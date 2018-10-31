@@ -51,7 +51,7 @@ function QuestGUI:addDay(i)
 		statusText = "abgelaufen"
 	elseif self.m_Current < i then
 		img = "files/images/Events/Christmas/QuestGray.png"
-		statusColor = Color.LightBlue
+		statusColor = Color.Accent
 		statusText = "demnächst"
 	end
 	self.m_Day[i] = GUIGridImage:new(x+(i*2), y, 2, 3, img, self.m_Window)

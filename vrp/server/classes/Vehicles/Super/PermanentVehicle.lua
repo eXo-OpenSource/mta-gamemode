@@ -63,7 +63,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 	return false
 end
 
-function PermanentVehicle:constructor(data)	
+--[[function PermanentVehicle:constructor(data)
 	self.m_Id = data.Id
 	self.m_Owner = data.OwnerId
 	self.m_OwnerType = data.OwnerType
@@ -75,6 +75,7 @@ function PermanentVehicle:constructor(data)
 	self:setCurrentPositionAsSpawn(data.PositionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
+	setElementData(self, "OwnerID", data.OwnerId) -- Todo: *hide*
 	setElementData(self, "OwnerType", VehicleTypeName[self.m_OwnerType])
 	setElementData(self, "ID", self.m_Id or -1)
 	self:updateTemplate()
@@ -131,9 +132,9 @@ function PermanentVehicle:constructor(data)
 
 	self.m_HasBeenUsed = 0
 	self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
-	self.m_SpawnDim = data.Dimension 
+	self.m_SpawnDim = data.Dimension
 	self.m_SpawnIn = data.Interior
-end
+end]]
 
 function PermanentVehicle:destructor()
 	self:save()
@@ -145,7 +146,73 @@ end
 
 function PermanentVehicle:virtual_constructor(data)
 	if data and type(data) == "table" then
-		PermanentVehicle.constructor(self, data)
+		self.m_Id = data.Id
+		self.m_Owner = data.OwnerId
+		self.m_OwnerType = data.OwnerType
+		self.m_Premium = data.Premium ~= 0
+		self.m_PremiumId = data.Premium
+		self:setCurrentPositionAsSpawn(data.PositionType)
+
+		setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
+		setElementData(self, "OwnerID", data.OwnerId) -- Todo: *hide*
+		setElementData(self, "OwnerType", VehicleTypeName[self.m_OwnerType])
+		setElementData(self, "ID", self.m_Id or -1)
+
+		self.m_Keys = data.Keys and fromJSON(data.Keys) or {} -- TODO: check if this works?
+		self.m_PositionType = data.PositionType or VehiclePositionType.World
+
+		if data.TrunkId == 0 or data.TrunkId == nil and (self.m_OwnerType == VehicleTypes.Player or self.m_OwnerType == VehicleTypes.Group) then
+			data.TrunkId = Trunk.create()
+		end
+
+		if self.m_PositionType ~= VehiclePositionType.World then
+			-- Move to unused dimension | Todo: That's probably a bad solution
+			setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+		end
+
+		if data.TrunkId ~= 0 then
+			self.m_Trunk = Trunk.load(data.TrunkId)
+			self.m_TrunkId = data.TrunkId
+			self.m_Trunk:setVehicle(self)
+		end
+
+		if health and health <= 300 then
+			health = 300
+		end
+
+		if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
+			self:setELSPreset(data.ELSPreset)
+		end
+
+		if data.Handling and data.Handling ~= "" then
+			local handling = getOriginalHandling(getElementModel(self))
+			local tHandlingTable = split(data.Handling, ";")
+			for k,v in ipairs( tHandlingTable ) do
+				local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
+				local oldValue = handling[property]
+				if oldValue then
+					if type( oldValue) == "number" and property ~= "dragCoeff" then
+						setVehicleHandling(self,property,oldValue*faktor)
+					else
+						setVehicleHandling(self,property,faktor)
+					end
+				end
+			end
+		end
+
+		self:setFrozen(true)
+		self.m_HandBrake = true
+		self:setData("Handbrake", self.m_HandBrake, true)
+		self:setFuel(data.Fuel or 100)
+		self:setLocked(true)
+		self:setMileage(data.Mileage or 0)
+		self.m_Tunings = VehicleTuning:new(self, data.Tunings)
+		--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+
+		self.m_HasBeenUsed = 0
+		self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
+		self.m_SpawnDim = data.Dimension
+		self.m_SpawnIn = data.Interior
 	end
 end
 
@@ -163,6 +230,11 @@ function PermanentVehicle:save()
   if self.m_Trunk then self.m_Trunk:save() end
   return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId =? WHERE Id = ?", sql:getPrefix(),
     self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Id)
+end
+
+function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
+	return sql:queryExec("UPDATE ??_vehicles SET Model = ?, ELSPreset = ? WHERE Id = ?", sql:getPrefix(),
+    self:getModel(), self.m_ELSPreset, self.m_Id)
 end
 
 function PermanentVehicle:getId()

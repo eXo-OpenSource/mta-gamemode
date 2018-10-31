@@ -15,13 +15,17 @@ function DeathmatchLobbyGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, true, self)
 	GUILabel:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.05, "Warnung: Alle deine Waffen werden beim betreten einer Lobby gelöscht!", self.m_Window):setColor(Color.Red)
+	self.m_RefreshButton = GUIButton:new(self.m_Width*0.91, 35, self.m_Width*0.05, self.m_Height*0.05, FontAwesomeSymbols.Refresh, self.m_Window):setFont(FontAwesome(15))
+	self.m_RefreshButton.onLeftClick = function()
+		triggerServerEvent("deathmatchRequestLobbys", root)
+	end
 	self.m_LobbyGrid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.05, self.m_Width*0.96, self.m_Height*0.6, self.m_Window)
 	self.m_LobbyGrid:addColumn(_"Name", 0.4)
 	self.m_LobbyGrid:addColumn(_"Spieler", 0.1)
 	self.m_LobbyGrid:addColumn(_"Map", 0.2)
 	self.m_LobbyGrid:addColumn(_"Modus", 0.15)
 	self.m_LobbyGrid:addColumn(_"PW", 0.15)
-	self.m_CreateLobbyButton = GUIButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.17, self.m_Width*0.3, self.m_Height*0.07, _"Lobby erstellen", self.m_Window):setBackgroundColor(Color.LightBlue):setBarEnabled(true)
+	self.m_CreateLobbyButton = GUIButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.17, self.m_Width*0.3, self.m_Height*0.07, _"Lobby erstellen", self.m_Window):setBackgroundColor(Color.Accent):setBarEnabled(true)
 	self.m_CreateLobbyButton.onLeftClick = function()
 		DeathmatchCreateLobby:getSingleton():open()
 		delete(self)
@@ -43,13 +47,15 @@ function DeathmatchLobbyGUI:destructor()
 end
 
 function DeathmatchLobbyGUI:onShow()
-	triggerServerEvent("deathmatchRequestLobbys", root)
+	triggerServerEvent("deathmatchRequestLobbys", localPlayer)
 end
 
 function DeathmatchLobbyGUI:onHide()
 end
 
 function DeathmatchLobbyGUI:receiveLobbys(lobbyTable)
+	self.m_LobbyGrid:clear()
+
 	local item, pw
 	for id, lobby in pairs(lobbyTable) do
 		pw = lobby.password ~= "" and "Ja" or "Nein"

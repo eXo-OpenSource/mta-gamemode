@@ -15,7 +15,7 @@ function CompanyGUI:constructor()
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_LeaderTab = false
@@ -119,11 +119,11 @@ function CompanyGUI:addLeaderTab()
 		self.m_CompanyRangGrid:addColumn(_"Rang", 0.2)
 		self.m_CompanyRangGrid:addColumn(_"Name", 0.8)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric(true, true)
-	
+
 		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
@@ -144,6 +144,10 @@ function CompanyGUI:addLeaderTab()
 
 		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
+
+		self.m_CompanyForumSyncButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Forum sync", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_CompanyForumSyncButton.onLeftClick = bind(self.CompanyForumSyncButton_Click, self)
+
 		self.m_LeaderTab = true
 	end
 end
@@ -254,6 +258,9 @@ function CompanyGUI:CompanyPlayerFileButton_Click()
 	HistoryPlayerGUI:new(CompanyGUI)
 end
 
+function CompanyGUI:CompanyForumSyncButton_Click()
+	triggerServerEvent("companyForumSync", root)
+end
 
 function CompanyGUI:CompanyRemovePlayerButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()

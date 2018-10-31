@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.7"
+PROJECT_VERSION = "1.7.1"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -133,6 +133,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlineUnban"] = RANK.Administrator,
 	["loginFix"] = RANK.Moderator,
 	["vehicleMenu"] = RANK.Moderator,
+	["syncForumFaction"] = RANK.Supporter,
+	["syncForumCompany"] = RANK.Supporter,
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
@@ -173,6 +175,13 @@ ADMIN_RANK_PERMISSION = {
 	["despawnVehicle"] = RANK.Supporter, -- despawn
 	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
 	["looseVehicleHandbrake"] = RANK.Supporter,
+	["editVehicleGeneral"] = RANK.Administrator, -- this is used to just open the window itself
+	["editVehicleModel"] = RANK.Administrator,
+	["editVehicleOwnerType"] = RANK.Administrator,
+	["editVehicleOwnerID"] = RANK.Administrator,
+	["editVehicleTunings"] = RANK.Administrator,
+	["editVehicleTexture"] = RANK.Developer, --override textures without visiting the texture shop
+
 
 	--development
 	["cookie"] = RANK.Developer, -- give that man a cookie
@@ -411,6 +420,20 @@ Tasks = {
 	TASK_GUARD = 1,
 	TASK_SHOOT_TARGET = 2,
 	TASK_GETTING_TARGETTED = 3,
+}
+
+VehicleTypes = {
+	Player = 1;
+	Faction = 2;
+	Company = 3;
+	Group = 4;
+}
+
+VehicleTypeName = {
+	[VehicleTypes.Player] = "player";
+	[VehicleTypes.Faction] = "faction";
+	[VehicleTypes.Company] = "company";
+	[VehicleTypes.Group] = "group";
 }
 
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}

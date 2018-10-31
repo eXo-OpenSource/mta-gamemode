@@ -36,7 +36,17 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 end
 
 function DeathmatchLobby:destructor()
-	self.m_Colshape:destroy()
+	if self.m_Colshape and isElement(self.m_Colshape) then
+		self.m_Colshape:destroy()
+	end
+	for player, data in pairs(self.m_Players) do
+		self:removePlayer(player)
+	end
+
+	if self.m_MapParser then
+		delete(self.m_MapParser)
+	end
+
 	DeathmatchManager:getSingleton():unregisterLobby(self.m_Id)
 end
 
@@ -56,6 +66,14 @@ function DeathmatchLobby:loadMap()
 	self.m_Colshape:setDimension(self.m_MapData["dim"])
 	self.m_Colshape:setInterior(self.m_MapData["int"])
 	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
+
+	if (map.File) then
+		self.m_MapParser = MapParser:new(map.File)
+		self.m_MapParser:create(self.m_MapData["dim"])
+		--outputDebugString("Mapname: ".. self.m_MapParser.m_Mapname)
+		--outputDebugString("Loaded Map '"..map.File.."' in Dimension "..self.m_MapData["dim"])
+		--outputDebugString("Objects: "..#self.m_MapParser:getElementsByType("object"))
+	end
 end
 
 function DeathmatchLobby:getPlayers()
@@ -109,51 +127,33 @@ function DeathmatchLobby:isValidWeapon(weapon)
 	return false
 end
 
-function DeathmatchLobby:refreshGUI()
-	for player, data in pairs(self:getPlayers()) do
-		player:triggerEvent("deathmatchRefreshGUI", self.m_Players)
-	end
-end
-
-function DeathmatchLobby:increaseKill(player, weapon)
-	if not self:isValidWeapon(weapon) then return end
+function DeathmatchLobby:increaseKill(player, weapon, weaponCheck)
+	if weaponCheck and not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Kills"] = self.m_Players[player]["Kills"] + 1
 	self:refreshGUI()
 end
 
-function DeathmatchLobby:increaseDead(player, weapon)
-	if not self:isValidWeapon(weapon) then return end
+function DeathmatchLobby:increaseDead(player, weapon, weaponCheck)
+	if weaponCheck and not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Deaths"] = self.m_Players[player]["Deaths"] + 1
 	self:refreshGUI()
 end
 
 function DeathmatchLobby:addPlayer(player)
-	self.m_Players[player] = {
-		["Kills"] = 0,
-		["Deaths"] = 0
-	}
 	player:createStorage(true)
 	player:setData("isInDeathMatch",true)
-	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 		setPedStat(player, stat, stat == 69 and 900 or 1000)
 	end
 
-	self:respawnPlayer(player)
 	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
-	self:refreshGUI()
 end
 
-function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
-	local pos = Randomizer:getRandomTableValue(self.m_MapData["spawns"])
+function DeathmatchLobby:respawnPlayer(player, dead, pos)
+	pos = pos and pos or Randomizer:getRandomTableValue(self.m_MapData["spawns"])
 	if dead then
-		player:triggerEvent("deathmatchStartDeathScreen", killer or player, true)
-		if killer then
-			self:increaseKill(killer, weapon)
-			self:increaseDead(player, weapon)
-		end
 		fadeCamera(player, false, 2)
 		player:triggerEvent("Countdown", 10, "Respawn in")
 		setTimer(function()
@@ -167,7 +167,9 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 				player:fadeCamera(true, 1)
 				player:setAlpha(255)
 				player:triggerEvent("CountdownStop", "Respawn in")
-				giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+				if #self.m_Weapons > 0 then
+					giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+				end
 			end
 		end,10000,1)
 	else
@@ -178,35 +180,36 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 		player:setHeadless(false)
 		player:setArmor(100)
 		player:setAlpha(255)
-		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+		if #self.m_Weapons > 0 then
+			giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+		end
 	end
 end
 
 function DeathmatchLobby:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
+		if player:isDead() then
+			player:respawn(Vector3(1325.21, -1559.48, 13.54), Vector3(0, 0, 0))
+		end
 		player:restoreStorage()
 		player:setDimension(0)
 		player:setInterior(0)
-		player:setPosition(1325.21, -1559.48, 13.54)
+		player:setPosition(Vector3(1325.21, -1559.48, 13.54))
 		player:setData("isInDeathMatch",false)
 		player:setHeadless(false)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil
+		player:setFrozen(false)
 
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
 			player:sendShortMessage(_("Du hast die Lobby verlassen!", player), "Deathmatch-Lobby", {255, 125, 0})
-			player:triggerEvent("deathmatchCloseGUI")
 		end
 	end
 
 	if self.m_Type == DeathmatchLobby.Types[2] and self:getPlayerCount() == 0 then
 		delete(self)
-	end
-
-	if not isServerStop then
-		self:refreshGUI()
 	end
 end
 
@@ -224,4 +227,8 @@ function DeathmatchLobby:onPlayerChat(player, text, type)
 
 		return true
 	end
+end
+
+function DeathmatchLobby:onWasted(player, killer, weapon)
+	player:triggerEvent("deathmatchStartDeathScreen", killer or player, true)
 end

@@ -21,7 +21,7 @@ function GUIProgressBar:constructor(posX, posY, width, height, parent)
 end
 
 function GUIProgressBar:setProgress(progress)
-	assert(progress >= 0 and progress <= 100, "Invalid range passed to GUIProgressbar.setProgress")
+	assert(progress >= 0 and progress <= 100, "Invalid range passed to GUIProgressbar.setProgress ("..progress..")")
 
 	self.m_Progress = progress
 	self:anyChange()

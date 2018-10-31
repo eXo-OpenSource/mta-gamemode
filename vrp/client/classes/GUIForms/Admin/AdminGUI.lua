@@ -27,7 +27,7 @@ function AdminGUI:constructor(money)
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:delete() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
@@ -42,21 +42,21 @@ function AdminGUI:constructor(money)
 
 	self:addAdminButton("adminAnnounce", "senden", self.onGeneralButtonClick, 490, 10, 100, 30, Color.Orange, tabAllgemein)
 	self:addAdminButton("smode", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
-	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", self.onGeneralButtonClick, 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
-	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", self.onGeneralButtonClick, 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
-	self:addAdminButton("respawnRadius", "im Umkreis respawnen", self.onGeneralButtonClick, 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", self.onGeneralButtonClick, 10, 100, 250, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", self.onGeneralButtonClick, 10, 140, 250, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("respawnRadius", "im Umkreis respawnen", self.onGeneralButtonClick, 75, 180, 185, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("clearchat", "Chat löschen / Werbung ausblenden", self.onGeneralButtonClick, 10, 230, 250, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", self.onGeneralButtonClick, 10, 270, 250, 30, Color.Orange, tabAllgemein)
 	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 310, 250, 30, Color.Accent, tabAllgemein)
 
-	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
+	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.Accent)
 	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
 	self.m_EditPosY = GUIEdit:new(95, 400, 80, 25, tabAllgemein):setNumeric(true, false)
 	self.m_EditPosZ = GUIEdit:new(180, 400, 80, 25, tabAllgemein):setNumeric(true, false)
 	self:addAdminButton("gotocords", "zu Koordinaten porten", self.onGeneralButtonClick, 10, 430, 250, 30, Color.Orange, tabAllgemein)
 
 	--Column 2
-	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
+	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.Accent)
 	self.m_EventCurrentMoney = GUILabel:new(340, 80, 200, 25, _("Momentan: %d$", money or 0), tabAllgemein)
 	GUILabel:new(340, 110, 60, 30, _"Betrag:", tabAllgemein)
 	self.m_EventMoneyEdit = GUIEdit:new(410, 110, 140, 30, tabAllgemein):setNumeric(true, true)
@@ -88,8 +88,10 @@ function AdminGUI:constructor(money)
 
 	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
 	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("syncForumFaction", "Fraktion sync", self.onGeneralButtonClick, self.m_Width-225, 305, 200, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("syncForumCompany", "Unternehmen sync", self.onGeneralButtonClick, self.m_Width-225, 345, 200, 30, Color.Orange, tabAllgemein)
 
-	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 310, 210, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 385, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -126,8 +128,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("gethere", "her porten", self.onPlayerButtonClick, 440, 290, 160, 30, Color.Green, tabSpieler)
 	self:addAdminButton("nickchange", "Nick ändern", self.onPlayerButtonClick, 440, 330, 160, 30, Color.Orange, tabSpieler)
 
-	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", self.onPlayerButtonClick, 610, 130, 160, 30, Color.LightBlue, tabSpieler)
-	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", self.onPlayerButtonClick, 610, 170, 160, 30, Color.LightBlue, tabSpieler)
+	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", self.onPlayerButtonClick, 610, 130, 160, 30, Color.Accent, tabSpieler)
+	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", self.onPlayerButtonClick, 610, 170, 160, 30, Color.Accent, tabSpieler)
 	self:addAdminButton("warn", "Warns verwalten", self.onPlayerButtonClick, 610, 210, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("setFaction", "in Fraktion setzen", self.onPlayerButtonClick, 610, 250, 160, 30, Color.Accent, tabSpieler)
 	self:addAdminButton("setCompany", "in Unternehmen setzen", self.onPlayerButtonClick, 610, 290, 160, 30, Color.Accent, tabSpieler)
@@ -544,6 +546,20 @@ function AdminGUI:onGeneralButtonClick(func)
 				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
 				function (factionId)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
+				end)
+	elseif func == "syncForumCompany" then
+		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
+		ChangerBox:new(_"Unternehmen: Forum sync",
+				_"Bitte wähle die gewünschte Unternehmen aus:",companyTable,
+				function (companyId)
+					triggerServerEvent("adminSyncForumCompany", root, companyId)
+				end)
+	elseif func == "syncForumFaction" then
+		local factionTable = FactionManager:getSingleton():getFactionNames()
+		ChangerBox:new(_"Fraktion: Forum sync",
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
+				function (factionId)
+					triggerServerEvent("adminSyncForumFaction", root, factionId)
 				end)
 	elseif func == "smode" or func == "clearchat" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)

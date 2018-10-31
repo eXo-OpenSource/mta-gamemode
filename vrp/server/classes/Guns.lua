@@ -25,8 +25,8 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
 		-- MP5:
 		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
-		
-		setWeaponProperty(30, skill, "accuracy", 0.5) 
+
+		setWeaponProperty(30, skill, "accuracy", 0.5)
 		setWeaponProperty(30, skill, "weapon_range",105) -- GTA-Std: 90
 
 		-- M4:
@@ -51,8 +51,8 @@ end
 
 
 function Guns:destructor()
-	for id, cacheObj in pairs(self.m_DamageLogCache) do 
-		self:forceDamageLogCache(  id ) 
+	for id, cacheObj in pairs(self.m_DamageLogCache) do
+		self:forceDamageLogCache(  id )
 	end
 end
 
@@ -90,6 +90,11 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
 	local attacker = client
+
+	if client:getData("isInDeathMatch") and target:getData("isInDeathMatch") then
+		if not DeathmatchManager:getSingleton():isDamageAllowed(target, attacker, weapon) then return end
+	end
+
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
 			local hasHelmet = target.m_Helmet
@@ -138,7 +143,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 				if realLoss < basicDamage then -- workaround for 5 hp damages
 					realLoss = basicDamage -- workaround
 				end
-				
+
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
 			end
 		end
@@ -152,7 +157,7 @@ end
 
 function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 	local killer = killer
-	if isElement(killer) and getElementType(killer) == "vehicle" then 
+	if isElement(killer) and getElementType(killer) == "vehicle" then
 		killer = killer.controller
 	end
 	if killer and isElement(killer) and weapon then
@@ -160,7 +165,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 	end
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
-	
+
 	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
 		local inv = source:getInventory()
 		ExecutionPed:new( source, weapon, bodypart)
@@ -270,71 +275,71 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	self:addDamageLog(player, loss, attacker, weapon, bodypart)
 end
 
-function Guns:addDamageLog( player, loss, attacker, weapon, bodypart) 
-	if self.m_DamageLogCache then 
-		local cacheTable = self.m_DamageLogCache[attacker.m_Id] 
-		if cacheTable then 
+function Guns:addDamageLog( player, loss, attacker, weapon, bodypart)
+	if self.m_DamageLogCache then
+		local cacheTable = self.m_DamageLogCache[attacker.m_Id]
+		if cacheTable then
 			local cacheWeapon = cacheTable["Weapon"]
 			local cacheTarget = cacheTable["Target"]
-			if weapon == cacheWeapon and player.m_Id == cacheTarget then 
+			if weapon == cacheWeapon and player.m_Id == cacheTarget then
 				cacheTable["TotalLoss"] = cacheTable["TotalLoss"] + loss
 				cacheTable["HitCount"] = cacheTable["HitCount"] + 1
-			else 
-				self:forceDamageLogCache( attacker ) 
+			else
+				self:forceDamageLogCache( attacker )
 				self.m_DamageLogCache[attacker.m_Id]  = {}
-				self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount() 
+				self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount()
 				self.m_DamageLogCache[attacker.m_Id]["Timestamp"] = getRealTime().timestamp
-				self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon 
+				self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon
 				self.m_DamageLogCache[attacker.m_Id]["Target"] = player.m_Id
-				self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss 
+				self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss
 				self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
 				self.m_DamageLogCache[attacker.m_Id]["Zone"] = StatisticsLogger:getSingleton():getZone(attacker)
 			end
-		else 
-			self:forceDamageLogCache( attacker ) 
+		else
+			self:forceDamageLogCache( attacker )
 			self.m_DamageLogCache[attacker.m_Id]  = {}
-			self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount() 
+			self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount()
 			self.m_DamageLogCache[attacker.m_Id]["Timestamp"] = getRealTime().timestamp
-			self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon 
+			self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon
 			self.m_DamageLogCache[attacker.m_Id]["Target"] = player.m_Id
-			self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss 
+			self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss
 			self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
 			self.m_DamageLogCache[attacker.m_Id]["Zone"] = StatisticsLogger:getSingleton():getZone(attacker)
 		end
 	end
 end
 
-function Guns:forceDamageLogCache( player ) 
-	if self.m_DamageLogCache then 
+function Guns:forceDamageLogCache( player )
+	if self.m_DamageLogCache then
 		local cacheTable, playerId
-		if type(player) == "userdata" then 
-			cacheTable = self.m_DamageLogCache[player.m_Id] 
+		if type(player) == "userdata" then
+			cacheTable = self.m_DamageLogCache[player.m_Id]
 			playerId = player.m_Id
-		else 
-			cacheTable = self.m_DamageLogCache[player] 
+		else
+			cacheTable = self.m_DamageLogCache[player]
 			playerId = player
 		end
-		if cacheTable then 
-			local cacheWeapon = cacheTable["Weapon"] 
+		if cacheTable then
+			local cacheWeapon = cacheTable["Weapon"]
 			local totalLoss = cacheTable["TotalLoss"]
 			local hitCount = cacheTable["HitCount"]
 			local target = cacheTable["Target"]
 			local startTime = cacheTable["Timestamp"]
 			local zone = cacheTable["Zone"]
 			StatisticsLogger:getSingleton():addDamageLog(player, target, cacheWeapon, startTime, totalLoss, hitCount, zone)
-			if self.m_DamageLogCache[playerId]  then 
-				self.m_DamageLogCache[playerId] = nil 
+			if self.m_DamageLogCache[playerId]  then
+				self.m_DamageLogCache[playerId] = nil
 			end
-		end	
+		end
 	end
 end
 
-function Guns:Event_onGunLogCacheTick() 
-	local now = getTickCount() 
+function Guns:Event_onGunLogCacheTick()
+	local now = getTickCount()
 	local cacheObj, cacheTime
-	for id, cacheObj in pairs(self.m_DamageLogCache) do 
-		if now >= cacheObj["CacheTime"] + GUN_CACHE_EMPTY_INTERVAL then 
-			self:forceDamageLogCache(  id ) 
+	for id, cacheObj in pairs(self.m_DamageLogCache) do
+		if now >= cacheObj["CacheTime"] + GUN_CACHE_EMPTY_INTERVAL then
+			self:forceDamageLogCache(  id )
 		end
 	end
 end
@@ -344,7 +349,7 @@ function giveWeapon( player, weapon, ammo, current)
 	local object = getElementData(player, "a:weapon:slot"..slot.."")
 	if object then
 		if isElement(object) and player and ammo then
-			local wId = getElementData(object, "a:weapon:id")	
+			local wId = getElementData(object, "a:weapon:id")
 				if wId ~= weapon then
 					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
 				end

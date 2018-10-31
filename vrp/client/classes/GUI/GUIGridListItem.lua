@@ -58,7 +58,7 @@ end
 function GUIGridListItem:setClickable(state)
 	self.m_Clickable = state
 
-	self:setColor(state and Color.White or Color.LightBlue)
+	self:setColor(state and Color.White or Color.Accent)
 	return self
 end
 

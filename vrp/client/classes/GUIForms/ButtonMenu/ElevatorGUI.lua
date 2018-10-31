@@ -23,7 +23,7 @@ function ElevatorGUI:constructor(elevatorId, stationName, stations, pos, int)
 
 	for stationId, data in pairs(stations) do
 		if data.name ~= stationName then
-			self:addItem(data.name, Color.LightBlue, bind(self.itemCallback, self, stationId, stations))
+			self:addItem(data.name, Color.Accent, bind(self.itemCallback, self, stationId, stations))
 		end
 	end
 end

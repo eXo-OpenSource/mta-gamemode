@@ -32,7 +32,7 @@ function VehicleTuningGUI:constructor(vehicle, specialType)
 
 		GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
         GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
-        GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.LightBlue, self.m_Window)
+        GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.Accent, self.m_Window)
     end
 
     -- Upgrade selection rect

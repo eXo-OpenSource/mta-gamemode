@@ -8,12 +8,12 @@ function MechanicTow:constructor()
 	self.m_Ped:setData("onClickEvent",
 		function()
 			self.ms_SelectionGUI = GUIButtonMenu:new("Fahrzeug Art")
-			self.ms_SelectionGUI:addItem(_"Privat Fahrzeug", Color.LightBlue,
+			self.ms_SelectionGUI:addItem(_"Privat Fahrzeug", Color.Accent,
 				function()
 					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "permanentVehicle")
 				end
 			)
-			self.ms_SelectionGUI:addItem(_"Firma/Gruppen Fahrzeug", Color.LightBlue,
+			self.ms_SelectionGUI:addItem(_"Firma/Gruppen Fahrzeug", Color.Accent,
 				function()
 					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "groupVehicle")
 				end

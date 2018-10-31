@@ -14,6 +14,7 @@ function GUIGridList:constructor(posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 180))
 	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 
+	self.m_ColumnBGColor = self.m_Color
 	self.m_ItemHeight = 30
 	self.m_Columns = {}
 	self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
@@ -99,7 +100,6 @@ function GUIGridList:setColumnText(columnIndex, text)
 end
 
 function GUIGridList:setColumnBackgroundColor(color)
-	if color == Color.Clear then color = false end
 	self.m_ColumnBGColor = color
 	return self
 end
@@ -145,7 +145,7 @@ function GUIGridList:onInternalSelectItem(item)
 		item:setBackgroundColor(Color.Clear)
 	end
 
-	item:setBackgroundColor(Color.LightBlue)
+	item:setBackgroundColor(Color.Accent)
 	self:anyChange()
 end
 
@@ -154,7 +154,7 @@ function GUIGridList:draw(incache) -- Swap render order
 		dxSetBlendMode("modulate_add")
 
 		-- Draw background
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight, self.m_Width, self.m_Height - self.m_ItemHeight, self.m_Color) -- don't draw column backgrounds -> self.m_ItemHeight
 
 		-- Draw items
 		for k, v in ipairs(self.m_Children) do
@@ -177,7 +177,7 @@ function GUIGridList:drawThis()
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_ItemHeight, self.m_ColumnBGColor)
 		dxSetBlendMode("blend")
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.LightBlue)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.Accent)
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
 		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self.m_FontSize, self.m_Font)

@@ -20,7 +20,7 @@ function AdminEventGUI:constructor(money)
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:delete() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() AdminGUI:getSingleton():show() Cursor:show() end
 
 	self.m_TabGeneral = self.m_TabPanel:addTab(_"Allgemein")
@@ -37,9 +37,9 @@ function AdminEventGUI:constructor(money)
 	self.m_EventButton["portPlayers"].onLeftClick = function() triggerServerEvent("adminEventTrigger", localPlayer, "teleportPlayers") end
 
 	self.m_EventButton["startNewAuction"] = GUIButton:new(270, 50, 250, 30, "Auktion starten",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
-	self.m_EventButton["startNewAuction"].onLeftClick = function() 
+	self.m_EventButton["startNewAuction"].onLeftClick = function()
 		InputBox:new("Auktionsgut benennen", "Bitte gebe einen Namen für das Auktionsgut ein (z.B. 'das Fahrzeug [Fahrzeugname]'):", function(text)
-			triggerServerEvent("adminEventTrigger", localPlayer, "startAuction", text) 
+			triggerServerEvent("adminEventTrigger", localPlayer, "startAuction", text)
 		end)
 	end
 

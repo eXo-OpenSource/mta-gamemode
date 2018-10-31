@@ -216,7 +216,7 @@ function VehiclePerformanceGUI:updateValues( vehicle, serverHandling )
 					if not unit then
 						value = normaliseRange(range[1], range[2], value)*100
 						edit:setText(math.round(value, 2))
-						edit:setCaption(("%s %"):format(value))
+						edit:setCaption(("%s %%"):format(value))
 					else 
 						if prop == "maxVelocity" then value = value + VEHICLE_SPEEDO_MAXVELOCITY_OFFSET end
 						edit:setCaption(("%s%s"):format(value,unit))

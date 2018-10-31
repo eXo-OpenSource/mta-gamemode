@@ -127,7 +127,7 @@ function MapParser:create(dimension)
 end
 
 function MapParser:destroy(index)
-	assert(self.m_Maps[index])
+	assert(self.m_Maps[index], "No Map with index "..index)
 
 	for k, element in pairs(self.m_Maps[index]) do
 		if isElement(element) then

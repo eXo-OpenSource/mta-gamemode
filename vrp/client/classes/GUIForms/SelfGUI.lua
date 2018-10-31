@@ -69,9 +69,9 @@ function SelfGUI:constructor()
 	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
 	GUILabel:new(self.m_Width*0.05, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "Rang:", tabGeneral)
 	self.m_CompanyRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "-", tabGeneral)
-	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.135, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.135, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.Accent)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
-	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
+	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.Accent) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
 	addRemoteEvents{"companyInvitationRetrieve"}
 	addEventHandler("companyInvitationRetrieve", root, bind(self.Event_CompanyInvitationRetrieve, self))
@@ -81,9 +81,9 @@ function SelfGUI:constructor()
 	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.37, self.m_Width*0.64, self.m_Height*0.06, "", tabGeneral)
 	GUILabel:new(self.m_Width*0.05, self.m_Height*0.43, self.m_Width*0.4, self.m_Height*0.06, "Rang:", tabGeneral)
 	self.m_FactionRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.43, self.m_Width*0.4, self.m_Height*0.06, "-", tabGeneral)
-	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.37, self.m_Width*0.135, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.37, self.m_Width*0.135, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.Accent)
 	self.m_FactionMenuButton.onHover = function () self.m_FactionMenuButton:setColor(Color.White) end
-	self.m_FactionMenuButton.onUnhover = function () self.m_FactionMenuButton:setColor(Color.LightBlue) end
+	self.m_FactionMenuButton.onUnhover = function () self.m_FactionMenuButton:setColor(Color.Accent) end
 
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
@@ -96,9 +96,9 @@ function SelfGUI:constructor()
 	self.m_GroupNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.50, self.m_Width*0.35, self.m_Height*0.06, "", tabGeneral)
 	GUILabel:new(self.m_Width*0.05, self.m_Height*0.56, self.m_Width*0.4, self.m_Height*0.06, "Rang:", tabGeneral)
 	self.m_GroupRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.56, self.m_Width*0.4, self.m_Height*0.06, "-", tabGeneral)
-	self.m_GroupMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.50, self.m_Width*0.135, self.m_Height*0.06, _"(verwalten)", tabGeneral):setColor(Color.LightBlue)
+	self.m_GroupMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.50, self.m_Width*0.135, self.m_Height*0.06, _"(verwalten)", tabGeneral):setColor(Color.Accent)
 	self.m_GroupMenuButton.onHover = function () self.m_GroupMenuButton:setColor(Color.White) end
-	self.m_GroupMenuButton.onUnhover = function () self.m_GroupMenuButton:setColor(Color.LightBlue) end
+	self.m_GroupMenuButton.onUnhover = function () self.m_GroupMenuButton:setColor(Color.Accent) end
 	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
 	--self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	--self.m_GroupInvitationsLabel:setVisible(false)
@@ -158,16 +158,16 @@ function SelfGUI:constructor()
 	self.m_VehiclesGrid:addColumn(_"Standort", 0.5)
 	self.m_VehiclesGrid:addColumn(_"Steuer", 0.2)
 	self.m_VehicleGarages = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.5, self.m_Height*0.06, _"Garage:", tabVehicles)
-	self.m_VehicleGarageUpgradeButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
+	self.m_VehicleGarageUpgradeButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.Accent)
 	self.m_VehicleGarageUpgradeButton.onHover = function () self.m_VehicleGarageUpgradeButton:setColor(Color.White) end
-	self.m_VehicleGarageUpgradeButton.onUnhover = function () self.m_VehicleGarageUpgradeButton:setColor(Color.LightBlue) end
+	self.m_VehicleGarageUpgradeButton.onUnhover = function () self.m_VehicleGarageUpgradeButton:setColor(Color.Accent) end
 	--self.m_VehicleHangar = GUILabel:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.06, _"Hangar:", tabVehicles)
-	--self.m_VehicleHangarButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.81, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
+	--self.m_VehicleHangarButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.81, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.Accent)
 	--self.m_VehicleHangarButton.onHover = function () self.m_VehicleHangarButton:setColor(Color.White) end
-	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.LightBlue) end
+	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.Accent) end
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
 	self.m_VehicleSellButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", tabVehicles):setBarEnabled(true)
- 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.LightBlue)
+ 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
  	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
  	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
 
@@ -197,7 +197,7 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
 	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getSkinLevel(), tabPoints)
-	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.Accent)
 	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestSkinLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value)
 		self.m_SkinLevelLabel:setText(_("%d/%d", value, MAX_SKIN_LEVEL))
@@ -210,7 +210,7 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
 	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getVehicleLevel(), tabPoints)
-	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.Accent)
 	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value)
 		self.m_VehicleLevelLabel:setText(_("%d/%d", value, MAX_VEHICLE_LEVEL))
@@ -223,7 +223,7 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
-	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.Accent)
 	self.m_JobLevelButton.onLeftClick = function() triggerServerEvent("requestJobLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("JobLevel", function(value)
 		self.m_JobLevelLabel:setText(_("%d/%d", value, MAX_JOB_LEVEL))
@@ -1384,7 +1384,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SeatbeltWarning:setChecked(core:get("Vehicles", "seatbeltWarning", true))
 		self.m_SeatbeltWarning.onChange = function (bool)
 			core:set("Vehicles", "seatbeltWarning", bool)
-		end		
+		end
 		self.m_SpeedoAlphaLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Tacho-Transparenz" , self.m_SettingBG)
 		:setFont(VRPFont(25)):setFontSize(1)
 		self.m_SpeedoAlpha = GUISlider:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.6, self.m_Height*0.07, self.m_SettingBG)
@@ -1402,7 +1402,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SpeedoOverlay.onChange = function (bool)
 			HUDSpeedo:getSingleton():setLightOption( bool )
 			core:set("HUD", "SpeedoLightOverlay", bool)
-		end		
+		end
 	elseif setting == "Shader" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
 		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
@@ -1426,7 +1426,7 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
-	elseif setting == "Event" then 
+	elseif setting == "Event" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Halloween", self.m_SettingBG)
 
 		self.m_HalloweenDarkness = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, _"Umgebungs-Ambiente", self.m_SettingBG)

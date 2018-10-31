@@ -172,7 +172,7 @@ function Halloween:constructor()
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
 	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
 
-
+	self:initHalloweenDM()
 end
 
 function Halloween:initTTPlayer(pId)
@@ -268,10 +268,10 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 						pl:sendWarning(_("Du musst in der Nähe der Tür bleiben um Süßigkeiten zu bekommen!", pl))
 					end
 				end
+				pl.m_HouseDoorBellCooldown = false
 			end
 			d.currentHouseId = nil
 			d.lastMessage = nil
-			pl.m_HouseDoorBellCooldown = false
 		end
 	end
 end
@@ -346,4 +346,40 @@ function Halloween:Event_buyBonus(bonusId)
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Kürbisse und %d Süßigkeiten gekauft!", client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"]))
 	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"])
 
+end
+
+function Halloween:initHalloweenDM()
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 12, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 12, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 14, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 14, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 16, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 16, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 18, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 18, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 20, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 20, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 22, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 22, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmMessage, self), "HalloweenDmMsg", nil, 00, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.halloweenDmStart, self), "HalloweenDmMsg", nil, 00, 13)
+end
+
+function Halloween:halloweenDmMessage()
+	for index, playeritem in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+		playeritem:sendShortMessage(_("Um %d:13 startet ein Halloween Special an der DM-Arena!", playeritem, getRealTime().hour), _("Halloween-DM", playeritem), {255, 130, 0})
+	end
+end
+
+function Halloween:halloweenDmStart()
+	DeathmatchManager:getSingleton():createLobby("Halloween Event", "Server", "halloween", {}, "halloween", 10)
+	for index, playeritem in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+		playeritem:sendShortMessage(_("Die Halloween-Deathmatch Lobby wurde geöffnet!", playeritem), _("Halloween-DM", playeritem), {255, 130, 0})
+	end
 end

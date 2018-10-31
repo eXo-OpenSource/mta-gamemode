@@ -368,6 +368,7 @@ function Vehicle:toggleEngine(player)
 						end
 						setTimer(
 							function()
+								if not isElement(self) then return end
 								self:setEngineState(true)
 								local occs = self:getOccupants()
 								if occs then

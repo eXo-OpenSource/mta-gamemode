@@ -50,8 +50,8 @@ end
 
 function WareClient:OnJoinWare( gamespeed )
 	self.m_Gamespeed = gamespeed or 1
-	CustomModelManager:getSingleton():loadImportTXD("files/models/waluigi.txd", 18)
-	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 18)
+	CustomModelManager:getSingleton():loadImportTXD("files/models/skins/skeleton.txd", 18)
+	CustomModelManager:getSingleton():loadImportDFF("files/models/skins/skeleton.dff", 18)
 	self:toggleEnvironementSettings(true)
 	setPedWalkingStyle(localPlayer, 125)
 	setPlayerHudComponentVisible("area_name", false)

@@ -14,7 +14,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height*.9))
 	GUIColorable.constructor(self, Color.White)
 
-	self.m_BackgroundColor = Color.LightBlue
+	self.m_BackgroundColor = Color.Accent
 
 	self.m_Items = {}
 	self.m_CurrentItem = 1

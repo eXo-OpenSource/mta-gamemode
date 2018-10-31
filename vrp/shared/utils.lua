@@ -121,6 +121,7 @@ function table.removevalue(tab, value)
 	local idx = table.find(tab, value)
 	if idx then
 		table.remove(tab, idx)
+		return true
 	end
 end
 

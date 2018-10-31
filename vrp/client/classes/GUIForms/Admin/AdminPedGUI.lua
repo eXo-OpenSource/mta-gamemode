@@ -43,17 +43,17 @@ function AdminPedGUI:constructor(money)
 		triggerServerEvent("adminPedDelete", localPlayer, self.m_SelectedPedId)
 	end
 
-	self.m_CreatePed = GUIButton:new(10, 500, 180, 30, "neuen Ped plazieren",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
+	self.m_CreatePed = GUIButton:new(10, 500, 180, 30, "neuen Ped plazieren",  self):setFontSize(1):setBackgroundColor(Color.Accent)
 	self.m_CreatePed.onLeftClick = function() delete(self) triggerServerEvent("adminCreatePed", localPlayer) end
 
 	self.m_RolesGrid = GUIGridList:new(390, 360, 180, 170, self.m_Window)
 	self.m_RolesGrid:addColumn(_"verfügbare Rollen", 1)
 
-	self.m_AddRoleButton = GUIButton:new(575, 405, 30, 30, FontAwesomeSymbols.Double_Right, self):setFont(FontAwesome(20)):setBackgroundColor(Color.LightBlue):setFontSize(1)
+	self.m_AddRoleButton = GUIButton:new(575, 405, 30, 30, FontAwesomeSymbols.Double_Right, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Accent):setFontSize(1)
 	self.m_AddRoleButton:setEnabled(false)
 	self.m_AddRoleButton.onLeftClick = bind(self.addRole, self)
 
-	self.m_RemRoleButton = GUIButton:new(575, 445, 30, 30, FontAwesomeSymbols.Double_Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.LightBlue):setFontSize(1)
+	self.m_RemRoleButton = GUIButton:new(575, 445, 30, 30, FontAwesomeSymbols.Double_Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Accent):setFontSize(1)
 	self.m_RemRoleButton:setEnabled(false)
 	self.m_RemRoleButton.onLeftClick = bind(self.remRole, self)
 

@@ -42,6 +42,10 @@ function BombArea:fire(player)
     if self.m_PlaceCallback and self.m_PlaceCallback(self, player) == false then
         return
     end
+    if not player:getInventory():removeItem("Sprengstoff", 1) then
+		player:sendError("Du hast keine Bombe im Inventar!")
+		return
+	end
 
     self.m_BombObject = createObject(1654, player:getPosition() + Vector3(0, 0, -0.9), 270, 0, 0)
     self.m_BombObject:setInterior(player:getInterior())

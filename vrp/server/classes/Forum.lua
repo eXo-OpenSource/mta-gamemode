@@ -71,8 +71,18 @@ function Forum:userUpdate(forumId, data, callback)
 	}, callback)
 end
 
+function Forum:groupGet(groupId, callback)
+	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=get", {
+		method = "POST",
+		formFields = {
+			secret = self.m_Secret,
+			groupID = groupId
+		}
+	}, callback)
+end
+
 function Forum:groupAddMember(forumId, groupId, callback)
-	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=addMember", {
+	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=add", {
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -83,7 +93,7 @@ function Forum:groupAddMember(forumId, groupId, callback)
 end
 
 function Forum:groupRemoveMember(forumId, groupId, callback)
-	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=removeMember", {
+	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=remove", {
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,

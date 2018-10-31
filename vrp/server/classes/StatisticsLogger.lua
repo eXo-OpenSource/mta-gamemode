@@ -78,22 +78,22 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
     return result
 end
 
-function StatisticsLogger:getGangwarAttackLog( rows ) 
+function StatisticsLogger:getGangwarAttackLog( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_Gangwar ORDER BY Id DESC LIMIT ?", sqlLogs:getPrefix(), rows)
     return result
 end
 
-function StatisticsLogger:getGangwarTopDamage( rows ) 
+function StatisticsLogger:getGangwarTopDamage( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY Damage DESC LIMIT ?", sqlLogs:getPrefix(), rows)
 	return result
 end
 
-function StatisticsLogger:getGangwarTopKill( rows ) 
+function StatisticsLogger:getGangwarTopKill( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY Kills DESC LIMIT ?", sqlLogs:getPrefix(), rows)
 	return result
 end
 
-function StatisticsLogger:getGangwarTopMVP( rows ) 
+function StatisticsLogger:getGangwarTopMVP( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY MVP DESC LIMIT ?", sqlLogs:getPrefix(), rows)
 	return result
 end
@@ -379,8 +379,8 @@ end
 function StatisticsLogger:worldItemLog( action, typ, userId, ownerId, itemId, zone1, zone2)
 	if isElement(ownerId) then ownerId= ownerId:getId() else ownerId = tonumber(ownerId) or 0 end
 	if isElement(userId) then userId = userId:getId() else userId = userId or 0 end
-	if type(ownerId) ~= "number" then 
-		if type(ownerId) == "table" then 
+	if type(ownerId) ~= "number" then
+		if type(ownerId) == "table" then
 			ownerId = ownerId:getId()
 		end
 	end
@@ -493,4 +493,3 @@ function StatisticsLogger:addGangwarDebugLog( warning, areaObj, attackSession)
 		warning, areaID )
 	end
 end
-

@@ -12,6 +12,6 @@ inherit(Singleton, FactionMoneyBagHoverGUI)
 function FactionMoneyBagHoverGUI:constructor(bag)
 	GUIRectangle.constructor(self, screenWidth-200, screenHeight/2-60/2, 160, 60, false)
 	self:setColor(tocolor(0,0,0,150))
-	GUILabel:new(0, 0, self.m_Width, 30, "Geldsack Inhalt:", self):setAlignX("center"):setAlignY("center"):setColor(Color.LightBlue)
+	GUILabel:new(0, 0, self.m_Width, 30, "Geldsack Inhalt:", self):setAlignX("center"):setAlignY("center"):setColor(Color.Accent)
 	self.m_ContentLabel = GUILabel:new(5, 30, self.m_Width, 25, getElementData(bag, "Money").."$", self):setAlignX("center")
 end

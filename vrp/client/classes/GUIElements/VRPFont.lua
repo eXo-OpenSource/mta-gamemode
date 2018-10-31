@@ -32,7 +32,7 @@ local FontAwesomes = {}
 function FontAwesome(height)
 	local fontsize = math.floor(height/2)
 	if not FontAwesomes[fontsize] then
-		FontAwesomes[fontsize] = dxCreateFont("files/fonts/FontAwesome.otf", fontsize)
+		FontAwesomes[fontsize] = dxCreateFont("files/fonts/FontAwesome5.ttf", fontsize)
 	end
 
 	return FontAwesomes[fontsize]

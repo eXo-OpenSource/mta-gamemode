@@ -14,7 +14,7 @@ function BankGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bankautomat", true, true, self)
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/Shops/BankHeader.png", self.m_Window)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Kontostand:", self.m_Window):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Kontostand:", self.m_Window):setColor(Color.Accent)
 	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.25, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", self.m_Window)
 
 	self.m_TabPanel = GUITabPanel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width-2*self.m_Width*0.02, self.m_Height*0.52, self.m_Window)
@@ -44,7 +44,7 @@ function BankGUI:constructor()
 	self.m_TransferButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.62, tabHeight*0.2, _"Überweisen", self.m_TabTransfer):setBarEnabled(true)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 
-	GUILabel:new(tabWidth*0.7, tabHeight*0.07, tabWidth*0.27, tabHeight*0.17, _"Spenden:", self.m_TabTransfer):setColor(Color.LightBlue)
+	GUILabel:new(tabWidth*0.7, tabHeight*0.07, tabWidth*0.27, tabHeight*0.17, _"Spenden:", self.m_TabTransfer):setColor(Color.Accent)
 
 	local donate = {}
 	donate["San News"] = GUIButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", self.m_TabTransfer):setBackgroundColor(Color.Green):setBarEnabled(true)

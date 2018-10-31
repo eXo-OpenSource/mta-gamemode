@@ -101,6 +101,7 @@ function VehicleTuning:applyTuning(disableTextureForce)
 		local texture = self.m_Tuning["Texture"]
 		self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
 	end]]
+	self.m_Vehicle:removeTexture()
 	if self.m_Tuning["Texture"] then
 		for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
 			if #texturePath > 3 then
@@ -297,6 +298,10 @@ function VehicleTuning:setSpecial(special)
 			addEventHandler("onElementDestroy", self.m_Vehicle, self.destroySpeaker, false)
 		end
 	end
+end
+
+function VehicleTuning:overrideTextures(newTextures)
+	self.m_Tuning["Texture"] = newTextures
 end
 
 function VehicleTuning:addTexture(texturePath, textureName)

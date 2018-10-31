@@ -77,9 +77,12 @@ function Admin:constructor()
 	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
-    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix",
+	"adminSyncForumFaction", "adminSyncForumCompany"}
 
+    addEventHandler("adminSyncForumFaction", root, bind(self.Event_adminSyncForumFaction, self))
+    addEventHandler("adminSyncForumCompany", root, bind(self.Event_adminSyncForumCompany, self))
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
@@ -88,6 +91,7 @@ function Admin:constructor()
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
+    addEventHandler("adminEditVehicle", root, bind(self.Event_EditVehicle, self))
     addEventHandler("adminSeachPlayer", root, bind(self.Event_seachPlayer, self))
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
@@ -163,11 +167,11 @@ end
 
 function Admin:Event_OnAdminLoginFix( id  )
 	if client and client:getRank() >= ADMIN_RANK_PERMISSION["loginFix"] then
-		if tonumber(id) then 
-			if DatabasePlayer.Map[tonumber(id)] then 
-				DatabasePlayer.Map[tonumber(id)] = nil 
+		if tonumber(id) then
+			if DatabasePlayer.Map[tonumber(id)] then
+				DatabasePlayer.Map[tonumber(id)] = nil
 				client:sendInfo(_("Die Aktion war erfolgreich (ID: %s)", client, id))
-			else 
+			else
 				client:sendInfo(_("Der Account (ID %s) ist nicht in Benutzung!", client, id))
 			end
 		end
@@ -645,7 +649,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				
+
 			end
 
 		if not target.spectBy then target.spectBy = {} end
@@ -1080,7 +1084,7 @@ local tpTable = {
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
 		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-		
+
 	}
 
 	local x,y,z = 0,0,0
@@ -1140,6 +1144,44 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
+function Admin:Event_adminSyncForumFaction(factionId)
+	if client:getRank() >= RANK.Supporter then
+        local faction = FactionManager:getSingleton():getFromId(factionId)
+   		if faction then
+			client:sendInfo(_("Syncronisation wurde gestartet.", client))
+			
+			Async.create(
+				function(client)
+					local addedCount, removedCount = faction:syncForumPermissions()
+
+					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
+				end
+			)(client)
+    	else
+    		client:sendError(_("Fraktion nicht gefunden!", client))
+    	end
+	end
+end
+
+function Admin:Event_adminSyncForumCompany(companyId)
+	if client:getRank() >= RANK.Supporter then
+        local company = CompanyManager:getSingleton():getFromId(companyId)
+		   if company then
+			client:sendInfo(_("Syncronisation wurde gestartet.", client))
+			
+			Async.create(
+				function(client)
+					local addedCount, removedCount = company:syncForumPermissions()
+
+					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
+				end
+			)(client)
+    	else
+    		client:sendError(_("Unternehmen nicht gefunden!", client))
+    	end
+	end
+end
+
 function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
@@ -1149,6 +1191,9 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
 			faction:removePlayer(targetPlayer)
+			Async.create(function()
+				faction:updateForumPermissions(targetPlayer.m_Id)
+			end)()
 		end
 
         if Id == 0 then
@@ -1161,7 +1206,10 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
 				end
 
-    			faction:addPlayer(targetPlayer, tonumber(rank))
+				faction:addPlayer(targetPlayer, tonumber(rank))
+				Async.create(function()
+					faction:updateForumPermissions(targetPlayer.m_Id)
+				end)()
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -1242,6 +1290,25 @@ function Admin:Event_portToVehicle(veh)
     end
 end
 
+function Admin:Event_EditVehicle(veh, changes)
+    if client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleGeneral"] then
+
+		if veh and isElement(veh) then
+			if changes.Model and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleModel"] then
+
+			end
+			if changes.OwnerType and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleOwnerType"] then --change type before id!
+
+			end
+			if changes.OwnerID and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleOwnerID"] then
+
+			end
+		else
+			client:sendError("Das Fahrzeug wurde nicht gefunden.")
+		end
+    end
+end
+
 function Admin:addFactionVehicle(player, cmd, factionID)
 	if player:getRank() >= RANK.Supporter then
 		if isPedInVehicle(player) then
@@ -1253,7 +1320,10 @@ function Admin:addFactionVehicle(player, cmd, factionID)
 					local model = getElementModel(veh)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
+					local veh = VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
+					local fc = factionCarColors[factionID]
+					veh:setColor(fc.r, fc.g, fc.b, fc.r1, fc.g1, fc.b1)
+					veh:getTunings():saveColors()
 				else
 					player:sendError(_("Fraktion nicht gefunden!", player))
 				end
@@ -1276,7 +1346,10 @@ function Admin:addCompanyVehicle(player, cmd, companyID)
 					local veh = getPedOccupiedVehicle(player)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
+					local veh = VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
+					local fc = companyColors[companyID]
+					veh:setColor(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b)
+					veh:getTunings():saveColors()
 				else
 					player:sendError(_("Unternehmen nicht gefunden!", player))
 				end

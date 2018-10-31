@@ -95,7 +95,7 @@ function PolicePanel:constructor()
 	self.m_JailPlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabJail)
 	self.m_JailPhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabJail)
 
-	self.m_JailRefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabJail):setBackgroundColor(Color.LightBlue)
+	self.m_JailRefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabJail):setBackgroundColor(Color.Accent)
 	self.m_JailRefreshBtn.onLeftClick = function()
 		triggerServerEvent("factionStateLoadJailPlayers", root)
 	end
@@ -142,7 +142,7 @@ function PolicePanel:constructor()
 	self.m_BugClearLog.onLeftClick = function() self:bugAction("clearLog") end
 
 	self.m_BugRefresh = GUIButton:new(400, 70, 25, 25, FontAwesomeSymbols.Refresh, self.m_TabBugs):setFont(FontAwesome(12))
-	self.m_BugRefresh:setBackgroundColor(Color.LightBlue)
+	self.m_BugRefresh:setBackgroundColor(Color.Accent)
 	self.m_BugRefresh:setEnabled(false)
 	self.m_BugRefresh.onLeftClick = function()
 		triggerServerEvent("factionStateLoadBugs", root)

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 DeathmatchManager = inherit(Singleton)
+DeathmatchManager.CurrentGUI = false
 
 function DeathmatchManager:constructor()
 	-- Zombie Survival
@@ -67,8 +68,8 @@ function deathScreen.onDeath(killer, gui)
 
 		-- Hide HUD, Chat, ...
 		HUDUI:getSingleton():hide()
-		if gui then
-			DeathmatchGUI:getSingleton():hide()
+		if gui and DeathmatchManager.CurrentGUI then
+			DeathmatchManager.CurrentGUI:hide()
 		end
 		showChat(false)
 
@@ -78,8 +79,8 @@ function deathScreen.onDeath(killer, gui)
 			deathScreen.state = false
 
 			HUDUI:getSingleton():show()
-			if gui then
-				DeathmatchGUI:getSingleton():show()
+			if gui and DeathmatchManager.CurrentGUI then
+				DeathmatchManager.CurrentGUI:show()
 			end
 			showChat(true)
 		end,9000,1)
