@@ -377,7 +377,9 @@ end
 
 function DeathmatchHalloween:healZombies()
 	for key, player in pairs(self.m_Zombies) do
-		player:setHealth(player:getHealth() + DeathmatchHalloween.ZombieHeal)
+		if player and isElement(player) then
+			player:setHealth(player:getHealth() + DeathmatchHalloween.ZombieHeal)
+		end
 	end
 end
 
