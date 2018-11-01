@@ -205,21 +205,21 @@ factionSpawnpoint[9] = {Vector3(687.07, -453.29, 20.65), 0, 0}
 
 -- ID 10 = Vatos
 factionRankNames[10] = {
-[0] = "Novivo",
-[1] = "Miembro",
-[2] = "Trepador",
-[3] = "Veterano",
-[4] = "Derecha",
-[5] = "Guerriero",
-[6] = "Jefe Boss"
+[0] = "Guerro",
+[1] = "Cholo",
+[2] = "Solado",
+[3] = "Pandillero",
+[4] = "Vato del Jefe",
+[5] = "Mano Derecha",
+[6] = "Jefe"
 }
 factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
 factionCarColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170, ["r1"] = 255,["g1"] = 252,["b1"] = 170}
 factionSkins[10] = {[108]=true, [109]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true}
 factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
-evilFactionInteriorEnter[10] =Vector3(2880.46, -2158.97, 4.26)
-factionWTDestination[10] = Vector3(2844.1006, -2147.5, 7)
-factionSpawnpoint[10] = {Vector3(2863.06, -2155.06, 4.80), 0, 0}
+evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
+factionWTDestination[10] = Vector3(1826.7, 1996, 13.2)
+factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 180}
 
 -- ID 11 = Triads
 factionRankNames[11] = {
