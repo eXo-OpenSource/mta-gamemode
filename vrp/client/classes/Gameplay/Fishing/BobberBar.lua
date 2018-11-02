@@ -209,8 +209,8 @@ function BobberBar:render()
 			self.m_BobberBarPosition = self.POSITION_DOWN - self.m_BobberBarHeight
 
 			if self.m_BobberBarSpeed ~= 0 then
-				self.m_BobberBarSpeed = -self.m_BobberBarSpeed + 0.5
-				if self.m_BobberBarSpeed < -self.MAX_PUSHBACK_SPEED then self.m_BobberBarSpeed = -self.MAX_PUSHBACK_SPEED end
+				self.m_BobberBarSpeed = 0 --self.m_BobberBarSpeed + 0.5
+				--if self.m_BobberBarSpeed < -self.MAX_PUSHBACK_SPEED then self.m_BobberBarSpeed = -self.MAX_PUSHBACK_SPEED end
 			end
 		elseif self.m_BobberBarPosition < self.POSITION_UP then
 			self.m_BobberBarPosition = self.POSITION_UP

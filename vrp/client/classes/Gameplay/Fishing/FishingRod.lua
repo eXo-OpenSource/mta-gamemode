@@ -13,7 +13,7 @@ function FishingRod:constructor(fishingRod)
 	self.Random = Randomizer:new()
 
 	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 30000
+	self.m_maxFishingBiteTime = 1000 --Todo: Just for dev reasons! prev: 30000
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
