@@ -219,7 +219,7 @@ factionSkins[10] = {[108]=true, [109]=true, [110]=true, [114]=true, [115]=true, 
 factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
 evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
 factionWTDestination[10] = Vector3(1826.7, 1996, 13.2)
-factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 180}
+factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
 
 -- ID 11 = Triads
 factionRankNames[11] = {
