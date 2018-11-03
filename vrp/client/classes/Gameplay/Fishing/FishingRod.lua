@@ -194,21 +194,42 @@ function FishingRod:checkWater(distance)
 	return false
 end
 
+function FishingRod:extrapolateToWater(startPosition, targetPosition, waterHeight)
+
+end
+
 function FishingRod:render()
 	if not self.m_FishingRod then return end
 
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
-	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, 0))
+	--[[local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, 0))
 
 	if self.m_isCasting and not self.m_MouseDown then
 		targetPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 		targetPosition.z = targetPosition.z - .7
 	else
 		targetPosition.z = 0
+	end]]
+
+	local extrapolatedPosition = 0
+
+	if self.m_isCasting and not self.m_MouseDown then
+		extrapolatedPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
+		extrapolatedPosition.z = extrapolatedPosition.z - .7
+	else
+		local targetPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05+10*self.m_PowerProgress/3, 0, -1.3))
+
+		extrapolatedPosition = startPosition + 1 * (targetPosition - startPosition)
+		local i = 1
+		while extrapolatedPosition.z > 0 do
+			i = i + 1
+			extrapolatedPosition = startPosition + i * (targetPosition - startPosition)
+			if i > 50 then break end
+		end
 	end
 
 	exports.bone_attach:setElementBoneRotationOffset(self.m_FishingRod, 180, 120 + 60*self.m_PowerProgress, 0)
-	dxDrawLine3D(startPosition, targetPosition, tocolor(255, 230, 190, 100), .3)
+	dxDrawLine3D(startPosition, extrapolatedPosition, tocolor(255, 230, 190, 100), .3)
 
 	local left = screenWidth-300
 	local top = screenHeight/2
