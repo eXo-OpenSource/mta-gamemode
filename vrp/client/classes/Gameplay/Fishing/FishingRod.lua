@@ -12,8 +12,8 @@ function FishingRod:constructor(fishingRod)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 1000 --Todo: Just for dev reasons! prev: 30000
+	self.m_minFishingBiteTime = 10000 --Todo: Just for dev reasons! prev: 600
+	self.m_maxFishingBiteTime = 30000 --Todo: Just for dev reasons! prev: 30000
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -173,10 +173,22 @@ end
 function FishingRod:checkWater(distance)
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
-	targetPosition.z = -0.2
+	targetPosition.z = self.FishingMap:getWaterHeight(targetPosition) --  -0.2
+
+	local waterPosition = Vector3(targetPosition.x, targetPosition.y, targetPosition.z)
+	waterPosition.z = -500
+
+	outputChatBox("targetPosition.z: " .. targetPosition.z, 255, 0, 0)
+	outputChatBox("waterPosition.z: " .. waterPosition.z, 200, 0, 0)
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
-	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, targetPosition) or getGroundPosition(targetPosition) == 0) then
+
+	--[[outputChatBox("TestLineAgainstWater: " .. tostring(testLineAgainstWater(startPosition, waterPosition)))
+	outputChatBox("result[9]: " .. tostring(result[9]))
+	outputChatBox("isLineOfSightClear: " .. tostring(isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer)))
+	outputChatBox("isGroundPosition equal to 0: " .. tostring(getGroundPosition(targetPosition) == 0))]]
+
+	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, waterPosition) or getGroundPosition(targetPosition) == 0) then
 		return true
 	end
 	return false
