@@ -503,4 +503,13 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	{
+		name = "Aztecas",
+		stations = {
+			{Vector3(1829.04, -2018.95, 13.85), 89, 1},
+		},
+		accessible =  {1, FactionStaticId.VATOS},
+		nonInterior = true,
+		fuelTypes = {"petrol", "diesel"},
+	},
 }
