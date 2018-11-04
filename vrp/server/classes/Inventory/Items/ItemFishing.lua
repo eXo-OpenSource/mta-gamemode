@@ -37,6 +37,13 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 	end
 
 	local value = fromJSON(player:getInventory():getItemValueByBag("Items", place))
+
+	if value then
+		for _, v in pairs(value) do
+			v.fishName = Fishing:getSingleton():getFishNameFromId(v.Id)
+		end
+	end
+
 	player:triggerEvent("closeInventory")
 	player:triggerEvent("showCoolingBag", itemName, value)
 end

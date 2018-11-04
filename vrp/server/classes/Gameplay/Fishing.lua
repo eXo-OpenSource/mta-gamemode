@@ -165,7 +165,7 @@ function Fishing:FishCaught()
 			currentValue = fromJSON(currentValue) or {}
 
 			if #currentValue < bagProperties.max then
-				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size, quality = self:getFishQuality(fishId, size), timestamp = getRealTime().timestamp})
+				table.insert(currentValue, {Id = fishId, size = size, quality = self:getFishQuality(fishId, size), timestamp = getRealTime().timestamp})
 				playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
 
 				self:increaseFishCaughtCount(fishId)
@@ -185,6 +185,10 @@ function Fishing:FishCaught()
 	end
 
 	client:sendError("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!")
+end
+
+function Fishing:getFishNameFromId(fishId)
+	return Fishing.Fish[fishId].Name_DE
 end
 
 function Fishing:getFishSize(player, fishId, timeToCatch, castPower)
@@ -239,6 +243,10 @@ function Fishing:onFishRequestTrading()
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
 			currentValue = fromJSON(currentValue) or {}
+
+			for _, v in pairs(currentValue) do
+				v.fishName = Fishing:getSingleton():getFishNameFromId(v.Id)
+			end
 
 			table.insert(fishes, {name = bagName, content = currentValue})
 		end
