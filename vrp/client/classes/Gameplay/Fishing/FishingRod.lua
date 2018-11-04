@@ -12,8 +12,8 @@ function FishingRod:constructor(fishingRod)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_minFishingBiteTime = 10000 --Todo: Just for dev reasons! prev: 600
-	self.m_maxFishingBiteTime = 30000 --Todo: Just for dev reasons! prev: 30000
+	self.m_minFishingBiteTime = 600 --Todo: Just for dev reasons! prev: 600
+	self.m_maxFishingBiteTime = 5000 --Todo: Just for dev reasons! prev: 30000
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -178,8 +178,8 @@ function FishingRod:checkWater(distance)
 	local waterPosition = Vector3(targetPosition.x, targetPosition.y, targetPosition.z)
 	waterPosition.z = -500
 
-	outputChatBox("targetPosition.z: " .. targetPosition.z, 255, 0, 0)
-	outputChatBox("waterPosition.z: " .. waterPosition.z, 200, 0, 0)
+	--outputChatBox("targetPosition.z: " .. targetPosition.z, 255, 0, 0)
+	--outputChatBox("waterPosition.z: " .. waterPosition.z, 200, 0, 0)
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
 

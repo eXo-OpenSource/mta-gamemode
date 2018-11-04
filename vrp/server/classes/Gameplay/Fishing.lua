@@ -111,7 +111,12 @@ function Fishing:getFish(location, timeOfDay, weather)
 		end
 	end
 
-	return tmp[self.Random:get(1, #tmp)]
+	local availableFishCount = #tmp
+	if self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
+		return tmp[self.Random:get(1, availableFishCount)]
+	else
+		return false
+	end
 end
 
 function Fishing:FishHit(location, castPower)
@@ -121,6 +126,13 @@ function Fishing:FishHit(location, castPower)
 	local weather = getWeather()
 
 	local fish = self:getFish(location, time, weather)
+
+	if not fish then
+		client:triggerEvent("onFishingBadCatch")
+		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
+		client:meChat(true, ("hat %s geangelt!"):format(randomMessage))
+		return
+	end
 
 	client:triggerEvent("fishingBobberBar", fish)
 
@@ -172,6 +184,7 @@ function Fishing:FishCaught()
 
 				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location)
 				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size))
+				client:meChat(true, ("hat ein %s gefangen. Größe: %scm"):format(fishName, size))
 				return
 			end
 
@@ -381,3 +394,38 @@ end
 function Fishing:onFishRequestStatistics()
 	client:triggerEvent("openFisherStatisticsGUI", self.m_Statistics)
 end
+
+
+--- XY hat ... geangelt! Todo: move to constants?
+FISHING_BAD_CATCH_MESSAGES =
+{
+	"eine alte Brille",
+	"eine rolle Toilettenpapier",
+	"ein Stück rostiges Blech",
+	"ein hauch von Tüll",
+	"einen Stock",
+	"eine Zahnbürste",
+	"ein defektes Smartphone",
+	"einen alten Hut",
+	"eine Patronenhülse",
+	"einen BH in Übergröße",
+	"ein benutztes Kondom",
+	"ein unbenutztes Kondom",
+	"Lippenstift",
+	"einen Stift",
+	"Metallschrott",
+	"die Unterhose von xXKing",
+	"Socken von Stumpy",
+	"einen nutzlosen SchrimpX",
+	"einen PawnX Sticker",
+	"eine alte Tastatur",
+	"eine alte CD",
+	"eine alte Maus",
+	"eine leere Flasche Bier",
+	"eine leere Bierdose",
+	"eine leere Cola Dose",
+	"ein volles Glas Wasser",
+	"ein leeres Glas Wasser",
+	"ein Blatt Papier",
+	"eine alte Zeitung",
+}
