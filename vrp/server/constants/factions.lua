@@ -213,12 +213,12 @@ factionRankNames[10] = {
 [5] = "Mano Derecha",
 [6] = "Jefe"
 }
-factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
-factionCarColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170, ["r1"] = 255,["g1"] = 252,["b1"] = 170}
-factionSkins[10] = {[108]=true, [109]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true}
+factionColors[10] = {["r"] = 46,["g"] = 169,["b"] = 186} 
+factionCarColors[10] = {["r"] = 158,["g"] = 250,["b"] = 255, ["r1"] = 158,["g1"] = 250,["b1"] = 255}
+factionSkins[10] = {[108]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true,[307]=true}
 factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
 evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
-factionWTDestination[10] = Vector3(1826.7, 1996, 13.2)
+factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
 factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
 
 -- ID 11 = Triads
