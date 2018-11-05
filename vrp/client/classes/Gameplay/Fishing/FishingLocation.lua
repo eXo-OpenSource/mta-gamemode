@@ -9,7 +9,6 @@ FishingLocation = inherit(Singleton)
 
 FishingLocation.Map = {
 	{location = "lake", func = createColCircle, waterHeight = -0.2, args = {Vector2(-285.03, -607.24), 300}},
-	{location = "lake", func = createColCircle, waterHeight = 5, args = {Vector2(-749.62829589844, -1959.28), 120}}, --sump
 	{location = "lake", func = createColCircle, waterHeight = -0.2, args = {Vector2(2090.97, -163.12), 250}},
 	{location = "lake", func = createColPolygon, waterHeight = 40, args = {-887.59, 1977.73, -887.59, 1977.73, -1074.60, 2110.97, -1452.39, 2058.75, -1428.23, 2161.41, -1083.33, 2256.44, -1339.67, 2802.67, -1193.65, 2886.34, -862.18, 2721.25, -780.21, 2547.93, -826.14, 2308.55, -497.28, 2421.28, -446.44, 2208.16, -491.48, 1982.30, -621.76, 2042.06, -752.46, 2056.82}},
 
@@ -22,6 +21,9 @@ FishingLocation.Map = {
 	{location = "river", func = createColCuboid, waterHeight = -0.2, args = {Vector3(13.86, -614.20, -2), 1880, 650, 50}},
 	{location = "river", func = createColCuboid, waterHeight = -0.2, args = {Vector3(2091.12, 80.22, -2), 150, 240, 50}},
 	{location = "river", func = createColPolygon, waterHeight = -0.2, args = {-2863.18, -778.91, -2863.18, -778.91, -2306.00, -788.46, -992.86, -1936.82, -991.34, -2861.35, -1380.37, -2859.66, -2918.87, -1210.92}},
+
+	{location = "sump", func = createColCircle, waterHeight = 5, args = {Vector2(-749.62829589844, -1959.28), 120}},
+	{location = "desert", func = createColCircle, waterHeight = 12.2, args = {Vector2(6.8852052688599, 1532.5594482422), 100}},
 }
 
 function FishingLocation:constructor()
@@ -57,7 +59,11 @@ function FishingLocation:getLocation(position)
 		end
 	end
 
-	return "ocean"
+	if getGroundPosition(position) == 0 then
+		return "ocean"
+	end
+
+	return "coast"
 end
 
 --[[
