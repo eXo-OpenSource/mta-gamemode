@@ -13,6 +13,7 @@ function Fishing:constructor()
 	self.m_Players = {}
 
 	self:loadFishDatas()
+	self:createDesertWater()
 	self:updatePricing()
 	self:updateStatistics()
 	self.m_BankAccountServer = BankServer.get("gameplay.fishing")
@@ -395,8 +396,23 @@ function Fishing:onFishRequestStatistics()
 	client:triggerEvent("openFisherStatisticsGUI", self.m_Statistics)
 end
 
+function Fishing:createDesertWater()
+	for _, position in pairs(FISHING_DESERT_WATER) do
+		createWater(position.l, position.d, FISHING_DESERT_WATERHEIGHT, position.r, position.d, FISHING_DESERT_WATERHEIGHT, position.l, position.u, FISHING_DESERT_WATERHEIGHT, position.r, position.u, FISHING_DESERT_WATERHEIGHT)
+	end
+end
 
 --- XY hat ... geangelt! Todo: move to constants?
+FISHING_DESERT_WATERHEIGHT = 13
+FISHING_DESERT_WATER = {
+	{l = -33, r = 82, u = 1590, d = 1464},
+	{l = -80, r = -33, u = 1590, d = 1511},
+	{l = -59, r = -33, u = 1511, d = 1489},
+	{l = -44, r = -33, u = 1489, d = 1475},
+	{l = -70, r = -59, u = 1511, d = 1500},
+	{l = -50, r = -44, u = 1489, d = 1481},
+}
+
 FISHING_BAD_CATCH_MESSAGES =
 {
 	"eine alte Brille",
