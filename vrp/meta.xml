@@ -1188,9 +1188,8 @@
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
-
-	<file src="files/images/bullethitsmoke.png"/>
-
+	
+	<file src="files/images/bullethitsmoke_original.png"/>
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/jquery-3.2.1.min.js" />

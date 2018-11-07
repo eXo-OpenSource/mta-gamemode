@@ -3,12 +3,47 @@ ItemSmokeGrenade = inherit(Singleton)
 ItemSmokeGrenade.Map = {}
 
 function ItemSmokeGrenade:constructor() 
+	self.m_ReplaceShader = dxCreateShader("files/shader/texreplace.fx") -- re-enable this if it gets used / fixed (bug with missing vehicle smoke)
+	
 	addEventHandler("onClientElementStreamIn", root, bind(self.Event_onStreamedIn, self))
 	addEventHandler("onClientElementStreamOut", root, bind(self.Event_onStreamedOut, self))
 	if core:get("Other", "SmokeLowMode", false) then
 		self:useLowMode()
 	else 
 		self:disableLowMode()
+	end
+	self.m_BindDisableFunc = bind(self.restoreOriginal, self)
+	self.m_BindLowFunc = bind(self.restoreLow, self)
+
+	addEventHandler("onClientRestore", root, self.m_BindDisableFunc)
+	addEventHandler("onClientRestore", root, self.m_BindLowFunc)
+
+
+end
+
+function ItemSmokeGrenade:restoreOriginal(bCleared) 
+	if bCleared and not core:get("Other", "SmokeLowMode", false) then
+		dxSetRenderTarget(self.m_RenderTarget) 
+		dxDrawImage(0, 0, 32, 32, "files/images/bullethitsmoke_original.png")
+		dxSetRenderTarget()
+		dxSetShaderValue(self.m_ReplaceShader, "gTexture", self.m_RenderTarget)
+		if self.m_ReplaceShader and self.m_RenderTarget then
+			engineRemoveShaderFromWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
+			engineApplyShaderToWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
+		end
+	end
+end
+
+function ItemSmokeGrenade:restoreLow(bCleared) 
+	if bCleared and core:get("Other", "SmokeLowMode", false) then
+		dxSetRenderTarget(self.m_RenderTarget) 
+		dxDrawImage(0, 0, 8, 8, "files/images/bullethitsmoke_original.png")
+		dxSetRenderTarget()
+		dxSetShaderValue(self.m_ReplaceShader, "gTexture", self.m_RenderTarget)
+		if self.m_ReplaceShader and self.m_RenderTarget then
+			engineRemoveShaderFromWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
+			engineApplyShaderToWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
+		end
 	end
 end
 
@@ -24,32 +59,40 @@ function ItemSmokeGrenade:Event_onStreamedIn()
 end
 
 function ItemSmokeGrenade:useLowMode()
-	self.m_ReplaceShader = dxCreateShader("files/shader/texreplace.fx") -- re-enable this if it gets used / fixed (bug with missing vehicle smoke)
-	self.m_RenderTarget = dxCreateRenderTarget(4, 4, true)
+	if self.m_RenderTarget then self.m_RenderTarget:destroy() end
+	self.m_RenderTarget = dxCreateRenderTarget(8, 8, true)
+	
+	if self.m_ReplaceShader then
+		engineRemoveShaderFromWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
+	end
+
 	dxSetRenderTarget(self.m_RenderTarget) 
-		dxDrawImage(0,0,4,4, "files/images/bullethitsmoke.png")
+		dxDrawImage(0, 0, 8, 8, "files/images/bullethitsmoke_original.png")
 	dxSetRenderTarget()
 	dxSetShaderValue(self.m_ReplaceShader, "gTexture", self.m_RenderTarget)
+	
 	if self.m_ReplaceShader and self.m_RenderTarget then
 		engineApplyShaderToWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
 	end
-	addEventHandler("onClientRestore", root, function(bCleared) 
-		if bCleared then
-			dxSetRenderTarget(self.m_RenderTarget) 
-			dxDrawImage(0,0,4,4, "files/images/bullethitsmoke.png")
-			dxSetRenderTarget()
-				dxSetShaderValue(self.m_ReplaceShader, "gTexture", self.m_RenderTarget)
-			if self.m_ReplaceShader and self.m_RenderTarget then
-				engineApplyShaderToWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
-			end
-		end
-	end)
 	ShortMessage:new(_"Achtung! Da du den Low-Mode für Rauch benutzt wird dir evtl. kein Motorrauch angezeigt!", _"Einstellungen", {230, 0, 0}, 10000)
 end
 
 function ItemSmokeGrenade:disableLowMode()
+	
+	if self.m_RenderTarget then self.m_RenderTarget:destroy() end
+	self.m_RenderTarget = dxCreateRenderTarget(32, 32, true)
+
 	if self.m_ReplaceShader then
 		engineRemoveShaderFromWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
+	end
+
+	dxSetRenderTarget(self.m_RenderTarget) 
+		dxDrawImage(0, 0, 32, 32, "files/images/bullethitsmoke_original.png")
+	dxSetRenderTarget()
+
+	dxSetShaderValue(self.m_ReplaceShader, "gTexture", self.m_RenderTarget)
+	if self.m_ReplaceShader and self.m_RenderTarget then
+		engineApplyShaderToWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
 	end
 end
 
