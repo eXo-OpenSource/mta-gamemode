@@ -850,3 +850,30 @@ function tableMerge(t1, t2)
     end
     return t1
 end
+
+function checkRaySphere(origin, ray, sphere, radius)
+	local offset = origin - sphere
+	local b = offset:dot(ray)
+	local c = offset:dot(offset) - radius * radius
+	if c > 0 and b > 0 then
+		return false
+	end
+	local discr = b * b - c
+	if discr < 0 then
+		return false
+	end
+	local t = -b - math.sqrt(discr)
+	t = t < 0 and 0 or t
+	return origin + ray * t, t
+end
+
+function getVectorByAngleDistance(vec, dist, angle)
+    local a = math.rad(90 - angle);
+    local dx = math.cos(a) * dist;
+    local dy = math.sin(a) * dist;
+    return Vector3(vec.x+dx, vec.y+dy, vec.z);
+end
+
+function angle(vec1, vec2)
+    return math.acos(vec1:dot(vec2)/(vec1.length*vec2.length))
+end
