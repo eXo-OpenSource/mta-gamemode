@@ -48,12 +48,12 @@ function Nametag:draw()
 					for col, bool in pairs(ItemSmokeGrenade.Map) do
 						if col and isElement(col) then
 							local point, hit = checkRaySphere(Vector3(cx, cy, cz), (Vector3(phX, phY, phZ) - Vector3(cx, cy, cz)):getNormalized(), col:getPosition(), 3)
+							local color = Color.Green
+							if hit then 
+								color = Color.Red
+								smokeHit = true
+							end							
 							if DEBUG then
-								local color = Color.Green
-								if hit then 
-									color = Color.Red
-									smokeHit = true
-								end
 								--dxDrawLine3D(Vector3(cx, cy, cz-0.5), Vector3(phX, phY, phZ), color)
 							end
 						else 
