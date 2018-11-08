@@ -1592,3 +1592,6 @@ end
 function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
 end
+
+function Player:setInSewer(bool) self.m_InSewer = bool end
+function Player:isInSewer() return self.m_InSewer end

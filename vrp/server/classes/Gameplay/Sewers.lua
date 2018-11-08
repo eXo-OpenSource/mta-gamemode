@@ -66,8 +66,8 @@ function Sewers:createMap()
         elseif Sewers.EntranceExternal[i] then  
             enter = Teleporter:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 0, 3, 0, 0) 
             self.m_Entrances[enter] = true
-	        enter:addEnterEvent(function( player ) player:triggerEvent("Sewers:applyTexture") end)
-	        enter:addExitEvent(function( player ) player:triggerEvent("Sewers:removeTexture") end)
+	        enter:addEnterEvent(function( player ) player:setInSewer(true); player:triggerEvent("Sewers:applyTexture") end)
+	        enter:addExitEvent(function( player ) player:setInSewer(false); player:triggerEvent("Sewers:removeTexture") end)
             enter:setFade(true)
         end
     end    
