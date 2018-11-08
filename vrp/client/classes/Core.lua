@@ -137,6 +137,7 @@ function Core:ready() --onClientResourceStart
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	Sewers:new()
 	PremiumArea:new()
 
 	Plant.initalize()
