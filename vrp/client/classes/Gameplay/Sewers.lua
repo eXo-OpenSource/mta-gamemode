@@ -14,6 +14,7 @@ function Sewers:constructor()
 end
 
 function Sewers:applyInteriorTexture()
+	if self.m_Applied then return end
 	if self.m_InteriorTexture and #self.m_InteriorTexture > 0 then 
 		self:removeInteriorTexture()
 	end
@@ -23,12 +24,20 @@ function Sewers:applyInteriorTexture()
 			self.m_InteriorTexture[i] = StaticFileTextureReplacer:new(Sewers.TexturePath.."/tex"..i..".jpg", Sewers.Textures[i])
 		end
 	end
+
+	self.m_SewerSound = playSound("files/audio/Ambient/sewer.mp3", true)
+	self.m_Applied = true
 end
 
 function Sewers:removeInteriorTexture()
+	if not self.m_Applied then return end
 	if self.m_InteriorTexture then
 		for i = 1, #self.m_InteriorTexture do 
 			self.m_InteriorTexture[i]:delete()
 		end	
 	end
+	if self.m_SewerSound then 
+		stopSound(self.m_SewerSound)
+	end
+	self.m_Applied = false
 end

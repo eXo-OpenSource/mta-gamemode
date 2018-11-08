@@ -329,7 +329,7 @@ function Player:save()
 			end
 		end
 
-		local dimension = 0
+		local dimension = self:isInSewer() and self:getDimension() or 0
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
 		local sSkin = self.m_Skin
