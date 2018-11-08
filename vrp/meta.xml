@@ -73,6 +73,8 @@
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
+	<script src="server/classes/Teleporter.lua" type="server"/>
+	<script src="server/classes/TeleportManager.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
 	<script src="server/classes/ParkGarageZone.lua" type="server"/>
 	<script src="server/classes/InstantTeleportArea.lua" type="server"/>
@@ -1014,6 +1016,7 @@
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
+	<script src="client/classes/Gameplay/Sewers.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
@@ -1660,6 +1663,9 @@
 	<vrpfile src="files/images/Textures/Cityhall/tex14.jpg"/>
 	<vrpfile src="files/images/Textures/Cityhall/tex15.jpg"/>
 	<vrpfile src="files/images/Textures/Cityhall/tex16.jpg"/>
+
+	<vrpfile src="files/images/Textures/Sewers/tex1.jpg"/>
+
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />

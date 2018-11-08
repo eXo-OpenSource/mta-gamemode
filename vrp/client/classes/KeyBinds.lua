@@ -207,8 +207,11 @@ function KeyBinds:vehicleELS(__, keyState)
 	end
 end
 
-function KeyBinds:tryEnterEntrance( __, keystate) 
-	triggerEvent("onTryEnterance", localPlayer)
+function KeyBinds:tryEnterEntrance( __, keystate)
+	if keystate == "up" then
+		triggerServerEvent("onTryEnterTeleporter", localPlayer)
+		triggerEvent("onTryEnterance", localPlayer)
+	end
 end
 
 --[[

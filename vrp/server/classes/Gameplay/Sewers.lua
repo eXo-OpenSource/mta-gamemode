@@ -42,13 +42,14 @@ function Sewers:createMap()
 	setElementAlpha(bin, 0)
     setElementCollisionsEnabled(bin, false)
     setElementDimension(bin, 3)
-    setElementInterior(bin, 21)
+    setElementInterior(bin, 0)
     local entrances = {}
     local mx, my, mz
 	for key, obj in ipairs(self.m_Map.m_Maps[1]) do 
         if isElement(obj) then
             if obj:getType() == "marker" then
-                obj:setPosition(obj:getPosition().x, obj:getPosition().y, obj:getPosition().z+1.2)
+                outputChatBox(obj:getDimension()..","..obj:getInterior())
+                obj:setPosition(obj:getPosition().x, obj:getPosition().y, obj:getPosition().z+0.3)
                 table.insert(entrances, obj)
                 obj:setAlpha(0)
             end
@@ -56,18 +57,18 @@ function Sewers:createMap()
 		end
     end
     local enter
-    setElementPosition(bin, x, y, z+400)
+    setElementPosition(bin, 1483.02, -1736.06, 13.38-50)
     for i = 1, #entrances do 
         enter = nil
         if Sewers.EntranceLinks[i] then 
-            enter = InteriorEnterExit:new( entrances[i]:getPosition(), entrances[Sewers.EntranceLinks[i]]:getPosition(), 0, 0, 21, 3, 21, 3) 
+            enter = Teleporter:new( entrances[i]:getPosition(), entrances[Sewers.EntranceLinks[i]]:getPosition(), 0, 0, 0, 3, 0, 3) 
             self.m_Entrances[enter] = true
         elseif Sewers.EntranceExternal[i] then  
-            enter = InteriorEnterExit:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 21, 3, 0, 0) 
+            enter = Teleporter:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 0, 3, 0, 0) 
             self.m_Entrances[enter] = true
-        end
-        if enter then 
-            enter:setMarkerType("arrow")
+	        enter:addEnterEvent(function( player ) player:triggerEvent("Sewers:applyTexture") end)
+	        enter:addExitEvent(function( player ) player:triggerEvent("Sewers:removeTexture") end)
+            enter:setFade(true)
         end
     end    
 end
