@@ -778,7 +778,10 @@ function attachRotationAdjusted ( from, to )
     local frPosX, frPosY, frPosZ = getElementPosition( from )
     local frRotX, frRotY, frRotZ = getElementRotation( from )
     local toPosX, toPosY, toPosZ = getElementPosition( to )
-    local toRotX, toRotY, toRotZ = getElementRotation( to )
+	local toRotX, toRotY, toRotZ = getElementRotation( to )
+	frRotX = frRotX or 0
+	frRotY = frRotY or 0
+	frRotZ = frRotZ or 0
     local offsetPosX = frPosX - toPosX
     local offsetPosY = frPosY - toPosY
     local offsetPosZ = frPosZ - toPosZ

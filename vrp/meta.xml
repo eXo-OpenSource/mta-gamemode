@@ -188,6 +188,7 @@
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 
 	<!-- Gameplay -->
+	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
