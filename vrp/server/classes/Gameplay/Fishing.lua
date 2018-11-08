@@ -38,6 +38,7 @@ function Fishing:loadFishDatas()
 	local readFuncs = {
 		["Name_DE"] = function (value) return utf8.escape(value) end,
 		["Location"] = function(value) if fromJSON(value) then return fromJSON(value) else return value end end,
+		["Season"] = function(value) if fromJSON(value) then return fromJSON(value) end end,
 		["Times"] = function(value) return fromJSON(value) end,
 		["Size"] = function(value) return fromJSON(value) end,
 	}
@@ -63,16 +64,17 @@ function Fishing:updateStatistics()
 	end
 end
 
-function Fishing:getFish(location, timeOfDay, weather)
+function Fishing:getFish(location, timeOfDay, weather, season)
 	local tmp = {}
 
 	for _, v in pairs(Fishing.Fish) do
 		local checkLocation = false
 		local checkTime = false
 		local checkWeather = false
+		local checkSeason = false
 
 		-- Check Location
-		if #v.Location == 2 then
+		if type(v.Location) == "table" then
 			for key, value in pairs(v.Location) do
 				if value == location then
 					checkLocation = true
@@ -80,6 +82,18 @@ function Fishing:getFish(location, timeOfDay, weather)
 			end
 		elseif v.Location == location then
 			checkLocation = true
+		end
+
+		-- Check Season
+		local season = getCurrentSeason()
+		if type(v.Season) == "table" then
+			for _, value in pairs(v.Season) do
+				if value == season then
+					checkSeason = true
+				end
+			end
+		elseif v.Season == 0 or v.Season == season then
+			checkSeason = true
 		end
 
 		-- Check time
@@ -107,7 +121,7 @@ function Fishing:getFish(location, timeOfDay, weather)
 		end
 
 		-- Check all
-		if checkLocation and checkTime and checkWeather then
+		if checkLocation and checkTime and checkWeather and checkSeason then
 			table.insert(tmp, v)
 		end
 	end
@@ -126,7 +140,7 @@ function Fishing:FishHit(location, castPower)
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
 	local weather = getWeather()
 
-	local fish = self:getFish(location, time, weather)
+	local fish = self:getFish(location, time, weather, 3)
 
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
