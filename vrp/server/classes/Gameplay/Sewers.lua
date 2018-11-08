@@ -25,6 +25,8 @@ Sewers.EntranceExternal =
     [22] = {Vector3(2869.74976, -2124.99414, 5.72266), 90}, -- east-ls
     [15] = { Vector3(2630.69214, -1459.24158, 22.35500), 180}, -- north-east ls
 }
+
+addRemoteEvents{"Sewers:requestRadioLocation"}
 function Sewers:constructor() 
     self.m_Dimension = 3
     self.m_Entrances = {}
@@ -63,6 +65,13 @@ function Sewers:constructor()
             hE:triggerEvent("Sewers:removeTexture")
         end
     end)
+
+    addEventHandler("Sewers:requestRadioLocation", root, function()
+        if self.m_SewerRadio then 
+            local x,y,z = getElementPosition(self.m_SewerRadio)
+            client:triggerEvent("Sewers:getRadioLocation", x, y, z,  self.m_Dimension)
+        end
+    end)
 end
 
 function Sewers:destructor()
@@ -70,14 +79,16 @@ function Sewers:destructor()
 end
 
 function Sewers:createMap()
+    self:createStorage()
+
     self.m_Map = MapParser:new(":exo_maps/sewer.map")
 	self.m_Map:create(self.m_Dimension)
 	local x, y, z = getElementPosition(self.m_Map:getElements(1)[1])
 	local bin = createObject(1337, x, y, z) 
-	setElementAlpha(bin, 0)
-    setElementCollisionsEnabled(bin, false)
-    setElementDimension(bin, self.m_Dimension)
-    setElementInterior(bin, 0)
+	bin:setAlpha(0)
+    bin:setCollisionsEnabled(false)
+    bin:setDimension(self.m_Dimension)
+    bin:setInterior(0)
     local entrances = {}
     local mx, my, mz
 	for key, obj in ipairs(self.m_Map.m_Maps[1]) do 
@@ -90,17 +101,47 @@ function Sewers:createMap()
             attachRotationAdjusted ( obj, bin)
 		end
     end
+
+    --// move the whole map to this position 
+    bin:setPosition(1483.02, -1736.06, 13.38-50)
+
     local enter
-    setElementPosition(bin, 1483.02, -1736.06, 13.38-50)
     for i = 1, #entrances do 
-        enter = nil
         if Sewers.EntranceLinks[i] then 
             enter = Teleporter:new( entrances[i]:getPosition(), entrances[Sewers.EntranceLinks[i]]:getPosition(), 0, 0, 0, self.m_Dimension, 0, self.m_Dimension) 
             self.m_Entrances[enter] = true
         elseif Sewers.EntranceExternal[i] then  
-            enter = Teleporter:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 0, self.m_Dimension, 0, 0) 
+            enter = Teleporter:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 0, self.m_Dimension, 0, Sewers.EntranceExternal[i][3] or 0) 
             self.m_Entrances[enter] = true
             enter:setFade(true)
         end
-    end    
+    end
+end
+
+function Sewers:createStorage()
+    self.m_Storage = MapParser:new(":exo_maps/fraktionen/insurgent_storage.map")
+    self.m_Storage:create(self.m_Dimension)
+    local x, y, z = getElementPosition(self.m_Storage:getElements(1)[1])
+    local bin = createObject(1337, x, y, z) 
+    bin:setAlpha(0)
+    bin:setCollisionsEnabled(false)
+    bin:setDimension(self.m_Dimension)
+    bin:setInterior(0)
+    local entrance
+    for key, obj in ipairs(self.m_Storage.m_Maps[1]) do 
+        if isElement(obj) then
+            if obj:getModel() == 2102 then 
+                self.m_SewerRadio = obj
+            end
+            attachRotationAdjusted ( obj, bin)
+            if obj:getType() == "marker" then 
+                obj:setAlpha(0)
+                entrance = obj
+            end
+		end
+    end
+    bin:setPosition(1483.02-200, -1736.06, 13.38-50)
+    if entrance and isElement(entrance) then
+        Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
+    end
 end

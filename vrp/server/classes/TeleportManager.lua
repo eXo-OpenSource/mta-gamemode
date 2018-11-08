@@ -15,7 +15,7 @@ end
 function TeleportManager:Event_KeyBindTeleport()
 	if client and client.m_Teleporter then 
 		local instance, marker, type = unpack(client.m_Teleporter)
-		if TeleportManager.Map[instance] then 
+		if TeleportManager.Map[instance] and self:check(client, marker) then 
 			if type == "enter" then
 				instance:teleport(client, "enter", instance.m_InteriorPosition, instance.m_InteriorRotation, instance.m_InteriorId, instance.m_Dimension)
 			else 
@@ -27,7 +27,7 @@ end
 
 function TeleportManager:check( player, pickup)
 	if player and isElement(player) and pickup and isElement(pickup) then 
-		if (player:getPosition() - pickup:getPosition()):getLength() < 4 and (pickup:getInterior() == player:getInterior()) and (pickup:getDimension()==player:getDimension()) then
+		if (player:getPosition() - pickup:getPosition()):getLength() < 1 and (pickup:getInterior() == player:getInterior()) and (pickup:getDimension()==player:getDimension()) then
 			return true
 		end
 	end
