@@ -16,7 +16,7 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
-MAX_FISHING_LEVEL = 10
+MAX_FISHING_LEVEL = 15
 
 MAX_WANTED_LEVEL = 12
 
@@ -654,7 +654,7 @@ FISHING_BAGS = {
 	["Kleine Kühltasche"] = {max = 15, level = 0},
 }
 
--- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
+-- (level * 15)^2 // for i = 1, 15 do print(("[%s] = %s,"):format(i, math.floor((i*15)^(i>10 and 2.2 or 2)))) end
 FISHING_LEVELS = {
 	[1] = 225,
 	[2] = 900,
@@ -666,6 +666,11 @@ FISHING_LEVELS = {
 	[8] = 14400,
 	[9] = 18225,
 	[10] = 22500,
+	[11] = 75590,
+	[12] = 91537,
+	[13] = 109163,
+	[14] = 128493,
+	[15] = 149555,
 }
 
 FERRIS_IDS = {
@@ -748,6 +753,13 @@ FactionStaticId = {
 	OUTLAWS = 9,
 	VATOS = 10,
 	TRIAD = 11
+}
+
+SEASONS = {
+	SPRING = 1,
+	SUMMER = 2,
+	FALL = 3,
+	WINTER = 4,
 }
 
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect

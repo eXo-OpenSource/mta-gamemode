@@ -247,8 +247,9 @@ function SelfGUI:constructor()
 	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
 		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
 			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
-			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
-			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1])):setProgressTextEnabled()
+			local levelValue = FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]
+			self.m_FishingLevelProgress:setProgress(math.min(value, levelValue)/levelValue*100)
+			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, levelValue)):setProgressTextEnabled()
 		else
 			self.m_FishingLevelProgress:hide()
 		end

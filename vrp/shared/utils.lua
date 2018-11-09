@@ -851,11 +851,11 @@ function tableMerge(t1, t2)
 end
 
 local seasons = {
-	{season = 4, seasonStart = getRealTime(946684800).yearday, seasonEnd = getRealTime(953510400).yearday},
-	{season = 1, seasonStart = getRealTime(953596800).yearday, seasonEnd = getRealTime(961459200).yearday},
-	{season = 2, seasonStart = getRealTime(961545600).yearday, seasonEnd = getRealTime(969580800).yearday},
-	{season = 3, seasonStart = getRealTime(969667200).yearday, seasonEnd = getRealTime(977270400).yearday},
-	{season = 4, seasonStart = getRealTime(977356800).yearday, seasonEnd = getRealTime(978220800).yearday},
+	{season = 4, seasonStart = getRealTime(946684800).yearday, seasonEnd = getRealTime(953510400).yearday}, -- Winter
+	{season = 1, seasonStart = getRealTime(953596800).yearday, seasonEnd = getRealTime(961459200).yearday}, -- Frühling
+	{season = 2, seasonStart = getRealTime(961545600).yearday, seasonEnd = getRealTime(969580800).yearday}, -- Sommer
+	{season = 3, seasonStart = getRealTime(969667200).yearday, seasonEnd = getRealTime(977270400).yearday}, -- Herbst
+	{season = 4, seasonStart = getRealTime(977356800).yearday, seasonEnd = getRealTime(978220800).yearday}, -- Winter
 }
 function getCurrentSeason()
 	local currentYearday = getRealTime().yearday

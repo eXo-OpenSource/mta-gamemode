@@ -64,7 +64,7 @@ function Fishing:updateStatistics()
 	end
 end
 
-function Fishing:getFish(location, timeOfDay, weather, season)
+function Fishing:getFish(location, timeOfDay, weather)
 	local tmp = {}
 
 	for _, v in pairs(Fishing.Fish) do
@@ -140,7 +140,7 @@ function Fishing:FishHit(location, castPower)
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
 	local weather = getWeather()
 
-	local fish = self:getFish(location, time, weather, 3)
+	local fish = self:getFish(location, time, weather)
 
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
