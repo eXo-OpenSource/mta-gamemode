@@ -35,6 +35,7 @@ function Sewers:onGetRadioPosition(x, y, z, dim)
 	if self.m_Applied then
 		self.m_SewerStorageMusic = playSound3D( "files/audio/Ambient/bruja_sewers.mp3", x, y, z, true )
 		self.m_SewerStorageMusic:setDimension(dim)
+		self.m_SewerStorageMusic:setMaxDistance(40)
 	end
 end
 

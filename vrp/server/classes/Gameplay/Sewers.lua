@@ -127,21 +127,33 @@ function Sewers:createStorage()
     bin:setCollisionsEnabled(false)
     bin:setDimension(self.m_Dimension)
     bin:setInterior(0)
-    local entrance
+    local entrance = nil
+    self.m_PedPositions = {}
     for key, obj in ipairs(self.m_Storage.m_Maps[1]) do 
         if isElement(obj) then
             if obj:getModel() == 2102 then 
                 self.m_SewerRadio = obj
             end
             attachRotationAdjusted ( obj, bin)
-            if obj:getType() == "marker" then 
+            if obj:getType() == "marker" then
+                if not entrance then
+                    entrance = obj
+                else 
+                    table.insert(self.m_PedPositions, obj)
+                end
                 obj:setAlpha(0)
-                entrance = obj
             end
 		end
     end
     bin:setPosition(1483.02-200, -1736.06, 13.38-50)
     if entrance and isElement(entrance) then
         Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
+    end
+    local p
+    for i, marker in ipairs(self.m_PedPositions) do 
+        p = createPed(220, marker:getPosition().x, marker:getPosition().y, marker:getPosition().z +0.5)
+        p:setFrozen(true)
+        p:setDimension(3)
+        p:setRotation(0, 0, findRotation(p:getPosition().x, p:getPosition().y, entrance:getPosition().x, entrance:getPosition().y))
     end
 end

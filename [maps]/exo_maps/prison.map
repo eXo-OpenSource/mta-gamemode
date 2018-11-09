@@ -34,5 +34,4 @@
     <object id="object (fencesmallb) (3)" breakable="true" interior="0" collisions="true" alpha="255" model="970" doublesided="false" scale="1" dimension="0" posX="-244.93457" posY="2371.7539" posZ="5693.5244" rotX="0" rotY="0" rotZ="270"></object>
     <object id="object (fencesmallb) (5)" breakable="true" interior="0" collisions="true" alpha="255" model="970" doublesided="false" scale="1" dimension="0" posX="-221.44531" posY="2371.5703" posZ="5693.0044" rotX="0" rotY="0" rotZ="270"></object>
     <object id="object (fencesmallb) (6)" breakable="true" interior="0" collisions="true" alpha="255" model="970" doublesided="false" scale="1" dimension="0" posX="-221.44531" posY="2371.5703" posZ="5693.5469" rotX="0" rotY="0" rotZ="270"></object>
-
 </map>
