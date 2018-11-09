@@ -97,11 +97,25 @@ CREATE TABLE `vrp_contracts_data`  (
 ]]
 
 function ContractManager:constructor()
+	self.Map = {}
+	
+	Async.create(
+		function ()
+			self:loadContracts()
+			outputServerLog(string.format("Loaded %d contracts", table.size(self.Map)))
+		end
+	)()
 end
 
-function ContractManager:loadContract(id)
-end
+function ContractManager:loadContracts()
+	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_contracts",
+		sql:getPrefix())
+	local result = Async.wait()
 
+	for k, v in pairs(result) do
+		self.Map[v.Id] = Contract.load(v.Id)
+	end
+end
 --[[
 	contractType = "sell" or "rent" or "credit"
 	seller       = player or group (type "Firma")
@@ -165,12 +179,25 @@ end
 function ContractManager:destructor()
 end
 
+--[[
+	id - object id
+	type - vehicle, shop, property, house
+]]
+function ContractManager:isElementInActiveContract(id, type)
+	for k, v in pairs(self.Map) do
+		if v:isElementInContract(id, type) then
+			return true
+		end
+	end
+	return false
+end
+
 addCommandHandler("ccon", function()
 
 	Async.create(
 		function ()
 			outputServerLog("Testi")
-			local con = SellContract.create(1, 1, 1, 1, {objectType = "item", objectAmount = 1, moneyAmount = 1})
+			local con = RentContract.create(1, 1, 1, 1, {objectType = "vehicle", objectId = 1, moneyAmount = 1})
 			outputServerLog(tostring(con))
 			outputServerLog("Laterli")
 		end
