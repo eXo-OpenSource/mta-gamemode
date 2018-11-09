@@ -30,11 +30,19 @@ addRemoteEvents{"Sewers:requestRadioLocation"}
 function Sewers:constructor() 
     self.m_Dimension = 3
     self.m_Entrances = {}
+    self.m_EntranceMarkers = {}
     self:createMap()
 
     self.m_RectangleCol = createColRectangle( 1248.42, -2081.78, 1668.47- 1248.42, -1348.3+2081.78 )
     self.m_RectangleCol:setDimension(self.m_Dimension)
 
+    self.m_AntiFallCuboid = createColCuboid( 1248.42, -2081.78, -50, 1668.47- 1248.42, -1348.3+2081.78, 4 )
+    self.m_AntiFallCuboid:setDimension(self.m_Dimension)
+    addEventHandler("onColShapeHit", self.m_AntiFallCuboid, function(hE, bDim)
+        if hE:getType() == "player" and bDim then 
+            self:teleportBack(hE)
+        end
+    end)
     addEventHandler("onElementDimensionChange", root, function( dim)
         if dim == self.m_Dimension then 
             if source:isWithinColShape(self.m_RectangleCol) then 
@@ -74,6 +82,28 @@ function Sewers:constructor()
     end)
 end
 
+function Sewers:teleportBack(player)
+    local min = math.huge
+    local dist, entrance
+    if player:getDimension() == self.m_Dimension then 
+        for id, marker in pairs(self.m_EntranceMarkers) do 
+            if marker and isElement(marker) then 
+                dist = (marker:getPosition() - player:getPosition()):getLength()
+                if min > dist then 
+                    min = dist
+                    entrance = marker
+                end
+            end
+        end
+    end
+    if entrance and isElement(entrance) then 
+        player:setFrozen(true)
+        player:setPosition(entrance:getPosition().x, entrance:getPosition().y, entrance:getPosition().z+0.2)
+        setTimer(function() player:setFrozen(false) end, 400, 1)
+        player:sendInfo("Du wurdest zum nächstgelgenen Ort teleportiert, da du unter die Map gefallen bist!")
+    end
+end
+
 function Sewers:destructor()
 
 end
@@ -104,7 +134,10 @@ function Sewers:createMap()
 
     --// move the whole map to this position 
     bin:setPosition(1483.02, -1736.06, 13.38-50)
-
+    
+    for k, entranceObj in ipairs(entrances) do 
+        table.insert(self.m_EntranceMarkers, entranceObj) 
+    end
     local enter
     for i = 1, #entrances do 
         if Sewers.EntranceLinks[i] then 
@@ -147,6 +180,7 @@ function Sewers:createStorage()
     end
     bin:setPosition(1483.02-200, -1736.06, 13.38-50)
     if entrance and isElement(entrance) then
+        table.insert(self.m_EntranceMarkers, entrance)
         Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
     end
     local p

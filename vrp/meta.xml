@@ -221,6 +221,7 @@
 	<script src="server/classes/Gameplay/Places/Atrium.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
+	<script src="server/classes/Gameplay/ArmsDealer.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
@@ -699,7 +700,7 @@
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
 

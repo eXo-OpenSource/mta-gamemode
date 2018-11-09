@@ -186,6 +186,7 @@ function Core:constructor()
 		Discord:new()
 		TeleportManager:new()
 		Sewers:new()
+		ArmsDealer:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
