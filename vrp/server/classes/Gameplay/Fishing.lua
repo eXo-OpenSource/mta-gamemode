@@ -72,6 +72,7 @@ function Fishing:getFish(location, timeOfDay, weather)
 		local checkTime = false
 		local checkWeather = false
 		local checkSeason = false
+		local checkEvent = false
 
 		-- Check Location
 		if type(v.Location) == "table" then
@@ -120,13 +121,24 @@ function Fishing:getFish(location, timeOfDay, weather)
 			end
 		end
 
+		if v.Event == 0 then
+			checkEvent = true
+		elseif v.Event == FISHING_EVENT_ID.EASTER and EVENT_EASTER then
+			checkEvent = true
+		elseif v.Event == FISHING_EVENT_ID.HALLOWEEN and EVENT_HALLOWEEN then
+			checkEvent = true
+		elseif v.Event == FISHING_EVENT_ID.CHRISTMAS and EVENT_CHRISTMAS then
+			checkEvent = true
+		end
+
 		-- Check all
-		if checkLocation and checkTime and checkWeather and checkSeason then
+		if checkLocation and checkTime and checkWeather and checkSeason and checkEvent then
 			table.insert(tmp, v)
 		end
 	end
 
 	local availableFishCount = #tmp
+	outputChatBox("count: " .. availableFishCount)
 	if self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
 		return tmp[self.Random:get(1, availableFishCount)]
 	else

@@ -1,11 +1,3 @@
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
--- *
--- ****************************************************************************
-
 --MAX_FISHING_LEVEL = 15 --> main.lua
 
 FISHING_BAGS = {
@@ -31,6 +23,12 @@ FISHING_LEVELS = {
 	[13] = 109163,
 	[14] = 128493,
 	[15] = 149555,
+}
+
+FISHING_EVENT_ID = {
+	EASTER = 1,
+	HALLOWEEN = 2,
+	CHRISTMAS = 3,
 }
 
 FISHING_DESERT_WATERHEIGHT = 13
