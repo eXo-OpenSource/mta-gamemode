@@ -14,6 +14,7 @@
 
 	<script src="shared/constants/main.lua" type="shared"/>
 	<script src="shared/constants/factions.lua" type="shared"/>
+	<script src="shared/constants/fishing.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
@@ -1206,7 +1207,7 @@
 
 	<file src="files/images/bullethitsmoke.png"/>
 	<file src="files/images/turbo.png"/>
-	
+
 
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />

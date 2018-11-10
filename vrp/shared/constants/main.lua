@@ -647,32 +647,6 @@ WEAPON_LEVEL = {
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
 
-
-FISHING_BAGS = {
-	["Kühlbox"] = {max = 65, level = 8},
-	["Kühltasche"] = {max = 25, level = 4},
-	["Kleine Kühltasche"] = {max = 15, level = 0},
-}
-
--- (level * 15)^2 // for i = 1, 15 do print(("[%s] = %s,"):format(i, math.floor((i*15)^(i>10 and 2.2 or 2)))) end
-FISHING_LEVELS = {
-	[1] = 225,
-	[2] = 900,
-	[3] = 2025,
-	[4] = 3600,
-	[5] = 5625,
-	[6] = 8100,
-	[7] = 11025,
-	[8] = 14400,
-	[9] = 18225,
-	[10] = 22500,
-	[11] = 75590,
-	[12] = 91537,
-	[13] = 109163,
-	[14] = 128493,
-	[15] = 149555,
-}
-
 FERRIS_IDS = {
 	Base = 6461,
 	Gond = 3752,
