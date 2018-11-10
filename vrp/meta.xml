@@ -222,6 +222,7 @@
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/ArmsDealer.lua" type="server"/>
+	<script src="server/classes/Gameplay/ArmsPackage.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
@@ -816,6 +817,7 @@
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>

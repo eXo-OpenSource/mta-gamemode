@@ -32,12 +32,13 @@ function Depot.load(Id, Owner, type)
 		Owner:setDepotId(Id)
 	end
 
-	local row = sql:queryFetchSingle("SELECT Weapons, Items FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
+	local row = sql:queryFetchSingle("SELECT Weapons, Items, Equipments FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
 	if not row then
 		return
 	end
 	local weapons = row.Weapons or ""
 	local items = row.Items or ""
+	local equipments = row.Equipments or ""
 	local DepotSave = false
 	if string.len(weapons) < 5 then
 		weapons = {}
@@ -63,17 +64,32 @@ function Depot.load(Id, Owner, type)
 		outputDebugString("Creating new Item-Table for Depot "..Id)
 	end
 
-	Depot.Map[Id] = Depot:new(Id, weapons, items, Owner)
+	if string.len(equipments) < 5 then
+		equipments = {}
+		for category, data in pairs(ArmsDealer.Data) do 
+			if category ~= "Waffen" then
+				for product, subdata in pairs(data) do 
+					equipments[product] = 0
+				end
+			end
+		end
+		equipments = toJSON(equipments)
+		DepotSave = true
+		outputDebugString("Creating new Equipment-Table for Depot "..Id)
+	end
+
+	Depot.Map[Id] = Depot:new(Id, weapons, items, equipments, Owner)
 
 	if DepotSave == true then Depot.Map[Id]:save() end
 
 	return Depot.Map[Id]
 end
 
-function Depot:constructor(Id, weapons, items, owner)
+function Depot:constructor(Id, weapons, items, equipments, owner)
 	self.m_Id = Id
 	self.m_Weapons = fromJSON(weapons)
 	self.m_Items = fromJSON(items)
+	self.m_Equipments = fromJSON(equipments)
 	self.m_Owner = owner
 end
 
@@ -82,7 +98,7 @@ function Depot:destructor()
 end
 
 function Depot:save()
-	return sql:queryExec("UPDATE ??_depot SET Weapons = ?, Items = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Weapons), toJSON(self.m_Items), self.m_Id)
+	return sql:queryExec("UPDATE ??_depot SET Weapons = ?, Items = ?, Equipments = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Weapons), toJSON(self.m_Items), toJSON(self.m_Equipments), self.m_Id)
 end
 
 function Depot:getId()
@@ -93,8 +109,16 @@ function Depot:getWeaponTable()
   return self.m_Weapons
 end
 
+function Depot:getEquipmentTable()
+	return self.m_Equipments
+end
+
 function Depot:getWeapon(id)
 	return self.m_Weapons[id]["Waffe"],self.m_Weapons[id]["Munition"]
+end
+
+function Depot:getEquipmentItem(item)
+	return self.m_Equipments[item]
 end
 
 function Depot:takeWeaponD(id,amount)
@@ -116,6 +140,12 @@ end
 function Depot:showItemDepot(player)
 	player:triggerEvent("ItemDepotOpen")
 	player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+end
+
+function Depot:showEquipmentDepot(player)
+	player:getInventory():syncClient()
+	player:triggerEvent("ItemEquipmentOpen")
+	player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
 end
 
 function Depot:getPlayerWeapons(player)
@@ -272,3 +302,42 @@ function Depot:takeItem(player, slotId)
 		end
 	end
 end
+
+function Depot:addEquipment(player, item, amount, forceSpawn) 
+	if self.m_Equipments then 
+		if forceSpawn or player:getInventory():removeItem(item, amount) then
+			if not self.m_Equipments[item] then 
+				self.m_Equipments[item] = amount
+			end
+			self.m_Equipments[item] = amount
+			StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
+			self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s in das Lager gelegt!"):format(amount, item))
+			player:sendInfo(_("Du hast %d %s ins Depot gelegt!", player, amount, item))
+			return
+		else 
+			player:sendError(_("Du hast nicht genug %s!", player, item))
+		end
+	end
+end
+
+
+function Depot:takeEquipment(player, item, amount)
+	if self.m_Equipments[item] then
+		if self.m_Equipments[item] >= amount then
+			local amount = self.m_Equipments[item]
+			if player:getInventory():getFreePlacesForItem(item) >= amount then
+				self.m_Equipments[item] = self.m_Equipments[item] - amount
+				player:getInventory():giveItem(item, amount)
+				player:sendInfo(_("Du hast %d %s aus dem Depot (Slot %d) genommen!", player, amount, item, slotId))
+				StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
+				self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s aus dem Lager genommen!"):format(amount, item))
+				return
+			else
+				player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
+			end
+		else
+			player:sendError(_("Du hast nicht so viele Items!", player))
+		end
+	end
+end
+
