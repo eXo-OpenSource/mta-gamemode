@@ -29,16 +29,17 @@ function BobberBar:constructor(difficulty, behavior)
 	self.HEIGHT = self.POSITION_DOWN - self.POSITION_UP
 	self.MAX_PUSHBACK_SPEED = 6
 
-	self.m_Difficulty = difficulty
 	self.m_MotionType = self:getMotionType(behavior)
+	self.m_Difficulty = self.m_MotionType == FISHING_MOTIONTYPE.DART and difficulty*2 or difficulty
 
-	self.m_BobberPosition = (100 - self.m_Difficulty) / 100 * self.HEIGHT
+	self.m_BobberPosition = self.Random:get(0, 100) / 100 * self.HEIGHT
 	self.m_BobberSpeed = 0
 	self.m_BobberTargetPosition = 0
 	self.m_BobberInBar = nil
 
-	self.m_Progress = math.max(40, self.m_Difficulty)/2
-	self.m_ProgressDuration = 10000
+	self.m_Progress = self.Random:get(15, 35)
+	self.m_ProgressDifficultyAddition = self.m_Difficulty*20
+	self.m_ProgressDuration = 10000 + self.m_ProgressDifficultyAddition
 
 	self:initAnimations()
 	self:updateRenderTarget()
@@ -131,11 +132,11 @@ function BobberBar:setBobberPosition()
 	local bobberAnimation = "InOutQuad"
 	self.m_BobberSpeed = (2000 - math.min(1000, self.m_Difficulty*5)) + self.Random:get(-self.m_Difficulty*3, self.m_Difficulty*3)
 
-	if self.m_MotionType == 1 or self.m_MotionType == 4 or (self.m_MotionType == 0 and self.Random:nextDouble() < self.m_Difficulty/150) then
-		if self.m_MotionType == 4 then
+	if self.m_MotionType == FISHING_MOTIONTYPE.DART or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/150) then
+		--[[if self.m_MotionType == FISHING_MOTIONTYPE.FLOATER then
 			bobberAnimation = "InOutBack"
 			self.m_BobberSpeed = self.m_BobberSpeed * 3
-		end
+		end]]
 
 		local newTargetPosition = self.m_BobberTargetPosition
 
@@ -145,17 +146,28 @@ function BobberBar:setBobberPosition()
 
 		self.m_BobberTargetPosition = newTargetPosition
 
-	elseif self.m_MotionType == 2 or (self.m_MotionType == 0 and self.Random:nextDouble() < self.m_Difficulty / 200) then
+	elseif self.m_MotionType == FISHING_MOTIONTYPE.SMOOTH or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/200) then
 		self.m_BobberTargetPosition = self.Random:get(math.max(self.POSITION_UP + 10, self.m_BobberPosition - self.m_Difficulty*3),
 			math.min(self.POSITION_DOWN - 20, self.m_BobberPosition + self.m_Difficulty*3))
 
-	elseif self.m_MotionType == 3 or (self.m_MotionType == 0 and self.Random:nextDouble() < self.m_Difficulty/100) then
+	elseif self.m_MotionType == FISHING_MOTIONTYPE.FLOATER or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/100) then
+		if self.m_BobberPosition > self.POSITION_DOWN - 50 then
+			self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP, self.POSITION_UP + self.HEIGHT/3)
+			self.m_BobberSpeed = 700 - self.m_Difficulty*2
+		else
+			self.m_BobberTargetPosition = self.m_BobberPosition + self.Random:get(-30, 100)
+			self.m_BobberSpeed = 500 - self.m_Difficulty*2
+		end
+
+	elseif self.m_MotionType == FISHING_MOTIONTYPE.SINKER or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/100) then
 		if self.m_BobberPosition < 50 then
-			self.m_BobberTargetPosition = self.Random:get(self.POSITION_DOWN - self.HEIGHT/2, self.POSITION_DOWN)
+			self.m_BobberTargetPosition = self.Random:get(self.POSITION_DOWN - self.HEIGHT/1.5, self.POSITION_DOWN)
+			self.m_BobberSpeed = 700 - self.m_Difficulty*2
 		else
 			self.m_BobberTargetPosition = self.m_BobberPosition - self.Random:get(-30, 100)
-			self.m_BobberSpeed = self.m_BobberTargetPosition > self.m_BobberTargetPosition and 500 or self.m_BobberSpeed/2
+			self.m_BobberSpeed = 500 - self.m_Difficulty*2
 		end
+
 	else
 		-- call again if motionType == 0 and no condition was true
 		return self:setBobberPosition()
@@ -182,7 +194,7 @@ function BobberBar:updateRenderTarget()
 	dxDrawRectangle(4, 4, 32, self.m_Size.y-8, Color.Black)																				-- bobberBar bg Border
 	dxDrawImage(5, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")														-- bobberBar bg
 	--dxDrawRectangle(3, self.m_BobberBarPosition, 34, self.m_BobberBarHeight, Color.Black)												-- bobberBar Border
-	dxDrawRectangle(4, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))	-- bobberBar
+	dxDrawRectangle(4, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 150))	-- bobberBar
 	dxSetBlendMode("blend")
 
 	-- Draw Bobber (Fish)
@@ -225,7 +237,7 @@ function BobberBar:render()
 		if (self.m_BobberInBar or self.m_BobberInBar == nil) and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 28) then
 			self.m_BobberInBar = false
 
-			local duration = (self.m_ProgressDuration - 3000) * (self.m_Progress/100)
+			local duration = (self.m_ProgressDuration - self.m_ProgressDifficultyAddition) * (self.m_Progress/100)
 			self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
 			self.Sound:play("woap2")
 			self.Sound:stop("slowReel")
@@ -241,14 +253,14 @@ function BobberBar:render()
 	-- Update and draw
 	self:updateRenderTarget()
 
-	--[[
+
 	dxDrawText("Speed: " .. self.m_BobberSpeed, 500, 20)
 	dxDrawText("Current position: " .. self.m_BobberPosition, 500, 35)
 	dxDrawText("Target position: " .. self.m_BobberTargetPosition, 500, 50)
 	dxDrawText("Motion type: " .. self.m_MotionType, 500, 65)
 	dxDrawText("Bobber in bar: " .. tostring(self.m_BobberInBar), 500, 80)
 	dxDrawText("Difficulty: " .. self.m_Difficulty, 500, 95)
-	]]
+
 
 	dxDrawImage(screenWidth*0.66 - self.m_Size.x * self.m_AnimationMultiplicator/2, screenHeight/2 - self.m_Size.y * self.m_AnimationMultiplicator/2, self.m_Size * self.m_AnimationMultiplicator, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, 255*self.m_AnimationMultiplicator))
 end

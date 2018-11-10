@@ -139,6 +139,7 @@ function Fishing:getFish(location, timeOfDay, weather)
 
 	local availableFishCount = #tmp
 	outputChatBox("count: " .. availableFishCount)
+	if true then return tmp[self.Random:get(1, availableFishCount)] end
 	if self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
 		return tmp[self.Random:get(1, availableFishCount)]
 	else
