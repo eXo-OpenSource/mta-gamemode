@@ -180,12 +180,38 @@ end
 function FactionEvil:onEquipmentDepotClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
-			player.m_LastEquipmentDepot = source
-			player:getFaction():getDepot():showEquipmentDepot(player)
+			local box = player:getPlayerAttachedObject()
+			if box and isElement(box) and box.m_Content then 
+				self:putOrderInDepot(player, box)
+			else
+				player.m_LastEquipmentDepot = source
+				player:getFaction():getDepot():showEquipmentDepot(player)
+			end
 		else
 			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
 		end
 	end
+end
+
+function FactionEvil:putOrderInDepot(player, box)
+	local content = box.m_Content 
+	local type, product, amount, price, id = unpack(box.m_Content)
+	local depot = player:getFaction():getDepot()
+	if type == "Waffe" then
+		if id then
+			depot:addWeaponD(id,amount)
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+		end
+	elseif type == "Munition" then
+		if id then
+			depot:addMagazineD(id,amount)
+			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+		end
+	else 
+		depot:addEquipment(player, product, amount, true) 
+		player:getFaction():sendShortMessage(("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
+	end
+	box.m_Package:delete()
 end
 
 function FactionEvil:loadYakGates(factionId)

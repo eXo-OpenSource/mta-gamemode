@@ -28,6 +28,7 @@ ArmsDealer.Data =
 addRemoteEvents{"requestArmsDealerInfo", "checkoutArmsDealerCart"}
 function ArmsDealer:constructor()
     self.m_Order = {}
+    self.m_BankAccountServer = BankServer.get("gameplay.blackmarket")
     addEventHandler("requestArmsDealerInfo", root, bind(self.sendInfo, self))
     addEventHandler("checkoutArmsDealerCart", root, bind(self.checkoutCart, self))
 end
@@ -62,7 +63,7 @@ function ArmsDealer:checkoutCart(cart)
                                 currentAmount = weaponDepot[product]["Waffe"]
                                 pricePerPiece = maxWeapons[product]["WaffenPreis"]
                                 if (maxAmount - currentAmount) > 0 then
-                                    table.insert(self.m_Order[faction], {"Waffe", WEAPON_NAMES[product], (maxAmount-currentAmount), (maxAmount-currentAmount)*pricePerPiece})
+                                    table.insert(self.m_Order[faction], {"Waffe", WEAPON_NAMES[product], (maxAmount-currentAmount), (maxAmount-currentAmount)*pricePerPiece, product})
                                 end
                             else 
                                 product = self:getMagazineId(product)
@@ -71,7 +72,7 @@ function ArmsDealer:checkoutCart(cart)
                                 currentAmount = weaponDepot[product]["Munition"]
                                 pricePerPiece = maxWeapons[product]["MagazinPreis"]
                                 if (maxAmount - currentAmount) > 0 then
-                                    table.insert(self.m_Order[faction], {"Munition", WEAPON_NAMES[product], (maxAmount-currentAmount), (maxAmount-currentAmount)*pricePerPiece})
+                                    table.insert(self.m_Order[faction], {"Munition", WEAPON_NAMES[product], (maxAmount-currentAmount), (maxAmount-currentAmount)*pricePerPiece, product})
                                 end
                             end
                         else 
@@ -108,6 +109,7 @@ function ArmsDealer:processCart( order, faction )
     end
     text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(self.m_Arrival+getRealTime().timestamp))
     faction:sendShortMessage(text, -1)
+    self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket", {silent = true})
     self.m_Order[faction] = false
 end
 
