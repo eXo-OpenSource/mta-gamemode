@@ -184,8 +184,11 @@ function FactionEvil:onEquipmentDepotClicked(button, state, player)
 			if box and isElement(box) and box.m_Content then 
 				self:putOrderInDepot(player, box)
 			else
-				player.m_LastEquipmentDepot = source
-				player:getFaction():getDepot():showEquipmentDepot(player)
+				if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
+					setElementData(player, "isEquipmentGUIOpen", true, true) 
+					player.m_LastEquipmentDepot = source
+					player:getFaction():getDepot():showEquipmentDepot(player)
+				end
 			end
 		else
 			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))

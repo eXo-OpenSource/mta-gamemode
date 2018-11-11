@@ -164,12 +164,21 @@ function ItemEquipmentGUI:loadDepotItems()
     self.m_GridInventar:setVisible(true)
 end
 
+function ItemEquipmentGUI:onHide()
+    setElementData(localPlayer, "isEquipmentGUIOpen", false, true) 
+end
+
+function ItemEquipmentGUI:onShow()
+    setElementData(localPlayer, "isEquipmentGUIOpen", true, true) 
+end
+
 function ItemEquipmentGUI:destructor() 
-	GUIForm.destructor(self)
+    GUIForm.destructor(self)
+    setElementData(localPlayer, "isEquipmentGUIOpen", false, true) 
 end
 
 
-addEventHandler("ItemEquipmentOpen", root, function(id)
+addEventHandler("ItemEquipmentOpen", root, function()
     if ItemEquipmentGUI:getSingleton():isInstantiated() then
         ItemEquipmentGUI:getSingleton():open()
     else

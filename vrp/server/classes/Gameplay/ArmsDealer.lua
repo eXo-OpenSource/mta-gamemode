@@ -110,6 +110,10 @@ function ArmsDealer:processCart( order, faction )
     text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(self.m_Arrival+getRealTime().timestamp))
     faction:sendShortMessage(text, -1)
     self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket", {silent = true})
+    local endPoint = factionWTDestination[faction:getId()]
+    if endPoint then
+        self:setupPlane(endPoint, 200000, faction, order)
+    end
     self.m_Order[faction] = false
 end
 
@@ -133,14 +137,37 @@ function ArmsDealer:sendInfo()
     end
 end
 
-function ArmsDealer:startAirDrop(faction, order)
+function ArmsDealer:startAirDrop(faction, order, acceleration)
     local endPoint = factionWTDestination[faction:getId()]
     if endPoint then 
-        local length = #order * 1.5 
+        local length = 30 / #order 
         for i, data in ipairs(order) do 
-            ArmsPackage:new()
+            setTimer(function() 
+                ArmsPackage:new(data, Vector3(endPoint.x+(i*length), endPoint.y, endPoint.z+100), Vector3(endPoint.x +(i*length), endPoint.y, endPoint.z-0.3))
+            end, acceleration*(length*i), 1)
         end
     end
+end
+
+function ArmsDealer:setupPlane(pos, time, faction, order)
+    local acceleration = time/6000
+    local startPoint = Vector3(-3000, pos.y, 100)
+    local distanceToDrop = math.abs(-3000 - pos.x)
+    local distanceAfterDrop = 6000 - distanceToDrop
+    local endPoint = Vector3(3000, pos.y, 100)
+    self.m_Plane =  TemporaryVehicle.create(592, -3000, pos.y, 100)
+    self.m_Plane:setColor(0,0,0,0,0,0)
+    setVehicleLandingGearDown(self.m_Plane, false)
+    self.m_MoveObject = createObject(1337, -3000, pos.y, 100)
+    self.m_MoveObject:setCollisionsEnabled(false)
+    self.m_MoveObject:setAlpha(0)
+    self.m_Plane:attach(self.m_MoveObject, Vector3(0, 0, 0), Vector3(0, 0, 270))
+    self.m_MoveObject:move(acceleration*distanceToDrop, pos.x, pos.y, 100)
+    setTimer(function() 
+        self.m_MoveObject:move(distanceAfterDrop*acceleration, 3000, pos.y, 100) 
+        self:startAirDrop(faction, order, acceleration)
+    end, acceleration*distanceToDrop, 1)
+
 end
 
 function ArmsDealer:destructor()

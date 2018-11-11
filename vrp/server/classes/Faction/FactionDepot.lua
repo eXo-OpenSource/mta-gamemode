@@ -157,7 +157,7 @@ end
 function Depot:showEquipmentDepot(player)
 	player:getInventory():syncClient()
 	player:triggerEvent("ItemEquipmentOpen")
-	player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
+	player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data, true)
 end
 
 function Depot:getPlayerWeapons(player)
@@ -336,7 +336,6 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 			if amount > 0 then
 				self.m_Equipments[item] = self.m_Equipments[item] + amount
 				if armsData[3] then 
-					outputChatBox("lel")
 					if not takeWeapon(player, armsData[3], amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] - amount -- prevent bug-abuse
 					end
@@ -382,7 +381,6 @@ function Depot:takeEquipment(player, item, amount)
 						self.m_Equipments[item] = self.m_Equipments[item] + amount
 					end
 				else 
-					outputChatBox("HERE")
 					giveWeapon(player, armsData[3], amount)
 				end
 			elseif amount == -1 then 
@@ -411,7 +409,7 @@ function Depot:checkDistanceFromEquipment(player)
 	if player and isElement(player) and player.m_LastEquipmentDepot and isElement(player.m_LastEquipmentDepot) 
 	and (player.m_LastEquipmentDepot:getInterior() == player:getInterior()) 
 	and (player.m_LastEquipmentDepot:getDimension() == player:getDimension()) then 
-		return (player:getPosition() - player.m_LastEquipmentDepot:getPosition()):getLength() < 4 or player:sendError("Zu weit entfernt!")
+		return (player:getPosition() - player.m_LastEquipmentDepot:getPosition()):getLength() < 8 or player:sendError("Zu weit entfernt!")
 	end
 	return false
 end

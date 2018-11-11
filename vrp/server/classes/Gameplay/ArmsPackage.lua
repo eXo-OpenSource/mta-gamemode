@@ -25,6 +25,7 @@ function ArmsPackage:create()
     self.m_Timer = setTimer(function()   
         self.m_Object:destroy()
         self.m_Box = createObject(2919, self.m_Destination)
+        self.m_Box:setFrozen(true)
         self.m_Box.m_Content = content
         self.m_Box.m_Package = self
         self.m_Box:setScale(0.5)
