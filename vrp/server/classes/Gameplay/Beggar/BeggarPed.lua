@@ -158,6 +158,7 @@ function BeggarPed:createLootPickup()
 	addEventHandler("onPickupHit", self.m_LootPickup, function(hitPlayer)
 		if hitPlayer:getType() == "player" and not hitPlayer.vehicle then
 			if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
+			if source and isElement(source) then destroyElement(source) end
 			hitPlayer:giveCombinedReward("Bettler-Raub", {
 				money = {
 					mode = "give",
@@ -177,7 +178,7 @@ function BeggarPed:createLootPickup()
 					hitPlayer:getInventory():giveItem("Diebesgut", amount)
 					hitPlayer:sendInfo(_("Du hast %s Diebesgut von %s erhalten.", hitPlayer, amount, self.m_Name))
 				end
-				
+
 			end
 		end
 	end)
