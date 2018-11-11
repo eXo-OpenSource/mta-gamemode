@@ -344,24 +344,28 @@ function FactionState:Command_ticket(source, cmd, target)
 				local faction = source:getFaction()
 				if not faction then return end
 				if not faction:isStateFaction() then return end
-				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
-					if source ~= targetPlayer then
-						if targetPlayer:getWanteds() <= 3 then
-							if targetPlayer:getMoney() >= TICKET_PRICE*targetPlayer:getWanteds() + 500 then
-								source.m_CurrentTicket = targetPlayer
-								targetPlayer:triggerEvent("stateFactionOfferTicket", source)
-								source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+				if source:isFactionDuty() then
+					if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
+						if source ~= targetPlayer then
+							if targetPlayer:getWanteds() <= 3 then
+								if targetPlayer:getMoney() >= TICKET_PRICE*targetPlayer:getWanteds() + 500 then
+									source.m_CurrentTicket = targetPlayer
+									targetPlayer:triggerEvent("stateFactionOfferTicket", source)
+									source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+								else
+									source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(),  TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+								end
 							else
-								source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(),  TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+								source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
 							end
 						else
-							source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
+							source:sendError("Du kannst dir kein Ticket anbieten!")
 						end
 					else
-						source:sendError("Du kannst dir kein Ticket anbieten!")
+						source:sendError("Du bist zu weit weg!")
 					end
 				else
-					source:sendError("Du bist zu weit weg!")
+					source:sendError("Du bist nicht im Dienst!")
 				end
 			else
 				source:sendError("Ziel nicht gefunden!")
@@ -1404,7 +1408,7 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 							logData[WEAPON_NAMES[weaponId]] = magsToMax
 							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
 						end
-						
+
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end

@@ -189,7 +189,8 @@ function Core:constructor()
 
 		setWaveHeight(1)
 		setWaterColor(0, 65, 75, 250)
-
+		resetSkyGradient()
+		resetFogDistance()
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")
