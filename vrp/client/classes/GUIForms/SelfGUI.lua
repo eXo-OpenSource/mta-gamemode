@@ -1467,5 +1467,11 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Event", "HalloweenBloodClick", state)
 		end
 
+		if not EVENT_HALLOWEEN then
+			self.m_HalloweenBlood:setEnabled(false)
+			self.m_HalloweenClickBlood:setEnabled(false)
+			self.m_HalloweenDarkness:setEnabled(false)
+		end
+
 	end
 end

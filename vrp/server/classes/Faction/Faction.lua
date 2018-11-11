@@ -347,19 +347,23 @@ function Faction:changeSkin(player, skinId)
 	if not player or not isElement(player) or getElementType(player) ~= "player" then return false end
 	local playerRank = self:getPlayerRank(player)
 	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
-	if self.m_Skins[skinId] then
-		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
-		if minRank <= playerRank then
-			player:setModel(skinId)
-			player.m_tblClientSettings["LastFactionSkin"] = skinId
+	if player:isFactionDuty() then
+		if self.m_Skins[skinId] then
+			local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+			if minRank <= playerRank then
+				player:setModel(skinId)
+				player.m_tblClientSettings["LastFactionSkin"] = skinId
+			else
+				player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+				player:setModel(self:getSkinsForRank(playerRank)[1])
+			end
 		else
-			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			-- ^useless if player switches faction
 			player:setModel(self:getSkinsForRank(playerRank)[1])
 		end
 	else
-		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
-		-- ^useless if player switches faction
-		player:setModel(self:getSkinsForRank(playerRank)[1])
+		player:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", player))
 	end
 end
 

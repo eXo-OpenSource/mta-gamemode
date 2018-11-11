@@ -114,8 +114,10 @@ end
 
 function Halloween:setDarkness(force)
 	if core:get("Event", "HalloweenDarkness", true) or force then
-		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
-		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
+		if EVENT_HALLOWEEN then -- ask again in case somebody has this option saved in preferences
+			removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
+			addEventHandler("onClientRender", root, self.m_DarkRenderBind)
+		end
 	else
 		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
 		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
