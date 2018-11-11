@@ -69,13 +69,16 @@ end
 	self.m_OwnerType = data.OwnerType
 	self.m_Premium = data.Premium ~= 0
 	self.m_PremiumId = data.Premium
+	self.m_ShopIndex = data.ShopIndex
+	self.m_BuyPrice = data.BuyPrice
+	self.m_Template = data.TemplateId
 	self:setCurrentPositionAsSpawn(data.PositionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
 	setElementData(self, "OwnerID", data.OwnerId) -- Todo: *hide*
 	setElementData(self, "OwnerType", VehicleTypeName[self.m_OwnerType])
 	setElementData(self, "ID", self.m_Id or -1)
-
+	self:updateTemplate()
 	self.m_Keys = data.Keys and fromJSON(data.Keys) or {} -- TODO: check if this works?
 	self.m_PositionType = data.PositionType or VehiclePositionType.World
 
@@ -225,9 +228,8 @@ end
 function PermanentVehicle:save()
   local health = getElementHealth(self)
   if self.m_Trunk then self.m_Trunk:save() end
-
-  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId =? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Id)
 end
 
 function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
@@ -252,6 +254,18 @@ end
 function PermanentVehicle:getTunings()
 	return self.m_Tunings
 end
+
+function PermanentVehicle:getShopIndex()
+	return self.m_ShopIndex or 1
+end
+
+function PermanentVehicle:getBuyPrice()
+	if self.m_BuyPrice == -1 then
+		return OLD_VEHICLE_PRICES[self:getModel()] or 0
+	end
+	return self.m_BuyPrice
+end
+
 
 function PermanentVehicle:getKeyNameList()
   local names = {}

@@ -54,7 +54,9 @@ function GUIProgressBar:drawThis()
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 
 	-- Draw actual progress bar
-	dxDrawRectangle(self.m_AbsoluteX + 2, self.m_AbsoluteY + 2, (self.m_Width - 4) * self.m_Progress/100, self.m_Height - 4, self.m_ForegroundColor)
+	local offsetHeight = 2
+	
+	dxDrawRectangle(self.m_AbsoluteX + 2, self.m_AbsoluteY + offsetHeight, (self.m_Width - 4) * self.m_Progress/100, self.m_Height - offsetHeight*2, self.m_ForegroundColor)
 
 	-- Draw Display Text
 	dxDrawText(self:getText() .. (self.m_ProgressTextEnabled and " ("..(self.m_Progress).." %)" or ""), self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height/2, nil, nil, self:getColor(), self:getFontSize(), self:getFont(), "center", "center")

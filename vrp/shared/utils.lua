@@ -734,6 +734,10 @@ function normaliseVector(serialisedVector)
 	end
 end
 
+function normaliseRange( min, max, value)
+	return ( value-min ) / ( max-min )
+end
+
 function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end

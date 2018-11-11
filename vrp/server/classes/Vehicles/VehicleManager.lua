@@ -9,6 +9,13 @@ VehicleManager = inherit(Singleton)
 VehicleManager.sPulse = TimedPulse:new(5*1000)
 
 function VehicleManager:constructor()
+	self.m_TuningClasses = 
+	{
+		["EngineKit"] = EngineTuning,
+		["BrakeKit"] = BrakeTuning, 
+		["WheelKit"] = WheelTuning,
+		["SuspensionKit"] = SuspensionTuning, 
+	}
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
 	self.m_CompanyVehicles = {}
@@ -23,7 +30,7 @@ function VehicleManager:constructor()
 	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
-	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant"}
+	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -56,7 +63,9 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
 	addEventHandler("vehicleSetVariant", root, bind(self.Event_SetVariant, self))
 	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
-
+	addEventHandler("vehicleSetTuningPropertyTable", root, bind(self.Event_SetPerformanceTuningTable, self))
+	addEventHandler("vehicleRequestHandling", root, bind(self.Event_GetVehicleHandling, self))
+	addEventHandler("vehicleResetHandling", root, bind(self.Event_ResetVehicleHandling, self))
 	addEventHandler("clientToggleVehicleEngine", root,
 		function()
 			if client.vehicleSeat ~= 0 then return end
@@ -155,6 +164,7 @@ function VehicleManager:constructor()
 		self:migrate()
 	end
 
+	TuningTemplateManager:new()
 end
 
 function VehicleManager:destructor()
@@ -266,6 +276,27 @@ function VehicleManager:Event_MagnetVehicleCheck(groundPosition)
 	source:magnetVehicleCheck(groundPosition)
 end
 
+function VehicleManager:Event_GetVehicleHandling( vehicle )
+	client:triggerEvent("updateVehicleHandling", vehicle, vehicle:getHandling())
+end
+
+function VehicleManager:Event_ResetVehicleHandling( )
+	local vehicle = client:getOccupiedVehicle() or client:getContactElement() 
+	if vehicle and isElement(vehicle) and getElementType(vehicle) == "vehicle" then 
+		if vehicle.m_Tunings then 
+			vehicle.m_Tunings:removeAllTuningKits()
+			client:sendInfo(_("Fahrzeug wurde zurückgesetzt!", client, name))
+		end
+	end
+end
+
+function VehicleManager:Event_SetPerformanceTuningTable( vehicle, tuningTable, reset )
+	if not vehicle.m_Tunings then 
+        vehicle.m_Tunings = VehicleTuning:new(vehicle)
+    end
+	vehicle.m_Tunings:setPerformanceTuningTable( tuningTable, client, reset )
+end
+
 function VehicleManager:getFactionVehicles(factionId)
 	return self.m_FactionVehicles[factionId] or {}
 end
@@ -286,7 +317,7 @@ function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
 	end
 end
 
-function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium)
+function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex, price, template)
 	-- owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium
 	if type(ownerId) == "userdata" then
 		ownerId = ownerId:getId()
@@ -298,14 +329,15 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotY = rotY or 0
 	local rotZ = rotZ or 0
 	local premium = premium or 0
-
-	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]')", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
-		return self:createVehicle(sql:lastInsertId())
+	local shopIndex = shopIndex or 1
+	
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
+		return self:createVehicle(sql:lastInsertId(), template)
 	end
 	return false
 end
 
-function VehicleManager:createVehicle(idOrData)
+function VehicleManager:createVehicle(idOrData, handlingTemplate)
 	local data = {}
 	if type(idOrData) == "number" then
 		data = sql:queryFetchSingle("SELECT * FROM ??_vehicles WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), idOrData)
@@ -331,7 +363,12 @@ function VehicleManager:createVehicle(idOrData)
 			vehicle:setInterior(data.Interior or 0)
 			vehicle:setDimension(data.Dimension or 0)
 		end
-
+		if handlingTemplate then
+			local template = TuningTemplateManager:getSingleton():getTemplateFromId( handlingTemplate )
+			if template then 
+				template:applyTemplate(vehicle)
+			end
+		end
 		local pershingSquareSpecialCase = false
 		if data.PosX > 1399.40 and data.PosX <= 1559 then
 			if data.PosY > -1835 and data.PosY < -1742 then
@@ -1112,17 +1149,8 @@ function VehicleManager:Event_vehicleSell()
 		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 		return
 	end
-	-- Search for price in vehicle shops table
-	local getPrice = function(model)
-		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
-			if shop:getVehiclePrice(model) then
-				return shop:getVehiclePrice(model)
-			end
-		end
-		return false
-	end
 
-	local price = getPrice(source:getModel()) or 0
+	local price = source:getBuyPrice()
 	if price > 0 then
 		QuestionBox:new(client, client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	else
@@ -1138,19 +1166,8 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 		source:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 		return
 	end
-	-- Search for price in vehicle shops table
-	local getPrice = function(model)
-		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
-			if shop:getVehiclePrice(model) then
-				return shop:getVehiclePrice(model)
-			end
-		end
-		return false
-	end
-
-	local price = getPrice(veh:getModel()) or 0
+	local price = veh:getBuyPrice()
 	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
-
 	if price then
 		veh:purge()
 		self.m_BankAccountServer:transferMoney(source, math.floor(price * 0.75), "Fahrzeug-Verkauf", "Vehicle", "SellToServer")

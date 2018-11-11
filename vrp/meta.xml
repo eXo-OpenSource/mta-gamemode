@@ -18,6 +18,7 @@
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
+	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
@@ -370,6 +371,15 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
+
+
+	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/EngineTuning.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/BrakeTuning.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/SuspensionTuning.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/WheelTuning.lua" type="server"/>
+
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -747,6 +757,7 @@
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehiclePerformanceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
@@ -779,6 +790,7 @@
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningShowGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleTuningTemplateGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleCustomTextureGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
@@ -948,6 +960,7 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
@@ -1087,6 +1100,8 @@
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
+	<vrpfile src="files/audio/vehicles/turbo.ogg" />
+
 	<!-- ware-gamemode -->
 	<vrpfile src="files/images/Textures/Ware/waretex.jpg"/>
 	<vrpfile src="files/images/Textures/Ware/bomb.png"/>
@@ -1195,8 +1210,11 @@
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
-	
+
+
+	<file src="files/images/turbo.png"/>
 	<file src="files/images/bullethitsmoke_original.png"/>
+	
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/jquery-3.2.1.min.js" />
