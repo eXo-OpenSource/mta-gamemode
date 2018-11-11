@@ -33,7 +33,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Permissions = permissions and fromJSON(permissions) or {}
 	self.m_ForumGroups = {}
 	self.m_LastForumSync = 0
-
+	self.m_Countdowns = {}
 	if self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
 		for _, v in pairs(self.m_Permissions["forum"]["ranks"]) do
 			if type(v) == "table" then
@@ -862,5 +862,38 @@ end
 function Faction:sendMoveRequest(targetChannel, text)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		TSConnect:getSingleton():sendMoveRequest(player, targetChannel, text)
+	end
+end
+
+function Faction:onPlayerJoin(player) -- join means comming online (onPlayerJoin-Event)
+	for text, data in pairs(self.m_Countdowns) do 
+		local time, origin = unpack(data)
+		local now = getRealTime().timestamp
+		local current = time - (now - origin)
+		if current > 0 and current < time then 
+			player:triggerEvent("Countdown", current, text)
+		end
+	end
+end
+
+function Faction:setCountDown(time, text) -- this can be used to set a countdown for a faction (players that join after this have the right time displayed)
+	local players = self:getOnlinePlayers()
+	if self.m_Countdowns[text] then 
+		for index, player in pairs(players) do 
+			player:triggerEvent("CountdownStop", text)
+		end
+	end
+	self.m_Countdowns[text] = {time, getRealTime().timestamp}
+	for index, player in pairs(players) do 
+		player:triggerEvent("Countdown", time, text)
+	end
+end
+
+function Faction:stopCountDown(text)
+	if self.m_Countdowns[text] then 
+		local players = self:getOnlinePlayers()
+		for index, player in pairs(players) do 
+			player:triggerEvent("CountdownStop", text)
+		end
 	end
 end

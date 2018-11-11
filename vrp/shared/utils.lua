@@ -626,7 +626,7 @@ function getWeekNumber()	--Maybe needs optimization
 	return math.floor((realtime.yearday + firstYearDayTime.weekday) / 7)
 end
 
-function getOpticalTimestamp(ts)
+function getOpticalTimestamp(ts, seconds)
 	local time = ts and getRealTime(ts) or getRealTime()
 	time.month = time.month+1
 	time.year = time.year-100
@@ -634,7 +634,7 @@ function getOpticalTimestamp(ts)
 		value = tostring(value)
 		if #value == 1 then time[index] = "0"..value end
 	end
-	return ("%s.%s.%s-%s:%s"):format(time.monthday, time.month, time.year, time.hour, time.minute)
+	return ("%s.%s.%s-%s:%s%s"):format(time.monthday, time.month, time.year, time.hour, time.minute, (seconds and (":%s"):format(time.second) or ""))
 end
 
 function timespanArray(seconds)

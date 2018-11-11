@@ -6,7 +6,7 @@ factionWeapons = {}
 evilFactionInteriorEnter = {}
 factionWTDestination = {}
 factionSpawnpoint = {}
-
+factionAirDropPoint = {}
 TICKET_PRICE = 1500
 
 
@@ -130,7 +130,7 @@ evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
 factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,17.8)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
 factionSpawnpoint[5] = {Vector3(728.03, -1203.80, 19.06), 0, 0}
-
+factionAirDropPoint[5] = Vector3(806.26, -1145.07, 24.02)
 -- ID 6 = Yakuza
 factionRankNames[6] = {
 [0] = "Aonisai",
@@ -184,7 +184,7 @@ factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=
 evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
 factionWTDestination[8] = Vector3(2212.42, -1435.53, 21.7)
 factionSpawnpoint[8] = {Vector3(2226.87, -1441.04, 24.00), 0, 0}
-
+factionAirDropPoint[8] = Vector3(2199.05, -1385.16, 23.83)
 -- ID 9 = Biker
 factionRankNames[9] = {
 [0] = "Hangaround",
@@ -202,7 +202,7 @@ factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=
 evilFactionInteriorEnter[9] =  Vector3(687.20, -445.40, 16.3)
 factionWTDestination[9] =   Vector3(659.80,-463.10,14.5)
 factionSpawnpoint[9] = {Vector3(687.07, -453.29, 20.65), 0, 0}
-
+factionAirDropPoint[9] = Vector3(605.91, -484.64, 16.20)
 -- ID 10 = Vatos
 factionRankNames[10] = {
 [0] = "Guerro",
@@ -220,6 +220,7 @@ factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]
 evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
 factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
 factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
+factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38)
 
 -- ID 11 = Triads
 factionRankNames[11] = {
@@ -238,7 +239,7 @@ factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]
 evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.1)
 factionWTDestination[11] = Vector3( 1912.89, 935.21, 10.6)
 factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.22), 0, 0}
-
+factionAirDropPoint[11] = Vector3(1878.07, 933.71, 10.67)
 -- General:
 factionWeaponDepotInfo = {
 	[1] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Brass Knuckles

@@ -82,7 +82,6 @@ function ArmsDealer:checkoutCart(cart)
                         end
                     end
                 end
-                self.m_Arrival = (120 + (#self.m_Order[faction] * 5))
                 self:processCart( self.m_Order[faction], faction)
             end
         end
@@ -90,14 +89,19 @@ function ArmsDealer:checkoutCart(cart)
 end
 
 function ArmsDealer:processCart( order, faction )
-    local text = "BESTELLUNG\n\n"
+    local endPoint = factionAirDropPoint[faction:getId()]
+    local etaTime
+    if endPoint then
+        etaTime = self:setupPlane(endPoint, 200000, faction, order)
+    end
+
+    local text = "Jackal Weapon Delivery\n"
     local categoryDisplay = {}
 
     for i, data in ipairs(order) do -- group the order into categories for display-purposes
         if not categoryDisplay[data[2]] then categoryDisplay[data[2]] = {} end
         table.insert(categoryDisplay[data[2]], data)
     end
-
     self.m_TotalPrice = 0
     for category, data in pairs(categoryDisplay) do 
         text = ("%s» %s\n"):format(text, category) 
@@ -107,14 +111,15 @@ function ArmsDealer:processCart( order, faction )
         end
         text = ("%s\n"):format(text) -- add double breakline after each category
     end
-    text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(self.m_Arrival+getRealTime().timestamp))
+    text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(etaTime+getRealTime().timestamp, true))
     faction:sendShortMessage(text, -1)
     self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket", {silent = true})
-    local endPoint = factionWTDestination[faction:getId()]
-    if endPoint then
-        self:setupPlane(endPoint, 200000, faction, order)
-    end
     self.m_Order[faction] = false
+    self.m_Blip =  Blip:new("Marker.png", endPoint.x, endPoint.y, {faction = {faction:getId()}}, 9999, BLIP_COLOR_CONSTANTS.Red)
+    self.m_Blip:attach(self.m_Plane)
+
+    self.m_DropBlip = Blip:new("SniperGame.png", endPoint.x, endPoint.y,  {factionType = {"State", "Evil"}}, 9999, BLIP_COLOR_CONSTANTS.Blue)
+    self.m_DropIndicator = createObject(354, endPoint.x, endPoint.y, endPoint.z)
 end
 
 function ArmsDealer:isMagazin(product)
@@ -150,6 +155,7 @@ function ArmsDealer:startAirDrop(faction, order, acceleration)
 end
 
 function ArmsDealer:setupPlane(pos, time, faction, order)
+    ActionsCheck:getSingleton():setAction("Waffendrop")
     local acceleration = time/6000
     local startPoint = Vector3(-3000, pos.y, 100)
     local distanceToDrop = math.abs(-3000 - pos.x)
@@ -163,11 +169,34 @@ function ArmsDealer:setupPlane(pos, time, faction, order)
     self.m_MoveObject:setAlpha(0)
     self.m_Plane:attach(self.m_MoveObject, Vector3(0, 0, 0), Vector3(0, 0, 270))
     self.m_MoveObject:move(acceleration*distanceToDrop, pos.x, pos.y, 100)
+    faction:setCountDown((acceleration*distanceToDrop)/1000, "Airdrop")
     setTimer(function() 
         self.m_MoveObject:move(distanceAfterDrop*acceleration, 3000, pos.y, 100) 
+        setTimer(function() self:clear() end, distanceAfterDrop*acceleration, 1)
         self:startAirDrop(faction, order, acceleration)
     end, acceleration*distanceToDrop, 1)
+    return (acceleration*distanceToDrop)/1000
+end
 
+function ArmsDealer:clear()
+    if self.m_Plane and isElement(self.m_Plane) then 
+        self.m_Plane:destroy()
+    end
+    if self.m_MoveObject and isElement(self.m_MoveObject) then 
+        self.m_MoveObject:delete()
+    end
+    if self.m_Blip then 
+        self.m_Blip:delete()
+        self.m_Blip = nil
+    end
+    if self.m_DropBlip then 
+        self.m_DropBlip:delete()
+        self.m_DropBlip = nil 
+    end
+    if self.m_DropIndicator and isElement(self.m_DropIndicator) then 
+        self.m_DropIndicator:delete()
+    end
+    ActionsCheck:getSingleton():endAction()
 end
 
 function ArmsDealer:destructor()

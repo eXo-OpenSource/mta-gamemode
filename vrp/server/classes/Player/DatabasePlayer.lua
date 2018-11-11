@@ -393,6 +393,9 @@ function DatabasePlayer:setFaction(faction)
 	if self:isActive() then
 		self:setPublicSync("FactionId", faction and faction:getId() or 0)
 		self:setPublicSync("FactionRank", faction and faction:getPlayerRank(self) or 0)
+		if self.m_Faction then
+			self.m_Faction:onPlayerJoin(self)
+		end
 		--if faction and faction:isStateFaction() then
 		--	bindKey(self, "m", "down", "chatbox", "BeamtenChat")
 		--end
