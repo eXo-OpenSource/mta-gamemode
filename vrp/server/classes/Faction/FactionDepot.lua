@@ -316,10 +316,10 @@ function Depot:takeItem(player, slotId)
 end
 
 function Depot:addEquipment(player, item, amount, forceSpawn) 
-	if not self:checkDistanceFromEquipment(player) then return end
+	if not forceSpawn and not self:checkDistanceFromEquipment(player) then return end
 	if self.m_Equipments then 
-		local allAmount = amount == -1 and player:getInventory():getItemAmount(item)
 		local armsData = ArmsDealer:getSingleton():getItemData(item)
+		local allAmount
 		if not armsData[3] then 
 			allAmount = amount == -1 and player:getInventory():getItemAmount(item)
 		else 
@@ -327,7 +327,7 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 		end
 
 		if forceSpawn
-		or (armsData[3] and (getPedWeapon(player, getSlotFromWeapon ( armsData[3])) == armsData[3]) and getPedTotalAmmo(player, getSlotFromWeapon ( armsData[3])) >= amount) 
+		or (armsData[3] and (getPedWeapon(player, getSlotFromWeapon ( armsData[3])) == armsData[3]) and ((amount > 0 and getPedTotalAmmo(player, getSlotFromWeapon ( armsData[3])) >= amount) or amount==-1))
 		or (amount > 0 and player:getInventory():removeItem(item, amount)) 
 		or (amount==-1 and self:removeAllEquipment(player, item, allAmount)) then
 			if not self.m_Equipments[item] then 
@@ -336,6 +336,7 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 			if amount > 0 then
 				self.m_Equipments[item] = self.m_Equipments[item] + amount
 				if armsData[3] then 
+					outputChatBox("lel")
 					if not takeWeapon(player, armsData[3], amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] - amount -- prevent bug-abuse
 					end
@@ -381,6 +382,7 @@ function Depot:takeEquipment(player, item, amount)
 						self.m_Equipments[item] = self.m_Equipments[item] + amount
 					end
 				else 
+					outputChatBox("HERE")
 					giveWeapon(player, armsData[3], amount)
 				end
 			elseif amount == -1 then 

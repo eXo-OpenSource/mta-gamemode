@@ -133,6 +133,16 @@ function ArmsDealer:sendInfo()
     end
 end
 
+function ArmsDealer:startAirDrop(faction, order)
+    local endPoint = factionWTDestination[faction:getId()]
+    if endPoint then 
+        local length = #order * 1.5 
+        for i, data in ipairs(order) do 
+            ArmsPackage:new()
+        end
+    end
+end
+
 function ArmsDealer:destructor()
 
 end
