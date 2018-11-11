@@ -20,6 +20,7 @@ function ArmsPackage:create()
     local time = distance*(60/100)*1000
     self.m_Object = createObject(2903, self.m_Position)
     self.m_Object:setScale(0.5)
+    self.m_Object:setCollisionsEnabled(false)
     self.m_Object:setRotation(Vector3(0, 60, 0))
     self.m_Object:move(time, self.m_Destination.x, self.m_Destination.y, self.m_Destination.z+(6.2*0.5), Vector3(0,-60,0), "OutQuad")
     self.m_Timer = setTimer(function()   

@@ -148,13 +148,17 @@ function ArmsDealer:startAirDrop(faction, order, acceleration)
         local length = 30 / #order 
         for i, data in ipairs(order) do 
             setTimer(function() 
-                ArmsPackage:new(data, Vector3(endPoint.x+(i*length), endPoint.y, endPoint.z+100), Vector3(endPoint.x +(i*length), endPoint.y, endPoint.z-0.3))
+                if self.m_Plane then 
+                    local pos = self.m_Plane:getPosition()
+                    ArmsPackage:new(data, Vector3(pos.x-4, pos.y, pos.z), Vector3(pos.x-4, pos.y, endPoint.z-0.35))
+                end
             end, acceleration*(length*i), 1)
         end
     end
 end
 
 function ArmsDealer:setupPlane(pos, time, faction, order)
+    self:sendOperatorMessage(faction, "In der Luft!")
     ActionsCheck:getSingleton():setAction("Waffendrop")
     local acceleration = time/6000
     local startPoint = Vector3(-3000, pos.y, 100)
@@ -163,6 +167,7 @@ function ArmsDealer:setupPlane(pos, time, faction, order)
     local endPoint = Vector3(3000, pos.y, 100)
     self.m_Plane =  TemporaryVehicle.create(592, -3000, pos.y, 100)
     self.m_Plane:setColor(0,0,0,0,0,0)
+    self.m_Plane:setCollisionsEnabled(false)
     setVehicleLandingGearDown(self.m_Plane, false)
     self.m_MoveObject = createObject(1337, -3000, pos.y, 100)
     self.m_MoveObject:setCollisionsEnabled(false)
@@ -170,31 +175,45 @@ function ArmsDealer:setupPlane(pos, time, faction, order)
     self.m_Plane:attach(self.m_MoveObject, Vector3(0, 0, 0), Vector3(0, 0, 270))
     self.m_MoveObject:move(acceleration*distanceToDrop, pos.x, pos.y, 100)
     faction:setCountDown((acceleration*distanceToDrop)/1000, "Airdrop")
+    setTimer(function() self:sendOperatorMessage(faction, "Abwurf in T-10!") end, (distanceToDrop*acceleration)-10000, 1)
     setTimer(function() 
         self.m_MoveObject:move(distanceAfterDrop*acceleration, 3000, pos.y, 100) 
-        setTimer(function() self:clear() end, distanceAfterDrop*acceleration, 1)
+        self:sendOperatorMessage(faction, "Abwurf!")
         self:startAirDrop(faction, order, acceleration)
+        setTimer(function() self:clear() end, distanceAfterDrop*acceleration, 1)
     end, acceleration*distanceToDrop, 1)
     return (acceleration*distanceToDrop)/1000
 end
 
+function ArmsDealer:sendOperatorMessage(faction, text)
+    if faction and text then 
+        local players = faction:getOnlinePlayers()
+        for index, player in pairs(players) do 
+            playSoundFrontEnd(player, 47)
+            setTimer(playSoundFrontEnd, 1000, 1, player, 48)
+        end
+        faction:sendMessage(("%s %s"):format("[**OPERATOR**]", text), 19, 32, 104)
+    end
+end
+
+
 function ArmsDealer:clear()
+    if self.m_Blip then 
+        self.m_Blip:delete()
+        self.m_Blip = nil
+    end
     if self.m_Plane and isElement(self.m_Plane) then 
         self.m_Plane:destroy()
     end
     if self.m_MoveObject and isElement(self.m_MoveObject) then 
-        self.m_MoveObject:delete()
-    end
-    if self.m_Blip then 
-        self.m_Blip:delete()
-        self.m_Blip = nil
+        self.m_MoveObject:destroy()
     end
     if self.m_DropBlip then 
         self.m_DropBlip:delete()
         self.m_DropBlip = nil 
     end
     if self.m_DropIndicator and isElement(self.m_DropIndicator) then 
-        self.m_DropIndicator:delete()
+        self.m_DropIndicator:destroy()
     end
     ActionsCheck:getSingleton():endAction()
 end
