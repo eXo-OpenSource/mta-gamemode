@@ -8,7 +8,7 @@
 ItemSmokeGrenade = inherit(Item)
 ItemSmokeGrenade.Map = { }
 local SMOKE_CHECK_INTERVAL = 10000
-local SMOKE_DURATION = 30000
+local SMOKE_DURATION = 60000
 
 function ItemSmokeGrenade:constructor()
 	setTimer(bind(self.checkSmokeRemove, self), SMOKE_CHECK_INTERVAL, 0)
@@ -24,31 +24,79 @@ function ItemSmokeGrenade:use(player)
 		if item ~= self or not position then return end
 		player:getInventory():removeItem(self:getName(), 1)
 		local worldItem = createObject(item:getModelId(), position.x , position.y, position.z)
-		setElementDoubleSided(worldItem, true)
-		setElementFrozen(worldItem, true)
+		worldItem:setDoubleSided(true)
+		worldItem:setFrozen(true)
 		worldItem.m_CreationTime = getTickCount()
-		ItemSmokeGrenade.Map[#ItemSmokeGrenade.Map+1] = worldItem
 		worldItem.m_SmokeEntity = createObject(2780, position.x, position.y, position.z, 0, 0, rotation)
-		setElementCollisionsEnabled(worldItem.m_SmokeEntity, false)
-		setElementAlpha( worldItem.m_SmokeEntity, 0)
-		setElementFrozen(worldItem.m_SmokeEntity, true)
-		setObjectScale(worldItem.m_SmokeEntity, 1)
-		attachElements(worldItem.m_SmokeEntity, worldItem)
+		worldItem.m_SmokeEntity:setCollisionsEnabled(false)
+		worldItem.m_SmokeEntity:setAlpha(0)
+		worldItem.m_SmokeEntity:setFrozen(true)
+		worldItem.m_SmokeEntity:attach(worldItem)
+		ItemSmokeGrenade.Map[worldItem] = {worldItem.m_SmokeEntity, self:createNameTagZone(worldItem)}
 		triggerClientEvent("itemRadioChangeURLClient", worldItem, "files/audio/smoke_explode.ogg")
 	end)
 end
 
+function ItemSmokeGrenade:createNameTagZone(worldItem)
+	if worldItem and isElement(worldItem) then 
+		worldItem.m_ColZone = createColSphere(worldItem:getPosition(), 3)
+		local elementsWithinColShape = getElementsWithinColShape(worldItem.m_ColZone, "player")
+		worldItem.m_SmokeMarker = createMarker(worldItem:getPosition(), "corona", 0, 0, 0, 0, 0)
+		worldItem.m_SmokeMarker:setData("isSmokeShape", true, true)
+		worldItem.m_SmokeMarker:setData("smokeCol", worldItem.m_ColZone, true)
+		for k, p in ipairs(elementsWithinColShape) do 
+			if (p:getDimension() == worldItem.m_ColZone:getDimension()) and (p:getInterior() == worldItem.m_ColZone:getInterior()) then 
+				p:setPublicSync("inSmokeGrenade", true)
+				p.m_LastSmokeColShape = worldItem.m_ColZone
+			end
+		end
+		addEventHandler("onColShapeHit", worldItem.m_ColZone, 
+		function(player, dimension) 
+			if player and dimension then 
+				player.m_LastSmokeColShape = source
+				player:setPublicSync("inSmokeGrenade", true)
+			end
+		end)
+		addEventHandler("onColShapeLeave", worldItem.m_ColZone, 
+		function(player, dimension) 
+			if player and dimension then 
+				if player.m_LastSmokeColShape == source then
+					player:setPublicSync("inSmokeGrenade", false)
+				end
+			end
+		end)
+		addEventHandler("onElementDestroy", worldItem.m_ColZone, 
+		function()
+			local elementsWithinColShape = getElementsWithinColShape(source, "player")
+			for k, p in ipairs(elementsWithinColShape) do 
+				if (p:getDimension() == source:getDimension()) and (p:getInterior() == source:getInterior()) then 
+					if p.m_LastSmokeColShape == source then 
+						p:setPublicSync("inSmokeGrenade", false)
+					end
+				end
+			end
+		end)
+		return worldItem.m_ColZone
+	end
+	return
+end
+
 function ItemSmokeGrenade:checkSmokeRemove() 
 	local now = getTickCount()
-	for i = 1, #ItemSmokeGrenade.Map do 
-		if ItemSmokeGrenade.Map[i] and isElement(ItemSmokeGrenade.Map[i]) then
-			if now >= ItemSmokeGrenade.Map[i].m_CreationTime + SMOKE_DURATION then 
-				destroyElement(ItemSmokeGrenade.Map[i].m_SmokeEntity)
-				destroyElement(ItemSmokeGrenade.Map[i]) 
-				ItemSmokeGrenade.Map[i] = nil
+	for smoke, bool in pairs(ItemSmokeGrenade.Map) do 
+		if smoke and isElement(smoke) then
+			if now >= smoke.m_CreationTime + SMOKE_DURATION then 
+				smoke.m_SmokeEntity:destroy()
+				smoke.m_ColZone:destroy()
+				ItemSmokeGrenade.Map[smoke] = nil
+				smoke:destroy()
 			end
 		else 
-			ItemSmokeGrenade.Map[i] = nil
+			if smokeEntity[1] and isElement(smokeEntity[1]) then 
+				smokeEntity[1]:destroy()
+				smokeEntity[2]:destroy()
+			end
+			ItemSmokeGrenade.Map[smoke] = nil
 		end
 	end
 end

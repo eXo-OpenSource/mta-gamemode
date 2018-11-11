@@ -32,19 +32,35 @@ function Nametag:draw()
 	local bRifleCheck = self:_weaponCheck()
 	local lpX, lpY, lpZ = getElementPosition(localPlayer)
 	for _, player in pairs(getElementsByType("player", root, true)) do
-		if player ~= localPlayer then
+		if player ~= localPlayer and (player.getPublicSync and not player:getPublicSync("inSmokeGrenade")) then
 			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
 			setPlayerNametagShowing(player, false)
 			local pX, pY, pZ = getElementPosition(player)
 			local phX, phY, phZ = player:getBonePosition(8)
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
+			local smokeHit = false
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
 			if not localPlayer:isLoggedIn() then return false end
 			if (bDistance <= maxDistance) or localPlayer:getPrivateSync("isSpecting") then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
 					local bLineOfSight = isLineOfSightClear(Vector3(cx, cy, cz), Vector3(phX, phY, phZ), true, false, false, true, false, false, false, localPlayer)
-					if bLineOfSight or localPlayer:getPrivateSync("isSpecting") then
+					for col, bool in pairs(ItemSmokeGrenade.Map) do
+						if col and isElement(col) then
+							local point, hit = checkRaySphere(Vector3(cx, cy, cz), (Vector3(phX, phY, phZ) - Vector3(cx, cy, cz)):getNormalized(), col:getPosition(), 3)
+							local color = Color.Green
+							if hit then 
+								color = Color.Red
+								smokeHit = true
+							end							
+							if DEBUG then
+								--dxDrawLine3D(Vector3(cx, cy, cz-0.5), Vector3(phX, phY, phZ), color)
+							end
+						else 
+							ItemSmokeGrenade.Map[col] = nil
+						end
+					end
+					if bLineOfSight and not smokeHit or localPlayer:getPrivateSync("isSpecting") then
 						local drawName = getPlayerName(player)
 						local wanteds = player:getWanteds()
 						local size = math.max(0.5, 1 - bDistance/maxDistance)*0.9
