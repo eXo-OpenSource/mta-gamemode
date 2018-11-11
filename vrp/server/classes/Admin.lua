@@ -1406,7 +1406,7 @@ function Admin:Command_MarkPos(player, add)
 end
 
 function Admin:reloadHelpText(player)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Moderator then
 		Help:getSingleton():loadHelpTexts()
 		player:sendInfo(_("Die F1 Hilfe wurde neu geladen!", player))
 	end
