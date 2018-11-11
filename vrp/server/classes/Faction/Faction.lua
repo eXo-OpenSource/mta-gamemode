@@ -601,6 +601,7 @@ function Faction:setSafe(obj)
 	end)
 end
 
+
 function Faction:refreshBankAccountGUI(player)
 	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end

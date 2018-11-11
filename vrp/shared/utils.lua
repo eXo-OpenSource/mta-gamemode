@@ -876,3 +876,18 @@ end
 function angle(vec1, vec2)
     return math.acos(vec1:dot(vec2)/(vec1.length*vec2.length))
 end
+
+function getPedWeapons(ped)
+	local playerWeapons = {}
+	if ped and isElement(ped) and getElementType(ped) == "ped" or getElementType(ped) == "player" then
+		for i=1,11 do
+			local wep = getPedWeapon(ped,i)
+			if wep and wep ~= 0 then
+				table.insert(playerWeapons,wep)
+			end
+		end
+	else
+		return false
+	end
+	return playerWeapons
+end

@@ -13,7 +13,7 @@ function FactionEvil:constructor()
 	self.InteriorEnterExit = {}
 	self.m_WeaponPed = {}
 	self.m_ItemDepot = {}
-
+	self.m_EquipmentDepot = {}
 	self.m_Raids = {}
 
 	nextframe(function()
@@ -63,6 +63,14 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
 
+
+	self.m_EquipmentDepot[Id] = createObject(964, 2819.84, -1173.51, 1024.57, 0, 0, 0)
+	self.m_EquipmentDepot[Id]:setDimension(Id)
+	self.m_EquipmentDepot[Id]:setInterior(8)
+	self.m_EquipmentDepot[Id].Faction = faction
+	self.m_EquipmentDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	addEventHandler("onElementClicked", self.m_EquipmentDepot[Id], bind(self.onEquipmentDepotClicked, self))
+
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),
 		createObject(348, 2813.6001, -1166.8, 1025.64, 90, 0, 332),
@@ -93,6 +101,7 @@ function FactionEvil:createInterior(Id, faction)
 			faction:setSafe(v)
 		end
 	end
+
 end
 
 function FactionEvil:getFactions()
@@ -162,6 +171,17 @@ function FactionEvil:onDepotClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
 			player:getFaction():getDepot():showItemDepot(player)
+		else
+			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
+		end
+	end
+end
+
+function FactionEvil:onEquipmentDepotClicked(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction() == source.Faction then
+			player.m_LastEquipmentDepot = source
+			player:getFaction():getDepot():showEquipmentDepot(player)
 		else
 			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
 		end

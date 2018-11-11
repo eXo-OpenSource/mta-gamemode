@@ -358,10 +358,12 @@ function Inventory:removeAllItem(item, value)
 				if itemName == item then
 					if not value then
 						self:removeItemFromPlace(bag, place)
+						return true
 					else
 						itemValue = self:getItemValueByBag(bag, place)
 						if itemValue == value then
 							self:removeItemFromPlace(bag, place)
+							return true
 						end
 					end
 				end

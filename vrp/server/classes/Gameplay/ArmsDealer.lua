@@ -13,15 +13,16 @@ ArmsDealer.Data =
     ["Spezial"] = 
     {
         ["Gasmaske"] = {50, 50000},
-        ["Gasgranate"] = {6, 50000, true},
+        ["Gasgranate"] = {6, 50000, 17},
         ["Rauchgranate"] = {3, 100000},
-        ["Scharfschützengewehr"] = {5, 60000, true, 34},
-        ["Fallschirm"] = {20, 5000}
+        ["Scharfschützengewehr"] = {5, 60000, 34},
+        ["Fallschirm"] = {20, 5000, 46}
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {5, 300000, true, 35},
-        ["Granate"] = {10, 80000, true, 16},
+        ["RPG-7"] = {5, 300000, 35},
+        ["Granate"] = {10, 80000, 16},
+        ["SLAM"] = {2, 40000}
     }
 }
 addRemoteEvents{"requestArmsDealerInfo", "checkoutArmsDealerCart"}
@@ -30,6 +31,18 @@ function ArmsDealer:constructor()
     addEventHandler("requestArmsDealerInfo", root, bind(self.sendInfo, self))
     addEventHandler("checkoutArmsDealerCart", root, bind(self.checkoutCart, self))
 end
+
+function ArmsDealer:getItemData(item)
+    for category, data in pairs(ArmsDealer.Data) do 
+        for product, subdata in pairs(data) do 
+            if product == item then 
+                return subdata
+            end
+        end
+    end
+    return false
+end
+
 
 function ArmsDealer:checkoutCart(cart)
     if client and client.getFaction and client:getFaction() then 

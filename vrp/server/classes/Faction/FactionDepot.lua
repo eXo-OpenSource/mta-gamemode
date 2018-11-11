@@ -9,7 +9,7 @@ Depot = inherit(Object)
 Depot.Map = {}
 
 function Depot.initalize()
-	addRemoteEvents{"itemDepotAdd", "itemDepotTake"}
+	addRemoteEvents{"itemDepotAdd", "itemDepotTake", "equipmentDepotAdd", "equipmentDepotTake"}
 
 	addEventHandler("itemDepotAdd", root, function(id, item, amount)
 		if Depot.Map[id] then
@@ -20,6 +20,18 @@ function Depot.initalize()
 	addEventHandler("itemDepotTake", root, function(id, slotId)
 		if Depot.Map[id] then
 			Depot.Map[id]:takeItem(client, slotId)
+		end
+	end)
+
+	addEventHandler("equipmentDepotAdd", root, function(id, item, amount)
+		if Depot.Map[id] then
+			Depot.Map[id]:addEquipment(client, item, amount)
+		end
+	end)
+
+	addEventHandler("equipmentDepotTake", root, function(id, item, amount)
+		if Depot.Map[id] then
+			Depot.Map[id]:takeEquipment(client, item, amount)
 		end
 	end)
 end
@@ -304,14 +316,42 @@ function Depot:takeItem(player, slotId)
 end
 
 function Depot:addEquipment(player, item, amount, forceSpawn) 
+	if not self:checkDistanceFromEquipment(player) then return end
 	if self.m_Equipments then 
-		if forceSpawn or player:getInventory():removeItem(item, amount) then
+		local allAmount = amount == -1 and player:getInventory():getItemAmount(item)
+		local armsData = ArmsDealer:getSingleton():getItemData(item)
+		if not armsData[3] then 
+			allAmount = amount == -1 and player:getInventory():getItemAmount(item)
+		else 
+			allAmount = amount == -1 and getPedTotalAmmo(player, getSlotFromWeapon ( armsData[3]))
+		end
+
+		if forceSpawn
+		or (armsData[3] and (getPedWeapon(player, getSlotFromWeapon ( armsData[3])) == armsData[3]) and getPedTotalAmmo(player, getSlotFromWeapon ( armsData[3])) >= amount) 
+		or (amount > 0 and player:getInventory():removeItem(item, amount)) 
+		or (amount==-1 and self:removeAllEquipment(player, item, allAmount)) then
 			if not self.m_Equipments[item] then 
-				self.m_Equipments[item] = amount
+				self.m_Equipments[item] = 0
 			end
-			self.m_Equipments[item] = amount
+			if amount > 0 then
+				self.m_Equipments[item] = self.m_Equipments[item] + amount
+				if armsData[3] then 
+					if not takeWeapon(player, armsData[3], amount) then 
+						self.m_Equipments[item] = self.m_Equipments[item] - amount -- prevent bug-abuse
+					end
+				end
+			else 
+				self.m_Equipments[item] = self.m_Equipments[item] + allAmount
+				amount = allAmount
+				if armsData[3] then 
+					if not takeWeapon(player, armsData[3]) then 
+						self.m_Equipments[item] = self.m_Equipments[item] - allAmount -- prevent bug-abuse
+					end
+				end
+			end
 			StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
 			self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s in das Lager gelegt!"):format(amount, item))
+			player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
 			player:sendInfo(_("Du hast %d %s ins Depot gelegt!", player, amount, item))
 			return
 		else 
@@ -320,24 +360,56 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 	end
 end
 
+function Depot:removeAllEquipment(player, item, amount) -- this executes removeItem x amount since removeAllItem occasionally misses an item in the inventory 
+	for i = 1, amount do 
+		if not player:getInventory():removeItem(item, 1) then 
+			return false
+		end
+	end
+	return true
+end
 
 function Depot:takeEquipment(player, item, amount)
+	if not self:checkDistanceFromEquipment(player) then return end
 	if self.m_Equipments[item] then
-		if self.m_Equipments[item] >= amount then
-			local amount = self.m_Equipments[item]
-			if player:getInventory():getFreePlacesForItem(item) >= amount then
+		local armsData = ArmsDealer:getSingleton():getItemData(item)
+		if armsData[3] or (amount > 0 and self.m_Equipments[item] >= amount) or (amount==-1 and player:getInventory():getFreePlacesForItem(item) >= self.m_Equipments[item] ) then
+			if amount > 0 then 
 				self.m_Equipments[item] = self.m_Equipments[item] - amount
-				player:getInventory():giveItem(item, amount)
-				player:sendInfo(_("Du hast %d %s aus dem Depot (Slot %d) genommen!", player, amount, item, slotId))
-				StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
-				self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s aus dem Lager genommen!"):format(amount, item))
-				return
-			else
-				player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
+				if not armsData[3] then 
+					if not player:getInventory():giveItem(item, amount) then 
+						self.m_Equipments[item] = self.m_Equipments[item] + amount
+					end
+				else 
+					giveWeapon(player, armsData[3], amount)
+				end
+			elseif amount == -1 then 
+				amount = self.m_Equipments[item]
+				self.m_Equipments[item] = 0
+				if not armsData[3] then
+					if not player:getInventory():giveItem(item, amount) then 
+						self.m_Equipments[item] = amount
+					end
+				else 
+					giveWeapon(player, armsData[3], amount)
+				end
 			end
+			player:sendInfo(_("Du hast %d %s aus dem Depot genommen!", player, amount, item))
+			StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
+			player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
+			self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s aus dem Lager genommen!"):format(amount, item))
+			return
 		else
-			player:sendError(_("Du hast nicht so viele Items!", player))
+			player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
 		end
 	end
 end
 
+function Depot:checkDistanceFromEquipment(player)
+	if player and isElement(player) and player.m_LastEquipmentDepot and isElement(player.m_LastEquipmentDepot) 
+	and (player.m_LastEquipmentDepot:getInterior() == player:getInterior()) 
+	and (player.m_LastEquipmentDepot:getDimension() == player:getDimension()) then 
+		return (player:getPosition() - player.m_LastEquipmentDepot:getPosition()):getLength() < 4 or player:sendError("Zu weit entfernt!")
+	end
+	return false
+end
