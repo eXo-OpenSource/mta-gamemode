@@ -178,20 +178,20 @@ function FactionEvil:loadYakGates(factionId)
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
+	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza"
 	--// ps: have I told you that I hate this new faction-base?
 	--// removed removeModel ;)
 end
 
-function FactionEvil:loadTriadGates( factionId) 
-	 
+function FactionEvil:loadTriadGates( factionId)
+
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120+4.04))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)	
+	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)
 	local door = Door:new(6400, Vector3(1908.597, 967.407, 10.750), Vector3(0, 0, 90))
 	setElementDoubleSided(door.m_Door, true)
 	local crate = createObject(3576, 1909.020,965.252,11.320)
@@ -210,14 +210,14 @@ function FactionEvil:loadLCNGates(factionId)
 	lcnGates[1] = Gate:new(980, Vector3(784.56561, -1152.40520, 24.93374), Vector3(0, 0, 275), Vector3(784.56561, -1152.40520, 18.53374))
 	lcnGates[2] = Gate:new(980, Vector3(659.12753, -1227.00923, 17.42981), Vector3(0, 0, 64), Vector3(659.12753, -1227.00923, 11.92981))
 	lcnGates[3] = Gate:new(980, Vector3(664.99264, -1309.83203, 15.06094), Vector3(0, 0, 182), Vector3(664.99264, -1309.83203, 8.46094))
-	
+
 	--setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
+	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza"
 	--// ps: have I told you that I hate this new faction-base?
 	--// removed removeModel ;)
 end
@@ -332,8 +332,8 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 			player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
 			return false
 		end
-		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
 		player:setFactionDuty(true)
+		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
 		player:setHealth(100)
 		player:setArmor(100)
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
@@ -435,4 +435,3 @@ function FactionEvil:Event_storageWeapons(player)
 		end
 	end
 end
-

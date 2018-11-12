@@ -445,6 +445,10 @@ function CompanyManager:Event_setPlayerDutySkin(skinId)
 		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
 		return false
 	end
+	if not client:isCompanyDuty() then
+		client:sendError(_("Du bist nicht im Dienst deines Unternehmens aktiv!", client))
+		return
+	end
 	client:sendInfo(_("Kleidung gewechselt.", client))
 	client:getCompany():changeSkin(client, skinId)
 end

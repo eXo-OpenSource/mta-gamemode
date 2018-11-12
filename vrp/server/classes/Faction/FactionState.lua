@@ -1342,8 +1342,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				faction:changeSkin(client, preferredSkin)
 				client:setFactionDuty(true)
+				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)
 				takeAllWeapons(client)
