@@ -71,6 +71,7 @@ function DmHalloweenGUI:destructor()
 end
 
 function DmHalloweenGUI:onPedDamage(attacker, weapon)
+	if NO_MUNITION_WEAPONS[weapon] then cancelEvent() end
 	triggerServerEvent("dmHalloweenOnDamage", source, attacker, weapon)
 end
 
