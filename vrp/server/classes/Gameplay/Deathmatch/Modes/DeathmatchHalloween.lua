@@ -347,7 +347,7 @@ end
 
 function DeathmatchHalloween:onWasted(player, killer, weapon)
 	DeathmatchLobby.onWasted(self, player, killer, weapon)
-	if killer then
+	if killer and killer ~= player then
 		self:increaseKill(killer, weapon)
 		self:increaseDead(player, weapon)
 	end
