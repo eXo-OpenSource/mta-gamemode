@@ -317,7 +317,7 @@ function Faction:setPlayerRank(playerId, rank)
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		if player then
+		if player and player:isFactionDuty() then
 			self:changeSkin(player)
 		end
 	end
