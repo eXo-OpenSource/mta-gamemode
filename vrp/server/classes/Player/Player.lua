@@ -428,6 +428,11 @@ function Player:spawn()
 	-- Update Skin
 	self:setCorrectSkin()
 
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
+
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
 	end
@@ -440,11 +445,6 @@ function Player:spawn()
 	-- Give weapons
 	for k, info in pairs(self.m_Weapons) do
 		giveWeapon(self, info[1], info[2])
-	end
-
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
 	end
 
 	-- gets unfrozen if he has a session id
