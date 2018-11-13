@@ -30,7 +30,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.MAX_PUSHBACK_SPEED = 6
 
 	self.m_MotionType = self:getMotionType(behavior)
-	self.m_Difficulty = self.m_MotionType == FISHING_MOTIONTYPE.DART and difficulty*2 or difficulty
+	self.m_Difficulty = difficulty --self.m_MotionType == FISHING_MOTIONTYPE.DART and difficulty*2 or difficulty
 
 	self.m_BobberPosition = self.Random:get(0, 100) / 100 * self.HEIGHT
 	self.m_BobberSpeed = 0
@@ -129,47 +129,47 @@ function BobberBar:handleClick(_, state)
 end
 
 function BobberBar:setBobberPosition()
-	local bobberAnimation = "InOutQuad"
-	self.m_BobberSpeed = (2000 - math.min(1000, self.m_Difficulty*5)) + self.Random:get(-self.m_Difficulty*3, self.m_Difficulty*3)
-
 	if self.m_MotionType == FISHING_MOTIONTYPE.DART or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/150) then
-		--[[if self.m_MotionType == FISHING_MOTIONTYPE.FLOATER then
-			bobberAnimation = "InOutBack"
-			self.m_BobberSpeed = self.m_BobberSpeed * 3
-		end]]
-
 		local newTargetPosition = self.m_BobberTargetPosition
 
-		while math.abs(newTargetPosition - self.m_BobberTargetPosition) < self.m_Difficulty do
-			newTargetPosition = self.Random:get(math.max(self.POSITION_UP + 10, self.m_BobberPosition - self.m_Difficulty*5), math.min(self.POSITION_DOWN - 20, self.m_BobberPosition + self.m_Difficulty*5))
+		while math.abs(newTargetPosition - self.m_BobberTargetPosition) < 60 do
+			newTargetPosition = self.Random:get(self.POSITION_UP + 10, self.POSITION_DOWN - 20)
 		end
 
+		local delta = math.abs(newTargetPosition - self.m_BobberTargetPosition)
+		self.m_BobberSpeed = (2500 - self.m_Difficulty*5)/self.HEIGHT*delta
 		self.m_BobberTargetPosition = newTargetPosition
 
 	elseif self.m_MotionType == FISHING_MOTIONTYPE.SMOOTH or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/200) then
-		self.m_BobberTargetPosition = self.Random:get(math.max(self.POSITION_UP + 10, self.m_BobberPosition - self.m_Difficulty*3),
-			math.min(self.POSITION_DOWN - 20, self.m_BobberPosition + self.m_Difficulty*3))
+		local newTargetPosition = self.m_BobberPosition
+
+		while math.abs(newTargetPosition - self.m_BobberPosition) < self.m_Difficulty do
+			newTargetPosition = self.m_BobberPosition + self.Random:get(-self.m_Difficulty*5, self.m_Difficulty*5)
+		end
+
+		self.m_BobberTargetPosition = newTargetPosition
+		self.m_BobberSpeed = (2000 - self.m_Difficulty*5)
 
 	elseif self.m_MotionType == FISHING_MOTIONTYPE.FLOATER or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/100) then
-		if self.m_BobberPosition > self.POSITION_DOWN - 50 then
-			self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP, self.POSITION_UP + self.HEIGHT/3)
-			self.m_BobberSpeed = 700 - self.m_Difficulty*2
+		if self.m_BobberPosition > self.POSITION_DOWN - 80 then
+			self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP + 10, self.POSITION_UP + self.HEIGHT/4)
+			self.m_BobberSpeed = 900 - self.m_Difficulty*2
 		else
-			self.m_BobberTargetPosition = self.m_BobberPosition + self.Random:get(-30, 100)
-			self.m_BobberSpeed = 500 - self.m_Difficulty*2
+			self.m_BobberTargetPosition = self.m_BobberPosition + (self.Random:get(1, 4) == 1 and self.Random:get(-math.max(self.m_Difficulty/2.5, 15), 10) or self.Random:get(15, math.clamp(30, self.m_Difficulty*2, 150)))
+			self.m_BobberSpeed = 600 - self.m_Difficulty*2
 		end
 
 	elseif self.m_MotionType == FISHING_MOTIONTYPE.SINKER or (self.m_MotionType == FISHING_MOTIONTYPE.MIXED and self.Random:nextDouble() < self.m_Difficulty/100) then
-		if self.m_BobberPosition < 50 then
-			self.m_BobberTargetPosition = self.Random:get(self.POSITION_DOWN - self.HEIGHT/1.5, self.POSITION_DOWN)
-			self.m_BobberSpeed = 700 - self.m_Difficulty*2
+		if self.m_BobberPosition < 80 then
+			self.m_BobberTargetPosition = self.Random:get(self.POSITION_DOWN - self.HEIGHT/4, self.POSITION_DOWN - 20)
+			self.m_BobberSpeed = 900 - self.m_Difficulty*2
 		else
-			self.m_BobberTargetPosition = self.m_BobberPosition - self.Random:get(-30, 100)
-			self.m_BobberSpeed = 500 - self.m_Difficulty*2
+			self.m_BobberTargetPosition = self.m_BobberPosition - (self.Random:get(1, 4) == 1 and self.Random:get(-math.max(self.m_Difficulty/2.5, 15), 10) or self.Random:get(15, math.clamp(30, self.m_Difficulty*2, 150)))
+			self.m_BobberSpeed = 600 - self.m_Difficulty*2
 		end
 
 	else
-		-- call again if motionType == 0 and no condition was true
+		-- call again if motionType == FISHING_MOTIONTYPE.MIXED and no condition was true
 		return self:setBobberPosition()
 	end
 
@@ -180,7 +180,7 @@ function BobberBar:setBobberPosition()
 		self.m_BobberTargetPosition = self.POSITION_UP + 10
 	end
 
-	self.m_BobberAnimation:startAnimation(self.m_BobberSpeed, bobberAnimation, self.m_BobberTargetPosition)
+	self.m_BobberAnimation:startAnimation(self.m_BobberSpeed, "InOutQuad", self.m_BobberTargetPosition)
 end
 
 function BobberBar:updateRenderTarget()
