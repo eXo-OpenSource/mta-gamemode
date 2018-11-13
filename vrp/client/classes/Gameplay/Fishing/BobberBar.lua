@@ -20,7 +20,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = 64 + fisherLevel*4 - difficulty/10
+	self.m_BobberBarHeight = (64 + fisherLevel*4 - difficulty/10) / 1080 * screenHeight
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 
@@ -213,7 +213,7 @@ end
 function BobberBar:render()
 	if self.m_ProgressDuration ~= 0 then
 		-- BobberBar Animation
-		local num = self.m_MouseDown and -0.5 or 0.5
+		local num = (self.m_MouseDown and -0.5 or 0.5)/1080*screenHeight
 		self.m_BobberBarSpeed = self.m_BobberBarSpeed + num
 		self.m_BobberBarPosition = self.m_BobberBarPosition + self.m_BobberBarSpeed
 
