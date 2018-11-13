@@ -185,9 +185,30 @@ function Sewers:createStorage()
     end
     local p
     for i, marker in ipairs(self.m_PedPositions) do 
-        p = createPed(220, marker:getPosition().x, marker:getPosition().y, marker:getPosition().z +0.5)
+        p = createPed(220, marker:getPosition().x, marker:getPosition().y, marker:getPosition().z +0.5, 0, true)
+        p:setModel(109)
+        
         p:setFrozen(true)
         p:setDimension(3)
-        p:setRotation(0, 0, findRotation(p:getPosition().x, p:getPosition().y, entrance:getPosition().x, entrance:getPosition().y))
+        p:setRotation(0, 0, findRotation(p:getPosition().x, p:getPosition().y, entrance:getPosition().x, entrance:getPosition().y)-45)
+        giveWeapon(p, 30, 200, true)
+        setElementData(p, "SewerPed", true)
+        self:addKevlarToPed(p)
     end
+end
+
+function Sewers:addKevlarToPed(ped)
+    local itemName = "Kevlar"
+    local x,y,z = getElementPosition(ped)
+    local dim = getElementDimension(ped)
+    local int = getElementInterior(ped)
+    local model, zOffset, yOffset, scale, rotX, rotZ = WearableShirt.objectTable[itemName][1] or WearableShirt.objectTable["Kevlar"][1],  WearableShirt.objectTable[itemName][2] or WearableShirt.objectTable["Kevlar"][2], WearableShirt.objectTable[itemName][3] or WearableShirt.objectTable["Kevlar"][3], WearableShirt.objectTable[itemName][4] or WearableShirt.objectTable["Kevlar"][4], WearableShirt.objectTable[itemName][5] or WearableShirt.objectTable["Kevlar"][5],  WearableShirt.objectTable[itemName][6] or WearableShirt.objectTable["Kevlar"][6]
+    local rotY =  WearableShirt.objectTable[itemName][7] or WearableShirt.objectTable["Kevlar"][7]
+    local obj = createObject(model,x,y,z)
+    local objName =  WearableShirt.objectTable["Kevlar"][8]
+    setElementDimension(obj, dim)
+    setElementInterior(obj, int)
+    setObjectScale(obj, scale)
+    setElementDoubleSided(obj,true)
+    exports.bone_attach:attachElementToBone(obj, ped, 3, 0, yOffset, zOffset, rotX , rotY, rotZ)
 end
