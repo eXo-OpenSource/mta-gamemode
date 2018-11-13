@@ -11,7 +11,7 @@ addRemoteEvents{"fishingBobberBar"}
 local screenWidth, screenHeight = guiGetScreenSize()
 
 function BobberBar:constructor(difficulty, behavior)
-	local fisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
+	self.m_FisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
 
 	self.m_Size = Vector2(58, screenHeight/2)
 	self.m_RenderTarget = DxRenderTarget(self.m_Size, true)
@@ -20,7 +20,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = (64 + fisherLevel*4 - difficulty/10) / 1080 * screenHeight
+	self.m_BobberBarHeight = (64 + self.m_FisherLevel*4 - difficulty/10) / 1080 * screenHeight
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 
@@ -237,8 +237,13 @@ function BobberBar:render()
 		if (self.m_BobberInBar or self.m_BobberInBar == nil) and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 28) then
 			self.m_BobberInBar = false
 
-			local duration = (self.m_ProgressDuration - self.m_ProgressDifficultyAddition) * (self.m_Progress/100)
-			self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
+			if self.m_FisherLevel > 1 then
+				local duration = (self.m_ProgressDuration - self.m_ProgressDifficultyAddition) * (self.m_Progress/100)
+				self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
+			else
+				self.m_ProgressAnimation:stopAnimation()
+			end
+
 			self.Sound:play("woap2")
 			self.Sound:stop("slowReel")
 		elseif (not self.m_BobberInBar or self.m_BobberInBar == nil) and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 28) then
