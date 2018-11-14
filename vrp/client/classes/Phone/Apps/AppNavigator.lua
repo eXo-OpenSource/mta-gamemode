@@ -13,6 +13,11 @@ end
 
 function AppNavigator:onOpen(form)
 
+	-- update faction list
+	for id, fac in pairs(FactionManager.Map) do
+		AppNavigator.Positions["Fraktionen"][fac:getName()] = fac:getNavigationPosition()
+	end
+
 	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, form.m_Width, form.m_Height, form)
 	self.m_Tabs = {}
 	self.m_LocationsGrid = {}
@@ -76,18 +81,7 @@ AppNavigator.Positions = {
 		["Mechaniker"] =  Vector3(886.21, -1220.47, 16.97),
 		["Public Transport"] =	 Vector3(1791.10, -1901.46, 13.08),
 	},
-	["Fraktionen"] = {
-		["Grove Street"] =   Vector3(2492.43, -1664.58, 13.34),
-		["Cosa Nostra"] =     Vector3(722.84, -1196.875, 19.123),
-		["Triaden"] =     Vector3(2028.02, 1008.24, 10.82),
-		--["Vatos Locos"] =     Vector3(2828.332, -2111.481, 12.206),
-		["Rescue Team"] =  Vector3(1201.11, -1327.57, 13.40),
-		["FBI"] =     Vector3(1206.00, -1743.18, 13.59),
-		["Police Department"] = Vector3(1536.06, -1675.63, 13.11),
-		["SASF"] =    Vector3(134.53, 1929.06,  18.89),
-		--["Ballas"] =  Vector3(2213.78, -1435.18, 23.83),
-		["Outlaws MC"] =   Vector3(684.82, -485.55, 16.19),
-	}
+	["Fraktionen"] = {}, -- get loaded dynamically!
 
 }
 
@@ -97,4 +91,3 @@ AppNavigator.Icons = {
 	["Unternehmen"] = FontAwesomeSymbols.Book,
 	["Fraktionen"] = FontAwesomeSymbols.Group,
 }
-

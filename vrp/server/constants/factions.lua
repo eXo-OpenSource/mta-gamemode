@@ -5,6 +5,7 @@ factionSkins = {}
 factionWeapons = {}
 evilFactionInteriorEnter = {}
 factionWTDestination = {}
+factionNavigationpoint = {}
 factionSpawnpoint = {}
 factionAirDropPoint = {}
 TICKET_PRICE = 1500
@@ -60,6 +61,7 @@ factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]
 factionWeapons[1] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[1] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[1] = {Vector3(234.32, 71.69, 1005.04, 0, 0), 6, 0}
+factionNavigationpoint[1] = Vector3(1552.278, -1675.725, 12.6)
 
 -- ID 2 = FBI:
 factionRankNames[2] = {
@@ -73,10 +75,11 @@ factionRankNames[2] = {
 }
 factionColors[2] = {["r"] = 50,["g"] = 100,["b"] = 150}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
-factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
+factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[211]=true,[295]=true}
 factionWeapons[2] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[2] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[2] = {Vector3(1223.51, -1813.49, 16.59), 0, 0}
+factionNavigationpoint[2] = Vector3(1209.32, -1748.02, 12.6)
 
 -- ID 3 = Army:
 factionRankNames[3] = {
@@ -95,6 +98,7 @@ factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true,[285]=t
 factionWeapons[3] = {[6]=true,[22]=true,[24]=true,[25]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[3] = {Vector3(221.49, 1865.97, 13.14), 0, 0}
+factionNavigationpoint[3] = Vector3(134.53, 1929.06, 12.6)
 
 -- ID 4 = Rescue Team:
 factionRankNames[4] = {
@@ -111,6 +115,7 @@ factionCarColors[4] = {["r"] = 178, ["g"] = 35, ["b"] = 33, ["r1"] = 255, ["g1"]
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true, [70]=true}
 factionWeapons[4] = {[9]=true}
 factionSpawnpoint[4] = {Vector3(1076.01, -1380.27, 13.71), 0, 0}
+factionNavigationpoint[4] = Vector3(1095.01, -1337.27, 13.71)
 
 -- ID 5 = La Cosa Nostra:
 factionRankNames[5] = {
@@ -131,6 +136,8 @@ factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,17.8)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
 factionSpawnpoint[5] = {Vector3(728.03, -1203.80, 19.06), 0, 0}
 factionAirDropPoint[5] = Vector3(806.26, -1145.07, 24.02)
+factionNavigationpoint[5] = evilFactionInteriorEnter[5]
+
 -- ID 6 = Yakuza
 factionRankNames[6] = {
 [0] = "Aonisai",
@@ -148,6 +155,7 @@ factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=
 evilFactionInteriorEnter[6] = Vector3(849.93, -1699.49, 13.55)
 factionWTDestination[6] = Vector3(  917.71, -1705.45, 12.6)
 factionSpawnpoint[6] = {Vector3(877.38, -1709.13, 13.54), 0, 0}
+factionNavigationpoint[6] = evilFactionInteriorEnter[6]
 
 -- ID 7 = Grove
 factionRankNames[7] = {
@@ -166,6 +174,7 @@ factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=
 evilFactionInteriorEnter[7] = Vector3(2522.5205078125, -1679.2890625, 15.996999740601)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 factionSpawnpoint[7] = {Vector3(2501.12, -1666.82, 13.36), 0, 0}
+factionNavigationpoint[7] = evilFactionInteriorEnter[7]
 
 -- ID 8 = Ballas
 factionRankNames[8] = {
@@ -185,6 +194,8 @@ evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
 factionWTDestination[8] = Vector3(2212.42, -1435.53, 21.7)
 factionSpawnpoint[8] = {Vector3(2226.87, -1441.04, 24.00), 0, 0}
 factionAirDropPoint[8] = Vector3(2199.05, -1385.16, 23.83)
+factionNavigationpoint[8] = evilFactionInteriorEnter[8]
+
 -- ID 9 = Biker
 factionRankNames[9] = {
 [0] = "Hangaround",
@@ -203,6 +214,8 @@ evilFactionInteriorEnter[9] =  Vector3(687.20, -445.40, 16.3)
 factionWTDestination[9] =   Vector3(659.80,-463.10,14.5)
 factionSpawnpoint[9] = {Vector3(687.07, -453.29, 20.65), 0, 0}
 factionAirDropPoint[9] = Vector3(605.91, -484.64, 16.20)
+factionNavigationpoint[9] = evilFactionInteriorEnter[9]
+
 -- ID 10 = Vatos
 factionRankNames[10] = {
 [0] = "Guerro",
@@ -221,6 +234,7 @@ evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
 factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
 factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
 factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38)
+factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
 -- ID 11 = Triads
 factionRankNames[11] = {
@@ -240,6 +254,8 @@ evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.1)
 factionWTDestination[11] = Vector3( 1912.89, 935.21, 10.6)
 factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.22), 0, 0}
 factionAirDropPoint[11] = Vector3(1878.07, 933.71, 10.67)
+factionNavigationpoint[11] = evilFactionInteriorEnter[11]
+
 -- General:
 factionWeaponDepotInfo = {
 	[1] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Brass Knuckles

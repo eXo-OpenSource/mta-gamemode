@@ -378,12 +378,12 @@ end
 function FactionState:Event_OnTicketAccept(cop)
 	if client then
 		if client:getMoney() >=  TICKET_PRICE*client:getWanteds()+500  then
-			if client:getWanteds() == 1 then
+			if client:getWanteds() <= 3 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
 					self.m_BankAccountServer:transferMoney(cop:getFaction(),  TICKET_PRICE*client:getWanteds()+500 , "Ticket", "Faction", "Ticket")
 				end
-				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
+				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde(n) %s Wanted(s) erlassen!", client, client:getWanteds()))
 				client:transferMoney(self.m_BankAccountServer,  TICKET_PRICE*client:getWanteds()+500 , "[SAPD] Kautionsticket", "Faction", "Ticket")
 				client:setWanteds(0)
 			end
@@ -1289,6 +1289,7 @@ function FactionState:freePlayer(player, prisonBreak)
 end
 
 function FactionState:Event_FactionRearm()
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
 		client:triggerEvent("showFactionWeaponShopGUI")
@@ -1309,6 +1310,11 @@ function FactionState:Event_FactionRearm()
 	end
 end
 
+function FactionState:isPlayerInDutyPickup(player)
+	if not player.m_CurrentDutyPickup then return false end
+	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
+end
+
 function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
@@ -1317,7 +1323,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	end
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
+		if self:isPlayerInDutyPickup(client) or wasted then
 			if client:isFactionDuty() then
 				if wasted then
 					--client:takeAllWeapons()
@@ -1371,6 +1377,7 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 	if player then
 		client = player
 	end
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() or ignoreDutyCheck then
