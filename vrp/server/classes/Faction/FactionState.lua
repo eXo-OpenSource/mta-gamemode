@@ -378,12 +378,12 @@ end
 function FactionState:Event_OnTicketAccept(cop)
 	if client then
 		if client:getMoney() >=  TICKET_PRICE*client:getWanteds()+500  then
-			if client:getWanteds() == 1 then
+			if client:getWanteds() <= 3 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
 					self.m_BankAccountServer:transferMoney(cop:getFaction(),  TICKET_PRICE*client:getWanteds()+500 , "Ticket", "Faction", "Ticket")
 				end
-				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
+				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde(n) %s Wanted(s) erlassen!", client, client:getWanteds()))
 				client:transferMoney(self.m_BankAccountServer,  TICKET_PRICE*client:getWanteds()+500 , "[SAPD] Kautionsticket", "Faction", "Ticket")
 				client:setWanteds(0)
 			end
