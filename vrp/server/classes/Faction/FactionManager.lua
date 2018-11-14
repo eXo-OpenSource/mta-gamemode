@@ -453,8 +453,8 @@ function FactionManager:Event_factionRespawnVehicles()
 end
 
 function FactionManager:Event_getFactions()
-	for id, faction in pairs(FactionManager.Map) do
-		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor())
+	for id, faction in pairs(FactionManager.Map) do -- send the wt destination as point where players can navigate to
+		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()]))
 	end
 end
 

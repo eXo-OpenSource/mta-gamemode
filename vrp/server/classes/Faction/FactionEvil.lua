@@ -148,7 +148,7 @@ function FactionEvil:sendWarning(text, header, withOffDuty, pos, ...)
 end
 
 function FactionEvil:onWeaponPedClicked(button, state, player)
-	if button == "left" and state == "down" then
+	if button == "left" and state == "up" then
 		if player:getFaction() and (player:getFaction() == source.Faction or source.Faction:checkAlliancePermission(player:getFaction(), "weapons")) then
 			player.m_CurrentDutyPickup = source
 			player:getFaction():updateDutyGUI(player)
@@ -159,7 +159,7 @@ function FactionEvil:onWeaponPedClicked(button, state, player)
 end
 
 function FactionEvil:onDepotClicked(button, state, player)
-	if button == "left" and state == "down" then
+	if button == "left" and state == "up" then
 		if player:getFaction() and player:getFaction() == source.Faction then
 			player:getFaction():getDepot():showItemDepot(player)
 		else
@@ -339,8 +339,11 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
 		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	end
+end
 
-
+function FactionEvil:isPlayerInDutyPickup(player)
+	if not player.m_CurrentDutyPickup then return false end
+	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
 function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
@@ -363,6 +366,7 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 end
 
 function FactionEvil:Event_FactionRearm()
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
 		client:triggerEvent("showFactionWeaponShopGUI")
@@ -384,6 +388,7 @@ function FactionEvil:Event_storageWeapons(player)
 	if player and isElement(player) then
 		client = player
 	end
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	local faction = client:getFaction()
 	if faction and faction:isEvilFaction() then
 		if client:isFactionDuty() then
