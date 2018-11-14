@@ -1686,6 +1686,7 @@
 	<vrpfile src="files/images/Textures/Cityhall/tex16.jpg"/>
 
 	<vrpfile src="files/images/Textures/Sewers/tex1.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/tex2.jpg"/>	
 
 
 	<!-- Inventory Images -->
@@ -1934,7 +1935,7 @@
 	<vrpfile src="files/audio/jobs/pickaxe4.mp3"/>
 
 	<vrpfile src="files/audio/Ambient/sewer.mp3" />
-	<vrpfile src="files/audio/Ambient/bruja_sewers.mp3" />
+	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
