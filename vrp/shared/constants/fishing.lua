@@ -1,9 +1,20 @@
 --MAX_FISHING_LEVEL = 15 --> main.lua
 
+FISHING_EQUIPMENT = {
+	["Kühlbox"] = {level = 8},
+	["Kühltasche"] = {level = 4},
+	["Kleine Kühltasche"] = {level = 0},
+
+	["Bambusstange"] = {level = 0},
+	["Angelrute"] = {level = 5},
+	["Profi Angelrute"] = {level = 7},
+	["Legendäre Angelrute"] = {level = 13},
+}
+
 FISHING_BAGS = {
-	["Kühlbox"] = {max = 65, level = 8},
-	["Kühltasche"] = {max = 25, level = 4},
-	["Kleine Kühltasche"] = {max = 15, level = 0},
+	["Kühlbox"] = {max = 65},
+	["Kühltasche"] = {max = 25},
+	["Kleine Kühltasche"] = {max = 15},
 }
 
 -- (level * 15)^2 // for i = 1, 15 do print(("[%s] = %s,"):format(i, math.floor((i*15)^(i>10 and 2.2 or 2)))) end
@@ -24,6 +35,9 @@ FISHING_LEVELS = {
 	[14] = 128493,
 	[15] = 149555,
 }
+
+FISHING_RODS = {"Bambusstange", "Angelrute", "Profi Angelrute", "Legendäre Angelrute"}
+FISHING_COOLING_BAGS = {"Kleine Kühltasche", "Kühltasche", "Kühlbox"}
 
 FISHING_MOTIONTYPE = {
 	MIXED = 0,

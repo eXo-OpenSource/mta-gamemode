@@ -295,19 +295,52 @@ inherit(Singleton, FishingRodGUI)
 
 addRemoteEvents{"showFishingRodGUI"}
 
-function FishingRodGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-150, screenHeight/2-75, 300, 150)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Angelrute", true, true, self)
+function FishingRodGUI:constructor(rodName)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 8)
+	self.m_Height = grid("y", 4)
 
-	--todo
-	-- FishingRod condition (if added)
-	-- Add baits?!
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Width/2, 300, 150)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, rodName, true, true, self)
+
+	GUIGridButton:new(1, 1, 4, 1, "Köder entfernen", self.m_Window)
 end
 
 addEventHandler("showFishingRodGUI", root,
 	function(...)
 		if not FishingRodGUI:isInstantiated() then
 			FishingRodGUI:new(...)
+		end
+	end
+)
+
+----------------------------------------------------------------------------------------------------------------------
+BaidSelectionGUI = inherit(GUIForm)
+inherit(Singleton, BaidSelectionGUI)
+
+addRemoteEvents{"showBaidSelectionGUI"}
+
+function BaidSelectionGUI:constructor(fishingRods, baitAmount)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 10)
+	self.m_Height = grid("y", 5)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Köder (%s)", baitAmount), true, true, self)
+
+	local combobox = GUIGridCombobox:new(1, 1, 6, 1, "Angelrute auswählen", window)
+
+	for _, fishingRod in pairs(fishingRods) do
+		combobox:addItem(fishingRod)
+	end
+
+	local button = GUIGridButton:new(7, 1, 3, 1, "Hinzufügen", window)
+end
+
+addEventHandler("showBaidSelectionGUI", root,
+	function(...)
+		if not BaidSelectionGUI:isInstantiated() then
+			BaidSelectionGUI:new(...)
 		end
 	end
 )

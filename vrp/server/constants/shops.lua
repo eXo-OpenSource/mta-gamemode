@@ -232,13 +232,16 @@ SHOP_ITEMS = {
 		["Cuba-Libre"] = 12
 	};
 	["Angel- / Outdoor-Shop"] = {
-		["Angelrute"] = 150,
+		["Bambusstange"] = 150,
+		["Angelrute"] = 15000,
+		["Profi Angelrute"] = 40000,
+		["Legendäre Angelrute"] = 120000,
 		["Kleine Kühltasche"] = 50,
 		["Kühltasche"] = 100,
 		["Kühlbox"] = 250,
 		["Motorcross-Helm"] = 2000,
 		["Radio"] = 1700,
-		--["Köder"] = 5,
+		["Köder"] = 5,
 	};
 	["Halloween Shop"] = {
 		["Kuheuter mit Pommes"] = 25,

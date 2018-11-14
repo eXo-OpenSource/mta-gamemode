@@ -49,7 +49,10 @@ function ItemManager:constructor()
 		["Rauchgranate"] = ItemSmokeGrenade;
 
 		["Wuerfel"] = ItemDice,
+		["Bambusstange"] = ItemFishing,
 		["Angelrute"] = ItemFishing,
+		["Profi Angelrute"] = ItemFishing,
+		["Legendäre Angelrute"] = ItemFishing,
 		["Kleine Kühltasche"] = ItemFishing,
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
