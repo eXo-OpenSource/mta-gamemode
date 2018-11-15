@@ -72,7 +72,7 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 			end
 		end
 
-		player:triggerEvent("showBaidSelectionGUI", fishingRods, baitAmount)
+		player:triggerEvent("showBaitSelectionGUI", fishingRods, baitAmount)
 		return
 	end
 end

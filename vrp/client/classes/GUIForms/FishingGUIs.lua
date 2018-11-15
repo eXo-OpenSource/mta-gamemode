@@ -315,12 +315,12 @@ addEventHandler("showFishingRodGUI", root,
 )
 
 ----------------------------------------------------------------------------------------------------------------------
-BaidSelectionGUI = inherit(GUIForm)
-inherit(Singleton, BaidSelectionGUI)
+BaitSelectionGUI = inherit(GUIForm)
+inherit(Singleton, BaitSelectionGUI)
 
-addRemoteEvents{"showBaidSelectionGUI"}
+addRemoteEvents{"showBaitSelectionGUI"}
 
-function BaidSelectionGUI:constructor(fishingRods, baitAmount)
+function BaitSelectionGUI:constructor(fishingRods, baitAmount)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 10)
 	self.m_Height = grid("y", 5)
@@ -337,10 +337,10 @@ function BaidSelectionGUI:constructor(fishingRods, baitAmount)
 	local button = GUIGridButton:new(7, 1, 3, 1, "Hinzufügen", window)
 end
 
-addEventHandler("showBaidSelectionGUI", root,
+addEventHandler("showBaitSelectionGUI", root,
 	function(...)
-		if not BaidSelectionGUI:isInstantiated() then
-			BaidSelectionGUI:new(...)
+		if not BaitSelectionGUI:isInstantiated() then
+			BaitSelectionGUI:new(...)
 		end
 	end
 )
