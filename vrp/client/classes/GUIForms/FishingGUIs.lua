@@ -277,7 +277,7 @@ function FishingPedGUI:constructor()
 	)
 	self:addItem(_"Statistiken", Color.Accent,
 		function()
-			triggerServerEvent("clientRequestFisherStatistics", localPlayer)
+			triggerServerEvent("clientRequestFishStatistics", localPlayer)
 			self:delete()
 		end
 	)
@@ -320,21 +320,30 @@ inherit(Singleton, BaitSelectionGUI)
 
 addRemoteEvents{"showBaitSelectionGUI"}
 
-function BaitSelectionGUI:constructor(fishingRods, baitAmount)
+function BaitSelectionGUI:constructor(fishingRods, baitName, baitAmount)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 10)
-	self.m_Height = grid("y", 5)
+	self.m_Height = grid("y", 2 + #fishingRods)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Köder (%s)", baitAmount), true, true, self)
-
-	local combobox = GUIGridCombobox:new(1, 1, 6, 1, "Angelrute auswählen", window)
+	self.m_Combobox = GUIGridCombobox:new(1, 1, 6, 1, "Angelrute auswählen", window)
 
 	for _, fishingRod in pairs(fishingRods) do
-		combobox:addItem(fishingRod)
+		local item = self.m_Combobox:addItem(fishingRod)
+		item.fishingRodName = fishingRod
 	end
 
 	local button = GUIGridButton:new(7, 1, 3, 1, "Hinzufügen", window)
+	button.onLeftClick =
+		function()
+			if not self.m_Combobox:getSelectedItem() then return end
+			local selectedFishingRod = self.m_Combobox:getSelectedItem().fishingRodName
+			if selectedFishingRod then
+				triggerServerEvent("clientUpdateFishingRodBait", localPlayer, selectedFishingRod, baitName)
+				self:delete()
+			end
+		end
 end
 
 addEventHandler("showBaitSelectionGUI", root,

@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFisherStatistics"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFishStatistics", "clientUpdateFishingRodBait", "clientDecreaseFishingEquipment"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
@@ -28,7 +28,9 @@ function Fishing:constructor()
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
 	addEventHandler("clientRequestFishTrading", root, bind(Fishing.onFishRequestTrading, self))
 	addEventHandler("clientSendFishTrading", root, bind(Fishing.clientSendFishTrading, self))
-	addEventHandler("clientRequestFisherStatistics", root, bind(Fishing.onFishRequestStatistics, self))
+	addEventHandler("clientRequestFishStatistics", root, bind(Fishing.onFishRequestStatistics, self))
+	addEventHandler("clientUpdateFishingRodBait", root, bind(Fishing.onUpdateFishingRodBait, self))
+	addEventHandler("clientDecreaseFishingEquipment", root, bind(Fishing.onDecreaseFishingEquipment, self))
 end
 
 function Fishing:destructor()
@@ -64,7 +66,7 @@ function Fishing:updateStatistics()
 	end
 end
 
-function Fishing:getFish(location, timeOfDay, weather)
+function Fishing:getFish(location, timeOfDay, weather, season)
 	local tmp = {}
 
 	for _, v in pairs(Fishing.Fish) do
@@ -86,7 +88,6 @@ function Fishing:getFish(location, timeOfDay, weather)
 		end
 
 		-- Check Season
-		local season = getCurrentSeason()
 		if type(v.Season) == "table" then
 			for _, value in pairs(v.Season) do
 				if value == season then
@@ -152,9 +153,9 @@ function Fishing:FishHit(location, castPower)
 
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
 	local weather = getWeather()
+	local season = getCurrentSeason()
 
-	local fish = self:getFish(location, time, weather)
-
+	local fish = self:getFish(location, time, weather, season)
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
 		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
@@ -392,7 +393,7 @@ function Fishing:updatePricing()
 	end
 end
 
-function Fishing:inventoryUse(player)
+function Fishing:inventoryUse(player, fishingRodName, bag, place)
 	if self.m_Players[player] then
 		local fishingRod = self.m_Players[player].fishingRod
 		if fishingRod then fishingRod:destroy() end
@@ -402,14 +403,29 @@ function Fishing:inventoryUse(player)
 		return
 	end
 
+	local baitName = self:checkBaits(player, fishingRodName, bag, place)
 	local fishingRod = createObject(1826, player.position)
 	exports.bone_attach:attachElementToBone(fishingRod, player, 12, -0.03, 0.02, 0.05, 180, 120, 0)
 
 	self.m_Players[player] = {
 		fishingRod = fishingRod,
+		fishingRodName = fishingRodName,
+		baitName = baitName,
 	}
 
-	player:triggerEvent("onFishingStart", fishingRod)
+	player:triggerEvent("onFishingStart", fishingRod, fishingRodName, baitName)
+end
+
+function Fishing:checkBaits(player, fishingRodName, bag, place)
+	if FISHING_RODS[fishingRodName].baitSlots > 0 then
+		local playerInventory = player:getInventory()
+		local fishingRodValue = playerInventory:getItemValueByBag(bag, place)
+		if fishingRodValue and FISHING_BAITS[fishingRodValue] and playerInventory:getItemAmount(fishingRodValue) > 0 then
+			return fishingRodValue
+		end
+	end
+
+	return false
 end
 
 function Fishing:onPlayerQuit()
@@ -421,6 +437,57 @@ end
 
 function Fishing:onFishRequestStatistics()
 	client:triggerEvent("openFisherStatisticsGUI", self.m_Statistics)
+end
+
+function Fishing:onUpdateFishingRodBait(fishingRod, baitName)
+	if not (fishingRod and baitName) then return end
+	self:addFishingRodBaits(client, fishingRod, baitName)
+end
+
+function Fishing:onDecreaseFishingEquipment(baitName)
+	if not self.m_Players[client] then return end
+	if self.m_Players[client].baitName ~= baitName then outputChatBox("INVALID decreasing equipment!") return end
+
+	local playerInventory = client:getInventory()
+	local fishingRodName = self.m_Players[client].fishingRodName
+	local baitName = self.m_Players[client].baitName
+
+	if FISHING_BAITS[baitName] then
+		local itemAmount = playerInventory:getItemAmount(baitName)
+		if itemAmount > 0 then
+			playerInventory:removeItem(baitName, 1)
+
+			if itemAmount == 1 then -- To avaid a stupid calculation lel 1337
+				client:sendWarning(_("Das ist der letzte %s!", client, baitName))
+				client:triggerEvent("onFishingUpdateBaits", baitName, 0) -- Tell now. It will just used for the next throw.
+			end
+		else
+			self:removeFishingRodBaits(client, fishingRodName)
+		end
+	end
+end
+
+function Fishing:addFishingRodBaits(player, fishingRod, baitName)
+	local playerInventory = player:getInventory()
+	if playerInventory:getItemAmount(fishingRod) > 0 and playerInventory:getItemAmount(baitName) > 0 then
+		local place = playerInventory:getItemPlacesByName(fishingRod)[1][1]
+		playerInventory:setItemValueByBag("Items", place, baitName)
+		player:sendInfo(_("%s an %s angebracht!", player, baitName, fishingRod))
+
+		if self.m_Players[player] then
+			self.m_Players[player].baitName = baitName
+			client:triggerEvent("onFishingUpdateBaits", baitName, 1)
+		end
+	end
+end
+
+function Fishing:removeFishingRodBaits(player, fishingRod)
+	local playerInventory = player:getInventory()
+	if playerInventory:getItemAmount(fishingRod) > 0 then
+		local place = playerInventory:getItemPlacesByName(fishingRod)[1][1]
+		playerInventory:setItemValueByBag("Items", place, "")
+		self.m_Players[player].baitName = false
+	end
 end
 
 function Fishing:createDesertWater()

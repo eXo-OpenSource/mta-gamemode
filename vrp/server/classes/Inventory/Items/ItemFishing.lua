@@ -26,7 +26,7 @@ function ItemFishing:canBuy(player, itemName)
 end
 
 function ItemFishing:isFishingRod(itemName)
-	for _, fishingRod in pairs(FISHING_RODS) do
+	for fishingRod in pairs(FISHING_RODS) do
 		if fishingRod == itemName then
 			return true
 		end
@@ -42,13 +42,15 @@ function ItemFishing:isCoolingBag(itemName)
 end
 
 function ItemFishing:use(player, itemId, bag, place, itemName)
+	local playerInventory = player:getInventory()
+
 	if self:isFishingRod(itemName) then
-		Fishing:getSingleton():inventoryUse(player)
+		Fishing:getSingleton():inventoryUse(player, itemName, bag, place)
 		return
 	end
 
 	if self:isCoolingBag(itemName) then
-		local value = fromJSON(player:getInventory():getItemValueByBag("Items", place))
+		local value = fromJSON(playerInventory:getItemValueByBag(bag, place))
 
 		if value then
 			for _, v in pairs(value) do
@@ -62,17 +64,16 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 	end
 
 	if itemName == "Köder" then
-		local playerInventory = player:getInventory()
 		local baitAmount = playerInventory:getItemAmount("Köder")
 		local fishingRods = {}
 
-		for _, fishingRod in pairs(FISHING_RODS) do
-			if playerInventory:getItemAmount(fishingRod) > 0 then
+		for fishingRod, fishingRodData in pairs(FISHING_RODS) do
+			if fishingRodData.baitSlots > 0 and playerInventory:getItemAmount(fishingRod) > 0 then
 				table.insert(fishingRods, fishingRod)
 			end
 		end
 
-		player:triggerEvent("showBaitSelectionGUI", fishingRods, baitAmount)
+		player:triggerEvent("showBaitSelectionGUI", fishingRods, itemName, baitAmount)
 		return
 	end
 end

@@ -7,13 +7,13 @@
 -- ****************************************************************************
 FishingRod = inherit(Singleton)
 
-function FishingRod:constructor(fishingRod)
+function FishingRod:constructor(fishingRod, fishingRodName, baitName)
 	self.FishingMap = FishingLocation:new()
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_minFishingBiteTime = 600 --Todo: Just for dev reasons! prev: 600
-	self.m_maxFishingBiteTime = 5000 --Todo: Just for dev reasons! prev: 30000
+	self.m_minFishingBiteTime = 600
+	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[baitName].biteTimeReduction - FISHING_RODS[fishingRodName].biteTimeReduction
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -22,10 +22,13 @@ function FishingRod:constructor(fishingRod)
 	self.m_Hit = false
 	self.m_MouseDown = false
 
+	outputChatBox("Max bite Time: " .. self.m_maxFishingBiteTime)
+
 	self:initAnimations()
 
-	self.m_FishingRod = fishingRod--createObject(1826, localPlayer.position)
-	--exports.bone_attach:attachElementToBone(self.m_FishingRod, localPlayer, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+	self.m_FishingRod = fishingRod
+	self.m_FishingRodName = fishingRodName
+	self.m_Bait = baitName
 
 	self.m_fishBite = bind(FishingRod.fishBite, self)
 	self.m_HandleClick = bind(FishingRod.handleClick, self)
@@ -77,6 +80,12 @@ function FishingRod:reset()
 	self.m_Hit = false
 	self.m_MouseDown = false
 	self.m_PowerProgress = 0
+end
+
+function FishingRod:updateBaits(baitName, baitAmount)
+	self.m_Bait = baitAmount > 0 and baitName or false
+	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[self.m_Bait].biteTimeReduction - FISHING_RODS[self.m_FishingRodName].biteTimeReduction
+	outputChatBox(self.m_maxFishingBiteTime)
 end
 
 function FishingRod:handleClick(_, state)
@@ -159,6 +168,10 @@ function FishingRod:cast()
 		createEffect("water_swim", fishingHookPosition)
 		self.Sound:play("cast")
 		self.Sound:play("waterplop")
+
+		if self.m_Bait then
+			triggerServerEvent("clientDecreaseFishingEquipment", localPlayer, self.m_Bait)
+		end
 	else
 		self.m_isCasting = true
 		self.Sound:play("dwop")
