@@ -22,7 +22,7 @@ function FishingRod:constructor(fishingRod, fishingRodName, baitName)
 	self.m_Hit = false
 	self.m_MouseDown = false
 
-	outputChatBox("Max bite Time: " .. self.m_maxFishingBiteTime)
+	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
 
 	self:initAnimations()
 
@@ -85,7 +85,7 @@ end
 function FishingRod:updateBaits(baitName, baitAmount)
 	self.m_Bait = baitAmount > 0 and baitName or false
 	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[self.m_Bait].biteTimeReduction - FISHING_RODS[self.m_FishingRodName].biteTimeReduction
-	outputChatBox(self.m_maxFishingBiteTime)
+	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
 end
 
 function FishingRod:handleClick(_, state)
@@ -205,7 +205,7 @@ function FishingRod:getFishingHookPosition()
 end
 
 function FishingRod:render()
-	if not self.m_FishingRod then return end
+	if not isElement(self.m_FishingRod) then return end
 
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 	local fishingHookPosition = self:getFishingHookPosition()

@@ -72,13 +72,13 @@ end
 addEventHandler("onFishingStop", root, Fishing.stop)
 
 function Fishing.BadCatch()
-	setTimer(
+	nextframe(
 		function()
 			if FishingRod:isInstantiated() then
 				FishingRod:getSingleton():reset()
 				FishingRod:getSingleton().Sound:play("caught")
 			end
-		end, 50, 1
+		end
 	)
 end
 addEventHandler("onFishingBadCatch", root, Fishing.BadCatch)

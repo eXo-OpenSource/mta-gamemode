@@ -10,7 +10,7 @@ addRemoteEvents{"fishingBobberBar"}
 
 local screenWidth, screenHeight = guiGetScreenSize()
 
-function BobberBar:constructor(difficulty, behavior)
+function BobberBar:constructor(fishData, fishingRodName, baitName)
 	self.m_FisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
 
 	self.m_Size = Vector2(58, screenHeight/2)
@@ -20,7 +20,16 @@ function BobberBar:constructor(difficulty, behavior)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = (64 + self.m_FisherLevel*4 - difficulty/10) / 1080 * screenHeight
+	outputChatBox("BAIT NAME: " .. tostring(baitName))
+	--self.m_Bait = baitName
+	--self.m_FishingRod = fishingRodName
+	self.m_Difficulty = math.max(MIN_FISHING_DIFFICULTY, fishData.Difficulty - FISHING_BAITS[baitName].difficultyReduction - FISHING_RODS[fishingRodName].difficultyReduction)
+	self.m_MotionType = self:getMotionType(fishData.Behavior)
+
+	outputChatBox("Normal Difficulty: " .. fishData.Difficulty)
+	outputChatBox("Reducted Difficulty: " .. self.m_Difficulty)
+
+	self.m_BobberBarHeight = (64 + self.m_FisherLevel*4 - self.m_Difficulty/10) / 1080 * screenHeight
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 
@@ -28,9 +37,6 @@ function BobberBar:constructor(difficulty, behavior)
 	self.POSITION_DOWN = self.m_Size.y - 5
 	self.HEIGHT = self.POSITION_DOWN - self.POSITION_UP
 	self.MAX_PUSHBACK_SPEED = 6
-
-	self.m_MotionType = self:getMotionType(behavior)
-	self.m_Difficulty = difficulty --self.m_MotionType == FISHING_MOTIONTYPE.DART and difficulty*2 or difficulty
 
 	self.m_BobberPosition = self.Random:get(0, 100) / 100 * self.HEIGHT
 	self.m_BobberSpeed = 0
@@ -271,7 +277,7 @@ function BobberBar:render()
 end
 
 addEventHandler("fishingBobberBar", root,
-	function(data)
-		BobberBar:new(data.Difficulty, data.Behavior)
+	function(...)
+		BobberBar:new(...)
 	end
 )

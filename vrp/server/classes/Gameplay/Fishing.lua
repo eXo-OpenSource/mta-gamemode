@@ -139,8 +139,12 @@ function Fishing:getFish(location, timeOfDay, weather, season)
 	end
 
 	local availableFishCount = #tmp
-	outputChatBox("count: " .. availableFishCount)
+
+	-- TODO DEV [[
+	--outputChatBox("count: " .. availableFishCount)
 	if true then return tmp[self.Random:get(1, availableFishCount)] end
+	--- TODO DEV ]]
+
 	if self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
 		return tmp[self.Random:get(1, availableFishCount)]
 	else
@@ -163,7 +167,10 @@ function Fishing:FishHit(location, castPower)
 		return
 	end
 
-	client:triggerEvent("fishingBobberBar", fish)
+	local fishingRodName = self.m_Players[client].fishingRodName
+	local bait = self:checkBait(client, location)
+
+	client:triggerEvent("fishingBobberBar", fish, fishingRodName, bait)
 
 	self.m_Players[client].lastFish = fish
 	self.m_Players[client].location = location
@@ -403,7 +410,7 @@ function Fishing:inventoryUse(player, fishingRodName, bag, place)
 		return
 	end
 
-	local baitName = self:checkBaits(player, fishingRodName, bag, place)
+	local baitName = self:isPlayerUsingBaits(player, fishingRodName, bag, place)
 	local fishingRod = createObject(1826, player.position)
 	exports.bone_attach:attachElementToBone(fishingRod, player, 12, -0.03, 0.02, 0.05, 180, 120, 0)
 
@@ -416,7 +423,7 @@ function Fishing:inventoryUse(player, fishingRodName, bag, place)
 	player:triggerEvent("onFishingStart", fishingRod, fishingRodName, baitName)
 end
 
-function Fishing:checkBaits(player, fishingRodName, bag, place)
+function Fishing:isPlayerUsingBaits(player, fishingRodName, bag, place)
 	if FISHING_RODS[fishingRodName].baitSlots > 0 then
 		local playerInventory = player:getInventory()
 		local fishingRodValue = playerInventory:getItemValueByBag(bag, place)
@@ -439,6 +446,24 @@ function Fishing:onFishRequestStatistics()
 	client:triggerEvent("openFisherStatisticsGUI", self.m_Statistics)
 end
 
+function Fishing:checkBait(player, location)
+	local lastBait = self.m_Players[player].lastBait
+	local baitName = self.m_Players[player].baitName
+
+	if not (lastBait or baitName) then return false end
+
+	self.m_Players[player].lastBait = nil
+	local checkBait = lastBait and lastBait or baitName
+
+	for _, baitLocation in pairs(FISHING_BAITS[checkBait].location) do
+		if baitLocation == location then
+			return checkBait
+		end
+	end
+
+	return false
+end
+
 function Fishing:onUpdateFishingRodBait(fishingRod, baitName)
 	if not (fishingRod and baitName) then return end
 	self:addFishingRodBaits(client, fishingRod, baitName)
@@ -448,9 +473,13 @@ function Fishing:onDecreaseFishingEquipment(baitName)
 	if not self.m_Players[client] then return end
 	if self.m_Players[client].baitName ~= baitName then outputChatBox("INVALID decreasing equipment!") return end
 
+	outputDebugString("onDecreaseFishingEquipment")
+
 	local playerInventory = client:getInventory()
 	local fishingRodName = self.m_Players[client].fishingRodName
 	local baitName = self.m_Players[client].baitName
+
+	self.m_Players[client].lastBait = nil
 
 	if FISHING_BAITS[baitName] then
 		local itemAmount = playerInventory:getItemAmount(baitName)
@@ -460,9 +489,9 @@ function Fishing:onDecreaseFishingEquipment(baitName)
 			if itemAmount == 1 then -- To avaid a stupid calculation lel 1337
 				client:sendWarning(_("Das ist der letzte %s!", client, baitName))
 				client:triggerEvent("onFishingUpdateBaits", baitName, 0) -- Tell now. It will just used for the next throw.
+				self:removeFishingRodBaits(client, fishingRodName)
+				self.m_Players[client].lastBait = baitName
 			end
-		else
-			self:removeFishingRodBaits(client, fishingRodName)
 		end
 	end
 end
@@ -476,6 +505,7 @@ function Fishing:addFishingRodBaits(player, fishingRod, baitName)
 
 		if self.m_Players[player] then
 			self.m_Players[player].baitName = baitName
+			self.m_Players[player].lastBait = nil
 			client:triggerEvent("onFishingUpdateBaits", baitName, 1)
 		end
 	end

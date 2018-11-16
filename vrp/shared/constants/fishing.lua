@@ -1,4 +1,6 @@
 --MAX_FISHING_LEVEL = 15 --> main.lua
+MIN_FISHING_DIFFICULTY = 15
+MAX_FISHING_DIFFUCULTY = 150
 
 FISHING_EQUIPMENT = {
 	["Kühlbox"] = {level = 8},
@@ -6,7 +8,7 @@ FISHING_EQUIPMENT = {
 	["Kleine Kühltasche"] = {level = 0},
 
 	["Bambusstange"] = {level = 0},
-	["Angelrute"] = {level = 5},
+	["Angelrute"] = {level = 3},
 	["Profi Angelrute"] = {level = 7},
 	["Legendäre Angelrute"] = {level = 13},
 }
