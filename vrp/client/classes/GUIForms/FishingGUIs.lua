@@ -295,15 +295,52 @@ inherit(Singleton, FishingRodGUI)
 
 addRemoteEvents{"showFishingRodGUI"}
 
-function FishingRodGUI:constructor(rodName)
+function FishingRodGUI:constructor(fishingRodName, equipments)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 8)
-	self.m_Height = grid("y", 4)
+	self.m_Height = grid("y", 3)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Width/2, 300, 150)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, rodName, true, true, self)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, fishingRodName, true, true, self)
+	local infoLabel = GUIGridLabel:new(1, 3, 8, 1, "", window):setFont(VRPFont(22)):setFontSize(1):setAlign("center", "center")
 
-	GUIGridButton:new(1, 1, 4, 1, "Köder entfernen", self.m_Window)
+	for i, equipment in ipairs(equipments) do
+		local slot = GUIGridRectangle:new((i-1)*2+1, 1, 2, 2, Inventory.Color.ItemBackground, window)
+
+		if equipment then
+			local itemIcon = Inventory:getSingleton():getItemData()[equipment].Icon
+			local itemAmount = Inventory:getSingleton():getItemAmount(equipment)
+			local amountText = itemAmount > 1 and itemAmount or ""
+			local textWidth = VRPTextWidth(amountText, 22) + 10
+
+			GUIImage:new(5, 5, slot.m_Width - 10, slot.m_Height - 10, "files/images/Inventory/items/" .. itemIcon, slot)
+
+			if itemAmount > 1 then
+				GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-15, textWidth, 15, Color.Background, slot)
+				GUILabel:new(0, slot.m_Height - 15, slot.m_Width - 5, 15, amountText, slot):setAlign("right", "center"):setFont(VRPFont(22)):setFontSize(1):setColor(Color.Orange)
+			end
+
+			slot.onHover =
+				function()
+					slot:setColor(Inventory.Color.ItemBackgroundHover)
+					infoLabel:setText(equipment)
+				end
+
+			slot.onUnhover =
+				function()
+					slot:setColor(Inventory.Color.ItemBackground)
+					infoLabel:setText("")
+				end
+
+			slot.onLeftClick =
+				function()
+					triggerServerEvent("clientRemoveFishingRodEquipment", localPlayer, fishingRodName, equipment)
+					self:delete()
+				end
+		end
+	end
+
+
 end
 
 addEventHandler("showFishingRodGUI", root,
@@ -340,7 +377,7 @@ function BaitSelectionGUI:constructor(fishingRods, baitName, baitAmount)
 			if not self.m_Combobox:getSelectedItem() then return end
 			local selectedFishingRod = self.m_Combobox:getSelectedItem().fishingRodName
 			if selectedFishingRod then
-				triggerServerEvent("clientUpdateFishingRodBait", localPlayer, selectedFishingRod, baitName)
+				triggerServerEvent("clientAddFishingRodEquipment", localPlayer, selectedFishingRod, baitName)
 				self:delete()
 			end
 		end

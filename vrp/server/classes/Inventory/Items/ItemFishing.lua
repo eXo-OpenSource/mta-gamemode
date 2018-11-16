@@ -73,20 +73,22 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 			end
 		end
 
+		player:triggerEvent("closeInventory")
 		player:triggerEvent("showBaitSelectionGUI", fishingRods, itemName, baitAmount)
 		return
 	end
 end
 
 function ItemFishing:useSecondary(player, itemId, bag, place, itemName)
-	if itemName == "Bambusstange" then
-		player:sendError("Diese Angel bietet keine Interaktion!")
-		return
-	end
+	if not FISHING_RODS[itemName] then return end
 
-	if itemName == "Angelrute" or itemName == "Profi Angelrute" then
+	if FISHING_RODS[itemName].baitSlots > 0 then
+		local fishingRodEquipments = Fishing:getSingleton():getFishingRodEquipments(player, itemName)
+
 		player:triggerEvent("closeInventory")
-		player:triggerEvent("showFishingRodGUI", itemName)
+		player:triggerEvent("showFishingRodGUI", itemName, {fishingRodEquipments["bait"], fishingRodEquipments["accessories"]})
 		return
+	else
+		player:sendError("Diese Angel bietet keine Interaktion!")
 	end
 end

@@ -2,15 +2,27 @@
 MIN_FISHING_DIFFICULTY = 15
 MAX_FISHING_DIFFUCULTY = 150
 
+FISHING_INVENTORY_BAG = "Items"
+
 FISHING_EQUIPMENT = {
+	-- Coolingbags
 	["Kühlbox"] = {level = 8},
 	["Kühltasche"] = {level = 4},
 	["Kleine Kühltasche"] = {level = 0},
 
+	-- Fishingrods
 	["Bambusstange"] = {level = 0},
 	["Angelrute"] = {level = 3},
 	["Profi Angelrute"] = {level = 7},
 	["Legendäre Angelrute"] = {level = 13},
+
+	-- Baits
+	["Köder"] = {level = 3},
+	["Leuchtköder"] = {level = 5},
+	["Pilkerköder"] = {level = 11},
+
+	-- Accessories
+	-- TODO
 }
 
 FISHING_BAGS = {
