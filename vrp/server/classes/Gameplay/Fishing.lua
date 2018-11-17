@@ -68,7 +68,7 @@ function Fishing:updateStatistics()
 	end
 end
 
-function Fishing:getFish(location, timeOfDay, weather, season)
+function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait)
 	local tmp = {}
 
 	for _, v in pairs(Fishing.Fish) do
@@ -77,6 +77,8 @@ function Fishing:getFish(location, timeOfDay, weather, season)
 		local checkWeather = false
 		local checkSeason = false
 		local checkEvent = false
+		local checkPlayerLevel = false
+		local checkBait = false
 
 		-- Check Location
 		if type(v.Location) == "table" then
@@ -124,6 +126,21 @@ function Fishing:getFish(location, timeOfDay, weather, season)
 			end
 		end
 
+		-- Check player level
+		if v.MinLevel == 0 then
+			checkPlayerLevel = true
+		elseif playerLevel > v.MinLevel then
+			checkPlayerLevel = true
+		end
+
+		-- Check bait
+		if v.NeedBait == 0 then
+			checkBait = true
+		elseif v.NeedBait == 1 and bait then
+			checkBait = true
+		end
+
+		-- Check special event fish
 		if v.Event == 0 then
 			checkEvent = true
 		elseif v.Event == FISHING_EVENT_ID.EASTER and EVENT_EASTER then
@@ -135,7 +152,7 @@ function Fishing:getFish(location, timeOfDay, weather, season)
 		end
 
 		-- Check all
-		if checkLocation and checkTime and checkWeather and checkSeason and checkEvent then
+		if checkLocation and checkTime and checkWeather and checkSeason and checkEvent and checkPlayerLevel and checkBait then
 			table.insert(tmp, v)
 		end
 	end
@@ -160,17 +177,17 @@ function Fishing:FishHit(location, castPower)
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
 	local weather = getWeather()
 	local season = getCurrentSeason()
+	local playerLevel = client:getPrivateSync("FishingLevel")
+	local fishingRodName = self.m_Players[client].fishingRodName
+	local bait = self:checkBait(client, location)
 
-	local fish = self:getFish(location, time, weather, season)
+	local fish = self:getFish(location, time, weather, season, playerLevel, bait)
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
 		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
 		client:meChat(true, ("hat %s geangelt!"):format(randomMessage))
 		return
 	end
-
-	local fishingRodName = self.m_Players[client].fishingRodName
-	local bait = self:checkBait(client, location)
 
 	client:triggerEvent("fishingBobberBar", fish, fishingRodName, bait)
 
