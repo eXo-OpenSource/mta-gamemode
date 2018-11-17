@@ -1727,10 +1727,15 @@
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
 	<vrpfile src="files/images/Inventory/items/Items/NagelBand.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Bamboorod.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Fishingrod.png" />
+	<vrpfile src="files/images/Inventory/items/Items/ProFishingrod.png" />
+	<vrpfile src="files/images/Inventory/items/Items/LegendaryFishingrod.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Coolbag.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Coolbox.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Glowingbait.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Pilkerbait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
