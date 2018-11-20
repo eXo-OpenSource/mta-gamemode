@@ -152,11 +152,10 @@ factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
 factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
 factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[6] = Vector3(849.93, -1699.49, 13.55)
-factionWTDestination[6] = Vector3(  917.71, -1705.45, 12.6)
-factionSpawnpoint[6] = {Vector3(877.38, -1709.13, 13.54), 0, 0}
+evilFactionInteriorEnter[6] = Vector3(1419.71, -1328.59, 13.56)
+factionWTDestination[6] = Vector3(1454.97, -1329.80, 12.68)
+factionSpawnpoint[6] = {Vector3(1418.66, -1316.93, 13.55), 0, 0}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
-
 -- ID 7 = Grove
 factionRankNames[7] = {
 [0] = "Crackhead",
@@ -238,22 +237,21 @@ factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
 -- ID 11 = Triads
 factionRankNames[11] = {
-[0] = "Cho Hai",
-[1] = "Pak Tsz Sin",
-[2] = "Hung Kwan",
-[3] = "Heung Chu",
-[4] = "Sin Fung",
-[5] = "Fu Shan Chu",
-[6] = "Shan Chu"
+[0] = "Diablo",
+[1] = "Reciente",
+[2] = "Halcón",
+[3] = "Sicario ",
+[4] = "Consejo",
+[5] = "Secretario",
+[6] = "Patrón"
 }
-factionColors[11] = {["r"] = 0,["g"] = 104,["b"] = 165}
+factionColors[11] = {["r"] = 0,["g"] = 19,["b"] = 48}
 factionCarColors[11] = {["r"] = 0,["g"] =  0,["b"] = 20, ["r1"] = 0,["g1"] = 0,["b1"] = 20}
-factionSkins[11] = {[117]=true, [118]=true, [120]=true, [122]=true, [123]=true, [141]=true, [169]=true,[294]=true, [49] = true, [186] = true}
+factionSkins[11] = {[47]=true, [48]=true, [30]=true, [43]=true, [152]=true, [44]=true}
 factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.1)
-factionWTDestination[11] = Vector3( 1912.89, 935.21, 10.6)
-factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.22), 0, 0}
-factionAirDropPoint[11] = Vector3(1878.07, 933.71, 10.67)
+evilFactionInteriorEnter[11] = Vector3(2494.06, -1464.34, 24.03)
+factionWTDestination[11] = Vector3( 2549.74, -1470.37, 22.95)
+factionSpawnpoint[11] = {Vector3(2509.91, -1468.94, 24.03), 0, 0}
 factionNavigationpoint[11] = evilFactionInteriorEnter[11]
 
 -- General:
