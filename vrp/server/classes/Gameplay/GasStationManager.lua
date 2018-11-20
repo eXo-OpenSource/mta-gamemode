@@ -449,6 +449,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	{
 		name = "Yakuza",
 		stations = {
 			{Vector3(1407.790, -1445.360, 8.178), 90, 1},
