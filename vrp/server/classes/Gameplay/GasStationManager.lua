@@ -454,7 +454,7 @@ GAS_STATIONS = {
 		stations = {
 			{Vector3(1407.790, -1445.360, 8.178), 90, 1},
 		},
-		accessible =  {1, FactionStaticId.Yakuza},
+		accessible =  {1, FactionStaticId.YAKUZA},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},

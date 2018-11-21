@@ -230,8 +230,8 @@ function FactionEvil:loadYakGates(factionId)
 	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
 	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
 	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
-	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.322))
-	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227, -0.322 ))
+	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.422))
+	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
 
 end
 

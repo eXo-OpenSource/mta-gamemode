@@ -150,12 +150,13 @@ factionRankNames[6] = {
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
-factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true, [196]=true}
+factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true, [169]=true,[120]=true}
 factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3(1419.71, -1328.59, 13.56)
 factionWTDestination[6] = Vector3(1454.97, -1329.80, 12.68)
 factionSpawnpoint[6] = {Vector3(1418.66, -1316.93, 13.55), 0, 0}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
+
 -- ID 7 = Grove
 factionRankNames[7] = {
 [0] = "Crackhead",
