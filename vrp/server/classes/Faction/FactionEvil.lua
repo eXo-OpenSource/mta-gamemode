@@ -13,7 +13,7 @@ function FactionEvil:constructor()
 	self.InteriorEnterExit = {}
 	self.m_WeaponPed = {}
 	self.m_ItemDepot = {}
-
+	self.m_EquipmentDepot = {}
 	self.m_Raids = {}
 
 	nextframe(function()
@@ -64,6 +64,14 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
 
+
+	self.m_EquipmentDepot[Id] = createObject(964, 2819.84, -1173.51, 1024.57, 0, 0, 0)
+	self.m_EquipmentDepot[Id]:setDimension(Id)
+	self.m_EquipmentDepot[Id]:setInterior(8)
+	self.m_EquipmentDepot[Id].Faction = faction
+	self.m_EquipmentDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	addEventHandler("onElementClicked", self.m_EquipmentDepot[Id], bind(self.onEquipmentDepotClicked, self))
+
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),
 		createObject(348, 2813.6001, -1166.8, 1025.64, 90, 0, 332),
@@ -94,6 +102,7 @@ function FactionEvil:createInterior(Id, faction)
 			faction:setSafe(v)
 		end
 	end
+
 end
 
 function FactionEvil:getFactions()
@@ -169,6 +178,46 @@ function FactionEvil:onDepotClicked(button, state, player)
 	end
 end
 
+function FactionEvil:onEquipmentDepotClicked(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction() == source.Faction then
+			local box = player:getPlayerAttachedObject()
+			if box and isElement(box) and box.m_Content then 
+				self:putOrderInDepot(player, box)
+			else
+				if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
+					setElementData(player, "isEquipmentGUIOpen", true, true) 
+					player.m_LastEquipmentDepot = source
+					player:getFaction():getDepot():showEquipmentDepot(player)
+				end
+			end
+		else
+			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
+		end
+	end
+end
+
+function FactionEvil:putOrderInDepot(player, box)
+	local content = box.m_Content 
+	local type, product, amount, price, id = unpack(box.m_Content)
+	local depot = player:getFaction():getDepot()
+	if type == "Waffe" then
+		if id then
+			depot:addWeaponD(id,amount)
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+		end
+	elseif type == "Munition" then
+		if id then
+			depot:addMagazineD(id,amount)
+			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+		end
+	else 
+		depot:addEquipment(player, product, amount, true) 
+		player:getFaction():sendShortMessage(("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
+	end
+	box.m_Package:delete()
+end
+
 function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.3))
@@ -181,8 +230,8 @@ function FactionEvil:loadYakGates(factionId)
 	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
 	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
 	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
-	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.322))
-	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227, -0.322 ))
+	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.422))
+	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
 
 end
 
