@@ -48,6 +48,7 @@ function Fishing:loadFishDatas()
 	}
 
 	Fishing.Fish = sql:queryFetch("SELECT * FROM ??_fish_data", sql:getPrefix())
+	Fishing.Statistics = sql:queryFetch("SELECT * FROM ??_fish_statistics", sql:getPrefix())
 
 	for i, fish in pairs(Fishing.Fish) do
 		for key, value in pairs(fish) do
@@ -129,7 +130,7 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 		-- Check player level
 		if v.MinLevel == 0 then
 			checkPlayerLevel = true
-		elseif playerLevel > v.MinLevel then
+		elseif playerLevel >= v.MinLevel then
 			checkPlayerLevel = true
 		end
 
@@ -288,13 +289,15 @@ function Fishing:updatePlayerSkill(player, skill)
 end
 
 function Fishing:increaseFishCaughtCount(fishId)
-	Fishing.Fish[fishId].CaughtCount = Fishing.Fish[fishId].CaughtCount + 1
-	sql:queryExec("UPDATE ??_fish_data SET CaughtCount = ? WHERE Id = ?", sql:getPrefix(), Fishing.Fish[fishId].CaughtCount, fishId)
+	Fishing.Statistics[fishId].CaughtCount = Fishing.Statistics[fishId].CaughtCount + 1
+	--sql:queryExec("UPDATE ??_fish_data SET CaughtCount = ? WHERE Id = ?", sql:getPrefix(), Fishing.Fish[fishId].CaughtCount, fishId)
+	sql:queryExec("INSERT INTO ??_fish_statistics (FishId, CaughtCount, SoldCount) VALUES (?, 1, 0) ON DUPLICATE KEY UPDATE CaughtCount = CaughtCount + 1", sql:getPrefix(), fishId)
 end
 
 function Fishing:increaseFishSoldCount(fishId)
-	Fishing.Fish[fishId].SoldCount = Fishing.Fish[fishId].SoldCount + 1
-	sql:queryExec("UPDATE ??_fish_data SET SoldCount = ? WHERE Id = ?", sql:getPrefix(), Fishing.Fish[fishId].SoldCount, fishId)
+	Fishing.Statistics[fishId].SoldCount = Fishing.Statistics[fishId].SoldCount + 1
+	--sql:queryExec("UPDATE ??_fish_data SET SoldCount = ? WHERE Id = ?", sql:getPrefix(), Fishing.Fish[fishId].SoldCount, fishId)
+	sql:queryExec("INSERT INTO ??_fish_statistics (FishId, CaughtCount, SoldCount) VALUES (?, 0, 1) ON DUPLICATE KEY UPDATE SoldCount = SoldCount + 1", sql:getPrefix(), fishId)
 end
 
 function Fishing:onFishRequestPricing()
@@ -404,7 +407,7 @@ end
 function Fishing:updatePricing()
 	-- Create a sort table, otherwise we get trouble with Fish Ids
 	local sortTable = {}
-	for _, fish in pairs(Fishing.Fish) do
+	for _, fish in pairs(Fishing.Statistics) do
 		table.insert(sortTable, fish.SoldCount)
 	end
 
@@ -415,7 +418,7 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		fish.RareBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish + 1), 0)
+		fish.RareBonus = math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 
@@ -559,7 +562,6 @@ function Fishing:addFishingRodEquipment(player, fishingRodName, equipment)
 		return true
 	end
 end
-
 
 function Fishing:removeFishingRodEquipment(player, fishingRodName, equipment)
 	local playerInventory = player:getInventory()
