@@ -1,0 +1,19 @@
+<map edf:definitions="editor_main">
+	<object id="object (des_rockgp2_03) (1)" breakable="true" interior="0" alpha="255" model="16113" doublesided="false" scale="1" dimension="0" posX="81.5" posY="1499.7" posZ="2.7" rotX="0" rotY="14" rotZ="130"></object>
+	<object id="object (des_rockgp2_03) (2)" breakable="true" interior="0" alpha="255" model="16113" doublesided="false" scale="1" dimension="0" posX="66.4" posY="1467.9" posZ="9.2" rotX="0" rotY="13.997" rotZ="65.996"></object>
+	<object id="object (des_rockgp2_03) (3)" breakable="true" interior="0" alpha="255" model="16113" doublesided="false" scale="1" dimension="0" posX="89.6" posY="1465.8" posZ="-5.5" rotX="354.452" rotY="46.277" rotZ="91.768"></object>
+	<object id="object (des_rockgp2_14) (1)" breakable="true" interior="0" alpha="255" model="16667" doublesided="false" scale="1" dimension="0" posX="-63.6" posY="1500.1" posZ="11.2" rotX="0" rotY="0" rotZ="144"></object>
+	<object id="object (des_rockgp2_14) (2)" breakable="true" interior="0" alpha="255" model="16667" doublesided="false" scale="1" dimension="0" posX="-39.5" posY="1473.4" posZ="11.2" rotX="0" rotY="0" rotZ="321.998"></object>
+	<object id="object (des_rockgp2_14) (3)" breakable="true" interior="0" alpha="255" model="16667" doublesided="false" scale="1" dimension="0" posX="-58.6" posY="1495.6" posZ="6.4" rotX="0" rotY="0" rotZ="329.993"></object>
+	<object id="object (veg_palwee03) (1)" breakable="true" interior="0" alpha="255" model="619" doublesided="false" scale="1" dimension="0" posX="41" posY="1464" posZ="12.7" rotX="0" rotY="0" rotZ="270"></object>
+	<object id="object (veg_palwee03) (2)" breakable="true" interior="0" alpha="255" model="619" doublesided="false" scale="1" dimension="0" posX="42.6" posY="1463.7" posZ="12.7" rotX="0" rotY="0" rotZ="350"></object>
+	<object id="object (veg_palwee03) (3)" breakable="true" interior="0" alpha="255" model="619" doublesided="false" scale="1" dimension="0" posX="23.2" posY="1458.6" posZ="12.7" rotX="0" rotY="0" rotZ="209.997"></object>
+	<object id="object (veg_palwee03) (4)" breakable="true" interior="0" alpha="255" model="619" doublesided="false" scale="1" dimension="0" posX="7.7" posY="1460.7" posZ="10.9" rotX="0" rotY="0" rotZ="259.993"></object>
+	<object id="object (veg_palwee03) (5)" breakable="true" interior="0" alpha="255" model="619" doublesided="false" scale="1" dimension="0" posX="-13.3" posY="1462.6" posZ="10.9" rotX="0" rotY="0" rotZ="189.991"></object>
+	<object id="object (veg_palwee03) (6)" breakable="true" interior="0" alpha="255" model="619" doublesided="false" scale="1" dimension="0" posX="-17.1" posY="1463.3" posZ="10.9" rotX="0" rotY="0" rotZ="249.987"></object>
+	<object id="object (veg_palm03) (2)" breakable="true" interior="0" alpha="255" model="622" doublesided="false" scale="1" dimension="0" posX="-40.3" posY="1470.2" posZ="11.9" rotX="24" rotY="0" rotZ="10"></object>
+	<object id="object (veg_palm03) (3)" breakable="true" interior="0" alpha="255" model="622" doublesided="false" scale="1" dimension="0" posX="-40.3" posY="1469.8" posZ="4.4" rotX="24" rotY="0" rotZ="309.998"></object>
+	<object id="object (veg_palm03) (4)" breakable="true" interior="0" alpha="255" model="622" doublesided="false" scale="1" dimension="0" posX="86.6" posY="1513.1" posZ="7.7" rotX="24" rotY="0" rotZ="83.996"></object>
+	<object id="object (veg_palm03) (5)" breakable="true" interior="0" alpha="255" model="622" doublesided="false" scale="1" dimension="0" posX="86.59961" posY="1513.0996" posZ="7.7" rotX="24" rotY="0" rotZ="155.99"></object>
+	<object id="object (veg_palm03) (6)" breakable="true" interior="0" alpha="255" model="622" doublesided="false" scale="1" dimension="0" posX="-76.6" posY="1534.2" posZ="7.7" rotX="24" rotY="0" rotZ="265.989"></object>
+</map>
