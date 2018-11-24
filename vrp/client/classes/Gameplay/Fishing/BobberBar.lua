@@ -52,13 +52,17 @@ function BobberBar:constructor(fishData, fishingRodName, baitName)
 
 	self.m_Render = bind(BobberBar.render, self)
 	self.m_HandleClick = bind(BobberBar.handleClick, self)
+	self.m_toggleControls = bind(BobberBar.toggleControls, self)
 
-	toggleControl("fire", false)
+	self.m_toggleControls(true)
+
 	bindKey("mouse1", "both", self.m_HandleClick)
 	addEventHandler("onClientRender", root, self.m_Render)
 
 	self:setBobberPosition()
 	self.m_FadeAnimation:startAnimation(500, "OutQuad", 1)
+
+	NetworkMonitor:getSingleton():getHook():register(self.m_toggleControls)
 end
 
 function BobberBar:destructor()
@@ -71,6 +75,8 @@ function BobberBar:destructor()
 	if self.m_ProgressAnimation:isAnimationRendered() then delete(self.m_ProgressAnimation) end
 
 	if isTimer(self.m_ResetFishingRodTimer) then killTimer(self.m_ResetFishingRodTimer) end
+
+	NetworkMonitor:getSingleton():getHook():unregister(self.m_toggleControls)
 end
 
 function BobberBar:initAnimations()
@@ -111,6 +117,12 @@ function BobberBar:initAnimations()
 	self.m_BobberAnimation:callRenderTarget(false)
 	self.m_ProgressAnimation:callRenderTarget(false)
 	self.m_FadeAnimation:callRenderTarget(false)
+end
+
+function BobberBar:toggleControls(state)
+	if state then
+		toggleControl("fire", false)
+	end
 end
 
 function BobberBar:getMotionType(behavior)
