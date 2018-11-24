@@ -541,6 +541,8 @@ function Fishing:getFishingRodEquipments(player, fishingRodName)
 			else
 				equipements[valueName] = false
 			end
+		else
+			equipements[valueName] = false
 		end
 	end
 
