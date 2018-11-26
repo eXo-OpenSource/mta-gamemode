@@ -200,9 +200,10 @@ end
 
 function Fishing:FishCaught()
 	if not self.m_Players[client] then return end
+	local playerLevel = client:getPrivateSync("FishingLevel")
 	local tbl = self.m_Players[client]
 	local timeToCatch = getTickCount() - tbl.lastFishHit
-	local size = self:getFishSize(client, tbl.lastFish.Id, timeToCatch, tbl.castPower)
+	local size = self:getFishSize(playerLevel, tbl.lastFish.Id, timeToCatch, tbl.castPower)
 	local playerInventory = client:getInventory()
 	local allBagsFull = false
 
@@ -260,18 +261,19 @@ function Fishing:getFishNameFromId(fishId)
 	return Fishing.Fish[fishId].Name_DE
 end
 
-function Fishing:getFishSize(player, fishId, timeToCatch, castPower)
+function Fishing:getFishSize(playerLevel, fishId, timeToCatch, castPower)
 	local minFishSize = Fishing.Fish[fishId].Size[1]
 	local maxFishSize = Fishing.Fish[fishId].Size[2]
-	local playerLevel = player:getPrivateSync("FishingLevel")
+
+	-- Check for a legendary fish
+	if playerLevel >= LEGENDARY_MIN_LEVEL and self.Random:get(0, 200) <= playerLevel then
+		return maxFishSize -- Normally we don't reach the maximum size due to time to catch reduction
+	end
 
 	local fishSizeTimeReduction = timeToCatch/2500
-	local fishSizeLevelReduction = (10-playerLevel)*((maxFishSize-minFishSize)/self.Random:get(15, 25))
+	local fishSizeLevelReduction = (self.Random:get(15, 15 + self.Random:get(0, playerLevel)) - playerLevel)*((maxFishSize-minFishSize)/self.Random:get(15, 25))
 
-	local num = self.Random:get(1 + math.min(10, playerLevel/2), 6) / 5
-	local fishSizeMultiplicator = math.max(0, math.min(1, num*(1 + self.Random:get(-10, 10)/100)))
-
-	local fishSize = math.max(minFishSize, ((minFishSize + (maxFishSize - minFishSize) * fishSizeMultiplicator)-(fishSizeTimeReduction + fishSizeLevelReduction))*castPower)
+	local fishSize = math.max(minFishSize, (minFishSize + (maxFishSize - minFishSize) - (fishSizeTimeReduction + fishSizeLevelReduction))*castPower)
 
 	return math.floor(fishSize)
 end
@@ -316,7 +318,7 @@ function Fishing:onFishRequestTrading()
 			currentValue = fromJSON(currentValue) or {}
 
 			for _, v in pairs(currentValue) do
-				v.fishName = Fishing:getSingleton():getFishNameFromId(v.Id)
+				v.fishName = self:getFishNameFromId(v.Id)
 			end
 
 			table.insert(fishes, {name = bagName, content = currentValue})
@@ -335,7 +337,7 @@ function Fishing:clientSendFishTrading(list)
 		local fish = self:getFishInCoolingBag(item.fishId, item.fishSize)
 		if fish then
 			local default = Fishing.Fish[fish.Id].DefaultPrice
-			local qualityMultiplicator = fish.quality == 2 and 1.5 or (fish.quality == 1 and 1.25 or 1)
+			local qualityMultiplicator = fish.quality == 3 and 2 or (fish.quality == 2 and 1.5 or (fish.quality == 1 and 1.25 or 1))
 			local rareBonusMultiplicator = Fishing.Fish[fish.Id].RareBonus + 1
 
 			local fishIncome = default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
@@ -395,7 +397,9 @@ function Fishing:getFishQuality(fishId, size)
 	local maxFishSize = Fishing.Fish[fishId].Size[2]
 	local thirdSpan = (maxFishSize - minFishSize)/3
 
-	if size < minFishSize + thirdSpan then
+	if maxFishSize == size then
+		return 3 -- Legendary
+	elseif size < minFishSize + thirdSpan then
 		return 0
 	elseif size > maxFishSize - thirdSpan then
 		return 2

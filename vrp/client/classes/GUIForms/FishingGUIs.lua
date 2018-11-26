@@ -65,9 +65,9 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 			item.onLeftClick =
 				function()
 					self.m_FishNameLabel:setText(fish.fishName)
-					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or Color.Yellow))
+					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or (fish.quality == 2 and Color.Yellow or Color.Purple)))
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
-					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
+					self.m_QualityBonusLabel:setText(fish.quality == 3 and "100%" or (fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-")))
 					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
 					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].RareBonus*100))
 				end
@@ -114,7 +114,7 @@ function FishingTradeGUI:updateTotalPrice()
 	for _, item in pairs(self.m_SellList:getItems()) do
 		if item.fishId then
 			local default = self.m_FishTable[item.fishId].DefaultPrice
-			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
+			local qualityMultiplicator = item.fishQuality == 3 and 2 or (item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1))
 			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
 
 			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator

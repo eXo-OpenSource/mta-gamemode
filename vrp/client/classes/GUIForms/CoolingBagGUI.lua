@@ -11,7 +11,7 @@ inherit(Singleton, CoolingBagGUI)
 addRemoteEvents{"showCoolingBag"}
 
 function CoolingBagGUI:constructor(bagName, value)
-	GUIForm.constructor(self, screenWidth/2-150, screenHeight/2-200, 300, 400)
+	GUIForm.constructor(self, screenWidth/2-150, screenHeight/2-200, 350, 400)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, bagName, true, true, self)
 
 	self.m_Size = GUILabel:new(self.m_Width*0.02, 0, 50, 30, ("%s/%s"):format(value and #value or 0, FISHING_BAGS[bagName].max), self.m_Window)
@@ -25,7 +25,7 @@ function CoolingBagGUI:constructor(bagName, value)
 		table.sort(value, function(a, b) return a.quality == b.quality and a.size > b.size or a.quality > b.quality end)
 		for _, v in pairs(value) do
 			local item = self.m_GridList:addItem(v.fishName, v.size, (FontAwesomeSymbols.Star):rep(v.quality + 1))
-			item:setColumnFont(3, FontAwesome(20), 1):setColumnColor(3, v.quality == 0 and Color.Brown or (v.quality == 1 and Color.LightGrey or Color.Yellow))
+			item:setColumnFont(3, FontAwesome(20), 1):setColumnColor(3, v.quality == 0 and Color.Brown or (v.quality == 1 and Color.LightGrey or (v.quality == 2 and Color.Yellow or Color.Purple)))
 		end
 	end
 end
