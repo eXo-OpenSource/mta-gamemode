@@ -94,6 +94,7 @@ function BobberBar:initAnimations()
 					triggerServerEvent("clientFishCaught", localPlayer)
 				else
 					self.Sound:play("escape")
+					triggerServerEvent("clientFishEscape", localPlayer)
 				end
 
 				self.m_FadeAnimation:startAnimation(500, "OutQuad", 0)

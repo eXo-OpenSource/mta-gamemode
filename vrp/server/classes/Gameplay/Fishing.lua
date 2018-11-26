@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFishStatistics", "clientAddFishingRodEquipment", "clientRemoveFishingRodEquipment", "clientDecreaseFishingEquipment"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "clientFishEscape", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFishStatistics", "clientAddFishingRodEquipment", "clientRemoveFishingRodEquipment", "clientDecreaseFishingEquipment"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
@@ -25,6 +25,7 @@ function Fishing:constructor()
 	addEventHandler("onPlayerQuit", root, bind(Fishing.onPlayerQuit, self))
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
+	addEventHandler("clientFishEscape", root, bind(Fishing.FishEscape, self))
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
 	addEventHandler("clientRequestFishTrading", root, bind(Fishing.onFishRequestTrading, self))
 	addEventHandler("clientSendFishTrading", root, bind(Fishing.clientSendFishTrading, self))
@@ -187,6 +188,7 @@ function Fishing:FishHit(location, castPower)
 		client:triggerEvent("onFishingBadCatch")
 		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
 		client:meChat(true, ("hat %s geangelt!"):format(randomMessage))
+		client:increaseStatistics("FishBadCatch")
 		return
 	end
 
@@ -203,13 +205,17 @@ function Fishing:FishCaught()
 	local playerLevel = client:getPrivateSync("FishingLevel")
 	local tbl = self.m_Players[client]
 	local timeToCatch = getTickCount() - tbl.lastFishHit
-	local size = self:getFishSize(playerLevel, tbl.lastFish.Id, timeToCatch, tbl.castPower)
+	local size, isLegendary = self:getFishSize(playerLevel, tbl.lastFish.Id, timeToCatch, tbl.castPower)
 	local playerInventory = client:getInventory()
 	local allBagsFull = false
 
 	self:updatePlayerSkill(client, size)
 	client:addFishSpecies(tbl.lastFish.Id)
 	client:increaseStatistics("FishCaught")
+
+	if isLegendary then
+		client:increaseStatistics("LegendaryFishCaught")
+	end
 
 	if client:getFishSpeciesCaughtCount() >= #Fishing.Fish then
 		client:giveAchievement(95) -- Angelmeister
@@ -257,6 +263,12 @@ function Fishing:FishCaught()
 	client:sendError("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!")
 end
 
+function Fishing:FishEscape()
+	if not self.m_Players[client] then return end
+	client:meChat(true, "hat einen Fisch verloren!")
+	client:increaseStatistics("FishLost")
+end
+
 function Fishing:getFishNameFromId(fishId)
 	return Fishing.Fish[fishId].Name_DE
 end
@@ -267,7 +279,7 @@ function Fishing:getFishSize(playerLevel, fishId, timeToCatch, castPower)
 
 	-- Check for a legendary fish
 	if playerLevel >= LEGENDARY_MIN_LEVEL and self.Random:get(0, 200) <= playerLevel then
-		return maxFishSize -- Normally we don't reach the maximum size due to time to catch reduction
+		return maxFishSize, true -- Normally we don't reach the maximum size due to time to catch reduction
 	end
 
 	local fishSizeTimeReduction = timeToCatch/2500
