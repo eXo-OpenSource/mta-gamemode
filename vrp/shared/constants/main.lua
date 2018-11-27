@@ -24,10 +24,11 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false
-SNOW_SHADERS_ENABLED = false -- disable them during summer time
+EVENT_CHRISTMAS = true --quests, mostly
+EVENT_CHRISTMAS_MARKET = true -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
+FIREWORK_SHOP_ACTIVE = true -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
