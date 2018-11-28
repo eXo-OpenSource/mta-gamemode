@@ -130,10 +130,10 @@ function VehicleInteraction:getDoor()
     local min, minid = 10, 10 -- placeholders, no reason
     for type, id in pairs(self.m_ValidDoors) do
         local compPos
-        local x, y, z = self.m_lookAtVehicle:getComponentPosition(type, "world")
+        local x, y, z = getVehicleComponentPosition(self.m_lookAtVehicle, type, "world")
         if x then --check if there is a component
             local vx, vy, vz = getElementPosition(self.m_lookAtVehicle)
-            local x0, y0, z0, x1, y1, z1 = self.m_lookAtVehicle:getBoundingBox()
+            local x0, y0, z0, x1, y1, z1 = getElementBoundingBox(self.m_lookAtVehicle)
 
             if id == 0 then -- hood
                 compPos = self.m_lookAtVehicle.matrix.forward*y1 + Vector3(vx, vy, vz)

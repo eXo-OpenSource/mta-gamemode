@@ -668,6 +668,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+		addEventHandler("onPlayerQuit", admin, admin.m_SpectStop)
 		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
 		bindKey(admin, "space", "down", admin.m_SpectStop)
 

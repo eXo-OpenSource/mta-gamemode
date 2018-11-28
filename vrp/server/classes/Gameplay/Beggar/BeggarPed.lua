@@ -132,7 +132,7 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 	--give loot
 	self:createLootPickup()
 
-	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = vehicle.controller end
+	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = killer.controller end
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		-- Take karma
 		killer:takeKarma(3)
