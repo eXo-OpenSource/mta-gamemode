@@ -116,7 +116,6 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
-	["tuneVehicle"] = RANK.Administrator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -181,6 +180,7 @@ ADMIN_RANK_PERMISSION = {
 	["editVehicleOwnerType"] = RANK.Administrator,
 	["editVehicleOwnerID"] = RANK.Administrator,
 	["editVehicleTunings"] = RANK.Administrator,
+	["editVehicleHandling"] = RANK.Administrator, -- handling editor
 	["editVehicleTexture"] = RANK.Developer, --override textures without visiting the texture shop
 
 

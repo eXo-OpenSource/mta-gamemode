@@ -236,6 +236,17 @@ function VehicleELS.update(veh)
                             CoronaEffect.add(veh.m_ELSLights[name], "strobe", tblChanges.strobe)
                         end
                     end
+                    if tblChanges.blink ~= nil then
+                        if not tblChanges.blink or type(tblChanges.blink) ~= "table" then
+                            CoronaEffect.remove(veh.m_ELSLights[name])
+                        else
+                            if not CoronaEffect.getEffect(veh.m_ELSLights[name]) then
+                                if not tblChanges.blink[3] then tblChanges.blink[3] = 400 end
+                                if not tblChanges.blink[4] then tblChanges.blink[4] = 0 end
+                                CoronaEffect.add(veh.m_ELSLights[name], "blink", tblChanges.blink)
+                            end
+                        end
+                    end
                     if tblChanges.color ~= nil then
                         veh.m_ELSLights[name]:setColor(unpack(tblChanges.color))
                     end

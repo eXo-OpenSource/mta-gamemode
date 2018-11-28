@@ -20,12 +20,12 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	else
 		self:addItem(_("Marke: %s", element:getName())):setTextColor(Color.LightBlue)
 	end
-	if templateName ~= "" then 
+	--[[if templateName ~= "" then 
 		self:addItem(_("Fabrikat: %s ", templateName)):setTextColor(Color.LightBlue)
 	else 
 		self:addItem(_("Fabrikat: Standard")):setTextColor(Color.LightBlue)
-	end
-	self:addItem(_("Klasse: %s", element:getCategoryName())):setTextColor(Color.LightBlue)
+	end]]
+	--self:addItem(_("Klasse: %s", element:getCategoryName())):setTextColor(Color.LightBlue)
 	if not element:isBlown() then
 		if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
 			self:addItem(_("%sschließen", element:isLocked() and "Auf" or "Zu"),

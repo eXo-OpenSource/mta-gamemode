@@ -52,7 +52,7 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 		end
 	end
 
-	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["tuneVehicle"] then
+	--[[if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["editVehicleHandling"] then
 		self:addItem(_"Handling",
 			function()
 				if self:getElement() then
@@ -63,7 +63,7 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 				end
 			end
 		)
-	end
+	end]]
 
 	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["repairVehicle"] then
 		self:addItem(_"Reparieren",
