@@ -217,17 +217,27 @@ function Fishing:FishCaught()
 		client:increaseStatistics("LegendaryFishCaught")
 	end
 
-	if client:getFishSpeciesCaughtCount() >= #Fishing.Fish then
-		client:giveAchievement(95) -- Angelmeister
-	elseif client:getFishSpeciesCaughtCount() >= 24 then
+	if tbl.lastFish.Id == 37 then -- Blobfisch
+		client:giveAchievement(101) -- Hässlichster Fisch der Welt
+	end
+
+	local playerSpeciesCaughtCount = client:getFishSpeciesCaughtCount()
+	if playerSpeciesCaughtCount >= #Fishing.Fish then
+		client:giveAchievement(95) -- Legendärer Angler
+	elseif playerSpeciesCaughtCount >= 50 then
+		client:giveAchievement(102) -- Angelmeister
+	elseif playerSpeciesCaughtCount >= 24 then
 		client:giveAchievement(94) -- Alter Seemann
-	elseif client:getFishSpeciesCaughtCount() >= 10 then
+	elseif playerSpeciesCaughtCount >= 10 then
 		client:giveAchievement(93) -- Fischer
 	end
 
-	if client:getStatistics("FishCaught") >= 500 then
-		client:giveAchievement(97) -- Für Helene Fischer
-	elseif client:getStatistics("FishCaught") >= 150 then
+	local fishCaughtCount = client:getStatistics("FishCaught")
+	if fishCaughtCount >= 15000 then
+		client:giveAchievement(103) -- Auf die Fische!
+	elseif fishCaughtCount >= 500 then
+		client:giveAchievement(97) -- Für Helene Fischer (hidden)
+	elseif fishCaughtCount >= 150 then
 		client:giveAchievement(96) -- Angelgott
 	end
 
