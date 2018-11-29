@@ -196,6 +196,8 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
+		self:loadImportTXD("files/models/skins/snowman.txd", 260)
+		self:loadImportDFF("files/models/skins/snowman.dff", 260)
 	end
 
 	--Easter Event:

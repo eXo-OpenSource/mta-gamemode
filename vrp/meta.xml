@@ -2235,7 +2235,7 @@
 	<!-- Halloween Event End-->
 
 	<!-- Christmas Event Start-->
-	<!--<vrpfile src="files/models/objects/XmasTree1.txd" />
+	<vrpfile src="files/models/objects/XmasTree1.txd" />
 	<vrpfile src="files/models/objects/XmasTree1.dff" />
 	<vrpfile src="files/models/objects/XmasTree1.col" />
 	<vrpfile src="files/models/objects/FortuneWheel.txd" />
@@ -2243,7 +2243,11 @@
 	<vrpfile src="files/models/objects/FortuneWheel.col" />
 	<vrpfile src="files/models/objects/XmasBox.txd" />
 	<vrpfile src="files/models/objects/XmasBox.dff" />
-	<vrpfile src="files/models/objects/XmasBox.col" />-->
+	<vrpfile src="files/models/objects/XmasBox.col" />
+	<vrpfile src="files/models/skins/kobold.txd" />
+	<vrpfile src="files/models/skins/kobold.dff" />
+	<vrpfile src="files/models/skins/snowman.txd" />
+	<vrpfile src="files/models/skins/snowman.dff" />
 	<!-- Christmas Event End-->
 
 	<!--Skins-->
