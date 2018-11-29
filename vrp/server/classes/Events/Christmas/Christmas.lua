@@ -2,57 +2,59 @@ Christmas = inherit(Singleton)
 
 Christmas.ms_Bonus = {
 	{
-		["Text"] = "Schutzweste",
-		["Image"] = "Bonus_Vest.png",
-		["Packages"] = 0,
+		["Text"] = "Radio",
+		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Packages"] = 1,
 		["CandyCane"] = 5,
-		["Type"] = "Special"
+		["Type"] = "Item",
+		["ItemName"] = "Radio",
+		["ItemAmount"] = 1
 	},
 	{
 		["Text"] = "250g Weed",
 		["Image"] = "Bonus_Weed.png",
-		["Packages"] = 1,
-		["CandyCane"] = 5,
+		["Packages"] = 3,
+		["CandyCane"] = 7,
 		["Type"] = "Item",
 		["ItemName"] = "Weed",
 		["ItemAmount"] = 250
 	},
 	{
-		["Text"] = "Dildo",
-		["Image"] = "Bonus_Dildo.png",
-		["Packages"] = 3,
-		["CandyCane"] = 5,
+		["Text"] = "Messer",
+		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Packages"] = 5,
+		["CandyCane"] = 10,
 		["Type"] = "Weapon",
-		["WeaponId"] = 10,
+		["WeaponId"] = 4,
 		["Ammo"] = 1
 	},
 	{
-		["Text"] = "10.000$",
+		["Text"] = "15.000$",
 		["Image"] = "Bonus_Money.png",
-		["Packages"] = 3,
+		["Packages"] = 5,
 		["CandyCane"] = 10,
 		["Type"] = "Money",
-		["MoneyAmount"] = 10000
+		["MoneyAmount"] = 15000
 	},
 	{
-		["Text"] = "100 Punkte",
+		["Text"] = "250 Punkte",
 		["Image"] = "Bonus_Points.png",
 		["Packages"] = 3,
 		["CandyCane"] = 10,
 		["Type"] = "Points",
-		["PointsAmount"] = 100
+		["PointsAmount"] = 250
 	},
 	{
 		["Text"] = "Neutrales Karma",
 		["Image"] = "Bonus_Karma.png",
-		["Packages"] = 60,
-		["CandyCane"] = 100,
+		["Packages"] = 50,
+		["CandyCane"] = 90,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
-		["Packages"] =100,
+		["Packages"] =75,
 		["CandyCane"] = 100,
 		["Type"] = "Special"
 	},
@@ -67,27 +69,28 @@ Christmas.ms_Bonus = {
 	{
 		["Text"] = "30 Tage VIP",
 		["Image"] = "Bonus_VIP.png",
-		["Packages"] = 200,
+		["Packages"] = 175,
 		["CandyCane"] = 200,
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "Comet",
-		["Image"] = "Bonus_Comet.png",
+		["Text"] = "FCR-900",
+		["Image"] = "MUSS GEÄNDERT WERDEN",
 		["Packages"] = 350,
 		["CandyCane"] = 500,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 480
+		["VehicleModel"] = 521
 	},
 	{
-		["Text"] = "Pizza-Boy",
-		["Image"] = "Bonus_PizzaBoy.png",
-		["Packages"] = 400,
-		["CandyCane"] = 550,
+		["Text"] = "Remington",
+		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Packages"] = 450,
+		["CandyCane"] = 700,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 448
+		["VehicleModel"] = 534
 	}
 }
+
 
 function Christmas:constructor()
 	self.m_QuestManager = QuestManager:new()
