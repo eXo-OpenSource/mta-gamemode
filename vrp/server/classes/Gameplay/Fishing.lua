@@ -448,7 +448,7 @@ function Fishing:updatePricing()
 	end
 end
 
-function Fishing:inventoryUse(player, fishingRodName, bag, place)
+function Fishing:inventoryUse(player, fishingRodName)
 	if self.m_Players[player] then
 		local fishingRod = self.m_Players[player].fishingRod
 		if fishingRod then fishingRod:destroy() end
@@ -460,7 +460,7 @@ function Fishing:inventoryUse(player, fishingRodName, bag, place)
 
 	local baitName = self:getFishingRodEquipments(player, fishingRodName)["bait"]
 	local fishingRod = createObject(1826, player.position)
-	exports.bone_attach:attachElementToBone(fishingRod, player, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+	player:attachPlayerObject(fishingRod)
 
 	self.m_Players[player] = {
 		fishingRod = fishingRod,
