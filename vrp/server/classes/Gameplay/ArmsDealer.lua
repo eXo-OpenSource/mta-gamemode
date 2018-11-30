@@ -102,7 +102,7 @@ function ArmsDealer:processCart( order, faction )
     local endPoint = factionAirDropPoint[faction:getId()]
     local etaTime
     if endPoint then
-        etaTime = self:setupPlane(endPoint, 200000, faction, order)
+        etaTime = self:setupPlane(endPoint, 400000, faction, order)
     end
 
     local text = "Jackal Weapon Delivery\n"
