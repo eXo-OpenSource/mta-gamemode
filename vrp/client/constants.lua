@@ -606,12 +606,6 @@ SHADERS = {
 	["DoF"] = {["event"] = "switchDoF"},
 }
 
-if SNOW_SHADERS_ENABLED then
-	SHADERS["Schneedecke"] = {["event"] = "switchSnowGround", ["enabled"] = EVENT_CHRISTMAS} --only force enable them during christmas
-	SHADERS["Schneeflocken"] = {["event"] = "switchSnowFlakes", ["enabled"] = EVENT_CHRISTMAS} 
-end
-
-
 GUNBOX_CRATES = {
 	createObject(2977, 1366.06, -1286.34, 12.4),
 	createObject(2977, 2397.80, -1980.82, 12.4),

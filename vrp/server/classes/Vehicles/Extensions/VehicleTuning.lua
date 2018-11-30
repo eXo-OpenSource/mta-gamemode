@@ -114,7 +114,7 @@ function VehicleTuning:applyTuning(disableTextureForce)
 
 	if self.m_TuningKits then
 		for tuning, class in pairs(self.m_TuningKits) do
-			class:destroy()
+			class:delete()
 		end
 	end
 

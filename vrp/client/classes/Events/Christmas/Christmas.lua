@@ -59,13 +59,13 @@ function Christmas:constructor()
 	local ped
 	if EVENT_CHRISTMAS_MARKET then-- spawn the ped at the market
 		ped = Ped.create(68, Vector3(1468.66, -1706.78, 14.05), -90)-- Quest Ped
-	else--if getRealTime().monthday <= 24 then -- spawn it near town hall
+	elseif DEBUG or getRealTime().monthday <= 24 then -- spawn it near town hall
 		ped = Ped.create(68, Vector3(1452.84, -1745.13, 13.55), 290)
 	end 
 	if ped then
 		ped:setData("NPC:Immortal", true)
 		ped:setFrozen(true)
-		ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Quest", 0, 1.3)
+		ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Quest-Adventskalender", 0, 1.3)
 		ped.SpeakBubble:setBorderColor(Color.LightRed)
 		ped.SpeakBubble:setTextColor(Color.LightRed)
 		setElementData(ped, "clickable", true)
@@ -75,5 +75,13 @@ function Christmas:constructor()
 				triggerServerEvent("questOnPedClick", localPlayer)
 			end
 		)
+		local blip = Blip:new("Calendar.png", ped.position.x, ped.position.y, 100, nil, {244, 73, 85})
+		blip:attachTo(ped)
+		blip:setDisplayText("Adventskalender")
+	end
+
+	if SNOW_SHADERS_ENABLED then
+		triggerEvent("switchSnowFlakes", root, core:get("Event", "SnowFlakes", EVENT_CHRISTMAS))
+		triggerEvent("switchSnowGround", root, core:get("Event", "SnowGround", EVENT_CHRISTMAS), core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
 	end
 end

@@ -712,8 +712,9 @@
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
-	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
 
+	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
@@ -1473,6 +1474,7 @@
 	<!-- Blips -->
 	<vrpfile src="files/images/Radar/Blips/Alarm.png"/>
 	<vrpfile src="files/images/Radar/Blips/BurgerShot.png"/>
+	<vrpfile src="files/images/Radar/Blips/Calendar.png"/>
 	<vrpfile src="files/images/Radar/Blips/CluckinBell.png"/>
 	<vrpfile src="files/images/Radar/Blips/Donut.png"/>
 	<vrpfile src="files/images/Radar/Blips/Ghost.png"/>
