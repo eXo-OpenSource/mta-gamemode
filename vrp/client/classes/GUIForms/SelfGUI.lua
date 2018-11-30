@@ -1179,6 +1179,19 @@ function SelfGUI:onSettingChange(setting)
 			setFarClipDistance(992)
 		end
 
+		self.m_SmokeMode = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.9, self.m_Height*0.04, _"Low-Modus für Rauch", self.m_SettingBG)
+		self.m_SmokeMode:setFont(VRPFont(25))
+		self.m_SmokeMode:setFontSize(1)
+		self.m_SmokeMode:setChecked(core:get("Other", "SmokeLowMode", false))
+		self.m_SmokeMode.onChange = function (state)
+			core:set("Other", "SmokeLowMode", state)
+			if state then 
+				ItemSmokeGrenade:getSingleton():useLowMode()
+			else 
+				ItemSmokeGrenade:getSingleton():disableLowMode()
+			end
+		end
+
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
 
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
@@ -1455,5 +1468,48 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Event", "HalloweenBloodClick", state)
 		end
 
+		if not EVENT_HALLOWEEN then
+			self.m_HalloweenBlood:setEnabled(false)
+			self.m_HalloweenClickBlood:setEnabled(false)
+			self.m_HalloweenDarkness:setEnabled(false)
+		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.30, self.m_Width*0.8, self.m_Height*0.07, _"Winterzeit", self.m_SettingBG)
+		self.m_SnowFlakes = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.9, self.m_Height*0.04, _"Schneeflocken", self.m_SettingBG)
+		self.m_SnowFlakes:setFont(VRPFont(25))
+		self.m_SnowFlakes:setFontSize(1)
+		self.m_SnowFlakes:setChecked(core:get("Event", "SnowFlakes", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowFlakes.onChange = function (state)
+			core:set("Event", "SnowFlakes", state)
+			triggerEvent("switchSnowFlakes", root, state)
+		end
+		self.m_SnowGround = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.44, self.m_Width*0.9, self.m_Height*0.04, _"Schneedecke", self.m_SettingBG)
+		self.m_SnowGround:setFont(VRPFont(25))
+		self.m_SnowGround:setFontSize(1)
+		self.m_SnowGround:setChecked(core:get("Event", "SnowGround", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowGround.onChange = function (state)
+			core:set("Event", "SnowGround", state)
+			triggerEvent("switchSnowGround", root, state, core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
+			self.m_SnowGroundExtra:setEnabled(state) 
+		end
+		
+		self.m_SnowGroundExtra = GUICheckbox:new(self.m_Width*0.04, self.m_Height*0.51, self.m_Width*0.9, self.m_Height*0.04, _"dynamische Textur (schön, aber FPS-lastig!)", self.m_SettingBG)
+		self.m_SnowGroundExtra:setFont(VRPFont(25))
+		self.m_SnowGroundExtra:setFontSize(1)
+		self.m_SnowGroundExtra:setChecked(core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowGroundExtra.onChange = function (state)
+			core:set("Event", "SnowGround_Extra", state)
+			triggerEvent("switchSnowGround", root, core:get("Event", "SnowGround", EVENT_CHRISTMAS), state)
+		end
+
+		if not core:get("Event", "SnowGround", EVENT_CHRISTMAS) then
+			self.m_SnowGroundExtra:setEnabled(false)
+		end
+
+		if not SNOW_SHADERS_ENABLED then
+			self.m_SnowFlakes:setEnabled(false)
+			self.m_SnowGround:setEnabled(false)
+			self.m_SnowGroundExtra:setEnabled(false)
+		end
 	end
 end

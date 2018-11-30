@@ -174,17 +174,16 @@ SHOP_TYPES = {
 		["Ped"] = {205, Vector3(1472.5, -1675, 14.75), 200},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
-		["disabled"] = true--not EVENT_CHRISTMAS
+		["disabled"] = not (EVENT_CHRISTMAS and EVENT_CHRISTMAS_MARKET)
 	},
 	[25] = {
 		["Name"] = "Feuerwerks-Shop",
-		["Marker"] = Vector3(1485.77, -1792.85, 12.7),
-		["Ped"] = {32, Vector3(1485.78, -1794.96, 13.55), 0},
+		["Marker"] = Vector3(1455.08, -1744.07, 12.6),
+		["Ped"] = {32, Vector3(1452.87, -1745.18, 13.55), 300},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
 		["disabled"] = not FIREWORK_SHOP_ACTIVE
 	}
-
 }
 
 SHOP_ITEMS = {

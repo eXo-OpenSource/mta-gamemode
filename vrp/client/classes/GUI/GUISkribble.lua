@@ -113,6 +113,7 @@ function GUISkribble:onClientRender()
 			local drawSize = Vector2(textWidth, textWidth)
 			local drawStart = Vector2(cx * screenWidth, cy * screenHeight)
 
+			dxDrawText(FontAwesomeSymbols.Circle, drawStart - (drawSize + Vector2(2, 2))/2, Vector2(0,0), tocolor(0,0,0,30), .5, FontAwesome(self.m_DrawSize+5))
 			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, FontAwesome(self.m_DrawSize))
 		end
 	end
@@ -202,4 +203,12 @@ end
 
 function GUISkribble:addDrawHook(callback)
 	self.m_DrawHook = callback
+end
+
+function GUISkribble:saveImage()
+	local pixels = self.m_RenderTarget:getPixels()
+	local pngPixels = dxConvertPixels(pixels, 'png')
+	local newImg = fileCreate('img.png')
+	fileWrite(newImg, pngPixels)
+	fileClose(newImg)
 end

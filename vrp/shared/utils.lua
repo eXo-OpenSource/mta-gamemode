@@ -626,7 +626,7 @@ function getWeekNumber()	--Maybe needs optimization
 	return math.floor((realtime.yearday + firstYearDayTime.weekday) / 7)
 end
 
-function getOpticalTimestamp(ts)
+function getOpticalTimestamp(ts, seconds)
 	local time = ts and getRealTime(ts) or getRealTime()
 	time.month = time.month+1
 	time.year = time.year-100
@@ -634,7 +634,7 @@ function getOpticalTimestamp(ts)
 		value = tostring(value)
 		if #value == 1 then time[index] = "0"..value end
 	end
-	return ("%s.%s.%s-%s:%s"):format(time.monthday, time.month, time.year, time.hour, time.minute)
+	return ("%s.%s.%s-%s:%s%s"):format(time.monthday, time.month, time.year, time.hour, time.minute, (seconds and (":%s"):format(time.second) or ""))
 end
 
 function timespanArray(seconds)
@@ -782,7 +782,10 @@ function attachRotationAdjusted ( from, to )
     local frPosX, frPosY, frPosZ = getElementPosition( from )
     local frRotX, frRotY, frRotZ = getElementRotation( from )
     local toPosX, toPosY, toPosZ = getElementPosition( to )
-    local toRotX, toRotY, toRotZ = getElementRotation( to )
+	local toRotX, toRotY, toRotZ = getElementRotation( to )
+	frRotX = frRotX or 0
+	frRotY = frRotY or 0
+	frRotZ = frRotZ or 0
     local offsetPosX = frPosX - toPosX
     local offsetPosY = frPosY - toPosY
     local offsetPosZ = frPosZ - toPosZ
@@ -865,4 +868,46 @@ function getCurrentSeason()
 			return season.season
 		end
 	end
+end
+
+function checkRaySphere(origin, ray, sphere, radius)
+	local offset = origin - sphere
+	local b = offset:dot(ray)
+	local c = offset:dot(offset) - radius * radius
+	if c > 0 and b > 0 then
+		return false
+	end
+	local discr = b * b - c
+	if discr < 0 then
+		return false
+	end
+	local t = -b - math.sqrt(discr)
+	t = t < 0 and 0 or t
+	return origin + ray * t, t
+end
+
+function getVectorByAngleDistance(vec, dist, angle)
+    local a = math.rad(90 - angle);
+    local dx = math.cos(a) * dist;
+    local dy = math.sin(a) * dist;
+    return Vector3(vec.x+dx, vec.y+dy, vec.z);
+end
+
+function angle(vec1, vec2)
+    return math.acos(vec1:dot(vec2)/(vec1.length*vec2.length))
+end
+
+function getPedWeapons(ped)
+	local playerWeapons = {}
+	if ped and isElement(ped) and getElementType(ped) == "ped" or getElementType(ped) == "player" then
+		for i=1,11 do
+			local wep = getPedWeapon(ped,i)
+			if wep and wep ~= 0 then
+				table.insert(playerWeapons,wep)
+			end
+		end
+	else
+		return false
+	end
+	return playerWeapons
 end

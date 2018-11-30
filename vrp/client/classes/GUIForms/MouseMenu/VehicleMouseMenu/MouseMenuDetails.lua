@@ -25,7 +25,7 @@ function VehicleMouseMenuDetails:constructor(posX, posY, element)
 		end
 	):setIcon(FontAwesomeSymbols.Search)
 
-	self:addItem(_"Fahrzeug-Performance",
+	--[[self:addItem(_"Fahrzeug-Performance",
 		function()
 			if self:getElement() then
 				if VehiclePerformanceGUI.Map[self:getElement()]  then
@@ -34,9 +34,9 @@ function VehicleMouseMenuDetails:constructor(posX, posY, element)
 				VehiclePerformanceGUI.Map[self:getElement()] = VehiclePerformanceGUI:new(self:getElement(), false)
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Search)
+	):setIcon(FontAwesomeSymbols.Search)]]
 
-	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["tuneVehicle"] then
+	--[[if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["editVehicleHandling"] then
 		self:addItem(_"Handling",
 			function()
 				if self:getElement() then
@@ -47,7 +47,7 @@ function VehicleMouseMenuDetails:constructor(posX, posY, element)
 				end
 			end
 		)
-	end
+	end]]
 
 	self:addItem(_("Fahrgestellnr: %s", element:getData("ID") or -1)):setTextColor(Color.White)
 	self:addItem(_("Kategorie: %s", element:getCategoryName())):setTextColor(Color.White)

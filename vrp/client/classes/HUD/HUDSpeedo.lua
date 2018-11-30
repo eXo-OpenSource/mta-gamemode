@@ -169,7 +169,7 @@ function HUDSpeedo:draw()
 		if localPlayer.vehicle.towedByVehicle then
 			self.m_TrailerFuel = localPlayer.vehicle.towedByVehicle:getFuel()
 			if self.m_TrailerFuel then
-				dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100, 0, 0, 0, tocolor(255, 255, 255, needleAlpha))
+				dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100, 0, 0, tocolor(255, 255, 255, needleAlpha))
 			end
 		end
 		--dxSetBlendMode("blend")

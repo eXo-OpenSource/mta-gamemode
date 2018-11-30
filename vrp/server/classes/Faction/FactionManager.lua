@@ -123,7 +123,7 @@ end
 function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
-	if faction then --use triggerLatentEvent to improve serverside performance 
+	if faction then --use triggerLatentEvent to improve serverside performance
 		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
 	else
 		client:triggerEvent("factionRetrieveInfo")
@@ -298,9 +298,6 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			faction:addPlayer(client)
 			faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
 			faction:sendMessage(_("#008888Fraktion: #FFFFFF%s ist soeben der Fraktion beigetreten!", client, getPlayerName(client)),200,200,200,true)
-			if faction:isEvilFaction() then
-				faction:changeSkin(client)
-			end
 
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, faction:hasInvitation(client), faction.m_Id, "faction")
 
@@ -487,8 +484,8 @@ function FactionManager:Event_factionRespawnVehicles()
 end
 
 function FactionManager:Event_getFactions()
-	for id, faction in pairs(FactionManager.Map) do
-		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor())
+	for id, faction in pairs(FactionManager.Map) do -- send the wt destination as point where players can navigate to
+		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()]))
 	end
 end
 
@@ -646,6 +643,10 @@ function FactionManager:Event_setPlayerDutySkin(skinId)
 		client:sendError(_("Du gehörst keiner Fraktion an!", client))
 		return false
 	end
+	if not client:isFactionDuty() then
+		client:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", client))
+		return
+	end
 	client:sendInfo(_("Kleidung gewechselt.", client))
 	client:getFaction():changeSkin(client, skinId)
 end
@@ -677,6 +678,7 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 		client:sendError(_("Du gehörst keiner Fraktion an!", client))
 		return false
 	end
+	if not client:isFactionDuty() then return client:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", client)) end
 	if not client:getFaction().m_SpecialSkin or tonumber(client:getFaction():getSetting("Skin", client:getFaction().m_SpecialSkin, 0)) ~= -1 then
 		client:sendError(_("Fehler bei Spezial/Aktionskleidung, bitte wende dich an deinen Leader!", client))
 		return false

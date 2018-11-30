@@ -185,13 +185,11 @@ function DeathmatchHalloween:setPlayerTeamProperties(player, team)
 		table.insert(self.m_Residents, player)
 		player:setModel(1)
 		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
-		player:triggerEvent("dmHalloweenToggleDamageEvent", true)
 	else
 		table.insert(self.m_Zombies, player)
 		player:setModel(310)
 		player:setArmor(0)
 		player:setWalkingStyle(120)
-		player:triggerEvent("dmHalloweenToggleDamageEvent", false)
 	end
 	player:sendShortMessage(_("Du wurdest ins Team der %s gesetzt!", player, team))
 end
@@ -202,6 +200,8 @@ function DeathmatchHalloween:addPlayer(player)
 		return
 	end
 	DeathmatchLobby.addPlayer(self, player)
+	player:triggerEvent("dmHalloweenToggleDamageEvent", true)
+
 	local team
 	if table.size(self.m_Zombies) <= table.size(self.m_Residents) then
 		team = DeathmatchHalloween.Teams[2]
@@ -234,9 +234,8 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	local kills = self.m_Players[player]["Kills"]
 	DeathmatchLobby.removePlayer(self, player, isServerStop)
 
-	if self.m_Residents[player] then
-		player:triggerEvent("dmHalloweenToggleDamageEvent", false)
-	end
+	player:triggerEvent("dmHalloweenToggleDamageEvent", false)
+
 
 	table.remove(self.m_Zombies, table.find(self.m_Zombies, player))
 	table.remove(self.m_Residents, table.find(self.m_Residents, player))
@@ -251,7 +250,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	end
 
 	if kills > 0 then
-		local sweets = kills*100
+		local sweets = kills*15
 		local pumpkins = kills * 5
 		player:getInventory():giveItem("Suessigkeiten", sweets)
 		player:getInventory():giveItem("Kürbis", pumpkins)
@@ -337,7 +336,7 @@ function DeathmatchHalloween:checkMarkers()
 	if self:countMarkers("Zombies") == #self.m_Colshapes then
 		for key, player in pairs(self.m_Zombies) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt die Runde gewonnen! Du erhälst 25 Kürbisse!")
-			player:giveItem("Kürbis", 25)
+			player:getInventory():giveItem("Kürbis", 25)
 		end
 		for key, player in pairs(self.m_Residents) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle eure Stadt erobert!")
@@ -348,7 +347,7 @@ end
 
 function DeathmatchHalloween:onWasted(player, killer, weapon)
 	DeathmatchLobby.onWasted(self, player, killer, weapon)
-	if killer then
+	if killer and killer ~= player then
 		self:increaseKill(killer, weapon)
 		self:increaseDead(player, weapon)
 	end
@@ -377,7 +376,9 @@ end
 
 function DeathmatchHalloween:healZombies()
 	for key, player in pairs(self.m_Zombies) do
-		player:setHealth(player:getHealth() + DeathmatchHalloween.ZombieHeal)
+		if player and isElement(player) then
+			player:setHealth(player:getHealth() + DeathmatchHalloween.ZombieHeal)
+		end
 	end
 end
 
@@ -389,14 +390,14 @@ function DeathmatchHalloween:checkAlivePlayers()
 			end
 			for key, player in pairs(self.m_Residents) do
 				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Zombies getötet! Du erhälst 25 Kürbisse!")
-				player:giveItem("Kürbis", 25)
+				player:getInventory():giveItem("Kürbis", 25)
 			end
 			delete(self)
 		end
 		if #self.m_Residents <= 0 then
 			for key, player in pairs(self.m_Zombies) do
 				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Bewohner getötet! Du erhälst 25 Kürbisse!")
-				player:giveItem("Kürbis", 25)
+				player:getInventory():giveItem("Kürbis", 25)
 			end
 			for key, player in pairs(self.m_Residents) do
 				player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle Bewohner getötet!")

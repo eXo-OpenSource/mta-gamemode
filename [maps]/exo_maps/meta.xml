@@ -27,6 +27,9 @@
 	<map src="fraktionen/army_shooting_town.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
+	<map src="fraktionen/aztecas.map" />
+	<map src="fraktionen/cartell.map" />
+
 	<map src="fraktionen/biker.map" />
 	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
@@ -39,7 +42,7 @@
 	<map src="fraktionen/rescue_int.map" />
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
-	<!--map src="fraktionen/yakuza.map"/>
+	<map src="fraktionen/yakuza.map"/>
 
 	<map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
@@ -53,7 +56,7 @@
 
 	<map src="fishing/location_desert.map" />
 
-	<map src="events/halloween.map" />
+	<!--<map src="events/halloween.map" />-->
 	<!--<map src="events/auction.map" />--> <!-- Auction Event map at Veriona Beach -->
 
 	<!--fixes-->
@@ -108,7 +111,7 @@
 	<map src="stuntfix.map"/>
 
 	<map src="shop/fishshop.map"/>
-	<!--<map src="sewer.map"/>-->
+	<!--map src="sewer.map"/-->
 	<map src="minigamescafe.map" dimension="2" />
 
 	<map src="admin-auction.map" />

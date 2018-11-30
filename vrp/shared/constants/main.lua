@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.7.1"
+PROJECT_VERSION = "1.7.2"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -24,8 +24,9 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false
-SNOW_SHADERS_ENABLED = false -- disable them during summer time
+EVENT_CHRISTMAS = true --quests, mostly
+EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
@@ -115,7 +116,6 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
-	["tuneVehicle"] = RANK.Administrator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -180,6 +180,7 @@ ADMIN_RANK_PERMISSION = {
 	["editVehicleOwnerType"] = RANK.Administrator,
 	["editVehicleOwnerID"] = RANK.Administrator,
 	["editVehicleTunings"] = RANK.Administrator,
+	["editVehicleHandling"] = RANK.Administrator, -- handling editor
 	["editVehicleTexture"] = RANK.Developer, --override textures without visiting the texture shop
 
 
@@ -460,7 +461,8 @@ WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
 	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
-	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}}
+	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}},
+	[2919] = {["model"] = 2919, ["name"] = "Waffen", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 90, 90), ["blockJump"] = true, ["bone"] = 3, ["blockSprint"] = true,  ["blockVehicle"] = false}
 }
 
 

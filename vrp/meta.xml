@@ -75,6 +75,8 @@
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
+	<script src="server/classes/Teleporter.lua" type="server"/>
+	<script src="server/classes/TeleportManager.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
 	<script src="server/classes/ParkGarageZone.lua" type="server"/>
 	<script src="server/classes/InstantTeleportArea.lua" type="server"/>
@@ -190,6 +192,7 @@
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 
 	<!-- Gameplay -->
+	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
@@ -220,6 +223,8 @@
 	<script src="server/classes/Gameplay/Places/Atrium.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
+	<script src="server/classes/Gameplay/ArmsDealer.lua" type="server"/>
+	<script src="server/classes/Gameplay/ArmsPackage.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
@@ -707,9 +712,10 @@
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
-
 
 	<script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
@@ -825,6 +831,7 @@
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -980,12 +987,12 @@
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
-	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
+	<!--<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/> -->
 
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
-	<!--<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/> -->
+	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
@@ -1027,6 +1034,7 @@
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
+	<script src="client/classes/Gameplay/Sewers.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
@@ -1180,6 +1188,12 @@
 	<vrpfile src="files/images/Events/Bonus/Bonus_Comet.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_ChristmasSkin.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Points.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Knife.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Radio.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Remington.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_FCR.png" />
+
+
 
 	<vrpfile src="files/images/Events/Christmas/Quest.png" />
 	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />
@@ -1205,9 +1219,8 @@
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
 
-	<file src="files/images/bullethitsmoke.png"/>
 	<file src="files/images/turbo.png"/>
-
+	<file src="files/images/bullethitsmoke_original.png"/>
 
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
@@ -1461,6 +1474,7 @@
 	<!-- Blips -->
 	<vrpfile src="files/images/Radar/Blips/Alarm.png"/>
 	<vrpfile src="files/images/Radar/Blips/BurgerShot.png"/>
+	<vrpfile src="files/images/Radar/Blips/Calendar.png"/>
 	<vrpfile src="files/images/Radar/Blips/CluckinBell.png"/>
 	<vrpfile src="files/images/Radar/Blips/Donut.png"/>
 	<vrpfile src="files/images/Radar/Blips/Ghost.png"/>
@@ -1539,7 +1553,7 @@
 	<vrpfile src="files/images/Nametag/LCN.png"/>
 	<vrpfile src="files/images/Nametag/Yakuza.png"/>
 	<vrpfile src="files/images/Nametag/Triaden.png"/>
-	<vrpfile src="files/images/Nametag/Vatos.png"/>
+	<vrpfile src="files/images/Nametag/Aztecas.png"/>
 	<vrpfile src="files/images/Nametag/Grove.png"/>
 	<vrpfile src="files/images/Nametag/GangwarIcon.png"/>
 	<vrpfile src="files/images/Nametag/Ballas.png"/>
@@ -1553,6 +1567,7 @@
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
 	<vrpfile src="files/images/Nametag/SASF.png"/>
+	<vrpfile src="files/images/Nametag/Kartell.png"/>
 	<vrpfile src="files/images/Nametag/EPT.png"/>
 	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
 	<vrpfile src="files/images/Nametag/San News.png"/>
@@ -1678,6 +1693,10 @@
 	<vrpfile src="files/images/Textures/Cityhall/tex14.jpg"/>
 	<vrpfile src="files/images/Textures/Cityhall/tex15.jpg"/>
 	<vrpfile src="files/images/Textures/Cityhall/tex16.jpg"/>
+
+	<vrpfile src="files/images/Textures/Sewers/tex1.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/tex2.jpg"/>
+
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1929,6 +1948,8 @@
 	<vrpfile src="files/audio/jobs/pickaxe3.mp3"/>
 	<vrpfile src="files/audio/jobs/pickaxe4.mp3"/>
 
+	<vrpfile src="files/audio/Ambient/sewer.mp3" />
+	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
@@ -2227,7 +2248,7 @@
 	<!-- Halloween Event End-->
 
 	<!-- Christmas Event Start-->
-	<!--<vrpfile src="files/models/objects/XmasTree1.txd" />
+	<vrpfile src="files/models/objects/XmasTree1.txd" />
 	<vrpfile src="files/models/objects/XmasTree1.dff" />
 	<vrpfile src="files/models/objects/XmasTree1.col" />
 	<vrpfile src="files/models/objects/FortuneWheel.txd" />
@@ -2235,7 +2256,11 @@
 	<vrpfile src="files/models/objects/FortuneWheel.col" />
 	<vrpfile src="files/models/objects/XmasBox.txd" />
 	<vrpfile src="files/models/objects/XmasBox.dff" />
-	<vrpfile src="files/models/objects/XmasBox.col" />-->
+	<vrpfile src="files/models/objects/XmasBox.col" />
+	<vrpfile src="files/models/skins/kobold.txd" />
+	<vrpfile src="files/models/skins/kobold.dff" />
+	<vrpfile src="files/models/skins/snowman.txd" />
+	<vrpfile src="files/models/skins/snowman.dff" />
 	<!-- Christmas Event End-->
 
 	<!--Skins-->

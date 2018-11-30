@@ -33,7 +33,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Permissions = permissions and fromJSON(permissions) or {}
 	self.m_ForumGroups = {}
 	self.m_LastForumSync = 0
-
+	self.m_Countdowns = {}
 	if self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
 		for _, v in pairs(self.m_Permissions["forum"]["ranks"]) do
 			if type(v) == "table" then
@@ -347,19 +347,23 @@ function Faction:changeSkin(player, skinId)
 	if not player or not isElement(player) or getElementType(player) ~= "player" then return false end
 	local playerRank = self:getPlayerRank(player)
 	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
-	if self.m_Skins[skinId] then
-		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
-		if minRank <= playerRank then
-			player:setModel(skinId)
-			player.m_tblClientSettings["LastFactionSkin"] = skinId
+	if player:isFactionDuty() then
+		if self.m_Skins[skinId] then
+			local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+			if minRank <= playerRank then
+				player:setModel(skinId)
+				player.m_tblClientSettings["LastFactionSkin"] = skinId
+			else
+				player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+				player:setModel(self:getSkinsForRank(playerRank)[1])
+			end
 		else
-			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			-- ^useless if player switches faction
 			player:setModel(self:getSkinsForRank(playerRank)[1])
 		end
 	else
-		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
-		-- ^useless if player switches faction
-		player:setModel(self:getSkinsForRank(playerRank)[1])
+		player:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", player))
 	end
 end
 
@@ -459,7 +463,7 @@ function Faction:setPlayerRank(playerId, rank)
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		if player then
+		if player and player.isFactionDuty and player:isFactionDuty() then
 			self:changeSkin(player)
 		end
 	end
@@ -747,6 +751,7 @@ function Faction:setSafe(obj)
 	end)
 end
 
+
 function Faction:refreshBankAccountGUI(player)
 	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end
@@ -861,5 +866,38 @@ end
 function Faction:sendMoveRequest(targetChannel, text)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		TSConnect:getSingleton():sendMoveRequest(player, targetChannel, text)
+	end
+end
+
+function Faction:onPlayerJoin(player) -- join means comming online (onPlayerJoin-Event)
+	for text, data in pairs(self.m_Countdowns) do 
+		local time, origin = unpack(data)
+		local now = getRealTime().timestamp
+		local current = time - (now - origin)
+		if current > 0 and current < time then 
+			player:triggerEvent("Countdown", current, text)
+		end
+	end
+end
+
+function Faction:setCountDown(time, text) -- this can be used to set a countdown for a faction (players that join after this have the right time displayed)
+	local players = self:getOnlinePlayers()
+	if self.m_Countdowns[text] then 
+		for index, player in pairs(players) do 
+			player:triggerEvent("CountdownStop", text)
+		end
+	end
+	self.m_Countdowns[text] = {time, getRealTime().timestamp}
+	for index, player in pairs(players) do 
+		player:triggerEvent("Countdown", time, text)
+	end
+end
+
+function Faction:stopCountDown(text)
+	if self.m_Countdowns[text] then 
+		local players = self:getOnlinePlayers()
+		for index, player in pairs(players) do 
+			player:triggerEvent("CountdownStop", text)
+		end
 	end
 end

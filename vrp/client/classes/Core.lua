@@ -137,6 +137,7 @@ function Core:ready() --onClientResourceStart
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	Sewers:new()
 	PremiumArea:new()
 
 	Plant.initalize()
@@ -239,7 +240,8 @@ function Core:afterLogin()
 			table.insert(AppBank.ATMs, object)
 		end
 	end
-
+	
+	setElementData(localPlayer, "isEquipmentGUIOpen", false, true)
 end
 
 function Core:onWebSessionCreated() -- this gets called from LocalPlayer when the client recieves it's web session ID

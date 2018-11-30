@@ -95,7 +95,7 @@ end
 
 function InventoryManager:Event_requestTrade(type, target, item, amount, money, value)
 	if (client:getPosition() - target:getPosition()).length > 10 then
-		client:sendError(_("Du bist zuweit von %s entfernt!", client, target.name))
+		client:sendError(_("Du bist zu weit von %s entfernt!", client, target.name))
 		return false
 	end
 	if not money then money = 0 end

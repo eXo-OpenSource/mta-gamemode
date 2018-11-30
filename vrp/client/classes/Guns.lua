@@ -159,6 +159,12 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		end
 		cancelEvent()
+	elseif weapon == 17 then 
+		if source.getPublicSync and source:getPublicSync("HelmetItem") == "Gasmaske" then
+		else 
+			WearableHelmet:getSingleton():onTearNade()
+		end
+		cancelEvent()
 	else
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze and not NetworkMonitor:getSingleton():getPingDisabled() and not NetworkMonitor:getSingleton():getLossDisabled() then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then

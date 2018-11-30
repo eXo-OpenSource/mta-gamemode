@@ -24,8 +24,8 @@ function QuestSantaKill:init(pos)
 			addEventHandler("onClientPedDamage", self.m_SantaPeds[#self.m_SantaPeds], self.m_PedDamage)
 		end
 	end
-	CustomModelManager:getSingleton():loadImportTXD("files/models/kobold.txd", 41)
-	CustomModelManager:getSingleton():loadImportDFF("files/models/kobold.dff", 41)
+	CustomModelManager:getSingleton():loadImportTXD("files/models/skins/kobold.txd", 41)
+	CustomModelManager:getSingleton():loadImportDFF("files/models/skins/kobold.dff", 41)
 
 end
 

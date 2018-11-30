@@ -218,7 +218,7 @@ function ShopManager:buyWeaponFromItemShop(shopId, weaponId)
 				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
 					client:giveWeapon(weaponId, ammo)
 					reloadPedWeapon(client)
-				
+
 					StatisticsLogger:addAmmunationLog(client, "Shop", toJSON({[weaponId] = ammo}), price)
 					client:transferMoney(shop.m_BankAccount, price, "Shop-Einkauf", "Gameplay", "Weapon")
 					client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
@@ -465,7 +465,7 @@ function ShopManager:onAmmunationAppOrder(weaponTable)
 	if canBuyWeapons then
 		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
-				
+
 				client:transferBankMoney(BankServer.get("shop.ammunation"), totalAmount, "AmmuNation Bestellung", "Shop", "Ammunation")
 				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
@@ -486,6 +486,7 @@ function ShopManager:createOrder(player, weaponTable)
 	y = y - 2
 	x = x - 2
 	local dropObject = createObject ( 2903, x, y, z+6.3+15 )
+	setElementCollisionsEnabled(dropObject, false)
 	moveObject(dropObject, 9000, x, y, z+6.3 )
 	setTimer(destroyElement, 10000, 1, dropObject )
 	setTimer(function(x, y, z, weaponTable)

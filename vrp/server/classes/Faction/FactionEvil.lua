@@ -13,12 +13,13 @@ function FactionEvil:constructor()
 	self.InteriorEnterExit = {}
 	self.m_WeaponPed = {}
 	self.m_ItemDepot = {}
-
+	self.m_EquipmentDepot = {}
 	self.m_Raids = {}
 
 	nextframe(function()
 		self:loadLCNGates(5)
-		self:loadTriadGates(11)
+		self:loadCartelGates(11)
+		self:loadYakGates(6)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -63,6 +64,13 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
 
+	self.m_EquipmentDepot[Id] = createObject(964, 2819.84, -1173.51, 1024.57, 0, 0, 0)
+	self.m_EquipmentDepot[Id]:setDimension(Id)
+	self.m_EquipmentDepot[Id]:setInterior(8)
+	self.m_EquipmentDepot[Id].Faction = faction
+	self.m_EquipmentDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	addEventHandler("onElementClicked", self.m_EquipmentDepot[Id], bind(self.onEquipmentDepotClicked, self))
+
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),
 		createObject(348, 2813.6001, -1166.8, 1025.64, 90, 0, 332),
@@ -93,6 +101,7 @@ function FactionEvil:createInterior(Id, faction)
 			faction:setSafe(v)
 		end
 	end
+
 end
 
 function FactionEvil:getFactions()
@@ -148,7 +157,7 @@ function FactionEvil:sendWarning(text, header, withOffDuty, pos, ...)
 end
 
 function FactionEvil:onWeaponPedClicked(button, state, player)
-	if button == "left" and state == "down" then
+	if button == "left" and state == "up" then
 		if player:getFaction() and (player:getFaction() == source.Faction or source.Faction:checkAlliancePermission(player:getFaction(), "weapons")) then
 			player.m_CurrentDutyPickup = source
 			player:getFaction():updateDutyGUI(player)
@@ -159,7 +168,7 @@ function FactionEvil:onWeaponPedClicked(button, state, player)
 end
 
 function FactionEvil:onDepotClicked(button, state, player)
-	if button == "left" and state == "down" then
+	if button == "left" and state == "up" then
 		if player:getFaction() and player:getFaction() == source.Faction then
 			player:getFaction():getDepot():showItemDepot(player)
 		else
@@ -168,39 +177,73 @@ function FactionEvil:onDepotClicked(button, state, player)
 	end
 end
 
-function FactionEvil:loadYakGates(factionId)
-
-	local lcnGates = {}
-	lcnGates[1] = Gate:new(2933, Vector3(907.40002, -1712.5, 14.5), Vector3(0, 0, 90), Vector3(907.40002, -1701.8812255859, 14.5))
-	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
-	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
-	for index, gate in pairs(lcnGates) do
-		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
-		gate.onGateHit = bind(self.onBarrierGateHit, self)
+function FactionEvil:onEquipmentDepotClicked(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction() == source.Faction then
+			local box = player:getPlayerAttachedObject()
+			if box and isElement(box) and box.m_Content then 
+				self:putOrderInDepot(player, box)
+			else
+				if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
+					setElementData(player, "isEquipmentGUIOpen", true, true) 
+					player.m_LastEquipmentDepot = source
+					player:getFaction():getDepot():showEquipmentDepot(player)
+				end
+			end
+		else
+			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
+		end
 	end
-	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
-	--// ps: have I told you that I hate this new faction-base?
-	--// removed removeModel ;)
 end
 
-function FactionEvil:loadTriadGates( factionId) 
-	 
+function FactionEvil:putOrderInDepot(player, box)
+	local content = box.m_Content 
+	local type, product, amount, price, id = unpack(box.m_Content)
+	local depot = player:getFaction():getDepot()
+	if type == "Waffe" then
+		if id then
+			depot:addWeaponD(id,amount)
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+		end
+	elseif type == "Munition" then
+		if id then
+			depot:addMagazineD(id,amount)
+			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+		end
+	else 
+		depot:addEquipment(player, product, amount, true) 
+		player:getFaction():sendShortMessage(("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
+	end
+	box.m_Package:delete()
+end
+
+function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120+4.04))
+	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.3))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)	
-	local door = Door:new(6400, Vector3(1908.597, 967.407, 10.750), Vector3(0, 0, 90))
-	setElementDoubleSided(door.m_Door, true)
-	local crate = createObject(3576, 1909.020,965.252,11.320)
-	setElementRotation(crate, 0, 0, 180)
-	local box = createObject(18260, 1910.220, 969.863, 11.420)
+	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	local elevator = Elevator:new()
-	elevator:addStation("Garage", Vector3(1904.38, 1016.85, 11.3), 351-180)
-	elevator:addStation("Casino", Vector3(1963.30, 973.03, 994.47), 204-180, 10, 0)
-	elevator:addStation("Dach - Heliports", Vector3(1941.15, 988.92, 52.74), 0)
+	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
+	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
+	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
+	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.422))
+	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
+
+end
+
+function FactionEvil:loadCartelGates( factionId) 
+	 
+	local lcnGates = {}
+	lcnGates[1] = Gate:new(6400, Vector3(2520.203, -1493.003, 25.094), Vector3(0, 0, 270), Vector3(2520.203, -1493.003, 20.094))
+	lcnGates[2] = Gate:new(16773, Vector3(2446.400, -1464.300, 23.800), Vector3(0, 0, 270), Vector3(2446.400, -1464.300, 17.800))
+	
+	for index, gate in pairs(lcnGates) do
+		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
+		gate.onGateHit = bind(self.onBarrierGateHit, self)
+	end
 end
 
 
@@ -210,14 +253,14 @@ function FactionEvil:loadLCNGates(factionId)
 	lcnGates[1] = Gate:new(980, Vector3(784.56561, -1152.40520, 24.93374), Vector3(0, 0, 275), Vector3(784.56561, -1152.40520, 18.53374))
 	lcnGates[2] = Gate:new(980, Vector3(659.12753, -1227.00923, 17.42981), Vector3(0, 0, 64), Vector3(659.12753, -1227.00923, 11.92981))
 	lcnGates[3] = Gate:new(980, Vector3(664.99264, -1309.83203, 15.06094), Vector3(0, 0, 182), Vector3(664.99264, -1309.83203, 8.46094))
-	
+
 	--setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
+	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza"
 	--// ps: have I told you that I hate this new faction-base?
 	--// removed removeModel ;)
 end
@@ -332,15 +375,18 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 			player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
 			return false
 		end
-		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
 		player:setFactionDuty(true)
+		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
 		player:setHealth(100)
 		player:setArmor(100)
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
 		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	end
+end
 
-
+function FactionEvil:isPlayerInDutyPickup(player)
+	if not player.m_CurrentDutyPickup then return false end
+	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
 function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
@@ -363,6 +409,7 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 end
 
 function FactionEvil:Event_FactionRearm()
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
 		client:triggerEvent("showFactionWeaponShopGUI")
@@ -384,6 +431,7 @@ function FactionEvil:Event_storageWeapons(player)
 	if player and isElement(player) then
 		client = player
 	end
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	local faction = client:getFaction()
 	if faction and faction:isEvilFaction() then
 		if client:isFactionDuty() then
@@ -435,4 +483,3 @@ function FactionEvil:Event_storageWeapons(player)
 		end
 	end
 end
-

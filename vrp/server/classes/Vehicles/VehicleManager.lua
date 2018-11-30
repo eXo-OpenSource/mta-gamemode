@@ -29,7 +29,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
 	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
-	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
+	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
@@ -57,6 +57,7 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
 	addEventHandler("adminVehicleEdit",root,bind(self.Event_AdminEdit, self))
+	addEventHandler("adminVehicleSetInTuning",root,bind(self.Event_AdminStartTuningSession, self))
 	addEventHandler("adminVehicleGetTextureList",root,bind(self.Event_AdminGetTextureList, self))
 	addEventHandler("adminVehicleOverrideTextures",root,bind(self.Event_AdminOverrideTextures, self))
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
@@ -255,6 +256,17 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 	if hasToBeSaved and instanceof(vehicle, PermanentVehicle) then
 		vehicle:saveAdminChanges()
 	end
+end
+
+function VehicleManager:Event_AdminStartTuningSession(vehicle)
+	if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleTunings"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
+	if vehicle:getOccupantsCount() > 0 then
+		for i,v in pairs(vehicle:getOccupants()) do
+			v:removeFromVehicle()
+		end
+	end
+	client:warpIntoVehicle(vehicle)
+	VehicleTuningShop:getSingleton():openForAdmin(client, vehicle)
 end
 
 function VehicleManager:Event_AdminGetTextureList(vehicle)

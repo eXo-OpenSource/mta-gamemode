@@ -72,6 +72,10 @@ function FactionState:constructor()
 	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
 	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 0, 5)
 
+
+	self.m_EvidenceEquipmentBox = {}
+	self:createEquipmentEvidence(Vector3(1581.7, -1689.27, 5.2), 0, 5)
+	self:createEquipmentEvidence(Vector3(1581.7, -1689.27, 5.2), 0, 5)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -180,6 +184,51 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 			end
 		end
 	end)
+end
+
+function FactionState:createEquipmentEvidence( pos, int, dim )
+	local box = createObject(964, pos)
+	box:setInterior(int)
+	box:setDimension(dim)
+	box:setData("clickable",true,true)
+	addEventHandler("onElementClicked", box, bind(self.Event_OnEvidenceEquipmentClick, self))
+	self.m_EvidenceEquipmentBox[#self.m_EvidenceEquipmentBox+1] = box
+end
+
+function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction():isStateFaction() then
+			local box = player:getPlayerAttachedObject()
+			if box and isElement(box) and box.m_Content then 
+				self:putEvidenceInDepot(player, box)
+			else 
+				player:sendError(_("Du trägst keine Schwarzmarktware mit dir!", player))
+			end
+		else
+			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
+		end
+	end
+end
+
+function FactionState:putEvidenceInDepot(player, box)
+	local content = box.m_Content 
+	local type, product, amount, price, id = unpack(box.m_Content)
+	local depot = player:getFaction():getDepot()
+	if type == "Waffe" then
+		if id then
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
+			self:addWeaponToEvidence(player, id, amount, 0, true)
+		end
+	elseif type == "Munition" then
+		if id then
+			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
+			self:addWeaponToEvidence(player, id, amount, 0, true)
+		end
+	else 
+		player:getFaction():sendShortMessage(("%s hat %s Stück %s (%s $) konfesziert!"):format(player:getName(), amount, product, price))
+		self.m_BankAccountServer:transferMoney(player:getFaction(), price , "Schwarzmarktware", "Faction", "Schwarzmarktware")
+	end
+	box.m_Package:delete()
 end
 
 function FactionState:Event_OnConfirmSelfArrest()
@@ -344,24 +393,28 @@ function FactionState:Command_ticket(source, cmd, target)
 				local faction = source:getFaction()
 				if not faction then return end
 				if not faction:isStateFaction() then return end
-				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
-					if source ~= targetPlayer then
-						if targetPlayer:getWanteds() <= 3 then
-							if targetPlayer:getMoney() >= TICKET_PRICE*targetPlayer:getWanteds() + 500 then
-								source.m_CurrentTicket = targetPlayer
-								targetPlayer:triggerEvent("stateFactionOfferTicket", source)
-								source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+				if source:isFactionDuty() then
+					if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
+						if source ~= targetPlayer then
+							if targetPlayer:getWanteds() <= 3 then
+								if targetPlayer:getMoney() >= TICKET_PRICE*targetPlayer:getWanteds() + 500 then
+									source.m_CurrentTicket = targetPlayer
+									targetPlayer:triggerEvent("stateFactionOfferTicket", source)
+									source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+								else
+									source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(),  TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+								end
 							else
-								source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(),  TICKET_PRICE*targetPlayer:getWanteds()+500 ))
+								source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
 							end
 						else
-							source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
+							source:sendError("Du kannst dir kein Ticket anbieten!")
 						end
 					else
-						source:sendError("Du kannst dir kein Ticket anbieten!")
+						source:sendError("Du bist zu weit weg!")
 					end
 				else
-					source:sendError("Du bist zu weit weg!")
+					source:sendError("Du bist nicht im Dienst!")
 				end
 			else
 				source:sendError("Ziel nicht gefunden!")
@@ -374,12 +427,12 @@ end
 function FactionState:Event_OnTicketAccept(cop)
 	if client then
 		if client:getMoney() >=  TICKET_PRICE*client:getWanteds()+500  then
-			if client:getWanteds() == 1 then
+			if client:getWanteds() <= 3 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
 					self.m_BankAccountServer:transferMoney(cop:getFaction(),  TICKET_PRICE*client:getWanteds()+500 , "Ticket", "Faction", "Ticket")
 				end
-				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
+				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde(n) %s Wanted(s) erlassen!", client, client:getWanteds()))
 				client:transferMoney(self.m_BankAccountServer,  TICKET_PRICE*client:getWanteds()+500 , "[SAPD] Kautionsticket", "Faction", "Ticket")
 				client:setWanteds(0)
 			end
@@ -1285,6 +1338,7 @@ function FactionState:freePlayer(player, prisonBreak)
 end
 
 function FactionState:Event_FactionRearm()
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
 		client:triggerEvent("showFactionWeaponShopGUI")
@@ -1305,6 +1359,11 @@ function FactionState:Event_FactionRearm()
 	end
 end
 
+function FactionState:isPlayerInDutyPickup(player)
+	if not player.m_CurrentDutyPickup then return false end
+	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
+end
+
 function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
@@ -1313,7 +1372,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	end
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
+		if self:isPlayerInDutyPickup(client) or wasted then
 			if client:isFactionDuty() then
 				if wasted then
 					--client:takeAllWeapons()
@@ -1338,8 +1397,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				faction:changeSkin(client, preferredSkin)
 				client:setFactionDuty(true)
+				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)
 				takeAllWeapons(client)
@@ -1367,6 +1426,7 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 	if player then
 		client = player
 	end
+	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() or ignoreDutyCheck then
@@ -1404,7 +1464,7 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 							logData[WEAPON_NAMES[weaponId]] = magsToMax
 							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
 						end
-						
+
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end
