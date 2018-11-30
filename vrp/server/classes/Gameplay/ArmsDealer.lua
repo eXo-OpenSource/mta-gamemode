@@ -7,7 +7,7 @@
 -- ****************************************************************************
 ArmsDealer = inherit(Singleton)
 ArmsDealer.Data = 
-{
+{ 
     ["Waffen"] = AmmuNationInfo,
     ["Spezial"] = 
     {
@@ -19,11 +19,20 @@ ArmsDealer.Data =
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {5, 300000, 35},
+        ["RPG-7"] = {5, 300000, 35, 3}, 
         ["Granate"] = {10, 80000, 16},
         ["SLAM"] = {2, 40000}
     }
 }
+
+ArmsDealer.ProhibitedRank = 
+{
+    ["RPG-7"] = 3, 
+    ["Granate"] = 3, 
+    ["SLAM"] = 3,
+    ["Scharfschützengewehr"] =  3 
+}
+
 addRemoteEvents{"requestArmsDealerInfo", "checkoutArmsDealerCart"}
 function ArmsDealer:constructor()
     self.m_Order = {}
