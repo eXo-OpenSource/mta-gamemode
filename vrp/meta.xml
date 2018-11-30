@@ -712,8 +712,9 @@
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
-	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
 
+	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
