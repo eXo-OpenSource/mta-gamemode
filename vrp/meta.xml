@@ -1186,6 +1186,12 @@
 	<vrpfile src="files/images/Events/Bonus/Bonus_Comet.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_ChristmasSkin.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Points.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Knife.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Radio.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Remington.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_FCR.png" />
+
+
 
 	<vrpfile src="files/images/Events/Christmas/Quest.png" />
 	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />
@@ -1214,7 +1220,7 @@
 
 	<file src="files/images/turbo.png"/>
 	<file src="files/images/bullethitsmoke_original.png"/>
-	
+
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/jquery-3.2.1.min.js" />
@@ -1687,7 +1693,7 @@
 	<vrpfile src="files/images/Textures/Cityhall/tex16.jpg"/>
 
 	<vrpfile src="files/images/Textures/Sewers/tex1.jpg"/>
-	<vrpfile src="files/images/Textures/Sewers/tex2.jpg"/>	
+	<vrpfile src="files/images/Textures/Sewers/tex2.jpg"/>
 
 
 	<!-- Inventory Images -->

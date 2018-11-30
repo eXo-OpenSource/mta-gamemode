@@ -3,7 +3,7 @@ Christmas = inherit(Singleton)
 Christmas.ms_Bonus = {
 	{
 		["Text"] = "Radio",
-		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Image"] = "Bonus_Radio.png",
 		["Packages"] = 1,
 		["CandyCane"] = 5,
 		["Type"] = "Item",
@@ -21,7 +21,7 @@ Christmas.ms_Bonus = {
 	},
 	{
 		["Text"] = "Messer",
-		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Image"] = "Bonus_Knife.png",
 		["Packages"] = 5,
 		["CandyCane"] = 10,
 		["Type"] = "Weapon",
@@ -75,7 +75,7 @@ Christmas.ms_Bonus = {
 	},
 	{
 		["Text"] = "FCR-900",
-		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Image"] = "Bonus_FCR.png",
 		["Packages"] = 350,
 		["CandyCane"] = 500,
 		["Type"] = "Vehicle",
@@ -83,7 +83,7 @@ Christmas.ms_Bonus = {
 	},
 	{
 		["Text"] = "Remington",
-		["Image"] = "MUSS GEÄNDERT WERDEN",
+		["Image"] = "Bonus_Remington.png",
 		["Packages"] = 450,
 		["CandyCane"] = 700,
 		["Type"] = "Vehicle",
@@ -110,7 +110,7 @@ function Christmas:constructor()
 
 		FerrisWheelManager:getSingleton():addWheel(Vector3(1479.35, -1665.9, 26.5), 0)
 	end
-	
+
 
 	createObject(3861, 1456.84, -1748.18, 13.72, 0, 0, 170) --QuestShop (before market opens) BonusShop (after Event)
 	createObject(3861, 1453.17, -1744.94, 13.72, 0, 0, 115) --Firework Shop
