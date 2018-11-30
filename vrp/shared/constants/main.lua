@@ -462,7 +462,7 @@ WEAPONTRUCK_MAX_LOAD_STATE = 60000
 PlayerAttachObjects = {
 	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
 	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}},
-	[2919] = {["model"] = 2919, ["name"] = "Waffen", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 90, 90), ["blockJump"] = true, ["bone"] = 3, ["blockSprint"] = true,  ["blockVehicle"] = true}
+	[2919] = {["model"] = 2919, ["name"] = "Waffen", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 90, 90), ["blockJump"] = true, ["bone"] = 3, ["blockSprint"] = true,  ["blockVehicle"] = false}
 }
 
 

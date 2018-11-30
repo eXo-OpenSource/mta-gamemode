@@ -8,7 +8,7 @@
 ArmsDealerGUI = inherit(GUIForm)
 inherit(Singleton, ArmsDealerGUI)
 
-addRemoteEvents{"updateArmsDealerInfo"}
+addRemoteEvents{"updateArmsDealerInfo", "openArmsDealerGUI"}
 function ArmsDealerGUI:constructor( )
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 15)	
@@ -146,3 +146,10 @@ end
 function ArmsDealerGUI:destructor() 
 	GUIForm.destructor(self)
 end
+
+addEventHandler("openArmsDealerGUI", root, function() 
+	if not ArmsDealerGUI:isInstantiated() then 
+		ArmsDealerGUI:new()
+	end
+end
+)

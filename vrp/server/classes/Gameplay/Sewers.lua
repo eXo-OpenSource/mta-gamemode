@@ -183,18 +183,34 @@ function Sewers:createStorage()
         table.insert(self.m_EntranceMarkers, entrance)
         Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
     end
-    local p
-    for i, marker in ipairs(self.m_PedPositions) do 
-        p = createPed(220, marker:getPosition().x, marker:getPosition().y, marker:getPosition().z +0.5, 0, true)
-        p:setModel(109)
-        
-        p:setFrozen(true)
-        p:setDimension(3)
-        p:setRotation(0, 0, findRotation(p:getPosition().x, p:getPosition().y, entrance:getPosition().x, entrance:getPosition().y)-45)
-        giveWeapon(p, 30, 200, true)
-        setElementData(p, "SewerPed", true)
-        self:addKevlarToPed(p)
-    end
+
+    local randomPed = math.random(1, #self.m_PedPositions)
+    local marker = self.m_PedPositions[randomPed]
+    local ped =  NPC:new(220, marker:getPosition().x, marker:getPosition().y, marker:getPosition().z +0.5, 0)
+    ped:setModel(109)
+    ped:setImmortal(true)
+    ped:setFrozen(true)
+    ped:setDimension(3)
+    ped:setRotation(0, 0, findRotation(ped:getPosition().x, ped:getPosition().y, entrance:getPosition().x, entrance:getPosition().y))
+    giveWeapon(ped, 30, 200, true)
+    setElementData(ped, "SewerPed", true)
+    setElementData(ped, "clickable", true)
+	addEventHandler("onElementClicked", ped, bind(self.Event_onPedClick, self))
+    self:addKevlarToPed(ped)
+end
+
+function Sewers:Event_onPedClick(button, state, player)
+	local faction = player:getFaction()
+
+	if
+		button ~= "left"
+		or state ~= "down"
+		or not faction
+		or not faction:isEvilFaction()
+	then
+		return
+	end
+	player:triggerEvent("openArmsDealerGUI")
 end
 
 function Sewers:addKevlarToPed(ped)

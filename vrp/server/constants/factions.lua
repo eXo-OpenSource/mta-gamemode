@@ -156,6 +156,7 @@ evilFactionInteriorEnter[6] = Vector3(1419.71, -1328.59, 13.56)
 factionWTDestination[6] = Vector3(1454.97, -1329.80, 12.68)
 factionSpawnpoint[6] = {Vector3(1418.66, -1316.93, 13.55), 0, 0}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
+factionAirDropPoint[6] = {Vector3(1452.09, -1443.78, 13.39), 0, 0}
 
 -- ID 7 = Grove
 factionRankNames[7] = {
@@ -233,7 +234,7 @@ factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]
 evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
 factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
 factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
-factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38)
+factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38+2.71)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
 -- ID 11 = Triads
@@ -253,6 +254,7 @@ factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]
 evilFactionInteriorEnter[11] = Vector3(2494.06, -1464.34, 24.03)
 factionWTDestination[11] = Vector3( 2549.74, -1470.37, 22.95)
 factionSpawnpoint[11] = {Vector3(2509.91, -1468.94, 24.03), 0, 0}
+factionAirDropPoint[11] = Vector3(2437.67, -1504.29, 23.83)
 factionNavigationpoint[11] = evilFactionInteriorEnter[11]
 
 -- General:

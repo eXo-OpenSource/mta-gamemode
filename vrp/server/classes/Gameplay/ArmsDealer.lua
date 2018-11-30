@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 ArmsDealer = inherit(Singleton)
-
 ArmsDealer.Data = 
 {
     ["Waffen"] = AmmuNationInfo,
@@ -83,6 +82,8 @@ function ArmsDealer:checkoutCart(cart)
                     end
                 end
                 self:processCart( self.m_Order[faction], faction)
+            else 
+                client:sendError("Deine Fraktion hat bereits heute bestellt!")
             end
         end
     end
@@ -114,12 +115,12 @@ function ArmsDealer:processCart( order, faction )
     text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(etaTime+getRealTime().timestamp, true))
     faction:sendShortMessage(text, -1)
     self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket", {silent = true})
-    self.m_Order[faction] = false
     self.m_Blip =  Blip:new("Marker.png", endPoint.x, endPoint.y, {faction = {faction:getId()}}, 9999, BLIP_COLOR_CONSTANTS.Red)
     self.m_Blip:attach(self.m_Plane)
 
     self.m_DropBlip = Blip:new("SniperGame.png", endPoint.x, endPoint.y,  {factionType = {"State", "Evil"}}, 9999, BLIP_COLOR_CONSTANTS.Blue)
     self.m_DropIndicator = createObject(354, endPoint.x, endPoint.y, endPoint.z)
+    PlayerManager:getSingleton():breakingNews("Ein nicht identifiziertes Flugzeug ist in den Flugraum von San Andreas eingedrungen!")
 end
 
 function ArmsDealer:isMagazin(product)
@@ -143,7 +144,7 @@ function ArmsDealer:sendInfo()
 end
 
 function ArmsDealer:startAirDrop(faction, order, acceleration)
-    local endPoint = factionWTDestination[faction:getId()]
+    local endPoint = factionAirDropPoint[faction:getId()]
     if endPoint then 
         local length = 30 / #order 
         for i, data in ipairs(order) do 
