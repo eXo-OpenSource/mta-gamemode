@@ -71,7 +71,6 @@ local function enableShader()
 	if not snowShader or not treeShader or not naughtyTreeShader or not noiseTexture then
 		return false
 	end
-	enableSnow()
 
 	--Set shader values.
 	dxSetShaderValue(treeShader, "sNoiseTexture", noiseTexture)
@@ -93,9 +92,6 @@ local function enableShader()
 	for _,applyMatch in ipairs(naughtyTreeApplyList) do
 		engineApplyShaderToWorldTexture(naughtyTreeShader, applyMatch)
 	end
-	
-	savedWeather = getWeather()
-	setWeather(12)
 	updateTimer = setTimer(processShader, 2500, 0)
 	
 	isEffectEnabled = true
@@ -114,8 +110,6 @@ local function disableShader()
 		destroyElement(naughtyTreeShader)
 		destroyElement(noiseTexture)
 	end
-	setWeather(savedWeather)
-	disableSnow()
 	
 	if isTimer(updateTimer) then
 		killTimer(updateTimer)
@@ -152,6 +146,11 @@ end
 
 
 addEvent("switchSnowGround")
-addEventHandler("switchSnowGround", root, function(on)
-	setShaderEnabled(on)
+addEventHandler("switchSnowGround", root, function(on, extra)
+	if on then enableSnow() else disableSnow() end
+	if on then
+		setShaderEnabled(extra)
+	else
+		setShaderEnabled(false)
+	end
 end)

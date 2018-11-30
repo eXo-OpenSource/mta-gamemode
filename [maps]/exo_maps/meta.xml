@@ -82,8 +82,8 @@
 	<map src="jobs/helitransport.map" />
 	<map src="jobs/dumper.map" />
 
-	<map src="noobspawn_christmas.map" />
-	<!--<map src="noobspawn.map" />-->
+	<!--<map src="noobspawn_christmas.map" />-->
+	<map src="noobspawn.map" />
 	<map src="prison.map" />
 
 	<map src="shop/ammunation.map" />

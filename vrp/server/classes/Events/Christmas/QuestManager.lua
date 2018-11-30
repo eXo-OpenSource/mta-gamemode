@@ -166,7 +166,7 @@ function QuestManager:constructor()
 
 
 	self:getTodayQuest()
-	self:startQuest(4)
+	--self:startQuest(4)
 	GlobalTimer:getSingleton():registerEvent(bind(self.getTodayQuest, self), "Christmas-Quests", nil, 00, 5)
 
 end
