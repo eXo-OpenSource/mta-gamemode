@@ -24,7 +24,7 @@ FishingLocation.Map = {
 
 	{location = "sump", func = createColCircle, waterHeight = 5, args = {Vector2(-749, -1959), 120}},
 	{location = "desert", func = createColCircle, waterHeight = 12.2, args = {Vector2(6, 1532), 100}},
-	{location = "sewer", func = createColCircle, waterHeight = -38, args = {Vector2(1421, -1885), 30}}
+	{location = "sewer", func = createColCuboid, waterHeight = -38, args = {Vector3(1411, -1896, -39), 35, 37, 5}}
 }
 
 function FishingLocation:constructor()
