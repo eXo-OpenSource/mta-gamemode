@@ -181,6 +181,7 @@ function FishingRod:cast()
 end
 
 function FishingRod:checkWater()
+	local location = self.FishingMap:getLocation(localPlayer.position)
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 	local targetPosition = self:getFishingHookPosition()
 
@@ -188,7 +189,7 @@ function FishingRod:checkWater()
 	waterPosition.z = -500
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
-	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, waterPosition) or getGroundPosition(targetPosition) == 0) then
+	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, waterPosition) or getGroundPosition(targetPosition) == 0 or (localPlayer:getData("inSewer") and location == "sewer")) then
 		return true
 	end
 	return false

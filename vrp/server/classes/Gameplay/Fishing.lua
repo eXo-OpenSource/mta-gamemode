@@ -460,6 +460,7 @@ function Fishing:inventoryUse(player, fishingRodName)
 
 	local baitName = self:getFishingRodEquipments(player, fishingRodName)["bait"]
 	local fishingRod = createObject(1826, player.position)
+	fishingRod:setDimension(player.dimension)
 	player:attachPlayerObject(fishingRod)
 
 	self.m_Players[player] = {
