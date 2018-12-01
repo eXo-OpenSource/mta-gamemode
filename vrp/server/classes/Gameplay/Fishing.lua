@@ -462,7 +462,9 @@ function Fishing:inventoryUse(player, fishingRodName)
 		return
 	end
 
-	local baitName = self:getFishingRodEquipments(player, fishingRodName)["bait"]
+	local fishingRodEquipments = self:getFishingRodEquipments(player, fishingRodName)
+	local baitName = fishingRodEquipments["bait"] or false
+	--local accessorieName = fishingRodEquipments["accessories"] or false
 	local fishingRod = createObject(1826, player.position)
 	fishingRod:setDimension(player.dimension)
 	player:attachPlayerObject(fishingRod)
@@ -572,8 +574,6 @@ function Fishing:getFishingRodEquipments(player, fishingRodName)
 			else
 				equipements[valueName] = false
 			end
-		else
-			equipements[valueName] = false
 		end
 	end
 
