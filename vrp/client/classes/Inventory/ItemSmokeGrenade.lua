@@ -5,8 +5,6 @@ ItemSmokeGrenade.Map = {}
 function ItemSmokeGrenade:constructor() 
 	self.m_ReplaceShader = dxCreateShader("files/shader/texreplace.fx") -- re-enable this if it gets used / fixed (bug with missing vehicle smoke)
 	
-	addEventHandler("onClientElementStreamIn", root, bind(self.Event_onStreamedIn, self))
-	addEventHandler("onClientElementStreamOut", root, bind(self.Event_onStreamedOut, self))
 	if core:get("Other", "SmokeLowMode", false) then
 		self:useLowMode()
 	else 
@@ -17,8 +15,7 @@ function ItemSmokeGrenade:constructor()
 
 	addEventHandler("onClientRestore", root, self.m_BindDisableFunc)
 	addEventHandler("onClientRestore", root, self.m_BindLowFunc)
-
-
+	triggerServerEvent("onPlayerRequestSmoke", localPlayer)
 end
 
 function ItemSmokeGrenade:restoreOriginal(bCleared) 
@@ -108,6 +105,17 @@ function ItemSmokeGrenade:Event_onStreamedOut()
 	end
 end
 
+
+addEvent("ItemSmokeSync", true)
+addEventHandler("ItemSmokeSync", root, function(syncTable)
+	ItemSmokeGrenade.Map = syncTable
+	for o, k in pairs(syncTable) do
+		removeEventHandler("onClientElementStreamIn", o, bind(ItemSmokeGrenade:getSingleton().Event_onStreamedIn, self))
+		removeEventHandler("onClientElementStreamOut", o, bind(ItemSmokeGrenade:getSingleton().Event_onStreamedOut, self))
+		addEventHandler("onClientElementStreamIn", o, bind(ItemSmokeGrenade:getSingleton().Event_onStreamedIn, self))
+		addEventHandler("onClientElementStreamOut", o, bind(ItemSmokeGrenade:getSingleton().Event_onStreamedOut, self))
+	end
+end)
 
 function ItemSmokeGrenade:destructor() 
 
