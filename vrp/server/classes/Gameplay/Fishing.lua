@@ -94,14 +94,14 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 		end
 
 		-- Check Season
-		if type(v.Season) == "table" then
+		if #v.Season == 1 and (v.Season[1] == season or v.Season[1] == 0) then
+			checkSeason = true
+		elseif type(v.Season) == "table" then
 			for _, value in pairs(v.Season) do
 				if value == season then
 					checkSeason = true
 				end
 			end
-		elseif v.Season == 0 or v.Season == season then
-			checkSeason = true
 		end
 
 		-- Check time
@@ -219,6 +219,10 @@ function Fishing:FishCaught()
 
 	if tbl.lastFish.Id == 37 then -- Blobfisch
 		client:giveAchievement(101) -- Hässlichster Fisch der Welt
+	end
+
+	if tbl.lastFish.Id == 73 or tbl.lastFish.Id == 74 then
+		client:giveAchievement(104) -- Mutantenfisch
 	end
 
 	local playerSpeciesCaughtCount = client:getFishSpeciesCaughtCount()
