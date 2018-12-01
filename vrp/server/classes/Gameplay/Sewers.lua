@@ -181,7 +181,7 @@ function Sewers:createStorage()
     bin:setPosition(1483.02-200, -1736.06, 13.38-50)
     if entrance and isElement(entrance) then
         table.insert(self.m_EntranceMarkers, entrance)
-        --Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
+        Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
     end
 
     local randomPed = math.random(1, #self.m_PedPositions)
@@ -194,8 +194,8 @@ function Sewers:createStorage()
     ped:setRotation(0, 0, findRotation(ped:getPosition().x, ped:getPosition().y, entrance:getPosition().x, entrance:getPosition().y))
     giveWeapon(ped, 30, 200, true)
     setElementData(ped, "SewerPed", true)
-    --setElementData(ped, "clickable", true)
-	--addEventHandler("onElementClicked", ped, bind(self.Event_onPedClick, self))
+    setElementData(ped, "clickable", true)
+	addEventHandler("onElementClicked", ped, bind(self.Event_onPedClick, self))
     self:addKevlarToPed(ped)
 end
 
