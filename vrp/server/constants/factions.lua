@@ -156,7 +156,7 @@ evilFactionInteriorEnter[6] = Vector3(1419.71, -1328.59, 13.56)
 factionWTDestination[6] = Vector3(1454.97, -1329.80, 12.68)
 factionSpawnpoint[6] = {Vector3(1418.66, -1316.93, 13.55), 0, 0}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
-factionAirDropPoint[6] = {Vector3(1452.09, -1443.78, 13.39), 0, 0}
+factionAirDropPoint[6] = Vector3(1452.09, -1443.78, 13.39)
 
 -- ID 7 = Grove
 factionRankNames[7] = {

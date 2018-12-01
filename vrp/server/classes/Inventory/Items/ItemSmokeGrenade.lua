@@ -49,13 +49,17 @@ function ItemSmokeGrenade:use(player)
 		worldItem.m_SmokeEntity:setAlpha(0)
 		worldItem.m_SmokeEntity:setFrozen(true)
 		worldItem.m_SmokeEntity:attach(worldItem)
+		worldItem:setDimension(player:getDimension())
+		worldItem:setInterior(player:getInterior())
+		worldItem.m_SmokeEntity:setDimension(player:getDimension())
+		worldItem.m_SmokeEntity:setInterior(player:getInterior())
 		ItemSmokeGrenade.Map[worldItem] = {worldItem.m_SmokeEntity, self:createNameTagZone(worldItem)}
 		triggerClientEvent("itemRadioChangeURLClient", worldItem, "files/audio/smoke_explode.ogg")
 	end)
 end
 
 function ItemSmokeGrenade:createNameTagZone(worldItem)
-	if worldItem and isElement(worldItem) then 
+	if worldItem and isElement(worldItem) then
 		worldItem.m_ColZone = createColSphere(worldItem:getPosition(), 3)
 		local elementsWithinColShape = getElementsWithinColShape(worldItem.m_ColZone, "player")
 		worldItem.m_SmokeMarker = createMarker(worldItem:getPosition(), "corona", 0, 0, 0, 0, 0)

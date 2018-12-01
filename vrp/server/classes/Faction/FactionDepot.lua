@@ -336,7 +336,7 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 			if amount > 0 then
 				self.m_Equipments[item] = self.m_Equipments[item] + amount
 				if armsData[3] then 
-					if not takeWeapon(player, armsData[3], amount) then 
+					if not forceSpawn and not takeWeapon(player, armsData[3], amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] - amount -- prevent bug-abuse
 					end
 				end
@@ -344,7 +344,7 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 				self.m_Equipments[item] = self.m_Equipments[item] + allAmount
 				amount = allAmount
 				if armsData[3] then 
-					if not takeWeapon(player, armsData[3]) then 
+					if not forceSpawn and not takeWeapon(player, armsData[3]) then 
 						self.m_Equipments[item] = self.m_Equipments[item] - allAmount -- prevent bug-abuse
 					end
 				end
