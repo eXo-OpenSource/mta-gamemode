@@ -27,7 +27,7 @@ end
 
 function TeleportManager:check( player, pickup)
 	if player and isElement(player) and pickup and isElement(pickup) then 
-		if (player:getPosition() - pickup:getPosition()):getLength() < 1 and (pickup:getInterior() == player:getInterior()) and (pickup:getDimension()==player:getDimension()) then
+		if (player:getPosition() - pickup:getPosition()):getLength() < 2 and (pickup:getInterior() == player:getInterior()) and (pickup:getDimension()==player:getDimension()) then
 			return true
 		end
 	end
