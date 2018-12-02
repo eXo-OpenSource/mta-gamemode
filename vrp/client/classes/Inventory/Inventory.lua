@@ -121,6 +121,8 @@ function Inventory:addItem(place, item)
 			if slot.ItemImage then delete(slot.ItemImage) end
 			if slot.LabelBackground then delete(slot.LabelBackground) end
 			if slot.ItemLabel then delete(slot.ItemLabel) end
+			if slot.ItemWearBackground then delete(slot.ItemWearBackground) end
+			if slot.ItemWearProgress then delete(slot.ItemWearProgress) end
 
 			slot.Item = true
 			slot.Id = place-1
@@ -128,11 +130,19 @@ function Inventory:addItem(place, item)
 			slot.ItemName = item["Objekt"]
 			slot.Amount = item["Menge"]
 			slot.Value = item["Value"]
+			slot.WearLevel = item["WearLevel"]
 
 			local amountText = slot.Amount > 1 and slot.Amount or ""
 			local textWidth = VRPTextWidth(amountText, 20) + 3
 
 			slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+
+			if slot.WearLevel then
+				local progress = slot.WearLevel/itemData["MaxWear"]
+				local wearLevelColor = tocolor(255*(1-progress), 255*progress, 0)
+				slot.ItemWearBackground = GUIRectangle:new(0, slot.m_Height - 4, slot.m_Width, 4, Color.Background, slot)
+				slot.ItemWearProgress = GUIRectangle:new(0, slot.m_Height - 4, slot.m_Width*progress, 4, wearLevelColor, slot)
+			end
 
 			if slot.Amount > 1 then
 				slot.LabelBackground = GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-12, textWidth, 12, Color.Background, slot)
@@ -150,6 +160,8 @@ function Inventory:loadItems()
 		if slot.ItemImage then delete(slot.ItemImage) end
 		if slot.LabelBackground then delete(slot.LabelBackground) end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
+		if slot.ItemWearBackground then delete(slot.ItemWearBackground) end
+		if slot.ItemWearProgress then delete(slot.ItemWearProgress) end
 
 		slot.Item = nil
 		slot.Id = nil

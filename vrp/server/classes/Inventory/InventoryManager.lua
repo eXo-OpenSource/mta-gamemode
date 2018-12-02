@@ -60,6 +60,7 @@ function InventoryManager:loadItems()
 		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
 		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
 		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
+		itemData[itemName]["MaxWear"] = tonumber(row["MaxWear"]) or nil
 	end
 
 	return itemData

@@ -34,6 +34,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 				self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 				self.m_Items[id]["Platz"] = place
 				self.m_Items[id]["Value"] = row["Value"] or ""
+				self.m_Items[id]["WearLevel"] = tonumber(row["WearLevel"]) or nil
 				self.m_Bag[row["Tasche"]][place] = id
 				if row["Objekt"] == "Mautpass" then
 					if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
@@ -72,12 +73,13 @@ function Inventory:loadItem(id)
 	for i, row in ipairs(result) do
 		if tonumber(row["Menge"]) > 0 then
 			id = tonumber(row["id"])
-			place = tonumber(row["Platz"])
+			local place = tonumber(row["Platz"])
 			self.m_Items[id] = {}
 			self.m_Items[id]["Objekt"] = row["Objekt"]
 			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 			self.m_Items[id]["Platz"] = place
 			self.m_Items[id]["Value"] = row["Value"]
+			self.m_Items[id]["WearLevel"] = tonumber(row["WearLevel"]) or nil
 			self.m_Bag[row["Tasche"]][place] = id
 		else
 			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
@@ -144,16 +146,22 @@ function Inventory:saveItemPlace(id, place)
 end
 
 function Inventory:saveItemValue(id, value)
-	sql:queryExec("UPDATE ??_inventory_slots SET Value =? WHERE id = ?", sql:getPrefix(), value, id )
+	sql:queryExec("UPDATE ??_inventory_slots SET Value = ? WHERE id = ?", sql:getPrefix(), value, id)
 	self:syncClient()
 end
+
+function Inventory:saveItemWearLevel(id, wearLevel)
+	sql:queryExec("UPDATE ??_inventory_slots SET WearLevel = ? WHERE id = ?", sql:getPrefix(), wearLevel, id)
+	self:syncClient()
+end
+
 function Inventory:deleteItem(id)
 	sql:queryExec("DELETE FROM ??_inventory_slots WHERE id= ?", sql:getPrefix(), id )
 	self:syncClient()
 end
 
-function Inventory:insertItem(amount, item, place, bag, value)
-	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche, Value) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag, self:getItemValueByBag(bag,place) or "" ) -- ToDo add Prefix
+function Inventory:insertItem(amount, item, place, bag, value, wearLevel)
+	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche, Value, WearLevel) VALUES (?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag, value, wearLevel)
 	return sql:lastInsertId()
 end
 
@@ -204,7 +212,7 @@ function Inventory:isPlaceEmpty(bag, place)
 	end
 end
 
-function Inventory:setItemValueByBag( bag, place, value )
+function Inventory:setItemValueByBag(bag, place, value)
 	if bag then
 		if place then
 			local id = self:getItemID(bag, place)
@@ -266,8 +274,6 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 		return true
 	end
 end
-
-
 
 function Inventory:getFreePlacesForItem(item)
 	if self.m_Debug == true then
@@ -448,10 +454,12 @@ function Inventory:giveItem(item, amount, value) -- donotsync if player disconne
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]
-		if self:getItemAmount(item)+amount > itemMax  then
+
+		if self:getItemAmount(item) + amount > itemMax  then
 			self.m_Owner:sendError(_("Du kannst maximal %d %s in dein Inventar legen!", self.m_Owner,itemMax, item))
 			return
 		end
+
 		local placeType, place
 		if self:getPlaceForItem(item, amount) and not value then --Stack
 			placeType = "stack"
@@ -471,8 +479,9 @@ function Inventory:giveItem(item, amount, value) -- donotsync if player disconne
 				return true
 			elseif placeType == "new" then
 				if amount > 0 then
-				--	outputDebugString("giveItem - NewStack")
-					local lastId = self:insertItem(amount, item, place, bag, value or "")
+					local wearLevel = self.m_ItemData[item]["MaxWear"]
+					outputChatBox(tostring(wearLevel))
+					local lastId = self:insertItem(amount, item, place, bag, value or "", wearLevel)
 					self:loadItem(lastId)
 					self:setItemValueByBag(bag,place, value or "")
 					return true
@@ -483,5 +492,40 @@ function Inventory:giveItem(item, amount, value) -- donotsync if player disconne
 		end
 	elseif not self.m_Owner.m_Disconnecting then
 		self.m_Owner:sendError(_("Ungültiges Item! (%s)", self.m_Owner,item))
+	end
+end
+
+function Inventory:getItemWearLevelByBag(bag, place)
+	if bag and place then
+		local id = self:getItemID(bag, place)
+		if id then
+			return self.m_Items[id]["WearLevel"]
+		end
+	end
+end
+
+function Inventory:setItemWearLevelByBag(bag, place, wearLevel)
+	if bag and place then
+		local id = self:getItemID(bag, place)
+		if id then
+			self.m_Items[id]["WearLevel"] = wearLevel
+			self:saveItemWearLevel(id, wearLevel)
+		end
+	end
+end
+
+function Inventory:decreaseItemWearLevelByBag(bag, place)
+	if bag and place then
+		local id = self:getItemID(bag, place)
+		if id then
+			local wearLevel =  self.m_Items[id]["WearLevel"] - 1
+			if wearLevel <= 0 then
+				self.m_Owner:sendWarning(_("Die %s ist nun kaputt!", self.m_Owner, self.m_Items[id]["Objekt"]))
+				self:removeItemFromPlace(bag, place)
+			else
+				self:setItemWearLevelByBag(bag, place, wearLevel)
+				return true
+			end
+		end
 	end
 end
