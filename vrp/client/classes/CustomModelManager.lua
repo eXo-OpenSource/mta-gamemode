@@ -39,7 +39,7 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/hedge01_law.col", 6046)
 	self:loadImportDFF("files/models/objects/hedge01_law.dff", 6046)
 	self:setLODDistance(6046, 500)
-	
+
 	--bank
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)
 	self:loadImportCOL("files/models/buildings/casino_heist/bank_fence.col", 8481)
@@ -69,7 +69,7 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/fence.col", 1866)
 	self:loadImportTXD("files/models/objects/fence.txd", 1866)
 	self:loadImportDFF("files/models/objects/fence.dff", 1866)
-	
+
 	-- fuel nozzle
 	self:loadImportCOL("files/models/wearables/fuelnozzle.col", 1909)
 	self:loadImportTXD("files/models/wearables/fuelnozzle.txd", 1909)
@@ -190,14 +190,20 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/objects/XmasTree1.col", 6972)
 		self:loadImportTXD("files/models/objects/XmasTree1.txd", 6972)
 		self:loadImportDFF("files/models/objects/XmasTree1.dff", 6972)
+
 		self:loadImportCOL("files/models/objects/XmasBox.col", 3878)
 		self:loadImportTXD("files/models/objects/XmasBox.txd", 3878)
 		self:loadImportDFF("files/models/objects/XmasBox.dff", 3878)
+
 		self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
+
 		self:loadImportTXD("files/models/skins/snowman.txd", 260)
 		self:loadImportDFF("files/models/skins/snowman.dff", 260)
+
+		self:loadImportTXD("files/models/vehicles/andromada.txd", 592)
+		self:loadImportDFF("files/models/vehicles/andromada.dff", 592)
 	end
 
 	--Easter Event:
