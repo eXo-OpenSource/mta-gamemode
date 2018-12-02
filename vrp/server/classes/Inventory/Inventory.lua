@@ -477,9 +477,7 @@ function Inventory:giveItem(item, amount, value)
 				return true
 			elseif placeType == "new" then
 				if amount > 0 then
-					local wearLevel = self.m_ItemData[item]["MaxWear"]
-					outputChatBox(tostring(wearLevel))
-					local lastId = self:insertItem(amount, item, place, bag, value or "", wearLevel)
+					local lastId = self:insertItem(amount, item, place, bag, value or "", self.m_ItemData[item]["MaxWear"])
 					self:loadItem(lastId)
 					self:setItemValueByBag(bag,place, value or "")
 					return true

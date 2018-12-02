@@ -28,7 +28,6 @@ Inventory.Tabs = {
 function Inventory:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+80)/2, 330, (80+106+80))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
-	self.m_Tabs = {}
 	self.m_CurrentTab = 1
 
 	-- Upper Area (Tabs)
@@ -36,8 +35,8 @@ function Inventory:constructor()
 	local tabX, tabY = tabArea:getSize()
 	self.m_Rect = GUIRectangle:new(0, 0, tabX, tabY, Inventory.Color.TabHover, tabArea)
 
-	self.m_Tabs = {}
 	-- Tabs
+	self.m_Tabs = {}
 	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
 	self:addItemSlots(21, self.m_Tabs[1])
 	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
@@ -50,21 +49,18 @@ function Inventory:constructor()
 	self.m_InfoText1 = GUILabel:new(0, self.m_Height-45, self.m_Width, 20, _"Info: Zum Löschen von Items Control und Linksklick!", self.m_Window):setAlignX("center")
 	self.m_InfoText2 = GUILabel:new(0, self.m_Height-25, self.m_Width, 20, "", self.m_Window):setAlignX("center")
 
-	--Developement:
-	--self.m_ItemData = Inventory:getSingleton():getItemData()
-    --self.m_Items = Inventory:getSingleton():getItems()
-	--self.m_Bag = Inventory:getSingleton():getBagData()
-
 	self.m_func1 = bind(self.Event_loadPlayerInventarClient,  self)
 	self.m_func2 = bind(self.Event_syncInventoryFromServer,  self)
 	self.m_func3 = bind(self.Event_forceInventoryRefresh,  self)
 	self.m_func4 = bind(self.hide, self)
+	self.m_KeyInputCheck = bind(self.Event_OnRender, self)
+
 	addEventHandler("loadPlayerInventarClient",  root, self.m_func1 )
 	addEventHandler("syncInventoryFromServer",  root,  self.m_func2)
 	addEventHandler("forceInventoryRefresh",  root, self.m_func3 )
 	addEventHandler("closeInventory",  root,  self.m_func4)
-	self.m_KeyInputCheck = bind(self.Event_OnRender, self)
 	addEventHandler("onClientRender", root, self.m_KeyInputCheck)
+
 	self:hide()
 end
 
@@ -73,7 +69,10 @@ function Inventory:Event_OnRender()
 end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
---	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+	if self.m_Debug then
+		outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+	end
+
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
@@ -83,6 +82,7 @@ function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	if self.m_Debug then
 		outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
 	end
+
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end
@@ -93,7 +93,7 @@ function Inventory:Event_forceInventoryRefresh(slots, itemData)
 end
 
 function Inventory:toggle()
-	if self.Show == true then
+	if self.Show then
 		self:hide()
 	else
 		self:show()
