@@ -169,9 +169,7 @@ function FishingRod:cast()
 		self.Sound:play("cast")
 		self.Sound:play("waterplop")
 
-		if self.m_Bait then
-			triggerServerEvent("clientDecreaseFishingEquipment", localPlayer, self.m_Bait)
-		end
+		triggerServerEvent("clientFishingRodCast", localPlayer, self.m_Bait)
 	else
 		self.m_isCasting = true
 		self.Sound:play("dwop")

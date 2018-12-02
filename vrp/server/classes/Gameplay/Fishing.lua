@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "clientFishEscape", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFishStatistics", "clientAddFishingRodEquipment", "clientRemoveFishingRodEquipment", "clientDecreaseFishingEquipment"}
+addRemoteEvents{"clientFishingRodCast", "clientFishHit", "clientFishCaught", "clientFishEscape", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFishStatistics", "clientAddFishingRodEquipment", "clientRemoveFishingRodEquipment"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
@@ -23,9 +23,11 @@ function Fishing:constructor()
 	self.m_UpdatePricingPulse:registerHandler(bind(Fishing.updateStatistics, self))
 
 	addEventHandler("onPlayerQuit", root, bind(Fishing.onPlayerQuit, self))
+	addEventHandler("clientFishingRodCast", root, bind(Fishing.FishingRodCast, self))
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
 	addEventHandler("clientFishEscape", root, bind(Fishing.FishEscape, self))
+
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
 	addEventHandler("clientRequestFishTrading", root, bind(Fishing.onFishRequestTrading, self))
 	addEventHandler("clientSendFishTrading", root, bind(Fishing.clientSendFishTrading, self))
@@ -33,7 +35,6 @@ function Fishing:constructor()
 
 	addEventHandler("clientAddFishingRodEquipment", root, bind(Fishing.onAddFishingRodEquipment, self))
 	addEventHandler("clientRemoveFishingRodEquipment", root, bind(Fishing.onRemoveFishingRodEquipment, self))
-	addEventHandler("clientDecreaseFishingEquipment", root, bind(Fishing.onDecreaseFishingEquipment, self))
 end
 
 function Fishing:destructor()
@@ -170,6 +171,23 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 		return tmp[self.Random:get(1, availableFishCount)]
 	else
 		return false
+	end
+end
+
+function Fishing:FishingRodCast(usedBait)
+	if not self.m_Players[client] then return end
+
+	local fishingRodName = self.m_Players[client].fishingRodName
+	local baitName = self.m_Players[client].baitName
+
+	if client:getInventory():decreaseItemWearLevel(fishingRodName) then
+		client:sendWarning(_("Deine %s ist kaputt gegangen!", client, fishingRodName))
+		self:inventoryUse(client)
+		return
+	end
+
+	if usedBait and baitName == usedBait then
+		self:decreaseFishingEquipment(usedBait)
 	end
 end
 
@@ -530,9 +548,8 @@ function Fishing:onRemoveFishingRodEquipment(fishingRod, equipmentName)
 	end
 end
 
-function Fishing:onDecreaseFishingEquipment(baitName) --  TODO: Add support for accessories
+function Fishing:decreaseFishingEquipment(baitName) --  TODO: Add support for accessories
 	if not self.m_Players[client] then return end
-	if self.m_Players[client].baitName ~= baitName then outputChatBox("INVALID decreasing equipment!") return end
 
 	local playerInventory = client:getInventory()
 	local fishingRodName = self.m_Players[client].fishingRodName
