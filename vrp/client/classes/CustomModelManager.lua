@@ -202,8 +202,8 @@ function CustomModelManager:constructor()
 		self:loadImportTXD("files/models/skins/snowman.txd", 260)
 		self:loadImportDFF("files/models/skins/snowman.dff", 260)
 
-		self:loadImportTXD("files/models/vehicles/andromada.txd", 592)
-		self:loadImportDFF("files/models/vehicles/andromada.dff", 592)
+		self:loadImportTXD("files/models/vehicles/reindeerSledge.txd", 609)
+		self:loadImportDFF("files/models/vehicles/reindeerSledge.dff", 609)
 	end
 
 	--Easter Event:

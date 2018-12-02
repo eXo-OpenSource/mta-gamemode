@@ -2222,8 +2222,8 @@
 	<vrpfile src="files/models/vehicles/dft30.dff"/>
 	<vrpfile src="files/models/vehicles/dozer.dff" />
 	<vrpfile src="files/models/vehicles/dumper.dff" />
-	<vrpfile src="files/models/vehicles/andromada.txd" />
-	<vrpfile src="files/models/vehicles/andromada.dff" />
+	<vrpfile src="files/models/vehicles/reindeerSledge.txd" />
+	<vrpfile src="files/models/vehicles/reindeerSledge.dff" />
 
 	<!-- Easter Event Start-->
 	<file src="files/models/objects/worldItems/easter_egg.txd" />
