@@ -41,6 +41,7 @@ function ItemManager:constructor()
 		["Donut"] = ItemFood,
 		["Keks"] = ItemFood,
 		["Apfel"] = ItemFood,
+		["KöderDummy"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;

@@ -8,7 +8,7 @@
 ItemFishing = inherit(Item)
 
 function ItemFishing:constructor()
-
+	self.Random = Randomizer:new()
 end
 
 function ItemFishing:destructor()
@@ -80,15 +80,30 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 end
 
 function ItemFishing:useSecondary(player, itemId, bag, place, itemName)
-	if not FISHING_RODS[itemName] then return end
+	if self:isFishingRod(itemName) then
+		if FISHING_RODS[itemName].baitSlots > 0 then
+			local fishingRodEquipments = Fishing:getSingleton():getFishingRodEquipments(player, itemName)
 
-	if FISHING_RODS[itemName].baitSlots > 0 then
-		local fishingRodEquipments = Fishing:getSingleton():getFishingRodEquipments(player, itemName)
+			player:triggerEvent("closeInventory")
+			player:triggerEvent("showFishingRodGUI", itemName, {fishingRodEquipments["bait"], fishingRodEquipments["accessories"]})
+			return
+		else
+			player:sendError("Diese Angel bietet keine Interaktion!")
+		end
 
-		player:triggerEvent("closeInventory")
-		player:triggerEvent("showFishingRodGUI", itemName, {fishingRodEquipments["bait"], fishingRodEquipments["accessories"]})
 		return
-	else
-		player:sendError("Diese Angel bietet keine Interaktion!")
+	end
+
+	if itemName == "Köder" then
+		if self.Random:get(1, 100) <= 2 then
+			player:giveAchievement(105) --Proteine?!
+			player:getInventory():removeItem(itemName, 1)
+			player:kill()
+			return
+		end
+
+		if ItemManager.Map["KöderDummy"]:use(player) then
+			player:getInventory():removeItem(itemName, 1)
+		end
 	end
 end
