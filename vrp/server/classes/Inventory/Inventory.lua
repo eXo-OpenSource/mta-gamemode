@@ -447,8 +447,6 @@ function Inventory:giveItem(item, amount, value)
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
 	end
 
-	value = value == "" and false or value
-
 	if value == "" then value = false end
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
@@ -516,12 +514,22 @@ function Inventory:decreaseItemWearLevelByBag(bag, place)
 		if id then
 			local wearLevel =  self.m_Items[id]["WearLevel"] - 1
 			if wearLevel <= 0 then
-				self.m_Owner:sendWarning(_("Die %s ist nun kaputt!", self.m_Owner, self.m_Items[id]["Objekt"]))
 				self:removeItemFromPlace(bag, place)
+				return true
 			else
 				self:setItemWearLevelByBag(bag, place, wearLevel)
-				return true
+				return false
 			end
 		end
 	end
 end
+
+function Inventory:decreaseItemWearLevel(itemName)
+	if self.m_ItemData[itemName] and self.m_ItemData[itemName]["MaxWear"] then
+		if self:getItemAmount(itemName) ~= 1 then return end
+
+		local place, bag = unpack(self:getItemPlacesByName(itemName)[1])
+		return self:decreaseItemWearLevelByBag(bag, place)
+	end
+end
+
