@@ -19,7 +19,7 @@ ArmsDealer.Data =
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {5, 300000, 35, 3}, 
+        ["RPG-7"] = {5, 300000, 35}, 
         ["Granate"] = {10, 80000, 16},
         ["SLAM"] = {2, 40000}
     }
@@ -102,7 +102,7 @@ function ArmsDealer:processCart( order, faction )
     local endPoint = factionAirDropPoint[faction:getId()]
     local etaTime
     if endPoint then
-        etaTime = self:setupPlane(endPoint, 200000, faction, order)
+        etaTime = self:setupPlane(endPoint, 400000, faction, order)
     end
 
     local text = "Jackal Weapon Delivery\n"
@@ -123,7 +123,7 @@ function ArmsDealer:processCart( order, faction )
     end
     text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(etaTime+getRealTime().timestamp, true))
     faction:sendShortMessage(text, -1)
-    self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket", {silent = true})
+    faction:transferMoney(self.m_BankAccountServer, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket")
     self.m_Blip =  Blip:new("Marker.png", endPoint.x, endPoint.y, {faction = {faction:getId()}}, 9999, BLIP_COLOR_CONSTANTS.Red)
     self.m_Blip:attach(self.m_Plane)
 

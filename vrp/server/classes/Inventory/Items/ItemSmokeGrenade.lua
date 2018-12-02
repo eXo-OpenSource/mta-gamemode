@@ -10,10 +10,11 @@ ItemSmokeGrenade.Map = { }
 local SMOKE_CHECK_INTERVAL = 10000
 local SMOKE_DURATION = 60000
 
-addRemoteEvents{"onPlayerEnterTearGas", "onPlayerLeaveTearGas"}
+addRemoteEvents{"onPlayerEnterTearGas", "onPlayerLeaveTearGas", "onPlayerRequestSmoke"}
 function ItemSmokeGrenade:constructor()
 	addEventHandler("onPlayerEnterTearGas", root, bind(self.Event_onPlayerEnterTear, self))
 	addEventHandler("onPlayerLeaveTearGas", root, bind(self.Event_onPlayerLeaveTear, self))
+	addEventHandler("onPlayerRequestSmoke", root, bind(self.Event_requestSync, self))
 	setTimer(bind(self.checkSmokeRemove, self), SMOKE_CHECK_INTERVAL, 0)
 end
 
@@ -49,13 +50,24 @@ function ItemSmokeGrenade:use(player)
 		worldItem.m_SmokeEntity:setAlpha(0)
 		worldItem.m_SmokeEntity:setFrozen(true)
 		worldItem.m_SmokeEntity:attach(worldItem)
+		worldItem:setDimension(player:getDimension())
+		worldItem:setInterior(player:getInterior())
+		worldItem.m_SmokeEntity:setDimension(player:getDimension())
+		worldItem.m_SmokeEntity:setInterior(player:getInterior())
 		ItemSmokeGrenade.Map[worldItem] = {worldItem.m_SmokeEntity, self:createNameTagZone(worldItem)}
 		triggerClientEvent("itemRadioChangeURLClient", worldItem, "files/audio/smoke_explode.ogg")
+		self:sync()
 	end)
 end
 
+function ItemSmokeGrenade:sync()
+	for k, p in ipairs(getElementsByType("player")) do 
+		p:triggerEvent("ItemSmokeSync", ItemSmokeGrenade.Map)
+	end
+end
+
 function ItemSmokeGrenade:createNameTagZone(worldItem)
-	if worldItem and isElement(worldItem) then 
+	if worldItem and isElement(worldItem) then
 		worldItem.m_ColZone = createColSphere(worldItem:getPosition(), 3)
 		local elementsWithinColShape = getElementsWithinColShape(worldItem.m_ColZone, "player")
 		worldItem.m_SmokeMarker = createMarker(worldItem:getPosition(), "corona", 0, 0, 0, 0, 0)
@@ -122,4 +134,8 @@ function ItemSmokeGrenade:checkSmokeRemove()
 			ItemSmokeGrenade.Map[smoke] = nil
 		end
 	end
+end
+
+function ItemSmokeGrenade:Event_requestSync()
+	client:triggerEvent("ItemSmokeSync", ItemSmokeGrenade.Map)
 end

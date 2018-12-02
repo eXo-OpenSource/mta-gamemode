@@ -355,7 +355,7 @@ end
 function PolicePanel:locateElement(element, locationOf)
 	local elementText = element:getType() == "player" and _"Der Spieler" or _"Die Wanze"
 
-	if getElementDimension(element) == 0 and getElementInterior(element) == 0 then
+	if (getElementDimension(element) == 0 and getElementInterior(element) == 0) or element:getData("inSewer") then
 		self:stopLocating()
 
 		local pos = element:getPosition()

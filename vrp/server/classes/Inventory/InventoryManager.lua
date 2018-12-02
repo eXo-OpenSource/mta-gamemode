@@ -60,6 +60,7 @@ function InventoryManager:loadItems()
 		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
 		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
 		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
+		itemData[itemName]["MaxWear"] = tonumber(row["MaxWear"]) or nil
 	end
 
 	return itemData
@@ -67,7 +68,7 @@ end
 
 function InventoryManager:loadInventory(player)
 	if not self.Map[player] then
-		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
+		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData, ItemManager:getSingleton():getClassItems())
 		self.Map[player] = instance
 		return instance
 	end
@@ -98,6 +99,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		client:sendError(_("Du bist zu weit von %s entfernt!", client, target.name))
 		return false
 	end
+
 	if not money then money = 0 end
 	local amount = math.abs(amount)
 	local money = math.abs(money)
