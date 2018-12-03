@@ -157,6 +157,7 @@ HelpTextTitles = {
 		Minigames = "Minispiele";
 	};
 	Jobs = {
+		Boxer = "Job: Boxer";
 		BusDriver = "Job: Busfahrer";
 		Farmer = "Job: Bauer";
 		Logistician = "Job: Logistik";
@@ -318,6 +319,11 @@ HelpTexts = {
 		]];
 	};
 	Jobs = {
+		Boxer = [[
+			Als Boxer musst du gegen andere Boxer antreten und diese im Kampf besiegen.
+			Gewinnst du den Kampf, gewinnst du ein Preisgeld. 
+			Verlierst du jedoch, gehst du leer aus.
+		]];
 		BusDriver = [[
 			Als Busfahrer musst du die Bürger von Los Santos von A nach B transportieren.
 			Im Grunde musst du nur dem roten Marker mit dem grauen Dreieck folgen und
