@@ -205,10 +205,16 @@ function GUISkribble:addDrawHook(callback)
 	self.m_DrawHook = callback
 end
 
-function GUISkribble:saveImage()
+function GUISkribble:getImage(format)
 	local pixels = self.m_RenderTarget:getPixels()
-	local pngPixels = dxConvertPixels(pixels, 'png')
-	local newImg = fileCreate('img.png')
+	local imgPixels = dxConvertPixels(pixels, format)
+	return imgPixels
+end
+
+function GUISkribble:saveImage(name, format)
+	local pixels = self.m_RenderTarget:getPixels()
+	local pngPixels = dxConvertPixels(pixels, format)
+	local newImg = fileCreate(name)
 	fileWrite(newImg, pngPixels)
 	fileClose(newImg)
 end
