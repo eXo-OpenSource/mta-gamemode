@@ -157,6 +157,7 @@ HelpTextTitles = {
 		Minigames = "Minispiele";
 	};
 	Jobs = {
+		Boxer = "Job: Boxer";
 		BusDriver = "Job: Busfahrer";
 		Farmer = "Job: Bauer";
 		Logistician = "Job: Logistik";
@@ -318,6 +319,11 @@ HelpTexts = {
 		]];
 	};
 	Jobs = {
+		Boxer = [[
+			Als Boxer musst du gegen andere Boxer antreten und diese im Kampf besiegen.
+			Gewinnst du den Kampf, gewinnst du ein Preisgeld. 
+			Verlierst du jedoch, gehst du leer aus.
+		]];
 		BusDriver = [[
 			Als Busfahrer musst du die Bürger von Los Santos von A nach B transportieren.
 			Im Grunde musst du nur dem roten Marker mit dem grauen Dreieck folgen und
@@ -688,3 +694,19 @@ EASTEREGG_KEY_MOVES =
 EASTEREGG_MAX_UPDATE_RATE = 80
 EASTEREGG_SLEEP_UPDATETICK = 1000/ EASTEREGG_MAX_UPDATE_RATE 
 EASTEREGG_DISPLAY_SIZE = {x=512, y=256}
+
+JobBoxerFights = { --Gewicht, NPCs, Leben 1, Leben 2
+	{"Fliegengewicht", 50},
+	{"Leichtgewicht", 75},
+	{"Mittelgewicht", 100},
+	{"Cruisergewicht", 150},
+	{"Schwergewicht", 200}
+}
+
+JobBoxerFightRandoms = {
+	{15, 4, 7, 9, 11},
+	{15, 5, 9, 11, 13},
+	{14, 5, 9, 11, 13},
+	{16, 6, 10, 13, 14},
+	{17, 10, 15, 16, 17}
+}

@@ -195,6 +195,9 @@ function Player:loadCharacter()
 	if self:getGroup() then
 		self:getGroup():spawnVehicles()
 	end
+
+	local row = sql:queryFetchSingle("SELECT Boxerlevel FROM ??_boxerlevel WHERE UserId = ?", sql:getPrefix(), self.m_Id)
+	self:setPublicSync("JobBoxer:Level", row["Boxerlevel"] or 0)
 	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
 end
