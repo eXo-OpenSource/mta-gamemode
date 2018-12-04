@@ -433,6 +433,7 @@
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
+	<script src="server/classes/Jobs/JobBoxer.lua" type="server" />
 	<script src="server/classes/Jobs/JobManager.lua" type="server"/>
 	<script src="server/classes/Jobs/JobLogistician.lua" type="server"/>
 	<script src="server/classes/Jobs/JobTrashman.lua" type="server"/>
@@ -847,6 +848,8 @@
 	<script src="client/classes/GUIForms/AchievementGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/JobBoxerGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/JobBoxerTopList.lua" type="client" />
 	<script src="client/classes/GUIForms/CoolingBagGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FishingGUIs.lua" type="client" />
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
@@ -928,6 +931,7 @@
 
 	<!-- Jobs -->
 	<script src="client/classes/Jobs/Job.lua" type="client"/>
+	<script src="client/classes/Jobs/JobBoxer.lua" type="client" />
 	<script src="client/classes/Jobs/JobManager.lua" type="client"/>
 	<script src="client/classes/Jobs/JobLogistician.lua" type="client"/>
 	<script src="client/classes/Jobs/JobTrashman.lua" type="client"/>
@@ -1544,6 +1548,7 @@
 	<vrpfile src="files/images/Jobs/HeaderHeliTransport.png"/>
 	<vrpfile src="files/images/Jobs/HeaderForkLift.png"/>
 	<vrpfile src="files/images/Jobs/HeaderGravel.png"/>
+	<vrpfile src="files/images/Jobs/HeaderBoxer.png"/>
 
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>

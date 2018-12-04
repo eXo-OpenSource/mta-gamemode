@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/GUIForms/JobBoxerTopList.lua
+-- *  FILE:        client/classes/GUIForms/JobBoxerTopList.lua
 -- *  PURPOSE:     Boxer job toplist gui class
 -- *
 -- ****************************************************************************
