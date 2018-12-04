@@ -9,12 +9,13 @@
 JobBoxerGUI = inherit(GUIForm)
 
 function JobBoxerGUI:constructor()
-    local width, height = 500, 400
-    GUIForm.constructor(self, screenWidth/2-(width/2), screenHeight/2-(height/2), width, height)
+	GUIWindow.updateGrid()			
+	self.m_Width = grid("x", 12)
+	self.m_Height = grid("y", 9)
 
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kampf Liste", true, true, self)
-
-    self.m_GridList = GUIGridList:new(10, 40, 200, self.m_Height-50, self.m_Window)
+    self.m_GridList = GUIGridGridList:new(1, 1, 6, 8, self.m_Window)
     self.m_GridList:addColumn("", 0.95)
     self.m_GridList:addItemNoClick(_"Verfügbare Kämpfe")
     for i = 1, #JobBoxerFights do
@@ -26,13 +27,9 @@ function JobBoxerGUI:constructor()
         end
     end
 
-    self.m_Headline = GUILabel:new(235, 40, self.m_Width-230, self.m_Height-10, "", self.m_Window)
-    self.m_Headline:setFont(VRPFont(34))
-
-    self.m_Label = GUILabel:new(235, 80, self.m_Width-230, self.m_Height-10, "", self.m_Window)
-    self.m_Label:setFont(VRPFont(28))
-
-    self.m_Button = VRPButton:new(240, 330, 230, 50, _"Starten", true, self.m_Window)
+    self.m_Headline = GUIGridLabel:new(7, 1, 5, 1, "", self.m_Window):setHeader()
+    self.m_Label = GUIGridLabel:new(7, 3, 5, 1, "", self.m_Window)
+    self.m_Button = GUIGridButton:new(7, 8, 5, 1, _"Starten", self.m_Window)
     self.m_Button.onLeftClick = bind(self.startButtonClick, self)
 end
 

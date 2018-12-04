@@ -7,7 +7,6 @@
 -- ****************************************************************************
 
 JobBoxer = inherit(Job)
-inherit(Singleton, JobBoxer)
 
 function JobBoxer:constructor()
     Job.constructor(self, 307, 2228.39, -1718.57, 13.55, 90.98, "Gangwar.png", {190, 40, 30}, "files/images/Jobs/HeaderBoxer.png", _(HelpTextTitles.Jobs.Boxer):gsub("Job: ", ""), _(HelpTexts.Jobs.Boxer))
@@ -16,8 +15,6 @@ function JobBoxer:constructor()
     addRemoteEvents{"boxerJobFightList", "boxerJobTopList"}
     addEventHandler("boxerJobFightList", root, bind(JobBoxer.openFightList, self))
     addEventHandler("boxerJobTopList", root, bind(JobBoxer.openTopList, self))
-
-    HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Boxer):gsub("Job: ", ""), "jobs.boxer")
 end
 
 function JobBoxer:start()
@@ -38,11 +35,7 @@ end
 
 function JobBoxer:startJob(type)
     local dimension = DimensionManager:getSingleton():getFreeDimension()
-    localPlayer:setPosition(758.42, 11.18, 1001.16)
-    localPlayer:setRotation(0, 0, 270)
-    localPlayer:setDimension(dimension)
-    setCameraTarget(localPlayer)
-    triggerServerEvent("boxerJobStartJob", localPlayer, type)
+    triggerServerEvent("boxerJobStartJob", localPlayer, type, dimension)
     
     self.m_Boxer = Ped(math.random(80, 81), Vector3(763.25, 11.18, 1001.16), 90)
     self.m_Boxer:setInterior(5)
@@ -82,6 +75,11 @@ function JobBoxer:aiUpdate(boxer)
             boxer:setRotation(0, 0, boxerRotation)
             setPedControlState(boxer, "aim_weapon", true)
             if boxerDistance < 2 then
+                if localPlayer:isDead() then
+                    self:boxerRemoveControlStates(boxer)
+                    setPedControlState(boxer, "fire", false)
+                    return
+                end
                 if now > self.m_NextTick then
                     boxerActionRandom = math.random(0, JobBoxerFightRandoms[self.m_BoxLevel][1])
                     self.m_LastTick = getTickCount()
@@ -150,7 +148,6 @@ function JobBoxer:stopJob()
         self.m_Boxer:destroy()
         localPlayer:setPosition(763.26, 5.48, 1000.71)
         localPlayer:setRotation(0, 0, 270)
-        localPlayer:setDimension(0)
         setCameraTarget(localPlayer)
         triggerServerEvent("boxerJobEndJob", localPlayer)
         self.m_ColShape:destroy()
@@ -162,7 +159,6 @@ function JobBoxer:abortJob()
         self.m_Boxer:destroy()
         localPlayer:setPosition(763.26, 5.48, 1000.71)
         localPlayer:setRotation(0, 0, 270)
-        localPlayer:setDimension(0)
         setCameraTarget(localPlayer)
         triggerServerEvent("boxerJobAbortJob", localPlayer)
         self.m_ColShape:destroy()
