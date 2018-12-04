@@ -447,7 +447,6 @@
 	<script src="server/classes/Jobs/JobForkLift.lua" type="server"/>
 	<script src="server/classes/Jobs/JobTreasureSeeker.lua" type="server"/>
 	<script src="server/classes/Jobs/JobGravel.lua" type="server"/>
-	<script src="server/classes/Jobs/JobBoxer.lua" type="server"/>
 
 
 	<!-- AI -->
@@ -703,8 +702,6 @@
 	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/JobBoxerGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/JobBoxerTopList.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioStationEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
@@ -943,7 +940,6 @@
 	<script src="client/classes/Jobs/JobForkLift.lua" type="client"/>
 	<script src="client/classes/Jobs/JobTreasureSeeker.lua" type="client"/>
 	<script src="client/classes/Jobs/JobGravel.lua" type="client"/>
-	<script src="client/classes/Jobs/JobBoxer.lua" type="client"/>
 
 	<!-- Groups -->
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
@@ -1547,7 +1543,6 @@
 	<vrpfile src="files/images/Jobs/HeaderHeliTransport.png"/>
 	<vrpfile src="files/images/Jobs/HeaderForkLift.png"/>
 	<vrpfile src="files/images/Jobs/HeaderGravel.png"/>
-	<vrpfile src="files/images/Jobs/HeaderBoxer.png"/>
 
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>

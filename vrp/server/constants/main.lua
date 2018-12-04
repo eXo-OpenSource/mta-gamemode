@@ -170,11 +170,3 @@ RESOURCES_TO_STOP = {
     "scoreboard";
     "helpmanager";
 }
-
-JobBoxerMoney = {
-    100,
-    250,
-    350,
-    400,
-    500
-}
