@@ -3,9 +3,12 @@ QuestDraw = inherit(Object)
 function QuestDraw:constructor(id, name, type)
 	self.m_Id = id
 	self.m_Name = name
-
 	addRemoteEvents{"questDrawShowSkribble"}
 	addEventHandler("questDrawShowSkribble", root, function()
+		if not dxGetStatus().AllowScreenUpload then
+			triggerServerEvent("questDrawNoScreenshotAllowed", localPlayer)
+			return	
+		end
 		QuestDrawGUI:new(self.m_Id, self.m_Name)
 	end)
 
@@ -64,16 +67,25 @@ function QuestDrawGUI:constructor(id, name)
 
 	local save = GUIGridButton:new(18, 11, 3, 1, "Einsenden", self.m_Window)
 	save.onLeftClick = function()
+		if not dxGetStatus().AllowScreenUpload then
+			ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um den Quest zu machen!")
+			return
+		end
 		QuestionBox:new("Möchtest du das Bild wirklich einsenden? Warnung: Du kannst nur ein einziges Bild für das Event einsenden!", function()
+			if not dxGetStatus().AllowScreenUpload then
+				ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um den Quest zu machen!")
+				return
+			end
 			self.m_Skribble:setDrawingEnabled(false)
 
 			self:showInfoText("Das Bild wird gespeichert...")
 
 			local options = {
-				["postData"] =  ("secret=%s&playerId=%d&contest=%s&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, toJSON(self.m_Skribble:getSyncData()))
+				["postData"] =  ("secret=%s&playerId=%d&contest=%s&img=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, base64Encode(self.m_Skribble:getImage("png"))),
+				["postIsBinary"] = true
 			}
 
-			fetchRemote((INGAME_WEB_PATH .. "/ingame/drawContest/addData.php%s"):format(DEBUG and "?debug=true" or ""), options,
+			fetchRemote(("%s/drawContest/upload.php%s"):format(PICUPLOAD_PATH, DEBUG and "?debug=true" or ""), options,
 				function(responseData, responseInfo)
 					--outputConsole(inspect({data = responseData, info = responseInfo}))
 					responseData = fromJSON(responseData)
@@ -163,7 +175,7 @@ function QuestDrawAdminGUI:constructor()
 	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 11, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Zeichnungen", 1)
 
-	self.m_Skribble = GUIGridSkribble:new(6, 2, 20, 10, self.m_Window)
+	self.m_Image = GUIGridWebView:new(6, 2, 20, 10, PICUPLOAD_PATH.."/drawContest/index.htm", true, self.m_Window)
 	self.m_Background = GUIGridRectangle:new(6, 2, 20, 10, Color.Clear, self.m_Window)
 	self.m_InfoLabel = GUIGridLabel:new(6, 2, 20, 10, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
 
@@ -228,39 +240,28 @@ function QuestDrawAdminGUI:onReceivePlayers(contestName, players)
 		item = self.m_PlayersGrid:addItem(drawing.name)
 
 		item.onLeftClick = function(item)
-			if item == self.m_SelectedDrawItem then return end
+		if item == self.m_SelectedDrawItem then return end
 
-			if not localPlayer.LastRequest then
-				self.m_SelectedDrawItem = item
-				self.m_SelectedDrawId = drawing.drawId
+			self.m_SelectedDrawItem = item
+			self.m_SelectedDrawId = drawing.drawId
 
-				self.m_SelectedPlayerName = drawing.name
-				self.m_SelectedPlayerId = id
+			self.m_SelectedPlayerName = drawing.name
+			self.m_SelectedPlayerId = id
 
-				self:resetOverview("Das Bild wird geladen...")
-				localPlayer.LastRequest = true
+			localPlayer.LastRequest = true
 
-				fetchRemote((INGAME_WEB_PATH .. "/ingame/drawContest/getData.php?%splayerId=%s&contest=%s"):format(DEBUG and "debug=true&" or "", id, contestName), bind(self.onReceiveImage, self))
-				self.m_AcceptDrawBtn:setVisible(false)
-				self.m_DeclineDrawBtn:setVisible(false)
-			else
-				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
-			end
+			self.m_Image:loadURL(drawing.url)
+			self:hideInfoText()
+			self.m_AcceptDrawBtn:setVisible(true)
+			self.m_DeclineDrawBtn:setVisible(true)
 		end
 	end
 end
 
 function QuestDrawAdminGUI:resetOverview(labelText)
-	self.m_Skribble:clear(true)
+	self.m_Image:loadURL(PICUPLOAD_PATH.."/drawContest/index.htm")
 	self:showInfoText(labelText)
-end
-
-function QuestDrawAdminGUI:onReceiveImage(drawData)
-	localPlayer.LastRequest = false
-
-	self:hideInfoText()
-	self.m_Skribble:drawSyncData(fromJSON(drawData))
-	self.m_AcceptDrawBtn:setVisible(true)
-	self.m_DeclineDrawBtn:setVisible(true)
+	self.m_AcceptDrawBtn:setVisible(false)
+	self.m_DeclineDrawBtn:setVisible(false)
 end
 
