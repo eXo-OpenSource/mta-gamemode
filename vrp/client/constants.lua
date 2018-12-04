@@ -157,6 +157,7 @@ HelpTextTitles = {
 		Minigames = "Minispiele";
 	};
 	Jobs = {
+		Boxer = "Job: Boxer";
 		BusDriver = "Job: Busfahrer";
 		Farmer = "Job: Bauer";
 		Logistician = "Job: Logistik";
