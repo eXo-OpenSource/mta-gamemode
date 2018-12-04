@@ -26,4 +26,5 @@ function JobBoxerTopList:constructor(table, playertable)
         end
     end
     self.m_GridList:addItem(("#%s"):format(playertable[1]), ("%s"):format(playertable[2]), ("%s"):format(playertable[3])):setColumnColor(1, Color.LightBlue):setColumnColor(2, Color.LightBlue):setColumnColor(3, Color.LightBlue)
+    ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
 end

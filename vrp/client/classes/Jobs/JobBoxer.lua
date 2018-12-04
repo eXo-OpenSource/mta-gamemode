@@ -9,7 +9,7 @@
 JobBoxer = inherit(Job)
 
 function JobBoxer:constructor()
-    Job.constructor(self, 307, 2228.39, -1718.57, 13.55, 90.98, "Gangwar.png", {190, 40, 30}, "files/images/Jobs/HeaderBoxer.png", _(HelpTextTitles.Jobs.Boxer):gsub("Job: ", ""), _(HelpTexts.Jobs.Boxer))
+    Job.constructor(self, 307, 2228.39, -1718.57, 13.55, 90.98, "BoxingGlove.png", {200, 40, 30}, "files/images/Jobs/HeaderBoxer.png", _(HelpTextTitles.Jobs.Boxer):gsub("Job: ", ""), _(HelpTexts.Jobs.Boxer))
     self:setJobLevel(JOB_LEVEL_BOXER)
 
     addRemoteEvents{"boxerJobFightList", "boxerJobTopList"}
