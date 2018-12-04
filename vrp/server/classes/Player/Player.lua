@@ -195,6 +195,10 @@ function Player:loadCharacter()
 	if self:getGroup() then
 		self:getGroup():spawnVehicles()
 	end
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/boxer-job
 	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
 end
