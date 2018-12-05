@@ -45,9 +45,29 @@ end
 function Async:continue(...)
 	Async.id = self.m_Id
 
+	if not self.m_Trace then
+		self.m_Trace = {}
+		local traceLevel = 1
+		while true do
+			local info = debug.getinfo(traceLevel, "Sl")
+			if not info then break end
+			if info.what ~= "C" and info.source then -- skip c functions as they don't have info
+				if not info.source:find("classlib.lua") and not info.source:find("tail call") then -- skip tail calls and classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
+					table.insert(self.m_Trace, {info.source, info.currentline or "not specified"})
+				end
+			end
+			traceLevel = traceLevel + 1
+		end
+	end
+
 	if not self.m_IsRunning then
 		self.m_Coroutine = coroutine.create(self.m_Fn)
 		self.m_IsRunning = true
+
+		if coroutine.status(self.m_Coroutine) == "dead" then
+			outputDebugString("Coroutine died: " .. inspect(self.m_Trace), 1)
+		end
+
 		assert(coroutine.resume(self.m_Coroutine, ...))
 		return
 	else
@@ -62,6 +82,11 @@ function Async:continue(...)
 			self.m_Element = nil
 		end
 	end
+
+	if coroutine.status(self.m_Coroutine) == "dead" then
+		outputDebugString("Coroutine died: " .. inspect(self.m_Trace), 1)
+	end
+
 	assert(coroutine.resume(self.m_Coroutine))
 end
 

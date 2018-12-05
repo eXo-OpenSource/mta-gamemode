@@ -680,9 +680,12 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			if isElement(target) and func == "nickchange" then
 				local oldName = target:getName()
 				changeTarget = target
-				if changeTarget:setNewNick(admin, reason) then
-					self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
-				end
+
+				Async.create(function(ac, changeTarget, admin, reason, oldName)
+					if changeTarget:setNewNick(admin, reason) then
+						ac:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
+					end
+				end)(self, changeTarget, admin, reason, oldName)
 			end
 		else
 			admin:sendError(_("Ungültiges Ziel!", admin))
@@ -1150,7 +1153,7 @@ function Admin:Event_adminSyncForumFaction(factionId)
         local faction = FactionManager:getSingleton():getFromId(factionId)
    		if faction then
 			client:sendInfo(_("Syncronisation wurde gestartet.", client))
-			
+
 			Async.create(
 				function(client)
 					local addedCount, removedCount = faction:syncForumPermissions()
@@ -1169,7 +1172,7 @@ function Admin:Event_adminSyncForumCompany(companyId)
         local company = CompanyManager:getSingleton():getFromId(companyId)
 		   if company then
 			client:sendInfo(_("Syncronisation wurde gestartet.", client))
-			
+
 			Async.create(
 				function(client)
 					local addedCount, removedCount = company:syncForumPermissions()
