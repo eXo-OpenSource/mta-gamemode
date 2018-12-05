@@ -72,6 +72,10 @@ function FactionState:constructor()
 	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
 	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 0, 5)
 
+
+	self.m_EvidenceEquipmentBox = {}
+	self:createEquipmentEvidence(Vector3(1581.7, -1689.27, 5.2), 0, 5)
+	self:createEquipmentEvidence(Vector3(1581.7, -1689.27, 5.2), 0, 5)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -180,6 +184,51 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 			end
 		end
 	end)
+end
+
+function FactionState:createEquipmentEvidence( pos, int, dim )
+	local box = createObject(964, pos)
+	box:setInterior(int)
+	box:setDimension(dim)
+	box:setData("clickable",true,true)
+	addEventHandler("onElementClicked", box, bind(self.Event_OnEvidenceEquipmentClick, self))
+	self.m_EvidenceEquipmentBox[#self.m_EvidenceEquipmentBox+1] = box
+end
+
+function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction():isStateFaction() then
+			local box = player:getPlayerAttachedObject()
+			if box and isElement(box) and box.m_Content then 
+				self:putEvidenceInDepot(player, box)
+			else 
+				player:sendError(_("Du trägst keine Schwarzmarktware mit dir!", player))
+			end
+		else
+			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
+		end
+	end
+end
+
+function FactionState:putEvidenceInDepot(player, box)
+	local content = box.m_Content 
+	local type, product, amount, price, id = unpack(box.m_Content)
+	local depot = player:getFaction():getDepot()
+	if type == "Waffe" then
+		if id then
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
+			self:addWeaponToEvidence(player, id, amount, 0, true)
+		end
+	elseif type == "Munition" then
+		if id then
+			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
+			self:addWeaponToEvidence(player, id, amount, 0, true)
+		end
+	else 
+		player:getFaction():sendShortMessage(("%s hat %s Stück %s (%s $) konfesziert!"):format(player:getName(), amount, product, price))
+		self.m_BankAccountServer:transferMoney(player:getFaction(), price , "Schwarzmarktware", "Faction", "Schwarzmarktware")
+	end
+	box.m_Package:delete()
 end
 
 function FactionState:Event_OnConfirmSelfArrest()

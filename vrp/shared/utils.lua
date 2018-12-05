@@ -626,7 +626,7 @@ function getWeekNumber()	--Maybe needs optimization
 	return math.floor((realtime.yearday + firstYearDayTime.weekday) / 7)
 end
 
-function getOpticalTimestamp(ts)
+function getOpticalTimestamp(ts, seconds)
 	local time = ts and getRealTime(ts) or getRealTime()
 	time.month = time.month+1
 	time.year = time.year-100
@@ -634,7 +634,7 @@ function getOpticalTimestamp(ts)
 		value = tostring(value)
 		if #value == 1 then time[index] = "0"..value end
 	end
-	return ("%s.%s.%s-%s:%s"):format(time.monthday, time.month, time.year, time.hour, time.minute)
+	return ("%s.%s.%s-%s:%s%s"):format(time.monthday, time.month, time.year, time.hour, time.minute, (seconds and (":%s"):format(time.second) or ""))
 end
 
 function timespanArray(seconds)
@@ -734,6 +734,10 @@ function normaliseVector(serialisedVector)
 	end
 end
 
+function normaliseRange( min, max, value)
+	return ( value-min ) / ( max-min )
+end
+
 function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
@@ -778,7 +782,10 @@ function attachRotationAdjusted ( from, to )
     local frPosX, frPosY, frPosZ = getElementPosition( from )
     local frRotX, frRotY, frRotZ = getElementRotation( from )
     local toPosX, toPosY, toPosZ = getElementPosition( to )
-    local toRotX, toRotY, toRotZ = getElementRotation( to )
+	local toRotX, toRotY, toRotZ = getElementRotation( to )
+	frRotX = frRotX or 0
+	frRotY = frRotY or 0
+	frRotZ = frRotZ or 0
     local offsetPosX = frPosX - toPosX
     local offsetPosY = frPosY - toPosY
     local offsetPosZ = frPosZ - toPosZ
@@ -872,4 +879,19 @@ end
 
 function angle(vec1, vec2)
     return math.acos(vec1:dot(vec2)/(vec1.length*vec2.length))
+end
+
+function getPedWeapons(ped)
+	local playerWeapons = {}
+	if ped and isElement(ped) and getElementType(ped) == "ped" or getElementType(ped) == "player" then
+		for i=1,11 do
+			local wep = getPedWeapon(ped,i)
+			if wep and wep ~= 0 then
+				table.insert(playerWeapons,wep)
+			end
+		end
+	else
+		return false
+	end
+	return playerWeapons
 end

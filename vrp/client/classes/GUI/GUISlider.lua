@@ -11,6 +11,7 @@ local HANDLE_WIDTH = 8
 
 function GUISlider:constructor(posX, posY, width, height, parent)
     GUIElement.constructor(self, posX, posY, width, height, parent)
+    self.m_Enabled = true
 	self.m_CursorMoveHandler = bind(GUISlider.Event_onClientCursorMove, self)
     self.m_RangeMin = 0 -- minimum value
     self.m_RangeMax = 1 --max value
@@ -53,12 +54,18 @@ function GUISlider:setRange(rangeMin, rangeMax)
 	return self
 end
 
+function GUISlider:setEnabled( bool ) 
+    self.m_Enabled = bool
+    return self
+end
+
 function GUISlider:setValue(value)
     self.m_Value = math.clamp(self.m_RangeMin, tonumber(value) or 0, self.m_RangeMax)
     return self
 end
 
 function GUISlider:internalCheckForNewValue(cx, cy)
+    if not self.m_Enabled then return end
     local newVal = self:internalCursorPositionToSliderValue(cx, cy)
     if newVal ~= self.m_Value then
         self.m_Value = newVal

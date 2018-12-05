@@ -22,7 +22,7 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", "companyPlayerSelectSkin", "companyUpdateSkinPermissions"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyForumSync", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", "companyPlayerSelectSkin", "companyUpdateSkinPermissions"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
@@ -42,6 +42,7 @@ function CompanyManager:constructor()
 	addEventHandler("companyRequestSkinSelection", root, bind(self.Event_requestSkins, self))
 	addEventHandler("companyPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 	addEventHandler("companyUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
+	addEventHandler("companyForumSync", root, bind(self.Event_companyForumSync, self))
 end
 
 function CompanyManager:destructor()
@@ -62,7 +63,7 @@ function CompanyManager:loadCompanies()
 		end
 
 		if Company.DerivedClasses[row.Id] then
-			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Name_Shorter, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Name_Shorter, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins, row.Permissions))
 		else
 			outputServerLog(("Company class for Id %s not found!"):format(row.Id))
 			--self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
@@ -71,6 +72,32 @@ function CompanyManager:loadCompanies()
 		count = count + 1
 	end
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s companies in %sms"):format(count, getTickCount()-st)) end
+end
+
+function CompanyManager:Event_companyForumSync()
+	local company = client:getCompany()
+
+	if company then
+		if company:getPlayerRank(client) < CompanyRank.Manager then
+			client:sendError(_("Du bist nicht berechtigt einen syncronisation zu starten!", client))
+			-- Todo: Report possible cheat attempt
+			return
+		end
+
+		if company.m_LastForumSync < getRealTime().timestamp - 60 * 15 then
+			company.m_LastForumSync = getRealTime().timestamp
+
+			Async.create(
+				function(client)
+					local addedCount, removedCount = company:syncForumPermissions()
+
+					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
+				end
+			)(client)
+		else
+			client:sendError(_("Es wurde bereits vor kurzem ein Sync durchgeführt!", client))
+		end
+	end
 end
 
 function CompanyManager:getFromId(Id)
@@ -112,6 +139,7 @@ function CompanyManager:Event_companyQuit()
     company:addLog(client, "Unternehmen", "hat das Unternehmen verlassen!")
 
 	self:sendInfosToClient(client)
+	company:updateForumPermissions(client.m_Id)
 end
 
 function CompanyManager:Event_companyDeposit(amount)
@@ -207,6 +235,7 @@ function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, rea
     company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
 
 	self:sendInfosToClient(client)
+	company:updateForumPermissions(playerId)
 end
 
 function CompanyManager:Event_companyInvitationAccept(companyId)
@@ -225,6 +254,7 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, company:hasInvitation(client), company.m_Id, "company")
 
 			self:sendInfosToClient(client)
+			company:updateForumPermissions(client.m_Id)
 		else
 			client:sendError(_("Du bisd bereits in einem Unternehmen!", client))
 		end
@@ -279,6 +309,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
+			company:updateForumPermissions(playerId)
 		else
 			client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, company:getPlayerRank(client)))
 		end
@@ -319,6 +350,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
+			company:updateForumPermissions(playerId)
 		else
 			client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 		end

@@ -37,7 +37,7 @@ function FactionVehicle:constructor(data)
 		addEventHandler("onVehicleStartEnter", self, function(player, seat)
 			if seat == 0 then
 				if not self:isWithinColShape(FactionState:getSingleton().m_ArmySepcialVehicleCol) then
-					if player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
+					if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
 						cancelEvent()
 					end
 				end

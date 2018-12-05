@@ -329,7 +329,7 @@ function Player:save()
 			end
 		end
 
-		local dimension = 0
+		local dimension = self:isInSewer() and self:getDimension() or 0
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
 		local sSkin = self.m_Skin
@@ -428,6 +428,11 @@ function Player:spawn()
 	-- Update Skin
 	self:setCorrectSkin()
 
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
+
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
 	end
@@ -440,11 +445,6 @@ function Player:spawn()
 	-- Give weapons
 	for k, info in pairs(self.m_Weapons) do
 		giveWeapon(self, info[1], info[2])
-	end
-
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
 	end
 
 	-- gets unfrozen if he has a session id
@@ -872,6 +872,12 @@ function Player:payDay()
 		income = income + self.m_HalloweenPaydayBonus
 		BankServer.get("event.halloween"):transferMoney({self, true, true}, self.m_HalloweenPaydayBonus, "Halloween-Bonus", "Event", "HalloweenBonus", {silent = true})
 		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
+	end
+
+	if EVENT_CHRISTMAS then
+		income = income + 200
+		BankServer.get("event.christmas"):transferMoney({self, true, true}, 200, "Weihnachtsgeld", "Event", "ChristmasBonus", {silent = true})
+		self:addPaydayText("income", _("Weihnachtsgeld", self), self.m_HalloweenPaydayBonus)
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
@@ -1592,3 +1598,6 @@ end
 function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
 end
+
+function Player:setInSewer(bool) self:setData("inSewer", bool, true); self.m_InSewer = bool end
+function Player:isInSewer() return self.m_InSewer end

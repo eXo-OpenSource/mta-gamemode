@@ -199,7 +199,10 @@ function KeyBinds:vehicleELS(__, keyState)
 	if localPlayer.vehicle and localPlayer.vehicle.m_ELSPreset then 
 		if localPlayer.vehicleSeat == 0 then
 			if VehicleELS:getSingleton():isEnabled() then
-			triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+				triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+				if localPlayer.vehicle.towedByVehicle and localPlayer.vehicle.towedByVehicle.m_ELSPreset and localPlayer.vehicle.towedByVehicle:getCategory() == 2 then -- trailer
+					triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle.towedByVehicle, not localPlayer.vehicle.towedByVehicle.m_ELSActive) 
+				end
 			else
 				WarningBox:new(_"Um die Rundumleuchten zu sehen musst du diese in den Einstellungen (F2) aktivieren.")
 			end
@@ -207,8 +210,11 @@ function KeyBinds:vehicleELS(__, keyState)
 	end
 end
 
-function KeyBinds:tryEnterEntrance( __, keystate) 
-	triggerEvent("onTryEnterance", localPlayer)
+function KeyBinds:tryEnterEntrance( __, keystate)
+	if keystate == "up" then
+		triggerServerEvent("onTryEnterTeleporter", localPlayer)
+		triggerEvent("onTryEnterance", localPlayer)
+	end
 end
 
 --[[

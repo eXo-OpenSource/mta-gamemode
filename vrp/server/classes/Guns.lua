@@ -87,7 +87,7 @@ function Guns:Event_onTaser(target)
 end
 
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
-	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
+	--if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
 	local attacker = client
 

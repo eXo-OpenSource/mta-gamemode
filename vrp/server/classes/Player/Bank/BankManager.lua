@@ -78,6 +78,10 @@ function BankManager:Event_Transfer(toPlayerName, amount)
 
 				client:sendShortMessage(_("Du hast an %s %d$ überwiesen!", client, toPlayerName, amount))
 				client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
+
+				if offline then
+					delete(toPlayer)
+				end
 			end
 		end
 	else

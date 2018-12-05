@@ -12,7 +12,7 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
+function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins, permissions)
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_ShortName = ShortName
@@ -28,6 +28,9 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_Level = 0
 	self.m_RankNames = companyRankNames[Id]
 	self.m_Skins = companySkins[Id]
+	self.m_Permissions = permissions and fromJSON(permissions) or {}
+	self.m_ForumGroups = {}
+	self.m_LastForumSync = 0
 	-- Settings
 	self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
 
@@ -59,6 +62,133 @@ function Company:destructor()
   end
 
   self:save()
+end
+
+function Company:getRequiredForumPermissionsChanges(playerId)
+	local forumId = Account.getBoardIdFromId(playerId)
+
+	Forum:getSingleton():userGet(forumId, Async.waitFor(self))
+	local result = Async.wait()
+	local data = fromJSON(result)
+
+	if data["status"] == 200 then
+		local groups = data["data"]["groups"]
+		local currentGroups = {}
+
+		for _, v in pairs(groups) do
+			if not table.find(currentGroups, v["groupID"]) then
+				table.insert(currentGroups, v["groupID"])
+			end
+		end
+
+		local rank = self:getPlayerRank(playerId)
+		local modifications = {
+			add = {},
+			remove = {}
+		}
+		
+		if rank and self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
+			local newGroups = self.m_Permissions["forum"]["ranks"][tostring(rank)]
+
+			if type(newGroups) == "table" then
+				newGroups = table.copy(newGroups)
+			else
+				newGroups = {newGroups}
+			end
+
+			for _, groupId in pairs(currentGroups) do
+				local isCompanyGroup = table.find(self.m_ForumGroups, groupId) and true or false
+				local isNewGroup = table.find(newGroups, groupId) and true or false
+
+				if isCompanyGroup and not isNewGroup then
+					table.insert(modifications.remove, groupId)
+				elseif isNewGroup then
+					table.removevalue(newGroups, groupId)
+				end
+			end
+
+			for _, groupId in pairs(newGroups) do
+				table.insert(modifications.add, groupId)
+			end
+		else
+			for _, groupId in pairs(currentGroups) do
+				local isCompanyGroup = table.find(self.m_ForumGroups, groupId) and true or false
+
+				if isCompanyGroup then
+					table.insert(modifications.remove, groupId)
+				end
+			end
+		end
+
+		return modifications
+	else
+		outputDebugString("[Company@getRequiredForumPermissionsChanges]Can't determinant changes for the user " .. tostring(playerId))
+	end
+	return false
+end
+
+function Company:updateForumPermissions(playerId)
+	local forumId = Account.getBoardIdFromId(playerId)
+
+	local changes = self:getRequiredForumPermissionsChanges(playerId)
+
+	if changes then
+		for _, groupId in pairs(changes.remove) do
+			Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
+		end
+
+		for _, groupId in pairs(changes.add) do
+			Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
+		end
+	end
+end
+
+function Company:syncForumPermissions()
+	local totalChanges = {}
+	local addedCount = 0
+	local removedCount = 0
+
+	for playerId, rank in pairs(self.m_Players) do
+		totalChanges[playerId] = self:getRequiredForumPermissionsChanges(playerId)
+	end
+
+	for _, groupId in pairs(self.m_ForumGroups) do
+		Forum:getSingleton():groupGet(groupId, Async.waitFor(self))
+		local result = Async.wait()
+		local data = fromJSON(result)
+		if data["status"] == 200 then
+			for _, v in pairs(data["data"]["members"]) do
+				local playerId = Account.getIdFromIdBoard(v["userID"])
+
+				if not playerId then -- has no ingame account but has group??
+					Forum:getSingleton():groupRemoveMember(v["userID"], groupId, function() end) -- to execute it faster ;)
+					removedCount = removedCount + 1
+				else
+					if not self.m_Players[playerId] then
+						totalChanges[playerId] = { add = {}, remove = {groupId} }
+					end
+				end
+			end
+		end
+	end
+
+	for playerId, changes in pairs(totalChanges) do
+		local forumId = Account.getBoardIdFromId(playerId)
+
+		if changes then
+			for _, groupId in pairs(changes.remove) do
+				Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
+				removedCount = removedCount + 1
+			end
+
+			for _, groupId in pairs(changes.add) do
+				Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
+				addedCount = addedCount + 1
+			end
+		end
+	end
+
+	return addedCount, removedCount
 end
 
 function Company:save()

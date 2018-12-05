@@ -8,7 +8,7 @@ local readFuncs = {
 	end;
 	marker = function(attributes)
 		return {type = "marker", markertype = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			size = tonumber(attributes.size), color = attributes.color}
+			size = tonumber(attributes.size), color = attributes.color,  interior = tonumber(attributes.interior)}
 	end;
 	removeWorldObject = function(attributes)
 		return {type = "removeWorldObject", radius = tonumber(attributes.radius), model = tonumber(attributes.model), lodModel = tonumber(attributes.lodModel),
@@ -39,11 +39,13 @@ local createFuncs = {
 		setElementDoubleSided(o, info.doublesided or false)
 		setElementAlpha(o, info.alpha or 255)
 		setObjectScale(o, info.scale or 1)
+		setElementInterior(o, info.interior or 0)
 		setElementCollisionsEnabled(o, info.collisions ~= "false")
 		return o
 	end;
 	marker = function(info)
 		local m = createMarker(info.x, info.y, info.z, info.markertype, info.size, getColorFromString(info.color))
+		setElementInterior(m, info.interior or 0)
 		return m
 	end;
 	checkpoint = function(info)
@@ -117,6 +119,7 @@ function MapParser:create(dimension)
 		local element = createFuncs[info.type](info)
 		if isElement(element) then
 			element._type = info.type
+			dimension = dimension < 0 and element:getType() == "marker" and 0 or dimension
 			setElementDimension(element, dimension)
 		end
 		table.insert(map, element)

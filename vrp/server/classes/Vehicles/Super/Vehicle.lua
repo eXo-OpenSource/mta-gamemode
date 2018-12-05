@@ -872,6 +872,20 @@ end
 
 function Vehicle:getFaction() end
 
+function Vehicle:updateTemplate()
+	if self.m_Template then 
+		self.m_TemplateName = TuningTemplateManager:getSingleton():getNameFromId( self.m_Template ) or ""
+		setElementData(self, "TemplateName", self.m_TemplateName)
+	end
+end
+
+function Vehicle:setTemplate(template)
+	self.m_Template = template
+end
+
+function Vehicle:getTemplateName()
+	return self.m_TemplateName
+end
 
 Vehicle.isPermanent = pure_virtual
 Vehicle.respawn = pure_virtual

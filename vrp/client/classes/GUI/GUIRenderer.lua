@@ -31,11 +31,13 @@ function GUIRenderer.updateAll(elapsedTime)
 
 	for k = #GUIRenderer.cache, 1, -1 do
 		local v = GUIRenderer.cache[k]
-		if v.m_Visible and v.update then
-			v:update(elapsedTime)
-		end
-		if v.m_ContainsGUIElements and v.m_Visible then
-			v:performChecks()
+		if v then
+			if v.m_Visible and v.update then
+				v:update(elapsedTime)
+			end
+			if v.m_ContainsGUIElements and v.m_Visible then
+				v:performChecks()
+			end
 		end
 	end
 

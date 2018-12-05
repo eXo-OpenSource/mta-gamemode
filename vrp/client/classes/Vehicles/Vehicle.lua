@@ -87,6 +87,10 @@ function Vehicle:getVehicleType()
 	return getVehicleType(self)
 end
 
+function Vehicle:isTurboVehicle()
+	return getElementData(self, "Turbo")
+end
+
 function Vehicle:magnetVehicleCheck()
 	local vehicle = self:getData("MagnetGrabbedVehicle")
 	local groundPosition = vehicle and getGroundPosition(vehicle.position)

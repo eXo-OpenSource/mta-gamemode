@@ -137,6 +137,7 @@ function Core:ready() --onClientResourceStart
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	Sewers:new()
 	PremiumArea:new()
 
 	Plant.initalize()
@@ -178,6 +179,8 @@ function Core:ready() --onClientResourceStart
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 
 	ExplosiveTruckManager:new()
+
+	VehicleTurbo:new()
 end
 
 function Core:afterLogin()
@@ -237,7 +240,8 @@ function Core:afterLogin()
 			table.insert(AppBank.ATMs, object)
 		end
 	end
-
+	
+	setElementData(localPlayer, "isEquipmentGUIOpen", false, true)
 end
 
 function Core:onWebSessionCreated() -- this gets called from LocalPlayer when the client recieves it's web session ID
