@@ -205,16 +205,17 @@ function JobBoxer:updateCachedTopList(player)
     if bNameFound == true then
         self.m_BoxerLevelTable[bTableIndex][2] = self:getPlayerLevel(player)[3]
         for i = 10, 1, -1 do 
-            if self.m_BoxerLevelTable[bTableIndex][2] > self.m_BoxerLevelTable[i][2] then
+            if self.m_BoxerLevelTable[bTableIndex][2] >= self.m_BoxerLevelTable[i][2] then
                 bUpperIndex = i
             end
         end
-        if self.m_BoxerLevelTable[1][1] ~= player:getName() then
-            if self.m_BoxerLevelTable[bTableIndex][2] > self.m_BoxerLevelTable[bUpperIndex][2] then
-                local temp = self.m_BoxerLevelTable[bUpperIndex]
-                self.m_BoxerLevelTable[bUpperIndex] = self.m_BoxerLevelTable[bTableIndex]
-                self.m_PlayerLevelCache[self.m_BoxerLevelTable[bUpperIndex][1]][1] = bUpperIndex
-                self.m_BoxerLevelTable[bTableIndex] = temp
+        if self.m_BoxerLevelTable[bTableIndex][2] > self.m_BoxerLevelTable[bUpperIndex][2] then
+            local temp = self.m_BoxerLevelTable[bUpperIndex]
+            self.m_BoxerLevelTable[bUpperIndex] = self.m_BoxerLevelTable[bTableIndex]
+            self.m_PlayerLevelCache[self.m_BoxerLevelTable[bUpperIndex][1]][1] = bUpperIndex
+            self.m_BoxerLevelTable[bTableIndex] = temp
+            if self.m_PlayerLevelCache[self.m_BoxerLevelTable[bTableIndex][1]] then
+                self.m_PlayerLevelCache[self.m_BoxerLevelTable[bTableIndex][1]][1] = bTableIndex
             end
         end
     else
