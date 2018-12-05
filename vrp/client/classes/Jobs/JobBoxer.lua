@@ -34,26 +34,30 @@ function JobBoxer:openTopList(table, playertable)
 end
 
 function JobBoxer:startJob(type)
-    local dimension = DimensionManager:getSingleton():getFreeDimension()
-    triggerServerEvent("boxerJobStartJob", localPlayer, type, dimension)
-    
-    self.m_Boxer = Ped(math.random(80, 81), Vector3(763.25, 11.18, 1001.16), 90)
-    self.m_Boxer:setInterior(5)
-    self.m_Boxer:setDimension(dimension)
-    self.m_Boxer:setHealth(JobBoxerFights[type][2])
-    self.m_BoxLevel = type
+    if localPlayer:getPrivateSync("Stat_BoxerLevel") >= JobBoxerFights[type][3] then
+        local dimension = DimensionManager:getSingleton():getFreeDimension()
+        triggerServerEvent("boxerJobStartJob", localPlayer, type, dimension)
+        
+        self.m_Boxer = Ped(math.random(80, 81), Vector3(763.25, 11.18, 1001.16), 90)
+        self.m_Boxer:setInterior(5)
+        self.m_Boxer:setDimension(dimension)
+        self.m_Boxer:setHealth(JobBoxerFights[type][2])
+        self.m_BoxLevel = type
 
-    self.m_ColShape = ColShape.Cuboid(757.51, 7.76, 999, 7, 7, 5)
-    self.m_ColShape:setInterior(5)
-    self.m_ColShape:setDimension(dimension)
-    addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.onClientColShapeLeave, self, leaveElement, matchingDimension))
+        self.m_ColShape = ColShape.Cuboid(757.51, 7.76, 999, 7, 7, 5)
+        self.m_ColShape:setInterior(5)
+        self.m_ColShape:setDimension(dimension)
+        addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.onClientColShapeLeave, self, leaveElement, matchingDimension))
 
-    bindKey("L", "down", bind(self.abortJob, self))
+        bindKey("L", "down", bind(self.abortJob, self))
 
-    self.m_StartTick = getTickCount()
-    self.m_LastTick = getTickCount()
-    self.m_NextTick = getTickCount()
-    addEventHandler("onClientPreRender", root, bind(self.aiUpdate, self, self.m_Boxer))
+        self.m_StartTick = getTickCount()
+        self.m_LastTick = getTickCount()
+        self.m_NextTick = getTickCount()
+        addEventHandler("onClientPreRender", root, bind(self.aiUpdate, self, self.m_Boxer))
+    else
+        ErrorBox:new(_"Dein Boxerlevel ist zu niedrig!")
+    end
 end
 
 function JobBoxer:onClientColShapeLeave(leaveElement, matchingDimension)

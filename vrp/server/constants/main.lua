@@ -172,9 +172,9 @@ RESOURCES_TO_STOP = {
 }
 
 JobBoxerMoney = {
+    50,
     100,
-    250,
+    200,
     350,
-    400,
-    500
+    475
 }

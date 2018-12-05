@@ -22,7 +22,7 @@ function JobBoxerGUI:constructor()
         local item = self.m_GridList:addItem(("  %s"):format(JobBoxerFights[i][1]))
         item.onLeftClick = function()
             self.m_Headline:setText(_"Informationen")
-            self.m_Label:setText(("Gewichtsklasse %s\nLeben: %s"):format(JobBoxerFights[i][1], JobBoxerFights[i][2]))
+            self.m_Label:setText(("Gewichtsklasse %s\nLeben: %s%%\nmin. Level: %s"):format(JobBoxerFights[i][1], JobBoxerFights[i][2], JobBoxerFights[i][3]))
             self.m_Type = i
         end
     end
@@ -34,6 +34,8 @@ function JobBoxerGUI:constructor()
 end
 
 function JobBoxerGUI:startButtonClick()
-    JobBoxer:getSingleton():startJob(self.m_Type)
-    self:close()
+    if self.m_Type then
+        JobBoxer:getSingleton():startJob(self.m_Type)
+        self:close()
+    end
 end

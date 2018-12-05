@@ -82,6 +82,8 @@ function JobBoxer:startJob(typ, dimension)
     client:sendInfo("Du bist nun im Ring,\ndrücke L um aufzugeben!")
 
     client:createStorage()
+    client:setArmor(0)
+    client:setHealth(100)
     client:setPosition(758.42, 11.18, 1001.16)
     client:setRotation(0, 0, 270)
     client:setCameraTarget(client)
@@ -103,6 +105,7 @@ function JobBoxer:endJob()
     local level = self:getPlayerLevel(client)[3]
     self.m_PlayerLevelCache[client:getName()][3] = level + 1
     client:increaseStatistics("BoxerLevel", 1)
+    client:givePoints(1)
     self:updateCachedTopList(client)
 
     client:restoreStorage()
@@ -168,12 +171,7 @@ end
 
 function JobBoxer:getPlayerLevel(player)
     if self.m_PlayerLevelCache[player:getName()] then 
-        if getTickCount() - self.m_PlayerLevelCache[player:getName()][4] < 600000 then
-            return self.m_PlayerLevelCache[player:getName()]
-        else
-            self.m_PlayerLevelCache[player:getName()] = nil
-            return self:getPlayerLevel(player)
-        end
+        return self.m_PlayerLevelCache[player:getName()]
     else
         local result = sql:queryFetch("SELECT (SELECT COUNT(*) FROM ??_stats WHERE BoxerLevel >= ?) AS Position, BoxerLevel FROM ??_stats WHERE Id=?", sql:getPrefix(), player:getPrivateSync("Stat_BoxerLevel"), sql:getPrefix(), player:getId())
         self.m_PlayerLevelCache[player:getName()] = {0, player:getName(), 0, getTickCount()}

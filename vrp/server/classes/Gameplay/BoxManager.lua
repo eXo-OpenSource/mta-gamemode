@@ -75,22 +75,26 @@ function BoxManager:onMarkerHit(hitElement, dim)
 end
 
 function BoxManager:requestFight(target, moneyId)
-	if not self.m_BoxFight["active"] then
-		local money = BOXING_MONEY[moneyId]
-		if client:getMoney() >= money then
-			if target:getMoney() >= money then
-				if target:isFactionDuty() or target:isCompanyDuty() then client:sendError("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!") return end
+	if not JobBoxer:getSingleton():isPlayerBoxing(target) then
+		if not self.m_BoxFight["active"] then
+			local money = BOXING_MONEY[moneyId]
+			if client:getMoney() >= money then
+				if target:getMoney() >= money then
+					if target:isFactionDuty() or target:isCompanyDuty() then client:sendError("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!") return end
 
-				QuestionBox:new(client, target, _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", client, target, money)
-				client:sendShortMessage(_("Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$", client, target:getName(), money))
+					QuestionBox:new(client, target, _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", client, target, money)
+					client:sendShortMessage(_("Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$", client, target:getName(), money))
+				else
+					client:sendError(_("%s hat nicht genug Geld dabei!", client, target:getName()))
+				end
 			else
-				client:sendError(_("%s hat nicht genug Geld dabei!", client, target:getName()))
+				client:sendError(_("Du hast nicht genug Geld dabei!", client))
 			end
 		else
-			client:sendError(_("Du hast nicht genug Geld dabei!", client))
+			client:sendError(_("Der Boxring ist derzeit belegt!", client))
 		end
 	else
-		client:sendError(_("Der Boxring ist derzeit belegt!", client))
+		client:sendError(_("Der Spieler ist bereits am Boxen!", client))
 	end
 end
 
