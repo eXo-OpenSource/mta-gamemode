@@ -877,7 +877,7 @@ function Player:payDay()
 	if EVENT_CHRISTMAS then
 		income = income + 200
 		BankServer.get("event.christmas"):transferMoney({self, true, true}, 200, "Weihnachtsgeld", "Event", "ChristmasBonus", {silent = true})
-		self:addPaydayText("income", _("Weihnachtsgeld", self), self.m_HalloweenPaydayBonus)
+		self:addPaydayText("income", _("Weihnachtsgeld", self), 200)
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
