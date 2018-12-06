@@ -166,17 +166,14 @@ function KeyBinds:animationMenu()
 end
 
 function KeyBinds:policePanel()
-	if not PolicePanel:isInstantiated() then
-		if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 then
-			if localPlayer:getPublicSync("Faction:Duty") == true then
-				PolicePanel:new()
-			else
-				ErrorBox:new(_"Du bist nicht im Dienst!")
-			end
-		end
-	else
-		delete(PolicePanel:getSingleton())
+	if not (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) then return false end
+	if not localPlayer:getPublicSync("Faction:Duty") then return false end
+	if not PolicePanel:isInstantiated() then --cretae new
+		PolicePanel:new()
+		return true
 	end
+	
+	PolicePanel:getSingleton():toggle()	
 end
 
 function KeyBinds:helpMenu()

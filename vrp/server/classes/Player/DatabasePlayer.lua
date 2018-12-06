@@ -996,7 +996,7 @@ end
 
 function DatabasePlayer:getSTVO(category)
 	if category then
-		return self.m_STVO[category]
+		return self.m_STVO[category] or 0
 	end
 
 	return self.m_STVO

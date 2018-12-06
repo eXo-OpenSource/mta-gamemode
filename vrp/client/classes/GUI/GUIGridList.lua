@@ -99,7 +99,7 @@ function GUIGridList:setColumnText(columnIndex, text)
 	return self
 end
 
-function GUIGridList:setColumnBackgroundColor(color)
+function GUIGridList:setColumnBackgroundColor(color) --header with column names
 	self.m_ColumnBGColor = color
 	return self
 end
@@ -107,6 +107,10 @@ end
 function GUIGridList:addColumn(text, width)
 	table.insert(self.m_Columns, {text = text, width = width})
 	return self
+end
+
+function GUIGridList:getColumnCount()
+	return #self.m_Columns
 end
 
 function GUIGridList:getSelectedItem()
@@ -139,13 +143,25 @@ function GUIGridList:clear()
 end
 
 function GUIGridList:onInternalSelectItem(item)
+	if self.m_SelectedItem then
+		self.m_SelectedItem:setBackgroundColor(Color.Clear)
+		if item.m_InternalClickSavedColor then -- it had another color which got changed by click
+			for i, color in pairs(item.m_InternalClickSavedColor) do
+				self.m_SelectedItem:setColumnColor(i, color)	
+			end	
+		end
+	end
+	
 	self.m_SelectedItem = item
 
-	for k, item in ipairs(self:getItems()) do
-		item:setBackgroundColor(Color.Clear)
-	end
-
 	item:setBackgroundColor(Color.Accent)
+	for i = 1, self:getColumnCount() do -- fix for blue texts -> color them white temporarily
+		if item:getColumnColor(i) == Color.Accent then
+			item:setColumnColor(i, Color.White)
+			if not item.m_InternalClickSavedColor then item.m_InternalClickSavedColor = {} end
+			item.m_InternalClickSavedColor[i] = Color.Accent
+		end
+	end	
 	self:anyChange()
 end
 

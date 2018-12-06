@@ -41,6 +41,10 @@ function GUIGridListItem:setColumnColor(columnIndex, color)
 	return self
 end
 
+function GUIGridListItem:getColumnColor(columnIndex)
+	return self.m_Columns[columnIndex].color
+end
+
 function GUIGridListItem:setColumnToImage(columnIndex, state, width)
 	self.m_Columns[columnIndex].image = state
 	self.m_Columns[columnIndex].imageWidth = width or getColumnWidth(columnIndex)*self.m_Width - 10
