@@ -71,7 +71,7 @@ function Guns:constructor()
 	self.m_NetworkInteruptFreeze = false
 	self.HookDrawAttention = bind(self.drawNetworkInterupt, self)
 	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
-	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
+	--addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
@@ -277,14 +277,14 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 		if cWeapon ~= 34 then
 			toggleControl("fire",true)
 			if localPlayer.m_FireToggleOff then
-				if localPlayer.m_LastSniperShot+6000 <= getTickCount() then
+				if localPlayer.m_LastSniperShot+4000 <= getTickCount() then
 					localPlayer.m_FireToggleOff = false
 				end
 			end
 			self.m_HasSniper = false
 		else
 			if localPlayer.m_FireToggleOff then
-				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
+				if localPlayer.m_LastSniperShot+4000 >= getTickCount() then
 					toggleControl("fire",false)
 				else
 					localPlayer.m_FireToggleOff = false
@@ -339,7 +339,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				setTimer(function()
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
-				end, 6000,1)
+				end, 4000,1)
 			end
 		end
 		if self.m_TracerEnabled then
@@ -385,6 +385,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 	end
 end
 
+--[[
 function Guns:Event_checkFadeIn()
 	local hasSniper = getPedWeapon(localPlayer) == 34
 	if hasSniper then
@@ -428,6 +429,7 @@ function Guns:removeSniperShader()
 		delete(self.m_SniperShader)
 	end
 end
+]]
 
 function Guns:Event_onTaserRender()
 	if self.m_TaserAttacker and (self.m_HitPos or self.m_TaserTarget) then
