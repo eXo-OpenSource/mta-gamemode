@@ -224,19 +224,6 @@ function StatisticsLogger:addVehicleDeleteLog(userId, admin, model, reason)
         sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin), reason)
 end
 
-function StatisticsLogger:addTextLog(logname, text)
-	local filePath = self.m_TextLogPath..logname..".log"
-
-	if not fileExists(filePath) then
-		fileClose(fileCreate(filePath))
-	end
-
-	local file = fileOpen(filePath, false)
-	fileSetPos(file, fileGetSize(file))
-	fileWrite(file, getOpticalTimestamp()..": "..text.."\n" )
-	fileClose(file)
-end
-
 function StatisticsLogger:addPlantLog(player, type)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	sqlLogs:queryExec("INSERT INTO ??_DrugPlants (UserId, Type, Date ) VALUES(?, ?,  NOW())",
@@ -325,6 +312,27 @@ function StatisticsLogger:addAdminAction( player, action, target)
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionOther (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
 	end
+end
+
+function StatisticsLogger:addAdminVehicleAction(player, type, vehicle, arg)
+	local userId = 0
+	local vehicle = vehicle
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	if vehicle then
+		if isElement(vehicle) and getElementType(vehicle) == "vehicle" then
+			if not vehicle.m_Id then
+				error("bad vehicle specified ("..inspect(vehicle)..")")	
+			end
+			vehicle = vehicle.m_Id
+		elseif tonumber(vehicle) then
+			vehicle = tonumber(vehicle)
+		else
+			error("bad vehicle specified ("..inspect(vehicle)..")")
+		end
+	end
+
+	sqlLogs:queryExec("INSERT INTO ??_AdminActionVehicle (UserId, VehicleId, Type, Arg, Date ) VALUES(?, ?, ?, ?, NOW())",
+	sqlLogs:getPrefix(), userId, vehicle, type, arg)
 end
 
 function StatisticsLogger:onDebugMessageLog(message, level, file, line)

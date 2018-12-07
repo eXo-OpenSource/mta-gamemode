@@ -876,7 +876,6 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						target:giveWanteds(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
-						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
 					else
@@ -1681,7 +1680,7 @@ function FactionState:Event_givePANote(target, note)
 				target:sendInfo(_("%s hat dir eine GWD-Note von %d gegeben!", target, client:getName(), note))
 				client:sendInfo(_("Du hast %s eine GWD-Note von %d gegeben!", client, target:getName(), note))
 				target:setPaNote(note)
-				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine GWD-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
+				client:getFaction():addLog(player, "GWD", ("%s hat %s eine GWD-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
 				client:sendError(_("Ungültige GWD-Note!", client))
 			end

@@ -224,7 +224,9 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 	local hasToBeSaved = false
 	if changes.Model then
 		if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleModel"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
+		local oldModel = vehicle:getModel()
 		vehicle:setModel(changes.Model)
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "changeModel", vehicle, oldModel.." -> "..(changes.Model))
 		hasToBeSaved = true
 	end
 	if changes.ELS then
@@ -233,6 +235,7 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 		if changes.ELS ~= "__REMOVE" then
 			vehicle:setELSPreset(changes.ELS)
 		end
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "changeELS", vehicle, changes.ELS)
 		client:sendSuccess(_("ELS aktualisiert", client))
 		hasToBeSaved = true
 	end
@@ -922,7 +925,7 @@ function VehicleManager:Event_vehicleRepair()
 		return
 	end
 
-	StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Repair", getElementData(source, "OwnerName") or "Unknown")
+	StatisticsLogger:getSingleton():addAdminVehicleAction(client, "repair", source)
 	Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s repariert.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 
 	source:fix()
@@ -960,6 +963,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if instanceof(source, FactionVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn(true)
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
@@ -979,6 +983,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if instanceof(source, CompanyVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn( true )
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
@@ -998,6 +1003,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if instanceof(source, GroupVehicle) then
 		if (client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"]) then
 			source:respawn(true)
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
@@ -1104,6 +1110,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
 		 if source:getOwner() == client:getId() then
 			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 		end
 		source:respawnOnSpawnPosition()

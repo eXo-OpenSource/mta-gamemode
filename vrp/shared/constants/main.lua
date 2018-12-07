@@ -171,6 +171,7 @@ ADMIN_RANK_PERMISSION = {
 	["respawnRadius"] = RANK.Supporter,
 	["showVehicles"] = RANK.Supporter,
 	["showGroupVehicles"] = RANK.Supporter,
+	["toggleVehicleHandbrake"] = RANK.Moderator,
 	["respawnVehicle"] = RANK.Supporter, -- respawn per click
 	["parkVehicle"] = RANK.Supporter, -- set spawn position
 	["repairVehicle"] = RANK.Supporter, -- repair per click

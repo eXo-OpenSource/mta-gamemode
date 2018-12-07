@@ -1404,7 +1404,7 @@ function Admin:Event_vehicleDespawn(reason)
 	VehicleManager:getSingleton():checkVehicle(source)
 
 	if source:isPermanent() then
-		StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Despawn", ("Besitzer: %s, Grund: %s"):format(getElementData(source, "OwnerName") or "", reason))
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "despawn", source, reason)
 		self:sendShortMessage(_("%s hat das Fahrzeug %s von %s despawnt (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "", reason))
 
 		if getElementData(source, "OwnerName") then

@@ -240,6 +240,8 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
 
     if not client.m_VehicleTuningAdminMode then
         client:transferMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
+    else
+        StatisticsLogger:getSingleton():addAdminVehicleAction(client, "tuningShop", vehicle, toJSON(cartContent))
     end
     for slot, upgradeId in pairs(cartContent) do
         if type(slot) == "number" and slot >= 0 then
