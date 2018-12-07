@@ -458,7 +458,7 @@ function PolicePanel:updateGPS()
 end
 
 function PolicePanel:stopLocating()
-	if ElementLocateBlip then delete(ElementLocateBlip) end
+	if ElementLocateBlip then delete(ElementLocateBlip) ElementLocateBlip = nil end
 	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
 	localPlayer.m_LocatingElement = false
 	GPS:getSingleton():stopNavigation()
