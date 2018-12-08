@@ -512,5 +512,6 @@ function DrivingSchool:Event_reduceSTVO(category, amount)
 	end
 
 	client:setSTVO(category, client:getSTVO(category) - amount)
+	self.m_BankAccountServer:transferMoney({self, nil, true}, stvoPricing*0.85, "STVO-Punkte abbauen", "Driving School", "ReduceSTVO")
 	triggerClientEvent(client, "hideDrivingSchoolReduceSTVO", resourceRoot)
 end
