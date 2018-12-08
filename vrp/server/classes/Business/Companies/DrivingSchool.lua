@@ -415,7 +415,7 @@ function DrivingSchool:startLession(instructor, target, type)
 						}
 
 						target:transferMoney(self.m_BankAccountServer, costs, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
-						self.m_BankAccountServer:transferMoney({self, nil, true}, costs*0.7, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
+						self.m_BankAccountServer:transferMoney({self, nil, true}, costs*0.85, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
 						self.m_BankAccountServer:transferMoney(instructor, costs*0.15, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
 
                         target:setPublicSync("inDrivingLession",true)
