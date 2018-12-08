@@ -1755,6 +1755,8 @@
 	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Glowingbait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Pilkerbait.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Bobber.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Spinner.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />

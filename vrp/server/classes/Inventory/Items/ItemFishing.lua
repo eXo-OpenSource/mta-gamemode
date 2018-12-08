@@ -34,8 +34,24 @@ function ItemFishing:isFishingRod(itemName)
 end
 
 function ItemFishing:isCoolingBag(itemName)
-	for _, coolingBag in pairs(FISHING_COOLING_BAGS) do
+	for coolingBag in pairs(FISHING_BAGS) do
 		if coolingBag == itemName then
+			return true
+		end
+	end
+end
+
+function ItemFishing:isBait(itemName)
+	for bait in pairs(FISHING_BAITS) do
+		if bait == itemName then
+			return true
+		end
+	end
+end
+
+function ItemFishing:isAccessorie(itemName)
+	for bait in pairs(FISHING_ACCESSORIES) do
+		if bait == itemName then
 			return true
 		end
 	end
@@ -63,8 +79,8 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 		return
 	end
 
-	if itemName == "Köder" then
-		local baitAmount = playerInventory:getItemAmount("Köder")
+	if self:isBait(itemName) then
+		local baitAmount = playerInventory:getItemAmount(itemName)
 		local fishingRods = {}
 
 		for fishingRod, fishingRodData in pairs(FISHING_RODS) do
@@ -74,7 +90,22 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 		end
 
 		player:triggerEvent("closeInventory")
-		player:triggerEvent("showBaitSelectionGUI", fishingRods, itemName, baitAmount)
+		player:triggerEvent("showEquipmentSelectionGUI", fishingRods, itemName, baitAmount)
+		return
+	end
+
+	if self:isAccessorie(itemName) then
+		local accessorieAmount = playerInventory:getItemAmount(itemName)
+		local fishingRods = {}
+
+		for fishingRod, fishingRodData in pairs(FISHING_RODS) do
+			if fishingRodData.accessorieSlots > 0 and playerInventory:getItemAmount(fishingRod) > 0 then
+				table.insert(fishingRods, fishingRod)
+			end
+		end
+
+		player:triggerEvent("closeInventory")
+		player:triggerEvent("showEquipmentSelectionGUI", fishingRods, itemName, accessorieAmount)
 		return
 	end
 end

@@ -10,7 +10,7 @@ addRemoteEvents{"fishingBobberBar"}
 
 local screenWidth, screenHeight = guiGetScreenSize()
 
-function BobberBar:constructor(fishData, fishingRodName, baitName)
+function BobberBar:constructor(fishData, fishingRodName, baitName, accessorieName)
 	self.m_FisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
 
 	self.m_Size = Vector2(58, screenHeight/2)
@@ -21,9 +21,9 @@ function BobberBar:constructor(fishData, fishingRodName, baitName)
 	self.Random = Randomizer:new()
 
 	outputChatBox("BAIT NAME: " .. tostring(baitName))
-	--self.m_Bait = baitName
-	--self.m_FishingRod = fishingRodName
-	self.m_Difficulty = math.max(MIN_FISHING_DIFFICULTY, fishData.Difficulty - FISHING_BAITS[baitName].difficultyReduction - FISHING_RODS[fishingRodName].difficultyReduction)
+	outputChatBox("ACCESSORIE NAME: " .. tostring(accessorieName))
+
+	self.m_Difficulty = math.max(MIN_FISHING_DIFFICULTY, fishData.Difficulty - FISHING_BAITS[baitName].difficultyReduction - FISHING_RODS[fishingRodName].difficultyReduction - FISHING_ACCESSORIES[accessorieName].difficultyReduction)
 	self.m_MotionType = self:getMotionType(fishData.Behavior)
 
 	outputChatBox("Normal Difficulty: " .. fishData.Difficulty)

@@ -44,9 +44,10 @@ function Fishing:loadFishDatas()
 	local readFuncs = {
 		["Name_DE"] = function (value) return utf8.escape(value) end,
 		["Location"] = function(value) if fromJSON(value) then return fromJSON(value) else return value end end,
-		["Season"] = function(value) if fromJSON(value) then return fromJSON(value) end end,
+		["Season"] = function(value)  return fromJSON(value) end,
 		["Times"] = function(value) return fromJSON(value) end,
 		["Size"] = function(value) return fromJSON(value) end,
+		["NeedEquipments"] = function(value) if value and fromJSON(value) then return fromJSON(value) else return value end end,
 	}
 
 	Fishing.Fish = sql:queryFetch("SELECT * FROM ??_fish_data", sql:getPrefix())
@@ -71,7 +72,7 @@ function Fishing:updateStatistics()
 	end
 end
 
-function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait)
+function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, fishingRodEquipments)
 	local tmp = {}
 
 	for _, v in pairs(Fishing.Fish) do
@@ -81,7 +82,7 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 		local checkSeason = false
 		local checkEvent = false
 		local checkPlayerLevel = false
-		local checkBait = false
+		local checkEquipments = false
 
 		-- Check Location
 		if type(v.Location) == "table" then
@@ -136,11 +137,13 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 			checkPlayerLevel = true
 		end
 
-		-- Check bait
-		if v.NeedBait == 0 then
-			checkBait = true
-		elseif v.NeedBait == 1 and bait then
-			checkBait = true
+		-- Check Equipments
+		if type(v.NeedEquipments) == "table" then
+			if self:checkEquipments(v.NeedEquipments, fishingRodEquipments) then
+				checkEquipments = true
+			end
+		else
+			checkEquipments = true
 		end
 
 		-- Check special event fish
@@ -155,7 +158,7 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 		end
 
 		-- Check all
-		if checkLocation and checkTime and checkWeather and checkSeason and checkEvent and checkPlayerLevel and checkBait then
+		if checkLocation and checkTime and checkWeather and checkSeason and checkEvent and checkPlayerLevel and checkEquipments then
 			table.insert(tmp, v)
 		end
 	end
@@ -174,11 +177,13 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, bait
 	end
 end
 
-function Fishing:FishingRodCast(usedBait)
+function Fishing:FishingRodCast()
 	if not self.m_Players[client] then return end
 
 	local fishingRodName = self.m_Players[client].fishingRodName
-	local baitName = self.m_Players[client].baitName
+	local fishingRodEquipments = self:getFishingRodEquipments(client, fishingRodName)
+	local baitName = fishingRodEquipments["bait"] or false
+	local accessorieName = fishingRodEquipments["accessories"] or false
 
 	if client:getInventory():decreaseItemWearLevel(fishingRodName) then
 		client:sendWarning(_("Deine %s ist kaputt gegangen!", client, fishingRodName))
@@ -186,8 +191,13 @@ function Fishing:FishingRodCast(usedBait)
 		return
 	end
 
-	if usedBait and baitName == usedBait then
-		self:decreaseFishingEquipment(usedBait)
+	if accessorieName and client:getInventory():decreaseItemWearLevel(accessorieName) then
+		client:sendWarning(_("Dein %s an der Angel ist kaputt gegangen!", client, accessorieName))
+		self:removeFishingRodEquipment(client, fishingRodName, accessorieName)
+	end
+
+	if baitName then
+		self:decreaseFishingEquipment(baitName)
 	end
 end
 
@@ -199,18 +209,20 @@ function Fishing:FishHit(location, castPower)
 	local season = getCurrentSeason()
 	local playerLevel = client:getPrivateSync("FishingLevel")
 	local fishingRodName = self.m_Players[client].fishingRodName
-	local bait = self:checkBait(client, location)
+	local fishingRodEquipments = self:getFishingRodEquipments(client, fishingRodName)
+	local baitName = fishingRodEquipments["bait"] or false
+	local accessorieName = fishingRodEquipments["accessories"] or false
 
-	local fish = self:getFish(location, time, weather, season, playerLevel, bait)
+	local fish = self:getFish(location, time, weather, season, playerLevel, fishingRodEquipments)
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
 		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
-		client:meChat(true, ("hat %s geangelt!"):format(randomMessage))
+		client:meChat(true, ("zieht %s aus dem Wasser!"):format(randomMessage))
 		client:increaseStatistics("FishBadCatch")
 		return
 	end
 
-	client:triggerEvent("fishingBobberBar", fish, fishingRodName, bait)
+	client:triggerEvent("fishingBobberBar", fish, fishingRodName, baitName, accessorieName)
 
 	self.m_Players[client].lastFish = fish
 	self.m_Players[client].location = location
@@ -482,7 +494,7 @@ function Fishing:inventoryUse(player, fishingRodName)
 
 	local fishingRodEquipments = self:getFishingRodEquipments(player, fishingRodName)
 	local baitName = fishingRodEquipments["bait"] or false
-	--local accessorieName = fishingRodEquipments["accessories"] or false
+	local accessorieName = fishingRodEquipments["accessories"] or false
 	local fishingRod = createObject(1826, player.position)
 	fishingRod:setDimension(player.dimension)
 	player:attachPlayerObject(fishingRod)
@@ -493,7 +505,7 @@ function Fishing:inventoryUse(player, fishingRodName)
 		baitName = baitName,
 	}
 
-	player:triggerEvent("onFishingStart", fishingRod, fishingRodName, baitName)
+	player:triggerEvent("onFishingStart", fishingRod, fishingRodName, baitName, accessorieName)
 end
 
 function Fishing:onPlayerQuit()
@@ -507,14 +519,26 @@ function Fishing:onFishRequestStatistics()
 	client:triggerEvent("openFisherStatisticsGUI", self.m_Statistics)
 end
 
-function Fishing:checkBait(player, location)
+function Fishing:checkEquipments(needEquipments, fishingRodEquipments)
+	for _, needEquipment in pairs(needEquipments) do
+		for _, rodEquipment in pairs(fishingRodEquipments) do
+			if needEquipment == rodEquipment then
+				return true
+			end
+		end
+	end
+end
+
+
+-- Todo: Probably remove lastBait
+--[[function Fishing:checkBait(player, location)
 	local lastBait = self.m_Players[player].lastBait
 	local baitName = self.m_Players[player].baitName
 
 	if not (lastBait or baitName) then return false end
 
 	self.m_Players[player].lastBait = nil
-	local checkBait = lastBait and lastBait or baitName
+	local checkBait = lastBait or baitName
 
 	for _, baitLocation in pairs(FISHING_BAITS[checkBait].location) do
 		if baitLocation == location then
@@ -523,7 +547,7 @@ function Fishing:checkBait(player, location)
 	end
 
 	return false
-end
+end]]
 
 --- EQUIPMENT HANDLING (bait, accessories)
 function Fishing:onAddFishingRodEquipment(fishingRod, equipmentName)
@@ -548,7 +572,7 @@ function Fishing:onRemoveFishingRodEquipment(fishingRod, equipmentName)
 	end
 end
 
-function Fishing:decreaseFishingEquipment(baitName) --  TODO: Add support for accessories
+function Fishing:decreaseFishingEquipment(baitName) --  TODO: Add support for accessories --> Update: Nope i think we dont need it for accessories cause of wear level
 	if not self.m_Players[client] then return end
 
 	local playerInventory = client:getInventory()

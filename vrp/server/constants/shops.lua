@@ -241,6 +241,10 @@ SHOP_ITEMS = {
 		["Motorcross-Helm"] = 2000,
 		["Radio"] = 1700,
 		["Köder"] = 5,
+		["Leuchtköder"] = 40,
+		["Pilkerköder"] = 40,
+		["Schwimmer"] = 7500,
+		["Spinner"] = 5000,
 	};
 	["Halloween Shop"] = {
 		["Kuheuter mit Pommes"] = 25,

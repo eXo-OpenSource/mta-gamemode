@@ -24,7 +24,8 @@ FISHING_EQUIPMENT = {
 	["Pilkerköder"] = {level = 11},
 
 	-- Accessories
-	-- TODO
+	["Schwimmer"] = 	{level = 1},
+	["Spinner"] = 		{level = 12},
 }
 
 FISHING_BAGS = {
@@ -42,13 +43,15 @@ FISHING_RODS = {
 
 FISHING_BAITS = {
 	[false] = 			{biteTimeReduction = 0, difficultyReduction = 0},
-	["Köder"] = 		{biteTimeReduction = 1000, difficultyReduction = 25, location = {"lake", "river", "coast", "sump", "desert", "cave"}},
-	["Leuchtköder"] = 	{biteTimeReduction = 5000, difficultyReduction = 5, location = {"lake", "river", "coast", "sump", "desert", "cave"}},
-	["Pilkerköder"] = 	{biteTimeReduction = 5000, difficultyReduction = 15, location = {"ocean"}},
+	["Köder"] = 		{biteTimeReduction = 1000, difficultyReduction = 25},
+	["Leuchtköder"] = 	{biteTimeReduction = 5000, difficultyReduction = 5},
+	["Pilkerköder"] = 	{biteTimeReduction = 5000, difficultyReduction = 15},
 }
 
 FISHING_ACCESSORIES = {
-
+	[false] = 			{biteTimeReduction = 0, difficultyReduction = 0},
+	["Schwimmer"] =		{biteTimeReduction = 1000, difficultyReduction = 0, renderBobber = true},
+	["Spinner"] =		{biteTimeReduction = 2500, difficultyReduction = 10, increaseBobberBar = 1.15},
 }
 
 -- (level * 15)^2 // for i = 1, 15 do print(("[%s] = %s,"):format(i, math.floor((i*15)^(i>10 and 2.2 or 2)))) end
@@ -69,8 +72,6 @@ FISHING_LEVELS = {
 	[14] = 128493,
 	[15] = 149555,
 }
-
-FISHING_COOLING_BAGS = {"Kleine Kühltasche", "Kühltasche", "Kühlbox"}
 
 FISHING_MOTIONTYPE = {
 	MIXED = 0,
@@ -109,7 +110,7 @@ FISHING_BAD_CATCH_MESSAGES = {
 	"einen BH in Übergröße",
 	"ein benutztes Kondom",
 	"ein unbenutztes Kondom",
-	"Lippenstift",
+	"einen Lippenstift",
 	"einen Stift",
 	"Metallschrott",
 	"die Unterhose von xXKing",
@@ -126,4 +127,11 @@ FISHING_BAD_CATCH_MESSAGES = {
 	"ein leeres Glas Wasser",
 	"ein Blatt Papier",
 	"eine alte Zeitung",
+	"einen alten Schuh",
+	"ein paar Turnschuhe",
+	"einen kaputten Helm",
+	"eine rostige alte Gießkanne",
+	"ein leere Tüte",
+	"einen #PewPorn.com Kugelschreiber",
+	"nichts",
 }

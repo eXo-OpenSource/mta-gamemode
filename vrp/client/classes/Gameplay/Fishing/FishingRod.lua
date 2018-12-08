@@ -7,13 +7,13 @@
 -- ****************************************************************************
 FishingRod = inherit(Singleton)
 
-function FishingRod:constructor(fishingRod, fishingRodName, baitName)
+function FishingRod:constructor(fishingRod, fishingRodName, baitName, accessorieName)
 	self.FishingMap = FishingLocation:new()
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
 	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[baitName].biteTimeReduction - FISHING_RODS[fishingRodName].biteTimeReduction
+	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[baitName].biteTimeReduction - FISHING_RODS[fishingRodName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -21,6 +21,7 @@ function FishingRod:constructor(fishingRod, fishingRodName, baitName)
 	self.m_isNibbling = false
 	self.m_Hit = false
 	self.m_MouseDown = false
+	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
 
 	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
 
@@ -28,7 +29,7 @@ function FishingRod:constructor(fishingRod, fishingRodName, baitName)
 
 	self.m_FishingRod = fishingRod
 	self.m_FishingRodName = fishingRodName
-	self.m_Bait = baitName
+	self.m_Bait = baitName -- Todo we probably dont need that anymore
 
 	self.m_fishBite = bind(FishingRod.fishBite, self)
 	self.m_HandleClick = bind(FishingRod.handleClick, self)
@@ -82,9 +83,9 @@ function FishingRod:reset()
 	self.m_PowerProgress = 0
 end
 
-function FishingRod:updateBaits(baitName, baitAmount)
+function FishingRod:updateBaits(baitName, baitAmount) -- Todo Update to equipments
 	self.m_Bait = baitAmount > 0 and baitName or false
-	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[self.m_Bait].biteTimeReduction - FISHING_RODS[self.m_FishingRodName].biteTimeReduction
+	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[self.m_Bait].biteTimeReduction - FISHING_RODS[self.m_FishingRodName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction -- Todo Update accessorie
 	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
 end
 
@@ -169,7 +170,7 @@ function FishingRod:cast()
 		self.Sound:play("cast")
 		self.Sound:play("waterplop")
 
-		triggerServerEvent("clientFishingRodCast", localPlayer, self.m_Bait)
+		triggerServerEvent("clientFishingRodCast", localPlayer)
 	else
 		self.m_isCasting = true
 		self.Sound:play("dwop")
@@ -208,6 +209,19 @@ function FishingRod:render()
 
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 	local fishingHookPosition = self:getFishingHookPosition()
+
+	if self.m_Hit or self.m_isNibbling then
+		fishingHookPosition = Vector3(fishingHookPosition.x + self.Random:get(-3, 3)/100, fishingHookPosition.y + self.Random:get(-4, 4)/100, fishingHookPosition.z + self.Random:get(-5, 5)/100)
+	end
+
+	if self.m_RenderBobber and not self.m_isCasting then
+		local drawn = self.m_isNibbling or self.m_Hit
+		if not drawn then
+			dxDrawLine3D(fishingHookPosition, Vector3(fishingHookPosition.x, fishingHookPosition.y, fishingHookPosition.z - 0.2), Color.White, 5)
+		end
+
+		dxDrawLine3D(Vector3(fishingHookPosition.x, fishingHookPosition.y, fishingHookPosition.z - (drawn and 0.1 or 0)), Vector3(fishingHookPosition.x, fishingHookPosition.y, fishingHookPosition.z - 0.1 - (drawn and 0.1 or 0)), Color.Red, 5)
+	end
 
 	if self.m_isCasting and not self.m_MouseDown then
 		fishingHookPosition = Vector3(startPosition.x, startPosition.y, startPosition.z)

@@ -49,7 +49,6 @@ function ItemManager:constructor()
 		["SLAM"] = ItemSlam;
 		["Rauchgranate"] = ItemSmokeGrenade;
 
-		["Wuerfel"] = ItemDice,
 		["Bambusstange"] = ItemFishing,
 		["Angelrute"] = ItemFishing,
 		["Profi Angelrute"] = ItemFishing,
@@ -58,6 +57,12 @@ function ItemManager:constructor()
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
 		["Köder"] = ItemFishing,
+		["Leuchtköder"] = ItemFishing,
+		["Pilkerköder"] = ItemFishing,
+		["Schwimmer"] = ItemFishing,
+		["Spinner"] = ItemFishing,
+
+		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = Plant,
 		["Apfelbaum-Samen"] = Plant,
 		["Blumen-Samen"] = Plant,
