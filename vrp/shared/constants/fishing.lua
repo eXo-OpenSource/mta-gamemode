@@ -97,6 +97,11 @@ FISHING_DESERT_WATER = {
 	{l = -50, r = -44, u = 1489, d = 1481},
 }
 
+FISHING_CAVE_WATERHEIGHT = 13
+FISHING_CAVE_WATER = {
+	{l = -425, r = -405, u = 1376, d = 1340}
+}
+
 FISHING_BAD_CATCH_MESSAGES = {
 	"eine alte Brille",
 	"eine rolle Toilettenpapier",

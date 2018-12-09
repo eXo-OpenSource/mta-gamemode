@@ -630,9 +630,13 @@ function Fishing:removeFishingRodEquipment(player, fishingRodName, equipment)
 end
 
 
---- Create some water areas (TODO: CAVE!)
+--- Create some water areas
 function Fishing:createDesertWater()
 	for _, position in pairs(FISHING_DESERT_WATER) do
 		createWater(position.l, position.d, FISHING_DESERT_WATERHEIGHT, position.r, position.d, FISHING_DESERT_WATERHEIGHT, position.l, position.u, FISHING_DESERT_WATERHEIGHT, position.r, position.u, FISHING_DESERT_WATERHEIGHT)
+	end
+
+	for _, position in pairs(FISHING_CAVE_WATER) do
+		createWater(position.l, position.d, FISHING_CAVE_WATERHEIGHT, position.r, position.d, FISHING_CAVE_WATERHEIGHT, position.l, position.u, FISHING_CAVE_WATERHEIGHT, position.r, position.u, FISHING_CAVE_WATERHEIGHT)
 	end
 end
