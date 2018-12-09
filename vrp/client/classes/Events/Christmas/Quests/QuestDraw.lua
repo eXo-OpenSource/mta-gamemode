@@ -86,7 +86,7 @@ function QuestDrawGUI:constructor(id, name)
 
 			fetchRemote(("%s/drawContest/upload.php%s"):format(PICUPLOAD_PATH, DEBUG and "?debug=true" or ""), options,
 				function(responseData, responseInfo)
-					outputConsole(inspect({data = responseData, info = responseInfo}))
+					--outputConsole(inspect({data = responseData, info = responseInfo}))
 					responseData = fromJSON(responseData)
 					if responseData then
 						if not responseData["error"] then
