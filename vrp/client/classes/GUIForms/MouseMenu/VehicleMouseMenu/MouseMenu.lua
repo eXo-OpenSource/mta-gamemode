@@ -154,7 +154,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							BusRouteInformationGUI:new(element)
 						end
 					end
-				):setIcon(FontAwesomeSymbols.Document)
+				):setIcon(FontAwesomeSymbols.Table)
 			end
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
@@ -184,7 +184,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							triggerServerEvent("SpeedCam:onStartClick", self:getElement())
 						end
 					end
-				):setIcon(FontAwesomeSymbols.Speedo)
+				):setIcon(FontAwesomeSymbols.Video)
 			end
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then

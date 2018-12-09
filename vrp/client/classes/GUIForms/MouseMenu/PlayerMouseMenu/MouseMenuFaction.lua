@@ -110,7 +110,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 						StateFactionNoteGUI:new(self:getElement())
 					end
 				end
-			):setIcon(FontAwesomeSymbols.Document)
+			):setIcon(FontAwesomeSymbols.File)
 		elseif localPlayer:getFaction():getId() == 2 then
 			self:addItem(_"Fraktion: Wanze verstecken",
 				function()
