@@ -98,7 +98,8 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:startEvidenceTruck"
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:startEvidenceTruck",
+	"factionStateCuff", "factionStateUncuff", "factionStateTie"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
@@ -136,6 +137,11 @@ function FactionState:constructor()
 	addEventHandler("factionStateCheckBug", root, bind(self.Event_checkBug, self))
 	addEventHandler("factionStateGiveSTVO", root, bind(self.Event_giveSTVO, self))
 	addEventHandler("factionStateSetSTVO", root, bind(self.Event_setSTVO, self))
+	addEventHandler("factionStateCuff", root, bind(self.Event_cuffPlayer, self))
+	addEventHandler("factionStateUncuff", root, bind(self.Event_uncuffPlayer, self))
+	addEventHandler("factionStateTie", root, bind(self.Event_tiePlayer, self))
+
+
 	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
@@ -199,9 +205,9 @@ function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isStateFaction() then
 			local box = player:getPlayerAttachedObject()
-			if box and isElement(box) and box.m_Content then 
+			if box and isElement(box) and box.m_Content then
 				self:putEvidenceInDepot(player, box)
-			else 
+			else
 				player:sendError(_("Du trägst keine Schwarzmarktware mit dir!", player))
 			end
 		else
@@ -211,7 +217,7 @@ function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
 end
 
 function FactionState:putEvidenceInDepot(player, box)
-	local content = box.m_Content 
+	local content = box.m_Content
 	local type, product, amount, price, id = unpack(box.m_Content)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" then
@@ -224,7 +230,7 @@ function FactionState:putEvidenceInDepot(player, box)
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
 			self:addWeaponToEvidence(player, id, amount, 0, true)
 		end
-	else 
+	else
 		player:getFaction():sendShortMessage(("%s hat %s Stück %s (%s $) konfesziert!"):format(player:getName(), amount, product, price))
 		self.m_BankAccountServer:transferMoney(player:getFaction(), price , "Schwarzmarktware", "Faction", "Schwarzmarktware")
 	end
@@ -440,7 +446,15 @@ function FactionState:Event_OnTicketAccept(cop)
 	end
 end
 
-function FactionState:Command_cuff( source, cmd, target )
+function FactionState:Event_cuffPlayer(target)
+	self:Command_cuff(client, "cuff", target.name)
+end
+
+function FactionState:Event_uncuffPlayer(target)
+	self:Command_uncuff(client, "uncuff", target.name)
+end
+
+function FactionState:Command_cuff(source, cmd, target)
 	if target then
 		if type(target) == "string" then
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
@@ -455,9 +469,9 @@ function FactionState:Command_cuff( source, cmd, target )
 										if not targetPlayer:isStateCuffed() then
 											source.m_CurrentCuff = targetPlayer
 											source:triggerEvent("factionStateStartCuff", targetPlayer)
-											targetPlayer:triggerEvent("CountdownStop",  10, "Gefesselt in")
+											targetPlayer:triggerEvent("CountdownStop", "Gefesselt in")
 											targetPlayer:triggerEvent("Countdown", 10, "Gefesselt in")
-											source:triggerEvent("CountdownStop", 10, "Gefesselt in")
+											source:triggerEvent("CountdownStop", "Gefesselt in")
 											source:triggerEvent("Countdown", 10, "Gefesselt in")
 										else
 											source:sendError("Der Spieler ist bereits gefesselt!")
@@ -533,6 +547,8 @@ function FactionState:uncuffPlayer( player)
 	player:triggerEvent("updateCuffImage", false)
 	player:setStateCuffed(false)
 	setPedWalkingStyle(player, 0)
+	player:setPublicSync("cuffed", false)
+
 end
 
 function FactionState:Event_CuffSuccess( target )
@@ -550,6 +566,7 @@ function FactionState:Event_CuffSuccess( target )
 					source:triggerEvent("CountdownStop", "Gefesselt in", 10)
 					target:triggerEvent("CountdownStop", "Gefesselt in", 10)
 					target:triggerEvent("updateCuffImage", true)
+					target:setPublicSync("cuffed", true)
 				end
 			end
 		end
@@ -965,6 +982,11 @@ function FactionState:getGrabbedPlayersInVehicle(vehicle)
 	end
 	return temp
 end
+
+function FactionState:Event_tiePlayer(target)
+	self:Command_tie(client, "tie", target.name)
+end
+
 
 function FactionState:Command_tie(player, cmd, tname, bool, force)
 	local faction = player:getFaction()

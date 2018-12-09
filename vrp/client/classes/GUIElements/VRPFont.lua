@@ -127,7 +127,9 @@ FontAwesomeSymbols = {
 	Edit = "",
 	Ban = "",
 	Bell = "",
-	Accept = ""
+	Accept = "",
+	Hands= "",
+	UserLock = ""
 }
 
 Fonts = {
