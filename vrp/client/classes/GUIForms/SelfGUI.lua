@@ -421,10 +421,8 @@ function SelfGUI:loadStatistics()
 		self.m_StatValue[data.Name] = GUILabel:new(self.m_Width*0.5, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data.value(value), self.m_TabStatistics)
 
 		if not data.Timer then
-			outputConsole(("setPrivateSyncChangeHandler: '%s%s'"):format(data.CustomStatistic and "" or "Stat_", data.Name))
 			localPlayer:setPrivateSyncChangeHandler(("%s%s"):format(data.CustomStatistic and "" or "Stat_", data.Name),
 				function(value)
-					outputChatBox(("%s: %s"):format(data.Name, tostring(value)))
 					self.m_StatValue[data.Name]:setText(tostring(data.value(value)))
 				end
 			)
