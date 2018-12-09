@@ -719,6 +719,7 @@ function Faction:phoneTakeOff(player, caller, voiceCall)
 			end
 			caller:triggerEvent("callAnswer", player, voiceCall)
 			player:triggerEvent("callAnswer", caller, voiceCall)
+			self:addLog(player, "Anrufe", ("hat ein Telefonat mit %s geführt!"):format(caller:getName()))
 			caller:setPhonePartner(player)
 			player:setPhonePartner(caller)
 			for k, factionPlayer in ipairs(self:getOnlinePlayers()) do
