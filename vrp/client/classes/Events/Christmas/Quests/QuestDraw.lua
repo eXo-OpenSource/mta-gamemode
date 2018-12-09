@@ -7,7 +7,7 @@ function QuestDraw:constructor(id, name, type)
 	addEventHandler("questDrawShowSkribble", root, function()
 		if not dxGetStatus().AllowScreenUpload then
 			triggerServerEvent("questDrawNoScreenshotAllowed", localPlayer)
-			return	
+			return
 		end
 		QuestDrawGUI:new(self.m_Id, self.m_Name)
 	end)
@@ -82,22 +82,26 @@ function QuestDrawGUI:constructor(id, name)
 
 			local options = {
 				["postData"] =  ("secret=%s&playerId=%d&contest=%s&img=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, base64Encode(self.m_Skribble:getImage("png"))),
-				["postIsBinary"] = true
 			}
 
 			fetchRemote(("%s/drawContest/upload.php%s"):format(PICUPLOAD_PATH, DEBUG and "?debug=true" or ""), options,
 				function(responseData, responseInfo)
-					--outputConsole(inspect({data = responseData, info = responseInfo}))
+					outputConsole(inspect({data = responseData, info = responseInfo}))
 					responseData = fromJSON(responseData)
-					if not responseData["error"] then
-						self:showInfoText("Das Bild wurde erfolgreich gespeichert!")
-						triggerServerEvent("questDrawPictureSaved", localPlayer)
-					else
-						if responseData["error"] == "Already sent a image" then
-							self:showInfoText("Fehler: Du hast bereits ein Bild zu dieser Aufgabe eingesendet!")
+					if responseData then
+						if not responseData["error"] then
+							self:showInfoText("Das Bild wurde erfolgreich gespeichert!")
+							triggerServerEvent("questDrawPictureSaved", localPlayer)
 						else
-							self:showInfoText("Fehler: "..responseData["error"])
+							if responseData["error"] == "Already sent a image" then
+								self:showInfoText("Fehler: Du hast bereits ein Bild zu dieser Aufgabe eingesendet!")
+							else
+								self:showInfoText("Fehler: "..responseData["error"])
+							end
 						end
+					else
+						self:showInfoText("Fehler: Das Bild konnte nicht gespeichert werden! Melde dich im TS")
+						outputConsole(inspect({data = responseData}))
 					end
 
 				end
