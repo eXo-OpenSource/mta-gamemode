@@ -47,6 +47,11 @@ function BombArea:fire(player)
 		return
 	end
 
+    if not player:getFaction():isEvilFaction() then
+		player:sendError("Nur Spieler in bösen Fraktionen können Bomben legen!")
+		return
+	end
+
     self.m_BombObject = createObject(1654, player:getPosition() + Vector3(0, 0, -0.9), 270, 0, 0)
     self.m_BombObject:setInterior(player:getInterior())
     self.m_BombObject:setDimension(player:getDimension())
