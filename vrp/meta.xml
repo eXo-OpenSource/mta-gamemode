@@ -197,6 +197,14 @@
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
+	<!-- Roaming Planes/Accident Planes -->
+	<script src="server/classes/Gameplay/Plane/Plane.lua" type="server" />
+	<script src="server/classes/Gameplay/Plane/PlaneManager.lua" type="server" />
+	<script src="server/classes/Gameplay/Plane/AmbientPlane.lua" type="server" />
+	<script src="server/classes/Gameplay/Plane/PlaneAccident.lua" type="server" />
+
+	<script src="server/constants/planes.lua" type="server"/>
+
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
@@ -1065,6 +1073,9 @@
 	<!-- Race -->
 	<script src="client/classes/Gameplay/Race/MovementRecorder.lua" type="client"/>
 	<script src="client/classes/Gameplay/Race/Kart.lua" type="client"/>
+
+	<!-- Roaming Planes/Accident Planes -->
+	<script src="client/classes/Gameplay/Plane.lua" type="client" />
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
