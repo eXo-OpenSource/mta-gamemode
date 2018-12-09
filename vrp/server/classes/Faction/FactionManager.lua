@@ -60,7 +60,7 @@ function FactionManager:constructor()
 	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
 	addEventHandler("factionForumSync", root, bind(self.Event_factionForumSync, self))
-	
+
 	FactionState:new()
 	FactionRescue:new()
 	FactionInsurgent:new()
@@ -465,6 +465,10 @@ function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
 		local faction = client:getFaction()
 		local depot = faction.m_Depot
+		if faction:isStateFaction() and not client:isFactionDuty() then
+			client:sendError(_("Du bist nicht im Dienst!", client))
+			return
+		end
 		depot:takeWeaponsFromDepot(client,weaponTable)
 	else
 		client:sendError(_("Du bist zu weit entfernt", client))
