@@ -59,11 +59,10 @@ function PlaneAccident:createAccidentFire()
     FireManager:getSingleton():startFire(1000)
 end
 
-function PlaneAccident:onAccidentFireExtinguished()
-    self.m_AccidentRescueBlip:delete()
-end
-
 function PlaneAccident:createRubble()
+    if isElement(self.m_Rubble) then
+        self.m_Rubble:destroy()
+    end
     for _, player in pairs(Element.getAllByType("player")) do
         player:triggerEvent("triggerClientPlaneDestroySmoke", self.m_Plane)
     end
@@ -135,16 +134,24 @@ function PlaneAccident:removeRubble(button, state, player)
 end
 
 function PlaneAccident:createTrashTruck()
+    if isElement(self.m_TrashTruck) then
+        self.m_TrashTruck:destroy()
+    end
     self.m_TrashTruck = TemporaryVehicle.create(455, 869.36, -1280.87, 14.77, 0) -- <- Mech&Tow Flatbed
+    self.m_TrashTruck:setData("TrashTruck", true, true)
+    self.m_TrashTruck:toggleRespawn(false)
     self.m_TrashTruck:setVariant(4, 3)
     self.m_TrashTruck:setColor(90, 90, 90)
     self.m_TrashTruckLoaded = false
 
-    self.m_TrashDeliveryMarker = Marker(869.36, -1280.87, 13.3, "cylinder", 4.0, 255, 0, 0, 0)
-
-    local planePos = self.m_Plane:getPosition()
-    local zone = getZoneName(planePos.x, planePos.y, planePos.z)
-    CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein Mechaniker wird mit dem Flatbed aus der Base am Unfallort benötigt! Position: %s", "Flugzeug-Wrack", true, planePos, zone)
+    addEventHandler("onVehicleStartEnter", self.m_TrashTruck, 
+        function(player, seat)
+            if player:getCompany() ~= CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC) then
+                cancelEvent()
+                player:sendError("Du darfst das Fahrzeug nicht benutzen!")
+            end
+        end
+    )
 
     addEventHandler("onVehicleEnter", self.m_TrashTruck, 
         function(player)
@@ -154,13 +161,19 @@ function PlaneAccident:createTrashTruck()
         end
     )
 
+    self.m_TrashDeliveryMarker = Marker(869.36, -1280.87, 13.3, "cylinder", 4.0, 255, 0, 0, 0)
+
+    local planePos = self.m_Plane:getPosition()
+    local zone = getZoneName(planePos.x, planePos.y, planePos.z)
+    CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein Mechaniker wird mit dem Flatbed aus der Base am Unfallort benötigt! Position: %s", "Flugzeug-Wrack", true, planePos, zone)
+
     addEventHandler("onMarkerHit", self.m_TrashDeliveryMarker, 
         function(hitElement, matchingDim)
             if matchingDim then
                 if hitElement == self.m_TrashTruck then
                     if self.m_TrashTruckLoaded == true then
                         if hitElement.controller then
-                            self.m_BankAccountServer:transferMoney(hitElement.controller, 5000, "Flugzeug-Wrack Abgabe", "Company", "Plane accident removal")
+                            CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):transferMoney(hitElement.controller, 5000, "Flugzeug-Wrack Abgabe", "Company", "Plane accident removal", {silent = true})
                         end
                         self.m_TrashTruck:destroy()
                         self.m_TrashDeliveryMarker:destroy()
