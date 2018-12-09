@@ -194,10 +194,23 @@ function Fishing:FishingRodCast()
 	if accessorieName and client:getInventory():decreaseItemWearLevel(accessorieName) then
 		client:sendWarning(_("Dein %s an der Angel ist kaputt gegangen!", client, accessorieName))
 		self:removeFishingRodEquipment(client, fishingRodName, accessorieName)
+		self:updateFishingRodEquipments(client, fishingRodName)
 	end
 
 	if baitName then
-		self:decreaseFishingEquipment(baitName)
+		local playerInventory = client:getInventory()
+		local itemAmount = playerInventory:getItemAmount(baitName)
+		if itemAmount > 0 then
+			playerInventory:removeItem(baitName, 1)
+
+			if itemAmount == 1 then
+				client:sendWarning(_("Das ist der letzte %s!", client, baitName))
+				self:removeFishingRodEquipment(client, fishingRodName, baitName)
+				self:updateFishingRodEquipments(client, fishingRodName)
+
+				self.m_Players[client].lastBait = baitName
+			end
+		end
 	end
 end
 
@@ -213,7 +226,12 @@ function Fishing:FishHit(location, castPower)
 	local baitName = fishingRodEquipments["bait"] or false
 	local accessorieName = fishingRodEquipments["accessories"] or false
 
-	local fish = self:getFish(location, time, weather, season, playerLevel, fishingRodEquipments)
+	if self.m_Players[client].lastBait then
+		baitName = self.m_Players[client].lastBait
+		self.m_Players[client].lastBait = nil
+	end
+
+	local fish = self:getFish(location, time, weather, season, playerLevel, {baitName, accessorieName})
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
 		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
@@ -529,35 +547,20 @@ function Fishing:checkEquipments(needEquipments, fishingRodEquipments)
 	end
 end
 
-
--- Todo: Probably remove lastBait
---[[function Fishing:checkBait(player, location)
-	local lastBait = self.m_Players[player].lastBait
-	local baitName = self.m_Players[player].baitName
-
-	if not (lastBait or baitName) then return false end
-
-	self.m_Players[player].lastBait = nil
-	local checkBait = lastBait or baitName
-
-	for _, baitLocation in pairs(FISHING_BAITS[checkBait].location) do
-		if baitLocation == location then
-			return checkBait
-		end
-	end
-
-	return false
-end]]
-
 --- EQUIPMENT HANDLING (bait, accessories)
+function Fishing:updateFishingRodEquipments(player, fishingRodName)
+	local fishingRodEquipments = self:getFishingRodEquipments(player, fishingRodName)
+	local baitName = fishingRodEquipments["bait"] or false
+	local accessorieName = fishingRodEquipments["accessories"] or false
+	player:triggerEvent("onFishingUpdateEquipments", baitName, accessorieName)
+end
+
 function Fishing:onAddFishingRodEquipment(fishingRod, equipmentName)
 	if not (fishingRod and equipmentName) then return end
 
 	if self:addFishingRodEquipment(client, fishingRod, equipmentName) then
-		if self.m_Players[client] and FISHING_BAITS[equipmentName] then
-			self.m_Players[client].baitName = equipmentName
-			self.m_Players[client].lastBait = nil
-			client:triggerEvent("onFishingUpdateBaits", equipmentName, 1)
+		if self.m_Players[client] then
+			self:updateFishingRodEquipments(client, fishingRod)
 		end
 	end
 end
@@ -567,33 +570,7 @@ function Fishing:onRemoveFishingRodEquipment(fishingRod, equipmentName)
 
 	if self:removeFishingRodEquipment(client, fishingRod, equipmentName) then
 		if self.m_Players[client] then
-			self.m_Players[client].baitName = false
-		end
-	end
-end
-
-function Fishing:decreaseFishingEquipment(baitName) --  TODO: Add support for accessories --> Update: Nope i think we dont need it for accessories cause of wear level
-	if not self.m_Players[client] then return end
-
-	local playerInventory = client:getInventory()
-	local fishingRodName = self.m_Players[client].fishingRodName
-	local baitName = self.m_Players[client].baitName
-
-	self.m_Players[client].lastBait = nil
-
-	if FISHING_BAITS[baitName] then
-		local itemAmount = playerInventory:getItemAmount(baitName)
-		if itemAmount > 0 then
-			playerInventory:removeItem(baitName, 1)
-
-			if itemAmount == 1 then -- To avaid a stupid calculation lel 1337
-				client:sendWarning(_("Das ist der letzte %s!", client, baitName))
-				client:triggerEvent("onFishingUpdateBaits", baitName, 0) -- Tell now. It will just used for the next throw.
-				self:removeFishingRodEquipment(client, fishingRodName, baitName)
-
-				self.m_Players[client].lastBait = baitName
-				self.m_Players[client].baitName = false
-			end
+			self:updateFishingRodEquipments(client, fishingRod)
 		end
 	end
 end

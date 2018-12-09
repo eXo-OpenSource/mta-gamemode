@@ -49,9 +49,9 @@ FISHING_BAITS = {
 }
 
 FISHING_ACCESSORIES = {
-	[false] = 			{biteTimeReduction = 0, difficultyReduction = 0},
-	["Schwimmer"] =		{biteTimeReduction = 1000, difficultyReduction = 0, renderBobber = true},
-	["Spinner"] =		{biteTimeReduction = 2500, difficultyReduction = 10, increaseBobberBar = 1.15},
+	[false] = 			{biteTimeReduction = 0, difficultyReduction = 0, bobberBarHeightMultiplier = 1},
+	["Schwimmer"] =		{biteTimeReduction = 1000, difficultyReduction = 0, bobberBarHeightMultiplier = 1, renderBobber = true},
+	["Spinner"] =		{biteTimeReduction = 2500, difficultyReduction = 10, bobberBarHeightMultiplier = 1.1},
 }
 
 -- (level * 15)^2 // for i = 1, 15 do print(("[%s] = %s,"):format(i, math.floor((i*15)^(i>10 and 2.2 or 2)))) end

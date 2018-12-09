@@ -29,7 +29,7 @@ function BobberBar:constructor(fishData, fishingRodName, baitName, accessorieNam
 	outputChatBox("Normal Difficulty: " .. fishData.Difficulty)
 	outputChatBox("Reducted Difficulty: " .. self.m_Difficulty)
 
-	self.m_BobberBarHeight = (64 + self.m_FisherLevel*4 - self.m_Difficulty/10) / 1080 * screenHeight
+	self.m_BobberBarHeight = ((64 + self.m_FisherLevel*4 - self.m_Difficulty/10)*FISHING_ACCESSORIES[accessorieName].bobberBarHeightMultiplier) / 1080 * screenHeight
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 

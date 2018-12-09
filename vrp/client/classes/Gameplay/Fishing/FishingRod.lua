@@ -13,7 +13,7 @@ function FishingRod:constructor(fishingRod, fishingRodName, baitName, accessorie
 	self.Random = Randomizer:new()
 
 	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[baitName].biteTimeReduction - FISHING_RODS[fishingRodName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
+	self.m_maxFishingBiteTime = 30000 - FISHING_RODS[fishingRodName].biteTimeReduction - FISHING_BAITS[baitName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -29,7 +29,6 @@ function FishingRod:constructor(fishingRod, fishingRodName, baitName, accessorie
 
 	self.m_FishingRod = fishingRod
 	self.m_FishingRodName = fishingRodName
-	self.m_Bait = baitName -- Todo we probably dont need that anymore
 
 	self.m_fishBite = bind(FishingRod.fishBite, self)
 	self.m_HandleClick = bind(FishingRod.handleClick, self)
@@ -83,9 +82,10 @@ function FishingRod:reset()
 	self.m_PowerProgress = 0
 end
 
-function FishingRod:updateBaits(baitName, baitAmount) -- Todo Update to equipments
-	self.m_Bait = baitAmount > 0 and baitName or false
-	self.m_maxFishingBiteTime = 30000 - FISHING_BAITS[self.m_Bait].biteTimeReduction - FISHING_RODS[self.m_FishingRodName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction -- Todo Update accessorie
+function FishingRod:updateEquipments(baitName, accessorieName)
+	self.m_maxFishingBiteTime = 30000 - FISHING_RODS[self.m_FishingRodName].biteTimeReduction - FISHING_BAITS[baitName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
+	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
+
 	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
 end
 

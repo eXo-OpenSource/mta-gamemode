@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = {}
-addRemoteEvents{"onFishingStart", "onFishingStop", "onFishingBadCatch", "onFishingUpdateBaits"}
+addRemoteEvents{"onFishingStart", "onFishingStop", "onFishingBadCatch", "onFishingUpdateEquipments"}
 
 function Fishing.load()
 	--LS
@@ -83,9 +83,9 @@ function Fishing.BadCatch()
 end
 addEventHandler("onFishingBadCatch", root, Fishing.BadCatch)
 
-function Fishing.updateBaits(...)
+function Fishing.updateEquipments(...)
 		if FishingRod:isInstantiated() then
-			FishingRod:getSingleton():updateBaits(...)
+			FishingRod:getSingleton():updateEquipments(...)
 		end
 end
-addEventHandler("onFishingUpdateBaits", root, Fishing.updateBaits)
+addEventHandler("onFishingUpdateEquipments", root, Fishing.updateEquipments)
