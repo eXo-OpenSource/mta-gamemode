@@ -55,14 +55,11 @@ function PolicePanel:constructor()
 	self.m_LocatePlayerBtn = GUIGridButton:new(10, 8, 4, 1, ElementLocateBlip and _"Orten beenden" or _"Orten", self.m_Tabs[1]) 
 	self.m_LocatePlayerBtn.onLeftClick = function()
 		if ElementLocateBlip then 
-			if self:stopLocating() then
-				self.m_LocatePlayerBtn:setText(_"Orten")
-			end
+			self:stopLocating()
 		else
-			if self:locatePlayer() then
-				self.m_LocatePlayerBtn:setText(_"Orten beenden")
-			end
+			self:locatePlayer()
 		end
+		self:checkLocateButtons(self.m_PlayersGrid:getSelectedItem() and true or false)
 	end
 	
 	self.m_GPS = GUIGridCheckbox:new(14, 8, 2, 1, _"Navi", self.m_Tabs[1])
@@ -85,8 +82,8 @@ function PolicePanel:constructor()
 	self.m_SetSTVOBtn = GUIGridButton:new(14, 10, 2, 1, _"Setzen", self.m_Tabs[1]) 
 	self.m_SetSTVOBtn.onLeftClick = function() self:giveSTVO("set") end
 	
-	self.m_PlayerFuncElements = {
-		self.m_LocatePlayerBtn, self.m_GPS, self.m_AddWantedsBtn, self.m_DeleteWantedsBtn, self.m_AddSTVOBtn, self.m_SetSTVOBtn
+	self.m_PlayerFuncElements = { -- locate is in a different function
+		self.m_GPS, self.m_AddWantedsBtn, self.m_DeleteWantedsBtn, self.m_AddSTVOBtn, self.m_SetSTVOBtn
 	}
 	--
 	-- Knast 
@@ -116,7 +113,6 @@ function PolicePanel:constructor()
 			ErrorBox:new(_"Der Spieler ist nicht mehr online!")
 		end
 	end
-	self:loadPlayers()
 	
 	--
 	-- Wanzen 
@@ -135,14 +131,11 @@ function PolicePanel:constructor()
 	self.m_BugLocate = GUIGridButton:new(12, 1, 4, 1, ElementLocateBlip and _"Orten beenden" or _"Orten", self.m_Tabs[3]) 
 	self.m_BugLocate.onLeftClick = function()
 		if ElementLocateBlip then 
-			if self:stopLocating() then
-				self.m_BugLocate:setText(_"Orten")
-			end
+			self:stopLocating()
 		else
-			if self:bugAction("locate") then
-				self.m_BugLocate:setText(_"Orten beenden")
-			end
+			self:bugAction("locate")
 		end
+		self:checkLocateButtons(self.m_CurrentSelectedBugId ~= 0 and true or false)
 	end
 	
 	self.m_BugClearLog = GUIGridButton:new(12, 2, 4, 1, _"Log löschen", self.m_Tabs[3]):setBackgroundColor(Color.Orange)
@@ -168,6 +161,7 @@ function PolicePanel:constructor()
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
 
+	self:loadPlayers()
 	self:bind("F5", function(self)
 		if isCursorShowing() then
 			self:loadPlayers()
@@ -197,6 +191,7 @@ function PolicePanel:loadPlayers()
 	end
 	self.m_InfoTextLabel:setText("")		
 	self.m_InfoDataLabel:setText("")	
+	self:checkLocateButtons(false)
 	
 	self.m_Players = {}
 
@@ -276,10 +271,27 @@ function PolicePanel:receiveJailPlayers(playerTable)
 	end
 end
 
+function PolicePanel:checkLocateButtons(shouldBeEnabled)
+	if ElementLocateBlip then
+		outputDebug("ElementLocateBlip")
+		self.m_BugLocate:setEnabled(true)
+		self.m_BugLocate:setText(_"Orten beenden")
+		self.m_LocatePlayerBtn:setEnabled(true)
+		self.m_LocatePlayerBtn:setText(_"Orten beenden")
+	else
+		outputDebug("no ElementLocateBlip", shouldBeEnabled)
+		self.m_BugLocate:setEnabled(shouldBeEnabled)
+		self.m_BugLocate:setText(_"Orten")
+		self.m_LocatePlayerBtn:setEnabled(shouldBeEnabled)
+		self.m_LocatePlayerBtn:setText(_"Orten")
+	end
+end
+
 
 function PolicePanel:receiveBugs(bugTable)
 	self.m_BugsGrid:clear()
 	self.m_BugData = bugTable
+	self:checkLocateButtons(false)
 
 
 	for id, bugData in ipairs(bugTable) do
@@ -327,17 +339,14 @@ function PolicePanel:onSelectBug(id)
 			self.m_BugDisable:setEnabled(true)
 			self.m_BugClearLog:setEnabled(true)
 		end
-		self.m_BugLocate:setEnabled(true)
 		self.m_BugRefresh:setEnabled(true)
-
 	else
 		self.m_BugLogGrid:clear()
 		self.m_BugDisable:setEnabled(false)
 		self.m_BugClearLog:setEnabled(false)
-		self.m_BugLocate:setEnabled(false)
 		self.m_BugRefresh:setEnabled(false)
 	end
-
+	self:checkLocateButtons(true)
 end
 
 function PolicePanel:bugAction(func)
@@ -348,13 +357,11 @@ function PolicePanel:bugAction(func)
 			if func == "locate" then
 				if self.m_BugData[id]["element"] and isElement(self.m_BugData[id]["element"]) then
 					self:locateElement(self.m_BugData[id]["element"], "bug")
-					return true
 				else
 					ErrorBox:new(_"Die Wanze wurde nicht gefunden!")
 				end
 			else
 				triggerServerEvent("factionStateBugAction", localPlayer, func, id)
-				return true
 			end
 		else
 			ErrorBox:new("Diese Wanze ist nicht aktiviert!")
@@ -371,6 +378,7 @@ function PolicePanel:onSelectPlayer(player)
 	for i, v in pairs(self.m_PlayerFuncElements) do
 		v:setEnabled(true)
 	end
+	self:checkLocateButtons(true)
 end
 
 function PolicePanel:onSelectJailPlayer(player)
@@ -387,7 +395,6 @@ function PolicePanel:locatePlayer()
 
 		if player:getPublicSync("Phone") == true then
 			self:locateElement(player, "phone")
-			return true
 		else
 			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
