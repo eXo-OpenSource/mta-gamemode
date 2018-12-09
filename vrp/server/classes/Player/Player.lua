@@ -212,7 +212,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -268,6 +268,12 @@ function Player:loadCharacterInfo()
 		for key, msg in ipairs( self.m_OfflineMessages ) do
 			self:sendShortMessage(msg[1], "Offlinenachricht" )
 		end
+	end
+
+	if row.TakeWeaponsOnLogin == 1 then
+		self:takeAllWeapons()
+		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
+		self:setTakeWeaponsOnLogin(false)
 	end
 end
 
@@ -1597,6 +1603,11 @@ end
 
 function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
+end
+
+function Player:setTakeWeaponsOnLogin(state)
+	state = state and 1 or 0
+	sql:queryExec("UPDATE ??_character SET TakeWeaponsOnLogin = ? WHERE Id = ?", sql:getPrefix(), state, self.m_Id)
 end
 
 function Player:setInSewer(bool) self:setData("inSewer", bool, true); self.m_InSewer = bool end

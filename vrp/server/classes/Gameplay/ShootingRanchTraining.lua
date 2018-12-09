@@ -20,6 +20,7 @@ function ShootingRanchTraining:constructor(player, level)
 		player:createStorage()
 
 		giveWeapon(player, data["Weapon"], data["Ammo"], true)
+		player:setTakeWeaponsOnLogin(true)
 		player:triggerEvent("disableDamage", true)
 		player:transferMoney(self.m_BankAccount, WEAPON_LEVEL[level]["costs"], "Schießstand", "Gameplay", "ShootingRanch")
 
@@ -55,6 +56,8 @@ function ShootingRanchTraining:destructor()
 	self.m_Player:setPosition(248.492, 70.665, 1003.641)
 	self.m_Player:setInterior(6)
 	self.m_Player:restoreStorage()
+	self.m_Player:setTakeWeaponsOnLogin(false)
+
 	removeElementData(self.m_Player, "ShootingRanch:Data")
 	toggleAllControls(self.m_Player, true, true, false)
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end

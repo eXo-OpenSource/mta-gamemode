@@ -148,6 +148,7 @@ function DeathmatchLobby:addPlayer(player)
 	end
 
 	player.deathmatchLobby = self
+	player:setTakeWeaponsOnLogin(true)
 	self:sendShortMessage(player:getName().." ist beigetreten!")
 end
 
@@ -201,6 +202,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil
 		player:setFrozen(false)
+		player:setTakeWeaponsOnLogin(false)
 
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
