@@ -41,7 +41,7 @@ function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 	self.m_Active = true
 
 	-- Show message if it's not a recalculation
-	if not soundDisabled and core:get("Sounds", "Navi", true) == true then
+	if not soundDisabled then
 		if not isRecalculate then
 			ShortMessage:new(_"Route wird berechnet...", _"Navigation")
 			self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/RouteWirdBerechnet.mp3")
@@ -187,6 +187,9 @@ function GPS:processWaypoint(nodeIndex)
 end
 
 function GPS:playAnnouncement(url)
+	if not core:get("Sounds", "Navi", true) then
+		return
+	end
 	local radio = RadioGUI:getSingleton()
 	if self.m_Sound and isElement(self.m_Sound) then
 		destroyElement(self.m_Sound)
