@@ -162,7 +162,9 @@ function Inventory:insertItem(amount, item, place, bag, value, wearLevel)
 end
 
 function Inventory:getItemID(bag, place)
-	return self.m_Bag[bag][place]
+	if self.m_Bag then
+		return self.m_Bag[bag][place]
+	end
 end
 
 function Inventory:getMaxItemAmount(item)
