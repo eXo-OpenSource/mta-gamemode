@@ -20,9 +20,9 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	else
 		self:addItem(_("Marke: %s", element:getName())):setTextColor(Color.LightBlue)
 	end
-	--[[if templateName ~= "" then 
+	--[[if templateName ~= "" then
 		self:addItem(_("Fabrikat: %s ", templateName)):setTextColor(Color.LightBlue)
-	else 
+	else
 		self:addItem(_("Fabrikat: Standard")):setTextColor(Color.LightBlue)
 	end]]
 	--self:addItem(_("Klasse: %s", element:getCategoryName())):setTextColor(Color.LightBlue)
@@ -47,8 +47,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.Player)
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") then
-			if localPlayer:getGroupName() == getElementData(element, "OwnerName") and (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
+		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) then
+			if (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
 				if getElementData(element, "forSale") == true then
 					self:addItem(_"Firma: Verkauf beenden",
 						function()
