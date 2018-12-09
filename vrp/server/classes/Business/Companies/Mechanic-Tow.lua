@@ -178,7 +178,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 			return false
 		end
 	else
-		if not client:transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
+		if not client:transferBankMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
 			client:sendError(_("Du hast nicht genügend Geld! (500$)", client))
 			return false
 		end
