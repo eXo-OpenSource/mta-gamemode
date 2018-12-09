@@ -42,13 +42,14 @@ function BombArea:fire(player)
     if self.m_PlaceCallback and self.m_PlaceCallback(self, player) == false then
         return
     end
-    if not player:getInventory():removeItem("Sprengstoff", 1) then
-		player:sendError("Du hast keine Bombe im Inventar!")
-		return
-	end
 
     if not player:getFaction():isEvilFaction() then
 		player:sendError("Nur Spieler in bösen Fraktionen können Bomben legen!")
+		return
+	end
+
+	if not player:getInventory():removeItem("Sprengstoff", 1) then
+		player:sendError("Du hast keine Bombe im Inventar!")
 		return
 	end
 
