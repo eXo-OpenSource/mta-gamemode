@@ -14,6 +14,7 @@
 
 	<script src="shared/constants/main.lua" type="shared"/>
 	<script src="shared/constants/factions.lua" type="shared"/>
+	<script src="shared/constants/fishing.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
@@ -1222,7 +1223,6 @@
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
 
-
 	<file src="files/images/turbo.png"/>
 	<file src="files/images/bullethitsmoke_original.png"/>
 
@@ -1752,10 +1752,17 @@
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
 	<vrpfile src="files/images/Inventory/items/Items/NagelBand.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Bamboorod.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Fishingrod.png" />
+	<vrpfile src="files/images/Inventory/items/Items/ProFishingrod.png" />
+	<vrpfile src="files/images/Inventory/items/Items/LegendaryFishingrod.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Coolbag.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Coolbox.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Glowingbait.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Pilkerbait.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Bobber.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Spinner.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />

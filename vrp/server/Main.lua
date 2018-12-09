@@ -107,7 +107,7 @@ addEventHandler("onDebugMessage", root,
 				end
 				traceLevel = traceLevel + 1
 			end
-			
+
 			if msg:find("dbExec failed;") then
 				msg = string.format("%s \n *Query:* `%s`", msg, SQL.LastExecQuery)
 			elseif msg:find("dbPoll failed;") then
@@ -163,14 +163,14 @@ local function startPerformanceRecording()
 				local percent = data[2]:gsub("%%", "")
 				if tonumber(percent) then
 					if tonumber(percent) > PERFORMANCE_HOOK_TRIGGER_PERCENT then --if a resource is over PERFORMANCE_HOOK_TRIGGER_PERCENT
-						send = "resource" 
+						send = "resource"
 						highestResPercent = (tonumber(percent) > highestResPercent and tonumber(percent) or highestResPercent)
 					elseif (data[1]:sub(0,1) == ".") and (tonumber(percent) > PERFORMANCE_HOOK_TRIGGER_PERCENT_FUNC) and (not data[1]:find("classlib")) then  --if a single function is over 1%, skip classlib because this it reflects other values
-						send = "function" 
+						send = "function"
 						highestFuncPercent = (tonumber(percent) > highestFuncPercent and tonumber(percent) or highestFuncPercent)
 					end
 				end
-				
+
 				if data[2] ~= "-" then
 					tfinish = tfinish .. ("\n%s - %s (%s s)"):format(data[2], data[1], data[3])
 				end

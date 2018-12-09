@@ -65,9 +65,9 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 			item.onLeftClick =
 				function()
 					self.m_FishNameLabel:setText(fish.fishName)
-					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or Color.Yellow))
+					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or (fish.quality == 2 and Color.Yellow or Color.Purple)))
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
-					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
+					self.m_QualityBonusLabel:setText(fish.quality == 3 and "100%" or (fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-")))
 					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
 					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].RareBonus*100))
 				end
@@ -114,7 +114,7 @@ function FishingTradeGUI:updateTotalPrice()
 	for _, item in pairs(self.m_SellList:getItems()) do
 		if item.fishId then
 			local default = self.m_FishTable[item.fishId].DefaultPrice
-			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
+			local qualityMultiplicator = item.fishQuality == 3 and 2 or (item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1))
 			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
 
 			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
@@ -277,7 +277,7 @@ function FishingPedGUI:constructor()
 	)
 	self:addItem(_"Statistiken", Color.Accent,
 		function()
-			triggerServerEvent("clientRequestFisherStatistics", localPlayer)
+			triggerServerEvent("clientRequestFishStatistics", localPlayer)
 			self:delete()
 		end
 	)
@@ -295,19 +295,98 @@ inherit(Singleton, FishingRodGUI)
 
 addRemoteEvents{"showFishingRodGUI"}
 
-function FishingRodGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-150, screenHeight/2-75, 300, 150)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Angelrute", true, true, self)
+function FishingRodGUI:constructor(fishingRodName, equipments)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 8)
+	self.m_Height = grid("y", 3)
 
-	--todo
-	-- FishingRod condition (if added)
-	-- Add baits?!
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Width/2, 300, 150)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, fishingRodName, true, true, self)
+	local infoLabel = GUIGridLabel:new(1, 3, 8, 1, "", window):setFont(VRPFont(22)):setFontSize(1):setAlign("center", "center")
+
+	for i, equipment in ipairs(equipments) do
+		local slot = GUIGridRectangle:new((i-1)*2+1, 1, 2, 2, Inventory.Color.ItemBackground, window)
+
+		if equipment then
+			local itemIcon = Inventory:getSingleton():getItemData()[equipment].Icon
+			local itemAmount = Inventory:getSingleton():getItemAmount(equipment)
+			local amountText = itemAmount > 1 and itemAmount or ""
+			local textWidth = VRPTextWidth(amountText, 22) + 10
+
+			GUIImage:new(5, 5, slot.m_Width - 10, slot.m_Height - 10, "files/images/Inventory/items/" .. itemIcon, slot)
+
+			if itemAmount > 1 then
+				GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-15, textWidth, 15, Color.Background, slot)
+				GUILabel:new(0, slot.m_Height - 15, slot.m_Width - 5, 15, amountText, slot):setAlign("right", "center"):setFont(VRPFont(22)):setFontSize(1):setColor(Color.Orange)
+			end
+
+			slot.onHover =
+				function()
+					slot:setColor(Inventory.Color.ItemBackgroundHover)
+					infoLabel:setText(equipment)
+				end
+
+			slot.onUnhover =
+				function()
+					slot:setColor(Inventory.Color.ItemBackground)
+					infoLabel:setText("")
+				end
+
+			slot.onLeftClick =
+				function()
+					triggerServerEvent("clientRemoveFishingRodEquipment", localPlayer, fishingRodName, equipment)
+					self:delete()
+				end
+		end
+	end
+
+
 end
 
 addEventHandler("showFishingRodGUI", root,
 	function(...)
 		if not FishingRodGUI:isInstantiated() then
 			FishingRodGUI:new(...)
+		end
+	end
+)
+
+----------------------------------------------------------------------------------------------------------------------
+EquipmentSelectionGUI = inherit(GUIForm)
+inherit(Singleton, EquipmentSelectionGUI)
+
+addRemoteEvents{"showEquipmentSelectionGUI"}
+
+function EquipmentSelectionGUI:constructor(fishingRods, equipmentName, equipmentAmount)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 10)
+	self.m_Height = grid("y", 2 + #fishingRods)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s (%s)", equipmentName, equipmentAmount), true, true, self)
+	self.m_Combobox = GUIGridCombobox:new(1, 1, 6, 1, "Angelrute auswählen", window)
+
+	for _, fishingRod in pairs(fishingRods) do
+		local item = self.m_Combobox:addItem(fishingRod)
+		item.fishingRodName = fishingRod
+	end
+
+	local button = GUIGridButton:new(7, 1, 3, 1, "Hinzufügen", window)
+	button.onLeftClick =
+		function()
+			if not self.m_Combobox:getSelectedItem() then return end
+			local selectedFishingRod = self.m_Combobox:getSelectedItem().fishingRodName
+			if selectedFishingRod then
+				triggerServerEvent("clientAddFishingRodEquipment", localPlayer, selectedFishingRod, equipmentName)
+				self:delete()
+			end
+		end
+end
+
+addEventHandler("showEquipmentSelectionGUI", root,
+	function(...)
+		if not EquipmentSelectionGUI:isInstantiated() then
+			EquipmentSelectionGUI:new(...)
 		end
 	end
 )

@@ -7,23 +7,24 @@
 -- ****************************************************************************
 Randomizer = inherit(Object)
 
-function Randomizer:changeSeat()
+function Randomizer:changeSeed()
 	math.randomseed(getTickCount())
 end
 
 function Randomizer:get(min, max)
-	self:changeSeat()
+	self:changeSeed()
 	return math.random(min, max)
 end
 
 function Randomizer:getRandomOf(n, opportunities)
+	self:changeSeed()
+
 	if n > #opportunities then
 		return false
 	end
 
 	local result = {}
 	for i = 1, n do
-		-- Todo: Try optimizing the following
 		local rand
 		repeat
 			rand = math.random(1, #opportunities)
@@ -36,7 +37,7 @@ function Randomizer:getRandomOf(n, opportunities)
 end
 
 function Randomizer:getRandomTableValue(tab)
-	return tab[math.random(1, #tab)]
+	return tab[self:get(1, #tab)]
 end
 
 function Randomizer:nextDouble()

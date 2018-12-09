@@ -265,7 +265,7 @@ end
 
 function Inventory:addItemEvents(item)
 	item.onHover = function()
-		if not Inventory:getSingleton().m_IsDeleteKeyDown then
+		if not self.m_IsDeleteKeyDown then
 			item:setColor(Inventory.Color.ItemBackgroundHover)
 			if item.Item then
 				local itemName = item.ItemName

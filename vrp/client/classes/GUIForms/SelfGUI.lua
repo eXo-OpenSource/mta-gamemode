@@ -9,28 +9,63 @@ SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 
 SelfGUI.Stats = {
-	--["AFK"] = {
-	--		["text"] = "gesamte AFK-Zeit",
-	--		["value"] = function(value)
-	--			local hours, minutes = math.floor(value/60/60), (value - math.floor(value/60/60)*60)
-	--			return hours.." Stunde(n)" ..minutes.." Minute(n)" end
-	--		},
-	["Driven"] = {
-			["text"] = "Gefahrene Kilometer",
-			["value"] = function(value) return math.floor(value/1000).." km" end
-			},
-	["Deaths"] = {
-			["text"] = "Tode",
-			["value"] = function(value) return value end
-			},
-	["Kills"] =	{
-			["text"] = "Kills",
-			["value"] = function(value) return value end
-			},
-	["FishCaught"] = {
-			["text"] = "Fische gefangen",
-			["value"] = function(value) return value end
-			},
+	{
+		["Name"] = "Playtime",
+		["Timer"] = 65000,
+		["text"] = "Spielzeit",
+		["value"] =
+			function()
+				local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
+				return ("%s Stunde%s, %s Minute%s"):format(hours, hours == 1 and "" or "n", minutes, minutes == 1 and "" or "n")
+			end
+	},
+	{
+		["Name"] = "AFKTime",
+		["Timer"] = 65000,
+		["text"] = "Aktuelle AFK-Zeit",
+		["value"] = function() local minutes = math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000) return ("%s Minute%s"):format(minutes, minutes == 1 and "" or "n") end
+	},
+	{
+		["Name"] = "Driven",
+		["text"] = "Gefahrene Kilometer",
+		["value"] = function(value) return math.floor(value/1000).." km" end
+	},
+	{
+		["Name"] = "Deaths",
+		["text"] = "Tode",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "Kills",
+		["text"] = "Kills",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "Collectables_Collected",
+		["CustomStatistic"] = true,
+		["text"] = "eXo Logos gesammelt",
+		["value"] = function(value) return ("%s/%s"):format(value, COLLECTABLES_COUNT_PER_PLAYER) end
+	},
+	{
+		["Name"] = "FishCaught",
+		["text"] = "Fische gefangen",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "LegendaryFishCaught",
+		["text"] = "    davon Legendäre",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "FishLost",
+		["text"] = "Fische verloren",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "FishBadCatch",
+		["text"] = "Müll geangelt",
+		["value"] = function(value) return value end
+	},
 }
 
 function SelfGUI:constructor()
@@ -247,8 +282,9 @@ function SelfGUI:constructor()
 	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
 		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
 			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
-			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
-			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1])):setProgressTextEnabled()
+			local levelValue = FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]
+			self.m_FishingLevelProgress:setProgress(math.min(value, levelValue)/levelValue*100)
+			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, levelValue)):setProgressTextEnabled()
 		else
 			self.m_FishingLevelProgress:hide()
 		end
@@ -337,11 +373,6 @@ function SelfGUI:onShow()
 		self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
 	end
 
-	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
-	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
-	self.m_AFKTimeLabel:setText(_("%s Minute(n)", math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000)))
-
-
 	local x, y = self.m_JobNameLabel:getPosition()
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
@@ -383,33 +414,28 @@ function SelfGUI:adjustGeneralTab(name)
 end
 
 function SelfGUI:loadStatistics()
-	local i = 0
-	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Spielzeit:", self.m_TabStatistics)
-	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", self.m_TabStatistics)
-	i = i+1
-	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", self.m_TabStatistics)
-	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", self.m_TabStatistics)
-	i = i+1
+	for i, data in pairs(SelfGUI.Stats) do
+		i = i - 1
+		local value = (data.CustomStatistic and localPlayer:getPrivateSync(data.Name) or localPlayer:getStatistics(data.Name)) or "-"
+		self.m_StatDescription[data.Name] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _("%s:", data.text), self.m_TabStatistics)
+		self.m_StatValue[data.Name] = GUILabel:new(self.m_Width*0.5, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data.value(value), self.m_TabStatistics)
 
-	local value
-	for index, data in pairs(SelfGUI.Stats) do
-		value = localPlayer:getStatistics(index) or " - "
-		self.m_StatDescription[index] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _("%s:", data["text"]), self.m_TabStatistics)
-		self.m_StatValue[index] = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data["value"](value), self.m_TabStatistics)
-
-		localPlayer:setPrivateSyncChangeHandler("Stat_"..index, function(value)
-			self.m_StatValue[index]:setText(tostring(data["value"](value)))
-		end)
-
-		i = i+1
+		if not data.Timer then
+			outputConsole(("setPrivateSyncChangeHandler: '%s%s'"):format(data.CustomStatistic and "" or "Stat_", data.Name))
+			localPlayer:setPrivateSyncChangeHandler(("%s%s"):format(data.CustomStatistic and "" or "Stat_", data.Name),
+				function(value)
+					outputChatBox(("%s: %s"):format(data.Name, tostring(value)))
+					self.m_StatValue[data.Name]:setText(tostring(data.value(value)))
+				end
+			)
+		else
+			setTimer(
+				function()
+					self.m_StatValue[data.Name]:setText(tostring(data.value()))
+				end, data.Timer, 0
+			)
+		end
 	end
-	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"eXo Logos gesammelt:", self.m_TabStatistics)
-	self.m_CollectablesLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)), self.m_TabStatistics)
-	localPlayer:setPrivateSyncChangeHandler("Collectables_Collected", function(value)
-		self.m_CollectablesLabel:setText(_(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)))
-	end)
-
-	--outputDebug(tonumber(localPlayer:getPrivateSync("Collectables_Collected")))
 end
 
 function SelfGUI:setCompanyInfo()

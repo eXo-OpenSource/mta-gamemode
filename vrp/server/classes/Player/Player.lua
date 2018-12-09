@@ -1279,8 +1279,11 @@ function Player:attachPlayerObject(object)
 
 			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
 
-			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
-			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			if settings.placeDown then
+				self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
+				bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			end
+
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
@@ -1300,8 +1303,9 @@ function Player:refreshAttachedObject(instant)
 	local func = function()
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
+			local model = object.model
 			outputDebug(object, self:getInterior(), self:getName())
-			if self:isDead() then
+			if self:isDead() and PlayerAttachObjects[model] and PlayerAttachObjects[model].placeDown then
 				self:detachPlayerObject(object)
 			end
 			object:setInterior(self:getInterior())

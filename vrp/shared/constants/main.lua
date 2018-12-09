@@ -17,7 +17,7 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
-MAX_FISHING_LEVEL = 10
+MAX_FISHING_LEVEL = 15
 
 MAX_WANTED_LEVEL = 12
 
@@ -463,9 +463,10 @@ WEAPONTRUCK_MAX_LOAD = 60000
 WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
-	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
-	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}},
-	[2919] = {["model"] = 2919, ["name"] = "Waffen", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 90, 90), ["blockJump"] = true, ["bone"] = 3, ["blockSprint"] = true,  ["blockVehicle"] = false}
+	[1550] = {model = 1550, name = "Geldsack", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 0, 180), blockJump = true, bone = 3, placeDown = true},
+	[2912] = {model = 2912, name = "Waffenkiste", pos = Vector3(0, 0.35, 0.45), rot = Vector3(10, 0, 0), blockJump = true, blockSprint = true, blockWeapons = true, blockVehicle = true, animationData = {"carry", "crry_prtial", 1, true, true, false, true}, placeDown = true},
+	[2919] = {model = 2919, name = "Waffen", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 90, 90), 	blockJump = true, bone = 3, blockSprint = true,  blockVehicle = false, placeDown = true},
+	[1826] = {model = 1826, name = "Angelruten", pos = Vector3(-0.03, 0.02, 0.05), rot = Vector3(180, 120, 0), blockJump = false, bone = 12, blockSprint = true, blockVehicle = true},
 }
 
 
@@ -652,27 +653,6 @@ WEAPON_LEVEL = {
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
 
-
-FISHING_BAGS = {
-	["Kühlbox"] = {max = 65, level = 8},
-	["Kühltasche"] = {max = 25, level = 4},
-	["Kleine Kühltasche"] = {max = 15, level = 0},
-}
-
--- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
-FISHING_LEVELS = {
-	[1] = 225,
-	[2] = 900,
-	[3] = 2025,
-	[4] = 3600,
-	[5] = 5625,
-	[6] = 8100,
-	[7] = 11025,
-	[8] = 14400,
-	[9] = 18225,
-	[10] = 22500,
-}
-
 FERRIS_IDS = {
 	Base = 6461,
 	Gond = 3752,
@@ -753,6 +733,13 @@ FactionStaticId = {
 	OUTLAWS = 9,
 	VATOS = 10,
 	TRIAD = 11
+}
+
+SEASONS = {
+	SPRING = 1,
+	SUMMER = 2,
+	FALL = 3,
+	WINTER = 4,
 }
 
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect
