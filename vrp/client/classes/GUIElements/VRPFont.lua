@@ -107,7 +107,7 @@ FontAwesomeSymbols = {
 	Circle_O_Notch = "",
 	Circle = "",
 	Heart = "",
-	Shield = "",
+	Shield = "",
 	Comment = "",
 	Anchor = "",
 	Points = "",
@@ -129,7 +129,8 @@ FontAwesomeSymbols = {
 	Bell = "",
 	Accept = "",
 	Hands= "",
-	UserLock = ""
+	UserLock = "",
+	Calendar = ""
 }
 
 Fonts = {

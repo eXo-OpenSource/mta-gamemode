@@ -501,6 +501,7 @@ function HUDUI:drawChart()
 		oxygenColor = Color.changeAlphaRate(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 
+	drawCol(1, 0, Color.Clear, ("%02d.%02d.%04d"):format(getRealTime().monthday, getRealTime().month+1, getRealTime().year+1900), FontAwesomeSymbols.Calendar, Color.HUD_Brown_D, "date", not core:get("HUD", "chartDateVisible", false))
 	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0)
 	drawCol(1, armor, Color.HUD_Grey, dsc and math.ceil(armor).."% Schutzweste" or math.ceil(armor), FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
 	drawCol(1, oxygen, oxygenColor, dsc and math.ceil(oxygen).."% Atemluft" or math.ceil(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100)

@@ -891,6 +891,11 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
 
+		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"Datum", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartBlue:setChecked(core:get("HUD", "chartDateVisible", false))
+		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartDateVisible", state) end
+
+
 		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartLabels:setChecked(core:get("HUD", "chartLabels", true))
 		self.m_ChartLabels.onChange = function (state) core:set("HUD", "chartLabels", state) end
@@ -1184,9 +1189,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SmokeMode:setChecked(core:get("Other", "SmokeLowMode", false))
 		self.m_SmokeMode.onChange = function (state)
 			core:set("Other", "SmokeLowMode", state)
-			if state then 
+			if state then
 				ItemSmokeGrenade:getSingleton():useLowMode()
-			else 
+			else
 				ItemSmokeGrenade:getSingleton():disableLowMode()
 			end
 		end
@@ -1489,9 +1494,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SnowGround.onChange = function (state)
 			core:set("Event", "SnowGround", state)
 			triggerEvent("switchSnowGround", root, state, core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
-			self.m_SnowGroundExtra:setEnabled(state) 
+			self.m_SnowGroundExtra:setEnabled(state)
 		end
-		
+
 		self.m_SnowGroundExtra = GUICheckbox:new(self.m_Width*0.04, self.m_Height*0.51, self.m_Width*0.9, self.m_Height*0.04, _"dynamische Textur (schön, aber FPS-lastig!)", self.m_SettingBG)
 		self.m_SnowGroundExtra:setFont(VRPFont(25))
 		self.m_SnowGroundExtra:setFontSize(1)
