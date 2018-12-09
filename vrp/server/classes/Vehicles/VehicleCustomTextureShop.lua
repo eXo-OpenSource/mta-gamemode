@@ -12,7 +12,7 @@ addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicl
 
 
 function VehicleCustomTextureShop:constructor()
-	self.m_Path = "http://picupload.pewx.de/textures/"
+	self.m_Path = "https://picupload.pewx.de/textures/"
 
 	self.m_GarageInfo = {
         -- Entrance - Exit (pos, rot) - Interior
@@ -184,11 +184,11 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 			veh:removeTexture(textureName)
 		end
 		self:closeFor(client, veh)
-	else 
+	else
 		self:closeFor(client, false)
 		client:setDimension(0)
 	end
-end	
+end
 
 function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2, player)
 	if not source.m_Tunings then source.m_Tunings = VehicleTuning:new(source) end

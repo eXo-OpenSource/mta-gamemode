@@ -12,7 +12,7 @@ ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 HTTP_DOWNLOAD = not DEBUG
 FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/release/production/vrp_assets/" -- Todo: move to config
 FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/release/production/vrp_assets/" -- Todo: see above
-TEXTURE_HTTP_URL = "http://picupload.pewx.de/textures"
+TEXTURE_HTTP_URL = "https://picupload.pewx.de/textures"
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 WeaponIcons = {
@@ -321,7 +321,7 @@ HelpTexts = {
 	Jobs = {
 		Boxer = [[
 			Als Boxer musst du gegen andere Boxer antreten und diese im Kampf besiegen.
-			Gewinnst du den Kampf, gewinnst du ein Preisgeld. 
+			Gewinnst du den Kampf, gewinnst du ein Preisgeld.
 			Verlierst du jedoch, gehst du leer aus.
 		]];
 		BusDriver = [[
@@ -646,9 +646,9 @@ TEXTURE_SYSTEM_HELP =
 }
 
 TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3, [1] = "STREAM", [2] = "PERMANENT", [3] = "NONE"}
-TEXTURE_LOADING_MODE.DEFAULT = dxGetStatus()["VideoCardRAM"] >= 256 and TEXTURE_LOADING_MODE.PERMANENT or TEXTURE_LOADING_MODE.NONE 
-FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256 
-HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512 
+TEXTURE_LOADING_MODE.DEFAULT = dxGetStatus()["VideoCardRAM"] >= 256 and TEXTURE_LOADING_MODE.PERMANENT or TEXTURE_LOADING_MODE.NONE
+FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256
+HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512
 
 CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
 
@@ -660,7 +660,7 @@ EASTEREGG_TICK_CAP = 1000/ 59.99
 EASTEREGG_NATIVE_RATIO = {x=1024;y=512}
 EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = guiGetScreenSize()
 EASTEREGG_FONT_SCALE = 1
-EASTEREGG_JUMP_RATIO = 16 
+EASTEREGG_JUMP_RATIO = 16
 EASTEREGG_PROJECTILE_SPEED = 3
 EASTEREGG_ARENA_IMAGE = "arena"
 local w, h = guiGetScreenSize()
@@ -674,25 +674,25 @@ elseif EASTEREGG_WINDOW_WIDTH >= 1024 then
 	EASTEREGG_WINDOW = {{x=(w*0.5)-256;y=(h*0.5)-128}, {x=512, y=256}}
 	EASTEREGG_JUMP_RATIO = 8
 	EASTEREGG_PROJECTILE_SPEED = 0.4
-else 
+else
 	EASTEREGG_FONT_SCALE = 0.75
 	EASTEREGG_WINDOW = {{x=(w*0.5)-256;y=(h*0.5)-128}, {x=512, y=256}}
 	EASTEREGG_JUMP_RATIO = 8
 	EASTEREGG_PROJECTILE_SPEED = 0.25
 end
-EASTEREGG_RESOLUTION_RATIO = (EASTEREGG_WINDOW[2].x * EASTEREGG_WINDOW[2].y )  /  (EASTEREGG_NATIVE_RATIO.x*EASTEREGG_NATIVE_RATIO.y) 
-EASTEREGG_KEY_MOVES = 
+EASTEREGG_RESOLUTION_RATIO = (EASTEREGG_WINDOW[2].x * EASTEREGG_WINDOW[2].y )  /  (EASTEREGG_NATIVE_RATIO.x*EASTEREGG_NATIVE_RATIO.y)
+EASTEREGG_KEY_MOVES =
 {
-	["a"] = "left", 
-	["d"] = "right", 
-	["s"] = "crouch", 
+	["a"] = "left",
+	["d"] = "right",
+	["s"] = "crouch",
 	["w"] = "jump",
-	["space"] = "punch", 
+	["space"] = "punch",
 	["<"] = "strafe_left",
-	[">"] = "strafe_right", 
+	[">"] = "strafe_right",
 }
 EASTEREGG_MAX_UPDATE_RATE = 80
-EASTEREGG_SLEEP_UPDATETICK = 1000/ EASTEREGG_MAX_UPDATE_RATE 
+EASTEREGG_SLEEP_UPDATETICK = 1000/ EASTEREGG_MAX_UPDATE_RATE
 EASTEREGG_DISPLAY_SIZE = {x=512, y=256}
 
 JobBoxerFights = { --Gewicht, Leben
