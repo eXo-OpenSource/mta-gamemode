@@ -626,9 +626,11 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin.m_SpectDimensionFunc = function(dim) _setElementDimension(admin, dim) end -- using overloaded methods to prevent that onElementDimensionChange will triggered
 		admin.m_SpectStop =
 			function()
-				for i, v in pairs(target.spectBy) do
-					if v == admin then
-						table.remove(target.spectBy, i)
+				if target.spectBy then
+					for i, v in pairs(target.spectBy) do
+						if v == admin then
+							table.remove(target.spectBy, i)
+						end
 					end
 				end
 				if admin and isElement(admin) then
