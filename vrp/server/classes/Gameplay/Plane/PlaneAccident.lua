@@ -13,6 +13,7 @@ function PlaneAccident:setAccidentPlane(flyingTime, colX, colY, colZ, colTime, s
         Timer(
             function()
                 self.m_Object:move(colTime, colX, colY, colZ)
+                self.m_Plane:setDamageProof(true)
                 self.m_Plane:setHealth(50)
                 self.m_Plane:setEngineState(true)
             end
@@ -21,6 +22,7 @@ function PlaneAccident:setAccidentPlane(flyingTime, colX, colY, colZ, colTime, s
         if standstillX and standstillY and standstillZ and standstillTime then
             Timer(
                 function()
+                    self.m_Plane:setEngineState(false)
                     self:explode()
                     self.m_Object:move(standstillTime, standstillX, standstillY, standstillZ, 0, 0, 0, "OutQuad")
 
@@ -115,6 +117,7 @@ function PlaneAccident:removeRubble(button, state, player)
                                     self.m_TrashTruckLoaded = true
                                     player:sendInfo("Fahre nun die Überreste zurück zur Mech&Tow Base!")
                                     self.m_AccidentDeliveryBlip = Blip:new("Marker.png", 869.36, -1280.87, {company = 2}, 400, {255, 255, 255}, {175, 175, 175})
+                                    self.m_AccidentMechanicBlip:delete()
                                 end
                             , 15100, 1, player)
                         else
@@ -148,7 +151,10 @@ function PlaneAccident:createTrashTruck()
         function(player, seat)
             if player:getCompany() ~= CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC) then
                 cancelEvent()
-                player:sendError("Du darfst das Fahrzeug nicht benutzen!")
+                player:sendError("Du bist kein Mechaniker!")
+            elseif not player:isCompanyDuty() then
+                cancelEvent()
+                player:sendError("Du bist nicht im Dienst!")
             end
         end
     )
@@ -156,7 +162,7 @@ function PlaneAccident:createTrashTruck()
     addEventHandler("onVehicleEnter", self.m_TrashTruck, 
         function(player)
             if self.m_TrashTruckLoaded == false then
-                player:sendInfo("Fahre die Überreste des Flugzeugunfalls zurück hierher! Klicke auf die Überreste des Flugzeugs um sie auf den Flatbed aufzuladen!")
+                player:sendInfo("Fahre die Überreste des Flugzeugunfalls hierher! Klicke auf die Überreste des Flugzeugs um sie auf den Flatbed aufzuladen!")
             end
         end
     )
@@ -166,6 +172,7 @@ function PlaneAccident:createTrashTruck()
     local planePos = self.m_Plane:getPosition()
     local zone = getZoneName(planePos.x, planePos.y, planePos.z)
     CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein Mechaniker wird mit dem Flatbed aus der Base am Unfallort benötigt! Position: %s", "Flugzeug-Wrack", true, planePos, zone)
+    self.m_AccidentMechanicBlip = Blip:new("Marker.png", planePos.x, planePos.y, {company = 2}, 400, {255, 255, 255}, {175, 175, 175})
 
     addEventHandler("onMarkerHit", self.m_TrashDeliveryMarker, 
         function(hitElement, matchingDim)
