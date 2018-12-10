@@ -649,6 +649,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
+				removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) --trig
 
 			end
 
