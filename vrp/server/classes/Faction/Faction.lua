@@ -28,7 +28,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	for i, v in pairs(self.m_Skins) do if tonumber(self:getSetting("Skin", i, 0)) == -1 then self.m_SpecialSkin = i end end
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
-	self.m_Blips = {}	
+	self.m_Blips = {}
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 	self.m_Permissions = permissions and fromJSON(permissions) or {}
 	self.m_ForumGroups = {}
@@ -70,6 +70,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 
 	self.m_DiplomacyJSON = diplomacy
 
+	ServiceSync:getSingleton():register("faction", self.m_Id, self.m_Permissions)
 	if not DEBUG then
 		self:getActivity()
 	end
@@ -105,7 +106,7 @@ function Faction:getRequiredForumPermissionsChanges(playerId)
 			add = {},
 			remove = {}
 		}
-		
+
 		if rank and self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
 			local newGroups = self.m_Permissions["forum"]["ranks"][tostring(rank)]
 
@@ -871,11 +872,11 @@ function Faction:sendMoveRequest(targetChannel, text)
 end
 
 function Faction:onPlayerJoin(player) -- join means comming online (onPlayerJoin-Event)
-	for text, data in pairs(self.m_Countdowns) do 
+	for text, data in pairs(self.m_Countdowns) do
 		local time, origin = unpack(data)
 		local now = getRealTime().timestamp
 		local current = time - (now - origin)
-		if current > 0 and current < time then 
+		if current > 0 and current < time then
 			player:triggerEvent("Countdown", current, text)
 		end
 	end
@@ -883,21 +884,21 @@ end
 
 function Faction:setCountDown(time, text) -- this can be used to set a countdown for a faction (players that join after this have the right time displayed)
 	local players = self:getOnlinePlayers()
-	if self.m_Countdowns[text] then 
-		for index, player in pairs(players) do 
+	if self.m_Countdowns[text] then
+		for index, player in pairs(players) do
 			player:triggerEvent("CountdownStop", text)
 		end
 	end
 	self.m_Countdowns[text] = {time, getRealTime().timestamp}
-	for index, player in pairs(players) do 
+	for index, player in pairs(players) do
 		player:triggerEvent("Countdown", time, text)
 	end
 end
 
 function Faction:stopCountDown(text)
-	if self.m_Countdowns[text] then 
+	if self.m_Countdowns[text] then
 		local players = self:getOnlinePlayers()
-		for index, player in pairs(players) do 
+		for index, player in pairs(players) do
 			player:triggerEvent("CountdownStop", text)
 		end
 	end

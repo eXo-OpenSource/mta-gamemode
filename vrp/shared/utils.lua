@@ -63,6 +63,12 @@ function table.find(tab, value)
 	return nil
 end
 
+function table.insertUnique(tab, value)
+	if not table.find(tab, value) then
+		table.insert(tab, value)
+	end
+end
+
 function table.findAll(tab, value)
 	local result = {}
 	for k, v in pairs(tab) do
