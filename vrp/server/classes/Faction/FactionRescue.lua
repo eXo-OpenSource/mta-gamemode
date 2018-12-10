@@ -521,10 +521,14 @@ function FactionRescue:createPedDeathPickup(ped, pedname)
 					if hitPlayer:isFactionDuty() and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
-								ped:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								if ped and isElement(ped) then
+									ped:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 
-								hitPlayer.m_RescueStretcher.player = ped
-								self:removePedDeathPickup(ped)
+									hitPlayer.m_RescueStretcher.player = ped
+									self:removePedDeathPickup(ped)
+								else
+									hitPlayer:sendError(_("Der Spieler konnte nicht auf die Trage gelegt werden!", hitPlayer))
+								end
 							else
 								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
 							end
