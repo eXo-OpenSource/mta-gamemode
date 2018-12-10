@@ -164,12 +164,6 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, fish
 	end
 
 	local availableFishCount = #tmp
-
-	-- TODO DEV [[
-	--outputChatBox("count: " .. availableFishCount)
-	if true then return tmp[self.Random:get(1, availableFishCount)] end
-	--- TODO DEV ]]
-
 	if self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
 		return tmp[self.Random:get(1, availableFishCount)]
 	else

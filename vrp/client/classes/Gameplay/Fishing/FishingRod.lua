@@ -23,8 +23,6 @@ function FishingRod:constructor(fishingRod, fishingRodName, baitName, accessorie
 	self.m_MouseDown = false
 	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
 
-	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
-
 	self:initAnimations()
 
 	self.m_FishingRod = fishingRod
@@ -85,8 +83,6 @@ end
 function FishingRod:updateEquipments(baitName, accessorieName)
 	self.m_maxFishingBiteTime = 30000 - FISHING_RODS[self.m_FishingRodName].biteTimeReduction - FISHING_BAITS[baitName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
 	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
-
-	self.m_maxFishingBiteTime = 5000 -- TODO: DEV
 end
 
 function FishingRod:handleClick(_, state)
