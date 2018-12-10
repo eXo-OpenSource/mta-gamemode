@@ -695,7 +695,7 @@ EASTEREGG_MAX_UPDATE_RATE = 80
 EASTEREGG_SLEEP_UPDATETICK = 1000/ EASTEREGG_MAX_UPDATE_RATE
 EASTEREGG_DISPLAY_SIZE = {x=512, y=256}
 
-JobBoxerFights = { --Gewicht, Leben
+JobBoxerFights = { --Gewicht, Leben, erforderliches Boxerlevel
 	{"Fliegengewicht", 50, 0},
 	{"Leichtgewicht", 75, 10},
 	{"Mittelgewicht", 100, 25},
@@ -708,5 +708,5 @@ JobBoxerFightRandoms = { --maxRandom, punch, block, left, right
 	{15, 7, 10, 11, 13},
 	{14, 8, 11, 12, 13},
 	{16, 8, 13, 14, 15},
-	{17, 10, 15, 16, 17}
+	{17, 10, 17, 17, 17}
 }
