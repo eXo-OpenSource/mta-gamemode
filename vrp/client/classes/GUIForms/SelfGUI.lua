@@ -1367,7 +1367,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_NaviSound:setFont(VRPFont(25))
 		self.m_NaviSound:setFontSize(1)
 		self.m_NaviSound:setChecked(core:get("Sounds", "Navi", true))
-		self.m_FireworkSound.onChange = function (state)
+		self.m_NaviSound.onChange = function (state)
 			core:set("Sounds", "Navi", state)
 		end
 
