@@ -1052,6 +1052,6 @@ function DatabasePlayer:addFishSpecies(fishId)
 	end
 end
 
-function DatabasePlayer:getFishSpeciesCaughtCount()
-	return #self.m_FishSpeciesCaught
+function DatabasePlayer:getFishSpeciesCaught()
+	return self.m_FishSpeciesCaught
 end

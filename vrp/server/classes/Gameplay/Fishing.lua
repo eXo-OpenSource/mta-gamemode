@@ -164,7 +164,8 @@ function Fishing:getFish(location, timeOfDay, weather, season, playerLevel, fish
 	end
 
 	local availableFishCount = #tmp
-	if self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
+	outputChatBox("Available fishies: " .. availableFishCount)
+	if availableFishCount > 0 and self.Random:get(1, 6) > math.max(1, 6 - availableFishCount) then
 		return tmp[self.Random:get(1, availableFishCount)]
 	else
 		return false
@@ -267,7 +268,7 @@ function Fishing:FishCaught()
 		client:giveAchievement(104) -- Mutantenfisch
 	end
 
-	local playerSpeciesCaughtCount = client:getFishSpeciesCaughtCount()
+	local playerSpeciesCaughtCount = #client:getFishSpeciesCaught()
 	if playerSpeciesCaughtCount >= #Fishing.Fish then
 		client:giveAchievement(95) -- Legendärer Angler
 	elseif playerSpeciesCaughtCount >= 50 then
@@ -371,8 +372,8 @@ function Fishing:increaseFishSoldCount(fishId)
 end
 
 function Fishing:onFishRequestPricing()
-	-- Todo: Only trigger specific datas
-	client:triggerEvent("openFishPricingGUI", Fishing.Fish)
+	local playerSpeciesCaught = client:getFishSpeciesCaught()
+	client:triggerEvent("openFishPricingGUI", Fishing.Fish, playerSpeciesCaught)
 end
 
 function Fishing:onFishRequestTrading()

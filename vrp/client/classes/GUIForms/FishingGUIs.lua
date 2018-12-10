@@ -154,7 +154,7 @@ inherit(Singleton, FishPricingGUI)
 
 addRemoteEvents{"openFishPricingGUI"}
 
-function FishPricingGUI:constructor(Fishes)
+function FishPricingGUI:constructor(Fishes, speciesCaught)
 	GUIForm.constructor(self, screenWidth/2-580/2, screenHeight/2-400/2, 580, 400)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Preistabelle", true, true, self)
@@ -166,10 +166,20 @@ function FishPricingGUI:constructor(Fishes)
 	self.m_PriceList:addColumn(_"Preis", .3)
 	self.m_PriceList:addColumn(_"Bonus", .3)
 
+	local unknownFishSpecies = 0
+
 	table.sort(Fishes, function(a, b) return a.RareBonus > b.RareBonus end)
 	for _, fish in ipairs(Fishes) do
-		local item = self.m_PriceList:addItem(fish.Name_DE, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
-		item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255*fish.RareBonus, 0))
+		if table.find(speciesCaught, fish.Id) then
+			local item = self.m_PriceList:addItem(fish.Name_DE, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
+			item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255*fish.RareBonus, 0))
+		else
+			unknownFishSpecies = unknownFishSpecies + 1
+		end
+	end
+
+	for i = 1, unknownFishSpecies do
+		self.m_PriceList:addItem("???", "", "")
 	end
 end
 
