@@ -917,3 +917,7 @@ function getPedWeapons(ped)
 	end
 	return playerWeapons
 end
+
+function isValidElement(data, type)
+    return isElement(data) and (type and getElementType(data) == type or true)
+end
