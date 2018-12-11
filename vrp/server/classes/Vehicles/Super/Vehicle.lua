@@ -188,7 +188,7 @@ function Vehicle:onPlayerExit(player, seat)
 			setControlState( player, "handbrake", false)
 		end
 
-		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+		if VEHICLE_SPECIAL_SMOKE[source:getModel()] then
 			self:toggleInternalSmoke()
 			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
