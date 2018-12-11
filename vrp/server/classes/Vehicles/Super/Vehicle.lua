@@ -453,7 +453,7 @@ function Vehicle:setEngineState(state)
 	self.m_StartingEnginePhase = false
 
 	if instanceof(self, PermanentVehicle, true) then return end
-	if self.controller then
+	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
 	end
 end
