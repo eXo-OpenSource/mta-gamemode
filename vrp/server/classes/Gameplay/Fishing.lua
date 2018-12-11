@@ -624,7 +624,6 @@ function Fishing:removeFishingRodEquipment(player, fishingRodName, equipment)
 	end
 end
 
-
 --- Create some water areas
 function Fishing:createDesertWater()
 	for _, position in pairs(FISHING_DESERT_WATER) do
@@ -635,3 +634,12 @@ function Fishing:createDesertWater()
 		createWater(position.l, position.d, FISHING_CAVE_WATERHEIGHT, position.r, position.d, FISHING_CAVE_WATERHEIGHT, position.l, position.u, FISHING_CAVE_WATERHEIGHT, position.r, position.u, FISHING_CAVE_WATERHEIGHT)
 	end
 end
+
+
+-- TODO: DEV
+addCommandHandler("get",
+	function(player)
+		local playerSpeciesCaught = player:getFishSpeciesCaught()
+		player:triggerEvent("receiveCaughtFishSpecies", Fishing.Fish, playerSpeciesCaught)
+	end
+)

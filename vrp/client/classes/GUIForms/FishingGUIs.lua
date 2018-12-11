@@ -400,3 +400,40 @@ addEventHandler("showEquipmentSelectionGUI", root,
 		end
 	end
 )
+
+----------------------------------------------------------------------------------------------------------------------
+FishSpeciesGUI = inherit(GUIForm)
+inherit(Singleton, FishSpeciesGUI)
+
+addRemoteEvents{"receiveCaughtFishSpecies"}
+
+function FishSpeciesGUI:constructor(fishList, fishSpecies)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 19)
+	self.m_Height = grid("y", 19)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Fischlexikon", true, true, self)
+
+	local row = 0
+	for i, fish in ipairs(fishList) do
+		local i = i - 9*row
+		if table.find(fishSpecies, fish.Id) then
+			local item GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.Background, window)
+		else
+			local item GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.LightRed, window)
+		end
+
+		local fishImage = GUIGridImage:new(1 + 2*(i-1), row*2 + 1, 2, 2, "files/images/Fishing/Fish.png", window)
+
+		if i%9 == 0 then row = row + 1 end
+	end
+end
+
+addEventHandler("receiveCaughtFishSpecies", root,
+	function(...)
+		if not FishSpeciesGUI:isInstantiated() then
+			FishSpeciesGUI:new(...)
+		end
+	end
+)
