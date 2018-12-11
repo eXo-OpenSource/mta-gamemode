@@ -49,11 +49,13 @@ function Async:continue(...)
 		self.m_Trace = {}
 		local traceLevel = 1
 		while true do
-			local info = debug.getinfo(traceLevel, "Sl")
-			if not info then break end
-			if info.what ~= "C" and info.source then -- skip c functions as they don't have info
-				if not info.source:find("classlib.lua") and not info.source:find("tail call") then -- skip tail calls and classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
-					table.insert(self.m_Trace, {info.source, info.currentline or "not specified"})
+			if debug and type(debug) ~= "number" then -- debug changes to a number value when called between async calls / find out why
+				local info = debug.getinfo(traceLevel, "Sl")
+				if not info then break end
+				if info.what ~= "C" and info.source then -- skip c functions as they don't have info
+					if not info.source:find("classlib.lua") and not info.source:find("tail call") then -- skip tail calls and classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
+						table.insert(self.m_Trace, {info.source, info.currentline or "not specified"})
+					end
 				end
 			end
 			traceLevel = traceLevel + 1
