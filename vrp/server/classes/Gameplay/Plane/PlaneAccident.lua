@@ -68,23 +68,29 @@ function PlaneAccident:createRubble()
     for _, player in pairs(Element.getAllByType("player")) do
         player:triggerEvent("triggerClientPlaneDestroySmoke", self.m_Plane)
     end
-    if #CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):getOnlinePlayers() >= 1 then
-        Timer(
-            function()
+    Timer(
+        function()
+            if #CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):getOnlinePlayers() >= 1 then
+                self:createTrashTruck()
                 local planePos = self.m_Plane:getPosition()
                 local planeRot = self.m_Plane:getRotation()
                 self.m_Rubble = createObject(10985, planePos.x, planePos.y, planePos.z + PlaneRubbleOffsets[self.m_Plane:getModel()], planeRot.x, planeRot.y, planeRot.z + 45)
                 self.m_IsRubbleBeingRemoved = false
                 addEventHandler("onElementClicked", self.m_Rubble, bind(self.removeRubble, self))
+            else
+                PlaneManager:getSingleton():endAccident()
+            end
+            if isElement(self.m_Plane) then
                 self.m_Plane:destroy()
+            end
+            if isElement(self.m_Object) then
                 self.m_Object:destroy()
+            end
+            if isElement(self.m_Pilot) then
                 self.m_Pilot:destroy()
             end
-        , 10000, 1)
-        self:createTrashTruck()
-    else
-        PlaneManager:getSingleton():endAccident()
-    end
+        end
+    , 10000, 1)
 end
 
 function PlaneAccident:removeRubble(button, state, player)
