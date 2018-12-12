@@ -919,5 +919,5 @@ function getPedWeapons(ped)
 end
 
 function isValidElement(data, type)
-    return isElement(data) and (type and getElementType(data) == type or true)
+    return isElement(data) and (not type or (getElementType(data) == type))
 end
