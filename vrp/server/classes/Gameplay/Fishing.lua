@@ -491,7 +491,8 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		fish.RareBonus = math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
+		for i = 1, 5000000 do end -- otherwise the script is too fast to create random numbers
+		fish.RareBonus = self.Random:nextDouble() --math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 
@@ -635,6 +636,26 @@ function Fishing:createDesertWater()
 	end
 end
 
+function convertFishSpeciesCaught()
+	local prefix = sql:getPrefix()
+	outputConsole("Start converting")
+	local allPlayers = sql:queryFetch("SELECT Id, FishSpeciesCaught FROM ??_character", prefix)
+
+	for _, playerData in pairs(allPlayers) do
+		if playerData and playerData.Id and playerData.FishSpeciesCaught and fromJSON(playerData.FishSpeciesCaught) then
+			outputConsole("Convert fishSpeciesCaught for PlayerId: " .. tostring(playerData.Id))
+
+			local fishSpeciesCaught = fromJSON(playerData.FishSpeciesCaught)
+			local newTable = {}
+
+			for _, species in pairs(fishSpeciesCaught) do
+				newTable[species] = {1, false} -- CaughtCount, TimeStamp (Cause of the convertion this is set to false)
+			end
+
+			sql:queryExec("UPDATE ??_character SET FishSpeciesCaught = ? WHERE Id = ?", prefix, toJSON(newTable), playerData.Id)
+		end
+	end
+end
 
 -- TODO: DEV
 addCommandHandler("get",

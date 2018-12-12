@@ -166,20 +166,14 @@ function FishPricingGUI:constructor(Fishes, speciesCaught)
 	self.m_PriceList:addColumn(_"Preis", .3)
 	self.m_PriceList:addColumn(_"Bonus", .3)
 
-	local unknownFishSpecies = 0
-
 	table.sort(Fishes, function(a, b) return a.RareBonus > b.RareBonus end)
 	for _, fish in ipairs(Fishes) do
-		if table.find(speciesCaught, fish.Id) then
+		if speciesCaught[fish.Id] then
 			local item = self.m_PriceList:addItem(fish.Name_DE, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
-			item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255*fish.RareBonus, 0))
+			item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255, 255*(1-fish.RareBonus)))
 		else
-			unknownFishSpecies = unknownFishSpecies + 1
+			self.m_PriceList:addItem("???", "-", "-")
 		end
-	end
-
-	for i = 1, unknownFishSpecies do
-		self.m_PriceList:addItem("???", "", "")
 	end
 end
 
@@ -418,13 +412,16 @@ function FishSpeciesGUI:constructor(fishList, fishSpecies)
 	local row = 0
 	for i, fish in ipairs(fishList) do
 		local i = i - 9*row
-		if table.find(fishSpecies, fish.Id) then
-			local item GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.Background, window)
-		else
-			local item GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.LightRed, window)
-		end
 
-		local fishImage = GUIGridImage:new(1 + 2*(i-1), row*2 + 1, 2, 2, "files/images/Fishing/Fish.png", window)
+		local background = GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.LightGrey, window)
+
+		if fishSpecies[fish.Id] then
+			GUIImage:new(15, 15, background.m_Width - 30, background.m_Height - 30, "files/images/Fishing/Fish.png", background)
+			GUIRectangle:new(0, background.m_Height - 15, background.m_Width, 15, Color.Background, background)
+			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20))
+		else
+			GUILabel:new(0, 0, background.m_Width, background.m_Height, "?", background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(70, false, true))
+		end
 
 		if i%9 == 0 then row = row + 1 end
 	end
