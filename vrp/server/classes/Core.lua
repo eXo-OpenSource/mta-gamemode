@@ -152,7 +152,7 @@ function Core:constructor()
 
 		GPS:new()
 		Chair:new()
-		--Atrium:new()
+		Atrium:new()
 
 		Help:new()
 

@@ -199,7 +199,7 @@ function Core:afterLogin()
 	Achievement:new()
 	BindManager:new()
 	WheelOfFortune:new()
-	--Atrium:new()
+	Atrium:new()
 
 	if DEBUG then
 		Debugging:new()
