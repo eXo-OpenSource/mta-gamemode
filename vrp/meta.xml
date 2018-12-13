@@ -1882,6 +1882,9 @@
 	<vrpfile src="files/images/Fishing/RedGreen.png"/>
 	<vrpfile src="files/images/Fishing/Fish.png"/>
 
+	<vrpfile src="files/images/Fishing/Fish/1.png"/>
+	<vrpfile src="files/images/Fishing/Fish/2.png"/>
+
 	<!-- Race -->
 	<vrpfile src="files/images/Race/countdown_0.png"/>
 	<vrpfile src="files/images/Race/countdown_1.png"/>
