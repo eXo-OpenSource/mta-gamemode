@@ -302,7 +302,7 @@ function Fishing:FishCaught()
 
 				self:increaseFishCaughtCount(fishId)
 
-				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location)
+				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location, fishId)
 				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size))
 				client:meChat(true, ("hat ein %s gefangen. Größe: %scm"):format(fishName, size))
 				return
