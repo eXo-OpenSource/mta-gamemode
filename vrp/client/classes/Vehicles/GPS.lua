@@ -70,7 +70,7 @@ function GPS:stopNavigation()
 	self.m_WaypointCols = {}
 
 	-- Kill recalculation timer
-	killTimer(self.m_TimerRecalculate)
+	if isTimer(self.m_TimerRecalculate) then killTimer(self.m_TimerRecalculate) end
 
 	self.m_Active = false
 end

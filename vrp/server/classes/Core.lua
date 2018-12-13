@@ -182,11 +182,13 @@ function Core:constructor()
 
 		BindManager:new()
 		Forum:new()
+		ServiceSync:new()
 
 		Discord:new()
 		TeleportManager:new()
 		Sewers:new()
 		ArmsDealer:new()
+		PlaneManager:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

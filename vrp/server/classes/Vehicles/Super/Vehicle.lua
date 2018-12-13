@@ -188,7 +188,7 @@ function Vehicle:onPlayerExit(player, seat)
 			setControlState( player, "handbrake", false)
 		end
 
-		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+		if VEHICLE_SPECIAL_SMOKE[source:getModel()] then
 			self:toggleInternalSmoke()
 			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
@@ -453,7 +453,7 @@ function Vehicle:setEngineState(state)
 	self.m_StartingEnginePhase = false
 
 	if instanceof(self, PermanentVehicle, true) then return end
-	if self.controller then
+	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
 	end
 end
@@ -873,7 +873,7 @@ end
 function Vehicle:getFaction() end
 
 function Vehicle:updateTemplate()
-	if self.m_Template then 
+	if self.m_Template then
 		self.m_TemplateName = TuningTemplateManager:getSingleton():getNameFromId( self.m_Template ) or ""
 		setElementData(self, "TemplateName", self.m_TemplateName)
 	end

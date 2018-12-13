@@ -139,8 +139,9 @@ function DatabasePlayer:load(sync)
 	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
 	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
 	self.m_PaNote = row.PaNote
-
 	self.m_PrisonTime = row.PrisonTime
+
+	self.m_FishSpeciesCaught = table.setIndexToInteger(self.m_FishSpeciesCaught)
 
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -976,7 +977,7 @@ end
 function DatabasePlayer:addOfflineMessage( text, typ)
 	local id = self:getId()
 	if id then
-		sql:queryExec("INSERT INTO ??_offlineMessage ( PlayerId, Text, Typ, Time ) VALUES(?, ?, ?, ?)", sql:getPrefix(), id, text or "" , typ or 1 , getRealTime().timestamp )
+		sql:queryExec("INSERT INTO ??_offlineMessage (PlayerId, Text, Typ, Time) VALUES (?, ?, ?, ?)", sql:getPrefix(), id, text or "" , typ or 1 , getRealTime().timestamp )
 	end
 end
 
@@ -1039,7 +1040,7 @@ function DatabasePlayer:giveFishingSkill(points)
 end
 
 function DatabasePlayer:hasFishSpeciesCaught(fishId)
-	for _, species in pairs(self.m_FishSpeciesCaught) do
+	for species in pairs(self.m_FishSpeciesCaught) do
 		if species == fishId then
 			return true
 		end
@@ -1048,7 +1049,10 @@ end
 
 function DatabasePlayer:addFishSpecies(fishId)
 	if not self:hasFishSpeciesCaught(fishId) then
-		table.insert(self.m_FishSpeciesCaught, fishId)
+		self.m_FishSpeciesCaught[fishId] = {1, getRealTime().timestamp}
+	else
+		local caughtCount = self.m_FishSpeciesCaught[fishId][1] + 1
+		self.m_FishSpeciesCaught[fishId] = {caughtCount, getRealTime().timestamp}
 	end
 end
 

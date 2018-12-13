@@ -521,10 +521,14 @@ function FactionRescue:createPedDeathPickup(ped, pedname)
 					if hitPlayer:isFactionDuty() and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
-								ped:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								if ped and isElement(ped) then
+									ped:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 
-								hitPlayer.m_RescueStretcher.player = ped
-								self:removePedDeathPickup(ped)
+									hitPlayer.m_RescueStretcher.player = ped
+									self:removePedDeathPickup(ped)
+								else
+									hitPlayer:sendError(_("Der Spieler konnte nicht auf die Trage gelegt werden!", hitPlayer))
+								end
 							else
 								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
 							end
@@ -582,7 +586,7 @@ function FactionRescue:Event_healPlayer(medic, target)
 			local costs = math.floor(100-target:getHealth())
 			if target:getMoney() >= costs then
 				medic:sendInfo(_("Du hast den Spieler %s für %d$ geheilt!", medic, target.name, costs ))
-				target:sendInfo(_("Du wurdest von medic %s für %d$ geheilt!", target, medic.name, costs ))
+				target:sendInfo(_("Du wurdest vom Medic %s für %d$ geheilt!", target, medic.name, costs ))
 				target:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
 

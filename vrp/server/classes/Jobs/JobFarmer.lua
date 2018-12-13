@@ -177,7 +177,7 @@ function JobFarmer:checkRequirements(player)
 end
 
 function JobFarmer:deliveryHit (hitElement,matchingDimension)
-	if getElementType(hitElement) ~= "vehicle" then
+	if not isValidElement(hitElement, "vehicle") then
 		return
 	end
 	local player = getVehicleOccupant(hitElement,0)

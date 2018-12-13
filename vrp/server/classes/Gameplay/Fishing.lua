@@ -302,7 +302,7 @@ function Fishing:FishCaught()
 
 				self:increaseFishCaughtCount(fishId)
 
-				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location)
+				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location, fishId)
 				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size))
 				client:meChat(true, ("hat ein %s gefangen. Größe: %scm"):format(fishName, size))
 				return
@@ -491,7 +491,8 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		fish.RareBonus = math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
+		for i = 1, 5000000 do end -- otherwise the script is too fast to create random numbers
+		fish.RareBonus = self.Random:nextDouble() --math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 
@@ -624,7 +625,6 @@ function Fishing:removeFishingRodEquipment(player, fishingRodName, equipment)
 	end
 end
 
-
 --- Create some water areas
 function Fishing:createDesertWater()
 	for _, position in pairs(FISHING_DESERT_WATER) do
@@ -635,3 +635,32 @@ function Fishing:createDesertWater()
 		createWater(position.l, position.d, FISHING_CAVE_WATERHEIGHT, position.r, position.d, FISHING_CAVE_WATERHEIGHT, position.l, position.u, FISHING_CAVE_WATERHEIGHT, position.r, position.u, FISHING_CAVE_WATERHEIGHT)
 	end
 end
+
+function convertFishSpeciesCaught()
+	local prefix = sql:getPrefix()
+	outputConsole("Start converting")
+	local allPlayers = sql:queryFetch("SELECT Id, FishSpeciesCaught FROM ??_character", prefix)
+
+	for _, playerData in pairs(allPlayers) do
+		if playerData and playerData.Id and playerData.FishSpeciesCaught and fromJSON(playerData.FishSpeciesCaught) then
+			outputConsole("Convert fishSpeciesCaught for PlayerId: " .. tostring(playerData.Id))
+
+			local fishSpeciesCaught = fromJSON(playerData.FishSpeciesCaught)
+			local newTable = {}
+
+			for _, species in pairs(fishSpeciesCaught) do
+				newTable[species] = {1, false} -- CaughtCount, TimeStamp (Cause of the convertion this is set to false)
+			end
+
+			sql:queryExec("UPDATE ??_character SET FishSpeciesCaught = ? WHERE Id = ?", prefix, toJSON(newTable), playerData.Id)
+		end
+	end
+end
+
+-- TODO: DEV
+addCommandHandler("get",
+	function(player)
+		local playerSpeciesCaught = player:getFishSpeciesCaught()
+		player:triggerEvent("receiveCaughtFishSpecies", Fishing.Fish, playerSpeciesCaught)
+	end
+)

@@ -54,20 +54,20 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Search)
 
 		if localPlayer:getPublicSync("cuffed") then
+			self:addItem(_"Fraktion: Handschellen abnehmen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateUncuff", localPlayer, self:getElement())
+					end
+				end
+				):setIcon(FontAwesomeSymbols.Hands)
+		else
 			self:addItem(_"Fraktion: Handschellen anlegen",
 				function()
 					if self:getElement() then
 						triggerServerEvent("factionStateCuff", localPlayer, self:getElement())
 					end
 				end
-			):setIcon(FontAwesomeSymbols.Hands)
-		else
-			self:addItem(_"Fraktion: Handschellen abnehmen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionStateUncuff", localPlayer, self:getElement())
-				end
-			end
 			):setIcon(FontAwesomeSymbols.Hands)
 		end
 

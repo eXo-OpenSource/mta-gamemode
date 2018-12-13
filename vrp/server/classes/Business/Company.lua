@@ -51,6 +51,7 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 
 	self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
+	ServiceSync:getSingleton():register("company", self.m_Id, self.m_Permissions)
 	if not DEBUG then
 		self:getActivity()
 	end
@@ -86,7 +87,7 @@ function Company:getRequiredForumPermissionsChanges(playerId)
 			add = {},
 			remove = {}
 		}
-		
+
 		if rank and self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
 			local newGroups = self.m_Permissions["forum"]["ranks"][tostring(rank)]
 
@@ -283,9 +284,9 @@ end
 function Company:setSetting(category, key, value, responsiblePlayer)
 	local allowed = true
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
-		if not responsiblePlayer:getCompany() then allowed = false end 
-		if responsiblePlayer:getCompany() ~= self then allowed = false end 
-		if self:getPlayerRank(responsiblePlayer) ~= CompanyRank.Leader then allowed = false end 
+		if not responsiblePlayer:getCompany() then allowed = false end
+		if responsiblePlayer:getCompany() ~= self then allowed = false end
+		if self:getPlayerRank(responsiblePlayer) ~= CompanyRank.Leader then allowed = false end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
@@ -370,7 +371,7 @@ function Company:sendChatMessage(sourcePlayer,message)
 		return
 	end
 	sourcePlayer:setLastChatMessage(message)
-	
+
 	local playerId = sourcePlayer:getId()
 	local rank = self.m_Players[playerId]
 	local rankName = self.m_RankNames[rank]

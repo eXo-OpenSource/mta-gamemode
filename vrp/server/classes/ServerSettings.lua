@@ -8,6 +8,8 @@
 ServerSettings = inherit(Singleton)
 
 function ServerSettings:constructor()
+	self.m_Settings = {}
+
 	local result = sql:queryFetch("SELECT * FROM ??_settings", sql:getPrefix())
 	for index, row in pairs(result) do
 		if row.Index == "ServerPassword" then
@@ -17,8 +19,11 @@ function ServerSettings:constructor()
 				setServerPassword()
 			end
 		end
-		if row.Index == "FPSLimit" then 
+		if row.Index == "FPSLimit" then
 			setFPSLimit(tonumber(row.Value) or 60)
 		end
+
+		self.m_Settings[row.Index] = row.Value
 	end
+
 end

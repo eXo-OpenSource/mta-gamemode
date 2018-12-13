@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Sewers = inherit(Singleton)
-Sewers.EntranceLinks = 
+Sewers.EntranceLinks =
 {
     [4] = 2,
     [3] = 7,
@@ -27,7 +27,7 @@ Sewers.EntranceExternal =
 }
 
 addRemoteEvents{"Sewers:requestRadioLocation"}
-function Sewers:constructor() 
+function Sewers:constructor()
     self.m_Dimension = 3
     self.m_Entrances = {}
     self.m_EntranceMarkers = {}
@@ -39,21 +39,21 @@ function Sewers:constructor()
     self.m_AntiFallCuboid = createColCuboid( 1248.42, -2081.78, -50, 1668.47- 1248.42, -1348.3+2081.78, 4 )
     self.m_AntiFallCuboid:setDimension(self.m_Dimension)
     addEventHandler("onColShapeHit", self.m_AntiFallCuboid, function(hE, bDim)
-        if hE:getType() == "player" and bDim then 
+        if isValidElement(hE, "player") and bDim then
             self:teleportBack(hE)
         end
     end)
     addEventHandler("onElementDimensionChange", root, function( dim)
-        if dim == self.m_Dimension then 
-            if source:isWithinColShape(self.m_RectangleCol) then 
-                if source:getType() == "player" then 
+        if dim == self.m_Dimension then
+            if source:isWithinColShape(self.m_RectangleCol) then
+                if source:getType() == "player" then
                     source:setInSewer(true)
                     source:triggerEvent("Sewers:applyTexture")
                 end
             end
-        else 
-            if source:isWithinColShape(self.m_RectangleCol) then 
-                if source:getType() == "player" then 
+        else
+            if source:isWithinColShape(self.m_RectangleCol) then
+                if source:getType() == "player" then
                     source:setInSewer(false)
                     source:triggerEvent("Sewers:removeTexture")
                 end
@@ -62,20 +62,20 @@ function Sewers:constructor()
     end
     )
     addEventHandler("onColShapeHit", self.m_RectangleCol, function( hE, bDim)
-        if hE:getType() == "player" and bDim then 
+        if isValidElement(hE, "player") and bDim then
             hE:setInSewer(true)
             hE:triggerEvent("Sewers:applyTexture")
         end
     end)
     addEventHandler("onColShapeLeave", self.m_RectangleCol, function( hE, bDim)
-        if hE:getType() == "player" and bDim then 
+        if isValidElement(hE, "player") and bDim then
             hE:setInSewer(false)
             hE:triggerEvent("Sewers:removeTexture")
         end
     end)
 
     addEventHandler("Sewers:requestRadioLocation", root, function()
-        if self.m_SewerRadio then 
+        if self.m_SewerRadio then
             local x,y,z = getElementPosition(self.m_SewerRadio)
             client:triggerEvent("Sewers:getRadioLocation", x, y, z,  self.m_Dimension)
         end
@@ -85,18 +85,18 @@ end
 function Sewers:teleportBack(player)
     local min = math.huge
     local dist, entrance
-    if player:getDimension() == self.m_Dimension then 
-        for id, marker in pairs(self.m_EntranceMarkers) do 
-            if marker and isElement(marker) then 
+    if player:getDimension() == self.m_Dimension then
+        for id, marker in pairs(self.m_EntranceMarkers) do
+            if marker and isElement(marker) then
                 dist = (marker:getPosition() - player:getPosition()):getLength()
-                if min > dist then 
+                if min > dist then
                     min = dist
                     entrance = marker
                 end
             end
         end
     end
-    if entrance and isElement(entrance) then 
+    if entrance and isElement(entrance) then
         player:setFrozen(true)
         player:setPosition(entrance:getPosition().x, entrance:getPosition().y, entrance:getPosition().z+0.2)
         setTimer(function() player:setFrozen(false) end, 400, 1)
@@ -114,14 +114,14 @@ function Sewers:createMap()
     self.m_Map = MapParser:new(":exo_maps/sewer.map")
 	self.m_Map:create(self.m_Dimension)
 	local x, y, z = getElementPosition(self.m_Map:getElements(1)[1])
-	local bin = createObject(1337, x, y, z) 
+	local bin = createObject(1337, x, y, z)
 	bin:setAlpha(0)
     bin:setCollisionsEnabled(false)
     bin:setDimension(self.m_Dimension)
     bin:setInterior(0)
     local entrances = {}
     local mx, my, mz
-	for key, obj in ipairs(self.m_Map.m_Maps[1]) do 
+	for key, obj in ipairs(self.m_Map.m_Maps[1]) do
         if isElement(obj) then
             if obj:getType() == "marker" then
                 obj:setPosition(obj:getPosition().x, obj:getPosition().y, obj:getPosition().z+0.3)
@@ -132,19 +132,19 @@ function Sewers:createMap()
 		end
     end
 
-    --// move the whole map to this position 
+    --// move the whole map to this position
     bin:setPosition(1483.02, -1736.06, 13.38-50)
-    
-    for k, entranceObj in ipairs(entrances) do 
-        table.insert(self.m_EntranceMarkers, entranceObj) 
+
+    for k, entranceObj in ipairs(entrances) do
+        table.insert(self.m_EntranceMarkers, entranceObj)
     end
     local enter
-    for i = 1, #entrances do 
-        if Sewers.EntranceLinks[i] then 
-            enter = Teleporter:new( entrances[i]:getPosition(), entrances[Sewers.EntranceLinks[i]]:getPosition(), 0, 0, 0, self.m_Dimension, 0, self.m_Dimension) 
+    for i = 1, #entrances do
+        if Sewers.EntranceLinks[i] then
+            enter = Teleporter:new( entrances[i]:getPosition(), entrances[Sewers.EntranceLinks[i]]:getPosition(), 0, 0, 0, self.m_Dimension, 0, self.m_Dimension)
             self.m_Entrances[enter] = true
-        elseif Sewers.EntranceExternal[i] then  
-            enter = Teleporter:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 0, self.m_Dimension, 0, Sewers.EntranceExternal[i][3] or 0) 
+        elseif Sewers.EntranceExternal[i] then
+            enter = Teleporter:new( Sewers.EntranceExternal[i][1],  entrances[i]:getPosition(), 0, Sewers.EntranceExternal[i][2], 0, self.m_Dimension, 0, Sewers.EntranceExternal[i][3] or 0)
             self.m_Entrances[enter] = true
             enter:setFade(true)
         end
@@ -155,23 +155,23 @@ function Sewers:createStorage()
     self.m_Storage = MapParser:new(":exo_maps/fraktionen/insurgent_storage.map")
     self.m_Storage:create(self.m_Dimension)
     local x, y, z = getElementPosition(self.m_Storage:getElements(1)[1])
-    local bin = createObject(1337, x, y, z) 
+    local bin = createObject(1337, x, y, z)
     bin:setAlpha(0)
     bin:setCollisionsEnabled(false)
     bin:setDimension(self.m_Dimension)
     bin:setInterior(0)
     local entrance = nil
     self.m_PedPositions = {}
-    for key, obj in ipairs(self.m_Storage.m_Maps[1]) do 
+    for key, obj in ipairs(self.m_Storage.m_Maps[1]) do
         if isElement(obj) then
-            if obj:getModel() == 2102 then 
+            if obj:getModel() == 2102 then
                 self.m_SewerRadio = obj
             end
             attachRotationAdjusted ( obj, bin)
             if obj:getType() == "marker" then
                 if not entrance then
                     entrance = obj
-                else 
+                else
                     table.insert(self.m_PedPositions, obj)
                 end
                 obj:setAlpha(0)
