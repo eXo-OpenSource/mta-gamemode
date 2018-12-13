@@ -418,7 +418,7 @@ function FishSpeciesGUI:constructor(fishList, fishSpecies)
 		if fishSpecies[fish.Id] then
 			GUIImage:new(15, 15, background.m_Width - 30, background.m_Height - 30, "files/images/Fishing/Fish.png", background)
 			GUIRectangle:new(0, background.m_Height - 15, background.m_Width, 15, Color.Background, background)
-			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20))
+			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE:len() > 9 and ("%s.."):format(fish.Name_DE:sub(0, 9)) or fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20)):setTooltip(fish.Name_DE, "bottom")
 		else
 			GUILabel:new(0, 0, background.m_Width, background.m_Height, "?", background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(70, false, true))
 		end

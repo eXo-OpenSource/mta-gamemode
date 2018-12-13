@@ -61,6 +61,7 @@ function ItemManager:constructor()
 		["Pilkerköder"] = ItemFishing,
 		["Schwimmer"] = ItemFishing,
 		["Spinner"] = ItemFishing,
+		["Fischlexikon"] = ItemFishing,
 
 		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = Plant,

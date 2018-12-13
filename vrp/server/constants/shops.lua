@@ -231,6 +231,7 @@ SHOP_ITEMS = {
 		["Cuba-Libre"] = 12
 	};
 	["Angel- / Outdoor-Shop"] = {
+		["Fischlexikon"] = 12500,
 		["Bambusstange"] = 150,
 		["Angelrute"] = 15000,
 		["Profi Angelrute"] = 40000,
