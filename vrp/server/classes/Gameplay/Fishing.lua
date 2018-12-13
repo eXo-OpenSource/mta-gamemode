@@ -170,7 +170,7 @@ function Fishing:FishCaught()
 
 				self:increaseFishCaughtCount(fishId)
 
-				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location)
+				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location, fishId)
 				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size))
 				return
 			end
@@ -339,7 +339,7 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		fish.RareBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish + 1), 0)
+		fish.RareBonus = 1--math.max(1 - (fish.SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 
