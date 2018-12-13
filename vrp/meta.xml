@@ -1524,6 +1524,7 @@
 	<vrpfile src="files/images/Radar/Blips/Train.png"/>
 	<vrpfile src="files/images/Radar/Blips/MoneyBag.png"/>
 	<vrpfile src="files/images/Radar/Blips/PoliceRob.png"/>
+	<vrpfile src="files/images/Radar/Blips/Parking.png"/>
 	<vrpfile src="files/images/Radar/Blips/Casino.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gardener.png"/>
 	<vrpfile src="files/images/Radar/Blips/Rescue.png"/>
