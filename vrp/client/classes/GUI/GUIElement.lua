@@ -19,7 +19,7 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 end
 
 function GUIElement:destructor(...)
-	self:updateTooltip(false) 
+	self:updateTooltip(false)
 	DxElement.destructor(self, ...)
 end
 
@@ -66,7 +66,6 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			if self.onUnhover		  then self:onUnhover(cx, cy)         end
 			if self.onInternalUnhover then self:onInternalUnhover(cx, cy) end
 			self.m_Hover = false
-			self:updateTooltip(self.m_Hover)
 			self.m_LActive = false
 			self.m_RActive = false
 
@@ -76,7 +75,6 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 					if child.onUnhover		  then child:onUnhover(cx, cy)         end
 					if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
 					child.m_Hover = false
-					child:updateTooltip(child.m_Hover)
 				end
 			end
 		end
@@ -93,8 +91,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		if not self.m_Hover then
 			if self.onHover			then self:onHover(cx, cy)			end
 			if self.onInternalHover then self:onInternalHover(cx, cy) end
+			if self.m_TooltipText then self:updateTooltip(true) end
 			self.m_Hover = true
-			self:updateTooltip(self.m_Hover)
 		end
 		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 			if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end

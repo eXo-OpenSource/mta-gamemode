@@ -1,4 +1,5 @@
 GUITooltip = inherit(Object)
+GUITooltip.ms_CurrentTooltip = nil
 
 function GUITooltip:virtual_constructor()
 	self.m_CreateTooltip = bind(GUITooltip.createTooltip, self)
@@ -13,22 +14,29 @@ end
 
 function GUITooltip:updateTooltip(hovered)
 	if not self.m_TooltipText then return false end
-	if hovered ~= self.m_TooltipActive then
-		if hovered then --create tooltip
-			self.m_TooltipTimer = setTimer(self.m_CreateTooltip, 2000, 1)
-		else --destroy tooltip
-			if self.m_Tooltip then
-				self.m_Tooltip:delete()
-				self.m_TooltipArrow:delete()
-				self.m_Tooltip = nil
-			end
+
+	if hovered and not self.m_TooltipActive then
+		if isTimer(self.m_TooltipCreateTimer) then killTimer(self.m_TooltipCreateTimer) end
+		self.m_TooltipCreateTimer = setTimer(self.m_CreateTooltip, 300, 1)
+	else
+		if self.m_TooltipActive then
+			self:fadeOut()
+			self.m_TooltipResetTimer = setTimer(
+				function()
+					self.m_Tooltip:delete()
+					self.m_TooltipArrow:delete()
+					self.m_TooltipActive = false
+				end, 210, 1
+			)
 		end
-		
-		self.m_TooltipActive = hovered
 	end
-	
-	if not hovered and isTimer(self.m_TooltipTimer) then
-		killTimer(self.m_TooltipTimer)
+
+	if not hovered and isTimer(self.m_TooltipCreateTimer) then
+		killTimer(self.m_TooltipCreateTimer)
+	end
+
+	if hovered and isTimer(self.m_TooltipResetTimer) then
+		killTimer(self.m_TooltipResetTimer)
 	end
 end
 
@@ -36,6 +44,9 @@ function GUITooltip:createTooltip()
 	if GUIElement.getHoveredElement() ~= self then
 		return
 	end
+
+	GUITooltip.ms_CurrentTooltip = self
+	self.m_TooltipActive = true
 
 	local f = VRPFont(20)
 	local x, y = self:getPosition(true)
@@ -65,7 +76,24 @@ function GUITooltip:createTooltip()
 	self.m_Tooltip:setColor(Color.PrimaryNoClick):setBackgroundColor(Color.White)
 	self.m_Tooltip:setAlignX(self.m_TooltipMultiline and "left" or "center")
 	self.m_Tooltip.m_CacheArea:bringToFront()
-	
-	Animation.FadeAlpha:new(self.m_Tooltip, 1000, 0, 255)
-	Animation.FadeAlpha:new(self.m_TooltipArrow, 1000, 0, 255)
+
+	self:fadeIn()
+end
+
+function GUITooltip:fadeIn()
+	Animation.FadeAlpha:new(self.m_Tooltip, 500, 0, 255)
+	Animation.FadeAlpha:new(self.m_TooltipArrow, 500, 0, 255)
+end
+
+function GUITooltip:fadeOut()
+	Animation.FadeAlpha:new(self.m_Tooltip, 200, 255, 0)
+	Animation.FadeAlpha:new(self.m_TooltipArrow, 200, 255, 0)
+end
+
+function GUITooltip.checkTooltip()
+	if  GUITooltip.ms_CurrentTooltip and GUIElement.getHoveredElement() and GUIElement.getHoveredElement() ~= GUITooltip.ms_CurrentTooltip then
+		GUITooltip.ms_CurrentTooltip:updateTooltip(false)
+		GUITooltip.ms_CurrentTooltip = nil
+		return
+	end
 end
