@@ -271,7 +271,7 @@ function Player:loadCharacterInfo()
 	end
 
 	if row.TakeWeaponsOnLogin == 1 then
-		self:takeAllWeapons()
+		takeAllWeapons(self)
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end

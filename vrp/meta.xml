@@ -551,6 +551,7 @@
 	<script src="client/classes/GUI/abstract/GUIColorable.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUITooltip.lua" type="client"/>
 	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
 	<script src="client/classes/GUI/DxElement.lua" type="client"/>
 	<script src="client/classes/GUI/DxRectangle.lua" type="client"/>
@@ -1766,6 +1767,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
 	<vrpfile src="files/images/Inventory/items/Items/NagelBand.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Bamboorod.png" />
+	<vrpfile src="files/images/Inventory/items/Items/FishEncyclopedia.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Fishingrod.png" />
 	<vrpfile src="files/images/Inventory/items/Items/ProFishingrod.png" />
 	<vrpfile src="files/images/Inventory/items/Items/LegendaryFishingrod.png" />
@@ -1880,6 +1882,82 @@
 	<vrpfile src="files/images/Fishing/BobberBarBG.png"/>
 	<vrpfile src="files/images/Fishing/RedGreen.png"/>
 	<vrpfile src="files/images/Fishing/Fish.png"/>
+
+	<vrpfile src="files/images/Fishing/Fish/1.png"/>
+	<vrpfile src="files/images/Fishing/Fish/2.png"/>
+	<vrpfile src="files/images/Fishing/Fish/3.png"/>
+	<vrpfile src="files/images/Fishing/Fish/4.png"/>
+	<vrpfile src="files/images/Fishing/Fish/5.png"/>
+	<vrpfile src="files/images/Fishing/Fish/6.png"/>
+	<vrpfile src="files/images/Fishing/Fish/7.png"/>
+	<vrpfile src="files/images/Fishing/Fish/8.png"/>
+	<vrpfile src="files/images/Fishing/Fish/9.png"/>
+	<vrpfile src="files/images/Fishing/Fish/10.png"/>
+	<vrpfile src="files/images/Fishing/Fish/11.png"/>
+	<vrpfile src="files/images/Fishing/Fish/12.png"/>
+	<vrpfile src="files/images/Fishing/Fish/13.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/14.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/15.png"/>
+	<vrpfile src="files/images/Fishing/Fish/16.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/17.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/18.png"/>
+	<vrpfile src="files/images/Fishing/Fish/19.png"/>
+	<vrpfile src="files/images/Fishing/Fish/20.png"/>
+	<vrpfile src="files/images/Fishing/Fish/21.png"/>
+	<vrpfile src="files/images/Fishing/Fish/22.png"/>
+	<vrpfile src="files/images/Fishing/Fish/23.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/24.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/25.png"/>
+	<vrpfile src="files/images/Fishing/Fish/26.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/27.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/28.png"/>
+	<vrpfile src="files/images/Fishing/Fish/29.png"/>
+	<vrpfile src="files/images/Fishing/Fish/30.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/31.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/32.png"/>
+	<vrpfile src="files/images/Fishing/Fish/33.png"/>
+	<vrpfile src="files/images/Fishing/Fish/34.png"/>
+	<vrpfile src="files/images/Fishing/Fish/35.png"/>
+	<vrpfile src="files/images/Fishing/Fish/36.png"/>
+	<vrpfile src="files/images/Fishing/Fish/37.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/38.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/39.png"/>
+	<vrpfile src="files/images/Fishing/Fish/40.png"/>
+	<vrpfile src="files/images/Fishing/Fish/41.png"/>
+	<vrpfile src="files/images/Fishing/Fish/42.png"/>
+	<vrpfile src="files/images/Fishing/Fish/43.png"/>
+	<vrpfile src="files/images/Fishing/Fish/44.png"/>
+	<vrpfile src="files/images/Fishing/Fish/45.png"/>
+	<vrpfile src="files/images/Fishing/Fish/46.png"/>
+	<vrpfile src="files/images/Fishing/Fish/47.png"/>
+	<vrpfile src="files/images/Fishing/Fish/48.png"/>
+	<vrpfile src="files/images/Fishing/Fish/49.png"/>
+	<vrpfile src="files/images/Fishing/Fish/50.png"/>
+	<vrpfile src="files/images/Fishing/Fish/51.png"/>
+	<vrpfile src="files/images/Fishing/Fish/52.png"/>
+	<vrpfile src="files/images/Fishing/Fish/53.png"/>
+	<vrpfile src="files/images/Fishing/Fish/54.png"/>
+	<vrpfile src="files/images/Fishing/Fish/55.png"/>
+	<vrpfile src="files/images/Fishing/Fish/56.png"/>
+	<vrpfile src="files/images/Fishing/Fish/57.png"/>
+	<vrpfile src="files/images/Fishing/Fish/58.png"/>
+	<vrpfile src="files/images/Fishing/Fish/59.png"/>
+	<vrpfile src="files/images/Fishing/Fish/60.png"/>
+	<vrpfile src="files/images/Fishing/Fish/61.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/62.png"/>-->
+	<!--<vrpfile src="files/images/Fishing/Fish/63.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/64.png"/>
+	<vrpfile src="files/images/Fishing/Fish/65.png"/>
+	<vrpfile src="files/images/Fishing/Fish/66.png"/>
+	<vrpfile src="files/images/Fishing/Fish/67.png"/>
+	<vrpfile src="files/images/Fishing/Fish/68.png"/>
+	<vrpfile src="files/images/Fishing/Fish/69.png"/>
+	<!--<vrpfile src="files/images/Fishing/Fish/70.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/71.png"/>
+	<vrpfile src="files/images/Fishing/Fish/72.png"/>
+	<vrpfile src="files/images/Fishing/Fish/73.png"/>
+	<vrpfile src="files/images/Fishing/Fish/74.png"/>
+	<vrpfile src="files/images/Fishing/Fish/75.png"/>
 
 	<!-- Race -->
 	<vrpfile src="files/images/Race/countdown_0.png"/>

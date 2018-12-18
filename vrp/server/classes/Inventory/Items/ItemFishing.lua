@@ -108,6 +108,13 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 		player:triggerEvent("showEquipmentSelectionGUI", fishingRods, itemName, accessorieAmount)
 		return
 	end
+
+	if itemName == "Fischlexikon" then
+		local playerSpeciesCaught = player:getFishSpeciesCaught()
+		player:triggerEvent("closeInventory")
+		player:triggerEvent("receiveCaughtFishSpecies", Fishing.Fish, playerSpeciesCaught)
+		return
+	end
 end
 
 function ItemFishing:useSecondary(player, itemId, bag, place, itemName)

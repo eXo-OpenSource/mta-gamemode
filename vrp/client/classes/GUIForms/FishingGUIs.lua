@@ -396,12 +396,12 @@ addEventHandler("showEquipmentSelectionGUI", root,
 )
 
 ----------------------------------------------------------------------------------------------------------------------
-FishSpeciesGUI = inherit(GUIForm)
-inherit(Singleton, FishSpeciesGUI)
+FishEncyclopedia = inherit(GUIForm)
+inherit(Singleton, FishEncyclopedia)
 
 addRemoteEvents{"receiveCaughtFishSpecies"}
 
-function FishSpeciesGUI:constructor(fishList, fishSpecies)
+function FishEncyclopedia:constructor(fishList, fishSpecies)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 19)
 	self.m_Height = grid("y", 19)
@@ -416,9 +416,17 @@ function FishSpeciesGUI:constructor(fishList, fishSpecies)
 		local background = GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.LightGrey, window)
 
 		if fishSpecies[fish.Id] then
-			GUIImage:new(15, 15, background.m_Width - 30, background.m_Height - 30, "files/images/Fishing/Fish.png", background)
+			background.onLeftClick =
+			function()
+				self:hide()
+				FishSpeciesGUI:new(fish, fishSpecies)
+			end
+
+			local path = ("files/images/Fishing/Fish/%s.png"):format(fish.Id)
+			local isImage = fileExists(path)
+			GUIImage:new(5, 5, background.m_Width - 5, background.m_Height - 5, isImage and path or "files/images/Fishing/Fish.png", background)
 			GUIRectangle:new(0, background.m_Height - 15, background.m_Width, 15, Color.Background, background)
-			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20))
+			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE:len() > 9 and ("%s.."):format(fish.Name_DE:sub(0, 9)) or fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20)):setTooltip(fish.Name_DE, "bottom")
 		else
 			GUILabel:new(0, 0, background.m_Width, background.m_Height, "?", background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(70, false, true))
 		end
@@ -429,8 +437,35 @@ end
 
 addEventHandler("receiveCaughtFishSpecies", root,
 	function(...)
-		if not FishSpeciesGUI:isInstantiated() then
-			FishSpeciesGUI:new(...)
+		if FishEncyclopedia:isInstantiated() then
+			delete(FishEncyclopedia:getSingleton())
 		end
+
+		FishEncyclopedia:new(...)
 	end
 )
+
+----------------------------------------------------------------------------------------------------------------------
+FishSpeciesGUI = inherit(GUIForm)
+inherit(Singleton, FishSpeciesGUI)
+
+function FishSpeciesGUI:constructor(fish, speciesData)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 8)
+	self.m_Height = grid("y", 9)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, fish.Name_DE, true, true, self)
+
+	window:addBackButton(
+		function()
+			delete(self)
+			FishEncyclopedia:getSingleton():show()
+		end
+	)
+
+	local path = ("files/images/Fishing/Fish/%s.png"):format(fish.Id)
+	local isImage = fileExists(path)
+	GUIGridImage:new(3, 1, 3, 3, isImage and path or "files/images/Fishing/Fish.png", window)
+	GUIGridLabel:new(1, 5, 5, 1, "Fischname:\nZuletzt gefangen:\nRekord Größe:\nOrte:\nUhrzeiten:\nWetter:\nJahreszeiten:", window)
+end

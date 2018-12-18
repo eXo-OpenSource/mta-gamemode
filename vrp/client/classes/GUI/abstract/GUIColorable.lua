@@ -15,10 +15,12 @@ function GUIColorable:getColor()
 	return self.m_Color
 end
 
-function GUIColorable:setColor(color)
+function GUIColorable:setColor(color, backgroundColor)
 	assert(type(color) == "number", "Bad argument @ GUIColorable.setColor")
 
 	self.m_Color = color
+	self.m_BackgroundColor = backgroundColor
+
 	self:anyChange()
 	return self
 end
@@ -36,7 +38,7 @@ end
 
 function GUIColorable:setAlpha(alpha)
 	self.m_Alpha = alpha
-	self:setColor(bitReplace(self.m_Color, alpha, 24, 8))
+	self:setColor(bitReplace(self.m_Color, alpha, 24, 8), self.m_BackgroundColor and bitReplace(self.m_BackgroundColor, alpha, 24, 8) or nil)
 	return self
 end
 

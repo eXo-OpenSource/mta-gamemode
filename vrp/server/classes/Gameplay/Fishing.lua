@@ -656,11 +656,3 @@ function convertFishSpeciesCaught()
 		end
 	end
 end
-
--- TODO: DEV
-addCommandHandler("get",
-	function(player)
-		local playerSpeciesCaught = player:getFishSpeciesCaught()
-		player:triggerEvent("receiveCaughtFishSpecies", Fishing.Fish, playerSpeciesCaught)
-	end
-)
