@@ -68,9 +68,9 @@ factionRankNames[2] = {
 [0] = "Probationary Agent",
 [1] = "Special Agent",
 [2] = "Sen. Special Agent",
-[3] = "Sup. Special Agent",
+[3] = "Supervisory Agent",
 [4] = "Section Chief",
-[5] = "Deputy Director",
+[5] = "Assistant Director",
 [6] = "FBI-Director"
 }
 factionColors[2] = {["r"] = 50,["g"] = 100,["b"] = 150}
@@ -237,7 +237,7 @@ factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
 factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38+2.71)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
--- ID 11 = Triads
+-- ID 11 = Cartel
 factionRankNames[11] = {
 [0] = "Diablo",
 [1] = "Reciente",
