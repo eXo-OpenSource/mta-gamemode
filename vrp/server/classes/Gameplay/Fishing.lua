@@ -636,23 +636,64 @@ function Fishing:createDesertWater()
 	end
 end
 
-function convertFishSpeciesCaught()
+function convertFishSpeciesCaught(target)
+	local st = getTickCount()
 	local prefix = sql:getPrefix()
-	outputConsole("Start converting")
+	local result = sqlLogs:queryFetch("SELECT PlayerId, FishId, COUNT(*) AS Count, MAX(FishSize) AS MaxFishSize, UNIX_TIMESTAMP(MAX(Date)) AS LastCaught FROM vrpLogs_fishCaught GROUP BY PlayerId, FishId")
+
+	local dataTable = {}
+	for _, data in pairs(result) do
+		if not dataTable[data.PlayerId] then dataTable[data.PlayerId] = {} end
+		dataTable[data.PlayerId][data.FishId] = {data.Count, data.MaxFishSize, data.LastCaught}
+	end
+
+	for playerId, data in pairs(dataTable) do
+		sql:queryExec("UPDATE ??_character SET FishSpeciesCaught = ? WHERE Id = ?", prefix, toJSON(data), playerId)
+	end
+
+	outputConsole(("Operation done (%s ms)"):format(getTickCount()-st))
+end
+
+--[[function convertFishSpeciesCaught()
+	local st = getTickCount()
+	local failedTable = {}
+	local prefix = sql:getPrefix()
+	local logsPrefix = sqlLogs:getPrefix()
 	local allPlayers = sql:queryFetch("SELECT Id, FishSpeciesCaught FROM ??_character", prefix)
 
 	for _, playerData in pairs(allPlayers) do
 		if playerData and playerData.Id and playerData.FishSpeciesCaught and fromJSON(playerData.FishSpeciesCaught) then
+			local stp = getTickCount()
 			outputConsole("Convert fishSpeciesCaught for PlayerId: " .. tostring(playerData.Id))
 
 			local fishSpeciesCaught = fromJSON(playerData.FishSpeciesCaught)
+			local doSave = true
 			local newTable = {}
 
 			for _, species in pairs(fishSpeciesCaught) do
-				newTable[species] = {1, false} -- CaughtCount, TimeStamp (Cause of the convertion this is set to false)
+				local result = sqlLogs:queryFetch("SELECT COUNT(*), MAX(FishSize), UNIX_TIMESTAMP(MAX(Date)) FROM ??_fishCaught WHERE PlayerId = ? and FishId = ?", logsPrefix, playerData.Id, species)
+				if result and result[1] then
+					result = result[1]
+					local caughtCount = result["COUNT(*)"] and (result["COUNT(*)"] > 0 and result["COUNT(*)"] or 1) or 1
+					local maxFishSize = result["MAX(FishSize)"] or false
+					local timestamp = result["UNIX_TIMESTAMP(MAX(Date))"] or false
+					newTable[species] = {caughtCount, maxFishSize, timestamp}
+				else
+					doSave = false
+				end
 			end
 
-			sql:queryExec("UPDATE ??_character SET FishSpeciesCaught = ? WHERE Id = ?", prefix, toJSON(newTable), playerData.Id)
+			if doSave then
+				outputConsole(("Success (took %s ms)"):format(getTickCount()-stp))
+				sql:queryExec("UPDATE ??_character SET FishSpeciesCaught = ? WHERE Id = ?", prefix, toJSON(newTable), playerData.Id)
+			else
+				outputConsole("Failed")
+				table.insert(failedTable, playerData.Id)
+			end
 		end
 	end
-end
+
+	outputConsole(("Operation done (%s ms)"):format(getTickCount()-st))
+	outputConsole(("Failed [%s]:"):format(#failedTable))
+	outputConsole(inspect(failedTable))
+end]]
