@@ -350,7 +350,7 @@ function HUDAviation:radarPulse()
 	if self.m_Texture.m_Image and self.m_Texture.m_MapX then
 		for k, v in ipairs(getElementsByType("vehicle")) do 
 			px, py = getElementPosition(v)
-			if Vector2(Vector2(px, py) - Vector2(vx, vy)):getLength() < 50 then 
+			if Vector2(Vector2(px, py) - Vector2(vx, vy)):getLength() < 100 then 
 				self.m_Texture:addBlip("Marker.png", px, py)
 			end
 		end
