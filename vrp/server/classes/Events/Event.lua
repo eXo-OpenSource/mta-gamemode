@@ -76,10 +76,12 @@ function Event:getId()
 end
 
 function Event:join(player)
-	self:sendMessage("%s ist dem Event beigetreten!", 255, 255, 0, getPlayerName(player))
-	table.insert(self.m_Players, player)
+	if not table.find(self.m_Players, player) then
+		self:sendMessage("%s ist dem Event beigetreten!", 255, 255, 0, getPlayerName(player))
+		table.insert(self.m_Players, player)
 
-	if self.onJoin then self:onJoin(player) end
+		if self.onJoin then self:onJoin(player) end
+	end
 end
 
 function Event:quit(player, withoutRespawn)

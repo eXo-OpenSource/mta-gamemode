@@ -36,6 +36,12 @@ function AdminEventGUI:constructor(money)
 	self.m_EventButton["portPlayers"] = GUIButton:new(10, 120, 250, 30, "Spieler porten",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
 	self.m_EventButton["portPlayers"].onLeftClick = function() triggerServerEvent("adminEventTrigger", localPlayer, "teleportPlayers") end
 
+	self.m_EventButton["intializeBattleRoyale"] = GUIButton:new(10, 155, 250, 30, "Battle Royale vorbereiten",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
+	self.m_EventButton["intializeBattleRoyale"].onLeftClick = function() triggerServerEvent("adminEventTrigger", localPlayer, "intializeBattleRoyale") end
+
+	self.m_EventButton["startBattleRoyale"] = GUIButton:new(270, 155, 250, 30, "Battle Royale starten",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
+	self.m_EventButton["startBattleRoyale"].onLeftClick = function() triggerServerEvent("adminEventTrigger", localPlayer, "startBattleRoyale") end
+
 	self.m_EventButton["startNewAuction"] = GUIButton:new(270, 50, 250, 30, "Auktion starten",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
 	self.m_EventButton["startNewAuction"].onLeftClick = function()
 		InputBox:new("Auktionsgut benennen", "Bitte gebe einen Namen für das Auktionsgut ein (z.B. 'das Fahrzeug [Fahrzeugname]'):", function(text)
@@ -118,7 +124,7 @@ function AdminEventGUI:onHide()
 	SelfGUI:getSingleton():removeWindow(self)
 end
 
-function AdminEventGUI:onReceiveData(eventActive, players, vehicles, auctionData)
+function AdminEventGUI:onReceiveData(eventActive, players, vehicles, auctionData, battleRoyaleStatus)
 	self.m_EventToggleButton:setText(eventActive and _"Event beenden" or _"Event starten")
 	self.m_PlayersGrid:clear()
 	self.m_VehiclesGrid:clear()
@@ -144,6 +150,17 @@ function AdminEventGUI:onReceiveData(eventActive, players, vehicles, auctionData
 			self.m_EventButton["startNewAuction"]:setEnabled(true)
 			self.m_EventButton["removeHighestAuctionBid"]:setEnabled(false)
 			self.m_EventButton["stopAuction"]:setEnabled(false)
+		end
+
+		if battleRoyaleStatus == "not intialized" then
+			self.m_EventButton["intializeBattleRoyale"]:setEnabled(true)
+			self.m_EventButton["startBattleRoyale"]:setEnabled(false)
+		elseif battleRoyaleStatus == "not started" then
+			self.m_EventButton["intializeBattleRoyale"]:setEnabled(false)
+			self.m_EventButton["startBattleRoyale"]:setEnabled(true)
+		else
+			self.m_EventButton["intializeBattleRoyale"]:setEnabled(false)
+			self.m_EventButton["startBattleRoyale"]:setEnabled(false)
 		end
 	else
 		for index, button in pairs(self.m_EventButton) do

@@ -35,6 +35,10 @@ function AdminEventManager:onEventTrigger(func, ...)
 		self.m_CurrentEvent:removeHighestBid(client, ...)
 	elseif func == "stopAuction" then
 		self.m_CurrentEvent:stopAuction(client, ...)
+	elseif func == "intializeBattleRoyale" then
+		self.m_CurrentEvent:intializeBattleRoyale(client)
+	elseif func == "startBattleRoyale" then
+		self.m_CurrentEvent:startBattleRoyale(client)
 	end
 	self:sendData(client)
 end
@@ -81,10 +85,10 @@ function AdminEventManager:bidEvent(cmdPlayer, cmd, text)
 	if self.m_CurrentEvent:isPlayerInEvent(cmdPlayer) then
 		if not tonumber(text) then
 			return cmdPlayer:sendError("Dein Gebot darf nur aus einer Zahl (ohne Trennzeichen oä.) bestehen.")
-		end	
+		end
 		if tonumber(text) < 1 then
 			return cmdPlayer:sendError("Dein Gebot muss mindestens 1$ sein.")
-		end	
+		end
 		return self.m_CurrentEvent:registerBid(cmdPlayer, tonumber(text))
 	else
 		cmdPlayer:sendError(_("Du musst zuerst dem Event teilnehmen (/teilnehmen)!", cmdPlayer))

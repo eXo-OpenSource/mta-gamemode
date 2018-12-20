@@ -4,7 +4,8 @@ function AdminEvent:constructor()
 	self.m_Players = {}
     self.m_Vehicles = {}
     self.m_AuctionsPerEvent = {}
-    self.m_VehiclesAmount = 0
+	self.m_VehiclesAmount = 0
+	self.m_BattleRoyaleStatus = "not intialized"
 end
 
 function AdminEvent:setTeleportPoint(eventManager)
@@ -13,16 +14,23 @@ function AdminEvent:setTeleportPoint(eventManager)
 end
 
 function AdminEvent:sendGUIData(player)
-	player:triggerEvent("adminEventReceiveData", true, self.m_Players, self.m_Vehicles, self.m_CurrentAuction)
+	player:triggerEvent("adminEventReceiveData", true, self.m_Players, self.m_Vehicles, self.m_CurrentAuction, self.m_BattleRoyaleStatus)
 end
 
 function AdminEvent:joinEvent(player)
-	table.insert(self.m_Players, player)
-    player:sendInfo(_("Du nimmst am Admin-Event teil! Bitte warte auf weitere Anweisungen!", player))
-    player:triggerEvent("adminEventPrepareClient")
-    if self.m_CurrentAuction then
-        triggerClientEvent(player, "adminEventSendAuctionData", resourceRoot, self.m_CurrentAuction)
-    end
+	if not table.find(self.m_Players, player) then
+		table.insert(self.m_Players, player)
+		player:sendInfo(_("Du nimmst am Admin-Event teil! Bitte warte auf weitere Anweisungen!", player))
+		player:triggerEvent("adminEventPrepareClient")
+		if self.m_CurrentAuction then
+			triggerClientEvent(player, "adminEventSendAuctionData", resourceRoot, self.m_CurrentAuction)
+		end
+		outputDebugString(tostring(self.m_BattleRoyale))
+		if self.m_BattleRoyale then
+			outputDebugString("dude?")
+			self.m_BattleRoyale:joinEvent(player)
+		end
+	end
 end
 
 function AdminEvent:isPlayerInEvent(player)
@@ -162,11 +170,9 @@ function AdminEvent:registerBid(player, bid)
                         if not updated then
                             table.insert(self.m_CurrentAuction.bids, {player:getName(), bid})
                         end
-                
                         table.sort(self.m_CurrentAuction.bids, function(a,b)
                             return a[2] > b[2]
                         end)
-                        
                         player:sendSuccess(_("Du hast %s auf %s geboten und bist somit Höchstbietender!", player, toMoneyString(bid), self.m_CurrentAuction.name))
                         triggerClientEvent(self.m_Players, "adminEventSendAuctionData", resourceRoot, self.m_CurrentAuction)
                     else
@@ -220,6 +226,23 @@ function AdminEvent:stopAuction(admin)
     end
 end
 
+function AdminEvent:intializeBattleRoyale(admin)
+	if self.m_BattleRoyaleStatus == "not intialized" then
+		self.m_BattleRoyaleStatus = "not started"
+		self.m_BattleRoyale = BattleRoyale:new(self.m_Players)
+	else
+        admin:sendError(_("Battle Royale wurde bereits initialisiert!", admin))
+	end
+end
+
+function AdminEvent:startBattleRoyale(admin)
+	if self.m_BattleRoyaleStatus == "not started" then
+		self.m_BattleRoyaleStatus = "started"
+		self.m_BattleRoyale:start()
+	else
+        admin:sendError(_("Battle Royale kann nicht gestartet werden!", admin))
+	end
+end
 
 function AdminEvent:outputAuctionDataToPlayer(player)
     if isElement(player) and getElementType(player) == "player" then

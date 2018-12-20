@@ -417,6 +417,7 @@
 	<script src="server/classes/Events/Event.lua" type="server"/>
 	<script src="server/classes/Events/EventManager.lua" type="server"/>
 	<script src="server/classes/Events/AuctionEvent.lua" type="server"/>
+	<script src="server/classes/Events/BattleRoyale.lua" type="server"/>
 	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
@@ -992,6 +993,7 @@
 	<script src="client/classes/Events/Event.lua" type="client"/>
 	<script src="client/classes/Events/EventManager.lua" type="client"/>
 	<script src="client/classes/Events/AdminEvent.lua" type="client"/>
+	<script src="client/classes/Events/BattleRoyale.lua" type="client"/>
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
