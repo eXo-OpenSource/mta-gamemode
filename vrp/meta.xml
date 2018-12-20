@@ -1364,6 +1364,9 @@
 	<vrpfile src="files/images/Speedo/needle.png"/>
 	<vrpfile src="files/images/Speedo/heading.png"/>
 	<vrpfile src="files/images/Speedo/aviation_engine_circle.png"/>
+	<vrpfile src="files/images/Speedo/overlay_glass.png"/>
+	<vrpfile src="files/images/Speedo/radar_circle.png"/>
+
 
 	<vrpfile src="files/images/Weapons/AK-47.png"/>
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>

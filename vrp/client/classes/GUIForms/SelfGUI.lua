@@ -1445,6 +1445,33 @@ function SelfGUI:onSettingChange(setting)
 			HUDSpeedo:getSingleton():setLightOption( bool )
 			core:set("HUD", "SpeedoLightOverlay", bool)
 		end
+
+		self.m_AviationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.35, self.m_Height*0.04, _"Flugzeug-Display" , self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+
+		self.m_AviationPFD = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.71, self.m_Width*0.6, self.m_Height*0.04, _"Primäre Fluganzeige (An/Aus)", self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_AviationPFD:setChecked(core:get("HUD", "AviationPFDOverlay", true))
+		self.m_AviationPFD.onChange = function (bool)
+			HUDAviation:getSingleton():setPFD( bool )
+			core:set("HUD", "AviationPFDOverlay", bool)
+		end
+		
+		self.m_AviationSFD = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.78, self.m_Width*0.6, self.m_Height*0.04, _"Sekundäre Fluganzeige (An/Aus)", self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_AviationSFD:setChecked(core:get("HUD", "AviationSFDOverlay", true))
+		self.m_AviationSFD.onChange = function (bool)
+			HUDAviation:getSingleton():setSFD( bool )
+			core:set("HUD", "AviationSFDOverlay", bool)
+		end
+
+		self.m_AviationECAS = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.6, self.m_Height*0.04, _"Tertiäre Fluganzeige (An/Aus)", self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_AviationECAS:setChecked(core:get("HUD", "AviationECASOverlay", true))
+		self.m_AviationECAS.onChange = function (bool)
+			HUDAviation:getSingleton():setECAS( bool )
+			core:set("HUD", "AviationECASOverlay", bool)
+		end
 	elseif setting == "Shader" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
 		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)

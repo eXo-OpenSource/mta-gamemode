@@ -38,7 +38,9 @@ function GUIMiniMap:drawThis()
 				self.m_Color
 			)
 			for index, blip in pairs(self.m_Blips) do
-				dxDrawImage(blip["posX"]-16, blip["posY"]-16, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
+				if blip then
+					dxDrawImage(blip["posX"]-16, blip["posY"]-16, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
+				end
 			end
 		end
 
@@ -54,7 +56,7 @@ function GUIMiniMap:worldToMapPosition(posX, posY)
 	return mapX, mapY
 end
 
-function GUIMiniMap:setPosition(posX, posY)
+function GUIMiniMap:setMapPosition(posX, posY)
 	local posX, posY = self:worldToMapPosition(posX, posY)
 	self.m_MapX, self.m_MapY = posX - self.m_Width/2, posY - self.m_Height/2
 	self:anyChange()

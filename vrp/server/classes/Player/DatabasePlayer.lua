@@ -300,7 +300,9 @@ end
 function DatabasePlayer:saveStatistics()
 	local string = ""
 	for index, value in pairs(self.m_Statistics) do
-		string = string..index.." = "..value..", "
+		if value then
+			string = string..index.." = "..value..", "
+		end
 	end
 	string = string:sub(1, -3) -- Removed last ", " cause of sql error
 
