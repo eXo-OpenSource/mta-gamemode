@@ -253,6 +253,9 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 end
 
 function Core:destructor()
+	if HUDAviation:isInstantiated() then
+		delete(HUDAviation:getSingleton())
+	end
 	delete(Cursor)
 	delete(self.m_Config)
 	delete(BindManager:getSingleton())

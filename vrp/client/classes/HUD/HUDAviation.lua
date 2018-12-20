@@ -8,6 +8,8 @@
 HUDAviation = inherit(Singleton)
 
 function HUDAviation:constructor()
+	self.m_FirstLoad = true
+
 	self.m_DisplayFontHeight =  dxGetFontHeight(1,"default")
 
 
@@ -58,10 +60,15 @@ function HUDAviation:constructor()
 			end
 		end
 	)
-
+	
 	self:setupSettings()
 
 end
+
+function HUDAviation:destructor() 
+	self:saveOffsets()
+end
+
 
 function HUDAviation:show(type)
 	self.m_RadarDirection = true 
@@ -101,6 +108,39 @@ function HUDAviation:getSFD() return self.m_SFD  end
 function HUDAviation:setECAS(bool) self.m_ECAS = bool end 
 function HUDAviation:getECAS() return self.m_ECAS end
 
+function HUDAviation:loadOffsets()
+	local pfdOffsetX = core:get("HUD", "aviationOffsetPFDX", 0) or 0
+	local pfdOffsetY = core:get("HUD", "aviationOffsetPFDY", 0) or 0
+
+	self:setOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.PFD.INDEX, pfdOffsetX, pfdOffsetY)
+
+	local sfdOffsetX = core:get("HUD", "aviationOffsetSFDX", 0) or 0 
+	local sfdOffsetY = core:get("HUD", "aviationOffsetSFDY", 0) or 0 
+	self:setOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.SFD.INDEX, sfdOffsetX, sfdOffsetY)
+
+	local ecasOffsetX = core:get("HUD", "aviationOffsetECASX", 0) or 0 
+	local ecasOffsetY = core:get("HUD", "aviationOffsetECASY", 0) or 0 
+	self:setOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS.INDEX, ecasOffsetX, ecasOffsetY)
+	outputDebugString("Loaded HUDAviation-Offsets...")
+end
+
+
+function HUDAviation:saveOffsets()
+	local pfdOffsetX, pfdOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.PFD.INDEX))
+	core:set("HUD", "aviationOffsetPFDX", pfdOffsetX or 0)
+	core:set("HUD", "aviationOffsetPFDY", pfdOffsetY or 0)
+
+	local sfdOffsetX, sfdOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.SFD.INDEX))
+	core:set("HUD", "aviationOffsetSFDX", sfdOffsetX or 0)
+	core:set("HUD", "aviationOffsetSFDY", sfdOffsetY or 0)
+
+
+	local ecasOffsetX, ecasOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS.INDEX))
+	core:set("HUD", "aviationOffsetECASX", ecasOffsetX or 0)
+	core:set("HUD", "aviationOffsetECASY", ecasOffsetY or 0)
+	outputDebugString("Saved HUDAviation-Offsets...")
+end
+
 
 function HUDAviation:getAviationType(vehicle)
 	local model = getElementModel(vehicle)
@@ -137,10 +177,15 @@ function HUDAviation:setupPanels()
 
 	category = ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS
 	self:setPanelBound(category.INDEX, self.m_StartX+self.m_Width*0.6, self.m_StartY, self.m_Width*0.3, self.m_Height, category.ENGINE_PANEL)
+
+	if self.m_FirstLoad then 
+		self.m_FirstLoad = false 
+		self:loadOffsets()
+	end
 end
 
 
-function HUDAviation:draw()
+function HUDAviation:draw()	
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Aviation") end
 	if not isPedInVehicle(localPlayer) or localPlayer.vehicleSeat > 1 then
 		self:hide()
@@ -158,7 +203,7 @@ function HUDAviation:draw()
 	if aircraft then
 		if getVehicleEngineState(aircraft) then
 			if not self.m_StartTime then
-				self.m_StartTime = getTickCount() + 200 
+				self.m_StartTime = getTickCount() + 2000 
 			else 
 				if getTickCount() >= self.m_StartTime then 
 					self.m_Started = true 
