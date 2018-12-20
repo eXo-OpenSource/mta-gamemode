@@ -80,6 +80,7 @@ function HUDAviation:show(type)
 	addEventHandler("onClientClick", root, self.m_DragAndDropBind)
 	addEventHandler("onClientKey", root, self.m_DragAndDropBind)
 	self.m_RadarPulse = setTimer(bind(self.radarPulse, self), 200, 0)
+	ShortMessage:new("Halte [Shift] und die [linke Maustaste] gedrückt um die Fluginstrumente zu bewegen!", "Fluginstrument-Anzeige")
 end
 
 function HUDAviation:hide()
