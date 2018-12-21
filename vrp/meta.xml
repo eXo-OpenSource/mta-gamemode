@@ -2424,6 +2424,7 @@
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
 	<vrpfile src="files/shader/loginShader.fx"/>
 	<vrpfile src="files/shader/radialFog.fx"/>
+	<vrpfile src="files/shader/monochrome.fx"/>
 	<file src="files/shader/cylinder.fx"/>
 
 
