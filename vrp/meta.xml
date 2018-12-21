@@ -1035,6 +1035,7 @@
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
 	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
+	<script src="client/classes/Effects/MonochromeShader.lua" type="client"/>
 
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
