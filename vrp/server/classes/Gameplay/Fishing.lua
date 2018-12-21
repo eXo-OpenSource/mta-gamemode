@@ -253,7 +253,7 @@ function Fishing:FishCaught()
 	local allBagsFull = false
 
 	self:updatePlayerSkill(client, size)
-	client:addFishSpecies(tbl.lastFish.Id)
+	local newFishRecord = client:addFishSpecies(tbl.lastFish.Id, size)
 	client:increaseStatistics("FishCaught")
 
 	if isLegendary then
@@ -303,8 +303,8 @@ function Fishing:FishCaught()
 				self:increaseFishCaughtCount(fishId)
 
 				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location, fishId)
-				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size))
-				client:meChat(true, ("hat ein %s gefangen. Größe: %scm"):format(fishName, size))
+				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size, newFishRecord and "(Rekord!)" or ""))
+				client:meChat(true, ("hat ein %s gefangen. Größe: %scm %s"):format(fishName, size, newFishRecord and "(Rekord!)" or ""))
 				return
 			end
 
