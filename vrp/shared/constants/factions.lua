@@ -7,6 +7,23 @@ FACTION_TRUNK_MAX_ITEMS = {
 	["Nagel-Band"] = 3,
 	["Blitzer"] = 3,
 	["Warnkegel"] = 10,
+	["SLAM"] = 2,
+	["Gasmaske"] = 10,
+	["Rauchgranate"] = 10,
+}
+
+FACTION_TRUNK_SWAT_ITEMS = 
+{
+	["SLAM"] = true,
+	["Gasmaske"] = true,
+	["Rauchgranate"] = true,
+}
+
+FACTION_TRUNK_SWAT_ITEM_PERMISSIONS = 
+{
+	["SLAM"] = {3, 3}, --// rank,faction
+	["Gasmaske"] = {0},
+	["Rauchgranate"] = {3},
 }
 
 VEHICLE_BAG_LOAD = {}

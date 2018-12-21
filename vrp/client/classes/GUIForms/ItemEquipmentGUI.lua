@@ -9,6 +9,7 @@ ItemEquipmentGUI = inherit(GUIForm)
 inherit(Singleton, ItemEquipmentGUI)
 ItemEquipmentGUI.ImagePath = "files/images/Inventory/items/"
 addRemoteEvents{"ItemEquipmentOpen", "ItemEquipmentRefresh"}
+
 function ItemEquipmentGUI:constructor(id)
     self.m_Id = id
 	GUIWindow.updateGrid()
@@ -83,6 +84,10 @@ function ItemEquipmentGUI:Event_onGetInfo(id, data, allowedItems)
 	end
 end
 
+function ItemEquipmentGUI:isSpecialProduct(product) 
+	return (product == "RPG-7" or product == "Granate" or product == "Scharfschützengewehr" or product == "Gasgranate") 
+end
+
 function ItemEquipmentGUI:loadInventoryItems()
     self.m_GridInventar:clear()
     self.m_ItemData = Inventory:getSingleton():getItemData()
@@ -122,7 +127,7 @@ end
 function ItemEquipmentGUI:getItemFromWeapon(weapon)
     for category, data in pairs(self.m_AllowedItems) do 
         for product, subdata in pairs(data) do 
-            if subdata[3] and subdata[3] == weapon then
+            if subdata[3] and subdata[3] == weapon and not self:isSpecialProduct(product) then
                 return product, subdata
             end
         end
@@ -147,17 +152,19 @@ function ItemEquipmentGUI:loadDepotItems()
     self.m_SelectedItemDepot = nil
     local item, weaponName, weaponData
     for itemName, amount in pairs(self.m_Depot) do
-        if amount > 0 then
-            item = self.m_GridDepot:addItem(itemName, amount)
-            weaponName, weaponData = self:getWeaponFromItem(itemName)
-            if weaponName then
-                item.m_SelectedWeaponName = WEAPON_NAMES[weaponName]
-                item.m_SelectedWeaponIcon = "Items/Munition.png"
-            end
-            item.onLeftClick = function(itm)
-                self.m_SelectedItemDepot = itemName
-                self.m_SelectedItemAmountDepot = amount
-                self:updateInfo(itm.m_SelectedWeaponIcon or self.m_ItemData[itemName]["Icon"], itm.m_SelectedWeaponName or self.m_ItemData[itemName]["Info"])
+        if not self:isSpecialProduct(itemName) then
+            if amount > 0 then
+                item = self.m_GridDepot:addItem(itemName, amount)
+                weaponName, weaponData = self:getWeaponFromItem(itemName)
+                if weaponName then
+                    item.m_SelectedWeaponName = WEAPON_NAMES[weaponName]
+                    item.m_SelectedWeaponIcon = "Items/Munition.png"
+                end
+                item.onLeftClick = function(itm)
+                    self.m_SelectedItemDepot = itemName
+                    self.m_SelectedItemAmountDepot = amount
+                    self:updateInfo(itm.m_SelectedWeaponIcon or self.m_ItemData[itemName]["Icon"], itm.m_SelectedWeaponName or self.m_ItemData[itemName]["Info"])
+                end
             end
         end
     end

@@ -519,6 +519,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 
+	self:takeEquipment()
 	if self:getExecutionPed() then delete(self:getExecutionPed()) end
 
 	WearableManager:getSingleton():removeAllWearables(self)
@@ -556,6 +557,30 @@ function Player:dropReviveWeapons()
 			end
 		end
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
+	end
+end
+
+function Player:takeEquipment(noOutput) 
+	local item, amount, price, id
+	local count = 0
+	for category, data in pairs(ArmsDealer.Data) do 
+		if category ~= "Waffen" then 
+			for product, subdata in pairs(data) do 
+				amount, price, id = unpack(subdata)
+				if not id then 
+					amount = self:getInventory():getItemAmount(product)
+					if amount and amount > 0 then
+						self:getInventory():removeAllItem(product)
+						count = count + amount
+					end
+				end
+			end
+		end
+	end
+	if count > 0 then 
+		if not noOutput then
+			self:sendShortMessage(("Dir wurden %i Items vom Equipment abgenommen!"):format(count), "Medical Center - Los Santos")
+		end
 	end
 end
 

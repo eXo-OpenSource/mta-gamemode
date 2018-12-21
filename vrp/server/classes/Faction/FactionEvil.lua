@@ -196,14 +196,26 @@ function FactionEvil:onEquipmentDepotClicked(button, state, player)
 	end
 end
 
+function FactionEvil:isSpecialProduct(product) 
+	return (product == "RPG-7" or product == "Granate" or product == "Scharfschützengewehr" or product == "Gasgranate") 
+end
+
 function FactionEvil:putOrderInDepot(player, box)
 	local content = box.m_Content 
 	local type, product, amount, price, id = unpack(box.m_Content)
 	local depot = player:getFaction():getDepot()
-	if type == "Waffe" then
-		if id then
-			depot:addWeaponD(id,amount)
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+	if type == "Waffe" or self:isSpecialProduct(product) then
+		if not self:isSpecialProduct(product) then
+			if id then
+				depot:addWeaponD(id,amount)
+				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+			end
+		else 
+			if id then
+				depot:addWeaponD(id,amount)
+				depot:addMagazineD(id,amount)
+				player:getFaction():sendShortMessage(("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+			end
 		end
 	elseif type == "Munition" then
 		if id then

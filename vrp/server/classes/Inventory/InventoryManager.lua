@@ -179,7 +179,12 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-
+	if player:getFaction():isStateFaction() and player:isFactionDuty() then 
+		if ArmsDealer:getSingleton():getItemData(item) then 
+			player:sendError(_("Du kannst dieses Item im Dienst nicht handeln!", player))
+			return false
+		end
+	end
 	if player:getInventory():getItemAmount(item) >= amount then
 		if target:getMoney() >= money then
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))

@@ -81,6 +81,9 @@ function FactionState:constructor()
 		["Nagel-Band"] = 0,
 		["Blitzer"] = 0,
 		["Warnkegel"] = 0,
+		["Rauchgranate"] = 5000,
+		["Gasmaske"] = 1000,
+		["SLAM"] = 25000,
 	}
 
 	nextframe(
@@ -1411,6 +1414,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				client:getInventory():removeAllItem("Nagel-Band")
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
+				client:takeEquipment(true)
 				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
@@ -1761,6 +1765,11 @@ function FactionState:Event_putItemInVehicle(itemName, amount, inventory)
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() == true then
 			local veh = inventory and source or client.vehicle
 			if veh:getFaction() and veh:getFaction():isStateFaction() then
+				if FACTION_TRUNK_SWAT_ITEMS[itemName] then 
+					if client.vehicle:getModel() ~= 427 then 
+						return client:sendError(_("Dieses Item kann nur in einen Enforcer getan werden!", client))
+					end
+				end
 				veh:loadFactionItem(client, itemName, amount, inventory)
 			else
 				client:sendError(_("Ungültiges Fahrzeug!", client))

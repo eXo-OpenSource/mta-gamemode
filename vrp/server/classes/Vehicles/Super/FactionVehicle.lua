@@ -171,18 +171,40 @@ end
 function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 	if not self.m_FactionTrunk then self.m_FactionTrunk = {} end
 	if not self.m_FactionTrunk[itemName] then self.m_FactionTrunk[itemName] = 0 end
+	local price = FactionState:getSingleton().m_Items[itemName]*amount
+	if FACTION_TRUNK_SWAT_ITEMS[itemName] then 
+		if player.vehicle:getModel() ~= 427 then 
+			return player:sendError(_("Du kannst diese Gegenstände nur in einen Enforcer laden!", player))
+		end
+	end
 	if FACTION_TRUNK_MAX_ITEMS[itemName] then
 		if FACTION_TRUNK_MAX_ITEMS[itemName] >= self.m_FactionTrunk[itemName]+amount then
 			if inventory then
 				if not player:getInventory():removeItem(itemName, amount) then
 					player:sendError(_("Du hast keine %d Stk. von diesem Item dabei! (%s)", player, amount, itemName))
 					return
-				end
+				end 
 			end
-
-			self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
-			player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
-			self:setData("factionTrunk", self.m_FactionTrunk, true)
+			local minRank, forFaction = 0, 0
+			if FACTION_TRUNK_SWAT_ITEM_PERMISSIONS[itemName] then 
+				minRank, forFaction = unpack(FACTION_TRUNK_SWAT_ITEM_PERMISSIONS[itemName])
+			end
+			if player:getFaction():getPlayerRank(player) >= minRank then
+				if not forFaction or forFaction == player:getFaction():getId() then
+					self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
+					player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
+					self:setData("factionTrunk", self.m_FactionTrunk, true)
+					if price > 0 and not inventory then 
+						player:getFaction().m_BankAccount:transferMoney(FactionState:getSingleton().m_BankAccountServer, price, "SWAT-Equipment", "Faction")
+						player:getFaction():sendShortMessage(("%s hat %d %s gekauft!"):format(player:getName(), amount, itemName))
+						player:getFaction():addLog(player, "Item", ("hat %d %s für $%s gekauft!"):format(amount, itemName, price))
+					end
+				else 
+					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction):getName()))
+				end
+			else 
+				player:sendError(_("Du kannst dieses Item nicht kaufen!", player))
+			end
 		else
 			player:sendError(_("In dieses Fahrzeug passen maximal %d Stk. dieses Items! (%s)", player, FACTION_TRUNK_MAX_ITEMS[itemName], itemName))
 		end
@@ -197,6 +219,7 @@ function FactionVehicle:takeFactionItem(player, itemName)
 			if player:getInventory():giveItem(itemName, 1) then
 				self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]-1
 				player:sendShortMessage(_("Du hast 1 %s aus dem Fahrzeug in dein Inventar gepackt!", player, itemName))
+				player:getFaction():addLog(player, "Item", ("hat %s in den %s (%s) gelegt!"):format(itemName, self:getName(), self:getPlateText()))
 			end
 		else
 			player:sendError(_("Dieses Item ist nicht mehr im Fahrzeug! (%s)", player, itemName))
