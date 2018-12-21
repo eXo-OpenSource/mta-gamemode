@@ -40,7 +40,9 @@ function MonochromeShader:show()
 end
 
 function MonochromeShader:setAlpha(alpha)
-    self.m_MonochromeShader:setValue("luminanceFloat", alpha/255)  
+    alpha =  alpha/255
+    alpha = alpha * 0.7
+    self.m_MonochromeShader:setValue("luminanceFloat", alpha)  
 end
 
 function MonochromeShader:destructor()
@@ -52,4 +54,11 @@ function MonochromeShader:destructor()
 	end
 	removeEventHandler("onClientPreRender", root, self.m_Update)
 	self.m_Update = nil
+end
+
+function MonochromeShader:flash()
+    Animation.FadeIn:new(self, 50)
+    setTimer(function() 
+        Animation.FadeOut:new(self, 500)
+    end, 100, 1)
 end

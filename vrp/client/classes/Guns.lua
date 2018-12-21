@@ -144,10 +144,7 @@ function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
 		triggerServerEvent("onDeathPedWasted", localPlayer, source, weapon)
 	end
 	if self.m_ChromeShader then 
-		Animation.FadeIn:new(self.m_ChromeShader, 200)
-		setTimer(function() 
-			Animation.FadeOut:new(self.m_ChromeShader, 200)
-		end, 250, 1)
+		self.m_ChromeShader:flash()
 	end
 end
 

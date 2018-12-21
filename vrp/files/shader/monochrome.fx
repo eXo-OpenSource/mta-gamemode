@@ -4,14 +4,14 @@ sampler implicitInputSampler = sampler_state
     Texture = <ScreenTexture>;
 };
 
-float4 filterColor = float4(1, 1, 1, 1);
+float4 filterColor = float4(0.95, 0.95, 1, 1);
 float luminanceFloat = 1;
 float alpha = 1;
 float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 {
 	float2 texuv = TextureCoordinate;
 	float4 srcColor = tex2D(implicitInputSampler, texuv);
-	float4 luminance = srcColor.r*0.30 + srcColor.g*0.59 + srcColor.b*0.11;
+	float4 luminance = srcColor.r*0.2 + srcColor.g*0.2 + srcColor.b;
 	luminance.a = luminanceFloat;
 	
 	return luminance * filterColor;
