@@ -41,7 +41,7 @@ end
 
 function MonochromeShader:setAlpha(alpha)
     alpha =  alpha/255
-    alpha = alpha * 0.7
+    alpha = alpha * 0.35
     self.m_MonochromeShader:setValue("luminanceFloat", alpha)  
 end
 
@@ -57,8 +57,9 @@ function MonochromeShader:destructor()
 end
 
 function MonochromeShader:flash()
-    Animation.FadeIn:new(self, 50)
+	self.m_Active = true
+	self:setAlpha(255)
     setTimer(function() 
-        Animation.FadeOut:new(self, 700)
-    end, 100, 1)
+        Animation.FadeOut:new(self, 500)
+    end, 300, 1)
 end
