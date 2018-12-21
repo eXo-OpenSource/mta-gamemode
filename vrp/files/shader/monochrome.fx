@@ -4,7 +4,7 @@ sampler implicitInputSampler = sampler_state
     Texture = <ScreenTexture>;
 };
 
-float4 filterColor = float4(0.95, 0.95, 1, 1);
+float4 filterColor = float4(0.85, 0.85, 1, 1);
 float luminanceFloat = 1;
 float alpha = 1;
 float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0

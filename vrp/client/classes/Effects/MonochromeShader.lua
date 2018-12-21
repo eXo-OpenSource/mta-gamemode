@@ -59,6 +59,6 @@ end
 function MonochromeShader:flash()
     Animation.FadeIn:new(self, 50)
     setTimer(function() 
-        Animation.FadeOut:new(self, 500)
+        Animation.FadeOut:new(self, 700)
     end, 100, 1)
 end
