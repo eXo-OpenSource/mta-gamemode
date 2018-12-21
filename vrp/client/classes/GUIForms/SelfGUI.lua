@@ -1117,6 +1117,15 @@ function SelfGUI:onSettingChange(setting)
 			Guns:getSingleton():toggleTracer(bool)
 		end
 
+		self.m_MonochromeShader = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.8, self.m_Height*0.04, _"Kill Feedback", self.m_SettingBG)
+		self.m_MonochromeShader:setFont(VRPFont(25))
+		self.m_MonochromeShader:setFontSize(1)
+		self.m_MonochromeShader:setChecked(core:get("HUD", "KillFeedbackShader", false))
+		self.m_MonochromeShader.onChange = function (bool)
+			core:set("HUD", "KillFeedbackShader", bool)
+			Guns:getSingleton():toggleMonochromeShader(bool)
+		end
+
 	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
 		self.m_TextureModeChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)

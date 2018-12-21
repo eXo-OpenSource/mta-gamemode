@@ -83,14 +83,22 @@ function Guns:constructor()
 	self.m_HitMark = false
 	self.m_TracerEnabled = false
 	self.m_hitpath = fileExists("_custom/files/audio/hitsound.wav") and "_custom/files/audio/hitsound.wav" or "files/audio/hitsound.wav"
-
-	self.m_ChromeShader = MonochromeShader:new()
-	self.m_ChromeShader:setAlpha(0)
-	self.m_ChromeShader.m_Active = false
 end
 
 function Guns:destructor()
 
+end
+
+function Guns:toggleMonochromeShader(bool)
+	if bool then
+		self.m_ChromeShader = MonochromeShader:new()
+		self.m_ChromeShader:setAlpha(0)
+		self.m_ChromeShader.m_Active = false
+	else
+		if self.m_ChromeShader then
+			self.m_ChromeShader = MonochromeShader:delete()
+		end
+	end
 end
 
 function Guns:toggleTracer( bool )
@@ -142,9 +150,6 @@ end
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
 	if killer == localPlayer then
 		triggerServerEvent("onDeathPedWasted", localPlayer, source, weapon)
-	end
-	if self.m_ChromeShader then 
-		self.m_ChromeShader:flash()
 	end
 end
 
@@ -311,6 +316,10 @@ end
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		triggerServerEvent("onClientWasted", localPlayer, killer, weapon, bodypart)
+	elseif killer == localPlayer then
+		if self.m_ChromeShader then 
+			self.m_ChromeShader:flash()
+		end
 	end
 end
 

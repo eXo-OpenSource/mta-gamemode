@@ -108,6 +108,7 @@ function Core:ready() --onClientResourceStart
 	Guns:new()
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
+	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
