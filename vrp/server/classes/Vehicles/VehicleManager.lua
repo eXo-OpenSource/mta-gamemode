@@ -815,9 +815,11 @@ function VehicleManager:Event_OnVehicleCrash(loss)
 					elseif sForce >= 0.85 then
 						if not player.m_SeatBelt then
 							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
-							setTimer(setPedAnimation, 5000,1, player, nil)
+							if  source:getVehicleType() ~= VehicleType.Bike and not VEHICLE_BIKES[source] then
+								removePedFromVehicle(player) -- causes network trouble for the client
+								setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
+								setTimer(setPedAnimation, 5000,1, player, nil)
+							end
 						elseif player.m_SeatBelt == source then
 							if not player.m_lastInjuryMe then
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
