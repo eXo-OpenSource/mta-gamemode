@@ -81,6 +81,12 @@ function HUDAviation:show(type)
 	addEventHandler("onClientKey", root, self.m_DragAndDropBind)
 	self.m_RadarPulse = setTimer(bind(self.radarPulse, self), 200, 0)
 	ShortMessage:new("Halte [Shift] und die [linke Maustaste] gedrückt um die Fluginstrumente zu bewegen!", "Fluginstrument-Anzeige")
+	if self.m_Texture then 
+		self.m_Texture:delete()
+		self.m_Texture = nil
+	end
+	self.m_Texture = GUIMiniMap:new(self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.5)
+	self.m_Texture.m_Color = tocolor(0, 200, 0, 100)
 end
 
 function HUDAviation:hide()
@@ -103,7 +109,20 @@ end
 function HUDAviation:setPFD(bool) self.m_PFD = bool end 
 function HUDAviation:getPFD() return self.m_PFD  end
 
-function HUDAviation:setSFD(bool) self.m_SFD = bool end 
+function HUDAviation:setSFD(bool) 
+	self.m_SFD = bool 	
+	if not bool then 
+		if self.m_Texture then 
+			self.m_Texture:delete()
+			self.m_Texture = nil
+		end
+	else 
+		if not self.m_Texture then
+			self.m_Texture = GUIMiniMap:new(self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.5)
+			self.m_Texture.m_Color = tocolor(0, 200, 0, 100)
+		end
+	end	
+end 
 function HUDAviation:getSFD() return self.m_SFD  end
 
 function HUDAviation:setECAS(bool) self.m_ECAS = bool end 
@@ -180,10 +199,6 @@ function HUDAviation:setupPanels()
 	category = ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.SFD
 	self:setPanelBound(category.INDEX, self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.5, category.CAUTION_WARNING_DISPLAY)
 	self:setPanelBound(category.INDEX, self.m_StartX+self.m_Width*0.3, self.m_StartY+self.m_Height*0.5, self.m_Width*0.3, self.m_Height*0.5, category.HEADING_INDICATOR)
-
-	
-	self.m_Texture = GUIMiniMap:new(self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.5)
-	self.m_Texture.m_Color = tocolor(0, 200, 0, 100)
 
 	category = ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS
 	self:setPanelBound(category.INDEX, self.m_StartX+self.m_Width*0.6, self.m_StartY, self.m_Width*0.3, self.m_Height, category.ENGINE_PANEL)
@@ -353,19 +368,20 @@ function HUDAviation:checkAcceleration( aircraft )
 end
 
 function HUDAviation:radarPulse()
-	local vehicle = getPedOccupiedVehicle(localPlayer)
-	local px, py = 0, 0
-	local vx, vy = getElementPosition(vehicle)
-	self.m_Texture.m_Blips = {}
-	if self.m_Texture.m_Image and self.m_Texture.m_MapX then
-		for k, v in ipairs(getElementsByType("vehicle")) do 
-			px, py = getElementPosition(v)
-			if Vector2(Vector2(px, py) - Vector2(vx, vy)):getLength() < 100 then 
-				self.m_Texture:addBlip("Marker.png", px, py)
+	if self.m_Texture then
+		local vehicle = getPedOccupiedVehicle(localPlayer)
+		local px, py = 0, 0
+		local vx, vy = getElementPosition(vehicle)
+		self.m_Texture.m_Blips = {}
+		if self.m_Texture.m_Image and self.m_Texture.m_MapX then
+			for k, v in ipairs(getElementsByType("vehicle")) do 
+				px, py = getElementPosition(v)
+				if Vector2(Vector2(px, py) - Vector2(vx, vy)):getLength() < 100 then 
+					self.m_Texture:addBlip("Marker.png", px, py)
+				end
 			end
 		end
 	end
-	
 end
 
 function HUDAviation:setPanelBound(id, posX, posY, width, height, subid)
