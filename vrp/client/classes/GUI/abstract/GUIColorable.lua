@@ -19,7 +19,10 @@ function GUIColorable:setColor(color, backgroundColor)
 	assert(type(color) == "number", "Bad argument @ GUIColorable.setColor")
 
 	self.m_Color = color
-	self.m_BackgroundColor = backgroundColor
+	
+	if backgroundColor then
+		self.m_BackgroundColor = backgroundColor
+	end
 
 	self:anyChange()
 	return self
