@@ -203,8 +203,8 @@ function Sewers:createStorage()
     ped:setRotation(0, 0, findRotation(ped:getPosition().x, ped:getPosition().y, entrance:getPosition().x, entrance:getPosition().y))
     giveWeapon(ped, 30, 200, true)
     setElementData(ped, "SewerPed", true)
-    --setElementData(ped, "clickable", true)
-	--addEventHandler("onElementClicked", ped, bind(self.Event_onPedClick, self))
+    setElementData(ped, "clickable", true)
+	addEventHandler("onElementClicked", ped, bind(self.Event_onPedClick, self))
     self:addKevlarToPed(ped)
 end
 

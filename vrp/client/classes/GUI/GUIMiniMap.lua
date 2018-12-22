@@ -28,15 +28,17 @@ end
 function GUIMiniMap:drawThis()
 	dxSetBlendMode("modulate_add")
 		if self.m_Image then
-			dxDrawImageSection(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY),
-				self.m_Width, self.m_Height,
-				self.m_MapX, self.m_MapY,
-				self.m_Width, self.m_Height,
-				self.m_Image,
-				self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0,
-				self.m_RotationCenterOffsetY or 0,
-				self.m_Color
-			)
+			if self.m_MapX then -- suppress warning of arguement #5 so the frames don't go down
+				dxDrawImageSection(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY),
+					self.m_Width, self.m_Height,
+					self.m_MapX, self.m_MapY,
+					self.m_Width, self.m_Height,
+					self.m_Image,
+					self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0,
+					self.m_RotationCenterOffsetY or 0,
+					self.m_Color
+				)
+			end
 			for index, blip in pairs(self.m_Blips) do
 				if blip then
 					dxDrawImage(blip["posX"]-16, blip["posY"]-16, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)

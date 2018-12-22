@@ -127,18 +127,27 @@ end
 
 
 function HUDAviation:saveOffsets()
-	local pfdOffsetX, pfdOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.PFD.INDEX))
-	core:set("HUD", "aviationOffsetPFDX", pfdOffsetX or 0)
-	core:set("HUD", "aviationOffsetPFDY", pfdOffsetY or 0)
+	local pfdOffsetX, pfdOffsetY = false, false
+	if self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.PFD.INDEX) then
+		pfdOffsetX, pfdOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.PFD.INDEX))
+	end
+	core:set("HUD", "aviationOffsetPFDX", pfdOffsetX or core:get("HUD", "aviationOffsetPFDX", 0))
+	core:set("HUD", "aviationOffsetPFDY", pfdOffsetY or core:get("HUD", "aviationOffsetPFDY", 0))
 
-	local sfdOffsetX, sfdOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.SFD.INDEX))
-	core:set("HUD", "aviationOffsetSFDX", sfdOffsetX or 0)
-	core:set("HUD", "aviationOffsetSFDY", sfdOffsetY or 0)
+	local sfdOffsetX, sfdOffsetY = false, false
+	if self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.SFD.INDEX) then
+		sfdOffsetX, sfdOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.SFD.INDEX))
+	end
+	core:set("HUD", "aviationOffsetSFDX", sfdOffsetX or core:get("HUD", "aviationOffsetSFDX", 0))
+	core:set("HUD", "aviationOffsetSFDY", sfdOffsetY or core:get("HUD", "aviationOffsetSFDY", 0))
 
 
-	local ecasOffsetX, ecasOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS.INDEX))
-	core:set("HUD", "aviationOffsetECASX", ecasOffsetX or 0)
-	core:set("HUD", "aviationOffsetECASY", ecasOffsetY or 0)
+	local ecasOffsetX, ecasOffsetY = false, false 
+	if self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS.INDEX) then
+		ecasOffsetX, ecasOffsetY = unpack(self:getOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS.INDEX))
+	end
+	core:set("HUD", "aviationOffsetECASX", ecasOffsetX or core:get("HUD", "aviationOffsetECASX", 0))
+	core:set("HUD", "aviationOffsetECASY", ecasOffsetY or core:get("HUD", "aviationOffsetECASY", 0))
 	outputDebugString("Saved HUDAviation-Offsets...")
 end
 
