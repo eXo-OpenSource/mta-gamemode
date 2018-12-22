@@ -929,6 +929,17 @@ function Faction:checkEquipmentPermissions()
 		perms["metadata"] = {"-", getOpticalTimestamp(getRealTime().timestamp)}
 		self.m_EquipmentPermissions = perms
 	end
+	for item, rank in pairs(self.m_EquipmentPermissions) do 
+		for cat, data in pairs(ArmsDealer.Data) do 
+			if cat ~= "Waffen" then 
+				for product, subdata in pairs(data) do 
+					if not self.m_EquipmentPermissions[product] and not subdata[3] then
+						self.m_EquipmentPermissions[product] = ArmsDealer.ProhibitedRank[product] or 0
+					end
+				end
+			end
+		end
+	end
 	if not self.m_EquipmentPermissions["metadata"] then 
 		self.m_EquipmentPermissions["metadata"]  = {"-", getOpticalTimestamp(getRealTime().timestamp)}
 	end

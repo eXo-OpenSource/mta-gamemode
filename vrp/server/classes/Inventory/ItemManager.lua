@@ -48,6 +48,7 @@ function ItemManager:constructor()
 		["Taser"] = ItemTaser;
 		["SLAM"] = ItemSlam;
 		["Rauchgranate"] = ItemSmokeGrenade;
+		["DefuseKit"] = ItemDefuseKit;
 
 		["Bambusstange"] = ItemFishing,
 		["Angelrute"] = ItemFishing,

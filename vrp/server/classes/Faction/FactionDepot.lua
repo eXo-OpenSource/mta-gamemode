@@ -371,6 +371,7 @@ end
 
 function Depot:takeEquipment(player, item, amount)
 	if not self:checkDistanceFromEquipment(player) then return end
+	if not player:isFactionDuty() then return player:sendError(_("Du bist nicht im Fraktionsmodus!", player)) end
 	if player:getFaction() then 
 		if self.m_Owner == player:getFaction() then 
 			local perms = player:getFaction():getEquipmentPermissions() 
@@ -391,6 +392,8 @@ function Depot:takeEquipment(player, item, amount)
 				if not armsData[3] then 
 					if not player:getInventory():giveItem(item, amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] + amount
+						player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
+						return
 					end
 				else 
 					giveWeapon(player, armsData[3], amount)
@@ -401,6 +404,8 @@ function Depot:takeEquipment(player, item, amount)
 				if not armsData[3] then
 					if not player:getInventory():giveItem(item, amount) then 
 						self.m_Equipments[item] = amount
+						player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
+						return
 					end
 				else 
 					giveWeapon(player, armsData[3], amount)

@@ -15,7 +15,8 @@ ArmsDealer.Data =
         ["Gasgranate"] = {6, 50000, 17},
         ["Rauchgranate"] = {3, 100000},
         ["Scharfschützengewehr"] = {5, 60000, 34},
-        ["Fallschirm"] = {20, 5000, 46}
+        ["Fallschirm"] = {20, 5000, 46},
+        ["DefuseKit"] = {20, 5000},
     },
     ["Explosiv"] = 
     {

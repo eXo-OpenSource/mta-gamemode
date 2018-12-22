@@ -141,6 +141,7 @@
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSlam.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSmokeGrenade.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemDefuseKit.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDice.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFood.lua" type="server"/>
@@ -1763,6 +1764,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Slam.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Smokegrenade.png" />
+	<vrpfile src="files/images/Inventory/items/Items/DefuseKit.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Kanne.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />

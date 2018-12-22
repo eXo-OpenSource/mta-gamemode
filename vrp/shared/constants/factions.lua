@@ -10,6 +10,7 @@ FACTION_TRUNK_MAX_ITEMS = {
 	["SLAM"] = 2,
 	["Gasmaske"] = 10,
 	["Rauchgranate"] = 10,
+	["DefuseKit"] = 10,
 }
 
 FACTION_TRUNK_SWAT_ITEMS = 
@@ -17,6 +18,7 @@ FACTION_TRUNK_SWAT_ITEMS =
 	["SLAM"] = true,
 	["Gasmaske"] = true,
 	["Rauchgranate"] = true,
+	["DefuseKit"] = true,
 }
 
 FACTION_TRUNK_SWAT_ITEM_PERMISSIONS = 
@@ -24,6 +26,7 @@ FACTION_TRUNK_SWAT_ITEM_PERMISSIONS =
 	["SLAM"] = {3, 3}, --// rank,faction
 	["Gasmaske"] = {0},
 	["Rauchgranate"] = {3},
+	["DefuseKit"] = {0},
 }
 
 VEHICLE_BAG_LOAD = {}
