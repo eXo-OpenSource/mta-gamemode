@@ -1485,6 +1485,15 @@ function SelfGUI:onSettingChange(setting)
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
 		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
 		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
+		self.m_BlurLevel = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Blur deaktivieren", self.m_SettingBG)
+		self.m_BlurLevel:setFont(VRPFont(25))
+		self.m_BlurLevel:setFontSize(1)
+		self.m_BlurLevel:setChecked(core:get("Shaders", "BlurLevel", false))
+		self.m_BlurLevel.onChange = function (state)
+			core:set("Shaders", "BlurLevel", state)
+			localPlayer:deactivateBlur(state)
+		end
 	elseif setting == "Tastenzuordnung" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
 		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen", self.m_SettingBG):setBarEnabled(true)

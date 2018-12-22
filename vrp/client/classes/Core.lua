@@ -218,6 +218,7 @@ function Core:afterLogin()
 	end
 
 	localPlayer:setPlayTime()
+	localPlayer:deactivateBlur(core:get("Shaders", "BlurLevel", false))
 
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
