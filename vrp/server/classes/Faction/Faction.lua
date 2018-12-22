@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, permissions)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, permissions, equipmentPermissions)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_ShorterName = name_shorter
@@ -74,6 +74,12 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	if not DEBUG then
 		self:getActivity()
 	end
+	if equipmentPermissions then
+		self.m_EquipmentPermissions = fromJSON(equipmentPermissions)
+	else 
+		self.m_EquipmentPermissions = {}
+	end
+	self:checkEquipmentPermissions()
 end
 
 function Faction:destructor()
@@ -219,14 +225,14 @@ function Faction:save()
 	if self.m_Settings then
 		self.m_Settings:save()
 	end
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ?, EquipmentPermissions = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, toJSON(self.m_EquipmentPermissions), self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
 end
 
 function Faction:isStateFaction()
-	if self.m_Type == "State" then
+	if self.m_Type == "State" then	
 		return true
 	end
 	return false
@@ -902,4 +908,37 @@ function Faction:stopCountDown(text)
 			player:triggerEvent("CountdownStop", text)
 		end
 	end
+end
+
+function Faction:getEquipmentPermissions()
+	return self.m_EquipmentPermissions
+end
+
+function Faction:checkEquipmentPermissions()
+	local perms = {}
+	if next(self.m_EquipmentPermissions) == nil or not self.m_EquipmentPermissions then 
+		for cat, data in pairs(ArmsDealer.Data) do 
+			if cat ~= "Waffen" then 
+				for product, subdata in pairs(data) do 
+					if not subdata[3] then
+						perms[product] = ArmsDealer.ProhibitedRank[product] or 0
+					end
+				end
+			end
+		end
+		perms["metadata"] = {"-", getOpticalTimestamp(getRealTime().timestamp)}
+		self.m_EquipmentPermissions = perms
+	end
+	if not self.m_EquipmentPermissions["metadata"] then 
+		self.m_EquipmentPermissions["metadata"]  = {"-", getOpticalTimestamp(getRealTime().timestamp)}
+	end
+end
+
+function Faction:updateEquipmentPermissions(player, update)
+	for item, rank in pairs(update) do 
+		self.m_EquipmentPermissions[item] = rank-1
+	end
+	self.m_EquipmentPermissions["metadata"] = {player:getName(), getOpticalTimestamp(getRealTime().timestamp)}
+	self:sendShortMessage(("Die Equipment-Ränge wurden von %s aktualisiert!"):format(player:getName()))
+	self:addLog(player, "Equipment", "hat die Zugriffe aktualisiert!")
 end

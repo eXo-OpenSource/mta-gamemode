@@ -57,6 +57,13 @@ function FactionGUI:constructor()
 		self.m_BindManageGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 	end
 
+	self.m_EquipmentPermButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"Equipment-Rechte", tabAllgemein):setBarEnabled(true)
+	self.m_EquipmentPermButton.onLeftClick = function()
+		if self.m_EquipmentPermGUI then delete(self.m_EquipmentPermGUI) end
+		self:close()
+		self.m_EquipmentPermGUI = EquipmentOptionGUI:new()
+		self.m_EquipmentPermGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
+	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder

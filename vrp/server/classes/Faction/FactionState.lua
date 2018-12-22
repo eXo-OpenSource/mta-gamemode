@@ -74,8 +74,7 @@ function FactionState:constructor()
 
 
 	self.m_EvidenceEquipmentBox = {}
-	self:createEquipmentEvidence(Vector3(1581.7, -1689.27, 5.2), 0, 5)
-	self:createEquipmentEvidence(Vector3(1581.7, -1689.27, 5.2), 0, 5)
+	self:createEquipmentEvidence(Vector3(1576.34, -1692.42, 5.22), 0, 5, 0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -195,9 +194,10 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 	end)
 end
 
-function FactionState:createEquipmentEvidence( pos, int, dim )
+function FactionState:createEquipmentEvidence( pos, int, dim, rot )
 	local box = createObject(964, pos)
 	box:setInterior(int)
+	box:setRotation(0, 0, rot or 0)
 	box:setDimension(dim)
 	box:setData("clickable",true,true)
 	addEventHandler("onElementClicked", box, bind(self.Event_OnEvidenceEquipmentClick, self))
@@ -207,17 +207,26 @@ end
 function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isStateFaction() then
-			local box = player:getPlayerAttachedObject()
-			if box and isElement(box) and box.m_Content then
-				self:putEvidenceInDepot(player, box)
-			else
-				player:sendError(_("Du trägst keine Schwarzmarktware mit dir!", player))
+			if player:isFactionDuty() then 
+				local box = player:getPlayerAttachedObject()
+				if box and isElement(box) and box.m_Content then
+					self:putEvidenceInDepot(player, box)
+				else
+					if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
+						setElementData(player, "isEquipmentGUIOpen", true, true) 
+						player.m_LastEquipmentDepot = source
+						player:getFaction():getDepot():showEquipmentDepot(player)
+					end
+				end
+			else 
+				player:sendError(_("Du bist nicht im Dienst!", player))
 			end
 		else
 			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
 		end
 	end
 end
+
 
 function FactionState:putEvidenceInDepot(player, box)
 	local content = box.m_Content

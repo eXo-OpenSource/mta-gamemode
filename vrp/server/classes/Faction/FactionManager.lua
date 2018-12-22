@@ -33,7 +33,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionForumSync", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionForumSync", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -60,7 +60,8 @@ function FactionManager:constructor()
 	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
 	addEventHandler("factionForumSync", root, bind(self.Event_factionForumSync, self))
-
+	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
+	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	FactionState:new()
 	FactionRescue:new()
 	FactionInsurgent:new()
@@ -84,7 +85,7 @@ function FactionManager:loadFactions()
 			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy, row.Permissions)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy, row.Permissions, row.EquipmentPermissions)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
@@ -113,6 +114,21 @@ function FactionManager:Event_factionSaveRank(rank,loan,rankWeapons)
 		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
 		faction:addLog(client, "Fraktion", "hat die Einstellungen für Rang "..rank.." geändert!")
 		self:sendInfosToClient(client)
+	end
+end
+
+function FactionManager:Event_factionEquipmentOptionRequest()
+	if client:getFaction() then 
+		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
+	end
+end
+
+function FactionManager:Event_factionEquipmentOptionSubmit(update)
+	if client:getFaction() and client:getFaction():getPlayerRank(client) >= 5 then 
+		client:getFaction():updateEquipmentPermissions(client, update)
+		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
+	else 
+		client:sendError(_("Du hast keine Berechtigung!", client))
 	end
 end
 

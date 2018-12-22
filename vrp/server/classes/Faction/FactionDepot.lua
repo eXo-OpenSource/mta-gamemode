@@ -371,7 +371,19 @@ end
 
 function Depot:takeEquipment(player, item, amount)
 	if not self:checkDistanceFromEquipment(player) then return end
-	if self.m_Equipments[item] and (not ArmsDealer.ProhibitedRank[item] or (player:getFaction() and player:getFaction():getPlayerRank(player) >= ArmsDealer.ProhibitedRank[item])) then
+	if player:getFaction() then 
+		if self.m_Owner == player:getFaction() then 
+			local perms = player:getFaction():getEquipmentPermissions() 
+			if perms then
+				if perms[item] then 
+					if perms[item] > player:getFaction():getPlayerRank(player) then
+						return player:sendError(_("Keine Berechtigung erst ab Rang %i!", player, perms[item]))
+					end
+				end
+			end
+		end
+	end
+	if self.m_Equipments[item] then
  		local armsData = ArmsDealer:getSingleton():getItemData(item)
 		if armsData[3] or (amount > 0 and self.m_Equipments[item] >= amount) or (amount==-1 and player:getInventory():getFreePlacesForItem(item) >= self.m_Equipments[item] ) then
 			if amount > 0 then 
@@ -402,8 +414,6 @@ function Depot:takeEquipment(player, item, amount)
 		else
 			player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
 		end
-	else 
-		player:sendError(_("Du hast keine Berechtigung dieses Item rauszunehmen!", player))
 	end
 end
 
