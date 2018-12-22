@@ -316,8 +316,11 @@ end
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		triggerServerEvent("onClientWasted", localPlayer, killer, weapon, bodypart)
-	elseif killer == localPlayer then
+	end
+	if killer and killer == localPlayer then
+		outputDebugString("onClientPlayerWasted killer")
 		if self.m_ChromeShader then 
+			outputDebugString("ChromeShader flash")
 			self.m_ChromeShader:flash()
 		end
 	end
