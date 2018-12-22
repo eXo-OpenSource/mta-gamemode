@@ -74,8 +74,9 @@ function Guns:constructor()
 	--addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
-	addRemoteEvents{"clientBloodScreen"}
+	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash"}
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
+	addEventHandler("clientMonochromeFlash", root, bind(self.monochromeFlash, self))
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 	
@@ -317,13 +318,6 @@ function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		triggerServerEvent("onClientWasted", localPlayer, killer, weapon, bodypart)
 	end
-	if killer and killer == localPlayer then
-		outputDebugString("onClientPlayerWasted killer")
-		if self.m_ChromeShader then 
-			outputDebugString("ChromeShader flash")
-			self.m_ChromeShader:flash()
-		end
-	end
 end
 
 function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hitZ, hitElement)
@@ -510,6 +504,12 @@ function Guns:Event_renderTracer()
 				self.m_TracerTable[time] = nil
 			end
 		end
+	end
+end
+
+function Guns:monochromeFlash()
+	if self.m_ChromeShader then 
+		self.m_ChromeShader:flash()
 	end
 end
 

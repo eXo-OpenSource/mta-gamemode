@@ -162,6 +162,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 	end
 	if killer and isElement(killer) and weapon then
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
+		killer:triggerEvent("clientMonochromeFlash")
 	end
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
