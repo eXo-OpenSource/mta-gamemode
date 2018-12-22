@@ -135,6 +135,7 @@ Fonts = {
 	EkMukta = "files/fonts/EkMukta.ttf",
 	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",
 	Digital = "files/fonts/digital-7.ttf",
+	JennaSue = "files/fonts/JennaSue.ttf",
 }
 
 local FontMario = {}

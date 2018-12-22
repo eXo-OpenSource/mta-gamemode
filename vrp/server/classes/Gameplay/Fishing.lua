@@ -644,7 +644,9 @@ function convertFishSpeciesCaught(target)
 	local dataTable = {}
 	for _, data in pairs(result) do
 		if not dataTable[data.PlayerId] then dataTable[data.PlayerId] = {} end
-		dataTable[data.PlayerId][data.FishId] = {data.Count, data.MaxFishSize, data.LastCaught}
+		if data.FishId then
+			dataTable[data.PlayerId][data.FishId] = {data.Count or 1, data.MaxFishSize or false, data.LastCaught or false}
+		end
 	end
 
 	for playerId, data in pairs(dataTable) do

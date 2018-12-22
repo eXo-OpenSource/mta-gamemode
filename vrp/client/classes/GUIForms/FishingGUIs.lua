@@ -413,20 +413,20 @@ function FishEncyclopedia:constructor(fishList, fishSpecies)
 	for i, fish in ipairs(fishList) do
 		local i = i - 9*row
 
-		local background = GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, Color.LightGrey, window)
+		local background = GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, fishSpecies[fish.Id] and tocolor(229, 218, 185) or Color.LightGrey, window)
 
 		if fishSpecies[fish.Id] then
 			background.onLeftClick =
 			function()
 				self:hide()
-				FishSpeciesGUI:new(fish, fishSpecies)
+				FishSpeciesGUI:new(fish, fishSpecies[fish.Id])
 			end
 
 			local path = ("files/images/Fishing/Fish/%s.png"):format(fish.Id)
 			local isImage = fileExists(path)
 			GUIImage:new(5, 5, background.m_Width - 5, background.m_Height - 5, isImage and path or "files/images/Fishing/Fish.png", background)
 			GUIRectangle:new(0, background.m_Height - 15, background.m_Width, 15, Color.Background, background)
-			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE:len() > 9 and ("%s.."):format(fish.Name_DE:sub(0, 9)) or fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20)):setTooltip(fish.Name_DE, "bottom")
+			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE:len() > 8 and ("%s.."):format(fish.Name_DE:sub(0, 8)) or fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20)):setTooltip(fish.Name_DE, "bottom")
 		else
 			GUILabel:new(0, 0, background.m_Width, background.m_Height, "?", background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(70, false, true))
 		end
@@ -451,8 +451,8 @@ inherit(Singleton, FishSpeciesGUI)
 
 function FishSpeciesGUI:constructor(fish, speciesData)
 	GUIWindow.updateGrid()
-	self.m_Width = grid("x", 8)
-	self.m_Height = grid("y", 9)
+	self.m_Width = grid("x", 12)
+	self.m_Height = grid("y", 6)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, fish.Name_DE, true, true, self)
@@ -465,7 +465,13 @@ function FishSpeciesGUI:constructor(fish, speciesData)
 	)
 
 	local path = ("files/images/Fishing/Fish/%s.png"):format(fish.Id)
-	local isImage = fileExists(path)
-	GUIGridImage:new(3, 1, 3, 3, isImage and path or "files/images/Fishing/Fish.png", window)
-	GUIGridLabel:new(1, 5, 5, 1, "Fischname:\nZuletzt gefangen:\nRekord Größe:\nOrte:\nUhrzeiten:\nWetter:\nJahreszeiten:", window)
+	path = fileExists(path) and path or "files/images/Fishing/Fish.png"
+
+	local fishImage = GUIGridRectangle:new(8, 1, 4, 5, Color.White, window)
+	GUIRectangle:new(10, 10, fishImage.m_Width - 20, fishImage.m_Width - 20, tocolor(229, 218, 185), fishImage)
+	GUIImage:new(15, 15, fishImage.m_Width - 30, fishImage.m_Width - 30, path, fishImage)
+	GUILabel:new(10, fishImage.m_Width, fishImage.m_Width, fishImage.m_Height - fishImage.m_Width, speciesData[3] and getOpticalTimestamp(speciesData[3]) or "-", fishImage):setAlignY("center"):setFont(VRPFont(40, Fonts.JennaSue), 1):setColor(Color.Black)
+
+	GUIGridLabel:new(1, 1, 5, 1, "Fischname:\nRekord Größe:\nOrte:\nUhrzeiten:\nWetter:\nJahreszeiten:", window):setAlign("left", "top")
+	GUIGridLabel:new(5, 1, 5, 1, ("%s\n"):rep(6):format(fish.Name_DE, speciesData[2] and speciesData[2] .. "cm" or "-", "?", "?", "?", "?"), window):setAlign("left", "top")
 end

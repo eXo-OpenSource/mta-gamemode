@@ -1159,10 +1159,6 @@
 	<vrpfile src="files/images/Chess/feed.png" />
 	<vrpfile src="files/images/Chess/crown.png" />
 
-	<!-- font file -->
-	<file src="files/fonts/Chapaza.ttf" />
-
-
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
@@ -2435,6 +2431,7 @@
 	<file src="files/fonts/EkMukta-Bold.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome5.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/Chapaza.ttf" /><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
 	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>
@@ -2446,6 +2443,7 @@
 	<vrpfile src="files/fonts/fuelstation.ttf"/>
 	<vrpfile src="files/fonts/gobold-light.ttf"/>
 	<vrpfile src="files/fonts/vanadine-bold.ttf"/>
+	<vrpfile src="files/fonts/JennaSue.ttf" />
 
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
