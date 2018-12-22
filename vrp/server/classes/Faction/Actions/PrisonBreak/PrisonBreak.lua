@@ -8,7 +8,7 @@
 
 PrisonBreak = inherit(Object)
 PrisonBreak.BombCountdown = 10 * 1000
-PrisonBreak.OfficerCountdown = 5 * 60 * 1000
+PrisonBreak.OfficerCountdown = 7 * 60 * 1000
 PrisonBreak.KeycardsCountdown = 2 * 60 * 1000
 PrisonBreak.DoorsCountdown = 20 * 60 * 1000
 PrisonBreak.OfficerCount = 5
