@@ -30,9 +30,9 @@ Sewers.EntranceLinks =
 Sewers.EntranceExternal =
 {
     [1] = {Vector3(1489.14551, -1720.22449, 8.93633), 0},  -- BENEATH LS-PS
-    [22] = {Vector3(2869.74976, -2124.99414, 5.72266), 90}, -- east-ls
+    [22] = {Vector3(2877.68, -2124.83, 4.42), 90}, -- east-ls
     [15] = { Vector3(2630.69214, -1459.24158, 22.35500), 180}, -- north-east ls
-    [24] = { Vector3(2611.7839355469, -2147.3510742188, 0), 90},
+    [24] = { Vector3(2613.28, -2147.70, -0.22, 0), 90},
 }
 
 addRemoteEvents{"Sewers:requestRadioLocation"}

@@ -45,6 +45,7 @@ function Sewers:applyInteriorTexture()
 			setElementRotation(p, 0, 0, rz-45)
 		end
 	end
+	HUDRadar:getSingleton():hide()
 end
 
 function Sewers:onGetRadioPosition(x, y, z, dim)
@@ -73,4 +74,5 @@ function Sewers:removeInteriorTexture()
 	if self.m_PedTimer and isTimer(self.m_PedTimer) then 
 		killTimer(self.m_PedTimer)
 	end
+	HUDRadar:getSingleton():show()
 end
