@@ -17,6 +17,14 @@ Sewers.EntranceLinks =
     [19] = 23,
     [9] = 17,
     [10] = 21,
+    [25] = 29,
+    [28] = 27,
+    [26] = 30,
+    [33] = 35,
+    [31] = 36,
+    [37] = 38,
+    [32] = 34,
+
 }
 
 Sewers.EntranceExternal =
@@ -24,6 +32,7 @@ Sewers.EntranceExternal =
     [1] = {Vector3(1489.14551, -1720.22449, 8.93633), 0},  -- BENEATH LS-PS
     [22] = {Vector3(2869.74976, -2124.99414, 5.72266), 90}, -- east-ls
     [15] = { Vector3(2630.69214, -1459.24158, 22.35500), 180}, -- north-east ls
+    [24] = { Vector3(2611.7839355469, -2147.3510742188, 0), 90},
 }
 
 addRemoteEvents{"Sewers:requestRadioLocation"}
@@ -33,10 +42,10 @@ function Sewers:constructor()
     self.m_EntranceMarkers = {}
     self:createMap()
 
-    self.m_RectangleCol = createColRectangle( 1248.42, -2081.78, 1668.47- 1248.42, -1348.3+2081.78 )
+    self.m_RectangleCol = createColRectangle( 1055.47, -2264.60, 1668.47- 1055.47, -1348.3+2264.60 )
     self.m_RectangleCol:setDimension(self.m_Dimension)
 
-    self.m_AntiFallCuboid = createColCuboid( 1248.42, -2081.78, -50, 1668.47- 1248.42, -1348.3+2081.78, 4 )
+    self.m_AntiFallCuboid = createColCuboid( 1055.47, -2264.60, -50, 1668.47- 1055.47, -1348.3+2264.60, 4 )
     self.m_AntiFallCuboid:setDimension(self.m_Dimension)
     addEventHandler("onColShapeHit", self.m_AntiFallCuboid, function(hE, bDim)
         if isValidElement(hE, "player") and bDim then
@@ -181,7 +190,7 @@ function Sewers:createStorage()
     bin:setPosition(1483.02-200, -1736.06, 13.38-50)
     if entrance and isElement(entrance) then
         table.insert(self.m_EntranceMarkers, entrance)
-        Sewers.EntranceExternal[24] = {entrance:getPosition(), 0, self.m_Dimension}
+        Sewers.EntranceExternal[39] = {entrance:getPosition(), 0, self.m_Dimension}
     end
 
     local randomPed = math.random(1, #self.m_PedPositions)
