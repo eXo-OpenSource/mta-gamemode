@@ -85,7 +85,7 @@ function ArmsDealer:checkoutCart(cart)
                             end
                         else 
                             if ArmsDealer.Data[category] and ArmsDealer.Data[category][product] then
-                                table.insert(self.m_Order[faction], {"Equipment", product, ArmsDealer.Data[category][product][1], ArmsDealer.Data[category][product][2] })
+                                table.insert(self.m_Order[faction], {"Equipment", product, ArmsDealer.Data[category][product][1], ArmsDealer.Data[category][product][2], ArmsDealer.Data[category][product][3] })
                             end
                         end
                     end
