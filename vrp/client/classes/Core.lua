@@ -201,7 +201,7 @@ function Core:afterLogin()
 	BindManager:new()
 	WheelOfFortune:new()
 	Atrium:new()
-
+	ElementInfoManager:new()
 	if DEBUG then
 		Debugging:new()
 		DebugGUI.initalize()

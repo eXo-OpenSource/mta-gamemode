@@ -849,6 +849,14 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "paydayBox_relative", state)
 		end
 
+		self.m_ElementHelpBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.8, self.m_Height*0.04, _"Hilfetext über Pickups", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_ElementHelpBox:setChecked(core:get("HUD", "elementHelpCaption", true))
+		self.m_ElementHelpBox.onChange = function (state)
+			core:set("HUD", "elementHelpCaption", state)
+			ElementInfoManager:getSingleton():setState(state)
+		end
+
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Design", self.m_SettingBG)
 
 		local function updateDesignOptions(index)

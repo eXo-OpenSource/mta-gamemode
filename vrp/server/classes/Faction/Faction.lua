@@ -757,6 +757,7 @@ function Faction:setSafe(obj)
 			end
 		end
 	end)
+	ElementInfo:new(obj, "Fraktionskasse", 2)
 end
 
 
@@ -952,4 +953,24 @@ function Faction:updateEquipmentPermissions(player, update)
 	self.m_EquipmentPermissions["metadata"] = {player:getName(), getOpticalTimestamp(getRealTime().timestamp)}
 	self:sendShortMessage(("Die Equipment-Ränge wurden von %s aktualisiert!"):format(player:getName()))
 	self:addLog(player, "Equipment", "hat die Zugriffe aktualisiert!")
+end
+
+function Faction:takeEquipment(player)
+	local item, amount, price, id
+	local count = 0
+	for category, data in pairs(ArmsDealer.Data) do 
+		if category ~= "Waffen" then 
+			for product, subdata in pairs(data) do 
+				amount, price, id = unpack(subdata)
+				if not id then 
+					amount = player:getInventory():getItemAmount(product)
+					if amount and amount > 0 then
+						player:getInventory():removeAllItem(product)
+						self:getDepot():addEquipment(player, product, amount, true) 
+						count = count + amount
+					end
+				end
+			end
+		end
+	end
 end

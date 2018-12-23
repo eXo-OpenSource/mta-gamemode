@@ -10,10 +10,10 @@ inherit(Singleton, ItemShopGUI)
 
 addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI", "showBarGUI", "shopCloseGUI"}
 
-function ItemShopGUI:constructor(callback)
+function ItemShopGUI:constructor(callback, shopName)
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Shop", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, shopName or _"Shop", true, true, self)
 	self.m_Preview = GUIImage:new(self.m_Height*0.08, self.m_Height*0.12, self.m_Width*0.2, self.m_Width*0.2, false, self.m_Window)
 	self.m_LabelDescription = GUILabel:new(self.m_Width*0.02, self.m_Width*0.3, self.m_Width*0.45, self.m_Height-self.m_Width*0.76, "", self.m_Window) -- use width to align correctly
 	self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.07)):setMultiline(true)
@@ -110,12 +110,12 @@ addEventHandler("showBarGUI", root,
 )
 
 addEventHandler("showStateItemGUI", root,
-	function()
+	function(shopName)
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount)
 			triggerServerEvent("factionStatePutItemInVehicle", root, itemName, amount)
 		end
-		ItemShopGUI:new(callback)
+		ItemShopGUI:new(callback, shopName)
 	end
 )
 

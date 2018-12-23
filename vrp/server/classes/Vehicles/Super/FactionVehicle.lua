@@ -172,10 +172,9 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 	if not self.m_FactionTrunk then self.m_FactionTrunk = {} end
 	if not self.m_FactionTrunk[itemName] then self.m_FactionTrunk[itemName] = 0 end
 	local price = FactionState:getSingleton().m_Items[itemName]*amount
+	local isEquipment = false
 	if FACTION_TRUNK_SWAT_ITEMS[itemName] then 
-		if player.vehicle:getModel() ~= 427 then 
-			return player:sendError(_("Du kannst diese Gegenstände nur in einen Enforcer laden!", player))
-		end
+		isEquipment = true
 	end
 	if FACTION_TRUNK_MAX_ITEMS[itemName] then
 		if FACTION_TRUNK_MAX_ITEMS[itemName] >= self.m_FactionTrunk[itemName]+amount then
@@ -191,9 +190,14 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 			end
 			if player:getFaction():getPlayerRank(player) >= minRank then
 				if not forFaction or forFaction == player:getFaction():getId() then
-					self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
-					player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
-					self:setData("factionTrunk", self.m_FactionTrunk, true)
+					if not isEquipment then
+						self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
+						player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
+						self:setData("factionTrunk", self.m_FactionTrunk, true)
+					else 
+						player:getFaction():getDepot():addEquipment(player, itemName, amount, true)
+						player:sendShortMessage(_("Du hast %d %s gekauft! Diese wurden ins Lager abgelegt!", player, amount, itemName))
+					end
 					if price > 0 and not inventory then 
 						player:getFaction().m_BankAccount:transferMoney(FactionState:getSingleton().m_BankAccountServer, price, "SWAT-Equipment", "Faction")
 						player:getFaction():sendShortMessage(("%s hat %d %s gekauft!"):format(player:getName(), amount, itemName))

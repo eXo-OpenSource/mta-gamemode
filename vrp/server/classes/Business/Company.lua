@@ -667,6 +667,7 @@ function Company:setSafe(obj)
 			end
 		end
 	end)
+	ElementInfo:new(obj, "Unternehmenskasse", 2)
 end
 
 function Company:refreshBankAccountGUI(player)

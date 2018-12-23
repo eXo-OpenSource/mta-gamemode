@@ -192,7 +192,8 @@
 	<!-- UI -->
 	<script src="server/classes/UI/Blip.lua" type="server"/>
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
-
+	<script src="server/classes/UI/ElementInfo.lua" type="server"/>
+	
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
@@ -710,6 +711,9 @@
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
 	<script src="client/classes/HUD/TreasureRadar.lua" type="client"/>
+	
+	<script src="client/classes/HUD/Help/ElementInfo.lua" type="client"/>
+	<script src="client/classes/HUD/Help/ElementInfoManager.lua" type="client"/>
 
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>

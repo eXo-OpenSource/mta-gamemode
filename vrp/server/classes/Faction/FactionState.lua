@@ -23,7 +23,12 @@ function FactionState:constructor()
 	--self.m_GaragePorter:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
-	InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
+	self.m_InstantTeleportGarage = InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
+	self.m_InstantTeleportGarage:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
+	self.m_InstantTeleportGarage:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
+
+	--self.m_InstantTeleportCol:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
+	--self.m_InstantTeleportCol:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
 	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
@@ -74,7 +79,7 @@ function FactionState:constructor()
 
 
 	self.m_EvidenceEquipmentBox = {}
-	self:createEquipmentEvidence(Vector3(1576.34, -1692.42, 5.22), 0, 5, 0)
+	self:createEquipmentEvidence(Vector3( 1538.44, -1708.12, 5.22), 0, 5, 133)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -193,6 +198,7 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 			end
 		end
 	end)
+	ElementInfo:new(marker, "Stellenmarker")
 end
 
 function FactionState:createEquipmentEvidence( pos, int, dim, rot )
@@ -203,6 +209,7 @@ function FactionState:createEquipmentEvidence( pos, int, dim, rot )
 	box:setData("clickable",true,true)
 	addEventHandler("onElementClicked", box, bind(self.Event_OnEvidenceEquipmentClick, self))
 	self.m_EvidenceEquipmentBox[#self.m_EvidenceEquipmentBox+1] = box
+	ElementInfo:new(box, "Ausrüstungskiste", 2)
 end
 
 function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
@@ -272,7 +279,7 @@ function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 0, 5) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 0, 5)
-
+	
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
@@ -383,7 +390,7 @@ function FactionState:createTakeItemsPickup(pos, int, dim)
 				if hitElement:isFactionDuty() and hitElement:getFaction() and hitElement:getFaction():isStateFaction() == true then
 					local veh = hitElement.vehicle
 					if instanceof(veh, FactionVehicle) and veh:getFaction():isStateFaction() then
-						hitElement:triggerEvent("showStateItemGUI")
+						hitElement:triggerEvent("showStateItemGUI", "Ausrüstungskiste")
 						triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, 0, self.m_Items)
 					else
 						hitElement:sendError(_("Ungültiges Fahrzeug!", hitElement))
@@ -396,6 +403,7 @@ function FactionState:createTakeItemsPickup(pos, int, dim)
 			end
 		end
 	end)
+	ElementInfo:new(pickup, "Ausrüstung")
 end
 
 
@@ -647,6 +655,7 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 			cancelEvent()
 		end
 	)
+	ElementInfo:new(self.m_DutyPickup, "Duty-Marker")
 end
 
 function FactionState:createArrestZone(x, y, z, int, dim)
@@ -676,6 +685,7 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 		cancelEvent()
 	end
 	)
+	ElementInfo:new(pickup, "Einsperren")
 end
 
 function FactionState:createEvidencePickup( x,y,z, int, dim )
@@ -694,6 +704,7 @@ function FactionState:createEvidencePickup( x,y,z, int, dim )
 			end
 		end
 	end)
+	ElementInfo:new(pickup, "Asservatenkammer")
 end
 
 function FactionState:getFullCategoryFromShurtcut(category)
@@ -1899,6 +1910,14 @@ function FactionState:isBugActive()
 		end
 	end
 	return false
+end
+
+function FactionState:checkInsideGarage(player)
+	if player and isElement(player) and isElementWithinColShape ( player, self.m_InstantTeleportCol) then 
+		if player:getDimension() == 5 then 
+			player:triggerEvent("setOcclusion", false)
+		end
+	end
 end
 
 function FactionState:Event_attachBug()

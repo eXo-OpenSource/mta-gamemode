@@ -197,6 +197,11 @@ function Player:loadCharacter()
 	end
 	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
+
+	if self:getFaction() and self:getFaction():isStateFaction() then 
+		self:getFaction():takeEquipment(self)
+	end
+	FactionState:getSingleton():checkInsideGarage(self)
 end
 
 function Player:createCharacter()
@@ -240,6 +245,7 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
+	ElementInfo.sendAllToClient(self)
 	VehicleELS.sendAllToClient(self)
 
 	if HouseManager:isInstantiated() then
@@ -335,11 +341,11 @@ function Player:save()
 			end
 		end
 
-		local dimension = self:isInSewer() and self:getDimension() or 0
+		local dimension = self:getDimension()
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
 		local sSkin = self.m_Skin
-		if interior > 0 then dimension = self:getDimension() end
+		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 		DatabasePlayer.save(self)
