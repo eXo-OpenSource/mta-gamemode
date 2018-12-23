@@ -1,6 +1,5 @@
 <map edf:definitions="editor_main">
     <object id="object (la_fuckcar1) (1)" interior="0" collisions="true" alpha="255" doublesided="false" model="3594" scale="1" dimension="0" posX="1085.8000488281" posY="-1192.4000244141" posZ="17.799999237061" rotX="0" rotY="0" rotZ="315"></object>
-    <object id="object (ad_flatdoor) (1)" interior="0" collisions="true" alpha="255" doublesided="false" model="3061" scale="1" dimension="0" posX="1074.6999511719" posY="-1195.3000488281" posZ="25.39999961853" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (lamppost2) (4)" interior="0" collisions="true" alpha="255" doublesided="false" model="1290" scale="1" dimension="0" posX="1084" posY="-1190.5" posZ="23.299999237061" rotX="0" rotY="0" rotZ="45"></object>
     <object id="object (CJ_CANDYVENDOR) (1)" interior="0" collisions="true" alpha="255" doublesided="false" model="1776" scale="1" dimension="0" posX="1090.9000244141" posY="-1189.6999511719" posZ="18.39999961853" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (trailer2_01) (1)" interior="0" collisions="true" alpha="255" doublesided="false" model="3168" scale="1" dimension="0" posX="1110.1999511719" posY="-1191.0999755859" posZ="17.200000762939" rotX="0" rotY="0" rotZ="270"></object>
