@@ -231,6 +231,7 @@ function Core:afterLogin()
 
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
+	addCommandHandler("unternehmen", function() CompanyGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
