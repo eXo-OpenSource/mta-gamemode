@@ -517,6 +517,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 		self.m_AFKStartTime = getTickCount()
 		NoDm:getSingleton():checkNoDm()
+		setInteriorSoundsEnabled(false)
 	else
 		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
 		triggerServerEvent("toggleAFK", localPlayer, false)
@@ -525,7 +526,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self.m_AFKStartTime = 0
 		self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
 		NoDm:getSingleton():checkNoDm()
-
+		setInteriorSoundsEnabled(true)
 	end
 end
 
