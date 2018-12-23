@@ -28,14 +28,17 @@ end
 
 function GUILabel:drawThis(incache)
 	dxSetBlendMode("modulate_add")
-		if GUI_DEBUG then
-			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
-		end
-		if self.m_BackgroundColor then
-			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
-		end
 
-		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, self.m_Rotation)
+	if GUI_DEBUG then
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
+	end
+
+	if self.m_BackgroundColor then
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
+	end
+
+	dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, self.m_Rotation)
+
 	dxSetBlendMode("blend")
 end
 
@@ -85,10 +88,10 @@ function GUILabel:setClickable(state)
 		self:setColor(Color.Accent)
 		self.onInternalHover = function()
 			self:setColor(Color.White)
-		end 
+		end
 		self.onInternalUnhover = function()
 			self:setColor(Color.Accent)
-		end 
+		end
 	else
 		self:setColor(Color.White)
 		self.onInternalHover = nil
