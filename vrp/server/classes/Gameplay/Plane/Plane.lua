@@ -22,6 +22,8 @@ function Plane:virtual_constructor(id, startX, startY, startZ, endX, endY, endZ,
 
     self.m_Pilot = Ped(61, Vector3(startX, startY, startZ+3))
     self.m_Pilot:warpIntoVehicle(self.m_Plane)
+
+    return self
 end
 
 function Plane:virtual_destructor()

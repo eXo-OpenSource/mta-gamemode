@@ -37,9 +37,9 @@ function PlaneAccident:setAccidentPlane(flyingTime, colX, colY, colZ, colTime, s
                 end
             , flyingTime + colTime, 1)
         end
-        if DEBUG then
+        --[[if DEBUG then
             getRandomPlayer():setPosition(standstillX, standstillY, standstillZ)
-        end
+        end]]
     end
 end
 
@@ -80,6 +80,7 @@ function PlaneAccident:createRubble()
             else
                 PlaneManager:getSingleton():endAccident()
             end
+            triggerClientEvent(root, "deletePlaneInstance", root, true)
             if isElement(self.m_Plane) then
                 self.m_Plane:destroy()
             end

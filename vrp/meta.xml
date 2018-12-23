@@ -1081,6 +1081,7 @@
 	<script src="client/classes/Gameplay/Race/Kart.lua" type="client"/>
 
 	<!-- Roaming Planes/Accident Planes -->
+	<script src="client/classes/Gameplay/PlaneManager.lua" type="client" />
 	<script src="client/classes/Gameplay/Plane.lua" type="client" />
 
 	<!-- Minigames -->
