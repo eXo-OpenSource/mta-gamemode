@@ -14,10 +14,9 @@ function GUIProgressBar:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height*.9))
 	self.m_Progress = 0
 	self.m_ForegroundColor = Color.Accent
-	self.m_BackgroundColor = Color.PrimaryNoClick
 
 	-- Does not do anything, only marks the progress bar as colorable
-	GUIColorable.constructor(self)
+	GUIColorable.constructor(self, Color.White, Color.PrimaryNoClick)
 end
 
 function GUIProgressBar:setProgress(progress)
@@ -37,11 +36,6 @@ function GUIProgressBar:setForegroundColor(color)
 	return self
 end
 
-function GUIProgressBar:setBackgroundColor(color)
-	self.m_BackgroundColor = color
-	return self
-end
-
 function GUIProgressBar:setProgressTextEnabled(state)
 	self.m_ProgressTextEnabled = state
 	return self
@@ -55,7 +49,7 @@ function GUIProgressBar:drawThis()
 
 	-- Draw actual progress bar
 	local offsetHeight = 2
-	
+
 	dxDrawRectangle(self.m_AbsoluteX + 2, self.m_AbsoluteY + offsetHeight, (self.m_Width - 4) * self.m_Progress/100, self.m_Height - offsetHeight*2, self.m_ForegroundColor)
 
 	-- Draw Display Text

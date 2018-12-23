@@ -17,12 +17,12 @@ function GUIMiniMap:constructor(posX, posY, width, height, parent)
 	self.m_Image = dxCreateTexture(path)
 	if self.m_Image then
 		dxSetTextureEdge(self.m_Image, "border", color or borderColor["Radar_GTA"])
-	else 
+	else
 		self.m_Image = path
 	end
 	self.m_Blips = {}
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, Color.White)
+	GUIColorable.constructor(self)
 end
 
 function GUIMiniMap:drawThis()
@@ -69,8 +69,8 @@ function GUIMiniMap:addBlip(icon, posX, posY) -- todo fix position, its wrong
 	local x,y = self:worldToMapPosition(posX, posY)
 	if self:isWithinMapBound( x, y) then
 		local offX = x - self.m_MapX
-		local offY = y - self.m_MapY 
-		offX = self.m_AbsoluteX + offX 
+		local offY = y - self.m_MapY
+		offX = self.m_AbsoluteX + offX
 		offY = self.m_AbsoluteY + offY
 		self.m_Blips[#self.m_Blips+1] = {["icon"] = icon, ["posX"] =  offX, ["posY"] =  offY}
 		self:anyChange()
@@ -79,8 +79,8 @@ function GUIMiniMap:addBlip(icon, posX, posY) -- todo fix position, its wrong
 end
 
 function GUIMiniMap:isWithinMapBound( x, y )
-	if x >= self.m_MapX and x <= self.m_MapX + self.m_Width then 
-		if y >= self.m_MapY and y <= self.m_MapY + self.m_Height then 
+	if x >= self.m_MapX and x <= self.m_MapX + self.m_Width then
+		if y >= self.m_MapY and y <= self.m_MapY + self.m_Height then
 			return true
 		end
 	end
