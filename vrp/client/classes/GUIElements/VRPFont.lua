@@ -46,8 +46,12 @@ FontAwesomeSymbols = {
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
+	Tshirt = "",
+	Boxes = "",
+	Cube = "",
 	Book = "",
 	Player = "",
+	Play = "",
 	Group = "",
 	Money = "",
 	Info = "",
@@ -128,7 +132,8 @@ FontAwesomeSymbols = {
 	Accept = "",
 	Hands= "",
 	UserLock = "",
-	Calendar = ""
+	Calendar = "",
+	Crosshair = "",
 }
 
 Fonts = {

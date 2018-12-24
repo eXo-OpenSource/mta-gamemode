@@ -8,14 +8,15 @@
 ElementInfo = inherit(Object)
 ElementInfo.Map = {}
 
-function ElementInfo:constructor(object, text, offset)
+function ElementInfo:constructor(object, text, offset, icon)
 	ElementInfo.Map[object] = self
     self.m_Text = text
     self.m_Object = object
-    self.m_Offset = offset
+	self.m_Offset = offset
+	self.m_Icon = icon
 	for k, player in pairs(getElementsByType("player")) do
 		if player:isLoggedIn() then
-			player:triggerEvent("elementInfoCreate", object, text, offset)
+			player:triggerEvent("elementInfoCreate", object, text, offset, icon)
 		end
 	end
 end
@@ -28,7 +29,7 @@ end
 function ElementInfo.sendAllToClient(player)
 	local data = {}
 	for object, class in pairs(ElementInfo.Map) do
-		data[object] = {class.m_Text, class.m_Offset}
+		data[object] = {class.m_Text, class.m_Offset, class.m_Icon}
 	end
 	player:triggerEvent("elementInfoRetrieve", data)
 end

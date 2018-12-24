@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, permissions, equipmentPermissions)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, permissions)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_ShorterName = name_shorter
@@ -73,11 +73,6 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	ServiceSync:getSingleton():register("faction", self.m_Id, self.m_Permissions)
 	if not DEBUG then
 		self:getActivity()
-	end
-	if equipmentPermissions then
-		self.m_EquipmentPermissions = fromJSON(equipmentPermissions)
-	else 
-		self.m_EquipmentPermissions = {}
 	end
 	self:checkEquipmentPermissions()
 end
@@ -225,7 +220,7 @@ function Faction:save()
 	if self.m_Settings then
 		self.m_Settings:save()
 	end
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ?, EquipmentPermissions = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, toJSON(self.m_EquipmentPermissions), self.m_Id) then
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
@@ -757,7 +752,7 @@ function Faction:setSafe(obj)
 			end
 		end
 	end)
-	ElementInfo:new(obj, "Fraktionskasse", 2)
+	ElementInfo:new(obj, "Fraktionskasse")
 end
 
 
@@ -912,45 +907,41 @@ function Faction:stopCountDown(text)
 end
 
 function Faction:getEquipmentPermissions()
-	return self.m_EquipmentPermissions
+	local perms = {}
+	for cat, data in pairs(ArmsDealer.Data) do 
+		if cat ~= "Waffen" then 
+			for product, subdata in pairs(data) do 
+				if not subdata[3] then
+					perms[product] =  tonumber(self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
+				end
+			end
+		end
+		perms["metadata"] = {self:getSetting("Equipment", "metadata_author", "-"), self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))}	
+	end
+	return perms
 end
 
 function Faction:checkEquipmentPermissions()
 	local perms = {}
-	if next(self.m_EquipmentPermissions) == nil or not self.m_EquipmentPermissions then 
-		for cat, data in pairs(ArmsDealer.Data) do 
-			if cat ~= "Waffen" then 
-				for product, subdata in pairs(data) do 
-					if not subdata[3] then
-						perms[product] = ArmsDealer.ProhibitedRank[product] or 0
-					end
+	for cat, data in pairs(ArmsDealer.Data) do 
+		if cat ~= "Waffen" then 
+			for product, subdata in pairs(data) do 
+				if not subdata[3] then
+					self:setSetting("Equipment", product, self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
 				end
 			end
 		end
-		perms["metadata"] = {"-", getOpticalTimestamp(getRealTime().timestamp)}
-		self.m_EquipmentPermissions = perms
-	end
-	for item, rank in pairs(self.m_EquipmentPermissions) do 
-		for cat, data in pairs(ArmsDealer.Data) do 
-			if cat ~= "Waffen" then 
-				for product, subdata in pairs(data) do 
-					if not self.m_EquipmentPermissions[product] and not subdata[3] then
-						self.m_EquipmentPermissions[product] = ArmsDealer.ProhibitedRank[product] or 0
-					end
-				end
-			end
-		end
-	end
-	if not self.m_EquipmentPermissions["metadata"] then 
-		self.m_EquipmentPermissions["metadata"]  = {"-", getOpticalTimestamp(getRealTime().timestamp)}
+		self:setSetting("Equipment", "metadata_author", self:getSetting("Equipment", "metadata_author", "-"))
+		self:setSetting("Equipment", "metadata_time", self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp)))
 	end
 end
 
 function Faction:updateEquipmentPermissions(player, update)
 	for item, rank in pairs(update) do 
-		self.m_EquipmentPermissions[item] = rank-1
+		self:setSetting("Equipment", item, rank-1, player)
 	end
-	self.m_EquipmentPermissions["metadata"] = {player:getName(), getOpticalTimestamp(getRealTime().timestamp)}
+	self:setSetting("Equipment", "metadata_author", player:getName())
+	self:setSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))
 	self:sendShortMessage(("Die Equipment-Ränge wurden von %s aktualisiert!"):format(player:getName()))
 	self:addLog(player, "Equipment", "hat die Zugriffe aktualisiert!")
 end

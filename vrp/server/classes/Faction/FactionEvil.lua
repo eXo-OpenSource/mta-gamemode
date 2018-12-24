@@ -56,6 +56,7 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	self.m_WeaponPed[Id].Faction = faction
 	addEventHandler("onElementClicked", self.m_WeaponPed[Id], bind(self.onWeaponPedClicked, self))
+	ElementInfo:new(self.m_WeaponPed[Id], "Waffenlager")
 
 	self.m_ItemDepot[Id] = createObject(2972, 2816.8, -1173.5, 1024.4, 0, 0, 0)
 	self.m_ItemDepot[Id]:setDimension(Id)
@@ -63,12 +64,15 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_ItemDepot[Id].Faction = faction
 	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
-
+	ElementInfo:new(self.m_ItemDepot[Id], "Itemlager")
+	
 	self.m_EquipmentDepot[Id] = createObject(964, 2819.84, -1173.51, 1024.57, 0, 0, 0)
 	self.m_EquipmentDepot[Id]:setDimension(Id)
 	self.m_EquipmentDepot[Id]:setInterior(8)
 	self.m_EquipmentDepot[Id].Faction = faction
 	self.m_EquipmentDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	ElementInfo:new(self.m_EquipmentDepot[Id], "Ausrüstungslager")
+
 	addEventHandler("onElementClicked", self.m_EquipmentDepot[Id], bind(self.onEquipmentDepotClicked, self))
 
 	local int = {

@@ -70,7 +70,7 @@ addEventHandler("elementInfoRetrieve", root,
 	function(data) 
 		for object, subdata in pairs(data) do 
 			if object and isElement(object) then
-				ElementInfo:new(object, subdata[1], subdata[2])
+				ElementInfo:new(object, subdata[1], subdata[2], subdata[3])
 			end
 		end
 	end)

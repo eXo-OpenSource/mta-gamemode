@@ -204,6 +204,10 @@ function Core:afterLogin()
 	WheelOfFortune:new()
 	Atrium:new()
 	ElementInfoManager:new()
+	
+	for i = 1,#GUNBOX_CRATES do
+		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)
+	end
 	if DEBUG then
 		Debugging:new()
 		DebugGUI.initalize()

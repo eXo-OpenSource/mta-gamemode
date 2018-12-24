@@ -80,6 +80,10 @@ function FactionState:constructor()
 
 	self.m_EvidenceEquipmentBox = {}
 	self:createEquipmentEvidence(Vector3( 1538.44, -1708.12, 5.22), 0, 5, 133)
+	self:createEquipmentEvidence(Vector3( 136.93, 1857.62, 16.68), 0, 0, 275)
+	self:createEquipmentEvidence(Vector3( 1211.52, -1820.59, 12.60), 0, 0, 0)
+	
+
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -655,7 +659,7 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 			cancelEvent()
 		end
 	)
-	ElementInfo:new(self.m_DutyPickup, "Duty-Marker")
+	ElementInfo:new(self.m_DutyPickup, "Duty-Marker", 1)
 end
 
 function FactionState:createArrestZone(x, y, z, int, dim)
@@ -685,7 +689,7 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 		cancelEvent()
 	end
 	)
-	ElementInfo:new(pickup, "Einsperren")
+	ElementInfo:new(pickup, "Einsperren", 1)
 end
 
 function FactionState:createEvidencePickup( x,y,z, int, dim )
@@ -704,7 +708,7 @@ function FactionState:createEvidencePickup( x,y,z, int, dim )
 			end
 		end
 	end)
-	ElementInfo:new(pickup, "Asservatenkammer")
+	ElementInfo:new(pickup, "Asservatenkammer", 1 )
 end
 
 function FactionState:getFullCategoryFromShurtcut(category)
