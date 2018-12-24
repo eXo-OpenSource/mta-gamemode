@@ -13,7 +13,6 @@ if DEBUG then --important: DEBUG_-settings should always have a default value of
 	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
 	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
 end
-DEBUG_AUTOLOGIN = false
 
 if triggerClientEvent and DEBUG_LOAD_SAVE then
 	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))

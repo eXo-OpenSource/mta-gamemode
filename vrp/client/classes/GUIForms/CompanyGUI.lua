@@ -145,7 +145,7 @@ function CompanyGUI:addLeaderTab()
 		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
 
-		self.m_CompanyForumSyncButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Forum sync", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_CompanyForumSyncButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_CompanyForumSyncButton.onLeftClick = bind(self.CompanyForumSyncButton_Click, self)
 
 		self.m_LeaderTab = true
@@ -259,7 +259,9 @@ function CompanyGUI:CompanyPlayerFileButton_Click()
 end
 
 function CompanyGUI:CompanyForumSyncButton_Click()
-	triggerServerEvent("companyForumSync", root)
+	-- triggerServerEvent("companyForumSync", root)
+	self:close()
+	ForumPermissionsGUI:new("company", localPlayer:getCompany().m_Id)
 end
 
 function CompanyGUI:CompanyRemovePlayerButton_Click()

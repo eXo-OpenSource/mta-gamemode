@@ -70,10 +70,17 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 
 	self.m_DiplomacyJSON = diplomacy
 
-	ServiceSync:getSingleton():register("faction", self.m_Id, self.m_Permissions)
 	if not DEBUG then
 		self:getActivity()
 	end
+<<<<<<< HEAD
+=======
+	if equipmentPermissions then
+		self.m_EquipmentPermissions = fromJSON(equipmentPermissions)
+	else
+		self.m_EquipmentPermissions = {}
+	end
+>>>>>>> Improved forum sync
 	self:checkEquipmentPermissions()
 end
 
@@ -148,70 +155,6 @@ function Faction:getRequiredForumPermissionsChanges(playerId)
 	return false
 end
 
-function Faction:updateForumPermissions(playerId)
-	local forumId = Account.getBoardIdFromId(playerId)
-
-	local changes = self:getRequiredForumPermissionsChanges(playerId)
-
-	if changes then
-		for _, groupId in pairs(changes.remove) do
-			Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
-		end
-
-		for _, groupId in pairs(changes.add) do
-			Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
-		end
-	end
-end
-
-function Faction:syncForumPermissions()
-	local totalChanges = {}
-	local addedCount = 0
-	local removedCount = 0
-
-	for playerId, rank in pairs(self.m_Players) do
-		totalChanges[playerId] = self:getRequiredForumPermissionsChanges(playerId)
-	end
-
-	for _, groupId in pairs(self.m_ForumGroups) do
-		Forum:getSingleton():groupGet(groupId, Async.waitFor(self))
-		local result = Async.wait()
-		local data = fromJSON(result)
-		if data["status"] == 200 then
-			for _, v in pairs(data["data"]["members"]) do
-				local playerId = Account.getIdFromIdBoard(v["userID"])
-
-				if not playerId then -- has no ingame account but has group??
-					Forum:getSingleton():groupRemoveMember(v["userID"], groupId, function() end) -- to execute it faster ;)
-					removedCount = removedCount + 1
-				else
-					if not self.m_Players[playerId] then
-						totalChanges[playerId] = { add = {}, remove = {groupId} }
-					end
-				end
-			end
-		end
-	end
-
-	for playerId, changes in pairs(totalChanges) do
-		local forumId = Account.getBoardIdFromId(playerId)
-
-		if changes then
-			for _, groupId in pairs(changes.remove) do
-				Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
-				removedCount = removedCount + 1
-			end
-
-			for _, groupId in pairs(changes.add) do
-				Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
-				addedCount = addedCount + 1
-			end
-		end
-	end
-
-	return addedCount, removedCount
-end
-
 function Faction:save()
 	local diplomacy = ""
 	if self.m_Diplomacy then
@@ -227,7 +170,7 @@ function Faction:save()
 end
 
 function Faction:isStateFaction()
-	if self.m_Type == "State" then	
+	if self.m_Type == "State" then
 		return true
 	end
 	return false
@@ -908,16 +851,27 @@ end
 
 function Faction:getEquipmentPermissions()
 	local perms = {}
+<<<<<<< HEAD
 	for cat, data in pairs(ArmsDealer.Data) do 
 		if cat ~= "Waffen" then 
 			for product, subdata in pairs(data) do 
 				if not subdata[3] then
 					perms[product] =  tonumber(self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
+=======
+	if next(self.m_EquipmentPermissions) == nil or not self.m_EquipmentPermissions then
+		for cat, data in pairs(ArmsDealer.Data) do
+			if cat ~= "Waffen" then
+				for product, subdata in pairs(data) do
+					if not subdata[3] then
+						perms[product] = ArmsDealer.ProhibitedRank[product] or 0
+					end
+>>>>>>> Improved forum sync
 				end
 			end
 		end
 		perms["metadata"] = {self:getSetting("Equipment", "metadata_author", "-"), self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))}	
 	end
+<<<<<<< HEAD
 	return perms
 end
 
@@ -933,12 +887,32 @@ function Faction:checkEquipmentPermissions()
 		end
 		self:setSetting("Equipment", "metadata_author", self:getSetting("Equipment", "metadata_author", "-"))
 		self:setSetting("Equipment", "metadata_time", self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp)))
+=======
+	for item, rank in pairs(self.m_EquipmentPermissions) do
+		for cat, data in pairs(ArmsDealer.Data) do
+			if cat ~= "Waffen" then
+				for product, subdata in pairs(data) do
+					if not self.m_EquipmentPermissions[product] and not subdata[3] then
+						self.m_EquipmentPermissions[product] = ArmsDealer.ProhibitedRank[product] or 0
+					end
+				end
+			end
+		end
+	end
+	if not self.m_EquipmentPermissions["metadata"] then
+		self.m_EquipmentPermissions["metadata"]  = {"-", getOpticalTimestamp(getRealTime().timestamp)}
+>>>>>>> Improved forum sync
 	end
 end
 
 function Faction:updateEquipmentPermissions(player, update)
+<<<<<<< HEAD
 	for item, rank in pairs(update) do 
 		self:setSetting("Equipment", item, rank-1, player)
+=======
+	for item, rank in pairs(update) do
+		self.m_EquipmentPermissions[item] = rank-1
+>>>>>>> Improved forum sync
 	end
 	self:setSetting("Equipment", "metadata_author", player:getName())
 	self:setSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))
@@ -949,15 +923,15 @@ end
 function Faction:takeEquipment(player)
 	local item, amount, price, id
 	local count = 0
-	for category, data in pairs(ArmsDealer.Data) do 
-		if category ~= "Waffen" then 
-			for product, subdata in pairs(data) do 
+	for category, data in pairs(ArmsDealer.Data) do
+		if category ~= "Waffen" then
+			for product, subdata in pairs(data) do
 				amount, price, id = unpack(subdata)
-				if not id then 
+				if not id then
 					amount = player:getInventory():getItemAmount(product)
 					if amount and amount > 0 then
 						player:getInventory():removeAllItem(product)
-						self:getDepot():addEquipment(player, product, amount, true) 
+						self:getDepot():addEquipment(player, product, amount, true)
 						count = count + amount
 					end
 				end

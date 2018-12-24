@@ -33,7 +33,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionForumSync", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -59,7 +59,6 @@ function FactionManager:constructor()
 	addEventHandler("factionPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
-	addEventHandler("factionForumSync", root, bind(self.Event_factionForumSync, self))
 	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	FactionState:new()
@@ -118,16 +117,16 @@ function FactionManager:Event_factionSaveRank(rank,loan,rankWeapons)
 end
 
 function FactionManager:Event_factionEquipmentOptionRequest()
-	if client:getFaction() then 
+	if client:getFaction() then
 		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
 	end
 end
 
 function FactionManager:Event_factionEquipmentOptionSubmit(update)
-	if client:getFaction() and client:getFaction():getPlayerRank(client) >= 5 then 
+	if client:getFaction() and client:getFaction():getPlayerRank(client) >= 5 then
 		client:getFaction():updateEquipmentPermissions(client, update)
 		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
-	else 
+	else
 		client:sendError(_("Du hast keine Berechtigung!", client))
 	end
 end
@@ -146,32 +145,6 @@ function FactionManager:sendInfosToClient(client)
 	end
 end
 
-function FactionManager:Event_factionForumSync()
-	local faction = client:getFaction()
-
-	if faction then
-		if faction:getPlayerRank(client) < FactionRank.Manager then
-			client:sendError(_("Du bist nicht berechtigt einen syncronisation zu starten!", client))
-			-- Todo: Report possible cheat attempt
-			return
-		end
-
-		if faction.m_LastForumSync < getRealTime().timestamp - 60 * 15 then
-			faction.m_LastForumSync = getRealTime().timestamp
-
-			Async.create(
-				function(client)
-					local addedCount, removedCount = faction:syncForumPermissions()
-
-					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
-				end
-			)(client)
-		else
-			client:sendError(_("Es wurde bereits vor kurzem ein Sync durchgeführt!", client))
-		end
-	end
-end
-
 function FactionManager:Event_factionQuit()
 	local faction = client:getFaction()
 	if not faction then return end
@@ -184,7 +157,7 @@ function FactionManager:Event_factionQuit()
 	client:sendSuccess(_("Du hast die Fraktion erfolgreich verlassen!", client))
 	faction:addLog(client, "Fraktion", "hat die Fraktion verlassen!")
 	self:sendInfosToClient(client)
-	faction:updateForumPermissions(client.m_Id)
+	Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(client.m_Id)
 end
 
 function FactionManager:Event_factionDeposit(amount)
@@ -299,7 +272,7 @@ function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, rea
 
 	faction:removePlayer(playerId)
 	self:sendInfosToClient(client)
-	faction:updateForumPermissions(playerId)
+	Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
@@ -318,7 +291,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, faction:hasInvitation(client), faction.m_Id, "faction")
 
 			self:sendInfosToClient(client)
-			faction:updateForumPermissions(client.m_Id)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(client.m_Id)
 		else
 			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
 		end
@@ -404,7 +377,7 @@ function FactionManager:Event_factionRankUp(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
-					faction:updateForumPermissions(playerId)
+					Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 				else
 					client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, faction:getPlayerRank(client)))
 				end
@@ -456,7 +429,7 @@ function FactionManager:Event_factionRankDown(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
-					faction:updateForumPermissions(playerId)
+					Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 				else
 					client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 				end

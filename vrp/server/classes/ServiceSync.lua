@@ -7,7 +7,54 @@
 -- ****************************************************************************
 ServiceSync = inherit(Singleton)
 
+--[[
+	Async.create(function() ServiceSync:getSingleton():syncPlayer(4123) end)()
+	Async.create(function() ServiceSync:getSingleton():syncAllUsers() end)()
+]]
+
+
 function ServiceSync:constructor()
+	self:load()
+	self.m_ForumGroups = {}
+	self.m_ForumGroupMembers = {}
+
+	Async.create(function()
+		self:loadGroupNames()
+		self:syncAllUsers(nil, "premium")
+	end)()
+end
+
+function ServiceSync:destructor()
+end
+
+function ServiceSync:loadGroupNames()
+	for _, base in pairs(self.m_Data["forumGroups"]) do
+		for _, factionOrCompany in pairs(base) do
+			for _, group in pairs(factionOrCompany) do
+				self.m_ForumGroups[group] = "Unknown"
+				self.m_ForumGroupMembers[group] = {}
+			end
+		end
+	end
+
+	for id, name in pairs(self.m_ForumGroups) do
+		Forum:getSingleton():groupGet(id, Async.waitFor(self))
+		local result = Async.wait()
+		local data = fromJSON(result)
+
+		if data.status == 200 then
+			self.m_ForumGroups[id] = data.data.groupName
+			self.m_ForumGroupMembers[id] = data.data.members
+		end
+	end
+end
+
+
+--[[
+	ALTER TABLE `vrp_factions` ADD COLUMN `ForumGroups` text NULL AFTER `Permissions`;
+	ALTER TABLE `vrp_companies` ADD COLUMN `ForumGroups` text NULL AFTER `Permissions`;
+]]
+function ServiceSync:load()
 	self.m_Data = {}
 
 	self.m_Data["faction"] = {}
@@ -16,15 +63,32 @@ function ServiceSync:constructor()
 	self.m_Data["automaticGroups"]["forum"] = {}
 	self.m_Data["automaticGroups"]["teamspeak"] = {}
 
+	self.m_Data["forumGroups"] = {}
+	self.m_Data["forumGroups"]["faction"] = {}
+	self.m_Data["forumGroups"]["company"] = {}
+
 	self.m_Data["premiumGroup"] = -1
 
 	if ServerSettings:getSingleton().m_Settings["PremiumGroup"] then
 		self.m_Data["premiumGroup"] = tonumber(ServerSettings:getSingleton().m_Settings["PremiumGroup"])
 		table.insert(self.m_Data["automaticGroups"]["forum"], self.m_Data["premiumGroup"])
 	end
-end
 
-function ServiceSync:destructor()
+	local result = sql:queryFetch("SELECT Id, 'faction' AS Type, Name, Permissions, ForumGroups FROM ??_factions UNION ALL SELECT Id, 'company' AS Type, Name, Permissions, ForumGroups FROM ??_companies", sql:getPrefix(), sql:getPrefix())
+
+	for _, v in pairs(result) do
+		local permissions = v.Permissions and fromJSON(v.Permissions) or {}
+		local forumGroups = v.ForumGroups and fromJSON(v.ForumGroups) or {}
+		self:register(v.Type, v.Id, permissions)
+
+		for _, group in pairs(forumGroups) do
+			if not self.m_Data["forumGroups"][v.Type][v.Id] then
+				self.m_Data["forumGroups"][v.Type][v.Id] = {}
+			end
+
+			table.insert(self.m_Data["forumGroups"][v.Type][v.Id], group)
+		end
+	end
 end
 
 --[[
@@ -87,7 +151,7 @@ function ServiceSync:register(factionOrCompany, id, data)
 		error("Invalid value for parameter 'factionOrCompany' value " .. factionOrCompany .. " @ ServiceSync:register")
 	end
 
-	self.m_Data["faction"][id] = data
+	self.m_Data[factionOrCompany][id] = data
 
 	for k, v in pairs(data) do
 		if v["ranks"] then
@@ -185,6 +249,8 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 					remove = {}
 				}
 
+				self.m_ForumGroupMembers[groupId] = data.data.members
+
 				for _, member in pairs(data.data.members) do
 					table.insert(currentGroupUsers, member.userID)
 				end
@@ -204,12 +270,20 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 
 				if #requiredChanges.remove > 0 then
 					Forum:getSingleton():groupRemoveMember(requiredChanges.remove, groupId, Async.waitFor(self))
-					Async.wait()
+					local data = Async.wait()
+
+					if data.status == 200 then
+						self.m_ForumGroupMembers[groupId] = data.data.members
+					end
 				end
 
 				if #requiredChanges.add > 0 then
 					Forum:getSingleton():groupAddMember(requiredChanges.add, groupId, Async.waitFor(self))
-					Async.wait()
+					local data = Async.wait()
+
+					if data.status == 200 then
+						self.m_ForumGroupMembers[groupId] = data.data.members
+					end
 				end
 
 				addedCount = addedCount + #requiredChanges.add
@@ -220,7 +294,7 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 
 
 	if player then
-		player:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", player))
+		player:sendSuccess(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", player))
 	end
 end
 
@@ -275,7 +349,7 @@ function ServiceSync:calculateChanges(groups, forumGroups, teamspeakGroups)
 	return changes
 end
 
-function ServiceSync:syncUser(forumId, factionId, factionRank, companyId, companyRank, premium, fast)
+function ServiceSync:syncUser(forumId, factionId, factionRank, companyId, companyRank, premium)
 	local groups = self:checkGroups(factionId, factionRank, companyId, companyRank, premium)
 
 	Forum:getSingleton():userGet(forumId, Async.waitFor(self))
@@ -297,20 +371,22 @@ function ServiceSync:syncUser(forumId, factionId, factionRank, companyId, compan
 	local changes = self:calculateChanges(groups, forumGroups, teamspeakGroups)
 
 	for _, groupId in ipairs(changes.forum.remove) do
-		if fast then
-			Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end)
-		else
-			Forum:getSingleton():groupRemoveMember(forumId, groupId, Async.waitFor(self))
-			Async.wait()
+		Forum:getSingleton():groupRemoveMember(forumId, groupId, Async.waitFor(self))
+		local result = Async.wait()
+		local data = fromJSON(result)
+
+		if data.status == 200 then
+			self.m_ForumGroupMembers[groupId] = data.data.members
 		end
 	end
 
 	for _, groupId in ipairs(changes.forum.add) do
-		if fast then
-			Forum:getSingleton():groupAddMember(forumId, groupId, function() end)
-		else
-			Forum:getSingleton():groupAddMember(forumId, groupId, Async.waitFor(self))
-			Async.wait()
+		Forum:getSingleton():groupAddMember(forumId, groupId, Async.waitFor(self))
+		local result = Async.wait()
+		local data = fromJSON(result)
+
+		if data.status == 200 then
+			self.m_ForumGroupMembers[groupId] = data.data.members
 		end
 	end
 
@@ -371,7 +447,6 @@ function ServiceSync:checkGroups(factionId, factionRank, companyId, companyRank,
 		end
 	end
 
-	outputServerLog("Premium check - " .. tostring(premium))
 	if premium then
 		outputServerLog("Premium TRUE")
 		if self.m_Data["premiumGroup"] > 0 then

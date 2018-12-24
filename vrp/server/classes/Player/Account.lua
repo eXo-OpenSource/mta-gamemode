@@ -136,9 +136,11 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
 
+	ServiceSync:getSingleton():syncPlayer(Id)
+
 	player:loadCharacter()
 	player:spawn()
-	player:triggerEvent("loginsuccess", pwhash)
+	player:triggerEvent("loginsuccess", player)
 
 	if player:isActive() then
 		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)

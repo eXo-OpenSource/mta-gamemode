@@ -193,7 +193,7 @@
 	<script src="server/classes/UI/Blip.lua" type="server"/>
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 	<script src="server/classes/UI/ElementInfo.lua" type="server"/>
-	
+
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
@@ -364,6 +364,7 @@
 	<script src="server/classes/Faction/FactionInsurgent.lua" type="server"/>
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 	<script src="server/classes/HistoryPlayer.lua" type="server"/>
+	<script src="server/classes/ForumPermissions.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarManager.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarGuard.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
@@ -711,7 +712,7 @@
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
 	<script src="client/classes/HUD/TreasureRadar.lua" type="client"/>
-	
+
 	<script src="client/classes/HUD/Help/ElementInfo.lua" type="client"/>
 	<script src="client/classes/HUD/Help/ElementInfoManager.lua" type="client"/>
 
@@ -818,6 +819,7 @@
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ForumPermissionsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HistoryUninviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWeaponShopGUI.lua" type="client"/>

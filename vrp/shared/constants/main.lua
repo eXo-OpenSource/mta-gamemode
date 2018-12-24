@@ -135,8 +135,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlineUnban"] = RANK.Administrator,
 	["loginFix"] = RANK.Moderator,
 	["vehicleMenu"] = RANK.Moderator,
-	["syncForumFaction"] = RANK.Supporter,
-	["syncForumCompany"] = RANK.Supporter,
+	["syncForum"] = RANK.Supporter,
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
