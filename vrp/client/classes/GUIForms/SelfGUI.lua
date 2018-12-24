@@ -849,7 +849,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "paydayBox_relative", state)
 		end
 
-		self.m_ElementHelpBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.8, self.m_Height*0.04, _"Hilfetext über Pickups", self.m_SettingBG)
+		self.m_ElementHelpBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.8, self.m_Height*0.04, _"Hilfetext über Objekten", self.m_SettingBG)
 			:setFont(VRPFont(25)):setFontSize(1)
 		self.m_ElementHelpBox:setChecked(core:get("HUD", "elementHelpCaption", true))
 		self.m_ElementHelpBox.onChange = function (state)
@@ -1494,13 +1494,13 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
 		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
 
-		self.m_BlurLevel = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Blur deaktivieren", self.m_SettingBG)
+		self.m_BlurLevel = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Blur bei Geschwindigkeit", self.m_SettingBG)
 		self.m_BlurLevel:setFont(VRPFont(25))
 		self.m_BlurLevel:setFontSize(1)
-		self.m_BlurLevel:setChecked(core:get("Shaders", "BlurLevel", false))
+		self.m_BlurLevel:setChecked(core:get("Shaders", "BlurLevel", true))
 		self.m_BlurLevel.onChange = function (state)
-			core:set("Shaders", "BlurLevel", state)
-			localPlayer:deactivateBlur(state)
+			core:set("Shaders", "BlurLevel", not state)
+			localPlayer:deactivateBlur(not state)
 		end
 	elseif setting == "Tastenzuordnung" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
