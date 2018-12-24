@@ -73,14 +73,6 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	if not DEBUG then
 		self:getActivity()
 	end
-<<<<<<< HEAD
-=======
-	if equipmentPermissions then
-		self.m_EquipmentPermissions = fromJSON(equipmentPermissions)
-	else
-		self.m_EquipmentPermissions = {}
-	end
->>>>>>> Improved forum sync
 	self:checkEquipmentPermissions()
 end
 
