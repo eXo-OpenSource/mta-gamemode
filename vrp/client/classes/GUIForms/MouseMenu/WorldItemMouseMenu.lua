@@ -86,6 +86,19 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 				end
 			):setIcon(FontAwesomeSymbols.Music)
 		end
+		self:addItem(_"Sound an/aus",
+			function()
+				if element then
+					if element.Sound and isElement(element.Sound) then
+						if element.Sound:getVolume() == 0 then
+							element.Sound:setVolume(1)
+						else
+							element.Sound:setVolume(0)
+						end
+					end
+				end
+			end
+		):setIcon(FontAwesomeSymbols.SoundOn)
 	elseif model == 1238 then -- Warnkegel
 		if self:hasPermissionTo("", element, true) then
 			self:addItem(_"Warnleuchte",

@@ -32,7 +32,7 @@ function PlaneManager:createRoute(Accident)
     else
         local flightRandom = math.random(1, #PlaneFlightRoutes[false])
         self.m_PlaneInstance = AmbientPlane:new(unpack(PlaneFlightRoutes[false][flightRandom]))
-        triggerClientEvent(root, "instanciatePlane", root, self.m_PlaneAccidentInstance.m_Plane, self.m_PlaneAccidentInstance.m_Pilot, false)
+        triggerClientEvent(root, "instanciatePlane", root, self.m_PlaneInstance.m_Plane, self.m_PlaneInstance.m_Pilot, false)
         Timer(
             function()
                 self.m_PlaneInstance:delete()
