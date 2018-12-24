@@ -179,7 +179,7 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-	if (player:getFaction():isStateFaction() and player:isFactionDuty()) then 
+	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
 		if (not player:getFaction():isStateFaction()) or (not player:getFaction():isFactionDuty()) then
 			if ArmsDealer:getSingleton():getItemData(item) then 
 				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
