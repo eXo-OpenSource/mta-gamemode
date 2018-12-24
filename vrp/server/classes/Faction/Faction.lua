@@ -851,35 +851,24 @@ end
 
 function Faction:getEquipmentPermissions()
 	local perms = {}
-<<<<<<< HEAD
-	for cat, data in pairs(ArmsDealer.Data) do 
-		if cat ~= "Waffen" then 
-			for product, subdata in pairs(data) do 
+	for cat, data in pairs(ArmsDealer.Data) do
+		if cat ~= "Waffen" then
+			for product, subdata in pairs(data) do
 				if not subdata[3] then
 					perms[product] =  tonumber(self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
-=======
-	if next(self.m_EquipmentPermissions) == nil or not self.m_EquipmentPermissions then
-		for cat, data in pairs(ArmsDealer.Data) do
-			if cat ~= "Waffen" then
-				for product, subdata in pairs(data) do
-					if not subdata[3] then
-						perms[product] = ArmsDealer.ProhibitedRank[product] or 0
-					end
->>>>>>> Improved forum sync
 				end
 			end
 		end
-		perms["metadata"] = {self:getSetting("Equipment", "metadata_author", "-"), self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))}	
+		perms["metadata"] = {self:getSetting("Equipment", "metadata_author", "-"), self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))}
 	end
-<<<<<<< HEAD
 	return perms
 end
 
 function Faction:checkEquipmentPermissions()
 	local perms = {}
-	for cat, data in pairs(ArmsDealer.Data) do 
-		if cat ~= "Waffen" then 
-			for product, subdata in pairs(data) do 
+	for cat, data in pairs(ArmsDealer.Data) do
+		if cat ~= "Waffen" then
+			for product, subdata in pairs(data) do
 				if not subdata[3] then
 					self:setSetting("Equipment", product, self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
 				end
@@ -887,32 +876,12 @@ function Faction:checkEquipmentPermissions()
 		end
 		self:setSetting("Equipment", "metadata_author", self:getSetting("Equipment", "metadata_author", "-"))
 		self:setSetting("Equipment", "metadata_time", self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp)))
-=======
-	for item, rank in pairs(self.m_EquipmentPermissions) do
-		for cat, data in pairs(ArmsDealer.Data) do
-			if cat ~= "Waffen" then
-				for product, subdata in pairs(data) do
-					if not self.m_EquipmentPermissions[product] and not subdata[3] then
-						self.m_EquipmentPermissions[product] = ArmsDealer.ProhibitedRank[product] or 0
-					end
-				end
-			end
-		end
-	end
-	if not self.m_EquipmentPermissions["metadata"] then
-		self.m_EquipmentPermissions["metadata"]  = {"-", getOpticalTimestamp(getRealTime().timestamp)}
->>>>>>> Improved forum sync
 	end
 end
 
 function Faction:updateEquipmentPermissions(player, update)
-<<<<<<< HEAD
-	for item, rank in pairs(update) do 
-		self:setSetting("Equipment", item, rank-1, player)
-=======
 	for item, rank in pairs(update) do
-		self.m_EquipmentPermissions[item] = rank-1
->>>>>>> Improved forum sync
+		self:setSetting("Equipment", item, rank-1, player)
 	end
 	self:setSetting("Equipment", "metadata_author", player:getName())
 	self:setSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))
