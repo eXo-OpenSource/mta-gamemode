@@ -173,6 +173,7 @@ function ServiceSync:register(factionOrCompany, id, data)
 end
 
 function ServiceSync:syncAllUsers(player, syncType, id)
+	if DEBUG then return end
 	if syncType then
 		if syncType == "premium" then
 			sql:queryFetch(Async.waitFor(), "SELECT * FROM view_AccountGroups WHERE premium_bis > UNIX_TIMESTAMP(NOW())")
