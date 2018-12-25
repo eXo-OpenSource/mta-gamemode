@@ -26,8 +26,9 @@ end
 function ElementInfo:draw(distance, prog)
 	local anim = getEasingValue(prog, "SineCurve") * 0.1
 	local x, y, z = getElementPosition(self.m_Object)
+	local lx, ly, lz = localPlayer:getPosition()
 	local x2, y2, z2 = getCameraMatrix()
-	if Vector3(localPlayer:getPosition() - self.m_Object:getPosition()):getLength() < 1 then 
+	if getDistanceBetweenPoints3D(lx, ly, lz, x, y, z) < 1 then 
 		return
 	end
 	if isLineOfSightClear(x, y, z+2, x2, y2, z2) then
