@@ -113,7 +113,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			if money and money > 0 then
 				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 			end
-			QuestionBox:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
+			ShortMessageQuestion:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
 		else
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
@@ -144,7 +144,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
 		end
-		QuestionBox:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+		ShortMessageQuestion:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
 	end
 end
 

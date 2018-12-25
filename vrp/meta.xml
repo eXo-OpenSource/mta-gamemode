@@ -96,6 +96,7 @@
 	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
+	<script src="server/classes/ShortMessageQuestion.lua" type="server"/>
 	<script src="server/classes/QuestionBox.lua" type="server"/>
 	<script src="server/classes/InactivityManager.lua" type="server"/>
 	<script src="server/classes/BindManager.lua" type="server"/>
@@ -776,6 +777,7 @@
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>

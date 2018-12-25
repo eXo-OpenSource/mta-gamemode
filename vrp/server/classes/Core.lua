@@ -167,6 +167,7 @@ function Core:constructor()
 		TollStation.initializeAll()
 		Depot.initalize()
 		QuestionBox.initalize()
+		ShortMessageQuestion.initalize()
 
 		ChessSessionManager:new()
 		-- Generate Missions
