@@ -20,6 +20,8 @@ function AnimationGUI:constructor()
 	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, "↕", self.m_Window):setAlignX("right")
 	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, _"Doppelklick zum Ausführen", self.m_Window):setFont(VRPFont(self.m_Height*0.04)):setAlignY("center"):setColor(Color.Red)
 
+	self.m_AnimationList:addItem("Laufstilfenster öffnen").onLeftDoubleClick = function () self.m_Window:close() WalkingstyleGUI:new() end
+
 	local item
 	for groupIndex, group in pairs(ANIMATION_GROUPS) do
 		self.m_AnimationList:addItemNoClick(_(group))
