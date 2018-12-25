@@ -28,14 +28,18 @@ function InteriorEnterExitManager:check(player, enterExit)
     if id and InteriorEnterExitManager.Map[id] then 
         local obj = InteriorEnterExitManager.Map[id]
         if type == "enter" then 
-            if obj.m_EnterMarker then 
+            if obj.m_EnterMarker and self:checkRange(obj.m_EnterMarker, player) then 
                 obj:enter(player)
             end
         else 
-            if obj.m_ExitMarker then 
+            if obj.m_ExitMarker and self:checkRange(obj.m_ExitMarker, player) then 
                 obj:exit(player)
             end 
         end
     end
     return
+end
+
+function InteriorEnterExitManager:checkRange(element, player)
+    return Vector3(element:getPosition() - player:getPosition()):getLength() < 3 
 end

@@ -18,7 +18,7 @@ function InteriorEnterExitGUI:constructor(entry, text)
     self.m_X, self.m_Y = screenWidth/2-self.m_Width/2, screenHeight-self.m_Height*2
 
     self.m_Entry = entry
-    self.m_Text =  ("%s"):format(text or "EINGANG")
+    self.m_Text =  ("%s"):format(text:upper() or "EINGANG")
 
     local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
     self.m_KeyText = ("Drücke %s[%s]%s zum Betreten!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
