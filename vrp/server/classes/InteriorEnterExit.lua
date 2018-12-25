@@ -53,7 +53,7 @@ function InteriorEnterExit:enter(player)
 end
 
 function InteriorEnterExit:exit(player)
-	self:teleport(player, "exit", unpack(self.m_EntranceData))
+	self:teleport(player, "exit", unpack(self.m_ExitData))
 end
 
 function InteriorEnterExit:setMarkerType(type)
