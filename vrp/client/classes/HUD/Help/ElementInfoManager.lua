@@ -34,7 +34,7 @@ function ElementInfoManager:iterate()
 	local prog = (now - self.m_Start) / 2000
 	if prog > 1 then self.m_Start = getTickCount() end
 	for object, info in pairs(self.m_Infos) do 
-		if object and isElement(object) and (not object:getType() == "marker" and isElementOnScreen(object) or object:getType() == "marker") then
+		if object and isElement(object) and ((object:getType() ~= "marker" and isElementOnScreen(object)) or object:getType() == "marker") then
 			local check = self:check(object) 
 			if check then
 				info:draw(check, prog)
