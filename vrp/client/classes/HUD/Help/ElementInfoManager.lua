@@ -34,7 +34,10 @@ end
 
 function ElementInfoManager:addEventToElement(element) 
 	addEventHandler("onClientElementStreamIn", element.m_Object, self.m_StreamInBind)
-	addEventHandler("onClientElementStreamOut", element.m_Object, self.m_StreamInBind)
+	addEventHandler("onClientElementStreamOut", element.m_Object, self.m_StreamOutBind)
+	if isElementStreamedIn(element.m_Object) then 
+		self.m_ActiveInfos[element] = self.m_Infos[element] 
+	end
 end
 
 function ElementInfoManager:onStreamIn() 
