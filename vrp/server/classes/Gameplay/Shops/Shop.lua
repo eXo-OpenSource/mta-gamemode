@@ -80,11 +80,15 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		end
 	end
 
+	if self.m_Ped then
+		ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
+	end
+	
 	if typeData["Marker"] then
 		if typeData["Marker"] == "blip_position" then 
-			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 175)
+			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 0)
 		else
-			self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
+			self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 0)
 		end
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)

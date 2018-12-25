@@ -18,9 +18,14 @@ function InteriorEnterExitGUI:constructor(entry, text)
     self.m_Height = screenHeight*0.083333333333333
     self.m_X, self.m_Y = screenWidth/2-self.m_Width/2, screenHeight-self.m_Height*2
 
+   
     self.m_Entry = entry
     self.m_Text =  ("%s"):format(text:upper() or "EINGANG")
-
+    local textWidth = dxGetTextWidth( self.m_Text, 1, self.m_Font)
+    if textWidth > self.m_Width*0.6 then 
+        local exceed = (textWidth - self.m_Width*0.6) / (self.m_Width*0.6)
+        self.m_Font = VRPFont(math.ceil(60-(60*exceed)))
+    end
     local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
     self.m_KeyText = ("Drücke %s[%s]%s zum Betreten!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
 
