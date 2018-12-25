@@ -142,6 +142,7 @@ function Core:constructor()
 		TSConnect:new()
 		BotManager:new()
 		PickupWeaponManager:new()
+		InteriorEnterExitManager:new()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end

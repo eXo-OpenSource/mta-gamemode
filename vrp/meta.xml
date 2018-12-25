@@ -74,6 +74,7 @@
 	<script src="server/classes/Provider.lua" type="server"/>
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
+	<script src="server/classes/InteriorEnterExitManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/Teleporter.lua" type="server"/>
 	<script src="server/classes/TeleportManager.lua" type="server"/>
@@ -848,6 +849,7 @@
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>

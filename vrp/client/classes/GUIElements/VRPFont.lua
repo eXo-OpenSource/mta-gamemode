@@ -76,6 +76,7 @@ FontAwesomeSymbols = {
 	Unlock = "",
 	Key = "",
 	Home = "",
+	Walking = "",
 	SignOut = "",
 	Star = "",
 	Wrench = "",

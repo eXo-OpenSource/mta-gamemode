@@ -34,7 +34,7 @@ function ElementInfoManager:iterate()
 	local prog = (now - self.m_Start) / 2000
 	if prog > 1 then self.m_Start = getTickCount() end
 	for object, info in pairs(self.m_Infos) do 
-		if object and isElement(object) and isElementOnScreen(object) then
+		if object and isElement(object) and (not object:getType() == "marker" and isElementOnScreen(object) or object:getType() == "marker") then
 			local check = self:check(object) 
 			if check then
 				info:draw(check, prog)
@@ -58,9 +58,9 @@ end
 
 addEvent("elementInfoCreate", true)
 addEventHandler("elementInfoCreate", root,
-	function(object, text, offset)
+	function(object, text, offset, iconOnly)
 		if object and isElement(object) then
-			ElementInfo:new(object, text, offset)
+			ElementInfo:new(object, text, offset, iconOnly)
 		end
 	end
 	)
@@ -70,7 +70,7 @@ addEventHandler("elementInfoRetrieve", root,
 	function(data) 
 		for object, subdata in pairs(data) do 
 			if object and isElement(object) then
-				ElementInfo:new(object, subdata[1], subdata[2], subdata[3])
+				ElementInfo:new(object, subdata[1], subdata[2], subdata[3], subdata[4])
 			end
 		end
 	end)
