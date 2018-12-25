@@ -42,6 +42,11 @@ function PayNSpray:constructor(x, y, z, garageId)
 				vehicle.m_DisableToggleHandbrake = true
 				setTimer(
 					function()
+						if garageId then
+							setGarageOpen(garageId, true)
+						elseif isElement(self.m_CustomDoor) then
+							self:setCustomGarageOpen(true)
+						end
 						if not isElement(hitElement) then return end
 						if hitElement:getBankMoney() >= costs then
 							vehicle:fix()
@@ -51,11 +56,6 @@ function PayNSpray:constructor(x, y, z, garageId)
 							hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
 						end
 						setElementFrozen(vehicle, false)
-						if garageId then
-							setGarageOpen(garageId, true)
-						elseif isElement(self.m_CustomDoor) then
-							self:setCustomGarageOpen(true)
-						end
 						vehicle.m_DisableToggleHandbrake = nil
 					end,
 					3000, 1
