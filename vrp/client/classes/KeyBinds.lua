@@ -211,6 +211,7 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 	if keystate == "up" then
 		triggerServerEvent("onTryEnterTeleporter", localPlayer)
 		triggerEvent("onTryEnterance", localPlayer)
+		triggerServerEvent("clientTryEnterEntrance", localPlayer)
 	end
 end
 

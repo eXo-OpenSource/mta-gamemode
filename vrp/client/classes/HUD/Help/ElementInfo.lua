@@ -9,12 +9,12 @@
 ElementInfo = inherit(Object)
 ElementInfo.m_Font = VRPFont(64)
 ElementInfo.m_FontAwesome = FontAwesome(64)
-function ElementInfo:constructor(object, text, offset, icon)
+function ElementInfo:constructor(object, text, offset, icon, iconOnly)
 	self.m_Object = object
 	self.m_Text = text
 	self.m_Offset = offset or 1
 	self.m_Icon = icon or "Info"
-	
+	self.m_IconOnly = iconOnly
 	ElementInfoManager:getSingleton().m_Infos[object] = self
 end
 
@@ -38,20 +38,24 @@ function ElementInfo:draw(distance, prog)
 			local width = dxGetTextWidth(self.m_Text, scale, self.m_Font)
 			local alpha = 255 * scale*1.5
 			if alpha > 255 then alpha = 255 end
-			dxDrawRectangle((sx-width/2)-3, sy, width+6, height, tocolor(0, 0, 0, 200))
-			dxDrawBoxShape((sx-width/2)-3, sy, width+6, height, tocolor(50, 200, 255, alpha))
-			dxDrawText(self.m_Text, sx+2, sy+2, sx, sy, tocolor(0, 0, 0, alpha), scale, self.m_Font, "center", "top")
-			dxDrawText(self.m_Text, sx, sy, sx, sy, tocolor(50, 200, 255, alpha), scale, self.m_Font, "center", "top")
+			if not self.m_IconOnly then
+				dxDrawRectangle((sx-width/2)-3, sy, width+6, height, tocolor(0, 0, 0, 200))
+				dxDrawBoxShape((sx-width/2)-3, sy, width+6, height, tocolor(50, 200, 255, alpha))
+				dxDrawText(self.m_Text, sx+2, sy+2, sx, sy, tocolor(0, 0, 0, alpha), scale, self.m_Font, "center", "top")
+				dxDrawText(self.m_Text, sx, sy, sx, sy, tocolor(50, 200, 255, alpha), scale, self.m_Font, "center", "top")
 			
-			dxDrawLine((sx-width/2)+width-10, sy-height*0.2, (sx-width/2)+width+10, sy-height*0.2, tocolor(50, 200, 255, alpha))
-			dxDrawLine((sx-width/2)+width+10, sy-height*0.2, (sx-width/2)+width+10, sy+height*0.1, tocolor(50, 200, 255, alpha))
+				dxDrawLine((sx-width/2)+width-10, sy-height*0.2, (sx-width/2)+width+10, sy-height*0.2, tocolor(50, 200, 255, alpha))
+				dxDrawLine((sx-width/2)+width+10, sy-height*0.2, (sx-width/2)+width+10, sy+height*0.1, tocolor(50, 200, 255, alpha))
 			
-			dxDrawText(FontAwesomeSymbols[self.m_Icon], ((sx-width/2)+width-10)+2, (sy-height2*1.5)+2, ((sx-width/2)+width+10)+2, (sy-height2*1.5)+2, tocolor(0, 0, 0, alpha),  scale*0.7, self.m_FontAwesome, "center", "top")
-			dxDrawText(FontAwesomeSymbols[self.m_Icon], (sx-width/2)+width-10, sy-height2*1.5, (sx-width/2)+width+10, sy-height2*1.5, tocolor(50, 200, 255, alpha),  scale*0.7, self.m_FontAwesome, "center", "top")
+				dxDrawText(FontAwesomeSymbols[self.m_Icon], ((sx-width/2)+width-10)+2, (sy-height2*1.5)+2, ((sx-width/2)+width+10)+2, (sy-height2*1.5)+2, tocolor(0, 0, 0, alpha),  scale*0.7, self.m_FontAwesome, "center", "top")
+				dxDrawText(FontAwesomeSymbols[self.m_Icon], (sx-width/2)+width-10, sy-height2*1.5, (sx-width/2)+width+10, sy-height2*1.5, tocolor(50, 200, 255, alpha),  scale*0.7, self.m_FontAwesome, "center", "top")
 		
-			dxDrawLine((sx-width/2)-10, sy+height*1.2, (sx-width/2)-10, sy+height*0.9, tocolor(50, 200, 255, alpha))
-			dxDrawLine((sx-width/2)-10, sy+height*1.2, (sx-width/2)+10, sy+height*1.2, tocolor(50, 200, 255, alpha))
-			
+				dxDrawLine((sx-width/2)-10, sy+height*1.2, (sx-width/2)-10, sy+height*0.9, tocolor(50, 200, 255, alpha))
+				dxDrawLine((sx-width/2)-10, sy+height*1.2, (sx-width/2)+10, sy+height*1.2, tocolor(50, 200, 255, alpha))
+			else 
+				dxDrawText(FontAwesomeSymbols[self.m_Icon], sx+2, sy+2, sx, sy, tocolor(0, 0, 0, alpha),  scale*2, self.m_FontAwesome, "center", "top")
+				dxDrawText(FontAwesomeSymbols[self.m_Icon], sx, sy, sx, sy, tocolor(50, 200, 255, alpha),  scale*2, self.m_FontAwesome, "center", "top")
+			end
 		end
 	end
 end
