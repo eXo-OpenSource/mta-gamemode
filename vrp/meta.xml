@@ -256,6 +256,8 @@
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
+	<script src="server/classes/Gameplay/ElevatorManager.lua" type="server"/>
+	
 	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>

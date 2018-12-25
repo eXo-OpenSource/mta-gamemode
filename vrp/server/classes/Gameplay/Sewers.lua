@@ -92,24 +92,26 @@ function Sewers:constructor()
 end
 
 function Sewers:teleportBack(player)
-    local min = math.huge
-    local dist, entrance
-    if player:getDimension() == self.m_Dimension then
-        for id, marker in pairs(self.m_EntranceMarkers) do
-            if marker and isElement(marker) then
-                dist = (marker:getPosition() - player:getPosition()):getLength()
-                if min > dist then
-                    min = dist
-                    entrance = marker
+    if player:isLoggedIn() then
+        local min = math.huge
+        local dist, entrance
+        if player:getDimension() == self.m_Dimension then
+            for id, marker in pairs(self.m_EntranceMarkers) do
+                if marker and isElement(marker) then
+                    dist = (marker:getPosition() - player:getPosition()):getLength()
+                    if min > dist then
+                        min = dist
+                        entrance = marker
+                    end
                 end
             end
         end
-    end
-    if entrance and isElement(entrance) then
-        player:setFrozen(true)
-        player:setPosition(entrance:getPosition().x, entrance:getPosition().y, entrance:getPosition().z+0.2)
-        setTimer(function() player:setFrozen(false) end, 400, 1)
-        player:sendInfo("Du wurdest zum nächstgelgenen Ort teleportiert, da du unter die Map gefallen bist!")
+        if entrance and isElement(entrance) then
+            player:setFrozen(true)
+            player:setPosition(entrance:getPosition().x, entrance:getPosition().y, entrance:getPosition().z+0.2)
+            setTimer(function() player:setFrozen(false) end, 400, 1)
+            player:sendInfo("Du wurdest zum nächstgelgenen Ort teleportiert, da du unter die Map gefallen bist!")
+        end
     end
 end
 

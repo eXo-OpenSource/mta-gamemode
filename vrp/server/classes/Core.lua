@@ -144,6 +144,7 @@ function Core:constructor()
 		BotManager:new()
 		PickupWeaponManager:new()
 		InteriorEnterExitManager:new()
+		ElevatorManager:new()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end

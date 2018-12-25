@@ -434,6 +434,11 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
+	if localPlayer.m_Entrance then 
+		if localPlayer.m_Entrance:check() then 
+			cancelEvent()
+		end
+	end
 	if seat == 0 and player == localPlayer then
 		if VehiclesToDisableShooting[source:getModel()] then
 			if not isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then

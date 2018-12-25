@@ -14,7 +14,6 @@ ServiceSync = inherit(Singleton)
 
 
 function ServiceSync:constructor()
-	if DEBUG then return end
 	self:load()
 	self.m_ForumGroups = {}
 	self.m_ForumGroupMembers = {}
@@ -29,7 +28,6 @@ function ServiceSync:destructor()
 end
 
 function ServiceSync:loadGroupNames()
-	if DEBUG then return end
 	for _, base in pairs(self.m_Data["forumGroups"]) do
 		for _, factionOrCompany in pairs(base) do
 			for _, group in pairs(factionOrCompany) do
@@ -57,7 +55,6 @@ end
 	ALTER TABLE `vrp_companies` ADD COLUMN `ForumGroups` text NULL AFTER `Permissions`;
 ]]
 function ServiceSync:load()
-	if DEBUG then return end
 	self.m_Data = {}
 
 	self.m_Data["faction"] = {}
@@ -176,7 +173,6 @@ function ServiceSync:register(factionOrCompany, id, data)
 end
 
 function ServiceSync:syncAllUsers(player, syncType, id)
-	if DEBUG then return end
 	if syncType then
 		if syncType == "premium" then
 			sql:queryFetch(Async.waitFor(), "SELECT * FROM view_AccountGroups WHERE premium_bis > UNIX_TIMESTAMP(NOW())")
@@ -303,7 +299,6 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 end
 
 function ServiceSync:syncPlayer(player)
-	if DEBUG then return end
 	local player = isElement(player) and playerId.m_Id or player
 
 	local factionId = 0

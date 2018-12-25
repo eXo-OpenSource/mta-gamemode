@@ -209,9 +209,21 @@ end
 
 function KeyBinds:tryEnterEntrance( __, keystate)
 	if keystate == "up" then
-		triggerServerEvent("onTryEnterTeleporter", localPlayer)
-		triggerEvent("onTryEnterance", localPlayer)
-		triggerServerEvent("clientTryEnterEntrance", localPlayer)
+		if not localPlayer.m_LastTryEntrance or localPlayer.m_LastTryEntrance+500 <= getTickCount() then
+			if localPlayer:getPublicSync("TeleporterPickup") and isElement(localPlayer:getPublicSync("TeleporterPickup")) then 
+				if Vector3(localPlayer:getPosition() - localPlayer:getPublicSync("TeleporterPickup"):getPosition()):getLength() < 2 then
+					triggerServerEvent("onTryEnterTeleporter", localPlayer)
+				end
+			end
+			if localPlayer:getPrivateSync("EntranceId") then
+				triggerEvent("onTryEnterance", localPlayer)
+			end
+			if localPlayer.m_Entrance then
+				triggerServerEvent("clientTryEnterEntrance", localPlayer)
+				triggerServerEvent("onTryElevator", localPlayer)
+			end
+			localPlayer.m_LastTryEntrance = getTickCount()
+		end
 	end
 end
 
