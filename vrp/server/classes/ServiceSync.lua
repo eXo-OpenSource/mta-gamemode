@@ -310,13 +310,15 @@ function ServiceSync:syncPlayer(player)
 	sql:queryFetchSingle(Async.waitFor(), "SELECT * FROM view_AccountGroups WHERE Id = ?", player)
 	local row = Async.wait()
 
-	factionId = row.FactionId
-	factionRank = row.FactionRank
-	companyId = row.CompanyId
-	companyRank = row.CompanyRank
-	premium = row.premium_bis > getRealTime().timestamp
+	if row then -- due to view not getting any results on local databases
+		factionId = row.FactionId
+		factionRank = row.FactionRank
+		companyId = row.CompanyId
+		companyRank = row.CompanyRank
+		premium = row.premium_bis > getRealTime().timestamp
 
-	return self:syncUser(row.ForumID, factionId, factionRank, companyId, companyRank, premium) ~= false
+		return self:syncUser(row.ForumID, factionId, factionRank, companyId, companyRank, premium) ~= false
+	end
 end
 
 function ServiceSync:calculateChanges(groups, forumGroups, teamspeakGroups)
