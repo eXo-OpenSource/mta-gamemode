@@ -13,8 +13,9 @@ InteriorEnterExitGUI.m_FontSmall = VRPFont(24)
 InteriorEnterExitGUI.m_FontHeight = dxGetFontHeight(1, InteriorEnterExitGUI.m_Font)
 
 function InteriorEnterExitGUI:constructor(entry, text)
-    self.m_Width = grid("x", 14)
-    self.m_Height = grid("y", 3) 
+
+    self.m_Width = screenWidth*0.27604166666667
+    self.m_Height = screenHeight*0.083333333333333
     self.m_X, self.m_Y = screenWidth/2-self.m_Width/2, screenHeight-self.m_Height*2
 
     self.m_Entry = entry

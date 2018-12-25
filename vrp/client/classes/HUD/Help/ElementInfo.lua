@@ -16,6 +16,7 @@ function ElementInfo:constructor(object, text, offset, icon, iconOnly)
 	self.m_Icon = icon or "Info"
 	self.m_IconOnly = iconOnly
 	ElementInfoManager:getSingleton().m_Infos[object] = self
+	ElementInfoManager:getSingleton():addEventToElement(self)
 end
 
 function ElementInfo:destructor()

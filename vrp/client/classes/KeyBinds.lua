@@ -219,8 +219,13 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 				triggerEvent("onTryEnterance", localPlayer)
 			end
 			if localPlayer.m_Entrance then
-				triggerServerEvent("clientTryEnterEntrance", localPlayer)
-				triggerServerEvent("onTryElevator", localPlayer)
+				if localPlayer.m_Entrance.m_Text == "AUFZUG" then
+					triggerServerEvent("onTryElevator", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "HAUS" then
+					triggerServerEvent("houseRequestGUI", localPlayer)
+				else 
+					triggerServerEvent("clientTryEnterEntrance", localPlayer)
+				end
 			end
 			localPlayer.m_LastTryEntrance = getTickCount()
 		end
