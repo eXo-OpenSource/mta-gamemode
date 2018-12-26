@@ -12,7 +12,7 @@ InteriorEnterExitGUI.m_Font = VRPFont(60)
 InteriorEnterExitGUI.m_FontSmall = VRPFont(24)
 InteriorEnterExitGUI.m_FontHeight = dxGetFontHeight(1, InteriorEnterExitGUI.m_Font)
 
-function InteriorEnterExitGUI:constructor(entry, text)
+function InteriorEnterExitGUI:constructor(entry, text, icon)
 
     self.m_Width = screenWidth*0.27604166666667
     self.m_Height = screenHeight*0.083333333333333
@@ -21,6 +21,7 @@ function InteriorEnterExitGUI:constructor(entry, text)
    
     self.m_Entry = entry
     self.m_Text =  ("%s"):format(text:upper() or "EINGANG")
+    self.m_Icon = icon
     local textWidth = dxGetTextWidth( self.m_Text, 1, self.m_Font)
     if textWidth > self.m_Width*0.6 then 
         local exceed = (textWidth - self.m_Width*0.6) / (self.m_Width*0.6)
@@ -85,7 +86,7 @@ function InteriorEnterExitGUI:draw()
         dxDrawBoxShape(self.m_X, self.m_Y, (self.m_Width*0.85)*prog, self.m_Height, Color.Black)
 
         dxDrawRectangle(self.m_X, self.m_Y, self.m_Width*0.15, self.m_Height, Color.Black)
-        dxDrawImage(self.m_X+self.m_Width*0.035, self.m_Y+self.m_Width*0.025, self.m_Width*0.08, self.m_Height-self.m_Width*0.05, "files/images/Inventory/items/Objekte/entrance.png")
+        dxDrawImage(self.m_X+self.m_Width*0.035, self.m_Y+self.m_Width*0.025, self.m_Width*0.08, self.m_Height-self.m_Width*0.05, self.m_Icon or "files/images/Inventory/items/Objekte/entrance.png")
         dxDrawBoxShape(self.m_X, self.m_Y, self.m_Width*0.15, self.m_Height, Color.Black)
         if prog == 1 then
             dxDrawText(self.m_Text, self.m_X+self.m_Width*0.15, self.m_Y, self.m_X + (self.m_Width*0.85)*prog, self.m_Y + self.m_Height, Color.LightBlue, 1, self.m_Font, "center", "top")
@@ -93,7 +94,7 @@ function InteriorEnterExitGUI:draw()
         end
     else 
         dxDrawRectangle(self.m_X, self.m_Y, self.m_Width*0.15, self.m_Height, tocolor(0, 0, 0, alpha))
-        dxDrawImage(self.m_X+self.m_Width*0.035, self.m_Y+self.m_Width*0.025, self.m_Width*0.08, self.m_Height-self.m_Width*0.05, "files/images/Inventory/items/Objekte/entrance.png", 0, 0, 0, tocolor(255, 255, 255, alpha))
+        dxDrawImage(self.m_X+self.m_Width*0.035, self.m_Y+self.m_Width*0.025, self.m_Width*0.08, self.m_Height-self.m_Width*0.05, self.m_Icon or "files/images/Inventory/items/Objekte/entrance.png", 0, 0, 0, tocolor(255, 255, 255, alpha))
         dxDrawBoxShape(self.m_X, self.m_Y, self.m_Width*0.15, self.m_Height, Color.changeAlpha(Color.LightBlue, alpha))
     end
 end

@@ -1427,6 +1427,7 @@
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
+	<vrpfile src="files/images/Other/info.png"/>
 	<vrpfile src="files/images/Textures/Other/trans.png"/>
 	<vrpfile src="files/images/Textures/Other/garage.jpg"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
@@ -1731,8 +1732,14 @@
 
 	<vrpfile src="files/images/Textures/Sewers/tex1.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/tex2.jpg"/>
-
-
+	<vrpfile src="files/images/Textures/Sewers/texCasino1.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino2.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino3.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino4.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino5.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino6.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino7.jpg"/>
+	
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
 	<vrpfile src="files/images/Inventory/food.png" />
@@ -2065,6 +2072,7 @@
 
 	<vrpfile src="files/audio/Ambient/sewer.mp3" />
 	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
+	<vrpfile src="files/audio/Ambient/spielo.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />

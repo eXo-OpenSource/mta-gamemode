@@ -8,7 +8,8 @@ NoDm.Zones = {
 	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
 	--[8] = {Vector3(2713.39, -1880.29, 8), Vector3(104, 80, 50)}, -- Auction Event	
 	[9] = {Vector3(1503.79, -1387.92,  23234), Vector3(151, 101, 30), 1}, -- Auction Event Interior
-	[10] = {Vector3(2730.97, -2423.91, 810.44), Vector3(100, 200, 30), 5 }
+	[10] = {Vector3(2730.97, -2423.91, 810.44), Vector3(100, 200, 30), 5 },
+	[11] = {Vector3(456.71, -1742.53, 784.67), Vector3(100, 55, 55)} --pershing square
 }
 
 if EVENT_HALLOWEEN then

@@ -17,7 +17,6 @@ Player.ms_ScreamHook = Hook:new()
 addEvent("characterInitialized")
 
 function Player:constructor()
-
 	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}

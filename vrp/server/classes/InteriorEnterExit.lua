@@ -17,6 +17,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	ElementInfo:new(self.m_EnterMarker, "Eingang", 1.2, "Walking", true)
 	local colEnter = createColSphere(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-0.8), 2)
 	colEnter:setInterior(enterInterior or 0)
+	colEnter:setDimension(enterDimension or 0)
 
 	self.m_EnterMarker:setDimension(enterDimension or 0)
 	self.m_ExitMarker = createMarker(Vector3(interiorPosition.x, interiorPosition.y, interiorPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)

@@ -120,6 +120,7 @@ function Sewers:destructor()
 end
 
 function Sewers:createMap()
+    self:createSewerCasino()
     self:createStorage()
 
     self.m_Map = MapParser:new(":exo_maps/sewer.map")
@@ -209,6 +210,46 @@ function Sewers:createStorage()
 	addEventHandler("onElementClicked", ped, bind(self.Event_onPedClick, self))
     self:addKevlarToPed(ped)
 end
+
+function Sewers:createSewerCasino()
+    self.m_Casino = MapParser:new(":exo_maps/sewer-casino.map")
+    self.m_Casino:create(self.m_Dimension)
+    self.m_EnterCasino = InteriorEnterExit:new(Vector3(1324.11, -2035.92, -32.28), Vector3(508.27499, -1695.637, 800.672), 180, 180, 18, self.m_Dimension, 0, 3)
+
+    self.m_EffectShape = createColCuboid(456.71, -1742.53, 784.67,100, 55, 55)
+    self.m_EffectShape:setDimension(self.m_Dimension)
+    self.m_EffectShape:setInterior(18)
+
+    addEventHandler("onColShapeHit", self.m_EffectShape, function( hE, bDim)
+        if isValidElement(hE, "player") and bDim and hE:getInterior() == 18 then
+            hE:triggerEvent("Sewers:casinoApplyTexture")
+        end
+    end)
+    addEventHandler("onColShapeLeave", self.m_EffectShape, function( hE, bDim)
+        if isValidElement(hE, "player") and bDim then
+            hE:triggerEvent("Sewers:casinoRemoveTexture")
+        end
+    end)
+
+    self.m_AntifallCasino = createColCuboid(456.71, -1742.53, 784.67,100, 55, 10)
+    self.m_AntifallCasino:setDimension(self.m_Dimension)
+    self.m_AntifallCasino:setInterior(18)
+    self.m_AntifallCasino:setDimension(self.m_Dimension)
+    addEventHandler("onColShapeHit", self.m_AntifallCasino, function(hE, bDim)
+        if isValidElement(hE, "player") and hE:getDimension() == self.m_Dimension and hE:getInterior() == 18 then
+            hE:setInterior(18)
+            hE:setDimension(self.m_Dimension)
+            hE:setPosition(Vector3(508.27499, -1695.637, 800.672))
+        end
+    end)
+    local door = createObject(2944, 1323.5, -2035.07, -32.28)
+    door:setRotation(0, 0, -10)
+    door:setInterior(0)
+    door:setDimension(3)
+
+    Slotmachine:new(502.22, -1703.63, 801.32, 0, 0, 90, 18, 3)
+end
+
 
 function Sewers:Event_onPedClick(button, state, player)
 	local faction = player:getFaction()
