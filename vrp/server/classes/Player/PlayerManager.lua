@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -38,6 +38,7 @@ function PlayerManager:constructor()
 	addEventHandler("setPhoneStatus", root, bind(self.Event_setPhoneStatus, self))
 	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
 	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
+	addEventHandler("changeWalkingstyle", root, bind(self.Event_changeWalkingstyle, self))
 	addEventHandler("passwordChange", root, bind(self.Event_passwordChange, self))
 	addEventHandler("requestGunBoxData", root, bind(self.Event_requestGunBoxData, self))
 	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
@@ -783,6 +784,16 @@ function PlayerManager:stopAnimation(player)
 	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
+end
+
+function PlayerManager:Event_changeWalkingstyle(walkingstyle)
+	if client:getPrivateSync("AlcoholLevel") == 0 then
+		if WALKINGSTYLES[walkingstyle] then
+			client:setWalkingStyle(WALKINGSTYLES[walkingstyle].id)
+		else
+			client:sendError("Internal Error! Laufstil nicht gefunden!")
+		end
+	end
 end
 
 function PlayerManager:Event_passwordChange(old, new1, new2)

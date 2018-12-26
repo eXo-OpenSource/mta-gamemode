@@ -56,7 +56,7 @@ function ForumPermissions:Event_SyncGroups(factionOrCompany, id)
 
 		self.m_LastSync[factionOrCompany][id] = getTickCount()
 	else
-		if player:getRank() < ADMIN_RANK_PERMISSION["syncForum"] then
+		if client:getRank() < ADMIN_RANK_PERMISSION["syncForum"] then
 			client:sendError(_("Du bist nicht berechtigt!", client))
 			return
 		end

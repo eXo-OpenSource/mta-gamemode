@@ -1157,9 +1157,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
 			faction:removePlayer(targetPlayer)
-			Async.create(function()
-				faction:updateForumPermissions(targetPlayer.m_Id)
-			end)()
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
 		end
 
         if Id == 0 then
@@ -1173,9 +1171,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				end
 
 				faction:addPlayer(targetPlayer, tonumber(rank))
-				Async.create(function()
-					faction:updateForumPermissions(targetPlayer.m_Id)
-				end)()
+				Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -1194,6 +1190,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
 			end
 			company:removePlayer(targetPlayer)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
 		end
 
         if Id == 0 then
@@ -1206,6 +1203,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
 				end
     			company:addPlayer(targetPlayer, tonumber(rank))
+				Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))

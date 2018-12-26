@@ -157,10 +157,14 @@ end
 
 function KeyBinds:animationMenu()
 	if not localPlayer:isInVehicle() then
-		if not AnimationGUI:isInstantiated() then
-			AnimationGUI:new()
+		if not WalkingstyleGUI:isInstantiated() then
+			if not AnimationGUI:isInstantiated() then
+				AnimationGUI:new()
+			else
+				delete(AnimationGUI:getSingleton())
+			end
 		else
-			delete(AnimationGUI:getSingleton())
+			delete(WalkingstyleGUI:getSingleton())
 		end
 	end
 end
