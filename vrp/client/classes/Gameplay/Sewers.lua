@@ -9,7 +9,7 @@
 Sewers = inherit(Singleton)
 
 Sewers.Textures = {  "newaterfal1_256", "LSV2"}
-Sewers.CasinoTextures = {"cj_tickm", "concretenewb256", "cj_sprunk_front", "mp_gs_libwall", "cj_don_post_1", "cj_don_post_2", "cj_tv_screen"}
+Sewers.CasinoTextures = {"cj_tickm", "concretenewb256", "cj_sprunk_front", "mp_gs_libwall", "cj_don_post_1", "cj_don_post_2", "cj_tv_screen", "cj_pokerscreen2"}
 Sewers.TexturePath = "files/images/Textures/Sewers"
 addRemoteEvents{"Sewers:applyTexture", "Sewers:removeTexture", "Sewers:getRadioLocation",
 "Sewers:casinoApplyTexture", "Sewers:casinoRemoveTexture"}
@@ -92,6 +92,12 @@ function Sewers:createCasinoPeds()
 	self.m_Peds[6] = createPed(268, 505.49, -1706.19, 800.72)
 	self.m_Peds[6]:setRotation(0, 0, 143)
 
+	self.m_Peds[7] = createPed(2, 512.94, -1699.87, 800.72)
+	self.m_Peds[7]:setRotation(0, 0, 0)
+
+	self.m_Peds[8] = createPed(23, 511.72, -1699.03, 800.72)
+	self.m_Peds[8]:setRotation(0, 0, 327)
+
 	for i = 1, #self.m_Peds do 
 		self.m_Peds[i]:setInterior(18)
 		self.m_Peds[i]:setDimension(3)
@@ -106,6 +112,8 @@ function Sewers:createCasinoPeds()
 	self.m_Peds[4]:setAnimation("cop_ambient", "coplook_think")
 	self.m_Peds[5]:setAnimation("gangs", "leanidle")
 	self.m_Peds[6]:setAnimation("car_chat", "car_talkm_loop")
+	self.m_Peds[7]:setAnimation("sunbathe", "parksit_m_idlec")
+	self.m_Peds[8]:setAnimation("sunbathe", "parksit_w_idleb")
 end
 
 

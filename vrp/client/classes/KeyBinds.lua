@@ -215,7 +215,7 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 	if keystate == "up" then
 		if not localPlayer.m_LastTryEntrance or localPlayer.m_LastTryEntrance+500 <= getTickCount() then
 			if localPlayer:getPublicSync("TeleporterPickup") and isElement(localPlayer:getPublicSync("TeleporterPickup")) then 
-				if Vector3(localPlayer:getPosition() - localPlayer:getPublicSync("TeleporterPickup"):getPosition()):getLength() < 2 then
+				if Vector3(localPlayer:getPosition() - localPlayer:getPublicSync("TeleporterPickup"):getPosition()):getLength() < 3 then
 					triggerServerEvent("onTryEnterTeleporter", localPlayer)
 				end
 			end

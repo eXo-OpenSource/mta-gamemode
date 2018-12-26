@@ -1740,7 +1740,8 @@
 	<vrpfile src="files/images/Textures/Sewers/texCasino5.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino6.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino7.jpg"/>
-	
+	<vrpfile src="files/images/Textures/Sewers/texCasino8.jpg"/>
+
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
 	<vrpfile src="files/images/Inventory/food.png" />
