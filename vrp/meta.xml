@@ -260,7 +260,7 @@
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
 	<script src="server/classes/Gameplay/ElevatorManager.lua" type="server"/>
-	
+
 	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
@@ -1927,10 +1927,10 @@
 	<vrpfile src="files/images/Fishing/Fish/11.png"/>
 	<vrpfile src="files/images/Fishing/Fish/12.png"/>
 	<vrpfile src="files/images/Fishing/Fish/13.png"/>
-	<!--<vrpfile src="files/images/Fishing/Fish/14.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/14.png"/>
 	<vrpfile src="files/images/Fishing/Fish/15.png"/>
 	<vrpfile src="files/images/Fishing/Fish/16.png"/>
-	<!--<vrpfile src="files/images/Fishing/Fish/17.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/17.png"/>
 	<vrpfile src="files/images/Fishing/Fish/18.png"/>
 	<vrpfile src="files/images/Fishing/Fish/19.png"/>
 	<vrpfile src="files/images/Fishing/Fish/20.png"/>
@@ -1940,7 +1940,7 @@
 	<!--<vrpfile src="files/images/Fishing/Fish/24.png"/>-->
 	<vrpfile src="files/images/Fishing/Fish/25.png"/>
 	<vrpfile src="files/images/Fishing/Fish/26.png"/>
-	<!--<vrpfile src="files/images/Fishing/Fish/27.png"/>-->
+	<vrpfile src="files/images/Fishing/Fish/27.png"/>
 	<vrpfile src="files/images/Fishing/Fish/28.png"/>
 	<vrpfile src="files/images/Fishing/Fish/29.png"/>
 	<vrpfile src="files/images/Fishing/Fish/30.png"/>

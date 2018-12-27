@@ -1052,12 +1052,12 @@ end
 
 function DatabasePlayer:addFishSpecies(fishId, size)
 	if not self:hasFishSpeciesCaught(fishId) then
-		self.m_FishSpeciesCaught[fishId] = {1, size, getRealTime().timestamp }
+		self.m_FishSpeciesCaught[fishId] = {1, size, getRealTime().timestamp}
 		return true
 	else
 		local caughtCount = self.m_FishSpeciesCaught[fishId][1] + 1
 		local previousSize = self.m_FishSpeciesCaught[fishId][2]
-		self.m_FishSpeciesCaught[fishId] = {caughtCount, math.max(size, previousSize or 0), getRealTime().timestamp }
+		self.m_FishSpeciesCaught[fishId] = {caughtCount, math.max(size, previousSize or 0), getRealTime().timestamp}
 		return size > (previousSize or 0)
 	end
 end
