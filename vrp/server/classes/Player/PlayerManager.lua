@@ -789,7 +789,7 @@ end
 function PlayerManager:Event_changeWalkingstyle(walkingstyle)
 	if client:getPrivateSync("AlcoholLevel") == 0 then
 		if WALKINGSTYLES[walkingstyle] then
-			client:setWalkingStyle(WALKINGSTYLES[walkingstyle].id)
+			client:changeWalkingstyle(WALKINGSTYLES[walkingstyle].id)
 		else
 			client:sendError("Internal Error! Laufstil nicht gefunden!")
 		end
