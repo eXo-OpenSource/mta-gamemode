@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, permissions)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_ShorterName = name_shorter
@@ -30,25 +30,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Color = factionColors[Id]
 	self.m_Blips = {}
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
-	self.m_Permissions = permissions and fromJSON(permissions) or {}
-	self.m_ForumGroups = {}
-	self.m_LastForumSync = 0
 	self.m_Countdowns = {}
-	if self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
-		for _, v in pairs(self.m_Permissions["forum"]["ranks"]) do
-			if type(v) == "table" then
-				for _, i in pairs(v) do
-					if not table.find(self.m_ForumGroups, i) then
-						table.insert(self.m_ForumGroups, i)
-					end
-				end
-			else
-				if not table.find(self.m_ForumGroups, v) then
-					table.insert(self.m_ForumGroups, v)
-				end
-			end
-		end
-	end
 
 	self.m_Vehicles = {}
 
