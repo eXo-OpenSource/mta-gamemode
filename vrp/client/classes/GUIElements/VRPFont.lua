@@ -48,6 +48,7 @@ FontAwesomeSymbols = {
 	Cart = "",
 	Phone = "",
 	Tshirt = "",
+
 	Pointer = "",
 	DoubleDown = "",
 	Boxes = "",
@@ -56,6 +57,7 @@ FontAwesomeSymbols = {
 	Player = "",
 	Play = "",
 	Group = "",
+	Dollar = "",
 	Money = "",
 	Info = "",
 	Question = "",

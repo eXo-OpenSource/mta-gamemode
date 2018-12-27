@@ -215,6 +215,8 @@
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGame.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
@@ -1107,6 +1109,7 @@
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/SlotGame.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/WheelOfFortune.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
@@ -1741,6 +1744,9 @@
 	<vrpfile src="files/images/Textures/Sewers/texCasino6.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino7.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino8.jpg"/>
+
+	<!-- onlinecasino -->
+	<vrpfile src="files/images/OnlineCasino/overlay.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
