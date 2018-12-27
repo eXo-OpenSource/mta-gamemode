@@ -1646,3 +1646,13 @@ end
 
 function Player:setInSewer(bool) self:setData("inSewer", bool, true); self.m_InSewer = bool end
 function Player:isInSewer() return self.m_InSewer end
+
+function Player:changeWalkingstyle(id)
+	local walkingstyle = id or 0
+	self:setWalkingStyle(walkingstyle)
+	self.m_WalkingStyle = walkingstyle
+end
+
+function Player:getWalkingstyle()
+	return self.m_WalkingStyle or 0
+end
