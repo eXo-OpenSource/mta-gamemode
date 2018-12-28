@@ -12,9 +12,10 @@ function JobBoxer:constructor()
     Job.constructor(self, 307, 2228.39, -1718.57, 13.55, 90.98, "BoxingGlove.png", {200, 40, 30}, "files/images/Jobs/HeaderBoxer.png", _(HelpTextTitles.Jobs.Boxer):gsub("Job: ", ""), _(HelpTexts.Jobs.Boxer))
     self:setJobLevel(JOB_LEVEL_BOXER)
 
-    addRemoteEvents{"boxerJobFightList", "boxerJobTopList"}
-    addEventHandler("boxerJobFightList", root, bind(JobBoxer.openFightList, self))
-    addEventHandler("boxerJobTopList", root, bind(JobBoxer.openTopList, self))
+    addRemoteEvents{"boxerJobFightList", "boxerJobTopList", "boxerJobStartFight"}
+    addEventHandler("boxerJobFightList", root, bind(self.openFightList, self))
+    addEventHandler("boxerJobTopList", root, bind(self.openTopList, self))
+    addEventHandler("boxerJobStartFight", root, bind(self.startFight, self))
 end
 
 function JobBoxer:start()
@@ -35,29 +36,30 @@ end
 
 function JobBoxer:startJob(type)
     if localPlayer:getPrivateSync("Stat_BoxerLevel") >= JobBoxerFights[type][3] then
-        local dimension = DimensionManager:getSingleton():getFreeDimension()
-        triggerServerEvent("boxerJobStartJob", localPlayer, type, dimension)
-        
-        self.m_Boxer = Ped(math.random(80, 81), Vector3(763.25, 11.18, 1001.16), 90)
-        self.m_Boxer:setInterior(5)
-        self.m_Boxer:setDimension(dimension)
-        self.m_Boxer:setHealth(JobBoxerFights[type][2])
-        self.m_BoxLevel = type
-
-        self.m_ColShape = ColShape.Cuboid(757.51, 7.76, 999, 7, 7, 5)
-        self.m_ColShape:setInterior(5)
-        self.m_ColShape:setDimension(dimension)
-        addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.onClientColShapeLeave, self, leaveElement, matchingDimension))
-
-        bindKey("L", "down", bind(self.abortJob, self))
-
-        self.m_StartTick = getTickCount()
-        self.m_LastTick = getTickCount()
-        self.m_NextTick = getTickCount()
-        addEventHandler("onClientPreRender", root, bind(self.aiUpdate, self, self.m_Boxer))
+        triggerServerEvent("boxerJobStartJob", localPlayer, type)
     else
         ErrorBox:new(_"Dein Boxerlevel ist zu niedrig!")
     end
+end
+
+function JobBoxer:startFight(type, dimension)
+    self.m_Boxer = Ped(math.random(80, 81), Vector3(763.25, 11.18, 1001.16), 90)
+    self.m_Boxer:setInterior(5)
+    self.m_Boxer:setDimension(dimension)
+    self.m_Boxer:setHealth(JobBoxerFights[type][2])
+    self.m_BoxLevel = type
+
+    self.m_ColShape = ColShape.Cuboid(757.51, 7.76, 999, 7, 7, 5)
+    self.m_ColShape:setInterior(5)
+    self.m_ColShape:setDimension(dimension)
+    addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.onClientColShapeLeave, self, leaveElement, matchingDimension))
+
+    bindKey("L", "down", bind(self.abortJob, self))
+
+    self.m_StartTick = getTickCount()
+    self.m_LastTick = getTickCount()
+    self.m_NextTick = getTickCount()
+    addEventHandler("onClientPreRender", root, bind(self.aiUpdate, self, self.m_Boxer))
 end
 
 function JobBoxer:onClientColShapeLeave(leaveElement, matchingDimension)
@@ -150,8 +152,6 @@ end
 function JobBoxer:stopJob()
     if isElement(self.m_Boxer) then
         self.m_Boxer:destroy()
-        localPlayer:setPosition(763.26, 5.48, 1000.71)
-        localPlayer:setRotation(0, 0, 270)
         setCameraTarget(localPlayer)
         triggerServerEvent("boxerJobEndJob", localPlayer)
         self.m_ColShape:destroy()
@@ -161,8 +161,6 @@ end
 function JobBoxer:abortJob()
     if isElement(self.m_Boxer) then
         self.m_Boxer:destroy()
-        localPlayer:setPosition(763.26, 5.48, 1000.71)
-        localPlayer:setRotation(0, 0, 270)
         setCameraTarget(localPlayer)
         triggerServerEvent("boxerJobAbortJob", localPlayer)
         self.m_ColShape:destroy()
