@@ -267,6 +267,12 @@ inherit(Singleton, FishingPedGUI)
 
 function FishingPedGUI:constructor()
 	GUIButtonMenu.constructor(self, "Angler Lutz")
+	self:addItem(_"Shop", Color.Accent,
+		function()
+			triggerServerEvent("shopOpenGUI", localPlayer, 80)
+			self:delete()
+		end
+	)
 	self:addItem(_"Preistabelle ansehen", Color.Accent,
 		function()
 			triggerServerEvent("clientRequestFishPricing", localPlayer)

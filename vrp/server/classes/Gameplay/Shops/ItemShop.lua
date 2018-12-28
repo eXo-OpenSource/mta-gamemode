@@ -20,11 +20,13 @@ function ItemShop:constructor(id, name, position, rotation, typeData, dimension,
 	
 	if self.m_Ped then
 		self.m_Ped:setData("clickable",true,true)
-		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
-			if button =="left" and state == "down" then
-				self:onItemMarkerHit(player, true)
+		addEventHandler("onElementClicked", self.m_Ped,
+			function(button, state, player)
+				if button =="left" and state == "down" then
+					self:onItemMarkerHit(player, true)
+				end
 			end
-		end)
+		)
 	end
 	if self.m_Ped then
 		self.m_Ped:setImmortal(true)
