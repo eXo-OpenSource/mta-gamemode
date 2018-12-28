@@ -39,12 +39,12 @@ function ItemShopGUI:refreshItemShopGUI(shopId, items, sortedItems, weaponItems)
 	local itemData = Inventory:getSingleton():getItemData()
 	if itemData then
 		self.m_Grid:clear()
-		for _, item in pairs(sortedItems and sortedItems or items) do
-			if item[1] == true then
-				self.m_Grid:addItemNoClick(item[2])
+		for key, value in pairs(sortedItems and sortedItems or items) do
+			if sortedItems and value[1] == true then
+				self.m_Grid:addItemNoClick(value[2])
 			else
-				local name = item[1]
-				local price = item[2]
+				local name = sortedItems and value[1] or key
+				local price = items[name]
 				local item = self.m_Grid:addItem(name, ("%s$"):format(price))
 				item.Id = name
 
