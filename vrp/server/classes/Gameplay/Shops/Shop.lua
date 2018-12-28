@@ -71,6 +71,7 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		if robable == 1 then
 			self.m_Robable = RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
 			self.m_Ped = self.m_Robable.m_Ped
+			self.m_Ped:setImmortal(true)
 		else
 			self.m_Ped = NPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
 			self.m_Ped:setImmortal(true)

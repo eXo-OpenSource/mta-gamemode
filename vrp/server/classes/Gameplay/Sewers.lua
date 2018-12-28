@@ -234,7 +234,7 @@ function Sewers:createSewerCasino()
         end
     end)
     addEventHandler("onColShapeLeave", self.m_EffectShape, function( hE, bDim)
-        if isValidElement(hE, "player") and bDim then
+        if isValidElement(hE, "player") then
             hE:triggerEvent("Sewers:casinoRemoveTexture")
         end
     end)

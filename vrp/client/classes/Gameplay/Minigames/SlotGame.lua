@@ -114,6 +114,7 @@ function SlotGame:constructor()
 	localPlayer:setFrozen(true)
 	self.m_ResultBind = bind(self.Event_GetTurnResults, self)
 	addEventHandler("onGetOnlineCasinoResults", root, self.m_ResultBind)
+	setElementData(localPlayer, "slotMachineIsOpen", false, true)
 end
 
 function SlotGame:createColumn()
@@ -268,6 +269,7 @@ end
 function SlotGame:destructor()
 	GUIForm.destructor(self)
 	localPlayer:setFrozen(false)
+	setElementData(localPlayer, "slotMachineIsOpen", false, true)
 	removeEventHandler("onGetOnlineCasinoResults", root, self.m_ResultBind)
 end
 

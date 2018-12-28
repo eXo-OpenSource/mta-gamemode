@@ -19,6 +19,7 @@ function SlotGame:constructor(object)
     self.m_LastPay = 0
     object:setData("clickable", true, true)
     addEventHandler("onElementClicked", object, function(button, state, player)
+        if getElementData(player, "slotMachineisOpen") then return end
 		if button == "left" and state == "down" then
 			if not self.m_Player and not player.m_OnlineSlotMachine then
 				player:triggerEvent("onOnlineCasinoShow")
@@ -47,7 +48,7 @@ function SlotGame:requestPay()
     if self.m_Player == client then 
         self.m_BankAccountServer:transferMoney(client, self.m_Pay, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
         self.m_Pay = 0
-        client:sendShortMessage(_("Dir wurden $%s ausgezahlt!", client, self.m_Pay), "Spielothek")
+        client:sendShortMessage(("Dir wurden $ %s ausgezahlt!"):format(self.m_Pay), "Spielothek")
     end
 end
 
