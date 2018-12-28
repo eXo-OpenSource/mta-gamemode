@@ -531,7 +531,12 @@ function Inventory:decreaseItemWearLevel(itemName)
 		if self:getItemAmount(itemName) ~= 1 then return end
 
 		local place, bag = unpack(self:getItemPlacesByName(itemName)[1])
+
+		local id = self:getItemID(bag, place)
+		if not self.m_Items[id]["WearLevel"] then
+			self.m_Items[id]["WearLevel"] = self.m_ItemData[itemName]["MaxWear"]
+		end
+
 		return self:decreaseItemWearLevelByBag(bag, place)
 	end
 end
-
