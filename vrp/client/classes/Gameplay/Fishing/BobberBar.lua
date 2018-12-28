@@ -20,14 +20,8 @@ function BobberBar:constructor(fishData, fishingRodName, baitName, accessorieNam
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	outputChatBox("BAIT NAME: " .. tostring(baitName))
-	outputChatBox("ACCESSORIE NAME: " .. tostring(accessorieName))
-
 	self.m_Difficulty = math.max(MIN_FISHING_DIFFICULTY, fishData.Difficulty - FISHING_BAITS[baitName].difficultyReduction - FISHING_RODS[fishingRodName].difficultyReduction - FISHING_ACCESSORIES[accessorieName].difficultyReduction)
 	self.m_MotionType = self:getMotionType(fishData.Behavior)
-
-	outputChatBox("Normal Difficulty: " .. fishData.Difficulty)
-	outputChatBox("Reducted Difficulty: " .. self.m_Difficulty)
 
 	self.m_BobberBarHeight = ((64 + self.m_FisherLevel*4 - self.m_Difficulty/10)*FISHING_ACCESSORIES[accessorieName].bobberBarHeightMultiplier) / 1080 * screenHeight
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
@@ -277,14 +271,12 @@ function BobberBar:render()
 	-- Update and draw
 	self:updateRenderTarget()
 
-
-	dxDrawText("Speed: " .. self.m_BobberSpeed, 500, 20)
-	dxDrawText("Current position: " .. self.m_BobberPosition, 500, 35)
-	dxDrawText("Target position: " .. self.m_BobberTargetPosition, 500, 50)
-	dxDrawText("Motion type: " .. self.m_MotionType, 500, 65)
-	dxDrawText("Bobber in bar: " .. tostring(self.m_BobberInBar), 500, 80)
-	dxDrawText("Difficulty: " .. self.m_Difficulty, 500, 95)
-
+	--dxDrawText("Speed: " .. self.m_BobberSpeed, 500, 20)
+	--dxDrawText("Current position: " .. self.m_BobberPosition, 500, 35)
+	--dxDrawText("Target position: " .. self.m_BobberTargetPosition, 500, 50)
+	--dxDrawText("Motion type: " .. self.m_MotionType, 500, 65)
+	--dxDrawText("Bobber in bar: " .. tostring(self.m_BobberInBar), 500, 80)
+	--dxDrawText("Difficulty: " .. self.m_Difficulty, 500, 95)
 
 	dxDrawImage(screenWidth*0.66 - self.m_Size.x * self.m_AnimationMultiplicator/2, screenHeight/2 - self.m_Size.y * self.m_AnimationMultiplicator/2, self.m_Size * self.m_AnimationMultiplicator, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, 255*self.m_AnimationMultiplicator))
 end
