@@ -74,10 +74,10 @@ function ServiceSync:load()
 		table.insert(self.m_Data["automaticGroups"]["forum"], self.m_Data["premiumGroup"])
 	end
 
-	local result = sql:queryFetch("SELECT Id, 'faction' AS Type, Name, Permissions, ForumGroups FROM ??_factions UNION ALL SELECT Id, 'company' AS Type, Name, Permissions, ForumGroups FROM ??_companies", sql:getPrefix(), sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, 'faction' AS Type, Name, ServiceSync, ForumGroups FROM ??_factions UNION ALL SELECT Id, 'company' AS Type, Name, ServiceSync, ForumGroups FROM ??_companies", sql:getPrefix(), sql:getPrefix())
 
 	for _, v in pairs(result) do
-		local permissions = v.Permissions and fromJSON(v.Permissions) or {}
+		local permissions = v.ServiceSync and fromJSON(v.ServiceSync) or {}
 		local forumGroups = v.ForumGroups and fromJSON(v.ForumGroups) or {}
 		self:register(v.Type, v.Id, permissions)
 
@@ -450,9 +450,7 @@ function ServiceSync:checkGroups(factionId, factionRank, companyId, companyRank,
 	end
 
 	if premium then
-		outputServerLog("Premium TRUE")
 		if self.m_Data["premiumGroup"] > 0 then
-			outputServerLog("Adding premium group " .. tostring(self.m_Data["premiumGroup"]))
 			table.insert(resultGroups.forum.must, self.m_Data["premiumGroup"])
 		end
 	end

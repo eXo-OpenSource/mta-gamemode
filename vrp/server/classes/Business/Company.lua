@@ -12,7 +12,7 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins, permissions)
+function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_ShortName = ShortName
@@ -28,9 +28,6 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_Level = 0
 	self.m_RankNames = companyRankNames[Id]
 	self.m_Skins = companySkins[Id]
-	self.m_Permissions = permissions and fromJSON(permissions) or {}
-	self.m_ForumGroups = {}
-	self.m_LastForumSync = 0
 	-- Settings
 	self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
 
