@@ -48,7 +48,19 @@ SlotGame.Lines  =
     {{1,3}, {2,3}, {3,3}, {4,3}, {5,3}},  -- green #3
 }
 
-addRemoteEvents{"onGetOnlineCasinoResults"}
+SlotGame.HelpText = "Drehe mit dem Button >>Play<< \nAchtung! Dein Gewinn wird nicht sofort ausgezahlt erst wenn du den Button >Cash out< drückst!\nDein Gewinn steht oben im Feld >Win<.\nDein aktueller Einsatz im Feld >Credits<.\nDu kannst diesen mit dem Button >Bet up< und >Bet down< erhöhen/vermindern.\nGelbe Linie = 1xGewinn |Rote Linie = 2xGewinn\nObere Grüne =3xGewinn | Untere Grüne = 4x Gewinn | Mittlere Grüne = 5x Gewinn\nSymbole = Alarm < Haken < Blume < Geist < Würfel < Schildkröte (< heisst weniger Wert)"
+SlotGame.BetAmount = 
+{
+	[1] = 50, 
+	[2] = 100, 
+	[3] = 200, 
+	[4] = 500, 
+	[5] = 1000, 
+	[6] = 1500, 
+	[7] = 2000,
+}
+
+addRemoteEvents{"onOnlineCasinoShow", "onOnlineCasinoHide", "onGetOnlineCasinoResults"}
 function SlotGame:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 1024/2, screenHeight/2-506/2, 1024, 506, false)
 	self.m_Fields = {}
@@ -58,37 +70,50 @@ function SlotGame:constructor()
 		self:createColumn()
 	end
 	
+	self.m_Bet = 1
 	self.m_Table = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/OnlineCasino/overlay.png", self)
 
-	self.m_Bet = GUILabel:new(self.m_Width*0.09, self.m_Height*0.04, self.m_Width*0.2, self.m_Height*0.08, "50$", self):setColor(Color.Green)
-	self.m_Pay = GUILabel:new(self.m_Width*0.81, self.m_Height*0.04, self.m_Width*0.2, self.m_Height*0.08, "0$", self):setColor(Color.Green)
-
+	self.m_BetLabel = GUILabel:new(self.m_Width*0.09, self.m_Height*0.06, self.m_Width*0.2, self.m_Height*0.08, "$50", self):setColor(Color.Green)
+	self.m_BetLabel:setFont(FontMario256(30))
+	self.m_PayLabel = GUILabel:new(self.m_Width*0.81, self.m_Height*0.06, self.m_Width*0.2, self.m_Height*0.08, "$0", self):setColor(Color.Green)
+	self.m_PayLabel:setFont(FontMario256(30))
+	self.m_BetLabel:setText(("$ %s"):format(self.BetAmount[self.m_Bet]))
 	self.m_Help = GUIRectangle:new(self.m_Width*0.02, self.m_Height-self.m_Height*0.15, self.m_Width*0.11, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
-	self.m_Help.onLeftClick = function() outputChatBox("help") end
+	self.m_Help.onLeftClick = function()  ShortMessage:new(self.HelpText, "Spielo-Automat", nil, -1) end
 	self.m_Help.onHover = function() self.m_Help:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_Help.onUnhover = function() self.m_Help:setColor(tocolor(255, 255, 255, 0)) end
 	
 	self.m_PayOut = GUIRectangle:new(self.m_Width*0.14, self.m_Height-self.m_Height*0.15, self.m_Width*0.15, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
+	self.m_PayOut.onLeftClick = function() triggerServerEvent("onOnlineSlotmachineRequestPay", localPlayer) end
 	self.m_PayOut.onHover = function() self.m_PayOut:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_PayOut.onUnhover = function() self.m_PayOut:setColor(tocolor(255, 255, 255, 0)) end
 	
 	self.m_BetDown = GUIRectangle:new(self.m_Width*0.51, self.m_Height-self.m_Height*0.15, self.m_Width*0.07, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
+	self.m_BetDown.onLeftClick = function() self.m_Bet = self.m_Bet-1; if self.m_Bet < 1 then self.m_Bet = 1; end self.m_BetLabel:setText(("$ %s"):format(self.BetAmount[self.m_Bet])) end
 	self.m_BetDown.onHover = function() self.m_BetDown:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_BetDown.onUnhover = function() self.m_BetDown:setColor(tocolor(255, 255, 255, 0)) end
 	
 		
 	self.m_BetUp = GUIRectangle:new(self.m_Width*0.65, self.m_Height-self.m_Height*0.15, self.m_Width*0.06, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
+	self.m_BetUp.onLeftClick = function() self.m_Bet = self.m_Bet+1;  if self.m_Bet > 7 then self.m_Bet = 7; end self.m_BetLabel:setText(("$ %s"):format(self.BetAmount[self.m_Bet])) end
 	self.m_BetUp.onHover = function() self.m_BetUp:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_BetUp.onUnhover = function() self.m_BetUp:setColor(tocolor(255, 255, 255, 0)) end
 	
 
 	self.m_Play = GUIRectangle:new(self.m_Width*0.86, self.m_Height-self.m_Height*0.15, self.m_Width*0.12, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
+	self.m_Play.onLeftClick = function() self:turn() end
 	self.m_Play.onHover = function() self.m_Play:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_Play.onUnhover = function() self.m_Play:setColor(tocolor(255, 255, 255, 0)) end
 	
-
-
-	addEventHandler("onGetOnlineCasinoResults", root, bind(self.Event_GetTurnResults, self))
+	self.m_CloseBtn = GUIButton:new(self.m_Width-self.m_Width*0.03, 0, self.m_Width*0.03, self.m_Width*0.03, FontAwesomeSymbols.Close, self)
+    self.m_CloseBtn:setFont(FontAwesome(15)):setFontSize(1)
+    self.m_CloseBtn:setBarEnabled(false)
+    self.m_CloseBtn:setBackgroundColor(Color.Red)
+	self.m_CloseBtn.onLeftClick = function() self:forceOut() end
+	
+	localPlayer:setFrozen(true)
+	self.m_ResultBind = bind(self.Event_GetTurnResults, self)
+	addEventHandler("onGetOnlineCasinoResults", root, self.m_ResultBind)
 end
 
 function SlotGame:createColumn()
@@ -147,13 +172,16 @@ function SlotGame:setNextImage(col)
 	end
 end
 
-function SlotGame:Event_GetTurnResults(data, win)
+function SlotGame:Event_GetTurnResults(data, win, pay, lastpay)
 	self.m_Spins = {}
 	self.m_Wins = win
 	for col = 1, #data do 
 		self.m_Spins[col] = data[col]
 		self:spin(col, data[col])
-	end
+	end	
+	self.m_Pay = pay
+	self.m_LastPay = lastpay
+	self.m_Disable = true
 end
 
 function SlotGame:showWinCondition() 
@@ -178,6 +206,10 @@ function SlotGame:showWin()
 		end
 	end
 	self:showWinLines()
+	if self.m_LastPay > 0 then
+		outputChatBox(("#FFFF00[Spielothekok]#FFFFFFDu hast #00FF00$%s#FFFFFF dazu gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
+	end
+	self.m_PayLabel:setText(("$ %s"):format(self.m_Pay))
 end
 
 function SlotGame:showWinLine(index)
@@ -213,17 +245,20 @@ function SlotGame:spin(col, times)
 	end
 	setTimer(function() setTimer(bind(self.setNextImage, self), 50, times, col) end, delayTime, 1)
 	if col == 5 then 
-		setTimer(function() self:showWin() end, delayTime+500, 1)
+		setTimer(function() self:showWin(); self.m_Disable = false end, delayTime+500, 1)
 	end
 end
 
-function SlotGame:Event()
-
+function SlotGame:forceOut() 
+	triggerServerEvent("onOnlineSlotmachineRequestPay", localPlayer)
+	triggerServerEvent("onOnlineSlotMachineForceOut", localPlayer)
 end
 
 function SlotGame:turn()
-	self:unmarkAll()
-	triggerServerEvent("onOnlineSlotmachineUse", localPlayer, self.m_Fields)
+	if not self.m_Disable then
+		self:unmarkAll()
+		triggerServerEvent("onOnlineSlotmachineUse", localPlayer, self.m_Fields, self.BetAmount[self.m_Bet])
+	end
 end
 
 function SlotGame:getPath(index) 
@@ -232,4 +267,20 @@ end
 
 function SlotGame:destructor()
 	GUIForm.destructor(self)
+	localPlayer:setFrozen(false)
+	removeEventHandler("onGetOnlineCasinoResults", root, self.m_ResultBind)
 end
+
+addEventHandler("onOnlineCasinoShow", root, function() 
+	if SlotGame:isInstantiated() then 
+		delete(SlotGame:getSingleton())
+	end
+	SlotGame:new()
+end)
+
+addEventHandler("onOnlineCasinoHide", root, function() 
+	if SlotGame:isInstantiated() then 
+		delete(SlotGame:getSingleton())
+	end
+end)
+

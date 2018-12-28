@@ -1,5 +1,5 @@
 SlotGame = inherit(Object)
-addRemoteEvents{"onOnlineSlotmachineUse"}
+addRemoteEvents{"onOnlineSlotmachineUse", "onOnlineSlotmachineRequest"}
 
 SlotGame.Lines  = 
 {
@@ -13,23 +13,42 @@ SlotGame.Lines  =
 function SlotGame:constructor(object)
 
     self.m_BankAccountServer = BankServer.get("gameplay.computerSlotmachine")
-    self.m_UseBind = bind(self.Event_onUse, self)    
     self.m_Rolls = {}
-    addEventHandler("onOnlineSlotmachineUse", root, self.m_UseBind)
+    self.m_Pay = 0
+    self.m_Player = nil
+    self.m_LastPay = 0
+    object:setData("clickable", true, true)
+    addEventHandler("onElementClicked", object, function(button, state, player)
+		if button == "left" and state == "down" then
+			if not self.m_Player and not player.m_OnlineSlotMachine then
+				player:triggerEvent("onOnlineCasinoShow")
+                self.m_Player = player
+                player.m_OnlineSlotMachine = self
+			else
+				player:sendError(_("Der Automat ist schon in Benutzung!", player))
+			end
+		end
+	end)
 end
 
-function SlotGame:Event_onUse(data, bet)
-    local spin
-    self:setup(data)
-    self.m_Bet = bet or 200
-    self:spin()
-    self:evaluate()
-    self:evaluatePay()
-    client:triggerEvent("onGetOnlineCasinoResults", self.m_Spins, self.m_Wins, self.m_Pay)
+function SlotGame:use(data, bet)
+    if client:transferMoney(self.m_BankAccountServer, bet, "Spielothek-Einsatz", "Gameplay", "Spielothek-Automat", {silent = true}) then
+        local spin
+        self:setup(data)
+        self.m_Bet = bet or 200
+        self:spin()
+        self:evaluate()
+        self:evaluatePay()
+        client:triggerEvent("onGetOnlineCasinoResults", self.m_Spins, self.m_Wins, self.m_Pay, self.m_Pay - self.m_LastPay)
+    end
 end
 
-function SlotGame:Event_onClientRequestPay()
-
+function SlotGame:requestPay()
+    if self.m_Player == client then 
+        self.m_BankAccountServer:transferMoney(client, self.m_Pay, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
+        self.m_Pay = 0
+        client:sendShortMessage(_("Dir wurden $%s ausgezahlt!", client, self.m_Pay), "Spielothek")
+    end
 end
 
 function SlotGame:setup(data) 
@@ -63,6 +82,7 @@ function SlotGame:evaluate()
     local icon
     local strings = {}
     self.m_Wins = {}
+    self.m_WinIcon = {}
     for index, data in ipairs(self.Lines) do 
         strings[index] = {}
         for subindex, subdata in ipairs(data) do 
@@ -90,6 +110,7 @@ function SlotGame:evaluate()
                         self.m_Wins[index] = {}
                         for iter = chain, subindex do 
                             table.insert(self.m_Wins[index], self.Lines[index][iter])
+                            self.m_WinIcon[index] = icon
                         end
                         done = true
                     end
@@ -112,18 +133,26 @@ end
 
 function SlotGame:evaluatePay()
     local index, data, pay
-    self.m_Pay = 0
+    self.m_LastPay = self.m_Pay
     for i = 1, #self.Lines do 
         if self.m_Wins[i] then
-            index, data = unpack(self.m_Wins[i])
-            if #data > 2 then
-                self.m_Pay = self.m_Pay + (self.m_Bet * (index+i+#data))
+
+            if #self.m_Wins[i] > 2 then
+                self.m_Pay = math.floor(self.m_Pay + (self.m_Bet * ((self.m_WinIcon[i]+i+#self.m_Wins[i])*0.25)))
             end
         end
     end
-    return self.m_Pay
 end
 
+function SlotGame:endPlayer(player) 
+    if self.m_Player == player then 
+        self.m_Player = nil 
+        self.m_Pay = 0
+        self.m_LastPay = 0
+        player.m_OnlineSlotMachine = nil
+        player:triggerEvent("onOnlineCasinoHide")
+    end
+end
 
 function SlotGame:destructor()
 

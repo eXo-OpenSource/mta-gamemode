@@ -216,6 +216,14 @@ function Sewers:createSewerCasino()
     self.m_Casino:create(self.m_Dimension)
     self.m_EnterCasino = InteriorEnterExit:new(Vector3(1324.11, -2035.92, -32.28), Vector3(508.27499, -1695.637, 800.672), 180, 180, 18, self.m_Dimension, 0, 3)
 
+    for key, obj in ipairs(self.m_Casino.m_Maps[1]) do
+        if isElement(obj) then
+            if obj:getModel() == 1515 then
+                SlotGameManager:getSingleton():add(obj)
+            end
+		end
+    end
+
     self.m_EffectShape = createColCuboid(456.71, -1742.53, 784.67,100, 55, 55)
     self.m_EffectShape:setDimension(self.m_Dimension)
     self.m_EffectShape:setInterior(18)

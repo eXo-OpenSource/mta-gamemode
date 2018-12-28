@@ -520,6 +520,8 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self.m_AFKStartTime = getTickCount()
 		NoDm:getSingleton():checkNoDm()
 		setInteriorSoundsEnabled(false)
+
+		triggerServerEvent("onOnlineSlotMachineForceOut", localPlayer)
 	else
 		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
 		triggerServerEvent("toggleAFK", localPlayer, false)
