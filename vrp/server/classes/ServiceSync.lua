@@ -432,11 +432,13 @@ function ServiceSync:checkGroups(factionId, factionRank, companyId, companyRank,
 	if companyId ~= 0 then
 		if self.m_Data["company"][companyId] then
 			for k, v in pairs(self.m_Data["company"][companyId]) do
-				local groups = v["ranks"][tostring(companyRank)]
-				groups = type(groups) == "number" and {groups} or groups
+				if v["ranks"] then
+					local groups = v["ranks"][tostring(companyRank)]
+					groups = type(groups) == "number" and {groups} or groups
 
-				for _, group in ipairs(groups) do
-					table.insertUnique(resultGroups[k].must, group)
+					for _, group in ipairs(groups) do
+						table.insertUnique(resultGroups[k].must, group)
+					end
 				end
 
 				if v["removeOnLeave"] then
