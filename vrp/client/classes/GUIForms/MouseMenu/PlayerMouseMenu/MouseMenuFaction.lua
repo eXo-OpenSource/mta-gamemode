@@ -53,7 +53,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Search)
 
-		if element:getPublicSync("cuffed") then
+		if self:getElement():getPublicSync("cuffed") then
 			self:addItem(_"Fraktion: Handschellen abnehmen",
 				function()
 					if self:getElement() then

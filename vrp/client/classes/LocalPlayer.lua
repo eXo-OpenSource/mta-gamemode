@@ -862,7 +862,7 @@ addEventHandler("showModCheck",localPlayer, function(tbl)
 end)
 
 function LocalPlayer:deactivateBlur(bool)
-	if bool then
+	if not bool then
 		setBlurLevel(0)
 	else
 		setBlurLevel(36)

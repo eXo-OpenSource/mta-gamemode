@@ -1499,8 +1499,8 @@ function SelfGUI:onSettingChange(setting)
 		self.m_BlurLevel:setFontSize(1)
 		self.m_BlurLevel:setChecked(core:get("Shaders", "BlurLevel", true))
 		self.m_BlurLevel.onChange = function (state)
-			core:set("Shaders", "BlurLevel", not state)
-			localPlayer:deactivateBlur(not state)
+			core:set("Shaders", "BlurLevel", state)
+			localPlayer:deactivateBlur(state)
 		end
 	elseif setting == "Tastenzuordnung" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
