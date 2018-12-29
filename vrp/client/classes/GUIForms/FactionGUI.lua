@@ -291,7 +291,7 @@ function FactionGUI:loadDiplomacyTab()
 				item.Id = faction:getId()
 				item.onLeftClick = function() triggerServerEvent("factionRequestDiplomacy", root, faction:getId()) end
 				if faction == localPlayer:getFaction() then
-					self.m_DiplomacyRequestGrid:onInternalSelectItem(item)
+					self.m_DiplomacyGrid:onInternalSelectItem(item)
 				end
 			end
 		end
