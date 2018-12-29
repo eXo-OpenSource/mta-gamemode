@@ -60,10 +60,13 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 end
 
 function House:updatePickup()
-	if 	self.m_Pickup then self.m_Pickup:destroy() end
-	self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD), 10, math.huge)
-	self.m_Pickup.m_PickupType = "House" --only used for fire message creation
-	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
+	if self.m_Pickup then
+		setPickupType(self.m_Pickup, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD))
+	else
+		self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD), 10, math.huge)
+		self.m_Pickup.m_PickupType = "House" --only used for fire message creation
+		addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
+	end
 end
 
 function House:getOwner()
@@ -335,6 +338,7 @@ function House:sellHouse(player)
 		self.m_BankAccount:transferMoney(player, self.m_BankAccount:getMoney(), "Hauskasse", "House", "Sell")
 
 		self:clearHouse()
+		self:showGUI(player)
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
 	end
@@ -568,6 +572,7 @@ function House:buyHouse(player)
 		self:save()
 		-- create blip
 		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
+		self:showGUI(player)
 	else
 		player:sendError(_("Du hast nicht genügend Geld!", player))
 	end

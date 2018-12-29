@@ -59,6 +59,7 @@ function PlaneAccident:createAccidentFire()
         ["enabled"] = true,
     }
     FireManager:getSingleton():startFire(1000)
+    PlayerManager:getSingleton():breakingNews(("Ein Flugzeugabsturz wurde in %s, %s gemeldet!"):format(zone, city))
 end
 
 function PlaneAccident:createRubble()
