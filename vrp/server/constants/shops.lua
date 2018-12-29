@@ -279,6 +279,31 @@ SHOP_ITEM_WEAPONS = {
 	};
 }
 
+SHOP_ITEM_SORT = {
+	["Angel- / Outdoor-Shop"] = {
+		{"Fischlexikon"},
+		{true, "Angelruten"}, --GridListItemNoClick
+		{"Bambusstange"},
+		{"Angelrute"},
+		{"Profi Angelrute"},
+		{"Legendäre Angelrute"},
+		{true, "Kühltaschen"}, --GridListItemNoClick
+		{"Kleine Kühltasche"},
+		{"Kühltasche"},
+		{"Kühlbox"},
+		{true, "Köder"},--GridListItemNoClick
+		{"Köder"},
+		{"Leuchtköder"},
+		{"Pilkerköder"},
+		{true, "Zubehör"}, --GridListItemNoClick
+		{"Schwimmer"},
+		{"Spinner"},
+		{true, "Outdoor"}, --GridListItemNoClick
+		{"Motorcross-Helm"},
+		{"Radio"},
+	}
+}
+
 SHOP_OWNER_TYPES = {
 	[1] = "Player",
 	[2] = "Group"

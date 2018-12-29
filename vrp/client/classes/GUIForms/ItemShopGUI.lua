@@ -34,29 +34,35 @@ function ItemShopGUI:constructor(callback, shopName)
 	self.m_CallBack = callback
 end
 
-function ItemShopGUI:refreshItemShopGUI(shopId, items, weaponItems)
+function ItemShopGUI:refreshItemShopGUI(shopId, items, sortedItems, weaponItems)
 	self.m_Shop = shopId or 0
-	local item
 	local itemData = Inventory:getSingleton():getItemData()
 	if itemData then
 		self.m_Grid:clear()
-		for name, price in pairs(items) do
-			item = self.m_Grid:addItem(name, tostring(price.."$"))
-			item.Id = name
-			
-			item.onLeftClick = function()
-				self.m_Preview:setImage("files/images/Inventory/items/"..itemData[name]["Icon"])
-				self.m_LabelDescription:setText(itemData[name]["Info"])
+		for key, value in pairs(sortedItems and sortedItems or items) do
+			if sortedItems and value[1] == true then
+				self.m_Grid:addItemNoClick(value[2])
+			else
+				local name = sortedItems and value[1] or key
+				local price = items[name]
+				local item = self.m_Grid:addItem(name, ("%s$"):format(price))
+				item.Id = name
+
+				item.onLeftClick =
+					function()
+						self.m_Preview:setImage(("files/images/Inventory/items/%s"):format(itemData[name]["Icon"]))
+						self.m_LabelDescription:setText(itemData[name]["Info"])
+					end
 			end
 		end
+
 		if weaponItems then
 			for id, price in pairs(weaponItems) do
-				item = self.m_Grid:addItem(WEAPON_NAMES[id], tostring(price.."$"))
+				local item = self.m_Grid:addItem(WEAPON_NAMES[id], ("%s$"):format(price))
 				item.Id = id
 				item.isWeapon = true
-				
+
 				item.onLeftClick = function()
-					outputDebug(id)
 					self.m_Preview:setImage(WeaponIcons[id])
 					self.m_LabelDescription:setText(WEAPON_NAMES[id])
 				end
@@ -89,7 +95,7 @@ addEventHandler("showItemShopGUI", root,
 	function()
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount, isWeapon)
-			if isWeapon then 
+			if isWeapon then
 				triggerServerEvent("shopBuyWeapon", root, shop, itemName)
 			else
 				triggerServerEvent("shopBuyItem", root, shop, itemName, amount)

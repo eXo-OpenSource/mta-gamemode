@@ -38,9 +38,7 @@ function JobBoxer:constructor()
 
     PlayerManager:getSingleton():getWastedHook():register(
 		function(player, killer, weapon)
-			if self:isPlayerBoxing(player) == true then
-				if ExecutionPed.Map[player] then delete(ExecutionPed.Map[player]) end
-				if player:getExecutionPed() then delete(player:getExecutionPed()) end
+            if self:isPlayerBoxing(player) == true then
                 player:triggerEvent("abortDeathGUI", true)
                 fadeCamera(player, false)
                 setTimer(self.onDeath, 1750, 1, self, player)
@@ -77,7 +75,8 @@ function JobBoxer:checkRequirements(player)
 	return true
 end
 
-function JobBoxer:startJob(typ, dimension)
+function JobBoxer:startJob(typ)
+    local dimension = DimensionManager:getSingleton():getFreeDimension()
     client:setPublicSync("JobBoxer:activeLevel", typ)
     client:sendInfo("Du bist nun im Ring,\ndrücke L um aufzugeben!")
 
@@ -94,6 +93,8 @@ function JobBoxer:startJob(typ, dimension)
     end
 
     setPedFightingStyle(client, 5)
+
+    client:triggerEvent("boxerJobStartFight", typ, dimension)
 end
 
 function JobBoxer:endJob()
@@ -122,9 +123,9 @@ function JobBoxer:abortJob()
     client:sendInfo("Du hast den Kampf aufgegeben!")
 
     client:restoreStorage()
-    client:setPosition(763.26, 5.48, 1000.71)
-    client:setRotation(0, 0, 270)
-    client:setCameraTarget(client)
+    --client:setPosition(763.26, 5.48, 1000.71)
+    --client:setRotation(0, 0, 270)
+    --client:setCameraTarget(client)
     client:setDimension(0)
 
     client:setPublicSync("JobBoxer:activeLevel", false)
@@ -152,10 +153,14 @@ end
 function JobBoxer:onDeath(player)
     local skin = player:getModel()
     local interior = player:getInterior()
-    spawnPlayer(player, 763.26, 5.48, 1000.71, 270, skin, interior, 0)
+    spawnPlayer(player, 766.04, 13.00, 1000.70, 180, skin, interior, 0)
     player:setAlpha(255)
-    setCameraTarget(player, player)
+    player:setCorrectSkin(true)
+    player:setHeadless(false)
+    player:setCameraTarget(player)
     fadeCamera(player, true)
+    if player:getExecutionPed() then delete(player:getExecutionPed()) end
+    if ExecutionPed.Map[player] then delete(ExecutionPed.Map[player]) end
 end
 
 function JobBoxer:createTopList()
