@@ -140,7 +140,7 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 
 	player:loadCharacter()
 	player:spawn()
-	player:triggerEvent("loginsuccess", player)
+	player:triggerEvent("loginsuccess", pwhash)
 
 	if player:isActive() then
 		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
