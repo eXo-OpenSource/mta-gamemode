@@ -31,7 +31,7 @@ SHOP_TYPES = {
 		["Name"] = "24/7",
 		["Interior"] = {18, Vector3(-30.98, -91.9, 1003.5)},
 		["Ped"] = {202, Vector3(-28.15, -91.64, 1003.55), 0},
-		["Marker"] = Vector3(-28, -89.9, 1002.7),
+		--["Marker"] = Vector3(-28, -89.9, 1002.7),
 		["Class"] = ItemShop
 	},
 	[6] = {
@@ -83,7 +83,7 @@ SHOP_TYPES = {
 	},
 	[13] = {
 		["Name"] = "Tankstelle",
-		["Marker"] = Vector3(-23.37, -55.63, 1002.6),
+		--["Marker"] = Vector3(-23.37, -55.63, 1002.6),
 		["Ped"] = {160, Vector3(-23.46, -57.32, 1003.55), 0},
 		["Interior"] = {6, Vector3(-27.48, -58.27, 1003.55)},
 		["Class"] = GasStationShop
@@ -244,7 +244,7 @@ SHOP_ITEMS = {
 		["Köder"] = 5,
 		["Leuchtköder"] = 40,
 		["Pilkerköder"] = 40,
-		["Schwimmer"] = 7500,
+		["Schwimmer"] = 2500,
 		["Spinner"] = 5000,
 	};
 	["Halloween Shop"] = {

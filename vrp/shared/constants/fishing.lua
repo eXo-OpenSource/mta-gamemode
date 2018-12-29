@@ -25,7 +25,7 @@ FISHING_EQUIPMENT = {
 
 	-- Accessories
 	["Schwimmer"] = 	{level = 1},
-	["Spinner"] = 		{level = 12},
+	["Spinner"] = 		{level = 10},
 }
 
 FISHING_BAGS = {

@@ -13,10 +13,6 @@ function GasStationShop:constructor(id, name, position, rotation, typeData, dime
 	self.m_Type = "ItemShop"
 	self.m_Items = SHOP_ITEMS[typeData["Name"]]
 
-	--if self.m_Marker then
-		--addEventHandler("onMarkerHit", self.m_Marker, bind(self.onGasStationMarkerHit, self))
-	--end
-
 	if self.m_Ped then
 		self.m_Ped:setData("clickable",true,true)
 		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
