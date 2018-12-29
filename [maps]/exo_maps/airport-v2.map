@@ -208,7 +208,6 @@
     <removeWorldObject id="removeWorldObject (crgostntrmp) (1)" radius="13.033258" interior="0" model="3625" lodModel="3769" posX="1961.4453" posY="-2216.1719" posZ="14.98438" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (crgostntrmp) (1)" radius="90.033258" interior="0" model="1412" lodModel="0" posX="1979.699" posY="-2203.93" posZ="14.98438" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (lasdkrtgrp2) (1)" radius="13.891983" interior="0" model="3574" lodModel="3744" posX="2061.5313" posY="-2209.8125" posZ="14.97656" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    
     <removeWorldObject id="removeWorldObject (crgostntrmp) (2)" radius="13.033258" interior="0" model="3625" lodModel="3769" posX="2060.6875" posY="-2305.9609" posZ="14.98438" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (crgostntrmp) (3)" radius="13.033258" interior="0" model="3625" lodModel="3769" posX="2060.6875" posY="-2371.8828" posZ="14.98438" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (DockBarr1_LA) (51)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="1" dimension="0" posX="1978.6699" posY="-2271.4795" posZ="11.82" rotX="0" rotY="0" rotZ="189.998"></object>
@@ -220,8 +219,6 @@
     <object id="object (DockBarr1_LA) (100)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="1" dimension="0" posX="1978.4805" posY="-2239.6494" posZ="11.82" rotX="0" rotY="0" rotZ="189.998"></object>
     <object id="object (DockBarr1_LA) (102)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="1" dimension="0" posX="1968.5605" posY="-2241.4102" posZ="11.82" rotX="0" rotY="0" rotZ="189.998"></object>
     <object id="object (DockBarr1_LA) (114)" breakable="true" interior="0" collisions="true" alpha="255" model="3578" doublesided="false" scale="1" dimension="0" posX="1961.62" posY="-2189.51" posZ="11.79" rotX="0" rotY="0" rotZ="180"></object>
-    <object id="object (vgsSelecfence10) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="8165" doublesided="false" scale="1" dimension="0" posX="2060.3301" posY="-2212.8501" posZ="15.31" rotX="359.75" rotY="358.75" rotZ="129.995"></object>
-    <!--object id="object (airportgate) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="980" doublesided="false" scale="0.92109543" dimension="0" posX="1961.56995" posY="-2189.73999" posZ="14.09" rotX="0" rotY="0" rotZ="0"--><!--/object-->
     <removeWorldObject id="removeWorldObject (arhang_LAS) (1)" radius="49.409595" interior="0" model="3629" lodModel="3672" posX="1921.6406" posY="-2206.3906" posZ="18.88281" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (DockBarr1_LA) (115)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="1" dimension="0" posX="1970.5" posY="-2348.5498" posZ="11.82" rotX="0" rotY="0" rotZ="189.998"></object>
     <object id="object (DockBarr1_LA) (116)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="1" dimension="0" posX="1978.5996" posY="-2347.1201" posZ="11.82" rotX="0" rotY="0" rotZ="189.998"></object>
@@ -253,4 +250,8 @@
     <object id="object (DockBarr1_LA) (123)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="3.5" dimension="0" posX="1553.66" posY="-2460.02" posZ="9.81" rotX="0" rotY="0" rotZ="88.489"></object>
     <object id="object (DockBarr1_LA) (124)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="3.5" dimension="0" posX="1521.63" posY="-2460.05" posZ="9.81" rotX="0" rotY="0" rotZ="88.489"></object>
     <removeWorldObject id="removeWorldObject (lasblastde_LAS) (2)" radius="17.001591" interior="0" model="3664" lodModel="0" posX="1388.0078" posY="-2593" posZ="19.28125" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <object id="object (elecfence_BAR) (1)" breakable="true" interior="0" alpha="255" model="987" doublesided="false" scale="1" dimension="0" posX="2055.1001" posY="-2226.8" posZ="12.5" rotX="0" rotY="0" rotZ="75"></object>
+    <object id="object (elecfence_BAR) (2)" breakable="true" interior="0" alpha="255" model="987" doublesided="false" scale="1" dimension="0" posX="2064.3999" posY="-2192" posZ="12.5" rotX="0" rotY="0" rotZ="74.998"></object>
+    <object id="object (elecfence_BAR) (3)" breakable="true" interior="0" alpha="255" model="987" doublesided="false" scale="1" dimension="0" posX="2058.2002" posY="-2215.2002" posZ="12.5" rotX="0" rotY="0" rotZ="74.998"></object>
+    <object id="object (elecfence_BAR) (4)" breakable="true" interior="0" alpha="255" model="987" doublesided="false" scale="1" dimension="0" posX="2061.2998" posY="-2203.5996" posZ="12.5" rotX="0" rotY="0" rotZ="74.998"></object>
 </map>
