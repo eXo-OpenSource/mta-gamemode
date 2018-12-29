@@ -55,8 +55,9 @@ end
 
 
 function ArmsDealer:checkoutCart(cart)
+    if not ActionsCheck:getSingleton():isActionAllowed(client) then return end
     if client and client.getFaction and client:getFaction() then 
-        if cart then
+        if cart and not self.m_InAir then
             local faction = client:getFaction()
             if not self.m_Order[faction] then
                 self.m_Order[faction] = {}
@@ -95,6 +96,8 @@ function ArmsDealer:checkoutCart(cart)
             else 
                 client:sendError("Deine Fraktion hat bereits heute bestellt!")
             end
+        else 
+            client:sendError("Es läuft zurzeit bereits ein Airdrop!")
         end
     end
 end
@@ -131,6 +134,7 @@ function ArmsDealer:processCart( order, faction )
     self.m_DropBlip = Blip:new("SniperGame.png", endPoint.x, endPoint.y,  {factionType = {"State", "Evil"}}, 9999, BLIP_COLOR_CONSTANTS.Blue)
     self.m_DropIndicator = createObject(354, endPoint.x, endPoint.y, endPoint.z)
     PlayerManager:getSingleton():breakingNews("Ein nicht identifiziertes Flugzeug ist in den Flugraum von San Andreas eingedrungen!")
+    self.m_InAir = true
 end
 
 function ArmsDealer:isMagazin(product)
@@ -177,6 +181,7 @@ function ArmsDealer:setupPlane(pos, time, faction, order)
     local distanceAfterDrop = 6000 - distanceToDrop
     local endPoint = Vector3(3000, pos.y, 100)
     self.m_Plane =  TemporaryVehicle.create(592, -3000, pos.y, 100)
+    self.m_Plane:disableRespawn(true)
     self.m_Plane:setColor(0,0,0,0,0,0)
     self.m_Plane:setCollisionsEnabled(false)
     setVehicleLandingGearDown(self.m_Plane, false)
@@ -215,9 +220,11 @@ function ArmsDealer:clear()
     end
     if self.m_Plane and isElement(self.m_Plane) then 
         self.m_Plane:destroy()
+        self.m_Plane = nil
     end
     if self.m_MoveObject and isElement(self.m_MoveObject) then 
         self.m_MoveObject:destroy()
+        self.m_MoveObject = nil
     end
     if self.m_DropBlip then 
         self.m_DropBlip:delete()
@@ -225,7 +232,9 @@ function ArmsDealer:clear()
     end
     if self.m_DropIndicator and isElement(self.m_DropIndicator) then 
         self.m_DropIndicator:destroy()
+        self.m_DropIndicator = nil
     end
+    self.m_InAir = false
     ActionsCheck:getSingleton():endAction()
 end
 

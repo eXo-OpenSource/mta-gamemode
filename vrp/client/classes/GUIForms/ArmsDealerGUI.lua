@@ -134,7 +134,7 @@ function ArmsDealerGUI:updateCart()
 end
 
 function ArmsDealerGUI:checkoutCart() 
-	if self.m_Price > 0 then
+	if self.m_Price and self.m_Price > 0 then
 		QuestionBox:new(
 			_("Bist du sicher, dass du die folgende Summe zahlen willst: $%s ?", self.m_Price),
 			function() triggerServerEvent("checkoutArmsDealerCart", localPlayer, self.m_Cart) end

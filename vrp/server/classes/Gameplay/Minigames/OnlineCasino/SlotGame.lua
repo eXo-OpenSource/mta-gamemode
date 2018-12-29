@@ -47,8 +47,8 @@ end
 function SlotGame:requestPay()
     if self.m_Player == client then 
         self.m_BankAccountServer:transferMoney(client, self.m_Pay, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
-        self.m_Pay = 0
         client:sendShortMessage(("Dir wurden $ %s ausgezahlt!"):format(self.m_Pay), "Spielothek")
+        self.m_Pay = 0
     end
 end
 
