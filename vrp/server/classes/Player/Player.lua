@@ -197,7 +197,7 @@ function Player:loadCharacter()
 	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
 
-	if self:getFaction() and self:getFaction():isStateFaction() then 
+	if self:getFaction() and self:getFaction():isStateFaction() then
 		self:getFaction():takeEquipment(self)
 	end
 	FactionState:getSingleton():checkInsideGarage(self)
@@ -565,14 +565,14 @@ function Player:dropReviveWeapons()
 	end
 end
 
-function Player:takeEquipment(noOutput) 
+function Player:takeEquipment(noOutput)
 	local item, amount, price, id
 	local count = 0
-	for category, data in pairs(ArmsDealer.Data) do 
-		if category ~= "Waffen" then 
-			for product, subdata in pairs(data) do 
+	for category, data in pairs(ArmsDealer.Data) do
+		if category ~= "Waffen" then
+			for product, subdata in pairs(data) do
 				amount, price, id = unpack(subdata)
-				if not id then 
+				if not id then
 					amount = self:getInventory():getItemAmount(product)
 					if amount and amount > 0 then
 						self:getInventory():removeAllItem(product)
@@ -582,7 +582,7 @@ function Player:takeEquipment(noOutput)
 			end
 		end
 	end
-	if count > 0 then 
+	if count > 0 then
 		if not noOutput then
 			self:sendShortMessage(("Dir wurden %i Items vom Equipment abgenommen!"):format(count), "Medical Center - Los Santos")
 		end
@@ -1281,7 +1281,6 @@ function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprin
 		toggleControl(self, "enter_exit", bool)
 		toggleControl(self, "enter_passenger", bool)
 	end
-
 end
 
 function Player:attachPlayerObject(object)
@@ -1374,7 +1373,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 			end
 		end
 	else
-		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
+		self:toggleControlsWhileObjectAttached(true, true, true, true, true) --fallback to re-enable all controls
 	end
 
 	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
