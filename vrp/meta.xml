@@ -199,6 +199,9 @@
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
+	<!-- New Years Eve -->
+	<script src="server/classes/Gameplay/NewYearsEve.lua" type="server" />
+
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
