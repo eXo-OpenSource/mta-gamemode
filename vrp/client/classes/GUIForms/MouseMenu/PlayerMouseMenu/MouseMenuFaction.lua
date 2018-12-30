@@ -34,7 +34,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Bolt)
-			if self:getElement():isInVehicle() and self:getElement().vehicle == localPlayer.vehicle then
+			if element:isInVehicle() and element.vehicle == localPlayer.vehicle then
 				self:addItem(self:getElement():getData("isTied") and "Fraktion: Spieler entfesseln" or "Fraktion: Spieler fesseln",
 					function()
 						if self:getElement() then
