@@ -1,11 +1,12 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.7"
+PROJECT_VERSION = "1.8"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
 INGAME_WEB_PATH = "https://ingame.exo-reallife.de"
+PICUPLOAD_PATH = "https://picupload.pewx.de"
 
 if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
@@ -16,7 +17,7 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
-MAX_FISHING_LEVEL = 10
+MAX_FISHING_LEVEL = 15
 
 MAX_WANTED_LEVEL = 12
 
@@ -24,10 +25,11 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false
-SNOW_SHADERS_ENABLED = false -- disable them during summer time
+EVENT_CHRISTMAS = false --quests, mostly
+EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
+FIREWORK_SHOP_ACTIVE = true -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -63,6 +65,7 @@ JOB_LEVEL_LUMBERJACK = 3
 JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
+JOB_LEVEL_BOXER = 8
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
@@ -131,6 +134,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
 	["loginFix"] = RANK.Moderator,
+	["vehicleMenu"] = RANK.Moderator,
+	["syncForum"] = RANK.Supporter,
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
@@ -165,12 +170,21 @@ ADMIN_RANK_PERMISSION = {
 	["respawnRadius"] = RANK.Supporter,
 	["showVehicles"] = RANK.Supporter,
 	["showGroupVehicles"] = RANK.Supporter,
+	["toggleVehicleHandbrake"] = RANK.Moderator,
 	["respawnVehicle"] = RANK.Supporter, -- respawn per click
 	["parkVehicle"] = RANK.Supporter, -- set spawn position
 	["repairVehicle"] = RANK.Supporter, -- repair per click
 	["despawnVehicle"] = RANK.Supporter, -- despawn
 	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
 	["looseVehicleHandbrake"] = RANK.Supporter,
+	["editVehicleGeneral"] = RANK.Administrator, -- this is used to just open the window itself
+	["editVehicleModel"] = RANK.Administrator,
+	["editVehicleOwnerType"] = RANK.Administrator,
+	["editVehicleOwnerID"] = RANK.Administrator,
+	["editVehicleTunings"] = RANK.Administrator,
+	["editVehicleHandling"] = RANK.Administrator, -- handling editor
+	["editVehicleTexture"] = RANK.Developer, --override textures without visiting the texture shop
+
 
 	--development
 	["cookie"] = RANK.Developer, -- give that man a cookie
@@ -411,6 +425,20 @@ Tasks = {
 	TASK_GETTING_TARGETTED = 3,
 }
 
+VehicleTypes = {
+	Player = 1;
+	Faction = 2;
+	Company = 3;
+	Group = 4;
+}
+
+VehicleTypeName = {
+	[VehicleTypes.Player] = "player";
+	[VehicleTypes.Faction] = "faction";
+	[VehicleTypes.Company] = "company";
+	[VehicleTypes.Group] = "group";
+}
+
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
@@ -434,77 +462,10 @@ WEAPONTRUCK_MAX_LOAD = 60000
 WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
-	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
-	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}}
-}
-
-MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
-VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
-VEHICLE_SPECIAL_TEXTURE = {
-	[417] = "leviathnbody8bit256",
-	[425] = "hunterbody8bit256a",
-	[447] = "sparrow92body128",
-	[460] = "skimmer92body128",
-	[469] = "sparrow92body128",
-	[481] = "vehiclegeneric256", --bmx
-	[483] = "remapcamperbody256",
-	[487] = "maverick92body128",
-	[488] = "polmavbody128a",
-	[497] = "polmavbody128a",
-	[510] = "mtbike64x128",
-	[511] = "beagle256",
-	[512] = "cropdustbody256",
-	[513] = "stunt256",
-	[519] = "shamalbody256",
-	[521] = "fcr90092body128",
-	[522] = "nrg50092body128",
-	[534] = "remapremington256body",
-	[535] = "#emapslamvan92body128",
-	[536] = "#emapblade92body128",
-	[548] = "cargobob92body256",
-	[553] = "nevada92body256",
-	[558] = "@hite",
-	[559] = "#emapjesterbody256",
-	[560] = "#emapsultanbody256",
-	[561] = "#emapstratum292body256",
-	[562] = "#emapelegybody128",
-	[563] = "raindance92body128",
-	[565] = "#emapflash92body256",
-	[567] = "#emapsavanna92body128",
-	[575] = "remapbroadway92body128",
-	[576] = "remaptornado92body128",
-	[577] = "at400_92_256",
-	[581] = "bf40092body128",
-	[586] = "wayfarerbody8bit128",
-	[593] = "dodo92body8bit256",
-}
-
-VEHICLE_BIKES = {
-[481] = true,
-[509] = true,
-[510] = true,
-}
-
-PLANES_SINGLE_ENGINE = {
-[593] = true,
-[512] = true,
-[476] = true,
-[513] = true,
-}
-
-PLANES_TWIN_ENGINE = {
-[511] = true,
-[553] = true,
-}
-
-PLANES_JET = {
-[520] = true,
-[519] = true,
-}
-
-PLANES_JUMBO_JET = {
-[592] = true,
-[577] = true,
+	[1550] = {model = 1550, name = "Geldsack", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 0, 180), blockJump = true, bone = 3, placeDown = true},
+	[2912] = {model = 2912, name = "Waffenkiste", pos = Vector3(0, 0.35, 0.45), rot = Vector3(10, 0, 0), blockJump = true, blockSprint = true, blockWeapons = true, blockVehicle = true, animationData = {"carry", "crry_prtial", 1, true, true, false, true}, placeDown = true},
+	[2919] = {model = 2919, name = "Waffen", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 90, 90), 	blockJump = true, bone = 3, blockSprint = true,  blockVehicle = false, placeDown = true},
+	[1826] = {model = 1826, name = "Angelruten", pos = Vector3(-0.03, 0.02, 0.05), rot = Vector3(180, 120, 0), blockJump = false, bone = 12, blockSprint = true, blockVehicle = true},
 }
 
 
@@ -571,7 +532,14 @@ WEAPON_NAMES = {
 	[43] = "Kamera",
 	[44] = "Nachtsicht-Gerät",
 	[45] = "Wärmesicht-Gerät",
-	[46] = "Fallschrirm"
+	[46] = "Fallschirm"
+}
+
+WEAPON_PROJECTILE =
+{
+	[17] = true,
+	[18] = true,
+	[39] = true,
 }
 
 WEAPON_CLIPS = {
@@ -623,7 +591,7 @@ MIN_WEAPON_LEVELS = {
 	[43] = 0, -- Kamera
 	[44] = 0, -- Nachtsicht-Gerät
 	[45] = 0, -- Wärmesicht-Gerät
-	[46] = 0, -- Fallschrirm"
+	[46] = 0, -- Fallschirm"
 }
 
 BODYPART_NAMES = {
@@ -684,27 +652,6 @@ WEAPON_LEVEL = {
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
 
-
-FISHING_BAGS = {
-	["Kühlbox"] = {max = 65, level = 8},
-	["Kühltasche"] = {max = 25, level = 4},
-	["Kleine Kühltasche"] = {max = 15, level = 0},
-}
-
--- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
-FISHING_LEVELS = {
-	[1] = 225,
-	[2] = 900,
-	[3] = 2025,
-	[4] = 3600,
-	[5] = 5625,
-	[6] = 8100,
-	[7] = 11025,
-	[8] = 14400,
-	[9] = 18225,
-	[10] = 22500,
-}
-
 FERRIS_IDS = {
 	Base = 6461,
 	Gond = 3752,
@@ -734,27 +681,6 @@ VEHICLE_SPAWN_OFFSETS = {
 	[484] = Vector3(0, -2, 2),
 	[483] = Vector3(2, 2, 0),
 	[454] = Vector3(-0.4, -3.0, 2),
-}
-
-CAR_COLORS_FROM_ID =
-{
-	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
-	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
-	"dunkel-grün","rot","pupurn", "grau", "blau", "pupurn", "violett",
-	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
-	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
-	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
-	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
-	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
-	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
-	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",
-	"grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau",
-	"hell-grau", "rot", "blau", "rosa", "grau", "rot", "grau", "braun", "lila", "grün",
-	"blau", "dunkel-rot", "grau", "hell-blau", "dunkel-blau", "grau", "blau", "dunkel-blau",
-	"dunke-blau", "hell-grau", "hell-blau", "grau", "braun", "blau", "dunkel-grau",
-	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
-	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
-	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
 }
 
 HOUSE_INTERIOR_TABLE = {
@@ -787,43 +713,6 @@ HOUSE_INTERIOR_TABLE = {
 	[27] = {0, 506.76, -1521.03, 32.11}; -- terror office
 }
 
-VEHICLE_PICKUP = {
-	[422] = true,
-	[554] = true,
-	[433] = true,
-	[444] = true,
-	[556] = true,
-	[557] = true,
-	[478] = true,
-	[578] = true,
-	[535] = true,
-	[543] = true,
-	[605] = true,
-	[600] = true,
-}
-
-VEHICLE_OBJECT_ATTACH_POSITIONS = {
-	[428] = { --vehicle model, securicar in this case
-		loadMarkerPos = Vector3(0, -3.5, 0),
-		vehicleDoors = {4, 5},
-		objectId = 1550, -- money bag
-		objectNames = {"Geldsack", "Geldsäcke"},
-        randomRotation = true, --random z-rotaion on attach to provide some variety
-        positions = { -- in loading order, e.g. the first row is the first object position to load
-            Vector3(0.3, -1, 0.2),
-            Vector3(-0.3, -1, 0.2),
-            Vector3(0.7, -1.61, 0.2),
-            Vector3(-0.7, -1.59, 0.2),
-            Vector3(0.21, -1.6, 0.2),
-            Vector3(-0.21, -1.58, 0.2),
-            Vector3(0.7, -2.51, 0.2),
-            Vector3(-0.7, -2.52, 0.2),
-            Vector3(0.21, -2.51, 0.2),
-            Vector3(-0.21, -2.49, 0.2),
-        }
-	}
-}
-
 CompanyStaticId = {
 	DRIVINGSCHOOL = 1,
 	MECHANIC = 2,
@@ -845,27 +734,11 @@ FactionStaticId = {
 	TRIAD = 11
 }
 
+SEASONS = {
+	SPRING = 1,
+	SUMMER = 2,
+	FALL = 3,
+	WINTER = 4,
+}
+
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect
-
-FUEL_PRICE = { --price per liter
-	["petrol"] = 2.3,
-	["petrol_plus"] = 3.4,
-	["diesel"] = 1.7,
-	["jetfuel"] = 4.6,
-	["universal"] = 0,
-	["nofuel"] = 0,
-
-}
-FUEL_NAME = { --display name
-	["petrol"] = "Super",
-	["petrol_plus"] = "Super Plus",
-	["diesel"] = "Diesel",
-	["jetfuel"] = "Kerosin",
-	["universal"] = "Universal-Kraftstoff",
-	["nofuel"] = "kein Kraftstoff",
-
-}
-FUEL_PRICE_MULTIPLICATOR = 2
-MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
-SERVICE_FUEL_PRICE_MULTIPLICATOR = 5
-SERVICE_REPAIR_PRICE_MULTIPLICATOR = 5

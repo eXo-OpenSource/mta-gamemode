@@ -70,7 +70,7 @@ function GPS:stopNavigation()
 	self.m_WaypointCols = {}
 
 	-- Kill recalculation timer
-	killTimer(self.m_TimerRecalculate)
+	if isTimer(self.m_TimerRecalculate) then killTimer(self.m_TimerRecalculate) end
 
 	self.m_Active = false
 end
@@ -187,6 +187,9 @@ function GPS:processWaypoint(nodeIndex)
 end
 
 function GPS:playAnnouncement(url)
+	if not core:get("Sounds", "Navi", true) then
+		return
+	end
 	local radio = RadioGUI:getSingleton()
 	if self.m_Sound and isElement(self.m_Sound) then
 		destroyElement(self.m_Sound)

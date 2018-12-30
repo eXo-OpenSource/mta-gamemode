@@ -41,21 +41,33 @@ function ItemManager:constructor()
 		["Donut"] = ItemFood,
 		["Keks"] = ItemFood,
 		["Apfel"] = ItemFood,
+		["KöderDummy"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;
 		["Taser"] = ItemTaser;
 		["SLAM"] = ItemSlam;
 		["Rauchgranate"] = ItemSmokeGrenade;
-		
-		["Wuerfel"] = ItemDice,
+		["DefuseKit"] = ItemDefuseKit;
+
+		["Bambusstange"] = ItemFishing,
 		["Angelrute"] = ItemFishing,
+		["Profi Angelrute"] = ItemFishing,
+		["Legendäre Angelrute"] = ItemFishing,
 		["Kleine Kühltasche"] = ItemFishing,
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
 		["Köder"] = ItemFishing,
+		["Leuchtköder"] = ItemFishing,
+		["Pilkerköder"] = ItemFishing,
+		["Schwimmer"] = ItemFishing,
+		["Spinner"] = ItemFishing,
+		["Fischlexikon"] = ItemFishing,
+
+		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = Plant,
 		["Apfelbaum-Samen"] = Plant,
+		["Blumen-Samen"] = Plant,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,
@@ -94,7 +106,7 @@ function ItemManager:constructor()
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
 		["Kleidung"] = WearableClothes,
-		
+
 	}
 
 	self.m_Properties = {
@@ -117,7 +129,7 @@ function ItemManager:constructor()
 	addEventHandler("onClientBreakItem",root, bind(self.Event_onItemBreak,self))
 end
 
-function ItemManager:updateOnQuit() 
+function ItemManager:updateOnQuit()
 
 end
 

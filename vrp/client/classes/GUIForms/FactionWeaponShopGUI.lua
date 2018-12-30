@@ -112,7 +112,7 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 
-	if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 or self.m_WaffenAnzahl == 12 then
+	if self.m_WaffenAnzahl % 4 == 0 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else
@@ -140,7 +140,7 @@ function FactionWeaponShopGUI:updateButtons()
 				skip = true
 			end
 			if not skip then
-				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
+				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 and not WEAPON_PROJECTILE[weaponID] then
 					if self.m_WeaponsBuyMunition[weaponID] then
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 					end

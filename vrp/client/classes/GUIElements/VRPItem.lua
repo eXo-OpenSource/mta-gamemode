@@ -30,7 +30,7 @@ function VRPItem:constructor(posX, posY, width, height, item, parent)
 end
 
 function VRPItem:select()
-	self:setColor(Color.LightBlue)
+	self:setColor(Color.Accent)
 end
 
 function VRPItem:deselect()

@@ -8,9 +8,9 @@
 
 PrisonBreak = inherit(Object)
 PrisonBreak.BombCountdown = 10 * 1000
-PrisonBreak.OfficerCountdown = 5 * 60 * 1000
+PrisonBreak.OfficerCountdown = 7 * 60 * 1000
 PrisonBreak.KeycardsCountdown = 2 * 60 * 1000
-PrisonBreak.DoorsCountdown = 20 * 60 * 1000
+PrisonBreak.DoorsCountdown = 12 * 60 * 1000
 PrisonBreak.OfficerCount = 5
 
 function PrisonBreak:constructor()
@@ -178,7 +178,7 @@ end
 
 function PrisonBreak.RemoveKeycard(player)
 	if player and isElement(player) and player:getInventory() then
-		if player:getInventory():getItemAmount("Keycard") > 0 then
+		if player:getInventory():getItemAmount("Keycard") and player:getInventory():getItemAmount("Keycard") > 0 then
 			player:getInventory():removeAllItem("Keycard")
 			player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
 		end

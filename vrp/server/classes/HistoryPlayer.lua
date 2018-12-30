@@ -22,8 +22,8 @@ function HistoryPlayer:addLeaveEntry(playerId, uninviterId, elementId, elementTy
     local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), playerId, elementId, elementType)
 
     if not result or #result == 0 then
-        sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, UninviteRank, HighestRank, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
-            sql:getPrefix(), playerId, uninviterId, elementId, elementType, uninviteRank, uninviteRank, internal, external)
+        --sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, UninviteRank, HighestRank, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
+        --    sql:getPrefix(), playerId, uninviterId, elementId, elementType, uninviteRank, uninviteRank, internal, external)
     else
         sql:queryExec("UPDATE ??_player_history SET LeaveDate = NOW(), InternalReason = ?, ExternalReason = ?, UninviterId = ?, UninviteRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
             sql:getPrefix(), internal, external, uninviterId, uninviteRank, playerId, elementId, elementType)
@@ -39,8 +39,8 @@ function HistoryPlayer:setHighestRank(playerId, rank, elementId, elementType)
     local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), playerId, elementId, elementType)
 
     if not result or #result == 0 then
-        sql:queryExec("INSERT INTO ??_player_history (UserId, ElementId, ElementType, HighestRank, JoinDate, InviterId) VALUES (?, ?, ?, ?, NOW(), 0)",
-            sql:getPrefix(), playerId, elementId, elementType, rank)
+        --sql:queryExec("INSERT INTO ??_player_history (UserId, ElementId, ElementType, HighestRank, JoinDate, InviterId) VALUES (?, ?, ?, ?, NOW(), 0)",
+        --    sql:getPrefix(), playerId, elementId, elementType, rank)
     else
         if not result[1].HighestRank or rank > result[1].HighestRank then
             sql:queryExec("UPDATE ??_player_history SET HighestRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",

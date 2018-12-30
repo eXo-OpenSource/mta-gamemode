@@ -150,7 +150,8 @@ function House:onMarkerHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
-		self:showGUI(hitElement)
+		hitElement.lastHousePickup = source
+		hitElement:triggerEvent("onTryEnterExit", source, "Haus")
 	end
 end
 
@@ -352,7 +353,8 @@ function House:onPickupHit(hitElement)
 	if hitElement:getType() == "player" and (hitElement:getDimension() == source:getDimension()) then
 		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
-		self:showGUI(hitElement)
+		hitElement.lastHousePickup = source
+		hitElement:triggerEvent("onTryEnterExit", source, "Haus")
 	end
 end
 
@@ -580,6 +582,7 @@ function House:refreshInteriorMarker()
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
 	local int, ix, iy, iz  = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
+	ElementInfo:new(self.m_HouseMarker, "Ausgang", 1.2, "Walking", true)
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))

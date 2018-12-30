@@ -51,6 +51,20 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			)
 		end
 	end
+
+	--[[if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["editVehicleHandling"] then
+		self:addItem(_"Handling",
+			function()
+				if self:getElement() then
+					if VehiclePerformanceGUI.Map[self:getElement()]  then
+						VehiclePerformanceGUI.Map[self:getElement()]:delete()
+					end
+					VehiclePerformanceGUI.Map[self:getElement()] = VehiclePerformanceGUI:new(self:getElement(), true)
+				end
+			end
+		)
+	end]]
+
 	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["repairVehicle"] then
 		self:addItem(_"Reparieren",
 			function()
@@ -82,6 +96,15 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 				if self:getElement() then
 					triggerServerEvent("vehicleToggleHandbrake", self:getElement())
 				end
+			end
+		)
+	end
+
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["editVehicleGeneral"] then
+		self:addItem(_"Editieren",
+			function()
+				if not self:getElement() then return end
+				AdminVehicleEditGUI:new(self:getElement())
 			end
 		)
 	end

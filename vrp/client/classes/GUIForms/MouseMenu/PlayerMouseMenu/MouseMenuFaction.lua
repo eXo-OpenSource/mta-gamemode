@@ -34,6 +34,15 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Bolt)
+			if element():isInVehicle() and element().vehicle == localPlayer.vehicle then
+				self:addItem(self:getElement():getData("isTied") and "Fraktion: Spieler entfesseln" or "Fraktion: Spieler fesseln",
+					function()
+						if self:getElement() then
+							triggerServerEvent("factionStateTie", localPlayer, self:getElement())
+						end
+					end
+				):setIcon(FontAwesomeSymbols.UserLock)
+			end
 		end
 
 		self:addItem(_"Fraktion: Spieler durchsuchen",
@@ -43,6 +52,24 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Search)
+
+		if element:getPublicSync("cuffed") then
+			self:addItem(_"Fraktion: Handschellen abnehmen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateUncuff", localPlayer, self:getElement())
+					end
+				end
+				):setIcon(FontAwesomeSymbols.Hands)
+		else
+			self:addItem(_"Fraktion: Handschellen anlegen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateCuff", localPlayer, self:getElement())
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Hands)
+		end
 
 		self:addItem(_"Fraktion: Alkoholtest durchführen",
 			function()
@@ -83,7 +110,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 						StateFactionNoteGUI:new(self:getElement())
 					end
 				end
-			):setIcon(FontAwesomeSymbols.Document)
+			):setIcon(FontAwesomeSymbols.File)
 		elseif localPlayer:getFaction():getId() == 2 then
 			self:addItem(_"Fraktion: Wanze verstecken",
 				function()

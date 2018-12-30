@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 GUIElement = inherit(DxElement)
+inherit(GUITooltip, GUIElement)
 
 function GUIElement:constructor(posX, posY, width, height, parent)
 	DxElement.constructor(self, posX, posY, width, height, parent)
@@ -18,7 +19,7 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 end
 
 function GUIElement:destructor(...)
-	self:updateTooltip(false) 
+	self:updateTooltip(false)
 	DxElement.destructor(self, ...)
 end
 
@@ -65,7 +66,6 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			if self.onUnhover		  then self:onUnhover(cx, cy)         end
 			if self.onInternalUnhover then self:onInternalUnhover(cx, cy) end
 			self.m_Hover = false
-			self:updateTooltip(self.m_Hover)
 			self.m_LActive = false
 			self.m_RActive = false
 
@@ -75,7 +75,6 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 					if child.onUnhover		  then child:onUnhover(cx, cy)         end
 					if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
 					child.m_Hover = false
-					child:updateTooltip(child.m_Hover)
 				end
 			end
 		end
@@ -92,8 +91,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		if not self.m_Hover then
 			if self.onHover			then self:onHover(cx, cy)			end
 			if self.onInternalHover then self:onInternalHover(cx, cy) end
+			if self.m_TooltipText then self:updateTooltip(true) end
 			self.m_Hover = true
-			self:updateTooltip(self.m_Hover)
 		end
 		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 			if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end
@@ -105,7 +104,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 				GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
 			end
 
-			if EVENT_HALLOWEEN and self.m_Blood then
+			if EVENT_HALLOWEEN and self.m_Blood and core:get("Event", "HalloweenBloodClick", true) then
 				Cursor:drawClickBlood()
 			end
 
@@ -142,56 +141,6 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 				--break
 			end
 		end
-	end
-end
-
-function GUIElement:setTooltip(text, pos, multiline)
-	self.m_TooltipText = text
-	self.m_TooltipPos = pos
-	self.m_TooltipMultiline = multiline or false
-	return self
-end
-
-function GUIElement:updateTooltip(hovered)
-	if not self.m_TooltipText then return false end
-	if hovered ~= self.m_TooltipActive then
-		if hovered then --create tooltip
-			local f = VRPFont(20)
-			local x, y = self:getPosition(true)
-			local w, h = self:getSize()
-			local textW = fontWidth(self.m_TooltipText, f, 1) + 10 -- 30 is the margin
-			local textH = self.m_TooltipMultiline and (string.count(self.m_TooltipText, "\n")+1)*dxGetFontHeight(1, VRPFont(20)) or 20
-
-			if self.m_TooltipPos == "left" then
-				self.m_Tooltip = GUILabel:new(x - textH/2 - textW, y + h/2 - 10, textW, textH, self.m_TooltipText)
-				self.m_TooltipArrow = GUIImage:new(x - 14, y + h/2 - 4, 16, 8, "files/images/GUI/Triangle.png"):setRotation(90)
-			elseif self.m_TooltipPos == "right" then
-				self.m_Tooltip = GUILabel:new(x + w + textH/2, y + h/2 - 10, textW, textH, self.m_TooltipText)
-				self.m_TooltipArrow = GUIImage:new(x + w - 2, y + h/2 - 4, 16, 8, "files/images/GUI/Triangle.png"):setRotation(270)
-			elseif self.m_TooltipPos == "bottom" then
-				self.m_Tooltip = GUILabel:new(x + w/2 - textW/2, y + h + 10, textW, textH, self.m_TooltipText)
-				self.m_TooltipArrow = GUIImage:new(x + w/2 - 8, y + h + 2, 16, 8, "files/images/GUI/Triangle.png"):setRotation(0)
-			else -- top is default
-				self.m_Tooltip = GUILabel:new(x + w/2 - textW/2, y - textH-10, textW, textH, self.m_TooltipText)
-				self.m_TooltipArrow = GUIImage:new(x + w/2 - 8, y - 10, 16, 8, "files/images/GUI/Triangle.png"):setRotation(180)
-			end
-
-			if self.m_TooltipMultiline then
-				self.m_Tooltip:setMultiline(true)
-				self.m_Tooltip:setFont(f)
-			end
-
-			self.m_Tooltip:setColor(Color.PrimaryNoClick):setBackgroundColor(Color.White)
-			self.m_Tooltip:setAlignX(self.m_TooltipMultiline and "left" or "center")
-			self.m_Tooltip.m_CacheArea:bringToFront()
-		else --destroy tooltip
-			if self.m_Tooltip then
-				self.m_Tooltip:delete()
-				self.m_TooltipArrow:delete()
-				self.m_Tooltip = nil
-			end
-		end
-		self.m_TooltipActive = hovered
 	end
 end
 

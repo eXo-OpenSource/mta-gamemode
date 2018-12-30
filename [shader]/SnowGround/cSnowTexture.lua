@@ -10,6 +10,8 @@ function enableSnow()
 	snowTexture = dxCreateTexture('snow.png')
 	snowShader = getSnowShader()				-- TODO make this better
 	effectParts = {snowTexture, snowShader}
+	savedWeather = getWeather()
+	setWeather(12)
 
 	engineApplyShaderToWorldTexture ( snowShader, "*conc*" )
 	--engineApplyShaderToWorldTexture ( snowShader, "*drain*" )
@@ -131,6 +133,7 @@ end
 -- disableSnow
 ----------------------------------------------------------------
 function disableSnow()
+	setWeather(savedWeather)
 	if not bEffectEnabled then return end
 
 	-- Destroy all parts

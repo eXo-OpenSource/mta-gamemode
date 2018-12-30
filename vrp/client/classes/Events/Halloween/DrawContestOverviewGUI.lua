@@ -54,7 +54,7 @@ function DrawContestOverviewGUI:constructor()
 	self.m_SelectedPlayerId = 0
 	self.m_SelectedPlayerName = ""
 
-	self:showInfoText("eXo-Reallife Halloween Zeichen-Wettbewerb!\nMale ein Bild zum angegeben Thema.\n(Jeder User darf nur ein Bild pro Thema einsenden)\nEinem Tag nach Einsendeschluss können User das Bild bewerten.\nZu Gewinnen gibt es bei jedem Wettbewerb 15 eXo-Dollar!")
+	self:showInfoText("eXo-Reallife Halloween Zeichen-Wettbewerb!\nMale ein Bild zum angegeben Thema.\n(Jeder User darf nur ein Bild pro Thema einsenden)\nEinem Tag nach Einsendeschluss können User das Bild bewerten.\nZu Gewinnen gibt es bei jedem Wettbewerb 50 Kürbisse und 1000 Süßigkeiten!")
 
 	self.m_RatingLabel = GUIGridLabel:new(6, 12, 4, 1, "Deine Bewertung:", self.m_Window)
 	self.m_Rating = GUIGridRating:new(10, 12, 5, 1, 5, self.m_Window)

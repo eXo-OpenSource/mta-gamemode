@@ -17,7 +17,6 @@ Player.ms_ScreamHook = Hook:new()
 addEvent("characterInitialized")
 
 function Player:constructor()
-
 	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}
@@ -62,7 +61,7 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() and (self:getFaction() and self:getFaction():isStateFaction()) then
+	if self:isFactionDuty() and (self:getFaction() and not self:getFaction():isEvilFaction()) then -- don't delete weapons if evil-duty
 		takeAllWeapons(self)
 	end
 
@@ -197,6 +196,11 @@ function Player:loadCharacter()
 	end
 	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
+
+	if self:getFaction() and self:getFaction():isStateFaction() then 
+		self:getFaction():takeEquipment(self)
+	end
+	FactionState:getSingleton():checkInsideGarage(self)
 end
 
 function Player:createCharacter()
@@ -212,7 +216,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -240,6 +244,7 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
+	ElementInfo.sendAllToClient(self)
 	VehicleELS.sendAllToClient(self)
 
 	if HouseManager:isInstantiated() then
@@ -268,6 +273,12 @@ function Player:loadCharacterInfo()
 		for key, msg in ipairs( self.m_OfflineMessages ) do
 			self:sendShortMessage(msg[1], "Offlinenachricht" )
 		end
+	end
+
+	if row.TakeWeaponsOnLogin == 1 then
+		takeAllWeapons(self)
+		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
+		self:setTakeWeaponsOnLogin(false)
 	end
 end
 
@@ -329,11 +340,11 @@ function Player:save()
 			end
 		end
 
-		local dimension = 0
+		local dimension = self:getDimension()
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
 		local sSkin = self.m_Skin
-		if interior > 0 then dimension = self:getDimension() end
+		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 		DatabasePlayer.save(self)
@@ -404,8 +415,8 @@ function Player:spawn()
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
 			local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
 			if self:getGroup() and #groupProperties > 0 then
+				spawnSuccess =  spawnPlayer(self, groupProperties[1].m_Position, 0, self.m_Skin or 0)
 				groupProperties[1]:setInside(self)
-				spawnSuccess = true
 			end
 		end
 	end
@@ -427,7 +438,11 @@ function Player:spawn()
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
 	self:setCorrectSkin()
-	self:setPublicSync("Faction:Duty",false)
+
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
 
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
@@ -441,11 +456,6 @@ function Player:spawn()
 	-- Give weapons
 	for k, info in pairs(self.m_Weapons) do
 		giveWeapon(self, info[1], info[2])
-	end
-
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
 	end
 
 	-- gets unfrozen if he has a session id
@@ -514,6 +524,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 
+	self:takeEquipment()
 	if self:getExecutionPed() then delete(self:getExecutionPed()) end
 
 	WearableManager:getSingleton():removeAllWearables(self)
@@ -554,16 +565,42 @@ function Player:dropReviveWeapons()
 	end
 end
 
+function Player:takeEquipment(noOutput) 
+	local item, amount, price, id
+	local count = 0
+	for category, data in pairs(ArmsDealer.Data) do 
+		if category ~= "Waffen" then 
+			for product, subdata in pairs(data) do 
+				amount, price, id = unpack(subdata)
+				if not id then 
+					amount = self:getInventory():getItemAmount(product)
+					if amount and amount > 0 then
+						self:getInventory():removeAllItem(product)
+						count = count + amount
+					end
+				end
+			end
+		end
+	end
+	if count > 0 then 
+		if not noOutput then
+			self:sendShortMessage(("Dir wurden %i Items vom Equipment abgenommen!"):format(count), "Medical Center - Los Santos")
+		end
+	end
+end
+
 function Player:destroyDropWeapons()
 	if self.m_ReviveWeapons then
 		for i = 1, #self.m_ReviveWeapons do
 			delete(self.m_ReviveWeapons[i])
 		end
+		self.m_DeathStateFactionDuty = nil
 	end
 end
 
-function Player:setReviveWeapons()
+function Player:setReviveWeapons(deathStateFactionDuty)
 	self.m_ReviveWeaponsInfo = {}
+	self.m_DeathStateFactionDuty = deathStateFactionDuty -- only use this to prevent weapon retieval if a onduty cop gets killed
 	local weaponInSlot, ammoInSlot
 	for i = 1, 12 do
 		weaponInSlot = getPedWeapon(self, i)
@@ -578,6 +615,9 @@ function Player:giveReviveWeapons()
 			if self.m_ReviveWeaponsInfo[i] then
 				giveWeapon( self, self.m_ReviveWeaponsInfo[i][1], self.m_ReviveWeaponsInfo[i][2], true)
 			end
+		end
+		if self.m_DeathStateFactionDuty then
+			FactionState:getSingleton():Event_storageWeapons(self, true)
 		end
 		self:destroyDropWeapons()
 		return true
@@ -656,10 +696,7 @@ end
 function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
 	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
-		self:getFaction():changeSkin(self)
-		self:setFactionDuty(true)
-		self:setPublicSync("Faction:Duty", true)
-		setPedArmor(self, 100)
+		FactionEvil:getSingleton():setPlayerDuty(self, true, true)
 	else
 		self:setModel(self.m_Skin or 0)
 	end
@@ -683,12 +720,16 @@ function Player:isCompanyDuty()
 	return self.m_CompanyDuty
 end
 
+
+-- this is not the function to set the player duty. Use FactionEvil:getSingleton():setPlayerDuty for evil factin, other factions can only go duty at their pickup
 function Player:setFactionDuty(state)
+	self:setPublicSync("Faction:Duty", state)
 	self.m_FactionDuty = state
 	self:reloadBlips()
 end
 
 function Player:setCompanyDuty(state)
+	self:setPublicSync("Company:Duty", state)
 	self.m_CompanyDuty = state
 	self:reloadBlips()
 end
@@ -867,6 +908,12 @@ function Player:payDay()
 		income = income + self.m_HalloweenPaydayBonus
 		BankServer.get("event.halloween"):transferMoney({self, true, true}, self.m_HalloweenPaydayBonus, "Halloween-Bonus", "Event", "HalloweenBonus", {silent = true})
 		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
+	end
+
+	if EVENT_CHRISTMAS then
+		income = income + 200
+		BankServer.get("event.christmas"):transferMoney({self, true, true}, 200, "Weihnachtsgeld", "Event", "ChristmasBonus", {silent = true})
+		self:addPaydayText("income", _("Weihnachtsgeld", self), 200)
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
@@ -1139,7 +1186,11 @@ function Player:giveCombinedReward(reason, tblReward)
 				local bank = amount.bank and " (Konto)" or ""
 
 				if amount.mode == "give" then
-					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, reason, amount.category, amount.subcategory)
+					if amount.toOrFrom then
+						amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, reason, amount.category, amount.subcategory)
+					else
+						outputDebugString(string.format("Error on giveCombinedReward - amount.toOrFrom missing. Reason: %s", reason), 1)
+					end
 				else
 					if amount.bank then
 						self:transferBankMoney(amount.toOrFrom, amount.amount, reason, amount.category, amount.subcategory, {silent = true})
@@ -1258,8 +1309,11 @@ function Player:attachPlayerObject(object)
 
 			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
 
-			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
-			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			if settings.placeDown then
+				self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
+				bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			end
+
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
@@ -1279,8 +1333,9 @@ function Player:refreshAttachedObject(instant)
 	local func = function()
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
+			local model = object.model
 			outputDebug(object, self:getInterior(), self:getName())
-			if self:isDead() then
+			if self:isDead() and PlayerAttachObjects[model] and PlayerAttachObjects[model].placeDown then
 				self:detachPlayerObject(object)
 			end
 			object:setInterior(self:getInterior())
@@ -1490,7 +1545,9 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self:setRotation(rotation)
 		setElementInterior(self, 2)
 		setElementDimension(self, 0)
-		self:setModel(self.m_Skin)
+		if self:getFaction() and self:getFaction():isEvilFaction() then
+			FactionEvil:getSingleton():setPlayerDuty(self, false, true)
+		end
 		self:toggleControl("fire", false)
 		self:toggleControl("jump", false)
 		self:toggleControl("aim_weapon ", false)
@@ -1580,4 +1637,22 @@ end
 
 function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
+end
+
+function Player:setTakeWeaponsOnLogin(state)
+	state = state and 1 or 0
+	sql:queryExec("UPDATE ??_character SET TakeWeaponsOnLogin = ? WHERE Id = ?", sql:getPrefix(), state, self.m_Id)
+end
+
+function Player:setInSewer(bool) self:setData("inSewer", bool, true); self.m_InSewer = bool end
+function Player:isInSewer() return self.m_InSewer end
+
+function Player:changeWalkingstyle(id)
+	local walkingstyle = id or 0
+	self:setWalkingStyle(walkingstyle)
+	self.m_WalkingStyle = walkingstyle
+end
+
+function Player:getWalkingstyle()
+	return self.m_WalkingStyle or 0
 end

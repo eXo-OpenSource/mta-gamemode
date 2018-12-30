@@ -121,6 +121,10 @@ BeggarSkins = {
     137
 }
 
+BeggarItemBuyTypes = {
+    [5] = {"Heroin"} -- list of all items that a beggar type sells to the player (and that a player can potentially rob by killing him)
+}
+
 BeggarItemBuy = {
 	["Heroin"] = {["amount"] = 5, ["pricePerAmount"] = 30}
 }

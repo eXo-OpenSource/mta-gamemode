@@ -66,9 +66,7 @@ function PaintjobPreviewGUI:Event_OnCallBackDownload( rData, responseInfo, vehic
 					end
 					self.m_Shader = dxCreateShader("files/shader/texreplace.fx")
 					self.m_Texture = VEHICLE_SPECIAL_TEXTURE[getElementModel(vehicle)] or "vehiclegrunge256"
-						outputChatBox("Here2")
 					if self.m_Shader then
-						outputChatBox("Here")
 						dxSetShaderValue(self.m_Shader, "gTexture", self.m_Texture)
 						engineApplyShaderToWorldTexture(self.m_Shader, self.m_TextureName, self.m_Element)
 					end

@@ -143,7 +143,7 @@ function HUDUI:drawLevelRect()
 
 	-- Background
 	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, screenHeight*0.035, tocolor(0, 0, 0, 120))
-	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, 5, Color.LightBlue)
+	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, 5, Color.Accent)
 
 	-- Joblevel
 	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0095), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
@@ -168,7 +168,7 @@ function HUDUI:drawTimeRect()
 	local left = screenWidth-0.25*screenWidth
 	-- Background
 	dxDrawRectangle(left, 0, 0.05*screenWidth, screenHeight*0.035, tocolor(0, 0, 0, 120))
-	dxDrawRectangle(left, 0, 0.05*screenWidth, 5, Color.LightBlue)
+	dxDrawRectangle(left, 0, 0.05*screenWidth, 5, Color.Accent)
 
 	local time =  string.format("%02d:%02d",getRealTime().hour,getRealTime().minute)
 	dxDrawText(time, left, screenHeight*0.007, left+0.05*screenWidth, nil, Color.White, 1.5, "arial", "center")
@@ -182,7 +182,7 @@ function HUDUI:drawVRP()
 
 	local munitionWindowActive = true
 
-	if NO_MUNITION_ITEMS[getPedWeapon(self:getLocalTarget())] then
+	if NO_MUNITION_WEAPONS[getPedWeapon(self:getLocalTarget())] then
 		munitionWindowActive = false
 	end
 
@@ -467,7 +467,7 @@ function HUDUI:drawChart()
 
 		--change colors based on setting
 		if core:get("HUD", "chartColorBlue", false) then
-			color = color ~= Color.Clear and Color.LightBlue or color
+			color = color ~= Color.Clear and Color.Accent or color
 			iconBgColor = iconBgColor ~= Color.Clear and Color.DarkLightBlue or iconBgColor
 		end
 
@@ -501,6 +501,7 @@ function HUDUI:drawChart()
 		oxygenColor = Color.changeAlphaRate(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 
+	drawCol(1, 0, Color.Clear, ("%02d.%02d.%04d"):format(getRealTime().monthday, getRealTime().month+1, getRealTime().year+1900), FontAwesomeSymbols.Calendar, Color.HUD_Brown_D, "date", not core:get("HUD", "chartDateVisible", false))
 	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0)
 	drawCol(1, armor, Color.HUD_Grey, dsc and math.ceil(armor).."% Schutzweste" or math.ceil(armor), FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
 	drawCol(1, oxygen, oxygenColor, dsc and math.ceil(oxygen).."% Atemluft" or math.ceil(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100)
@@ -547,8 +548,7 @@ function HUDUI:drawChart()
 end
 
 function HUDUI:drawRedDot()
-	local reddotSlots = {2, 3, 4, 5, 6, 7}
-	if reddotSlots[getPedWeaponSlot(self:getLocalTarget())] then
+	if getPedWeaponSlot(self:getLocalTarget()) >= 2 and getPedWeaponSlot(self:getLocalTarget()) <= 7 then
 		if getPedControlState(self:getLocalTarget(), "aim_weapon" ) then
 			local x1, y1, z1 = getPedWeaponMuzzlePosition(self:getLocalTarget())
 			local x2, y2, z2 = getPedTargetEnd(self:getLocalTarget())

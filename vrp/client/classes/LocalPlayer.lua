@@ -7,7 +7,8 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"
+,"onTryEnterExit"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -52,6 +53,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setCanBeKnockedOffBike", root, bind(self.serverSetCanBeKnockedOffBike, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
+	addEventHandler("onTryEnterExit", root, bind(self.Event_tryEnterExit, self)) 
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
@@ -281,6 +283,8 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
 				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
+			elseif localPlayer:getFaction():isEvilFaction() then
+				triggerServerEvent("factionEvilToggleDuty", localPlayer, true)
 			end
 		end
 
@@ -515,6 +519,9 @@ function LocalPlayer:toggleAFK(state, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 		self.m_AFKStartTime = getTickCount()
 		NoDm:getSingleton():checkNoDm()
+		setInteriorSoundsEnabled(false)
+
+		triggerServerEvent("onOnlineSlotMachineForceOut", localPlayer)
 	else
 		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
 		triggerServerEvent("toggleAFK", localPlayer, false)
@@ -523,7 +530,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self.m_AFKStartTime = 0
 		self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
 		NoDm:getSingleton():checkNoDm()
-
+		setInteriorSoundsEnabled(true)
 	end
 end
 
@@ -542,20 +549,21 @@ function LocalPlayer:renderPedNameTags()
 		if mortemTag then mortemTag = getElementData(ped,"NPC:namePed") or "Unbekannt" end
 
 		if nameTag or mortemTag then
-			x,y,z = getPedBonePosition(ped, 8)
-			if getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 then
+			x,y,z = getElementPosition(ped)
+			local dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz)
+			if dist <= 20 then
 				if isLineOfSightClear( Vector3(px, py, pz), Vector3(x, y, z), true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z+0.5)
+						x,y = getScreenFromWorldPosition(x,y,z+1)
 						if x and y then
 							if nameTag then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
-								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
-								dxDrawText(nameTag, x, y, nil, nil, tocolor(200, 200, 200, 255), 1, "default-bold", "center", "center")
+								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
+								dxDrawText(nameTag, x+1, y+1, nil, nil, tocolor(200, 200, 200, 255), 5/dist, "default-bold", "center", "center")
 							elseif mortemTag then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
-								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
-								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 1, "default-bold", "center", "center")
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 5/dist, "default-bold", "center", "center")
 							end
 						end
 					end
@@ -852,3 +860,19 @@ addEventHandler("showModCheck",localPlayer, function(tbl)
 		end
 	end)
 end)
+
+function LocalPlayer:deactivateBlur(bool)
+	if not bool then
+		setBlurLevel(0)
+	else
+		setBlurLevel(36)
+	end
+end
+
+function LocalPlayer:Event_tryEnterExit(object, name, icon)
+	if not self.m_LastEntrance or self.m_LastEntrance + 500 < getTickCount() then 
+		if self.m_Entrance and self.m_Entrance:isInstantiated() then self.m_Entrance:delete() end
+		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon)
+		self.m_LastEntrance = getTickCount()
+	end
+end

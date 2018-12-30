@@ -12,9 +12,7 @@ inherit(GUIColorable, GUIChanger)
 function GUIChanger:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height*.9))
-	GUIColorable.constructor(self, Color.White)
-
-	self.m_BackgroundColor = Color.LightBlue
+	GUIColorable.constructor(self, Color.White, Color.PrimaryNoClick)
 
 	self.m_Items = {}
 	self.m_CurrentItem = 1
@@ -73,7 +71,7 @@ end
 
 function GUIChanger:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.PrimaryNoClick)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self:getBackgroundColor())
 	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "center", "center")
 	dxSetBlendMode("blend")
 end
@@ -103,12 +101,6 @@ function GUIChanger:setSelectedItem(item)
 			self:setIndex(k)
 		end
 	end
-end
-
-function GUIChanger:setBackgroundColor(color)
-	self.m_BackgroundColor = color
-	self:anyChange()
-	return self
 end
 
 function GUIChanger:getSelectedItem()

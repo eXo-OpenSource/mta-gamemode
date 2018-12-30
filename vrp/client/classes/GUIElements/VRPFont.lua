@@ -32,25 +32,32 @@ local FontAwesomes = {}
 function FontAwesome(height)
 	local fontsize = math.floor(height/2)
 	if not FontAwesomes[fontsize] then
-		FontAwesomes[fontsize] = dxCreateFont("files/fonts/FontAwesome.otf", fontsize)
+		FontAwesomes[fontsize] = dxCreateFont("files/fonts/FontAwesome5.ttf", fontsize)
 	end
 
 	return FontAwesomes[fontsize]
 end
 
+--for new icons: https://fontawesome.com/icons?d=gallery&m=free -> search -> click on icon -> copy from subtitle (unicode glyph). name it after its original name in the table below
 FontAwesomeSymbols = {
 	Close = "",
 	Left = "",
+	ArrowsAlt = "",
 	Right = "",
-	LongRight = "",
-	LongLeft = "",
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
+	Tshirt = "",
+
+	Pointer = "",
+	DoubleDown = "",
+	Boxes = "",
+	Cube = "",
 	Book = "",
-	Back = "",
 	Player = "",
+	Play = "",
 	Group = "",
+	Dollar = "",
 	Money = "",
 	Info = "",
 	Question = "",
@@ -65,7 +72,7 @@ FontAwesomeSymbols = {
 	Save = "",
 	SoundOff = "",
 	SoundOn = "",
-	Mail = "",
+	Mail = "",
 	Gamepad = "",
 	Suitcase = "",
 	Minus = "",
@@ -74,14 +81,15 @@ FontAwesomeSymbols = {
 	Unlock = "",
 	Key = "",
 	Home = "",
-	SignOut = "",
+	Walking = "",
+	SignOut = "",
 	Star = "",
 	Wrench = "",
 	Cog = "",
 	Cogs = "",
 	List = "",
 	Bug = "",
-	Arrows = "",
+	Arrows = "",
 	Double_Up = "",
 	Double_Down = "",
 	Double_Left = "",
@@ -89,15 +97,15 @@ FontAwesomeSymbols = {
 	Music = "",
 	Random = "",
 	Handshake = "",
-	Building = "",
+	Building = "",
 	Medikit = "",
-	IDCard = "",
-	Document = "",
+	IDCard = "",
+	Table = "", --chart
 	Bomb = "",
 	Taxi = "",
 	Bolt = "",
-	Speedo = "",
-	Long_Down = "",
+	Video = "",
+	Long_Down = "",
 	Waypoint = "",
 	Lightbulb = "",
 	Cart_Plus = "",
@@ -107,7 +115,7 @@ FontAwesomeSymbols = {
 	Circle_O_Notch = "",
 	Circle = "",
 	Heart = "",
-	Shield = "",
+	Shield = "",
 	Comment = "",
 	Anchor = "",
 	Points = "",
@@ -117,21 +125,28 @@ FontAwesomeSymbols = {
 	Newspaper = "",
 	Advertisement = "",
 	Fire = "",
+	Map = "",
+	CommentDot = "",
 	File = "",
 	Clock = "",
 	Brush = "",
-	Pencil = "",
+	Pencil = "",
 	Erase = "",
 	Edit = "",
 	Ban = "",
 	Bell = "",
-	Accept = ""
+	Accept = "",
+	Hands= "",
+	UserLock = "",
+	Calendar = "",
+	Crosshair = "",
 }
 
 Fonts = {
 	EkMukta = "files/fonts/EkMukta.ttf",
 	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",
 	Digital = "files/fonts/digital-7.ttf",
+	JennaSue = "files/fonts/JennaSue.ttf",
 }
 
 local FontMario = {}
@@ -144,3 +159,19 @@ function FontMario256(height)
 	return FontMario[fontsize]
 end
 
+-- uncomment this to render a preview of all icons on the screen
+--[[
+addEventHandler("onClientRender", root, function()
+	local global_x = 0
+	local global_y = 0
+	for i, v in pairs(FontAwesomeSymbols) do
+		if global_x == 15 then
+			global_x = 0
+			global_y = global_y + 1
+		end
+		dxDrawText(v, 70+global_x*70, 300+global_y*40, 20, 20, Color.white, 1, 1, FontAwesome(20))
+		dxDrawText(i, 70+global_x*70, 300+global_y*40+20, 20, 20, Color.white, 1, 1)
+		global_x = global_x + 1
+	end
+end)
+]]

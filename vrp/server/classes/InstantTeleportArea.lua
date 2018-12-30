@@ -12,9 +12,22 @@ function InstantTeleportArea:constructor(col, int, dim, pos)
 end
 
 function InstantTeleportArea:Event_onColShapeHit( hE, bDim ) 
+    local hE = hE
     if bDim then 
-        setElementDimension(hE, self.m_DestinationDim)
-        setElementInterior(hE, self.m_DestinationInt)
+        if hE:getType() ~= "vehicle" or not hE:getTowingVehicle() then  
+            setElementDimension(hE, self.m_DestinationDim)
+            setElementInterior(hE, self.m_DestinationInt)
+        end
+        if hE:getType() == "vehicle" and hE:getTowedByVehicle() then
+            local veh = hE:getTowedByVehicle()
+            setElementDimension(veh, self.m_DestinationDim)
+            setElementInterior(veh, self.m_DestinationInt)
+            nextframe(function() 
+                detachTrailerFromVehicle(hE)
+                attachTrailerToVehicle(hE, veh) 
+            end)
+        end
+        if self.m_EnterEvent then self.m_EnterEvent(hE) end
         if self.m_Pos then 
             hE:setPosition(self.m_Pos)
         end
@@ -22,11 +35,33 @@ function InstantTeleportArea:Event_onColShapeHit( hE, bDim )
 end
 
 function InstantTeleportArea:Event_onColShapeLeave( hE, bDim )
+    local hE = hE
     if hE:getDimension() == self.m_DestinationDim and hE:getInterior() == self.m_DestinationInt then 
-        setElementDimension(hE, self.m_Colshape:getDimension())
-        setElementInterior(hE, self.m_Colshape:getInterior())
+        if hE:getType() ~= "vehicle" or not hE:getTowingVehicle() then
+            setElementDimension(hE, self.m_Colshape:getDimension())
+            setElementInterior(hE, self.m_Colshape:getInterior())
+        end
+        if hE:getType() == "vehicle" and hE:getTowedByVehicle() then
+            local veh = hE:getTowedByVehicle()
+            setElementDimension(veh, self.m_Colshape:getDimension())
+            setElementInterior(veh, self.m_Colshape:getInterior())
+            nextframe(function() 
+                detachTrailerFromVehicle(hE)
+                outputDebug(attachTrailerToVehicle(hE, veh)) 
+            end)
+        end
         if self.m_Pos then 
             hE:setPosition(self.m_Pos)
         end
+        if self.m_ExitEvent then self.m_ExitEvent(hE) end
     end
 end
+
+function InstantTeleportArea:addEnterEvent(event)
+	self.m_EnterEvent = event
+end
+
+function InstantTeleportArea:addExitEvent(event)
+	self.m_ExitEvent = event
+end
+

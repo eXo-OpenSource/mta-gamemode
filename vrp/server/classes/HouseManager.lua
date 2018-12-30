@@ -11,7 +11,7 @@ addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse"
 "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
 "tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
 "houseAdminRequestData", "houseAdminChangeInterior", "houseAdminFree",
-"houseRingDoor"
+"houseRingDoor", "houseRequestGUI"
 }
 
 local ROB_DELAY = DEBUG and 50 or 1000*60*15
@@ -47,7 +47,7 @@ function HouseManager:constructor()
 	addEventHandler("houseAdminRequestData", root, bind(self.requestAdminData,self))
 	addEventHandler("houseAdminChangeInterior", root, bind(self.changeInterior,self))
 	addEventHandler("houseAdminFree", root, bind(self.freeByAdmin,self))
-
+	addEventHandler("houseRequestGUI", root, bind(self.Event_requestGUI, self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
@@ -259,6 +259,14 @@ function HouseManager:loadBlips(player)
 	for index, rentHouse in pairs(self:getPlayerRentedHouses(player)) do
 		if rentHouse then
 			player:triggerEvent("addHouseBlip", rentHouse.m_Id, rentHouse.m_Pos.x, rentHouse.m_Pos.y)
+		end
+	end
+end
+
+function HouseManager:Event_requestGUI( )
+	if client.visitingHouse and client.lastHousePickup and isElement(client.lastHousePickup) then 
+		if Vector3(client:getPosition() - client.lastHousePickup:getPosition()):getLength() < 5 then 
+			self.m_Houses[client.visitingHouse]:showGUI(client)
 		end
 	end
 end

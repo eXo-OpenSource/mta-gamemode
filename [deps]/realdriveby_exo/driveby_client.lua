@@ -8,7 +8,7 @@ local bikes = { [581]=true,[509]=true,[481]=true,[462]=true,[521]=true,[463]=tru
 local driver = false
 local shooting = false
 local exitingvehicle = false
-local helpText, helpAnimation, block
+local block
 local lastSlot = 0
 local settings = {}
 local functions = {}
@@ -24,38 +24,11 @@ local function pedGotHit ( attacker, weapon, bodypart, loss )
 	end
 end
 
-
-local function helpTextChangeAlpha ( alpha )
-	helpText:color(255,255,255,alpha)
-end
-
-
-functions.fadeInHelp = function()
-	if helpAnimation then helpAnimation:remove() end
-	local _,_,_,a = helpText:color()
-	if a ~= 255 then
-		helpAnimation = Animation.createAndPlay(helpText, Animation.presets.dxTextFadeIn(300))
-		setTimer ( helpTextChangeAlpha, 300, 1, 255 )
-	end
-end
-
-
-functions.fadeOutHelp = function()
-	if helpAnimation then helpAnimation:remove() end
-	local _,_,_,a = helpText:color()
-	if a ~= 0 then
-		helpAnimation = Animation.createAndPlay(helpText, Animation.presets.dxTextFadeOut(300))
-		setTimer ( helpTextChangeAlpha, 300, 1, 0 )
-	end
-end
-
-
 functions.removeKeyToggles = function ( vehicle )
 	toggleControl ( "vehicle_look_left",true )
 	toggleControl ( "vehicle_look_right",true )
 	toggleControl ( "vehicle_secondary_fire",true )
 	functions.toggleTurningKeys(getElementModel(vehicle),true)
-	functions.fadeOutHelp()
 	removeEventHandler ( "onClientPlayerVehicleExit", localPlayer, functions.removeKeyToggles )
 end
 
@@ -143,9 +116,6 @@ functions.toggleDriveby = function()
 							if animation then
 								Animation:remove()
 							end
-							helpText:text( "Press '"..prevw.."' or '"..nextw.."' to change weapon" )
-							functions.fadeInHelp()
-							setTimer ( functions.fadeOutHelp, 10000, 1 )
 						end
 					end
 				end
@@ -157,7 +127,6 @@ functions.toggleDriveby = function()
 				toggleControl ( "vehicle_look_right",true )
 				toggleControl ( "vehicle_secondary_fire",true )
 				functions.toggleTurningKeys(vehicleID,true)
-				functions.fadeOutHelp()
 				triggerServerEvent ( "destroyPedForDrivebyFix", localPlayer )
 				removeEventHandler ( "onClientPlayerVehicleExit",localPlayer,functions.removeKeyToggles )
 			end
@@ -324,9 +293,6 @@ addEventHandler ( "onClientResourceStart", resourceRoot,
 		toggleControl ( "vehicle_next_weapon",false )
 		toggleControl ( "vehicle_previous_weapon",false )
 		triggerServerEvent ( "driveby_clientScriptLoaded", localPlayer )
-		helpText = dxText:create("",0.5,0.85)
-		helpText:scale(1)
-		helpText:type("stroke",1)
 	end
 )
 

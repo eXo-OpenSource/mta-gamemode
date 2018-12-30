@@ -10,8 +10,6 @@ inherit(Singleton, FuelTankGUI)
 addRemoteEvents{"showFuelTankGUI", "closeFuelTankGUI", "updateFuelTankGUI"}
 
 function FuelTankGUI:constructor(element, fuel, fuelTankSize)
-	addEventHandler("onElementDestroy", element, function () delete(self) end, false)
-
 	self.m_Fuel = fuel or 0
 	self.m_FuelTankSize = fuelTankSize or 0
 	self.m_FuelMultiplicator = self.m_FuelTankSize / 100

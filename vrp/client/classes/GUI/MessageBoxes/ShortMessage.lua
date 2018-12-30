@@ -70,7 +70,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	if true then
 		if minimapPos then
 			self.m_Texture = GUIMiniMap:new(4, (self.m_TitleHeight or 0) + 4, TEXTURE_SIZE_X - 8, TEXTURE_SIZE_Y - 8, self)
-			self.m_Texture:setPosition(minimapPos.x, minimapPos.y)
+			self.m_Texture:setMapPosition(minimapPos.x, minimapPos.y)
 			for i, v in pairs(minimapBlips or {}) do
 				self.m_Texture:addBlip(v.path, v.pos.x, v.pos.y)
 			end

@@ -8,17 +8,7 @@
 CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
-function CompanyManager:constructor()	
-	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_companies WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
-		sql:queryExec([[ALTER TABLE ??_companies ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
-
-		sql:queryExec([[
-			UPDATE ??_companies SET Name_Shorter = 'DS' WHERE Id = 1;
-			UPDATE ??_companies SET Name_Shorter = 'MT' WHERE Id = 2;
-			UPDATE ??_companies SET Name_Shorter = 'SN' WHERE Id = 3;
-			UPDATE ??_companies SET Name_Shorter = 'PT' WHERE Id = 4;
-		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
-	end
+function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
@@ -92,7 +82,7 @@ end
 function CompanyManager:sendInfosToClient(client)
 	local company = client:getCompany()
 
-	if company then --use triggerLatentEvent to improve serverside performance 
+	if company then --use triggerLatentEvent to improve serverside performance
         client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
 	else
 		client:triggerEvent("companyRetrieveInfo")
@@ -112,6 +102,7 @@ function CompanyManager:Event_companyQuit()
     company:addLog(client, "Unternehmen", "hat das Unternehmen verlassen!")
 
 	self:sendInfosToClient(client)
+	Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(client.m_Id)
 end
 
 function CompanyManager:Event_companyDeposit(amount)
@@ -207,6 +198,7 @@ function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, rea
     company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
 
 	self:sendInfosToClient(client)
+	Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 end
 
 function CompanyManager:Event_companyInvitationAccept(companyId)
@@ -225,6 +217,7 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, company:hasInvitation(client), company.m_Id, "company")
 
 			self:sendInfosToClient(client)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(client.m_Id)
 		else
 			client:sendError(_("Du bisd bereits in einem Unternehmen!", client))
 		end
@@ -279,6 +272,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 		else
 			client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, company:getPlayerRank(client)))
 		end
@@ -319,6 +313,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 		else
 			client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 		end
@@ -336,7 +331,7 @@ function CompanyManager:Event_companyRespawnVehicles()
 	end
 end
 
-function CompanyManager:Event_companySaveRank(rank,skinId,loan)
+function CompanyManager:Event_companySaveRank(rank,loan)
 	local company = client:getCompany()
 	if company then
         if tonumber(loan) > COMPANY_MAX_RANK_LOANS[rank] then
@@ -344,7 +339,6 @@ function CompanyManager:Event_companySaveRank(rank,skinId,loan)
 			return
 		end
         company:setRankLoan(rank,loan)
-        company:setRankSkin(rank,skinId)
 		company:save()
 		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
         company:addLog(client, "Unternehmen", "hat die Einstellungen für Rang "..rank.." geändert!")
@@ -366,7 +360,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 	if company then
 		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 or wasted then
 			if client:isCompanyDuty() then
-				client:setCorrectSkin()
+				client:setCorrectSkin(true)
 				client:setCompanyDuty(false)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
@@ -376,7 +370,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 					company:stop(client)
 				end
 			else
-				if client:getPublicSync("Faction:Duty") and client:getFaction() then
+				if client:isFactionDuty() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 					return false
 				end
@@ -445,6 +439,10 @@ function CompanyManager:Event_setPlayerDutySkin(skinId)
 	if not client:getCompany() then
 		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
 		return false
+	end
+	if not client:isCompanyDuty() then
+		client:sendError(_("Du bist nicht im Dienst deines Unternehmens aktiv!", client))
+		return
 	end
 	client:sendInfo(_("Kleidung gewechselt.", client))
 	client:getCompany():changeSkin(client, skinId)

@@ -52,6 +52,7 @@ local thisResource = getThisResource()
 local rootElement = getRootElement()
 local localPlayer = getLocalPlayer()
 local serverGravity = getGravity()
+local flyingPlayers = {}
 
 local function isPlayerFlying(player)
   local data = getElementData(player, "superman:flying") and isSupermanEnabled
@@ -64,6 +65,7 @@ local function setPlayerFlying(player, state)
 	state = true 
   else state = false
   end
+  flyingPlayers[player] = (state and true or nil)
   setElementData(player, "superman:flying", state)
 end
 
@@ -167,8 +169,12 @@ end
 function Superman_Stop()
   setGravity(serverGravity)
   -- Restore all players animations, collisions, etc
-  for player in iterateFlyingPlayers() do
-    Superman_restorePlayer(player)
+  for player in pairs(flyingPlayers) do
+    if not isElement(player) or getElementType(player) ~= "player" then
+      flyingPlayers[player] = nil
+    else
+      Superman_restorePlayer(player)
+    end
   end
 end
 
@@ -371,32 +377,36 @@ function Superman_processControls()
 end
 
 function Superman_processFlight()
-  for player in iterateFlyingPlayers() do
-    local Velocity = Vector3D:new(getElementVelocity(player))
-    local distanceToBase = getElementDistanceFromCentreOfMassToBaseOfModel(player)
-    local playerPos = Vector3D:new(getElementPosition(player))
-    playerPos.z = playerPos.z - distanceToBase
-
-    local distanceToGround
-    if playerPos.z > 0 then
-      local hit, hitX, hitY, hitZ, hitElement = processLineOfSight(playerPos.x, playerPos.y, playerPos.z,
-                                                                   playerPos.x, playerPos.y, playerPos.z - LANDING_DISTANCE - 1,
-                                                                   true, true, true, true, true, false, false, false)
-      if hit then distanceToGround = playerPos.z - hitZ end
-    end
-
-    if distanceToGround and distanceToGround < GROUND_ZERO_TOLERANCE then
-      Superman_restorePlayer(player)
-      if player == localPlayer then
-      	setGravity(serverGravity)
-        triggerServerEvent("superman:stop", getRootElement())
-      end
-    elseif distanceToGround and distanceToGround < LANDING_DISTANCE then
-      Superman_processLanding(player, Velocity, distanceToGround)
-    elseif Velocity:Module() < ZERO_TOLERANCE then
-      Superman_processIdleFlight(player)
+  for player in pairs(flyingPlayers) do
+    if not isElement(player) or getElementType(player) ~= "player" then
+      flyingPlayers[player] = nil
     else
-      Superman_processMovingFlight(player, Velocity)
+      local Velocity = Vector3D:new(getElementVelocity(player))
+      local distanceToBase = getElementDistanceFromCentreOfMassToBaseOfModel(player)
+      local playerPos = Vector3D:new(getElementPosition(player))
+      playerPos.z = playerPos.z - distanceToBase
+
+      local distanceToGround
+      if playerPos.z > 0 then
+        local hit, hitX, hitY, hitZ, hitElement = processLineOfSight(playerPos.x, playerPos.y, playerPos.z,
+                                                                    playerPos.x, playerPos.y, playerPos.z - LANDING_DISTANCE - 1,
+                                                                    true, true, true, true, true, false, false, false)
+        if hit then distanceToGround = playerPos.z - hitZ end
+      end
+
+      if distanceToGround and distanceToGround < GROUND_ZERO_TOLERANCE then
+        Superman_restorePlayer(player)
+        if player == localPlayer then
+          setGravity(serverGravity)
+          triggerServerEvent("superman:stop", getRootElement())
+        end
+      elseif distanceToGround and distanceToGround < LANDING_DISTANCE then
+        Superman_processLanding(player, Velocity, distanceToGround)
+      elseif Velocity:Module() < ZERO_TOLERANCE then
+        Superman_processIdleFlight(player)
+      else
+        Superman_processMovingFlight(player, Velocity)
+      end
     end
   end
 end

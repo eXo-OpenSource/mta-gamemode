@@ -6,14 +6,42 @@
 -- *
 -- ****************************************************************************
 Fishing = {}
-addRemoteEvents{"onFishingStart", "onFishingStop"}
+addRemoteEvents{"onFishingStart", "onFishingStop", "onFishingBadCatch", "onFishingUpdateEquipments"}
 
 function Fishing.load()
-	local ped = Ped.create(161, Vector3(396.63, -1893.72, 7.88), 150)
+	--LS
+	local ped = Ped.create(161, Vector3(393.03, -1905.04, 7.87), 0)
 
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
 	ped.SpeakBubble = SpeakBubble3D:new(ped, "Angler Lutz", "Verkaufe mir deinen Fang!")
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			FishingPedGUI:new()
+		end
+	)
+
+	--Bayside
+	local ped = Ped.create(161, Vector3(-2058.39, -2463.71, 31.18), 145)
+
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Angler Heinz", "Verkaufe mir deinen Fang!", 0, 1.3)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			FishingPedGUI:new()
+		end
+	)
+	--Tierra Robada
+	local ped = Ped.create(161, Vector3(-1353.93, 2056.65, 53.12), 270)
+
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Angler Bernd", "Verkaufe mir deinen Fang!", 0, 1.3)
 	setElementData(ped, "clickable", true)
 
 	ped:setData("onClickEvent",
@@ -42,3 +70,22 @@ function Fishing.stop()
 	toggleControl("previous_weapon", true)
 end
 addEventHandler("onFishingStop", root, Fishing.stop)
+
+function Fishing.BadCatch()
+	nextframe(
+		function()
+			if FishingRod:isInstantiated() then
+				FishingRod:getSingleton():reset()
+				FishingRod:getSingleton().Sound:play("caught")
+			end
+		end
+	)
+end
+addEventHandler("onFishingBadCatch", root, Fishing.BadCatch)
+
+function Fishing.updateEquipments(...)
+		if FishingRod:isInstantiated() then
+			FishingRod:getSingleton():updateEquipments(...)
+		end
+end
+addEventHandler("onFishingUpdateEquipments", root, Fishing.updateEquipments)

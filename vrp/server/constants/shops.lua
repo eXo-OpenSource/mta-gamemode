@@ -135,9 +135,9 @@ SHOP_TYPES = {
 		["Class"] = CJClothes
 	},
 	[19] = {
-		["Name"] = "Anglershop",
-		["Marker"] = Vector3(393.19, -1902.86, 6.95),
-		["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
+		["Name"] = "Angel- / Outdoor-Shop",
+		["Marker"] = "blip_position",
+		--["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop
 	},
@@ -174,17 +174,16 @@ SHOP_TYPES = {
 		["Ped"] = {205, Vector3(1472.5, -1675, 14.75), 200},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
-		["disabled"] = true--not EVENT_CHRISTMAS
+		["disabled"] = not (EVENT_CHRISTMAS and EVENT_CHRISTMAS_MARKET)
 	},
 	[25] = {
 		["Name"] = "Feuerwerks-Shop",
-		["Marker"] = Vector3(1485.77, -1792.85, 12.7),
-		["Ped"] = {32, Vector3(1485.78, -1794.96, 13.55), 0},
+		["Marker"] = Vector3(1455.08, -1744.07, 12.6),
+		["Ped"] = {32, Vector3(1452.87, -1745.18, 13.55), 300},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
 		["disabled"] = not FIREWORK_SHOP_ACTIVE
 	}
-
 }
 
 SHOP_ITEMS = {
@@ -192,6 +191,7 @@ SHOP_ITEMS = {
 		["Weed-Samen"] = 20,
 		["Kanne"] = 500,
 		["Apfelbaum-Samen"] = 40,
+		["Blumen-Samen"] = 80,
 	};
 	["24/7"] = {
 		["Radio"] = 2000,
@@ -230,12 +230,22 @@ SHOP_ITEMS = {
 		["Shot"] = 8,
 		["Cuba-Libre"] = 12
 	};
-	["Anglershop"] = {
-		["Angelrute"] = 150,
+	["Angel- / Outdoor-Shop"] = {
+		["Fischlexikon"] = 12500,
+		["Bambusstange"] = 150,
+		["Angelrute"] = 15000,
+		["Profi Angelrute"] = 40000,
+		["Legendäre Angelrute"] = 120000,
 		["Kleine Kühltasche"] = 50,
 		["Kühltasche"] = 100,
 		["Kühlbox"] = 250,
-		--["Köder"] = 5,
+		["Motorcross-Helm"] = 2000,
+		["Radio"] = 1700,
+		["Köder"] = 5,
+		["Leuchtköder"] = 40,
+		["Pilkerköder"] = 40,
+		["Schwimmer"] = 7500,
+		["Spinner"] = 5000,
 	};
 	["Halloween Shop"] = {
 		["Kuheuter mit Pommes"] = 25,
@@ -255,6 +265,42 @@ SHOP_ITEMS = {
 		["Römische Kerzen Batterie"] = 250,
 		["Kugelbombe"] = 100,
 		["Böller"] = 50,
+	}
+}
+
+SHOP_ITEM_WEAPONS = {
+	["Angel- / Outdoor-Shop"] = {
+		--[weapon id] = price
+		[2] = 500, -- Golfschläger
+		[46] = 750, -- Fallschirm
+	};
+	["24/7"] = {
+		[43] = 250, -- Kamera mit einem Film
+	};
+}
+
+SHOP_ITEM_SORT = {
+	["Angel- / Outdoor-Shop"] = {
+		{"Fischlexikon"},
+		{true, "Angelruten"}, --GridListItemNoClick
+		{"Bambusstange"},
+		{"Angelrute"},
+		{"Profi Angelrute"},
+		{"Legendäre Angelrute"},
+		{true, "Kühltaschen"}, --GridListItemNoClick
+		{"Kleine Kühltasche"},
+		{"Kühltasche"},
+		{"Kühlbox"},
+		{true, "Köder"},--GridListItemNoClick
+		{"Köder"},
+		{"Leuchtköder"},
+		{"Pilkerköder"},
+		{true, "Zubehör"}, --GridListItemNoClick
+		{"Schwimmer"},
+		{"Spinner"},
+		{true, "Outdoor"}, --GridListItemNoClick
+		{"Motorcross-Helm"},
+		{"Radio"},
 	}
 }
 
@@ -325,7 +371,7 @@ ROBABLE_SHOP_STATE_TARGETS = {
 ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(2862.30, -1439.80, 9), -- east beach
 	Vector3(1955.00, -1095.44, 24.3), -- glen park
-	Vector3(432.80, -1749.60, 7.5), -- santa maria beach 
+	Vector3(432.80, -1749.60, 7.5), -- santa maria beach
 	Vector3(1225.90, -2346.14, 11.90), -- ls airport pond
 	Vector3(797.73, -611.71, 15.34), -- dillimore camp
 	Vector3(-2737.16, 132.01, 3.39), -- ocean flats garages

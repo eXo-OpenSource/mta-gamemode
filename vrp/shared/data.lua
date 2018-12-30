@@ -400,5 +400,7 @@ VEHICLE_UPGRADE_PRICES = {
 	["CustomHorn"] = 15000,
 	["Neon"] = 25000,
 	["NeonColor"] = 0,
+	["Variant1"] = 2500,
+	["Variant2"] = 2500,
 
 }

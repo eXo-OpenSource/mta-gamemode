@@ -180,6 +180,7 @@ function Phone:openApp(app)
 	-- Show phone if not shown already
 	if not self:isVisible() then
 		self:open()
+		showCursor(false)
 	end
 	self.m_CurrentApp = app
 

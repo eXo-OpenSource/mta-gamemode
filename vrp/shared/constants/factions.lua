@@ -1,5 +1,5 @@
 VEHICLE_BOX_LOAD = {}
-VEHICLE_BOX_LOAD[543] = {["count"]= 1,	[1] = Vector3(0, -1.2, 0)}
+VEHICLE_BOX_LOAD[543] = {["count"]= 2, [1] = Vector3(0, -1.9, -0.2), [2] = Vector3(0, -1.1, -0.2)}
 VEHICLE_BOX_LOAD[427] = {["count"]= 2,	[1] = Vector3(0, -1.5, -0.2), [2] = Vector3(0, -3, -0.2)}
 
 FACTION_TRUNK_MAX_ITEMS = {
@@ -7,12 +7,32 @@ FACTION_TRUNK_MAX_ITEMS = {
 	["Nagel-Band"] = 3,
 	["Blitzer"] = 3,
 	["Warnkegel"] = 10,
+	["SLAM"] = 2,
+	["Gasmaske"] = 10,
+	["Rauchgranate"] = 10,
+	["DefuseKit"] = 10,
+}
+
+FACTION_TRUNK_SWAT_ITEMS = 
+{
+	["SLAM"] = true,
+	["Gasmaske"] = true,
+	["Rauchgranate"] = true,
+	["DefuseKit"] = true,
+}
+
+FACTION_TRUNK_SWAT_ITEM_PERMISSIONS = 
+{
+	["SLAM"] = {3, 3}, --// rank,faction
+	["Gasmaske"] = {0},
+	["Rauchgranate"] = {3},
+	["DefuseKit"] = {0},
 }
 
 VEHICLE_BAG_LOAD = {}
 VEHICLE_BAG_LOAD[428] = {["count"]= 5, [1] = Vector3(0, -1.2, 0), [2] = Vector3(0, -1.2, 0), [3] = Vector3(0, -1.2, 0), [4] = Vector3(0, -1.2, 0), [5] = Vector3(0, -1.2, 0)}
 VEHICLE_BAG_LOAD[427] = {["count"]= 2, [1] = Vector3(0, -1.5, -0.2), [2] = Vector3(0, -3, -0.2)}
-VEHICLE_BAG_LOAD[543] = {["count"]= 1, [1] = Vector3(0, -1.5, -0.2)}
+VEHICLE_BAG_LOAD[543] = {["count"]= 2, [1] = Vector3(0, -1.9, -0.2), [2] = Vector3(0, -1.1, -0.2)}
 
 FACTION_FBI_BUGS = 5
 

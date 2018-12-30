@@ -75,7 +75,7 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 				if element:getOccupant() then
 					local player = element:getOccupant()
 
-					if player:isFactionDuty() then return end
+					if player:getFaction() and (player:getFaction():isStateFaction() or player:getFaction():isRescueFaction()) and player:isFactionDuty() then return end
 
 					local speed = math.floor(element:getSpeed())
 					local costs = (speed-80)*COST_FACTOR

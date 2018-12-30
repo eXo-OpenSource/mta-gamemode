@@ -178,7 +178,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 			return false
 		end
 	else
-		if not client:transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
+		if not client:transferBankMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
 			client:sendError(_("Du hast nicht genügend Geld! (500$)", client))
 			return false
 		end
@@ -208,16 +208,28 @@ function MechanicTow:onEnterTowLot(hitElement)
 
 	local towingBike = hitElement.vehicle:getData("towingBike")
 	if isElement(towingBike) then
-		towingBike:toggleRespawn(true)
-		towingBike:setCollisionsEnabled(true)
-		towingBike:detach()
-		self:respawnVehicle(towingBike)
 
-		towingBike:setData("towedByVehicle", nil, true)
-		hitElement.vehicle:setData("towingBike", nil, true)
+		if towingBike.burned then
+			if towingBike.Blip then
+				towingBike.Blip:delete()
+			end
+			self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s)  abgeschleppt!"):format(towingBike:getName()))
+			towingBike:destroy()
+			hitElement:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", hitElement))
+			self.m_BankAccountServer:transferMoney(hitElement, 200, "Fahrzeug-Wrack", "Company", "Towed")
+		else
 
-		StatisticsLogger:getSingleton():vehicleTowLogs(hitElement, towingBike)
-		self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(towingBike:getName(), getElementData(towingBike, "OwnerName") or "Unbekannt"))
+			towingBike:toggleRespawn(true)
+			towingBike:setCollisionsEnabled(true)
+			towingBike:detach()
+			self:respawnVehicle(towingBike)
+
+			towingBike:setData("towedByVehicle", nil, true)
+			hitElement.vehicle:setData("towingBike", nil, true)
+
+			StatisticsLogger:getSingleton():vehicleTowLogs(hitElement, towingBike)
+			self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(towingBike:getName(), getElementData(towingBike, "OwnerName") or "Unbekannt"))
+		end
 	else
 		hitElement.vehicle:setData("towingBike", nil, true)
 	end
@@ -279,6 +291,7 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 					if source.Blip then
 						source.Blip:delete()
 					end
+					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s) abgeschleppt!"):format(source:getName()))
 					source:destroy()
 					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
 					self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
@@ -382,32 +395,36 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
 	local fuelTank = player:getPrivateSync("hasMechanicFuelNozzle")
-	local fuelTrailerId = fuelTank:getModel()
+	if fuelTank then
+		local fuelTrailerId = fuelTank:getModel()
 
-	if (fuelTrailerId == 611 and fuel > fuelTank:getFuel() * 5) or (fuelTrailerId == 584 and fuel > fuelTank:getFuel() * 15) then
-		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
-		return
-	end
-
-	if target:getMoney() >= price then
-		target:transferMoney(self.m_BankAccountServer, price, "Mech&Tow tanken", "Company", "Refill")
-		vehicle:setFuel(vehicle:getFuel() + fuel)
-
-		self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
-		self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
-
-		local fuelDiff
-		if fuelTrailerId == 611 then
-			fuelDiff = fuel / 5
-		elseif fuelTrailerId == 584 then
-			fuelDiff = fuel / 15
+		if (fuelTrailerId == 611 and fuel > fuelTank:getFuel() * 5) or (fuelTrailerId == 584 and fuel > fuelTank:getFuel() * 15) then
+			player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
+			return
 		end
 
-		fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
-		player:triggerEvent("updateFuelTankGUI", math.floor(fuelTank:getFuel()))
+		if target:getMoney() >= price then
+			target:transferMoney(self.m_BankAccountServer, price, "Mech&Tow tanken", "Company", "Refill")
+			vehicle:setFuel(vehicle:getFuel() + fuel)
+
+			self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
+			self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
+
+			local fuelDiff
+			if fuelTrailerId == 611 then
+				fuelDiff = fuel / 5
+			elseif fuelTrailerId == 584 then
+				fuelDiff = fuel / 15
+			end
+
+			fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
+			player:triggerEvent("updateFuelTankGUI", math.floor(fuelTank:getFuel()))
+		else
+			target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
+			player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
+		end
 	else
-		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
-		player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
+		player:sendError(_("Der Tankanhänger wurde nicht mehr erkannt, bitte Tankvorgang wiederholen!", player))
 	end
 end
 
@@ -423,7 +440,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 	if client.vehicle:getData("towingBike") then return end
 
 	if vehicle and vehicle:isEmpty() then
-		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or source.burned then
+		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or vehicle.burned then
 			vehicle:toggleRespawn(false)
 			client.vehicle:setData("towingBike", vehicle, true)
 			vehicle:setData("towedByVehicle", client.vehicle, true)

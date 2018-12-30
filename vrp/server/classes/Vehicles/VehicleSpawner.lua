@@ -8,6 +8,21 @@
 VehicleSpawner = inherit(Object)
 VehicleSpawner.Map = {}
 
+addEvent("onTryVehicleSpawner", true)
+addEventHandler("onTryVehicleSpawner", root, function() 
+
+	if client.m_LastVehicleSpawner then 
+		local index = table.find(VehicleSpawner.Map, client.m_LastVehicleSpawner)
+		if index then
+			local mx, my, mz = getElementPosition(client.m_LastVehicleSpawner.m_Marker)
+			local px, py, pz = getElementPosition(client)
+			if getDistanceBetweenPoints3D(mx, my, mz, px, py, pz) < 3 then
+				client.m_LastVehicleSpawner:markerHit(client, client.m_LastVehicleSpawner.m_Marker:getDimension() == client:getDimension())	
+			end
+		end
+	end
+end)
+
 function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionFunc, postSpawnFunc)
 	VehicleSpawner.Map[#VehicleSpawner.Map + 1] = self
 	self.m_Id = #VehicleSpawner.Map
@@ -27,7 +42,15 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 	self.m_PostSpawnFunc = postSpawnFunc
 
 	self.m_Marker = createMarker(x, y, z, "cylinder", 1.2, 255, 0, 0)
-	addEventHandler("onMarkerHit", self.m_Marker, bind(self.markerHit, self))
+	ElementInfo:new(self.m_Marker, "Ausgang", 1.2, "Car", true)
+	--bind(self.markerHit, self)
+	
+	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement)
+		if hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() and hitElement:getType() == "player" and not hitElement.vehicle then 
+			hitElement.m_LastVehicleSpawner = self
+			hitElement:triggerEvent("onTryEnterExit", self.m_Marker, "Fahrzeuge", "files/images/Other/info.png") 
+		end
+	end)
 end
 
 function VehicleSpawner:markerHit(hitElement, matchingDimension)
@@ -135,7 +158,7 @@ function VehicleSpawner:initializeAll()
 		player:transferMoney({CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT), nil, true}, 200, "Fahrzeugverleih", "Gameplay", "VehicleRent")
 	end
 
-	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
-	VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
+	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- city hall
+	VehicleSpawner:new(1417.75, -1659.78, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- driving school
 	VehicleSpawner:new(1182.59, -1331.99, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
 end

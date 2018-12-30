@@ -1,14 +1,8 @@
 
 Atrium = inherit(Singleton)
 function Atrium:constructor()
-    --[[
-        1654.06, -1654.98, 22.52
-        Rotation: -0.00, 0.00, 173.55
-        Position: 1659.50, -1641.74, 83.78
-        Rotation: -0.00, 0.00, 358.54
-    ]]
-    local elevator = Elevator:new()
-    elevator:addStation("Heliport", Vector3(1659.50, -1641.74, 83.78))
-    elevator:addStation("Terrasse", Vector3(1654.06, -1654.98, 22.52), 180)
-
+    --parkdeck
+    InteriorEnterExit:constructor(Vector3(1699.02, -1667.94, 20.19), Vector3(1701.11, -1667.85, 20.23), 270, 90, 1, 1)
+    --terrasse
+    InteriorEnterExit:constructor(Vector3(1726.99, -1636.20, 20.22), Vector3(1726.89, -1638.65, 20.23), 180, 0, 1, 1)
 end

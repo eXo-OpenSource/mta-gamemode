@@ -15,8 +15,7 @@ function QuestDraw:constructor(id)
 	self.m_AcceptImageBind = bind(self.acceptImage, self)
 	self.m_DeclineImageBind = bind(self.declineImage, self)
 	self.m_PictureSavedImageBind = bind(self.savedImage, self)
-
-
+	self.m_NoScreenshotAllowedBind = bind(self.noScreenShot, self)
 
 	addCommandHandler("drawquest", function(player)
 		if player:getRank() >= RANK.Moderator then
@@ -24,11 +23,12 @@ function QuestDraw:constructor(id)
 		end
 	end)
 
-	addRemoteEvents{"questDrawRequestPlayers", "questDrawReceiveAcceptImage", "questDrawReceiveDeclineImage", "questDrawPictureSaved"}
+	addRemoteEvents{"questDrawRequestPlayers", "questDrawReceiveAcceptImage", "questDrawReceiveDeclineImage", "questDrawPictureSaved", "questDrawNoScreenshotAllowed"}
 	addEventHandler("questDrawRequestPlayers", root, self.m_RequestPlayersBind)
 	addEventHandler("questDrawReceiveAcceptImage", root, self.m_AcceptImageBind)
 	addEventHandler("questDrawReceiveDeclineImage", root, self.m_DeclineImageBind)
 	addEventHandler("questDrawPictureSaved", root, self.m_PictureSavedImageBind)
+	addEventHandler("questDrawNoScreenshotAllowed", root, self.m_NoScreenshotAllowedBind)
 
 end
 
@@ -39,6 +39,7 @@ function QuestDraw:destructor(id)
 	removeEventHandler("questDrawReceiveAcceptImage", root, self.m_AcceptImageBind)
 	removeEventHandler("questDrawReceiveDeclineImage", root, self.m_DeclineImageBind)
 	removeEventHandler("questDrawPictureSaved", root, self.m_PictureSavedImageBind)
+	removeEventHandler("questDrawNoScreenshotAllowed", root, self.m_NoScreenshotAllowedBind)
 
 end
 
@@ -74,11 +75,11 @@ end
 function QuestDraw:sendToClient(player)
 	local contestName = self.m_Name
 	local players = {}
-	local result = sql:queryFetch("SELECT Id, UserId FROM ??_drawContest WHERE Contest = ? AND (Accepted IS NULL OR Accepted = 0)", sql:getPrefix(), contestName)
+	local result = sql:queryFetch("SELECT Id, UserId, ImageUrl FROM ??_drawContest WHERE Contest = ? AND (Accepted IS NULL OR Accepted = 0)", sql:getPrefix(), contestName)
     if not result then return end
 
 	for i, row in pairs(result) do
-		players[row.UserId] = {drawId = row.Id, name = Account.getNameFromId(row.UserId)}
+		players[row.UserId] = {drawId = row.Id, name = Account.getNameFromId(row.UserId), url = row.ImageUrl}
 	end
 
 	player:triggerEvent("questDrawReceivePlayers", contestName, players)
@@ -92,7 +93,7 @@ function QuestDraw:acceptImage(drawId)
 	local contestName = self.m_Name
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
-	sql:queryExec("UPDATE ??_drawContest SET Accepted = 1 WHERE Id = ?", sql:getPrefix(), drawId)
+	sql:queryExec("UPDATE ??_drawContest SET Accepted = 1 AND Hidden = 0 WHERE Id = ?", sql:getPrefix(), drawId)
 	client:sendSuccess("Du hast die Zeichnung erfolgreich akzeptiert!")
 	self:sendToClient(client)
 end
@@ -112,5 +113,10 @@ end
 
 function QuestDraw:savedImage()
 	client:sendShortMessage("Deine Zeichnung muss bestätigt werden!\nKomm später wieder und starte nochmal den Quest!")
+	self:removePlayer(client)
+end
+
+function QuestDraw:noScreenShot()
+	client:sendError("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um den Quest zu machen!")
 	self:removePlayer(client)
 end

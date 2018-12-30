@@ -28,10 +28,9 @@ function PickupWeapon:pickup( player )
 		if ((player:getPlayTime() / 60) >=  3) or self.m_IgnoreHoursPlayed then
 			if not ( player:isFactionDuty() and player:getFaction():isStateFaction()) then
 				giveWeapon(player, self.m_WeaponID, self.m_Ammo, true)
-				outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
+				client:sendSuccess(_("Du hast die Waffe erhalten!", client))
 			else
 				FactionState:getSingleton():addWeaponToEvidence( player, self.m_WeaponID, self.m_Ammo, self.m_OwnerFaction or "Keine")
-				outputChatBox("Du hast die Waffe konfesziert! Sie wird in die Asservatenkammer reingelegt.", player, 200,200,0)
 			end
 			player:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 			setPedAnimation( player, PICKUP_ANIMATION_BLOCK, PICKUP_ANIMATION_NAME, 500, false, false, false)

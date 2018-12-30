@@ -21,12 +21,12 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 
 	self.m_SoundUrl = ""
 
-	if self.m_Marker then
-		self.m_SoundCol = createColSphere(self.m_Marker:getPosition(), 50)
-		self.m_SoundCol:setDimension(self.m_Dimension)
-		self.m_SoundCol:setInterior(self.m_Interior)
-		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
-	end
+	--if self.m_Marker then
+		--self.m_SoundCol = createColSphere(self.m_Marker:getPosition(), 50)
+		--self.m_SoundCol:setDimension(self.m_Dimension)
+		--self.m_SoundCol:setInterior(self.m_Interior)
+		--addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
+	--end
 
 	if self.m_Ped then
 		self.m_Ped:setData("clickable",true,true)

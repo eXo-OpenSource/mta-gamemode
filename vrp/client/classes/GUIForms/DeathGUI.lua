@@ -5,7 +5,7 @@ inherit(Singleton, DeathGUI)
 function DeathGUI:constructor(time, callback)
 	GUIForm.constructor(self, screenWidth-500, screenHeight-210, 450, 200, false)
 	GUIRectangle:new(0,0, self.m_Width, self.m_Height, tocolor(0,0,0,125), self)
-	GUILabel:new(0, 0, self.m_Width-10, 80, _"eXo-Krankenhaus", self):setAlignX("right"):setColor(Color.LightBlue)
+	GUILabel:new(0, 0, self.m_Width-10, 80, _"eXo-Krankenhaus", self):setAlignX("right"):setColor(Color.Accent)
 	self.m_Seconds = time/1000
 	self.m_Timer = setTimer(bind(self.decreaseSeconds, self), 1000, 0)
 	self.m_CountdownLabel = GUILabel:new(0, 80, self.m_Width-10, 50, _("%d Sekunden", self.m_Seconds), self):setAlignX("right")

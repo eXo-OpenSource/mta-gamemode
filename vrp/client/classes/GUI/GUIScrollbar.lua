@@ -17,9 +17,8 @@ function GUIScrollbar:virtual_constructor(posX, posY, width, height, parent, scr
 	checkArgs("GUIScrollbar:virtual_constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, Color.LightBlue)
+	GUIColorable.constructor(self, Color.Background)
 
-	self.m_Color = tocolor(0, 0, 0, 200)
 	self.m_ScrollPosition = 0
 	self.m_Scrolling = false
 	self.m_ScrollerSize = scrollerSize or 50

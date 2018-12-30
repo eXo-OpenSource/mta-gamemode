@@ -15,92 +15,92 @@ local GPSUpdateStep = 0
 addRemoteEvents{"receiveJailPlayers", "receiveBugs"}
 
 function PolicePanel:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	GUIWindow.updateGrid(true)			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 16) 	-- width of the window
+	self.m_Height = grid("y", 11) 	-- height of the window
 
-	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Polizeicomputer", true, false, self)
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Spieler", "Knast", "Wanzen", "Wantedregeln"}) 
+	self.m_TabPanel:updateGrid() 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
-	self.m_CloseButton.onLeftClick = function() self:close() end
+	--
+	-- Allgemein
+	--
+	
+	self.m_PlayersGrid = GUIGridGridList:new(1, 1, 9, 9, self.m_Tabs[1])
+	self.m_PlayersGrid:addColumn(_"W", 0.05)
+	self.m_PlayersGrid:addColumn(_"Name", 0.4)
+	self.m_PlayersGrid:addColumn(_"Fraktion", 0.2)
+	self.m_PlayersGrid:addColumn(_"Firma/Gang", 0.3)
 
-	self.m_TabSpieler = self.m_TabPanel:addTab(_"Spieler")
+	GUIGridLabel:new(10, 1, 6, 1, _"Spielerinformationen", self.m_Tabs[1]):setHeader("sub")	
+	self.m_InfoTextLabel =	GUIGridLabel:new(10, 2, 4, 6, _"", self.m_Tabs[1]):setAlign("left", "top")		
+	self.m_InfoDataLabel =	GUIGridLabel:new(12, 2, 4, 6, _"", self.m_Tabs[1]):setAlign("right", "top")		
 
-	self.m_PlayersGrid = GUIGridList:new(10, 10, 300, 370, self.m_TabSpieler)
-	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
-	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
-
-	--self.m_FactionLogo = GUIWebView:new(360, 10, 100, 135, INGAME_WEB_PATH .. "/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
-
-	--self.m_Skin = GUIWebView:new(490, 10, 100, 220, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
-
-	self.m_PlayerNameLabel = 	GUILabel:new(320, 50, 180, 20, _"Spieler: -", self.m_TabSpieler)
-	self.m_PlayerFactionLabel = GUILabel:new(320, 75, 180, 20, _"Fraktion: -", self.m_TabSpieler)
-	self.m_PlayerCompanyLabel = GUILabel:new(320, 100, 180, 20, _"Unternehmen: -", self.m_TabSpieler)
-	self.m_PlayerGroupLabel = 	GUILabel:new(320, 125, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
-	self.m_PhoneStatus = 		GUILabel:new(320, 150, 180, 20, _"Handy: -", self.m_TabSpieler)
-	self.m_STVODriving = 		GUILabel:new(320, 175, 180, 20, _"STVO-Auto: -", self.m_TabSpieler)
-	self.m_STVOBike = 			GUILabel:new(320, 200, 180, 20, _"STVO-Motorrad: -", self.m_TabSpieler)
-	self.m_STVOTruck = 			GUILabel:new(320, 225, 180, 20, _"STVO-Lastkraftwagen: -", self.m_TabSpieler)
-	self.m_STVOPilot = 			GUILabel:new(320, 250, 180, 20, _"STVO-Pilot: -", self.m_TabSpieler)
-
-	self.m_GPS = GUICheckbox:new(490, 275, 100, 20, "GPS", self.m_TabSpieler)
-	self.m_GPS:setChecked(GPSEnabled)
-	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
-
-	self.m_RefreshBtn = GUIButton:new(280, 390, 30, 30, FontAwesomeSymbols.Refresh, self.m_TabSpieler):setFont(FontAwesome(20)):setFontSize(1)
+	self.m_RefreshBtn = GUIGridIconButton:new(9, 10, FontAwesomeSymbols.Refresh, self.m_Tabs[1])
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
 
-	self.m_PlayerSearch = GUIEdit:new(10, 390, 260, 30, self.m_TabSpieler)
+	self.m_WantedFilter = GUIGridCheckbox:new(1, 10, 1, 1, _"W", self.m_Tabs[1])
+	self.m_WantedFilter.onChange = function() self:loadPlayers() end
+	self.m_FactionFilter = GUIGridCheckbox:new(2, 10, 1, 1, _"F", self.m_Tabs[1])
+	self.m_FactionFilter.onChange = function() self:loadPlayers() end
+	self.m_GangFilter = GUIGridCheckbox:new(3, 10, 1, 1, _"G", self.m_Tabs[1])
+	self.m_GangFilter.onChange = function() self:loadPlayers() end
+
+	self.m_PlayerSearch = GUIGridEdit:new(4, 10, 5, 1, self.m_Tabs[1])
 	self.m_PlayerSearch.onChange = function () self:loadPlayers() end
-
-	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 125, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green):setFontSize(1)
-	self.m_LocatePlayerBtn:setFont(VRPFont(20))
-	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
-
-	self.m_StopLocateBtn = GUIButton:new(450, 305, 125, 30, "Ortung beenden", self.m_TabSpieler):setBackgroundColor(Color.Orange):setFontSize(1)
-	self.m_StopLocateBtn:setFont(VRPFont(20))
-	self.m_StopLocateBtn.onLeftClick = function() self:stopLocating() end
-
-	self.m_AddWantedsBtn = GUIButton:new(320, 340, 125, 30, "Wanteds geben", self.m_TabSpieler):setFontSize(1)
-	self.m_AddWantedsBtn:setFont(VRPFont(20))
+	
+	self.m_LocatePlayerBtn = GUIGridButton:new(10, 8, 4, 1, ElementLocateBlip and _"Orten beenden" or _"Orten", self.m_Tabs[1]) 
+	self.m_LocatePlayerBtn.onLeftClick = function()
+		if ElementLocateBlip then 
+			self:stopLocating()
+		else
+			self:locatePlayer()
+		end
+		self:checkLocateButtons(self.m_PlayersGrid:getSelectedItem() and true or false)
+	end
+	
+	self.m_GPS = GUIGridCheckbox:new(14, 8, 2, 1, _"Navi", self.m_Tabs[1])
+	self.m_GPS:setChecked(GPSEnabled)
+	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
+	
+	self.m_AddWantedsBtn = GUIGridButton:new(10, 9, 4, 1, _"Wanteds geben", self.m_Tabs[1]) 
 	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
-
-	self.m_DeleteWantedsBtn = GUIButton:new(450, 340, 125, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red):setFontSize(1)
-	self.m_DeleteWantedsBtn:setFont(VRPFont(20))
+	
+	self.m_DeleteWantedsBtn = GUIGridButton:new(14, 9, 2, 1, _"Löschen", self.m_Tabs[1]):setBackgroundColor(Color.Red)
 	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
 		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
 	end
-
-	self.m_AddSTVOBtn = GUIButton:new(320, 375, 125, 30, "STVO-Punkte geben", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
-	self.m_AddSTVOBtn:setFont(VRPFont(20))
+	
+	
+	self.m_AddSTVOBtn = GUIGridButton:new(10, 10, 4, 1, _"STVO-Punkte geben", self.m_Tabs[1]) 
 	self.m_AddSTVOBtn.onLeftClick = function() self:giveSTVO("give") end
-	self.m_SetSTVOBtn = GUIButton:new(450, 375, 125, 30, "STVO-Punkte setzen", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
-	self.m_SetSTVOBtn:setFont(VRPFont(20))
+	
+	self.m_SetSTVOBtn = GUIGridButton:new(14, 10, 2, 1, _"Setzen", self.m_Tabs[1]) 
 	self.m_SetSTVOBtn.onLeftClick = function() self:giveSTVO("set") end
+	
+	self.m_PlayerFuncElements = { -- locate is in a different function
+		self.m_GPS, self.m_AddWantedsBtn, self.m_DeleteWantedsBtn, self.m_AddSTVOBtn, self.m_SetSTVOBtn
+	}
+	--
+	-- Knast 
+	--
 
-	self.m_TabJail = self.m_TabPanel:addTab(_"Knast")
-
-	self.m_JailPlayersGrid = GUIGridList:new(10, 10, 300, 370, self.m_TabJail)
-	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.5)
-	self.m_JailPlayersGrid:addColumn(_"Knastzeit", 0.3)
-
-	--self.m_FactionLogo2 = GUIWebView:new(360, 10, 100, 135, INGAME_WEB_PATH .. "/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
-
-	--self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
-
-	self.m_JailPlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabJail)
-	self.m_JailPlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabJail)
-	self.m_JailPlayerCompanyLabel = GUILabel:new(320, 200, 180, 20, _"Unternehmen: -", self.m_TabJail)
-	self.m_JailPlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabJail)
-	self.m_JailPhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabJail)
-
-	self.m_JailRefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabJail):setBackgroundColor(Color.LightBlue)
+	self.m_JailPlayersGrid = GUIGridGridList:new(1, 1, 15, 9, self.m_Tabs[2])
+	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.3)
+	self.m_JailPlayersGrid:addColumn(_"Zeit", 0.2)
+	self.m_JailPlayersGrid:addColumn(_"Fraktion", 0.2)
+	self.m_JailPlayersGrid:addColumn(_"Gang", 0.2)
+	
+	self.m_JailRefreshBtn = GUIGridIconButton:new(15, 1, FontAwesomeSymbols.Refresh, self.m_Tabs[2])
 	self.m_JailRefreshBtn.onLeftClick = function()
 		triggerServerEvent("factionStateLoadJailPlayers", root)
 	end
 
-	self.m_FreePlayerBtn = GUIButton:new(320, 305, 250, 30, "Spieler frei lassen", self.m_TabJail):setBackgroundColor(Color.Green)
+	self.m_FreePlayerBtn = GUIGridButton:new(1, 10, 4, 1, _"Freilassen", self.m_Tabs[2]):setBackgroundColor(Color.Green):setBarEnabled(false) 
 	self.m_FreePlayerBtn.onLeftClick = function()
 		if self.m_JailSelectedPlayer and isElement(self.m_JailSelectedPlayer) then
 			QuestionBox:new(
@@ -113,93 +113,149 @@ function PolicePanel:constructor()
 			ErrorBox:new(_"Der Spieler ist nicht mehr online!")
 		end
 	end
-
-	self:loadPlayers()
-
-
-	self.m_TabBugs = self.m_TabPanel:addTab(_"Wanzen")
-	self.m_BugsGrid = GUIGridList:new(10, 10, 150, 370, self.m_TabBugs)
-	self.m_BugsGrid:addColumn(_"Wanze", 0.5)
-	self.m_BugsGrid:addColumn(_"Aktiv", 0.5)
-
-	self.m_BugState = GUILabel:new(170, 10, 240, 25, _"Status: -", self.m_TabBugs)
-	self.m_BugType = GUILabel:new(170, 35, 350, 25, _"angebracht an: -", self.m_TabBugs)
-	self.m_BugOwner = GUILabel:new(170, 60, 350, 25, _"Besitzer: -", self.m_TabBugs)
-
-	self.m_BugLogGrid = GUIGridList:new(170, 100, 390, 275, self.m_TabBugs)
-	self.m_BugLogGrid:setItemHeight(20)
-	self.m_BugLogGrid:setFont(VRPFont(20))
-	self.m_BugLogGrid:addColumn(_"Log", 1)
-
-	self.m_BugLocate = GUIButton:new(430, 10, 140, 25, _"orten", self.m_TabBugs)
-	self.m_BugLocate:setBackgroundColor(Color.Green)
-	self.m_BugLocate:setEnabled(false)
-	self.m_BugLocate.onLeftClick = function() self:bugAction("locate") end
-
-	self.m_BugClearLog = GUIButton:new(430, 40, 140, 25, _"Log löschen", self.m_TabBugs)
-	self.m_BugClearLog:setBackgroundColor(Color.Blue)
-	self.m_BugClearLog:setEnabled(false)
-	self.m_BugClearLog.onLeftClick = function() self:bugAction("clearLog") end
-
-	self.m_BugRefresh = GUIButton:new(400, 70, 25, 25, FontAwesomeSymbols.Refresh, self.m_TabBugs):setFont(FontAwesome(12))
-	self.m_BugRefresh:setBackgroundColor(Color.LightBlue)
-	self.m_BugRefresh:setEnabled(false)
+	
+	--
+	-- Wanzen 
+	--
+	
+	self.m_BugsGrid = GUIGridGridList:new(1, 1, 11, 5, self.m_Tabs[3])
+	self.m_BugsGrid:addColumn(_"ID", 0.1)
+	self.m_BugsGrid:addColumn(_"Status", 0.45)
+	self.m_BugsGrid:addColumn(_"Ziel", 0.2)
+	
+	self.m_BugRefresh = GUIGridIconButton:new(11, 1, FontAwesomeSymbols.Refresh, self.m_Tabs[3])
 	self.m_BugRefresh.onLeftClick = function()
 		triggerServerEvent("factionStateLoadBugs", root)
 	end
 
-	self.m_BugDisable = GUIButton:new(430, 70, 140, 25, _"deaktivieren", self.m_TabBugs)
-	self.m_BugDisable:setBackgroundColor(Color.Red)
+	self.m_BugLocate = GUIGridButton:new(12, 1, 4, 1, ElementLocateBlip and _"Orten beenden" or _"Orten", self.m_Tabs[3]) 
+	self.m_BugLocate.onLeftClick = function()
+		if ElementLocateBlip then 
+			self:stopLocating()
+		else
+			self:bugAction("locate")
+		end
+		self:checkLocateButtons(self.m_CurrentSelectedBugId ~= 0 and true or false)
+	end
+	
+	self.m_BugClearLog = GUIGridButton:new(12, 2, 4, 1, _"Log löschen", self.m_Tabs[3]):setBackgroundColor(Color.Orange)
+	self.m_BugClearLog:setEnabled(false)
+	self.m_BugClearLog.onLeftClick = function() self:bugAction("clearLog") end
+	
+	self.m_BugDisable = GUIGridButton:new(12, 3, 4, 1, _"Deaktivieren", self.m_Tabs[3]):setBackgroundColor(Color.Red)
 	self.m_BugDisable:setEnabled(false)
 	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
 
-	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
-	self.m_WantedRules = GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, INGAME_WEB_PATH .. "/ingame/other/wanteds.php", true, self.m_TabWantedRules)
+	self.m_BugLogGrid = GUIGridGridList:new(1, 6, 15, 5, self.m_Tabs[3])
+	self.m_BugLogGrid:setItemHeight(20)
+	self.m_BugLogGrid:setFont(VRPFont(20))
+	self.m_BugLogGrid:addColumn(_"Log", 1)
+	
+	--
+	-- Wantedregeln
+	--
+	
+	self.m_WantedRules = GUIGridWebView:new(1, 1, 15, 10, INGAME_WEB_PATH .. "/ingame/other/wanteds.php", true, self.m_Tabs[4])
+	self.m_WantedRules:setRenderingEnabled(false) --only render the browser if the player is on its tab
 
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
+
+	self:loadPlayers()
+	self:bind("F5", function(self)
+		if isCursorShowing() then
+			self:loadPlayers()
+		end
+	end)
 end
 
+addCommandHandler("pp", function()
+	PolicePanel:new()
+end)
+
 function PolicePanel:TabPanel_TabChanged(tabId)
-	if tabId == self.m_TabJail.TabIndex then
+	self.m_WantedRules:setRenderingEnabled(false) --only render the browser if the player is on its tab
+	if tabId == 2 then
 		triggerServerEvent("factionStateLoadJailPlayers", root)
-	elseif tabId == self.m_TabBugs.TabIndex then
+	elseif tabId == 3 then
 		triggerServerEvent("factionStateLoadBugs", root)
+	elseif tabId == 4 then
+		self.m_WantedRules:setRenderingEnabled(true)
 	end
 end
 
 function PolicePanel:loadPlayers()
 	self.m_PlayersGrid:clear()
+	for i, v in pairs(self.m_PlayerFuncElements) do
+		v:setEnabled(false)
+	end
+	self.m_InfoTextLabel:setText("")		
+	self.m_InfoDataLabel:setText("")	
+	self:checkLocateButtons(false)
+	
 	self.m_Players = {}
 
-	for i = 0, MAX_WANTED_LEVEL do
-		for Id, player in pairs(Element.getAllByType("player")) do
-			if player:getWanteds() == i then
-				if not self.m_Players[i] then self.m_Players[i] = {} end
-				if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(player:getName()), string.lower(self.m_PlayerSearch:getText())) then
-					self.m_Players[i][player] = player:getName()
-				end
+	for i,v in pairs(getElementsByType("player")) do
+		local skip = false
+		--skip inactive players
+		if v:isAFK() then skip = true end
+		if v:getData("inAdminPrison") then skip = true end
+		--filters
+		if self.m_WantedFilter:isChecked() and v:getWanteds() == 0 then skip = true end
+		if self.m_FactionFilter:isChecked() and (not v:getFaction() or not v:getFaction():isEvilFaction()) then skip = true end
+		if self.m_GangFilter:isChecked() and v:getGroupType() ~= "Gang" then skip = true end
+		if #self.m_PlayerSearch:getText() <= 3 or string.find(string.lower(v:getName()), string.lower(self.m_PlayerSearch:getText())) then
+			if not skip then
+				self.m_Players[v] = v:getWanteds()
 			end
-		end
-
-		if self.m_Players[i] then
-			table.sort(self.m_Players[i], function(a, b) return a < b end)
 		end
 	end
 
-	for i = MAX_WANTED_LEVEL, 0, -1 do
-		if self.m_Players[i] then
-			self.m_PlayersGrid:addItemNoClick(("%s Wanteds"):format(i), "")
+	if self.m_Players then
+		table.sort(self.m_Players, function(a, b) return a < b end)
+		
+		for player in pairs(self.m_Players) do
+			if isElement(player) then
+				local item = self.m_PlayersGrid:addItem(
+					player:getWanteds(), 
+					player:getName(), 
+					player:getFaction() and player:getFaction():getShortName() or "-",
+					player:getGroupName() or "-"
+				)
+				item.player = player
+				item.onLeftClick = function()
+					self:onSelectPlayer(player)
+				end
 
-			for player, bool in pairs(self.m_Players[i]) do
-				if isElement(player) then
-					local item = self.m_PlayersGrid:addItem(player:getName(), player:getFaction() and player:getFaction():getShortName() or "- Keine -")
-					item.player = player
-					item.onLeftClick = function()
-						self:onSelectPlayer(player)
+				if player:getPublicSync("Phone") == true then
+					if player:getInterior() == 0 and player:getDimension() == 0 then
+						item:setColumnColor(1, tocolor(200, 255, 200))
+					else
+						item:setColumnColor(1, tocolor(255, 220, 200))
+					end
+				else
+					item:setColumnColor(1, tocolor(255, 200, 200))
+				end
+
+				if player:getFaction() then
+					local color = player:getFaction():getColor()
+					item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+				end
+
+				if player:getFaction() then
+					local color = player:getFaction():getColor()
+					item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+				end
+		
+				if player:getGroupType() then
+					if player:getGroupType() == "Gang" then
+						item:setColumnColor(4, Color.Red)
+					elseif player:getGroupType() == "Firma" then
+						item:setColumnColor(4, Color.Accent)
 					end
 				end
 			end
+			
 		end
 	end
 end
@@ -215,21 +271,45 @@ function PolicePanel:receiveJailPlayers(playerTable)
 	end
 end
 
+function PolicePanel:checkLocateButtons(shouldBeEnabled)
+	if ElementLocateBlip then
+		outputDebug("ElementLocateBlip")
+		self.m_BugLocate:setEnabled(true)
+		self.m_BugLocate:setText(_"Orten beenden")
+		self.m_LocatePlayerBtn:setEnabled(true)
+		self.m_LocatePlayerBtn:setText(_"Orten beenden")
+	else
+		outputDebug("no ElementLocateBlip", shouldBeEnabled)
+		self.m_BugLocate:setEnabled(shouldBeEnabled)
+		self.m_BugLocate:setText(_"Orten")
+		self.m_LocatePlayerBtn:setEnabled(shouldBeEnabled)
+		self.m_LocatePlayerBtn:setText(_"Orten")
+	end
+end
+
 
 function PolicePanel:receiveBugs(bugTable)
 	self.m_BugsGrid:clear()
 	self.m_BugData = bugTable
+	self:checkLocateButtons(false)
 
-	local pos, active = ""
 
 	for id, bugData in ipairs(bugTable) do
-
-		active = _"Nein"
+		local owner, state, element = "-", "nicht in Benutzung"
 		if bugData["element"] and isElement(bugData["element"]) then
-			active = "Ja"
+			
+			element = bugData["element"]
+
+			if element:getType() == "vehicle" then
+				owner = element:getData("OwnerName") or "Unbekannt"
+				state = "angebracht an Fahrzeug"
+			elseif element:getType() == "player" then
+				owner = element:getName() or "Unbekannt"
+				state = "angebracht an Spieler"
+			end
 		end
 
-		local item = self.m_BugsGrid:addItem(id, active)
+		local item = self.m_BugsGrid:addItem(id, state, owner)
 
 		if id == self.m_CurrentSelectedBugId  then
 			item:onInternalLeftClick()
@@ -246,44 +326,27 @@ end
 function PolicePanel:onSelectBug(id)
 	self.m_CurrentSelectedBugId = id
 	if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["element"] and isElement(self.m_BugData[id]["element"]) then
-		local owner, ownerType, item
-		local element = self.m_BugData[id]["element"]
-
-		if element:getType() == "vehicle" then
-			owner = element:getData("OwnerName") or "Unbekannt"
-			ownerType = "Fahrzeug"
-		elseif element:getType() == "player" then
-			owner = element:getName() or "Unbekannt"
-			ownerType = "Spieler"
-		end
-
-		self.m_BugOwner:setText("angebracht an: "..ownerType)
-		self.m_BugType:setText("Besitzer: "..owner)
-		self.m_BugState:setText(_"Status: aktiv")
-		self.m_BugState:setColor(Color.Green)
 
 		self.m_BugLogGrid:clear()
 		for index, msg in pairs(self.m_BugData[id]["log"]) do
 			item = self.m_BugLogGrid:addItem(msg)
 			item:setFont(VRPFont(20))
+			item.onLeftClick = function()
+				ShortMessage:new(msg)
+			end
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():getId() == 2 then
 			self.m_BugDisable:setEnabled(true)
 			self.m_BugClearLog:setEnabled(true)
 		end
-		self.m_BugLocate:setEnabled(true)
 		self.m_BugRefresh:setEnabled(true)
-
 	else
 		self.m_BugLogGrid:clear()
-		self.m_BugState:setText(_"Status: deaktiviert")
-		self.m_BugState:setColor(Color.Red)
 		self.m_BugDisable:setEnabled(false)
 		self.m_BugClearLog:setEnabled(false)
-		self.m_BugLocate:setEnabled(false)
 		self.m_BugRefresh:setEnabled(false)
 	end
-
+	self:checkLocateButtons(true)
 end
 
 function PolicePanel:bugAction(func)
@@ -309,39 +372,27 @@ function PolicePanel:bugAction(func)
 end
 
 function PolicePanel:onSelectPlayer(player)
-	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
-	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
-	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keins -"))
-	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
+	self.m_InfoTextLabel:setText(_"STVO\n Auto\n Motorrad\n LKW\n Pilot")		
+	self.m_InfoDataLabel:setText(("\n%s\n%s\n%s\n%s"):format(player:getSTVO("Driving"), player:getSTVO("Bike"), player:getSTVO("Truck"), player:getSTVO("Pilot")))	
 	self.m_SelectedPlayer = player
-	local phone = "Ausgeschaltet"
-	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
-	self.m_PhoneStatus:setText(_("Handy: %s", phone))
-	self.m_STVODriving:setText(_("STVO-Auto: %d", player:getSTVO("Driving")))
-	self.m_STVOBike:setText(_("STVO-Motorrad: %d", player:getSTVO("Bike")))
-	self.m_STVOTruck:setText(_("STVO-Lastkraftwagen: %d", player:getSTVO("Truck")))
-	self.m_STVOPilot:setText(_("STVO-Pilot: %d", player:getSTVO("Pilot")))
-
-	--self.m_Skin:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
+	for i, v in pairs(self.m_PlayerFuncElements) do
+		v:setEnabled(true)
+	end
+	self:checkLocateButtons(true)
 end
 
 function PolicePanel:onSelectJailPlayer(player)
-	self.m_JailPlayerNameLabel:setText(_("Spieler: %s", player:getName()))
-	self.m_JailPlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
-	self.m_JailPlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keins -"))
-	self.m_JailPlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_JailSelectedPlayer = player
-	local phone = "Ausgeschaltet"
-	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
-	self.m_JailPhoneStatus:setText(_("Handy: %s", phone))
-
-	--self.m_JailSkin:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:locatePlayer()
 	local item = self.m_PlayersGrid:getSelectedItem()
+	if not item then ErrorBox:new(_"Du musst einen Spieler auswählen!") return end
 	local player = item.player
 	if isElement(player) then
+		if player:isAFK() then ErrorBox:new(_"Der Spieler ist AFK!") return false end
+		if player:getData("inAdminPrison") then ErrorBox:new(_"Der Spieler sitzt gerade eine administrative Strafe ab!") return false end
+
 		if player:getPublicSync("Phone") == true then
 			self:locateElement(player, "phone")
 		else
@@ -355,7 +406,7 @@ end
 function PolicePanel:locateElement(element, locationOf)
 	local elementText = element:getType() == "player" and _"Der Spieler" or _"Die Wanze"
 
-	if getElementDimension(element) == 0 and getElementInterior(element) == 0 then
+	if (getElementDimension(element) == 0 and getElementInterior(element) == 0) or element:getData("inSewer") then
 		self:stopLocating()
 
 		local pos = element:getPosition()
@@ -414,10 +465,11 @@ function PolicePanel:updateGPS()
 end
 
 function PolicePanel:stopLocating()
-	if ElementLocateBlip then delete(ElementLocateBlip) end
+	if ElementLocateBlip then delete(ElementLocateBlip) ElementLocateBlip = nil end
 	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
 	localPlayer.m_LocatingElement = false
 	GPS:getSingleton():stopNavigation()
+	return true
 end
 
 function PolicePanel:giveWanteds()
@@ -447,20 +499,6 @@ end
 GiveWantedBox = inherit(GUIForm)
 
 function GiveWantedBox:constructor(player, min, max, title, callback)
-	--[[GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
-
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
-
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, _"Anzahl:", self.m_Window)
-	self.m_Changer = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.2, self.m_Height*0.2, self.m_Window)
-	for i = min, max do
-		self.m_Changer:addItem(tostring(i))
-	end
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
-	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
-	self.m_SubmitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
-	]]
-
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 8)
 	self.m_Height = grid("y", 4)
@@ -487,26 +525,6 @@ end
 GiveSTVOBox = inherit(GUIForm)
 
 function GiveSTVOBox:constructor(player, min, max, title, callback)
-	--[[GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
-
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
-
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, _"Kategorie:", self.m_Window)
-	self.m_STVOCategories = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
-	self.m_STVOCategories:addItem(_"Auto")
-	self.m_STVOCategories:addItem(_"Motorrad")
-	self.m_STVOCategories:addItem(_"Lastkraftwagen")
-	self.m_STVOCategories:addItem(_"Pilot")
-
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Anzahl:", self.m_Window)
-	self.m_Changer = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.2, self.m_Height*0.2, self.m_Window)
-	for i = min, max do
-		self.m_Changer:addItem(tostring(i))
-	end
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.68, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
-	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.68, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
-	self.m_SubmitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.8, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
-	]]
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 10)
 	self.m_Height = grid("y", 5)

@@ -65,9 +65,9 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 			item.onLeftClick =
 				function()
 					self.m_FishNameLabel:setText(fish.fishName)
-					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or Color.Yellow))
+					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or (fish.quality == 2 and Color.Yellow or Color.Purple)))
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
-					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
+					self.m_QualityBonusLabel:setText(fish.quality == 3 and "100%" or (fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-")))
 					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
 					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].RareBonus*100))
 				end
@@ -114,7 +114,7 @@ function FishingTradeGUI:updateTotalPrice()
 	for _, item in pairs(self.m_SellList:getItems()) do
 		if item.fishId then
 			local default = self.m_FishTable[item.fishId].DefaultPrice
-			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
+			local qualityMultiplicator = item.fishQuality == 3 and 2 or (item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1))
 			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
 
 			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
@@ -154,7 +154,7 @@ inherit(Singleton, FishPricingGUI)
 
 addRemoteEvents{"openFishPricingGUI"}
 
-function FishPricingGUI:constructor(Fishes)
+function FishPricingGUI:constructor(Fishes, speciesCaught)
 	GUIForm.constructor(self, screenWidth/2-580/2, screenHeight/2-400/2, 580, 400)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Preistabelle", true, true, self)
@@ -168,8 +168,12 @@ function FishPricingGUI:constructor(Fishes)
 
 	table.sort(Fishes, function(a, b) return a.RareBonus > b.RareBonus end)
 	for _, fish in ipairs(Fishes) do
-		local item = self.m_PriceList:addItem(fish.Name_DE, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
-		item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255*fish.RareBonus, 0))
+		if speciesCaught[fish.Id] then
+			local item = self.m_PriceList:addItem(fish.Name_DE, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
+			item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255, 255*(1-fish.RareBonus)))
+		else
+			self.m_PriceList:addItem("???", "-", "-")
+		end
 	end
 end
 
@@ -263,25 +267,31 @@ inherit(Singleton, FishingPedGUI)
 
 function FishingPedGUI:constructor()
 	GUIButtonMenu.constructor(self, "Angler Lutz")
-	self:addItem(_"Preistabelle ansehen", Color.LightBlue,
+	self:addItem(_"Shop", Color.Accent,
+		function()
+			triggerServerEvent("shopOpenGUI", localPlayer, 80)
+			self:delete()
+		end
+	)
+	self:addItem(_"Preistabelle ansehen", Color.Accent,
 		function()
 			triggerServerEvent("clientRequestFishPricing", localPlayer)
 			self:delete()
 		end
 	)
-	self:addItem(_"Fische verkaufen", Color.LightBlue,
+	self:addItem(_"Fische verkaufen", Color.Accent,
 		function()
 			triggerServerEvent("clientRequestFishTrading", localPlayer)
 			self:delete()
 		end
 	)
-	self:addItem(_"Statistiken", Color.LightBlue,
+	self:addItem(_"Statistiken", Color.Accent,
 		function()
-			triggerServerEvent("clientRequestFisherStatistics", localPlayer)
+			triggerServerEvent("clientRequestFishStatistics", localPlayer)
 			self:delete()
 		end
 	)
-	self:addItem(_"Mehr informationen", Color.LightBlue,
+	self:addItem(_"Mehr informationen", Color.Accent,
 		function()
 			FishingInformationGUI:new()
 			self:delete()
@@ -295,13 +305,52 @@ inherit(Singleton, FishingRodGUI)
 
 addRemoteEvents{"showFishingRodGUI"}
 
-function FishingRodGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-150, screenHeight/2-75, 300, 150)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Angelrute", true, true, self)
+function FishingRodGUI:constructor(fishingRodName, equipments)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 8)
+	self.m_Height = grid("y", 3)
 
-	--todo
-	-- FishingRod condition (if added)
-	-- Add baits?!
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Width/2, 300, 150)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, fishingRodName, true, true, self)
+	local infoLabel = GUIGridLabel:new(1, 3, 8, 1, "", window):setFont(VRPFont(22)):setFontSize(1):setAlign("center", "center")
+
+	for i, equipment in ipairs(equipments) do
+		local slot = GUIGridRectangle:new((i-1)*2+1, 1, 2, 2, Inventory.Color.ItemBackground, window)
+
+		if equipment then
+			local itemIcon = Inventory:getSingleton():getItemData()[equipment].Icon
+			local itemAmount = Inventory:getSingleton():getItemAmount(equipment)
+			local amountText = itemAmount > 1 and itemAmount or ""
+			local textWidth = VRPTextWidth(amountText, 22) + 10
+
+			GUIImage:new(5, 5, slot.m_Width - 10, slot.m_Height - 10, "files/images/Inventory/items/" .. itemIcon, slot)
+
+			if itemAmount > 1 then
+				GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-15, textWidth, 15, Color.Background, slot)
+				GUILabel:new(0, slot.m_Height - 15, slot.m_Width - 5, 15, amountText, slot):setAlign("right", "center"):setFont(VRPFont(22)):setFontSize(1):setColor(Color.Orange)
+			end
+
+			slot.onHover =
+				function()
+					slot:setColor(Inventory.Color.ItemBackgroundHover)
+					infoLabel:setText(equipment)
+				end
+
+			slot.onUnhover =
+				function()
+					slot:setColor(Inventory.Color.ItemBackground)
+					infoLabel:setText("")
+				end
+
+			slot.onLeftClick =
+				function()
+					triggerServerEvent("clientRemoveFishingRodEquipment", localPlayer, fishingRodName, equipment)
+					self:delete()
+				end
+		end
+	end
+
+
 end
 
 addEventHandler("showFishingRodGUI", root,
@@ -311,3 +360,147 @@ addEventHandler("showFishingRodGUI", root,
 		end
 	end
 )
+
+----------------------------------------------------------------------------------------------------------------------
+EquipmentSelectionGUI = inherit(GUIForm)
+inherit(Singleton, EquipmentSelectionGUI)
+
+addRemoteEvents{"showEquipmentSelectionGUI"}
+
+function EquipmentSelectionGUI:constructor(fishingRods, equipmentName, equipmentAmount)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 10)
+	self.m_Height = grid("y", 2 + #fishingRods)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s (%s)", equipmentName, equipmentAmount), true, true, self)
+	self.m_Combobox = GUIGridCombobox:new(1, 1, 6, 1, "Angelrute auswählen", window)
+
+	for _, fishingRod in pairs(fishingRods) do
+		local item = self.m_Combobox:addItem(fishingRod)
+		item.fishingRodName = fishingRod
+	end
+
+	local button = GUIGridButton:new(7, 1, 3, 1, "Hinzufügen", window)
+	button.onLeftClick =
+		function()
+			if not self.m_Combobox:getSelectedItem() then return end
+			local selectedFishingRod = self.m_Combobox:getSelectedItem().fishingRodName
+			if selectedFishingRod then
+				triggerServerEvent("clientAddFishingRodEquipment", localPlayer, selectedFishingRod, equipmentName)
+				self:delete()
+			end
+		end
+end
+
+addEventHandler("showEquipmentSelectionGUI", root,
+	function(...)
+		if not EquipmentSelectionGUI:isInstantiated() then
+			EquipmentSelectionGUI:new(...)
+		end
+	end
+)
+
+----------------------------------------------------------------------------------------------------------------------
+FishEncyclopedia = inherit(GUIForm)
+inherit(Singleton, FishEncyclopedia)
+
+addRemoteEvents{"receiveCaughtFishSpecies"}
+
+function FishEncyclopedia:constructor(fishList, fishSpecies)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 19)
+	self.m_Height = grid("y", 19)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Fischlexikon", true, true, self)
+
+	local row = 0
+	for i, fish in ipairs(fishList) do
+		local i = i - 9*row
+
+		local path = ("files/images/Fishing/Fish/%s.png"):format(fish.Id)
+		path = fileExists(path) and path or false
+		local background = GUIGridRectangle:new(1 + 2*(i-1), row*2 + 1, 2, 2, fishSpecies[fish.Id] and tocolor(229, 218, 185) or Color.LightGrey, window)
+		GUIImage:new(5, 5, background.m_Width - 5, background.m_Height - 5, path or "files/images/Fishing/Fish.png", background):setColor(path and (fishSpecies[fish.Id] and Color.White or Color.Black) or Color.Clear)
+
+		if fishSpecies[fish.Id] then
+			background.onLeftClick =
+			function()
+				self:hide()
+				FishSpeciesGUI:new(fish, fishSpecies[fish.Id])
+			end
+
+			GUIRectangle:new(0, background.m_Height - 15, background.m_Width, 15, Color.Background, background)
+			GUILabel:new(0, background.m_Height - 15, background.m_Width, 15, fish.Name_DE:len() > 8 and ("%s.."):format(fish.Name_DE:sub(0, 8)) or fish.Name_DE, background):setAlign("center", "center"):setFontSize(1):setFont(VRPFont(20)):setTooltip(fish.Name_DE, "bottom")
+		end
+
+		if i%9 == 0 then row = row + 1 end
+	end
+end
+
+addEventHandler("receiveCaughtFishSpecies", root,
+	function(...)
+		if FishEncyclopedia:isInstantiated() then
+			delete(FishEncyclopedia:getSingleton())
+		end
+
+		FishEncyclopedia:new(...)
+	end
+)
+
+----------------------------------------------------------------------------------------------------------------------
+FishSpeciesGUI = inherit(GUIForm)
+inherit(Singleton, FishSpeciesGUI)
+
+function FishSpeciesGUI:constructor(fish, speciesData)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 12)
+	self.m_Height = grid("y", 6)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, fish.Name_DE, true, true, self)
+
+	window:addBackButton(
+		function()
+			delete(self)
+			FishEncyclopedia:getSingleton():show()
+		end
+	)
+
+	local path = ("files/images/Fishing/Fish/%s.png"):format(fish.Id)
+	path = fileExists(path) and path or false
+
+	local fishImage = GUIGridRectangle:new(8, 1, 4, 5, Color.White, window)
+	GUIRectangle:new(10, 10, fishImage.m_Width - 20, fishImage.m_Width - 20, tocolor(229, 218, 185), fishImage)
+	GUIImage:new(15, 15, fishImage.m_Width - 30, fishImage.m_Width - 30, path or "files/images/Fishing/Fish.png", fishImage):setColor(path and Color.White or Color.Clear)
+	GUILabel:new(10, fishImage.m_Width, fishImage.m_Width, fishImage.m_Height - fishImage.m_Width, speciesData[3] and getOpticalTimestamp(speciesData[3]) or "-", fishImage):setAlignY("center"):setFont(VRPFont(40, Fonts.JennaSue), 1):setColor(Color.Black)
+
+	local caughtCount = speciesData[1]
+	local recordCaughtSize = speciesData[2] and ("%s cm"):format(speciesData[2]) or "-"
+
+	GUIGridLabel:new(1, 1, 6, 1, "Statistiken", window):setAlign("left", "top"):setFont(VRPFont(grid(1), false, true))
+	GUIGridLabel:new(1, 2, 5, 1, "Fischname:\nAnzahl gefangen:\nRekord Größe:", window):setAlign("left", "top")
+	GUIGridLabel:new(5, 2, 5, 1, ("%s\n"):rep(3):format(fish.Name_DE, caughtCount, recordCaughtSize), window):setAlign("left", "top")
+
+	--local infoLabel, count = self:getInfos(caughtCount)
+	--GUIGridLabel:new(1, 1, 6, 1, "Über den Fisch", window):setAlign("left", "top"):setFont(VRPFont(grid(1), false, true))
+end
+
+local informations = {
+	{minCaughtCount = 2, text = "Orte"},
+	{minCaughtCount = 10, text = "Wetter:"},
+	{minCaughtCount = 15, text = "Jahreszeit:"},
+	{minCaughtCount = 20, text = "Uhrzeit:"},
+}
+function FishSpeciesGUI:getInfos(caughtCount)
+	local infos = {}
+
+	for _, infoData in pairs(informations) do
+		if caughtCount >= infoData.minCaughtCount then
+			table.insert(infos, infoData.text)
+		end
+	end
+
+	return table.concat(infos, "\n"), #infos
+end

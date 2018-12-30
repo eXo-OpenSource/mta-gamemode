@@ -21,7 +21,7 @@ function ShaderPanel:constructor()
   GUILabel:new(self.m_Width*0.45, self.m_Height*0.07, self.m_Width*0.55, self.m_Height*0.08, _"Shader", self.m_Window)
   GUILabel:new(self.m_Width*0.45, self.m_Height*0.15, self.m_Width*0.55, self.m_Height*0.05, _"Hier kannst du Shader aktivieren oder deaktivieren. Zu viele aktivierte Shader können sich möglicherweise auf die Performance auswirken.\nProbiere einfach ein wenig herum um die ideale Einstellung für dich zu finden.", self.m_Window):setMultiline(true)
   self.m_SelectedLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setVisible(false)
-  self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.52, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
+  self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.52, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.Accent):setFontSize(1.2):setVisible(false)
   self.m_SelectedButton.onLeftClick = function () self:toggleShader() end
 end
 
@@ -69,8 +69,8 @@ Shaders = {}
 function Shaders.load()
 	local setting
 	for name, key in pairs(SHADERS) do
-        setting = core:get("Shaders", name) 
-        if setting == nil then setting = key["enabled"] core:set("Shaders", name, key["enabled"]) end 
+        setting = core:get("Shaders", name)
+        if setting == nil then setting = key["enabled"] core:set("Shaders", name, key["enabled"]) end
 		triggerEvent(key["event"], root, setting)
 	end
 end

@@ -42,7 +42,7 @@ function Account.login(player, username, password, pwhash, enableAutologin)
 			local row = Async.wait()
 
 			if row and player:getSerial() == data[2] then
-				Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId)
+				Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId, pwhash)
 				return
 			end
 		end
@@ -136,9 +136,11 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
 
+	ServiceSync:getSingleton():syncPlayer(Id)
+
 	player:loadCharacter()
 	player:spawn()
-	player:triggerEvent("loginsuccess", pwhash)
+	player:triggerEvent("loginsuccess", player)
 
 	if player:isActive() then
 		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
@@ -327,6 +329,11 @@ function Account.getBoardIdFromId(id)
 
 	local row = sql:queryFetchSingle("SELECT ForumId FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
 	return row and row.ForumId
+end
+
+function Account.getIdFromIdBoard(id)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE ForumId = ?", sql:getPrefix(), id)
+	return row and row.Id
 end
 
 function Account.getTeamspeakIdFromId(id)

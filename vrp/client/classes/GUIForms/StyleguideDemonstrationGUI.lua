@@ -86,6 +86,13 @@ function StyleguideDemonstrationGUI:constructor()
 		function(state)
 			labelToggle:setText("onChange: " .. tostring(state))
 		end
+
+	local combo = GUIGridCombobox:new(1, 4, 6, 1, "ComboBox ftw...", self.m_Tabs[2])
+	local item1 = combo:addItem("MasterM")
+	combo:addItem("Bugfrei")
+	combo:addItem("MasterSDM")
+	combo:setSelectedItem(1)
+
 	local scrollArea = GUIGridScrollableArea:new(10, 1, 10, 10, 10, 20, true, false, self.m_Tabs[2], 1)
 	scrollArea:updateGrid()
 	GUIGridLabel:new(1, 1, 10, 1, _"irgendwelche Settings", scrollArea):setHeader()

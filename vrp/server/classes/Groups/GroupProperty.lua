@@ -49,13 +49,20 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
 
-	self.m_ExitMarker = createMarker(InteriorSpawn, "corona", 2, 255, 255, 255, 200)
+	self.m_ExitMarker = createMarker(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z-1), "cylinder", 1, 255, 255, 255, 200)
+	ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
+	local colshape = createColSphere(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z-1), 3)
+	colshape:setInterior(InteriorId)
+	colshape:setDimension(self.m_Dimension)
 	self.m_ExitMarker:setInterior(InteriorId)
 	self.m_ExitMarker:setDimension(self.m_Dimension)
-	addEventHandler("onMarkerHit", self.m_ExitMarker,
+	addEventHandler("onColShapeHit", colshape,
 		function(hitElement, matchingDimension)
-			if matchingDimension then
-				self:closeForPlayer(hitElement)
+			if hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() then
+				hitElement.m_LastGroupPropertyInside = true
+				hitElement.m_LastPropertyPickup = self
+				hitElement:triggerEvent("onTryEnterExit", source, "Ausgang")
+				--self:closeForPlayer(hitElement)
 			end
 		end
 	)
@@ -236,6 +243,7 @@ function GroupProperty:setInside( player )
 		end, 1000, 1)
 		player.justEntered = true
 		setTimer(function() player.justEntered = false end, 2000,1)
+		player.m_LastPropertyPickup = nil
 	end
 end
 
@@ -248,6 +256,7 @@ function GroupProperty:setOutside( player )
 		fadeCamera(player, true)
 		setElementFrozen( player, false)
 		player:triggerEvent("forceGroupPropertyClose")
+		player.m_LastPropertyPickup = nil
 	end
 end
 
@@ -341,7 +350,9 @@ function GroupProperty:onEnter( player )
 			name = self.m_Owner.m_Name
 		end
 		player.m_LastPropertyPickup = self
-		player:triggerEvent("showGroupEntrance", self, self.m_Pickup, name)
+		player.m_LastGroupPropertyInside = false
+		player:triggerEvent("onTryEnterExit", source, self.m_Name)
+		--player:triggerEvent("showGroupEntrance", self, self.m_Pickup, name)
 	end
 end
 

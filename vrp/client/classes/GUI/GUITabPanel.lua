@@ -47,7 +47,7 @@ function GUITabPanel:addTab(tabName, small)
 				instance.TabButton:setBackgroundColor(Color.Grey)
 			else
 				instance.TabButton:setColor(Color.Grey)
-				instance.TabButton:setBackgroundColor(Color.LightBlue)
+				instance.TabButton:setBackgroundColor(Color.Accent)
 			end
 		end
 	end

@@ -12,7 +12,7 @@ function PasswordChangeGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Passwort ändern", true, true, self)
 	GUILabel:new(10, 40, 180, 30, "Altes Passwort:", self.m_Window)
-	GUIRectangle:new(10, 80, 380, 2, Color.LightBlue, self.m_Window)
+	GUIRectangle:new(10, 80, 380, 2, Color.Accent, self.m_Window)
 	GUILabel:new(10, 90, 180, 30, "Neues Passwort:", self.m_Window)
 	GUILabel:new(10, 125, 180, 30, "Wiederholung:", self.m_Window)
 
@@ -24,7 +24,7 @@ function PasswordChangeGUI:constructor()
 
 	self.m_Error = GUILabel:new(10, 160, 380, 30, "", self.m_Window):setColor(Color.Red)
 
-	self.m_SubmitButton = GUIButton:new(10, 195, 380, 40, _"Bestätigen", self.m_Window):setBackgroundColor(Color.LightBlue):setBarEnabled(true)
+	self.m_SubmitButton = GUIButton:new(10, 195, 380, 40, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Accent):setBarEnabled(true)
 	self.m_SubmitButton:setEnabled(false)
 	self.m_SubmitButton.onLeftClick = function()
 		triggerServerEvent("passwordChange", localPlayer, self.m_OldPassword:getText(), self.m_NewPassword1:getText(), self.m_NewPassword2:getText())

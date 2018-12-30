@@ -18,6 +18,7 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:setFont(VRPFont(24))
 	self.m_Grid:setItemHeight(24)
 	self.m_Grid:setColor(Color.Clear)
+	self.m_Grid:setColumnBackgroundColor(Color.Clear)
 	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
 	self.m_Grid:addColumn(_"Fraktion", 0.14)
@@ -29,9 +30,9 @@ function ScoreboardGUI:constructor()
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
-	self.m_PlayerCount:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05))
+	self.m_PlayerCount:setColor(Color.White):setFont(VRPFont(self.m_Height*0.05))
 	self.m_Ping = GUILabel:new(self.m_Width/2, self.m_Height*0.65, self.m_Width/2-self.m_Width*0.05, self.m_Height*0.05, "", self.m_Rect)
-	self.m_Ping:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
+	self.m_Ping:setColor(Color.White):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
 
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 
@@ -208,7 +209,7 @@ function ScoreboardGUI:insertPlayers()
 			if player:getGroupType() == "Gang" then
 				item:setColumnColor(5, Color.Red)
 			elseif player:getGroupType() == "Firma" then
-				item:setColumnColor(5, Color.LightBlue)
+				item:setColumnColor(5, Color.Accent)
 			end
 		end
 

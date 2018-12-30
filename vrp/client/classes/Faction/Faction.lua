@@ -27,8 +27,8 @@ function FactionManager:constructor()
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
 
-function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)
-	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color)
+function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color, navigationPosition)
+	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color, navigationPosition)
 end
 
 function FactionManager:stateFactionStartCuff( target )
@@ -212,13 +212,14 @@ end
 
 Faction = inherit(Object)
 
-function Faction:constructor(Id, name, name_short, rankNames, factionType, color)
+function Faction:constructor(Id, name, name_short, rankNames, factionType, color, navigationPosition)
 	self.m_Id = Id
 	self.m_Name = name
 	self.m_NameShort = name_short
 	self.m_RankNames = rankNames
 	self.m_Type = factionType
 	self.m_Color = color
+	self.m_NavigationPosition = normaliseVector(navigationPosition)
 end
 
 function Faction:getId()
@@ -247,4 +248,8 @@ end
 
 function Faction:getColor()
 	return self.m_Color
+end
+
+function Faction:getNavigationPosition()
+	return self.m_NavigationPosition
 end

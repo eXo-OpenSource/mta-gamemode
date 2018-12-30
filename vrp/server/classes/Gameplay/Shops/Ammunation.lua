@@ -16,7 +16,7 @@ function Ammunation:constructor(id, name, position, rotation, typeData, dimensio
 	self.m_Magazines = {}
 	self:loadWeapons()
 
-	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onAmmunationMarkerHit, self))
+	--addEventHandler("onMarkerHit", self.m_Marker, bind(self.onAmmunationMarkerHit, self))
 
 	if self.m_Ped then
 		self.m_Ped:setData("clickable",true,true)

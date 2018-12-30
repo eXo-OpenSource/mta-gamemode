@@ -10,7 +10,7 @@ inherit(GUIColorable, GUIImage)
 
 function GUIRating:constructor(posX, posY, width, height, amount, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, Color.White)
+	GUIColorable.constructor(self)
 
 	self.m_Amount = amount
 	self.m_Stars = {}

@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/GUIForms/StateFactionDutyGUI.lua
+-- *  FILE:        client/classes/GUIForms/InventoryActionGUI.lua
 -- *  PURPOSE:     Inventory Action GUI
 -- *
 -- ****************************************************************************

@@ -13,9 +13,21 @@ function GroupPropertyManager:constructor( )
 		count = count + 1
 	end
 
-	addEventHandler("GroupPropertyClientInput",root,function()
+	addEventHandler("GroupPropertyClientInput", root, function()
 		if client.m_LastPropertyPickup then
-			client.m_LastPropertyPickup:openForPlayer(client)
+			if not client.m_LastGroupPropertyInside then
+				local px, py, pz = getElementPosition(client)
+				local mx, my, mz = getElementPosition(client.m_LastPropertyPickup.m_Pickup)
+				if getDistanceBetweenPoints3D(px, py, pz, mx, my, mz) < 3 then
+					client.m_LastPropertyPickup:openForPlayer(client)
+				end
+			else
+				local px, py, pz = getElementPosition(client)
+				local mx, my, mz = getElementPosition(client.m_LastPropertyPickup.m_ExitMarker)
+				if getDistanceBetweenPoints3D(px, py, pz, mx, my, mz) < 3 then
+					client.m_LastPropertyPickup:closeForPlayer(client)
+				end
+			end
 		end
 	end)
 
@@ -128,7 +140,7 @@ function GroupPropertyManager:BuyProperty( Id )
 				property.m_Open = 1
 				newOwner:transferMoney(self.m_BankAccountServer, price, "Immobilie "..property.m_Name.." gekauft!", "Group", "PropertyBuy")
 				client:sendInfo("Du hast die Immobilie gekauft!")
-				if property.m_Pickup and isElement(property.m_Pickup) then 
+				if property.m_Pickup and isElement(property.m_Pickup) then
 					setPickupType(property.m_Pickup, 3, PICKUP_ARROW)
 				end
 				client:triggerEvent("ForceClose")
@@ -172,7 +184,7 @@ function GroupPropertyManager:SellProperty(  )
 				property.m_OwnerID = 0
 				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)
 				property.m_Open = 1
-				if property.m_Pickup and isElement(property.m_Pickup) then 
+				if property.m_Pickup and isElement(property.m_Pickup) then
 					setPickupType(property.m_Pickup, 3, PICKUP_FOR_SALE)
 				end
 				self.m_BankAccountServer:transferMoney(group, price, "Immobilie "..property.m_Name.." verkauft!", "Group", "PropertySell")
@@ -205,4 +217,19 @@ function GroupPropertyManager:getPropsForPlayer( player )
 		end
 	end
 	return playerProps
+end
+
+function GroupPropertyManager:takePropsFromGroup(group) --in case the group gets deleted with active props
+	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
+		if v.m_OwnerID == group.m_Id then
+			v.m_Owner = false
+			v.m_OwnerID = 0
+			sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, v.m_Id)
+			v.m_Open = 1
+			if v.m_Pickup and isElement(v.m_Pickup) then
+				setPickupType(v.m_Pickup, 3, PICKUP_FOR_SALE)
+			end
+			StatisticsLogger:GroupBuyImmoLog( group.m_Id or 0, "GROUP_DELETED", property.m_Id or 0)
+		end
+	end
 end

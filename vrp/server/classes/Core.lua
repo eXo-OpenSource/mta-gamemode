@@ -136,12 +136,15 @@ function Core:constructor()
 		Fishing:new()
 		InactivityManager:new()
 		HistoryPlayer:new()
+		ForumPermissions:new()
 		VehicleCategory:new()
 		ClientStatistics:new()
 		SkribbleManager:new()
 		TSConnect:new()
 		BotManager:new()
 		PickupWeaponManager:new()
+		InteriorEnterExitManager:new()
+		ElevatorManager:new()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end
@@ -152,7 +155,7 @@ function Core:constructor()
 
 		GPS:new()
 		Chair:new()
-		--Atrium:new()
+		Atrium:new()
 
 		Help:new()
 
@@ -164,6 +167,7 @@ function Core:constructor()
 		TollStation.initializeAll()
 		Depot.initalize()
 		QuestionBox.initalize()
+		ShortMessageQuestion.initalize()
 
 		ChessSessionManager:new()
 		-- Generate Missions
@@ -183,14 +187,20 @@ function Core:constructor()
 
 		BindManager:new()
 		Forum:new()
+		ServiceSync:new()
 
 		Discord:new()
+		TeleportManager:new()
+		Sewers:new()
+		ArmsDealer:new()
+		PlaneManager:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
 		setWaveHeight(1)
 		setWaterColor(0, 65, 75, 250)
-
+		resetSkyGradient()
+		resetFogDistance()
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")

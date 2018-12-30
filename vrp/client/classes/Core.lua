@@ -83,12 +83,13 @@ end
 
 function Core:ready() --onClientResourceStart
 	-- Tell the server that we're ready to accept additional data
-	triggerServerEvent("playerReady", root)
+	triggerServerEvent("playerReady", root, { -- trigger some client settings
+		["LastFactionSkin"] = core:get("Cache", "LastFactionSkin", 0),
+		["LastCompanySkin"] = core:get("Cache", "LastCompanySkin", 0),
+	})
 
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de"}
-	Browser.requestDomains{"ingame.exo-reallife.de"}
-	Browser.requestDomains{"i.imgur.com"}
+	Browser.requestDomains{"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), "i.imgur.com"}
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
@@ -107,6 +108,7 @@ function Core:ready() --onClientResourceStart
 	Guns:new()
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
+	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
@@ -136,6 +138,7 @@ function Core:ready() --onClientResourceStart
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	Sewers:new()
 	PremiumArea:new()
 
 	Plant.initalize()
@@ -177,6 +180,10 @@ function Core:ready() --onClientResourceStart
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 
 	ExplosiveTruckManager:new()
+
+	VehicleTurbo:new()
+
+	PlaneManager:new()
 end
 
 function Core:afterLogin()
@@ -195,10 +202,13 @@ function Core:afterLogin()
 	Achievement:new()
 	BindManager:new()
 	WheelOfFortune:new()
-	--Atrium:new()
-
+	Atrium:new()
+	ElementInfoManager:new()
+	
+	for i = 1,#GUNBOX_CRATES do
+		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)
+	end
 	if DEBUG then
-		Browser.requestDomains{"ingame-dev.exo-reallife.de"}
 		Debugging:new()
 		DebugGUI.initalize()
 	end
@@ -214,6 +224,7 @@ function Core:afterLogin()
 	end
 
 	localPlayer:setPlayTime()
+	localPlayer:deactivateBlur(core:get("Shaders", "BlurLevel", false))
 
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
@@ -226,6 +237,7 @@ function Core:afterLogin()
 
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
+	addCommandHandler("unternehmen", function() CompanyGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
@@ -237,7 +249,8 @@ function Core:afterLogin()
 			table.insert(AppBank.ATMs, object)
 		end
 	end
-
+	
+	setElementData(localPlayer, "isEquipmentGUIOpen", false, true)
 end
 
 function Core:onWebSessionCreated() -- this gets called from LocalPlayer when the client recieves it's web session ID
@@ -249,6 +262,9 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 end
 
 function Core:destructor()
+	if HUDAviation:isInstantiated() then
+		delete(HUDAviation:getSingleton())
+	end
 	delete(Cursor)
 	delete(self.m_Config)
 	delete(BindManager:getSingleton())

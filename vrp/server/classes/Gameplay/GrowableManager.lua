@@ -35,6 +35,20 @@ GrowableManager.Types = {
 		["TimesEarnedForDestroy"] = 3,
 		["Illegal"] = false
 	};
+	["Blumen"] = {
+		["Object"] = 325,
+		["ObjectSizeMin"] = 0.4,
+		["ObjectSizeSteps"] = 0.1,
+		["GrowPerHour"] = 2,
+		["GrowPerHourWatered"] = 4,
+		["HoursWatered"] = 4,
+		["MaxSize"] = 10,
+		["Item"] = "Blumen",
+		["Seed"] = "Blumen-Samen",
+		["ItemPerSize"] = 0.1,
+		["TimesEarnedForDestroy"] = 1,
+		["Illegal"] = false
+	};
 }
 GrowableManager.Map = {}
 

@@ -20,6 +20,8 @@ function AnimationGUI:constructor()
 	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, "↕", self.m_Window):setAlignX("right")
 	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, _"Doppelklick zum Ausführen", self.m_Window):setFont(VRPFont(self.m_Height*0.04)):setAlignY("center"):setColor(Color.Red)
 
+	self.m_AnimationList:addItem("Laufstilfenster öffnen").onLeftDoubleClick = function () self.m_Window:close() WalkingstyleGUI:new() end
+
 	local item
 	for groupIndex, group in pairs(ANIMATION_GROUPS) do
 		self.m_AnimationList:addItemNoClick(_(group))
@@ -39,9 +41,10 @@ end
 
 function AnimationGUI:startAnimation()
 	if localPlayer:getData("isTasered") then return end
+	if localPlayer:getData("isInDeathMatch") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
-	
+
 	if ANIMATIONS[self.m_AnimationList:getSelectedItem().Name] then
 		if not self.m_InfoMessage then
 			self.m_InfoMessage = ShortMessage:new(_"Benutze 'Leertaste' zum Beenden der Animation!", -1)
@@ -50,7 +53,7 @@ function AnimationGUI:startAnimation()
 		triggerServerEvent("startAnimation", localPlayer, animation)
 		if animation == "Tanz Chill" then
 			for i, v in ipairs(Element.getAllByType("object", root, true)) do -- to short the loop use only streamedin objects
-				if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then		
+				if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then
 					localPlayer:giveAchievement(43)
 					return
 				end

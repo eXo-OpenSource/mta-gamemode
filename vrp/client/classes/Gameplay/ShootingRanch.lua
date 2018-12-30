@@ -8,7 +8,7 @@ function ShootingRanch:constructor()
 
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0,0,0,150), self)
 
-	GUILabel:new(0, 0, self.m_Width, 30, _"Schießstand", self):setAlignX("center"):setAlignY("center"):setColor(Color.LightBlue)
+	GUILabel:new(0, 0, self.m_Width, 30, _"Schießstand", self):setAlignX("center"):setAlignY("center"):setColor(Color.Accent)
 	self.m_Hits = GUILabel:new(5, 30, self.m_Width-10, 25, _"Bitte schieße auf die Ziele!", self)
 	self.m_TimeLabel = GUILabel:new(5, 60, self.m_Width-10, 25, "", self)
 	self.m_Accuracy = GUILabel:new(5, 90, self.m_Width-10, 25, "", self)
