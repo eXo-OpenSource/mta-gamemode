@@ -35,7 +35,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.Bolt)
 			if element:isInVehicle() and element.vehicle == localPlayer.vehicle then
-				self:addItem(self:getElement():getData("isTied") and "Fraktion: Spieler entfesseln" or "Fraktion: Spieler fesseln",
+				self:addItem(element:getData("isTied") and "Fraktion: Spieler entfesseln" or "Fraktion: Spieler fesseln",
 					function()
 						if self:getElement() then
 							triggerServerEvent("factionStateTie", localPlayer, self:getElement())
