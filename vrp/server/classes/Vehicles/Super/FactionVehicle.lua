@@ -189,7 +189,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 				minRank, forFaction = unpack(FACTION_TRUNK_SWAT_ITEM_PERMISSIONS[itemName])
 			end
 			if player:getFaction():getPlayerRank(player) >= minRank then
-				if not forFaction or forFaction == player:getFaction():getId() then
+				if forFaction == 0 or forFaction == player:getFaction():getId() then
 					if not isEquipment then
 						self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
 						player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
