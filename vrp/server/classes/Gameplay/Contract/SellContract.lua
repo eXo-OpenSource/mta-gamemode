@@ -37,7 +37,7 @@ function SellContract.create(sellerId, sellerType, buyerId, buyerType, data)
 		-- if buyerInventory:canReceiveItem(data.())
 		-- if client:getInventory():getItemAmount(item) >= amount then
 
-	if data.objectType == "weapon" then
+	elseif data.objectType == "weapon" then
 		-- only allow B2C and C2C
 		if buyerType ~= 1 then
 			return false
