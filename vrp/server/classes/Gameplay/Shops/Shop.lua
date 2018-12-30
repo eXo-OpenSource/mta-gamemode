@@ -138,33 +138,28 @@ end
 
 function Shop:onFoodMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if not self.m_Marker.m_Disable then
-			hitElement:triggerEvent("showFoodShopMenu")
-			triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showFoodShopMenu")
+		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
 	end
 end
 
 function Shop:onItemMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if self.m_Marker then
-			if not self.m_Marker.m_Disable then
-				hitElement:triggerEvent("showItemShopGUI")
-				triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_SortedItems, self.m_WeaponItems)
-			end
-		else
-			hitElement:triggerEvent("showItemShopGUI")
-			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_SortedItems, self.m_WeaponItems)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showItemShopGUI")
+		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_SortedItems, self.m_WeaponItems)
 	end
 end
 
 function Shop:onGasStationMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if not self.m_Marker.m_Disable then
-			hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
-			triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
+		triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
 	end
 end
 

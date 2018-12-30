@@ -40,11 +40,9 @@ end
 
 function Ammunation:onAmmunationMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if self.m_Marker then
-			if not self.m_Marker.m_Disable then
-				hitElement:triggerEvent("showAmmunationMenu")
-				triggerClientEvent(hitElement, "refreshAmmunationMenu", hitElement, self.m_Id, self.m_TypeName, self.m_Weapons, self.m_Magazines)
-			end
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showAmmunationMenu")
+		triggerClientEvent(hitElement, "refreshAmmunationMenu", hitElement, self.m_Id, self.m_TypeName, self.m_Weapons, self.m_Magazines)
 	end
 end
