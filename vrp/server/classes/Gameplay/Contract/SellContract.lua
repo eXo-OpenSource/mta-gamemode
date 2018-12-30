@@ -34,7 +34,7 @@ function SellContract.create(sellerId, sellerType, buyerId, buyerType, data)
 			return _("Der Verkäufer hat nicht den Gegenstand mit der angegeben Menge!")
 		end
 
-		if buyerInventory:canReceiveItem(data.())
+		-- if buyerInventory:canReceiveItem(data.())
 		-- if client:getInventory():getItemAmount(item) >= amount then
 
 	if data.objectType == "weapon" then
@@ -71,7 +71,7 @@ function SellContract.create(sellerId, sellerType, buyerId, buyerType, data)
 		if sellerType ~= 2 or buyerType ~= 1 then
 			return false
 		end
-		
+
 		if data.objectAmount < 0 then
 			return false
 		end

@@ -25,7 +25,7 @@ function RentContract.create(sellerId, sellerType, buyerId, buyerType, data)
 	if buyerType ~= 1 or sellerType ~= 2 then
 		return false
     end
-    
+
     if data.objectType == "vehicle" then
         if not data.objectid then
             return false
@@ -39,14 +39,14 @@ function RentContract.create(sellerId, sellerType, buyerId, buyerType, data)
 		return false
 	end
 
-	if data.upFrontPayment =< 0 then
+	if data.upFrontPayment <= 0 then
 		return false
 	end
 
-	if data.paymentAmount =< 0 then
+	if data.paymentAmount <= 0 then
 		return false
     end
-    
+
     if data.upFrontPayment == 0 and data.paymentAmount == 0 then
         return false
     end
