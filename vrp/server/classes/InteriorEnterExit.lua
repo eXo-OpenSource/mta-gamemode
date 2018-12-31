@@ -8,32 +8,65 @@
 InteriorEnterExit = inherit(Object)
 
 function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, enterInterior, enterDimension)
-	self.m_EnterMarker = createMarker(entryPosition, "corona", 1.5, 255, 255, 255, 200)
+	
+	InteriorEnterExitManager.Map[#InteriorEnterExitManager.Map+1] = self
+	self.m_Id = #InteriorEnterExitManager.Map
+	
+	self.m_EnterMarker = createMarker(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)
 	self.m_EnterMarker:setInterior(enterInterior or 0)
+	ElementInfo:new(self.m_EnterMarker, "Eingang", 1.2, "Walking", true)
+	local colEnter = createColSphere(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-0.8), 2)
+	colEnter:setInterior(enterInterior or 0)
+	colEnter:setDimension(enterDimension or 0)
+
 	self.m_EnterMarker:setDimension(enterDimension or 0)
-  self.m_ExitMarker = createMarker(interiorPosition, "corona", 1.5, 255, 255, 255, 200)
+	self.m_ExitMarker = createMarker(Vector3(interiorPosition.x, interiorPosition.y, interiorPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)
+	local colExit = createColSphere(Vector3(interiorPosition.x, interiorPosition.y, interiorPosition.z-0.8), 2)
+
+	ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
 
   interiorId = interiorId or 0
   dimension = dimension or 0
   self.m_ExitMarker:setInterior(interiorId)
   self.m_ExitMarker:setDimension(dimension)
+	colExit:setInterior(interiorId)
+	colExit:setDimension(dimension)
 
-  addEventHandler("onMarkerHit", self.m_EnterMarker,
-    function(hitElement, matchingDimension)
-      if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
-    	self:teleport(hitElement, "enter", interiorPosition, enterRotation, interiorId, dimension)
-      end
-    end
-  )
+	self.m_EntranceData =  {interiorPosition, enterRotation, interiorId, dimension}
+	self.m_ExitData = {entryPosition, exitRotation, enterInterior or 0, enterDimension or 0}
 
-   addEventHandler("onMarkerHit", self.m_ExitMarker,
-    function(hitElement, matchingDimension)
-      if getElementType(hitElement) == "player" and matchingDimension then
-	  	self:teleport(hitElement, "exit", entryPosition, exitRotation, enterInterior or 0, enterDimension or 0)
-      end
-    end
-  )
+	addEventHandler("onColShapeHit", colEnter,
+	function(hitElement, matchingDimension)
+		if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() and not isPedInVehicle(hitElement) then
+			if hitElement:getInterior() == source:getInterior() then
+				hitElement.m_LastEnterExit = {self.m_Id, "enter"}
+				hitElement:triggerEvent("onTryEnterExit", self.m_EnterMarker, "Eingang")
+			end
+		end
+	end
+)
 
+	addEventHandler("onColShapeHit", colExit,
+	function(hitElement, matchingDimension)
+		if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() then
+			if hitElement:getInterior() == source:getInterior() then
+				hitElement.m_LastEnterExit = {self.m_Id, "exit"}
+				hitElement:triggerEvent("onTryEnterExit", self.m_ExitMarker, "Ausgang")
+			end
+		end
+	end
+)	
+	
+
+	
+end
+
+function InteriorEnterExit:enter(player)
+	self:teleport(player, "enter", unpack(self.m_EntranceData))
+end
+
+function InteriorEnterExit:exit(player)
+	self:teleport(player, "exit", unpack(self.m_ExitData))
 end
 
 function InteriorEnterExit:setMarkerType(type)

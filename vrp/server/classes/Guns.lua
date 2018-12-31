@@ -87,7 +87,7 @@ function Guns:Event_onTaser(target)
 end
 
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
-	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
+	--if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
 	local attacker = client
 
@@ -162,6 +162,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 	end
 	if killer and isElement(killer) and weapon then
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
+		killer:triggerEvent("clientMonochromeFlash")
 	end
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
@@ -270,8 +271,6 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 			player:setHealth(health-loss)
 		end
 	end
-	--StatisticsLogger:getSingleton():addDamageLog(attacker, player, weapon, bodypart, loss)
-	--StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))
 	self:addDamageLog(player, loss, attacker, weapon, bodypart)
 end
 

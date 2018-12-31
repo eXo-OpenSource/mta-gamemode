@@ -71,6 +71,7 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		if robable == 1 then
 			self.m_Robable = RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
 			self.m_Ped = self.m_Robable.m_Ped
+			self.m_Ped:setImmortal(true)
 		else
 			self.m_Ped = NPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
 			self.m_Ped:setImmortal(true)
@@ -80,11 +81,15 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		end
 	end
 
+	if self.m_Ped then
+		ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
+	end
+
 	if typeData["Marker"] then
-		if typeData["Marker"] == "blip_position" then 
-			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 175)
+		if typeData["Marker"] == "blip_position" then
+			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 0)
 		else
-			self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
+			self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 0)
 		end
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
@@ -133,33 +138,28 @@ end
 
 function Shop:onFoodMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if not self.m_Marker.m_Disable then
-			hitElement:triggerEvent("showFoodShopMenu")
-			triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showFoodShopMenu")
+		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
 	end
 end
 
 function Shop:onItemMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if self.m_Marker then
-			if not self.m_Marker.m_Disable then
-				hitElement:triggerEvent("showItemShopGUI")
-				triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_WeaponItems)
-			end
-		else
-			hitElement:triggerEvent("showItemShopGUI")
-			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_WeaponItems)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showItemShopGUI")
+		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_SortedItems, self.m_WeaponItems)
 	end
 end
 
 function Shop:onGasStationMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if not self.m_Marker.m_Disable then
-			hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
-			triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
+		triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
 	end
 end
 

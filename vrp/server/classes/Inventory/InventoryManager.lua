@@ -60,6 +60,7 @@ function InventoryManager:loadItems()
 		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
 		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
 		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
+		itemData[itemName]["MaxWear"] = tonumber(row["MaxWear"]) or nil
 	end
 
 	return itemData
@@ -67,7 +68,7 @@ end
 
 function InventoryManager:loadInventory(player)
 	if not self.Map[player] then
-		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
+		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData, ItemManager:getSingleton():getClassItems())
 		self.Map[player] = instance
 		return instance
 	end
@@ -98,6 +99,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		client:sendError(_("Du bist zu weit von %s entfernt!", client, target.name))
 		return false
 	end
+
 	if not money then money = 0 end
 	local amount = math.abs(amount)
 	local money = math.abs(money)
@@ -111,7 +113,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			if money and money > 0 then
 				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 			end
-			QuestionBox:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
+			ShortMessageQuestion:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
 		else
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
@@ -142,7 +144,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
 		end
-		QuestionBox:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+		ShortMessageQuestion:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
 	end
 end
 
@@ -177,7 +179,14 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-
+	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
+		if (not player:getFaction():isStateFaction()) or (not player:getFaction():isFactionDuty()) then
+			if ArmsDealer:getSingleton():getItemData(item) then 
+				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
+				return false
+			end
+		end
+	end
 	if player:getInventory():getItemAmount(item) >= amount then
 		if target:getMoney() >= money then
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))

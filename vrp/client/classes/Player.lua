@@ -78,7 +78,7 @@ function Player:getGroupName()
 end
 
 function Player:getSTVO(category)
-	return fromJSON(self:getPublicSync("STVO"))[category]
+	return fromJSON(self:getPublicSync("STVO"))[category] or 0
 end
 
 function Player:getGroupType()
@@ -98,6 +98,10 @@ function Player:isAFK()
 end
 
 function Player:isInJail()
+	return self:getData("inJail") or false
+end
+
+function Player:isInPrison()
 	return self:getData("inJail") or false
 end
 

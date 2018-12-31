@@ -336,7 +336,7 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 			if amount > 0 then
 				self.m_Equipments[item] = self.m_Equipments[item] + amount
 				if armsData[3] then 
-					if not takeWeapon(player, armsData[3], amount) then 
+					if not forceSpawn and not takeWeapon(player, armsData[3], amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] - amount -- prevent bug-abuse
 					end
 				end
@@ -344,7 +344,7 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 				self.m_Equipments[item] = self.m_Equipments[item] + allAmount
 				amount = allAmount
 				if armsData[3] then 
-					if not takeWeapon(player, armsData[3]) then 
+					if not forceSpawn and not takeWeapon(player, armsData[3]) then 
 						self.m_Equipments[item] = self.m_Equipments[item] - allAmount -- prevent bug-abuse
 					end
 				end
@@ -371,14 +371,29 @@ end
 
 function Depot:takeEquipment(player, item, amount)
 	if not self:checkDistanceFromEquipment(player) then return end
+	if not player:isFactionDuty() then return player:sendError(_("Du bist nicht im Fraktionsmodus!", player)) end
+	if player:getFaction() then 
+		if self.m_Owner == player:getFaction() then 
+			local perms = player:getFaction():getEquipmentPermissions() 
+			if perms then
+				if perms[item] then 
+					if perms[item] > player:getFaction():getPlayerRank(player) then
+						return player:sendError(_("Keine Berechtigung erst ab Rang %i!", player, perms[item]))
+					end
+				end
+			end
+		end
+	end
 	if self.m_Equipments[item] then
-		local armsData = ArmsDealer:getSingleton():getItemData(item)
+ 		local armsData = ArmsDealer:getSingleton():getItemData(item)
 		if armsData[3] or (amount > 0 and self.m_Equipments[item] >= amount) or (amount==-1 and player:getInventory():getFreePlacesForItem(item) >= self.m_Equipments[item] ) then
 			if amount > 0 then 
 				self.m_Equipments[item] = self.m_Equipments[item] - amount
 				if not armsData[3] then 
 					if not player:getInventory():giveItem(item, amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] + amount
+						player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
+						return
 					end
 				else 
 					giveWeapon(player, armsData[3], amount)
@@ -389,6 +404,8 @@ function Depot:takeEquipment(player, item, amount)
 				if not armsData[3] then
 					if not player:getInventory():giveItem(item, amount) then 
 						self.m_Equipments[item] = amount
+						player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
+						return
 					end
 				else 
 					giveWeapon(player, armsData[3], amount)

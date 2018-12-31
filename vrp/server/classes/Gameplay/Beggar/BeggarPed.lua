@@ -86,7 +86,7 @@ function BeggarPed:rob(player)
 				mode = "give",
 				bank = false,
 				amount = money,
-				toOrFrom = self.m_BankAccountServer,
+				toOrFrom = self.m_BankAccountServer or BankServer.get("gameplay.beggar"),
 				category = "Gameplay",
 				subcategory = "BeggarRob"
 			},
@@ -132,7 +132,7 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 	--give loot
 	self:createLootPickup()
 
-	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = vehicle.controller end
+	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = killer.controller end
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		-- Take karma
 		killer:takeKarma(3)
@@ -164,7 +164,7 @@ function BeggarPed:createLootPickup()
 					mode = "give",
 					bank = false,
 					amount = math.random(1,3),
-					toOrFrom = self.m_BankAccountServer,
+					toOrFrom = self.m_BankAccountServer or BankServer.get("gameplay.beggar"),
 					category = "Gameplay",
 					subcategory = "BeggarRob"
 				},

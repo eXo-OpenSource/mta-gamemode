@@ -10,10 +10,10 @@ inherit(Singleton, ItemShopGUI)
 
 addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI", "showBarGUI", "shopCloseGUI"}
 
-function ItemShopGUI:constructor(callback)
+function ItemShopGUI:constructor(callback, shopName)
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Shop", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, shopName or _"Shop", true, true, self)
 	self.m_Preview = GUIImage:new(self.m_Height*0.08, self.m_Height*0.12, self.m_Width*0.2, self.m_Width*0.2, false, self.m_Window)
 	self.m_LabelDescription = GUILabel:new(self.m_Width*0.02, self.m_Width*0.3, self.m_Width*0.45, self.m_Height-self.m_Width*0.76, "", self.m_Window) -- use width to align correctly
 	self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.07)):setMultiline(true)
@@ -34,29 +34,35 @@ function ItemShopGUI:constructor(callback)
 	self.m_CallBack = callback
 end
 
-function ItemShopGUI:refreshItemShopGUI(shopId, items, weaponItems)
+function ItemShopGUI:refreshItemShopGUI(shopId, items, sortedItems, weaponItems)
 	self.m_Shop = shopId or 0
-	local item
 	local itemData = Inventory:getSingleton():getItemData()
 	if itemData then
 		self.m_Grid:clear()
-		for name, price in pairs(items) do
-			item = self.m_Grid:addItem(name, tostring(price.."$"))
-			item.Id = name
-			
-			item.onLeftClick = function()
-				self.m_Preview:setImage("files/images/Inventory/items/"..itemData[name]["Icon"])
-				self.m_LabelDescription:setText(itemData[name]["Info"])
+		for key, value in pairs(sortedItems and sortedItems or items) do
+			if sortedItems and value[1] == true then
+				self.m_Grid:addItemNoClick(value[2])
+			else
+				local name = sortedItems and value[1] or key
+				local price = items[name]
+				local item = self.m_Grid:addItem(name, ("%s$"):format(price))
+				item.Id = name
+
+				item.onLeftClick =
+					function()
+						self.m_Preview:setImage(("files/images/Inventory/items/%s"):format(itemData[name]["Icon"]))
+						self.m_LabelDescription:setText(itemData[name]["Info"])
+					end
 			end
 		end
+
 		if weaponItems then
 			for id, price in pairs(weaponItems) do
-				item = self.m_Grid:addItem(WEAPON_NAMES[id], tostring(price.."$"))
+				local item = self.m_Grid:addItem(WEAPON_NAMES[id], ("%s$"):format(price))
 				item.Id = id
 				item.isWeapon = true
-				
+
 				item.onLeftClick = function()
-					outputDebug(id)
 					self.m_Preview:setImage(WeaponIcons[id])
 					self.m_LabelDescription:setText(WEAPON_NAMES[id])
 				end
@@ -89,7 +95,7 @@ addEventHandler("showItemShopGUI", root,
 	function()
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount, isWeapon)
-			if isWeapon then 
+			if isWeapon then
 				triggerServerEvent("shopBuyWeapon", root, shop, itemName)
 			else
 				triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
@@ -110,12 +116,12 @@ addEventHandler("showBarGUI", root,
 )
 
 addEventHandler("showStateItemGUI", root,
-	function()
+	function(shopName)
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount)
 			triggerServerEvent("factionStatePutItemInVehicle", root, itemName, amount)
 		end
-		ItemShopGUI:new(callback)
+		ItemShopGUI:new(callback, shopName)
 	end
 )
 

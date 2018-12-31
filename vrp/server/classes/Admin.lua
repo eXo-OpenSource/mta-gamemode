@@ -78,11 +78,8 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix",
-	"adminSyncForumFaction", "adminSyncForumCompany"}
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
 
-    addEventHandler("adminSyncForumFaction", root, bind(self.Event_adminSyncForumFaction, self))
-    addEventHandler("adminSyncForumCompany", root, bind(self.Event_adminSyncForumCompany, self))
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
@@ -626,9 +623,11 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin.m_SpectDimensionFunc = function(dim) _setElementDimension(admin, dim) end -- using overloaded methods to prevent that onElementDimensionChange will triggered
 		admin.m_SpectStop =
 			function()
-				for i, v in pairs(target.spectBy) do
-					if v == admin then
-						table.remove(target.spectBy, i)
+				if target.spectBy then
+					for i, v in pairs(target.spectBy) do
+						if v == admin then
+							table.remove(target.spectBy, i)
+						end
 					end
 				end
 				if admin and isElement(admin) then
@@ -649,6 +648,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
+				removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) --trig
 
 			end
 
@@ -668,6 +668,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+		addEventHandler("onPlayerQuit", admin, admin.m_SpectStop)
 		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
 		bindKey(admin, "space", "down", admin.m_SpectStop)
 
@@ -679,9 +680,12 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			if isElement(target) and func == "nickchange" then
 				local oldName = target:getName()
 				changeTarget = target
-				if changeTarget:setNewNick(admin, reason) then
-					self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
-				end
+
+				Async.create(function(ac, changeTarget, admin, reason, oldName)
+					if changeTarget:setNewNick(admin, reason) then
+						ac:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
+					end
+				end)(self, changeTarget, admin, reason, oldName)
 			end
 		else
 			admin:sendError(_("Ungültiges Ziel!", admin))
@@ -857,7 +861,7 @@ function Admin:chat(player,cmd,...)
 end
 
 function Admin:toggleJetPack(player)
-	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
+	if player:getRank() >= RANK.Supporter and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
 		givePedJetPack(player)
 	else
 		if doesPedHaveJetPack(player) then
@@ -1026,7 +1030,8 @@ local tpTable = {
 		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
         ["afk"] =           {["pos"] = Vector3(1567.72, -1886.07, 13.24),  	["typ"] = "Orte"},
         ["drogentruck"] =   {["pos"] = Vector3(-1079.60, -1620.10, 76.19),  ["typ"] = "Orte"},
-        ["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
+		["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
+		["kanal"] = 		{["pos"] = Vector3(1483.34, -1760.16, -37.31),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
         --["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
         --["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
@@ -1076,15 +1081,14 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
-		["vatos"] =         {["pos"] = Vector3(1882.53, -2029.32, 13.39),["typ"] = "Fraktionen"},
-		--["yakuza"] =        {["pos"] = Vector3(924.773, -1711.789, 13.547), ["typ"] = "Fraktionen"},
-		["triaden"] =        {["pos"] = Vector3( 1907.526, 940.785, 10.776), ["typ"] = "Fraktionen"},
+		["vatos"] =         {["pos"] = Vector3(1882.53, -2029.32, 13.39),	["typ"] = "Fraktionen"},
+		["yakuza"] =        {["pos"] = Vector3(1406.541, -1426.492, 8.643),	["typ"] = "Fraktionen"},
+		["kartell"] =       {["pos"] = Vector3(2529.555, -1465.829, 23.94), ["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
 		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-
 	}
 
 	local x,y,z = 0,0,0
@@ -1144,44 +1148,6 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSyncForumFaction(factionId)
-	if client:getRank() >= RANK.Supporter then
-        local faction = FactionManager:getSingleton():getFromId(factionId)
-   		if faction then
-			client:sendInfo(_("Syncronisation wurde gestartet.", client))
-			
-			Async.create(
-				function(client)
-					local addedCount, removedCount = faction:syncForumPermissions()
-
-					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
-				end
-			)(client)
-    	else
-    		client:sendError(_("Fraktion nicht gefunden!", client))
-    	end
-	end
-end
-
-function Admin:Event_adminSyncForumCompany(companyId)
-	if client:getRank() >= RANK.Supporter then
-        local company = CompanyManager:getSingleton():getFromId(companyId)
-		   if company then
-			client:sendInfo(_("Syncronisation wurde gestartet.", client))
-			
-			Async.create(
-				function(client)
-					local addedCount, removedCount = company:syncForumPermissions()
-
-					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
-				end
-			)(client)
-    	else
-    		client:sendError(_("Unternehmen nicht gefunden!", client))
-    	end
-	end
-end
-
 function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
@@ -1191,9 +1157,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
 			faction:removePlayer(targetPlayer)
-			Async.create(function()
-				faction:updateForumPermissions(targetPlayer.m_Id)
-			end)()
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
 		end
 
         if Id == 0 then
@@ -1207,9 +1171,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				end
 
 				faction:addPlayer(targetPlayer, tonumber(rank))
-				Async.create(function()
-					faction:updateForumPermissions(targetPlayer.m_Id)
-				end)()
+				Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -1228,6 +1190,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
 			end
 			company:removePlayer(targetPlayer)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
 		end
 
         if Id == 0 then
@@ -1240,6 +1203,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
 				end
     			company:addPlayer(targetPlayer, tonumber(rank))
+				Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))
@@ -1400,7 +1364,7 @@ function Admin:Event_vehicleDespawn(reason)
 	VehicleManager:getSingleton():checkVehicle(source)
 
 	if source:isPermanent() then
-		StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Despawn", ("Besitzer: %s, Grund: %s"):format(getElementData(source, "OwnerName") or "", reason))
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "despawn", source, reason)
 		self:sendShortMessage(_("%s hat das Fahrzeug %s von %s despawnt (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "", reason))
 
 		if getElementData(source, "OwnerName") then

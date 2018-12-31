@@ -25,7 +25,7 @@ function CluckinBell:constructor(id, name, position, rotation, typeData, dimensi
 		self.m_Ped:setData("clickable",true,true)
 		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
 			if button =="left" and state == "down" then
-				self:onAmmunationMarkerHit(player, true)
+				self:onFoodMarkerHit(player, true)
 			end
 		end)
 	end

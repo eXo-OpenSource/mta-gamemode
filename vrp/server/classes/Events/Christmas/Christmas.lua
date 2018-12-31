@@ -2,57 +2,59 @@ Christmas = inherit(Singleton)
 
 Christmas.ms_Bonus = {
 	{
-		["Text"] = "Schutzweste",
-		["Image"] = "Bonus_Vest.png",
-		["Packages"] = 0,
+		["Text"] = "Radio",
+		["Image"] = "Bonus_Radio.png",
+		["Packages"] = 1,
 		["CandyCane"] = 5,
-		["Type"] = "Special"
+		["Type"] = "Item",
+		["ItemName"] = "Radio",
+		["ItemAmount"] = 1
 	},
 	{
 		["Text"] = "250g Weed",
 		["Image"] = "Bonus_Weed.png",
-		["Packages"] = 1,
-		["CandyCane"] = 5,
+		["Packages"] = 3,
+		["CandyCane"] = 7,
 		["Type"] = "Item",
 		["ItemName"] = "Weed",
 		["ItemAmount"] = 250
 	},
 	{
-		["Text"] = "Dildo",
-		["Image"] = "Bonus_Dildo.png",
-		["Packages"] = 3,
-		["CandyCane"] = 5,
+		["Text"] = "Messer",
+		["Image"] = "Bonus_Knife.png",
+		["Packages"] = 5,
+		["CandyCane"] = 10,
 		["Type"] = "Weapon",
-		["WeaponId"] = 10,
+		["WeaponId"] = 4,
 		["Ammo"] = 1
 	},
 	{
-		["Text"] = "10.000$",
+		["Text"] = "15.000$",
 		["Image"] = "Bonus_Money.png",
-		["Packages"] = 3,
+		["Packages"] = 5,
 		["CandyCane"] = 10,
 		["Type"] = "Money",
-		["MoneyAmount"] = 10000
+		["MoneyAmount"] = 15000
 	},
 	{
-		["Text"] = "100 Punkte",
+		["Text"] = "250 Punkte",
 		["Image"] = "Bonus_Points.png",
 		["Packages"] = 3,
 		["CandyCane"] = 10,
 		["Type"] = "Points",
-		["PointsAmount"] = 100
+		["PointsAmount"] = 250
 	},
 	{
 		["Text"] = "Neutrales Karma",
 		["Image"] = "Bonus_Karma.png",
-		["Packages"] = 60,
-		["CandyCane"] = 100,
+		["Packages"] = 50,
+		["CandyCane"] = 90,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
-		["Packages"] =100,
+		["Packages"] =75,
 		["CandyCane"] = 100,
 		["Type"] = "Special"
 	},
@@ -67,42 +69,51 @@ Christmas.ms_Bonus = {
 	{
 		["Text"] = "30 Tage VIP",
 		["Image"] = "Bonus_VIP.png",
-		["Packages"] = 200,
+		["Packages"] = 175,
 		["CandyCane"] = 200,
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "Comet",
-		["Image"] = "Bonus_Comet.png",
+		["Text"] = "FCR-900",
+		["Image"] = "Bonus_FCR.png",
 		["Packages"] = 350,
 		["CandyCane"] = 500,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 480
+		["VehicleModel"] = 521
 	},
 	{
-		["Text"] = "Pizza-Boy",
-		["Image"] = "Bonus_PizzaBoy.png",
-		["Packages"] = 400,
-		["CandyCane"] = 550,
+		["Text"] = "Remington",
+		["Image"] = "Bonus_Remington.png",
+		["Packages"] = 450,
+		["CandyCane"] = 700,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 448
+		["VehicleModel"] = 534
 	}
 }
 
+
 function Christmas:constructor()
-	--self.m_QuestManager = QuestManager:new()
+	self.m_QuestManager = QuestManager:new()
 
-	self.m_BankServerAccount = BankServer.get("event.halloween")
+	self.m_BankServerAccount = BankServer.get("event.christmas")
 
-	--WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0) -- in front of tree
-	--WheelOfFortune:new(Vector3(1479, -1692.3, 14.2), 180) -- in back of tree
-	WheelOfFortune:new(Vector3(1475.10, -1779.37, 13.6), 0)
-	WheelOfFortune:new(Vector3(1486.00, -1779.34, 13.6), 0)
+	if EVENT_CHRISTMAS_MARKET then
+		WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0) -- in front of tree
+		WheelOfFortune:new(Vector3(1479, -1692.3, 14.2), 180) -- in back of tree
+		--other wheels on side of market
+		WheelOfFortune:new(Vector3(1455.52, -1662.81, 14.16), 80)
+		WheelOfFortune:new(Vector3(1454.12, -1669.74, 14.17), 70)
+		WheelOfFortune:new(Vector3(1455.73, -1654.92, 14.16), 95)
+		WheelOfFortune:new(Vector3(1504.01, -1658.57, 14.12), 260)
+		WheelOfFortune:new(Vector3(1506.11, -1651.70, 14.11), 245)
+		WheelOfFortune:new(Vector3(1509.73, -1645.62, 14.11), 230)
+
+		FerrisWheelManager:getSingleton():addWheel(Vector3(1479.35, -1665.9, 26.5), 0)
+	end
 
 
-	createObject(3861, 1485.83, -1794.58, 13.72, 0, 0, 180) --BonusShop (after Event)
-	createObject(3861, 1474.87, -1794.77, 13.72, 0, 0, 180) --Firework Shop
-
+	createObject(3861, 1456.84, -1748.18, 13.72, 0, 0, 170) --QuestShop (before market opens) BonusShop (after Event)
+	createObject(3861, 1453.17, -1744.94, 13.72, 0, 0, 115) --Firework Shop
 
 	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))

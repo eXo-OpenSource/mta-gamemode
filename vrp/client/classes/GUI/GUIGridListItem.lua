@@ -11,11 +11,10 @@ inherit(GUIFontContainer, GUIGridListItem)
 
 function GUIGridListItem:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, Color.White)
+	GUIColorable.constructor(self)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 
 	self.m_Columns = {}
-	self.m_BackgroundColor = Color.Clear
 	self.m_Clickable = true
 end
 
@@ -41,6 +40,10 @@ function GUIGridListItem:setColumnColor(columnIndex, color)
 	return self
 end
 
+function GUIGridListItem:getColumnColor(columnIndex)
+	return self.m_Columns[columnIndex].color
+end
+
 function GUIGridListItem:setColumnToImage(columnIndex, state, width)
 	self.m_Columns[columnIndex].image = state
 	self.m_Columns[columnIndex].imageWidth = width or getColumnWidth(columnIndex)*self.m_Width - 10
@@ -62,17 +65,16 @@ function GUIGridListItem:setClickable(state)
 	return self
 end
 
-function GUIGridListItem:setBackgroundColor(color)
-	self.m_BackgroundColor = color
-end
-
 function GUIGridListItem:getBackgroundColor()
 	return self.m_BackgroundColor
 end
 
 function GUIGridListItem:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
+
+	if self.m_BackgroundColor then
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
+	end
 
 	local currentXPos = 0
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
@@ -84,6 +86,7 @@ function GUIGridListItem:drawThis()
 		end
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
+
 	dxSetBlendMode("blend")
 end
 

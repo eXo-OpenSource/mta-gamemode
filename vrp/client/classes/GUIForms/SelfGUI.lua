@@ -9,28 +9,63 @@ SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 
 SelfGUI.Stats = {
-	--["AFK"] = {
-	--		["text"] = "gesamte AFK-Zeit",
-	--		["value"] = function(value)
-	--			local hours, minutes = math.floor(value/60/60), (value - math.floor(value/60/60)*60)
-	--			return hours.." Stunde(n)" ..minutes.." Minute(n)" end
-	--		},
-	["Driven"] = {
-			["text"] = "Gefahrene Kilometer",
-			["value"] = function(value) return math.floor(value/1000).." km" end
-			},
-	["Deaths"] = {
-			["text"] = "Tode",
-			["value"] = function(value) return value end
-			},
-	["Kills"] =	{
-			["text"] = "Kills",
-			["value"] = function(value) return value end
-			},
-	["FishCaught"] = {
-			["text"] = "Fische gefangen",
-			["value"] = function(value) return value end
-			},
+	{
+		["Name"] = "Playtime",
+		["Timer"] = 65000,
+		["text"] = "Spielzeit",
+		["value"] =
+			function()
+				local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
+				return ("%s Stunde%s, %s Minute%s"):format(hours, hours == 1 and "" or "n", minutes, minutes == 1 and "" or "n")
+			end
+	},
+	{
+		["Name"] = "AFKTime",
+		["Timer"] = 65000,
+		["text"] = "Aktuelle AFK-Zeit",
+		["value"] = function() local minutes = math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000) return ("%s Minute%s"):format(minutes, minutes == 1 and "" or "n") end
+	},
+	{
+		["Name"] = "Driven",
+		["text"] = "Gefahrene Kilometer",
+		["value"] = function(value) return math.floor(value/1000).." km" end
+	},
+	{
+		["Name"] = "Deaths",
+		["text"] = "Tode",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "Kills",
+		["text"] = "Kills",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "Collectables_Collected",
+		["CustomStatistic"] = true,
+		["text"] = "eXo Logos gesammelt",
+		["value"] = function(value) return ("%s/%s"):format(value, COLLECTABLES_COUNT_PER_PLAYER) end
+	},
+	{
+		["Name"] = "FishCaught",
+		["text"] = "Fische gefangen",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "LegendaryFishCaught",
+		["text"] = "    davon Legendäre",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "FishLost",
+		["text"] = "Fische verloren",
+		["value"] = function(value) return value end
+	},
+	{
+		["Name"] = "FishBadCatch",
+		["text"] = "Müll geangelt",
+		["value"] = function(value) return value end
+	},
 }
 
 function SelfGUI:constructor()
@@ -247,8 +282,9 @@ function SelfGUI:constructor()
 	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
 		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
 			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
-			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
-			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1])):setProgressTextEnabled()
+			local levelValue = FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]
+			self.m_FishingLevelProgress:setProgress(math.min(value, levelValue)/levelValue*100)
+			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, levelValue)):setProgressTextEnabled()
 		else
 			self.m_FishingLevelProgress:hide()
 		end
@@ -337,11 +373,6 @@ function SelfGUI:onShow()
 		self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
 	end
 
-	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
-	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
-	self.m_AFKTimeLabel:setText(_("%s Minute(n)", math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000)))
-
-
 	local x, y = self.m_JobNameLabel:getPosition()
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
@@ -383,33 +414,26 @@ function SelfGUI:adjustGeneralTab(name)
 end
 
 function SelfGUI:loadStatistics()
-	local i = 0
-	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Spielzeit:", self.m_TabStatistics)
-	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", self.m_TabStatistics)
-	i = i+1
-	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", self.m_TabStatistics)
-	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", self.m_TabStatistics)
-	i = i+1
+	for i, data in pairs(SelfGUI.Stats) do
+		i = i - 1
+		local value = (data.CustomStatistic and localPlayer:getPrivateSync(data.Name) or localPlayer:getStatistics(data.Name)) or "-"
+		self.m_StatDescription[data.Name] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _("%s:", data.text), self.m_TabStatistics)
+		self.m_StatValue[data.Name] = GUILabel:new(self.m_Width*0.5, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data.value(value), self.m_TabStatistics)
 
-	local value
-	for index, data in pairs(SelfGUI.Stats) do
-		value = localPlayer:getStatistics(index) or " - "
-		self.m_StatDescription[index] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _("%s:", data["text"]), self.m_TabStatistics)
-		self.m_StatValue[index] = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data["value"](value), self.m_TabStatistics)
-
-		localPlayer:setPrivateSyncChangeHandler("Stat_"..index, function(value)
-			self.m_StatValue[index]:setText(tostring(data["value"](value)))
-		end)
-
-		i = i+1
+		if not data.Timer then
+			localPlayer:setPrivateSyncChangeHandler(("%s%s"):format(data.CustomStatistic and "" or "Stat_", data.Name),
+				function(value)
+					self.m_StatValue[data.Name]:setText(tostring(data.value(value)))
+				end
+			)
+		else
+			setTimer(
+				function()
+					self.m_StatValue[data.Name]:setText(tostring(data.value()))
+				end, data.Timer, 0
+			)
+		end
 	end
-	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"eXo Logos gesammelt:", self.m_TabStatistics)
-	self.m_CollectablesLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)), self.m_TabStatistics)
-	localPlayer:setPrivateSyncChangeHandler("Collectables_Collected", function(value)
-		self.m_CollectablesLabel:setText(_(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)))
-	end)
-
-	--outputDebug(tonumber(localPlayer:getPrivateSync("Collectables_Collected")))
 end
 
 function SelfGUI:setCompanyInfo()
@@ -825,6 +849,14 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "paydayBox_relative", state)
 		end
 
+		self.m_ElementHelpBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.8, self.m_Height*0.04, _"Hilfetext über Objekten", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_ElementHelpBox:setChecked(core:get("HUD", "elementHelpCaption", true))
+		self.m_ElementHelpBox.onChange = function (state)
+			core:set("HUD", "elementHelpCaption", state)
+			ElementInfoManager:getSingleton():setState(state)
+		end
+
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Design", self.m_SettingBG)
 
 		local function updateDesignOptions(index)
@@ -890,6 +922,11 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
+
+		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"Datum", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartBlue:setChecked(core:get("HUD", "chartDateVisible", false))
+		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartDateVisible", state) end
+
 
 		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartLabels:setChecked(core:get("HUD", "chartLabels", true))
@@ -1088,6 +1125,15 @@ function SelfGUI:onSettingChange(setting)
 			Guns:getSingleton():toggleTracer(bool)
 		end
 
+		self.m_MonochromeShader = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.8, self.m_Height*0.04, _"Kill Feedback", self.m_SettingBG)
+		self.m_MonochromeShader:setFont(VRPFont(25))
+		self.m_MonochromeShader:setFontSize(1)
+		self.m_MonochromeShader:setChecked(core:get("HUD", "KillFeedbackShader", false))
+		self.m_MonochromeShader.onChange = function (bool)
+			core:set("HUD", "KillFeedbackShader", bool)
+			Guns:getSingleton():toggleMonochromeShader(bool)
+		end
+
 	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
 		self.m_TextureModeChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
@@ -1184,9 +1230,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SmokeMode:setChecked(core:get("Other", "SmokeLowMode", false))
 		self.m_SmokeMode.onChange = function (state)
 			core:set("Other", "SmokeLowMode", state)
-			if state then 
+			if state then
 				ItemSmokeGrenade:getSingleton():useLowMode()
-			else 
+			else
 				ItemSmokeGrenade:getSingleton():disableLowMode()
 			end
 		end
@@ -1338,7 +1384,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_NaviSound:setFont(VRPFont(25))
 		self.m_NaviSound:setFontSize(1)
 		self.m_NaviSound:setChecked(core:get("Sounds", "Navi", true))
-		self.m_FireworkSound.onChange = function (state)
+		self.m_NaviSound.onChange = function (state)
 			core:set("Sounds", "Navi", state)
 		end
 
@@ -1416,10 +1462,46 @@ function SelfGUI:onSettingChange(setting)
 			HUDSpeedo:getSingleton():setLightOption( bool )
 			core:set("HUD", "SpeedoLightOverlay", bool)
 		end
+
+		self.m_AviationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.35, self.m_Height*0.04, _"Flugzeug-Display" , self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+
+		self.m_AviationPFD = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.71, self.m_Width*0.6, self.m_Height*0.04, _"Primäre Fluganzeige (An/Aus)", self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_AviationPFD:setChecked(core:get("HUD", "AviationPFDOverlay", true))
+		self.m_AviationPFD.onChange = function (bool)
+			HUDAviation:getSingleton():setPFD( bool )
+			core:set("HUD", "AviationPFDOverlay", bool)
+		end
+		
+		self.m_AviationSFD = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.78, self.m_Width*0.6, self.m_Height*0.04, _"Sekundäre Fluganzeige (An/Aus)", self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_AviationSFD:setChecked(core:get("HUD", "AviationSFDOverlay", true))
+		self.m_AviationSFD.onChange = function (bool)
+			HUDAviation:getSingleton():setSFD( bool )
+			core:set("HUD", "AviationSFDOverlay", bool)
+		end
+
+		self.m_AviationECAS = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.6, self.m_Height*0.04, _"Tertiäre Fluganzeige (An/Aus)", self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_AviationECAS:setChecked(core:get("HUD", "AviationECASOverlay", true))
+		self.m_AviationECAS.onChange = function (bool)
+			HUDAviation:getSingleton():setECAS( bool )
+			core:set("HUD", "AviationECASOverlay", bool)
+		end
 	elseif setting == "Shader" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
 		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
 		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
+		self.m_BlurLevel = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Blur bei Geschwindigkeit", self.m_SettingBG)
+		self.m_BlurLevel:setFont(VRPFont(25))
+		self.m_BlurLevel:setFontSize(1)
+		self.m_BlurLevel:setChecked(core:get("Shaders", "BlurLevel", true))
+		self.m_BlurLevel.onChange = function (state)
+			core:set("Shaders", "BlurLevel", state)
+			localPlayer:deactivateBlur(state)
+		end
 	elseif setting == "Tastenzuordnung" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
 		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen", self.m_SettingBG):setBarEnabled(true)
@@ -1473,5 +1555,42 @@ function SelfGUI:onSettingChange(setting)
 			self.m_HalloweenDarkness:setEnabled(false)
 		end
 
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.30, self.m_Width*0.8, self.m_Height*0.07, _"Winterzeit", self.m_SettingBG)
+		self.m_SnowFlakes = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.9, self.m_Height*0.04, _"Schneeflocken", self.m_SettingBG)
+		self.m_SnowFlakes:setFont(VRPFont(25))
+		self.m_SnowFlakes:setFontSize(1)
+		self.m_SnowFlakes:setChecked(core:get("Event", "SnowFlakes", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowFlakes.onChange = function (state)
+			core:set("Event", "SnowFlakes", state)
+			triggerEvent("switchSnowFlakes", root, state)
+		end
+		self.m_SnowGround = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.44, self.m_Width*0.9, self.m_Height*0.04, _"Schneedecke", self.m_SettingBG)
+		self.m_SnowGround:setFont(VRPFont(25))
+		self.m_SnowGround:setFontSize(1)
+		self.m_SnowGround:setChecked(core:get("Event", "SnowGround", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowGround.onChange = function (state)
+			core:set("Event", "SnowGround", state)
+			triggerEvent("switchSnowGround", root, state, core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
+			self.m_SnowGroundExtra:setEnabled(state)
+		end
+
+		self.m_SnowGroundExtra = GUICheckbox:new(self.m_Width*0.04, self.m_Height*0.51, self.m_Width*0.9, self.m_Height*0.04, _"dynamische Textur (schön, aber FPS-lastig!)", self.m_SettingBG)
+		self.m_SnowGroundExtra:setFont(VRPFont(25))
+		self.m_SnowGroundExtra:setFontSize(1)
+		self.m_SnowGroundExtra:setChecked(core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowGroundExtra.onChange = function (state)
+			core:set("Event", "SnowGround_Extra", state)
+			triggerEvent("switchSnowGround", root, core:get("Event", "SnowGround", EVENT_CHRISTMAS), state)
+		end
+
+		if not core:get("Event", "SnowGround", EVENT_CHRISTMAS) then
+			self.m_SnowGroundExtra:setEnabled(false)
+		end
+
+		if not SNOW_SHADERS_ENABLED then
+			self.m_SnowFlakes:setEnabled(false)
+			self.m_SnowGround:setEnabled(false)
+			self.m_SnowGroundExtra:setEnabled(false)
+		end
 	end
 end

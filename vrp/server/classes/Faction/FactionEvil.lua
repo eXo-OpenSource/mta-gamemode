@@ -18,7 +18,8 @@ function FactionEvil:constructor()
 
 	nextframe(function()
 		self:loadLCNGates(5)
-		self:loadTriadGates(11)
+		self:loadCartelGates(11)
+		self:loadYakGates(6)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -55,6 +56,7 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	self.m_WeaponPed[Id].Faction = faction
 	addEventHandler("onElementClicked", self.m_WeaponPed[Id], bind(self.onWeaponPedClicked, self))
+	ElementInfo:new(self.m_WeaponPed[Id], "Waffenlager")
 
 	self.m_ItemDepot[Id] = createObject(2972, 2816.8, -1173.5, 1024.4, 0, 0, 0)
 	self.m_ItemDepot[Id]:setDimension(Id)
@@ -62,13 +64,15 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_ItemDepot[Id].Faction = faction
 	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
-
-
+	ElementInfo:new(self.m_ItemDepot[Id], "Itemlager")
+	
 	self.m_EquipmentDepot[Id] = createObject(964, 2819.84, -1173.51, 1024.57, 0, 0, 0)
 	self.m_EquipmentDepot[Id]:setDimension(Id)
 	self.m_EquipmentDepot[Id]:setInterior(8)
 	self.m_EquipmentDepot[Id].Faction = faction
 	self.m_EquipmentDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	ElementInfo:new(self.m_EquipmentDepot[Id], "Ausrüstungslager")
+
 	addEventHandler("onElementClicked", self.m_EquipmentDepot[Id], bind(self.onEquipmentDepotClicked, self))
 
 	local int = {
@@ -196,14 +200,26 @@ function FactionEvil:onEquipmentDepotClicked(button, state, player)
 	end
 end
 
+function FactionEvil:isSpecialProduct(product) 
+	return (product == "RPG-7" or product == "Granate" or product == "Scharfschützengewehr" or product == "Gasgranate") 
+end
+
 function FactionEvil:putOrderInDepot(player, box)
 	local content = box.m_Content 
 	local type, product, amount, price, id = unpack(box.m_Content)
 	local depot = player:getFaction():getDepot()
-	if type == "Waffe" then
-		if id then
-			depot:addWeaponD(id,amount)
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+	if type == "Waffe" or self:isSpecialProduct(product) then
+		if not self:isSpecialProduct(product) then
+			if id then
+				depot:addWeaponD(id,amount)
+				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+			end
+		else 
+			if id then
+				depot:addWeaponD(id,amount)
+				depot:addMagazineD(id,amount)
+				player:getFaction():sendShortMessage(("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+			end
 		end
 	elseif type == "Munition" then
 		if id then
@@ -218,38 +234,32 @@ function FactionEvil:putOrderInDepot(player, box)
 end
 
 function FactionEvil:loadYakGates(factionId)
-
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(2933, Vector3(907.40002, -1712.5, 14.5), Vector3(0, 0, 90), Vector3(907.40002, -1701.8812255859, 14.5))
-	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
-	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
+	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.3))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza"
-	--// ps: have I told you that I hate this new faction-base?
-	--// removed removeModel ;)
+	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
+	local elevator = Elevator:new()
+	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
+	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
+	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
+	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.422))
+	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
+
 end
 
-function FactionEvil:loadTriadGates( factionId)
-
+function FactionEvil:loadCartelGates( factionId) 
+	 
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120+4.04))
+	lcnGates[1] = Gate:new(6400, Vector3(2520.203, -1493.003, 25.094), Vector3(0, 0, 270), Vector3(2520.203, -1493.003, 20.094))
+	lcnGates[2] = Gate:new(16773, Vector3(2446.400, -1464.300, 23.800), Vector3(0, 0, 270), Vector3(2446.400, -1464.300, 17.800))
+	
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)
-	local door = Door:new(6400, Vector3(1908.597, 967.407, 10.750), Vector3(0, 0, 90))
-	setElementDoubleSided(door.m_Door, true)
-	local crate = createObject(3576, 1909.020,965.252,11.320)
-	setElementRotation(crate, 0, 0, 180)
-	local box = createObject(18260, 1910.220, 969.863, 11.420)
-	local elevator = Elevator:new()
-	elevator:addStation("Garage", Vector3(1904.38, 1016.85, 11.3), 351-180)
-	elevator:addStation("Casino", Vector3(1963.30, 973.03, 994.47), 204-180, 10, 0)
-	elevator:addStation("Dach - Heliports", Vector3(1941.15, 988.92, 52.74), 0)
 end
 
 

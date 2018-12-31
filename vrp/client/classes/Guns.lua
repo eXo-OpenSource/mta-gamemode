@@ -71,11 +71,12 @@ function Guns:constructor()
 	self.m_NetworkInteruptFreeze = false
 	self.HookDrawAttention = bind(self.drawNetworkInterupt, self)
 	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
-	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
+	--addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
-	addRemoteEvents{"clientBloodScreen"}
+	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash"}
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
+	addEventHandler("clientMonochromeFlash", root, bind(self.monochromeFlash, self))
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 	
@@ -87,6 +88,18 @@ end
 
 function Guns:destructor()
 
+end
+
+function Guns:toggleMonochromeShader(bool)
+	if bool then
+		self.m_ChromeShader = MonochromeShader:new()
+		self.m_ChromeShader:setAlpha(0)
+		self.m_ChromeShader.m_Active = false
+	else
+		if self.m_ChromeShader then
+			self.m_ChromeShader = MonochromeShader:delete()
+		end
+	end
 end
 
 function Guns:toggleTracer( bool )
@@ -161,8 +174,10 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		cancelEvent()
 	elseif weapon == 17 then 
 		if source.getPublicSync and source:getPublicSync("HelmetItem") == "Gasmaske" then
-		else 
-			WearableHelmet:getSingleton():onTearNade()
+		else
+			if source == localPlayer then
+				WearableHelmet:getSingleton():onTearNade()
+			end
 		end
 		cancelEvent()
 	else
@@ -275,14 +290,14 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 		if cWeapon ~= 34 then
 			toggleControl("fire",true)
 			if localPlayer.m_FireToggleOff then
-				if localPlayer.m_LastSniperShot+6000 <= getTickCount() then
+				if localPlayer.m_LastSniperShot+4000 <= getTickCount() then
 					localPlayer.m_FireToggleOff = false
 				end
 			end
 			self.m_HasSniper = false
 		else
 			if localPlayer.m_FireToggleOff then
-				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
+				if localPlayer.m_LastSniperShot+4000 >= getTickCount() then
 					toggleControl("fire",false)
 				else
 					localPlayer.m_FireToggleOff = false
@@ -337,7 +352,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				setTimer(function()
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
-				end, 6000,1)
+				end, 4000,1)
 			end
 		end
 		if self.m_TracerEnabled then
@@ -383,6 +398,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 	end
 end
 
+--[[
 function Guns:Event_checkFadeIn()
 	local hasSniper = getPedWeapon(localPlayer) == 34
 	if hasSniper then
@@ -426,6 +442,7 @@ function Guns:removeSniperShader()
 		delete(self.m_SniperShader)
 	end
 end
+]]
 
 function Guns:Event_onTaserRender()
 	if self.m_TaserAttacker and (self.m_HitPos or self.m_TaserTarget) then
@@ -487,6 +504,12 @@ function Guns:Event_renderTracer()
 				self.m_TracerTable[time] = nil
 			end
 		end
+	end
+end
+
+function Guns:monochromeFlash()
+	if self.m_ChromeShader then 
+		self.m_ChromeShader:flash()
 	end
 end
 

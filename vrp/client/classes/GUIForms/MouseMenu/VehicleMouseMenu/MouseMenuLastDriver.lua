@@ -21,7 +21,7 @@ function LastDriverMouseMenu:constructor(posX, posY, element)
 				ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenu:new(posX, posY, element), element)
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Back)
+	)
 
 	local max = 5
 	local count = 0

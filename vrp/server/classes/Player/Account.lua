@@ -136,6 +136,8 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
 
+	ServiceSync:getSingleton():syncPlayer(Id)
+
 	player:loadCharacter()
 	player:spawn()
 	player:triggerEvent("loginsuccess", pwhash)

@@ -88,10 +88,9 @@ function AdminGUI:constructor(money)
 
 	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
 	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("syncForumFaction", "Fraktion sync", self.onGeneralButtonClick, self.m_Width-225, 305, 200, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("syncForumCompany", "Unternehmen sync", self.onGeneralButtonClick, self.m_Width-225, 345, 200, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("syncForum", "Foren-Gruppen", self.onGeneralButtonClick, self.m_Width-225, 305, 200, 30, Color.Orange, tabAllgemein)
 
-	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 385, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 345, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -547,25 +546,13 @@ function AdminGUI:onGeneralButtonClick(func)
 				function (factionId)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
-	elseif func == "syncForumCompany" then
-		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-		ChangerBox:new(_"Unternehmen: Forum sync",
-				_"Bitte wähle die gewünschte Unternehmen aus:",companyTable,
-				function (companyId)
-					triggerServerEvent("adminSyncForumCompany", root, companyId)
-				end)
-	elseif func == "syncForumFaction" then
-		local factionTable = FactionManager:getSingleton():getFactionNames()
-		ChangerBox:new(_"Fraktion: Forum sync",
-				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
-				function (factionId)
-					triggerServerEvent("adminSyncForumFaction", root, factionId)
-				end)
+	elseif func == "syncForum" then
+		ForumPermissionsGUI:new()
 	elseif func == "smode" or func == "clearchat" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "loginFix" then
 		triggerServerEvent("adminLoginFix", localPlayer, self.m_PlayerID:getText())
-	elseif func == "vehicleMenu" then 
+	elseif func == "vehicleMenu" then
 		self:close()
 		VehicleTuningTemplateGUI:getSingleton():open()
 	elseif func == "respawnRadius" then

@@ -29,7 +29,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
 	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
-	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
+	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
@@ -57,6 +57,7 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
 	addEventHandler("adminVehicleEdit",root,bind(self.Event_AdminEdit, self))
+	addEventHandler("adminVehicleSetInTuning",root,bind(self.Event_AdminStartTuningSession, self))
 	addEventHandler("adminVehicleGetTextureList",root,bind(self.Event_AdminGetTextureList, self))
 	addEventHandler("adminVehicleOverrideTextures",root,bind(self.Event_AdminOverrideTextures, self))
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
@@ -223,7 +224,9 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 	local hasToBeSaved = false
 	if changes.Model then
 		if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleModel"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
+		local oldModel = vehicle:getModel()
 		vehicle:setModel(changes.Model)
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "changeModel", vehicle, oldModel.." -> "..(changes.Model))
 		hasToBeSaved = true
 	end
 	if changes.ELS then
@@ -232,6 +235,7 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 		if changes.ELS ~= "__REMOVE" then
 			vehicle:setELSPreset(changes.ELS)
 		end
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "changeELS", vehicle, changes.ELS)
 		client:sendSuccess(_("ELS aktualisiert", client))
 		hasToBeSaved = true
 	end
@@ -255,6 +259,17 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 	if hasToBeSaved and instanceof(vehicle, PermanentVehicle) then
 		vehicle:saveAdminChanges()
 	end
+end
+
+function VehicleManager:Event_AdminStartTuningSession(vehicle)
+	if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleTunings"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
+	if vehicle:getOccupantsCount() > 0 then
+		for i,v in pairs(vehicle:getOccupants()) do
+			v:removeFromVehicle()
+		end
+	end
+	client:warpIntoVehicle(vehicle)
+	VehicleTuningShop:getSingleton():openForAdmin(client, vehicle)
 end
 
 function VehicleManager:Event_AdminGetTextureList(vehicle)
@@ -800,9 +815,11 @@ function VehicleManager:Event_OnVehicleCrash(loss)
 					elseif sForce >= 0.85 then
 						if not player.m_SeatBelt then
 							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
-							setTimer(setPedAnimation, 5000,1, player, nil)
+							if  source:getVehicleType() ~= VehicleType.Bike and not VEHICLE_BIKES[source] then
+								removePedFromVehicle(player) -- causes network trouble for the client
+								setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
+								setTimer(setPedAnimation, 5000,1, player, nil)
+							end
 						elseif player.m_SeatBelt == source then
 							if not player.m_lastInjuryMe then
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
@@ -910,7 +927,7 @@ function VehicleManager:Event_vehicleRepair()
 		return
 	end
 
-	StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Repair", getElementData(source, "OwnerName") or "Unknown")
+	StatisticsLogger:getSingleton():addAdminVehicleAction(client, "repair", source)
 	Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s repariert.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 
 	source:fix()
@@ -948,6 +965,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if instanceof(source, FactionVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn(true)
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
@@ -967,6 +985,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if instanceof(source, CompanyVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn( true )
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
@@ -986,6 +1005,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if instanceof(source, GroupVehicle) then
 		if (client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"]) then
 			source:respawn(true)
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
@@ -1092,6 +1112,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
 		 if source:getOwner() == client:getId() then
 			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 		end
 		source:respawnOnSpawnPosition()

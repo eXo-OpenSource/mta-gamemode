@@ -28,7 +28,6 @@ Inventory.Tabs = {
 function Inventory:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+80)/2, 330, (80+106+80))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
-	self.m_Tabs = {}
 	self.m_CurrentTab = 1
 
 	-- Upper Area (Tabs)
@@ -36,8 +35,8 @@ function Inventory:constructor()
 	local tabX, tabY = tabArea:getSize()
 	self.m_Rect = GUIRectangle:new(0, 0, tabX, tabY, Inventory.Color.TabHover, tabArea)
 
-	self.m_Tabs = {}
 	-- Tabs
+	self.m_Tabs = {}
 	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
 	self:addItemSlots(21, self.m_Tabs[1])
 	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
@@ -50,21 +49,18 @@ function Inventory:constructor()
 	self.m_InfoText1 = GUILabel:new(0, self.m_Height-45, self.m_Width, 20, _"Info: Zum Löschen von Items Control und Linksklick!", self.m_Window):setAlignX("center")
 	self.m_InfoText2 = GUILabel:new(0, self.m_Height-25, self.m_Width, 20, "", self.m_Window):setAlignX("center")
 
-	--Developement:
-	--self.m_ItemData = Inventory:getSingleton():getItemData()
-    --self.m_Items = Inventory:getSingleton():getItems()
-	--self.m_Bag = Inventory:getSingleton():getBagData()
-
 	self.m_func1 = bind(self.Event_loadPlayerInventarClient,  self)
 	self.m_func2 = bind(self.Event_syncInventoryFromServer,  self)
 	self.m_func3 = bind(self.Event_forceInventoryRefresh,  self)
 	self.m_func4 = bind(self.hide, self)
+	self.m_KeyInputCheck = bind(self.Event_OnRender, self)
+
 	addEventHandler("loadPlayerInventarClient",  root, self.m_func1 )
 	addEventHandler("syncInventoryFromServer",  root,  self.m_func2)
 	addEventHandler("forceInventoryRefresh",  root, self.m_func3 )
 	addEventHandler("closeInventory",  root,  self.m_func4)
-	self.m_KeyInputCheck = bind(self.Event_OnRender, self)
 	addEventHandler("onClientRender", root, self.m_KeyInputCheck)
+
 	self:hide()
 end
 
@@ -73,7 +69,10 @@ function Inventory:Event_OnRender()
 end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
---	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+	if self.m_Debug then
+		outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+	end
+
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
@@ -83,6 +82,7 @@ function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	if self.m_Debug then
 		outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
 	end
+
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end
@@ -93,7 +93,7 @@ function Inventory:Event_forceInventoryRefresh(slots, itemData)
 end
 
 function Inventory:toggle()
-	if self.Show == true then
+	if self.Show then
 		self:hide()
 	else
 		self:show()
@@ -121,6 +121,8 @@ function Inventory:addItem(place, item)
 			if slot.ItemImage then delete(slot.ItemImage) end
 			if slot.LabelBackground then delete(slot.LabelBackground) end
 			if slot.ItemLabel then delete(slot.ItemLabel) end
+			if slot.ItemWearBackground then delete(slot.ItemWearBackground) end
+			if slot.ItemWearProgress then delete(slot.ItemWearProgress) end
 
 			slot.Item = true
 			slot.Id = place-1
@@ -128,11 +130,19 @@ function Inventory:addItem(place, item)
 			slot.ItemName = item["Objekt"]
 			slot.Amount = item["Menge"]
 			slot.Value = item["Value"]
+			slot.WearLevel = item["WearLevel"]
 
 			local amountText = slot.Amount > 1 and slot.Amount or ""
 			local textWidth = VRPTextWidth(amountText, 20) + 3
 
 			slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+
+			if slot.WearLevel then
+				local progress = slot.WearLevel/itemData["MaxWear"]
+				local wearLevelColor = tocolor(255*(1-progress), 255*progress, 0)
+				slot.ItemWearBackground = GUIRectangle:new(0, slot.m_Height - 4, slot.m_Width, 4, Color.Background, slot)
+				slot.ItemWearProgress = GUIRectangle:new(0, slot.m_Height - 4, slot.m_Width*progress, 4, wearLevelColor, slot)
+			end
 
 			if slot.Amount > 1 then
 				slot.LabelBackground = GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-12, textWidth, 12, Color.Background, slot)
@@ -150,6 +160,8 @@ function Inventory:loadItems()
 		if slot.ItemImage then delete(slot.ItemImage) end
 		if slot.LabelBackground then delete(slot.LabelBackground) end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
+		if slot.ItemWearBackground then delete(slot.ItemWearBackground) end
+		if slot.ItemWearProgress then delete(slot.ItemWearProgress) end
 
 		slot.Item = nil
 		slot.Id = nil
@@ -253,7 +265,7 @@ end
 
 function Inventory:addItemEvents(item)
 	item.onHover = function()
-		if not Inventory:getSingleton().m_IsDeleteKeyDown then
+		if not self.m_IsDeleteKeyDown then
 			item:setColor(Inventory.Color.ItemBackgroundHover)
 			if item.Item then
 				local itemName = item.ItemName

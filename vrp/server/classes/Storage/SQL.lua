@@ -1,7 +1,10 @@
 SQL = inherit(Object)
 
-SQL.LastExecQuery = ""
-SQL.LastFetchQuery = ""
+SQL.LastExecQuery = {}
+SQL.LastFetchQuery = {}
+
+function SQL.insertLastExecQuery(pre, str) table.insert(SQL.LastExecQuery, 1, tostring(pre)..": "..str) if #SQL.LastExecQuery > 5 then table.remove(SQL.LastExecQuery, 5) end end
+function SQL.insertLastFetchQuery(pre, str) table.insert(SQL.LastFetchQuery, 1, tostring(pre)..": "..str) if #SQL.LastFetchQuery > 5 then table.remove(SQL.LastFetchQuery, 5) end end
 
 function SQL:virtual_constructor()
 	self.m_Async = true
@@ -15,7 +18,7 @@ end
 function SQL:queryExec(query, ...)
 	local start = getTickCount()
 	if self.m_DebugLog then
-		SQL.LastExecQuery = query
+		SQL.insertLastExecQuery(self.m_Prefix, query)
 	end
 	local result = dbExec(self.m_DBHandle, query, ...)
 	self:writeSqlPerfomanceLog(query, getTickCount() - start, "sync")
@@ -42,7 +45,7 @@ function SQL:queryFetch(...)
 	local start = getTickCount()
 	if type(args[1]) == "string" then
 		if self.m_DebugLog then
-			SQL.LastFetchQuery = args[1]
+			SQL.insertLastFetchQuery(self.m_Prefix, args[1])
 		end
 		local result, numrows, lastInserID = self.dbPoll(dbQuery(self.m_DBHandle, ...), -1)
 		self:writeSqlPerfomanceLog(args[1], getTickCount() - start, "sync")
@@ -58,7 +61,7 @@ function SQL:queryFetch(...)
 		dbQuery(
 			function(qh)
 				if self.m_DebugLog then
-					SQL.LastFetchQuery = query
+					SQL.insertLastFetchQuery(self.m_Prefix, query)
 				end
 				local callbackArgs = { self.dbPoll(qh, -1) }
 				self:writeSqlPerfomanceLog(query, getTickCount() - start, "async")

@@ -27,6 +27,8 @@ ItemFood.Settings = {
 	["Zuckerstange"] = {["Health"] = 15, ["Model"] = 2880, ["Text"] = "nascht eine Zuckerstange", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 	["Wuerstchen"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "isst heiße Würstchen vom Grill", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 	["Lebkuchen"] = {["Health"] = 40, ["Model"] = 2880, ["Text"] = "isst Lebkuchen", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
+
+	["KöderDummy"] = {["Health"] = 2, ["Model"] = 2880, ["Text"] = "isst einen Wurm", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 }
 
 function ItemFood:constructor()
@@ -40,10 +42,10 @@ end
 function ItemFood:use(player)
 	if player.isTasered then return false end
 	if player:isInGangwar() and player:getArmor() == 0 then player:sendError(_("Du hast keine Schutzweste mehr!", player)) return false end
+	if JobBoxer:getSingleton():isPlayerBoxing(player) == true then player:sendError(_("Du darfst dich während des Boxkampfes nicht heilen!", player)) return false end
 	if math.round(math.abs(player.velocity.z*100)) ~= 0 and not player.vehicle then player:sendError(_("Du kannst in der Luft nichts essen!", player)) return false end
 
 	local ItemSettings = ItemFood.Settings[self:getName()]
-	local block, animation, time = unpack(ItemSettings["Animation"])
 
 	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
@@ -54,10 +56,14 @@ function ItemFood:use(player)
 
 	local block, animation, time = unpack(ItemSettings["Animation"])
 	if not player.vehicle then player:setAnimation(block, animation, time, true, false, false) end
-	setTimer(function()
-		if isElement(item) then item:destroy() end
-		if not isElement(player) or getElementType(player) ~= "player" then return false end
-		player:setHealth(player:getHealth()+ItemSettings["Health"])
-		player:setAnimation()
-	end, time, 1)
+	setTimer(
+		function()
+			if isElement(item) then item:destroy() end
+			if not isElement(player) or getElementType(player) ~= "player" then return false end
+			player:setHealth(player:getHealth()+ItemSettings["Health"])
+			player:setAnimation()
+		end, time, 1
+	)
+
+	return true
 end

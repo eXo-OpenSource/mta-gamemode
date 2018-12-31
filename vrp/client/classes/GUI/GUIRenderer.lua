@@ -23,6 +23,14 @@ function GUIRenderer.destructor()
 	removeEventHandler("onClientRender", root, GUIRenderer.drawAll)
 end
 
+function GUIRenderer.reattachEvents()
+	removeEventHandler("onClientPreRender", root, GUIRenderer.updateAll)
+	removeEventHandler("onClientRender", root, GUIRenderer.drawAll)
+	addEventHandler("onClientPreRender", root, GUIRenderer.updateAll)
+	addEventHandler("onClientRender", root, GUIRenderer.drawAll)
+end
+
+
 function GUIRenderer.updateAll(elapsedTime)
 	GUIElement.ms_ClickProcessed = false
 	GUIElement.ms_ClickDownProcessed = false
@@ -40,6 +48,8 @@ function GUIRenderer.updateAll(elapsedTime)
 			end
 		end
 	end
+
+	GUITooltip.checkTooltip()
 
 	if not GUIElement.ms_ClickProcessed then
 		GUIRenderer.process3DMouse()

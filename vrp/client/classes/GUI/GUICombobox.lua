@@ -93,11 +93,3 @@ function GUICombobox:clear()
 	return self.m_List:clear()
 end
 
-addCommandHandler("combo",
-	function()
-		combo = GUICombobox:new(200, 300, 230, ITEM_HEIGHT, "Kategorie wählen...")
-		combo:addItem("Test 1")
-		combo:addItem("Test 2")
-		combo:addItem("Test 3")
-	end
-)

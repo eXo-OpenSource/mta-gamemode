@@ -10,30 +10,11 @@ FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
 function FactionManager:constructor()
-	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_factions WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
-		sql:queryExec([[ALTER TABLE ??_factions ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
-
-		sql:queryExec([[
-			UPDATE ??_factions SET Name_Shorter = 'PD' WHERE Id = 1;
-			UPDATE ??_factions SET Name_Shorter = 'FB' WHERE Id = 2;
-			UPDATE ??_factions SET Name_Shorter = 'SF' WHERE Id = 3;
-			UPDATE ??_factions SET Name_Shorter = 'RT' WHERE Id = 4;
-			UPDATE ??_factions SET Name_Shorter = 'LC' WHERE Id = 5;
-			UPDATE ??_factions SET Name_Shorter = 'YK' WHERE Id = 6;
-			UPDATE ??_factions SET Name_Shorter = 'GS' WHERE Id = 7;
-			UPDATE ??_factions SET Name_Shorter = 'BA' WHERE Id = 8;
-			UPDATE ??_factions SET Name_Shorter = 'OM' WHERE Id = 9;
-			UPDATE ??_factions SET Name_Shorter = 'VL' WHERE Id = 10;
-		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(),
-			sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
-	end
-
-
 	self:loadFactions()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionForumSync", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -59,8 +40,8 @@ function FactionManager:constructor()
 	addEventHandler("factionPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
-	addEventHandler("factionForumSync", root, bind(self.Event_factionForumSync, self))
-	
+	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
+	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	FactionState:new()
 	FactionRescue:new()
 	FactionInsurgent:new()
@@ -84,7 +65,7 @@ function FactionManager:loadFactions()
 			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy, row.Permissions)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
@@ -116,6 +97,21 @@ function FactionManager:Event_factionSaveRank(rank,loan,rankWeapons)
 	end
 end
 
+function FactionManager:Event_factionEquipmentOptionRequest()
+	if client:getFaction() then
+		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
+	end
+end
+
+function FactionManager:Event_factionEquipmentOptionSubmit(update)
+	if client:getFaction() and client:getFaction():getPlayerRank(client) >= 5 then
+		client:getFaction():updateEquipmentPermissions(client, update)
+		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
+	else
+		client:sendError(_("Du hast keine Berechtigung!", client))
+	end
+end
+
 function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
 end
@@ -127,32 +123,6 @@ function FactionManager:sendInfosToClient(client)
 		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
 	else
 		client:triggerEvent("factionRetrieveInfo")
-	end
-end
-
-function FactionManager:Event_factionForumSync()
-	local faction = client:getFaction()
-
-	if faction then
-		if faction:getPlayerRank(client) < FactionRank.Manager then
-			client:sendError(_("Du bist nicht berechtigt einen syncronisation zu starten!", client))
-			-- Todo: Report possible cheat attempt
-			return
-		end
-
-		if faction.m_LastForumSync < getRealTime().timestamp - 60 * 15 then
-			faction.m_LastForumSync = getRealTime().timestamp
-
-			Async.create(
-				function(client)
-					local addedCount, removedCount = faction:syncForumPermissions()
-
-					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
-				end
-			)(client)
-		else
-			client:sendError(_("Es wurde bereits vor kurzem ein Sync durchgeführt!", client))
-		end
 	end
 end
 
@@ -168,7 +138,7 @@ function FactionManager:Event_factionQuit()
 	client:sendSuccess(_("Du hast die Fraktion erfolgreich verlassen!", client))
 	faction:addLog(client, "Fraktion", "hat die Fraktion verlassen!")
 	self:sendInfosToClient(client)
-	faction:updateForumPermissions(client.m_Id)
+	Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(client.m_Id)
 end
 
 function FactionManager:Event_factionDeposit(amount)
@@ -283,7 +253,7 @@ function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, rea
 
 	faction:removePlayer(playerId)
 	self:sendInfosToClient(client)
-	faction:updateForumPermissions(playerId)
+	Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
@@ -302,7 +272,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, faction:hasInvitation(client), faction.m_Id, "faction")
 
 			self:sendInfosToClient(client)
-			faction:updateForumPermissions(client.m_Id)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(client.m_Id)
 		else
 			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
 		end
@@ -388,7 +358,7 @@ function FactionManager:Event_factionRankUp(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
-					faction:updateForumPermissions(playerId)
+					Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 				else
 					client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, faction:getPlayerRank(client)))
 				end
@@ -440,7 +410,7 @@ function FactionManager:Event_factionRankDown(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
-					faction:updateForumPermissions(playerId)
+					Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 				else
 					client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 				end
@@ -465,6 +435,10 @@ function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
 		local faction = client:getFaction()
 		local depot = faction.m_Depot
+		if faction:isStateFaction() and not client:isFactionDuty() then
+			client:sendError(_("Du bist nicht im Dienst!", client))
+			return
+		end
 		depot:takeWeaponsFromDepot(client,weaponTable)
 	else
 		client:sendError(_("Du bist zu weit entfernt", client))

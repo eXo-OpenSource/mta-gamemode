@@ -17,7 +17,6 @@ Player.ms_ScreamHook = Hook:new()
 addEvent("characterInitialized")
 
 function Player:constructor()
-
 	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}
@@ -197,6 +196,11 @@ function Player:loadCharacter()
 	end
 	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
+
+	if self:getFaction() and self:getFaction():isStateFaction() then
+		self:getFaction():takeEquipment(self)
+	end
+	FactionState:getSingleton():checkInsideGarage(self)
 end
 
 function Player:createCharacter()
@@ -212,7 +216,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -240,6 +244,7 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
+	ElementInfo.sendAllToClient(self)
 	VehicleELS.sendAllToClient(self)
 
 	if HouseManager:isInstantiated() then
@@ -268,6 +273,12 @@ function Player:loadCharacterInfo()
 		for key, msg in ipairs( self.m_OfflineMessages ) do
 			self:sendShortMessage(msg[1], "Offlinenachricht" )
 		end
+	end
+
+	if row.TakeWeaponsOnLogin == 1 then
+		takeAllWeapons(self)
+		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
+		self:setTakeWeaponsOnLogin(false)
 	end
 end
 
@@ -329,11 +340,11 @@ function Player:save()
 			end
 		end
 
-		local dimension = self:isInSewer() and self:getDimension() or 0
+		local dimension = self:getDimension()
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
 		local sSkin = self.m_Skin
-		if interior > 0 then dimension = self:getDimension() end
+		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 		DatabasePlayer.save(self)
@@ -513,6 +524,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 
+	self:takeEquipment()
 	if self:getExecutionPed() then delete(self:getExecutionPed()) end
 
 	WearableManager:getSingleton():removeAllWearables(self)
@@ -550,6 +562,30 @@ function Player:dropReviveWeapons()
 			end
 		end
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
+	end
+end
+
+function Player:takeEquipment(noOutput)
+	local item, amount, price, id
+	local count = 0
+	for category, data in pairs(ArmsDealer.Data) do
+		if category ~= "Waffen" then
+			for product, subdata in pairs(data) do
+				amount, price, id = unpack(subdata)
+				if not id then
+					amount = self:getInventory():getItemAmount(product)
+					if amount and amount > 0 then
+						self:getInventory():removeAllItem(product)
+						count = count + amount
+					end
+				end
+			end
+		end
+	end
+	if count > 0 then
+		if not noOutput then
+			self:sendShortMessage(("Dir wurden %i Items vom Equipment abgenommen!"):format(count), "Medical Center - Los Santos")
+		end
 	end
 end
 
@@ -872,6 +908,12 @@ function Player:payDay()
 		income = income + self.m_HalloweenPaydayBonus
 		BankServer.get("event.halloween"):transferMoney({self, true, true}, self.m_HalloweenPaydayBonus, "Halloween-Bonus", "Event", "HalloweenBonus", {silent = true})
 		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
+	end
+
+	if EVENT_CHRISTMAS then
+		income = income + 200
+		BankServer.get("event.christmas"):transferMoney({self, true, true}, 200, "Weihnachtsgeld", "Event", "ChristmasBonus", {silent = true})
+		self:addPaydayText("income", _("Weihnachtsgeld", self), 200)
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
@@ -1239,7 +1281,6 @@ function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprin
 		toggleControl(self, "enter_exit", bool)
 		toggleControl(self, "enter_passenger", bool)
 	end
-
 end
 
 function Player:attachPlayerObject(object)
@@ -1267,8 +1308,11 @@ function Player:attachPlayerObject(object)
 
 			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
 
-			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
-			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			if settings.placeDown then
+				self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
+				bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			end
+
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
@@ -1288,8 +1332,9 @@ function Player:refreshAttachedObject(instant)
 	local func = function()
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
+			local model = object.model
 			outputDebug(object, self:getInterior(), self:getName())
-			if self:isDead() then
+			if self:isDead() and PlayerAttachObjects[model] and PlayerAttachObjects[model].placeDown then
 				self:detachPlayerObject(object)
 			end
 			object:setInterior(self:getInterior())
@@ -1328,7 +1373,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 			end
 		end
 	else
-		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
+		self:toggleControlsWhileObjectAttached(true, true, true, true, true) --fallback to re-enable all controls
 	end
 
 	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
@@ -1593,5 +1638,20 @@ function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
 end
 
-function Player:setInSewer(bool) self.m_InSewer = bool end
+function Player:setTakeWeaponsOnLogin(state)
+	state = state and 1 or 0
+	sql:queryExec("UPDATE ??_character SET TakeWeaponsOnLogin = ? WHERE Id = ?", sql:getPrefix(), state, self.m_Id)
+end
+
+function Player:setInSewer(bool) self:setData("inSewer", bool, true); self.m_InSewer = bool end
 function Player:isInSewer() return self.m_InSewer end
+
+function Player:changeWalkingstyle(id)
+	local walkingstyle = id or 0
+	self:setWalkingStyle(walkingstyle)
+	self.m_WalkingStyle = walkingstyle
+end
+
+function Player:getWalkingstyle()
+	return self.m_WalkingStyle or 0
+end

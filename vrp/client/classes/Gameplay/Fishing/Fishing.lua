@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = {}
-addRemoteEvents{"onFishingStart", "onFishingStop"}
+addRemoteEvents{"onFishingStart", "onFishingStop", "onFishingBadCatch", "onFishingUpdateEquipments"}
 
 function Fishing.load()
 	--LS
@@ -70,3 +70,22 @@ function Fishing.stop()
 	toggleControl("previous_weapon", true)
 end
 addEventHandler("onFishingStop", root, Fishing.stop)
+
+function Fishing.BadCatch()
+	nextframe(
+		function()
+			if FishingRod:isInstantiated() then
+				FishingRod:getSingleton():reset()
+				FishingRod:getSingleton().Sound:play("caught")
+			end
+		end
+	)
+end
+addEventHandler("onFishingBadCatch", root, Fishing.BadCatch)
+
+function Fishing.updateEquipments(...)
+		if FishingRod:isInstantiated() then
+			FishingRod:getSingleton():updateEquipments(...)
+		end
+end
+addEventHandler("onFishingUpdateEquipments", root, Fishing.updateEquipments)

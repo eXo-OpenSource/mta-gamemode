@@ -6,7 +6,7 @@ addRemoteEvents{"texturePreviewLoadTextures", "texturePreviewForceClose"}
 function TexturePreviewGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight/1.5)
 
-	self.m_Path = "http://picupload.pewx.de/textures/"
+	self.m_Path = "https://picupload.pewx.de/textures/"
 	self.m_Admin = false
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Textur Vorschau", false, true, self)

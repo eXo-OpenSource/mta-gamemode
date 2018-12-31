@@ -4,7 +4,7 @@ AdminVehicleEditGUI = inherit(GUIForm)
 function AdminVehicleEditGUI:constructor(vehicle)
 	GUIWindow.updateGrid()			-- initialise the grid function to use a window
 	self.m_Width = grid("x", 11) 	-- width of the window
-	self.m_Height = grid("y", 8) 	-- height of the window
+	self.m_Height = grid("y", 9) 	-- height of the window
 
 	self.m_Cache = {
 		OwnerType = getElementData(vehicle, "OwnerType"),
@@ -96,7 +96,12 @@ function AdminVehicleEditGUI:constructor(vehicle)
 			triggerServerEvent("adminVehicleEdit", localPlayer, vehicle, {["ELS"] = name})
 		end)
 	end
-
+	self.m_StartTuningButton = GUIGridButton:new(1, 8, 5, 1, "in Tuninggarage", self.m_Window)
+	self.m_StartTuningButton.onLeftClick = function() 
+		QuestionBox:new("Du wirst mit dem Fahrzeug die Tuninggarage betreten und kannst es danach kostenlos tunen. Möchtest du fortfahren?", function()
+			triggerServerEvent("adminVehicleSetInTuning", localPlayer, vehicle, {["ELS"] = name})
+		end)
+	end
 end
 
 function AdminVehicleEditGUI:parseModelInput()

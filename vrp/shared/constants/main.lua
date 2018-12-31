@@ -1,11 +1,12 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.7.1"
+PROJECT_VERSION = "1.8"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
 INGAME_WEB_PATH = "https://ingame.exo-reallife.de"
+PICUPLOAD_PATH = "https://picupload.pewx.de"
 
 if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
@@ -16,7 +17,7 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
-MAX_FISHING_LEVEL = 10
+MAX_FISHING_LEVEL = 15
 
 MAX_WANTED_LEVEL = 12
 
@@ -24,10 +25,11 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false
-SNOW_SHADERS_ENABLED = false -- disable them during summer time
+EVENT_CHRISTMAS = false --quests, mostly
+EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
+FIREWORK_SHOP_ACTIVE = true -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -63,6 +65,7 @@ JOB_LEVEL_LUMBERJACK = 3
 JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
+JOB_LEVEL_BOXER = 8
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
@@ -115,7 +118,6 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
-	["tuneVehicle"] = RANK.Administrator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -133,8 +135,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlineUnban"] = RANK.Administrator,
 	["loginFix"] = RANK.Moderator,
 	["vehicleMenu"] = RANK.Moderator,
-	["syncForumFaction"] = RANK.Supporter,
-	["syncForumCompany"] = RANK.Supporter,
+	["syncForum"] = RANK.Supporter,
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
@@ -169,6 +170,7 @@ ADMIN_RANK_PERMISSION = {
 	["respawnRadius"] = RANK.Supporter,
 	["showVehicles"] = RANK.Supporter,
 	["showGroupVehicles"] = RANK.Supporter,
+	["toggleVehicleHandbrake"] = RANK.Moderator,
 	["respawnVehicle"] = RANK.Supporter, -- respawn per click
 	["parkVehicle"] = RANK.Supporter, -- set spawn position
 	["repairVehicle"] = RANK.Supporter, -- repair per click
@@ -180,6 +182,7 @@ ADMIN_RANK_PERMISSION = {
 	["editVehicleOwnerType"] = RANK.Administrator,
 	["editVehicleOwnerID"] = RANK.Administrator,
 	["editVehicleTunings"] = RANK.Administrator,
+	["editVehicleHandling"] = RANK.Administrator, -- handling editor
 	["editVehicleTexture"] = RANK.Developer, --override textures without visiting the texture shop
 
 
@@ -459,9 +462,10 @@ WEAPONTRUCK_MAX_LOAD = 60000
 WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
-	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
-	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}},
-	[2919] = {["model"] = 2919, ["name"] = "Waffen", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 90, 90), ["blockJump"] = true, ["bone"] = 3, ["blockSprint"] = true,  ["blockVehicle"] = true}
+	[1550] = {model = 1550, name = "Geldsack", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 0, 180), blockJump = true, bone = 3, placeDown = true},
+	[2912] = {model = 2912, name = "Waffenkiste", pos = Vector3(0, 0.35, 0.45), rot = Vector3(10, 0, 0), blockJump = true, blockSprint = true, blockWeapons = true, blockVehicle = true, animationData = {"carry", "crry_prtial", 1, true, true, false, true}, placeDown = true},
+	[2919] = {model = 2919, name = "Waffen", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 90, 90), 	blockJump = true, bone = 3, blockSprint = true,  blockVehicle = false, placeDown = true},
+	[1826] = {model = 1826, name = "Angelruten", pos = Vector3(-0.03, 0.02, 0.05), rot = Vector3(180, 120, 0), blockJump = false, bone = 12, blockSprint = true, blockVehicle = true},
 }
 
 
@@ -648,27 +652,6 @@ WEAPON_LEVEL = {
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
 
-
-FISHING_BAGS = {
-	["Kühlbox"] = {max = 65, level = 8},
-	["Kühltasche"] = {max = 25, level = 4},
-	["Kleine Kühltasche"] = {max = 15, level = 0},
-}
-
--- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
-FISHING_LEVELS = {
-	[1] = 225,
-	[2] = 900,
-	[3] = 2025,
-	[4] = 3600,
-	[5] = 5625,
-	[6] = 8100,
-	[7] = 11025,
-	[8] = 14400,
-	[9] = 18225,
-	[10] = 22500,
-}
-
 FERRIS_IDS = {
 	Base = 6461,
 	Gond = 3752,
@@ -749,6 +732,13 @@ FactionStaticId = {
 	OUTLAWS = 9,
 	VATOS = 10,
 	TRIAD = 11
+}
+
+SEASONS = {
+	SPRING = 1,
+	SUMMER = 2,
+	FALL = 3,
+	WINTER = 4,
 }
 
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect

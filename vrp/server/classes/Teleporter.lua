@@ -34,6 +34,7 @@ function Teleporter:constructor(entryPosition, interiorPosition, enterRotation, 
 				hitElement.m_Teleporter = {self, source, "enter"}
 				if not hitElement.LastPort or (getRealTime().timestamp - hitElement.LastPort)  > 2 then
 					hitElement:sendInfo("Drücke F zum Betreten!", 2000)
+					hitElement:setPublicSync("TeleporterPickup", source)
 				end
       end
     end
@@ -45,6 +46,7 @@ function Teleporter:constructor(entryPosition, interiorPosition, enterRotation, 
 				hitElement.m_Teleporter = {self, source, "exit"}
 				if not hitElement.LastPort or (getRealTime().timestamp - hitElement.LastPort)  > 2 then
 					hitElement:sendInfo("Drücke F zum Betreten!", 2000)
+					hitElement:setPublicSync("TeleporterPickup", source)
 				end
       end
     end

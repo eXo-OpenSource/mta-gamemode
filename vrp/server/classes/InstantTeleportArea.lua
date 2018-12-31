@@ -27,6 +27,7 @@ function InstantTeleportArea:Event_onColShapeHit( hE, bDim )
                 attachTrailerToVehicle(hE, veh) 
             end)
         end
+        if self.m_EnterEvent then self.m_EnterEvent(hE) end
         if self.m_Pos then 
             hE:setPosition(self.m_Pos)
         end
@@ -52,5 +53,15 @@ function InstantTeleportArea:Event_onColShapeLeave( hE, bDim )
         if self.m_Pos then 
             hE:setPosition(self.m_Pos)
         end
+        if self.m_ExitEvent then self.m_ExitEvent(hE) end
     end
 end
+
+function InstantTeleportArea:addEnterEvent(event)
+	self.m_EnterEvent = event
+end
+
+function InstantTeleportArea:addExitEvent(event)
+	self.m_ExitEvent = event
+end
+

@@ -13,9 +13,21 @@ function GroupPropertyManager:constructor( )
 		count = count + 1
 	end
 
-	addEventHandler("GroupPropertyClientInput",root,function()
+	addEventHandler("GroupPropertyClientInput", root, function()
 		if client.m_LastPropertyPickup then
-			client.m_LastPropertyPickup:openForPlayer(client)
+			if not client.m_LastGroupPropertyInside then
+				local px, py, pz = getElementPosition(client)
+				local mx, my, mz = getElementPosition(client.m_LastPropertyPickup.m_Pickup)
+				if getDistanceBetweenPoints3D(px, py, pz, mx, my, mz) < 3 then
+					client.m_LastPropertyPickup:openForPlayer(client)
+				end
+			else
+				local px, py, pz = getElementPosition(client)
+				local mx, my, mz = getElementPosition(client.m_LastPropertyPickup.m_ExitMarker)
+				if getDistanceBetweenPoints3D(px, py, pz, mx, my, mz) < 3 then
+					client.m_LastPropertyPickup:closeForPlayer(client)
+				end
+			end
 		end
 	end)
 

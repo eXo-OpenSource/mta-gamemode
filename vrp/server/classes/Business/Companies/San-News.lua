@@ -8,7 +8,7 @@ function SanNews:constructor()
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
 	self.m_SanNewsMessageEnabled = false
 
-	local safe = createObject(2332, 732.40, -1339.90, 15.30, 0, 0, 90)
+	local safe = createObject(2332, 732.40, -1341.90, 13, 0, 0, 90)
  	self:setSafe(safe)
 
 	local id = self:getId()

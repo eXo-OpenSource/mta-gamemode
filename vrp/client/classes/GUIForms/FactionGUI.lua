@@ -57,6 +57,13 @@ function FactionGUI:constructor()
 		self.m_BindManageGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 	end
 
+	self.m_EquipmentPermButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"Equipment-Rechte", tabAllgemein):setBarEnabled(true)
+	self.m_EquipmentPermButton.onLeftClick = function()
+		if self.m_EquipmentPermGUI then delete(self.m_EquipmentPermGUI) end
+		self:close()
+		self.m_EquipmentPermGUI = EquipmentOptionGUI:new()
+		self.m_EquipmentPermGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
+	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
@@ -143,9 +150,9 @@ function FactionGUI:addLeaderTab()
 		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 		self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
 
-		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Forum sync", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_FactionForumSyncButton.onLeftClick = bind(self.FactionForumSyncButton_Click, self)
-		
+
 		self.m_Leader = true
 	else
 		self:refreshLeaderTab()
@@ -284,7 +291,7 @@ function FactionGUI:loadDiplomacyTab()
 				item.Id = faction:getId()
 				item.onLeftClick = function() triggerServerEvent("factionRequestDiplomacy", root, faction:getId()) end
 				if faction == localPlayer:getFaction() then
-					self.m_DiplomacyRequestGrid:onInternalSelectItem(item)
+					self.m_DiplomacyGrid:onInternalSelectItem(item)
 				end
 			end
 		end
@@ -517,7 +524,7 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06,_("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
 			self.m_NextAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.4, self.m_Height*0.06,_("Nächster Angriff: %s", getOpticalTimestamp(item.lastAttack+(GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS))), self.m_tabGangwar)
 			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.35, self.m_Width*0.62, self.m_Height*0.55, self.m_tabGangwar)
-			self.m_Map:setPosition(item.posX, item.posY)
+			self.m_Map:setMapPosition(item.posX, item.posY)
 			self.m_Map:addBlip("Marker.png", item.posX, item.posY)
 		end
 	end
@@ -638,7 +645,9 @@ function FactionGUI:FactionAddPlayerButton_Click()
 end
 
 function FactionGUI:FactionForumSyncButton_Click()
-	triggerServerEvent("factionForumSync", root)
+	-- triggerServerEvent("factionForumSync", root)
+	self:close()
+	ForumPermissionsGUI:new("faction", localPlayer:getFaction().m_Id)
 end
 
 function FactionGUI:FactionRemovePlayerButton_Click()

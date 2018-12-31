@@ -35,6 +35,9 @@ function Kart:constructor()
 	self.m_Maps = {}
 	self.m_BankAccount = BankServer.get("gameplay.kart")
 
+	-- Cleanup ghostdrivers if we have more than 100
+	self:ghostdriverCleanup()
+
 	-- Create and validate map instances
 	for k, v in pairs(Kart.Maps) do
 		if fileExists(v) then
@@ -75,6 +78,37 @@ function Kart:constructor()
 	addEventHandler("onColShapeLeave", self.m_Polygon, bind(Kart.onKartZoneLeave, self))
 
 	GlobalTimer:getSingleton():registerEvent(bind(self.changeMap, self), "KartMapChange", nil, nil, 00)
+end
+
+function Kart:ghostdriverCleanup()
+	if sql:queryFetchSingle("SELECT Count(ID) FROM ??_ghostdriver", sql:getPrefix())["Count(ID)"] <= 100 then
+		return
+	end
+
+	local MapNames = {}
+
+	local list = sql:queryFetch("Select ID, Name FROM ??_toptimes", sql:getPrefix())
+	for _, map in pairs(list) do
+		MapNames[map.ID] = map.Name
+	end
+
+	local ghostDrivers = sql:queryFetch("SELECT ID, MapID, PlayerID FROM ??_ghostdriver", sql:getPrefix())
+	local deleted = 0
+
+	for _, ghostDriver in pairs(ghostDrivers) do
+		local toptimes = Toptimes:new(MapNames[ghostDriver.MapID])
+		local _, position = toptimes:getToptimeFromPlayer(ghostDriver.PlayerID)
+
+		if not position or position > 12 then
+			outputDebugString(("Delete movement recording --> PlayerId: %s / MapId: %s / Toptime: %s"):format(ghostDriver.PlayerID, ghostDriver.MapID, position or "?"))
+			sql:queryExec("DELETE FROM ??_ghostdriver WHERE ID = ?", sql:getPrefix(), ghostDriver.ID)
+			deleted = deleted + 1
+		end
+
+		delete(toptimes, true)
+	end
+
+	outputDebugString(("Deleted %s movement recordings!"):format(deleted))
 end
 
 ---

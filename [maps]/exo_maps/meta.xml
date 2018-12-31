@@ -28,6 +28,7 @@
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
 	<map src="fraktionen/aztecas.map" />
+	<map src="fraktionen/cartell.map" />
 
 	<map src="fraktionen/biker.map" />
 	<map src="fraktionen/cosanostra.map" />
@@ -41,7 +42,7 @@
 	<map src="fraktionen/rescue_int.map" />
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
-	<!--map src="fraktionen/yakuza.map"/>
+	<map src="fraktionen/yakuza.map"/>
 
 	<map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
@@ -53,6 +54,8 @@
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 
+	<map src="fishing/location_desert.map" />
+	<map src="fishing/location_cave.map" />
 
 	<!--<map src="events/halloween.map" />-->
 	<!--<map src="events/auction.map" />--> <!-- Auction Event map at Veriona Beach -->
@@ -81,8 +84,8 @@
 	<map src="jobs/helitransport.map" />
 	<map src="jobs/dumper.map" />
 
-	<!--<map src="noobspawn_christmas.map" />-->
-	<map src="noobspawn.map" />
+	<!-- <map src="noobspawn_christmas.map" /> -->
+	<!--<map src="noobspawn.map" />-->
 	<map src="prison.map" />
 
 	<map src="shop/ammunation.map" />
@@ -92,6 +95,7 @@
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
 	<map src="airport.map" />
+	<map src="airport-v2.map" />
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />
 	<map src="pier_ls.map" />
@@ -104,12 +108,12 @@
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 	<map src="gasstation.map" />
-
-
+	<map src="atrium_outside.map" />
+	
 	<map src="stuntfix.map"/>
 
 	<map src="shop/fishshop.map"/>
-	<!--map src="sewer.map"/-->
+	<map src="sewer-ext.map"/>
 	<map src="minigamescafe.map" dimension="2" />
 
 	<map src="admin-auction.map" />

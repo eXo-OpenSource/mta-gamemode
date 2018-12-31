@@ -6,9 +6,8 @@
 -- *
 -- ****************************************************************************
 ArmsDealer = inherit(Singleton)
-
 ArmsDealer.Data = 
-{
+{ 
     ["Waffen"] = AmmuNationInfo,
     ["Spezial"] = 
     {
@@ -16,15 +15,25 @@ ArmsDealer.Data =
         ["Gasgranate"] = {6, 50000, 17},
         ["Rauchgranate"] = {3, 100000},
         ["Scharfschützengewehr"] = {5, 60000, 34},
-        ["Fallschirm"] = {20, 5000, 46}
+        ["Fallschirm"] = {20, 5000, 46},
+        ["DefuseKit"] = {20, 5000},
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {5, 300000, 35},
+        ["RPG-7"] = {5, 300000, 35}, 
         ["Granate"] = {10, 80000, 16},
         ["SLAM"] = {2, 40000}
     }
 }
+
+ArmsDealer.ProhibitedRank = 
+{
+    ["RPG-7"] = 3, 
+    ["Granate"] = 3, 
+    ["SLAM"] = 3,
+    ["Scharfschützengewehr"] =  3 
+}
+
 addRemoteEvents{"requestArmsDealerInfo", "checkoutArmsDealerCart"}
 function ArmsDealer:constructor()
     self.m_Order = {}
@@ -46,8 +55,9 @@ end
 
 
 function ArmsDealer:checkoutCart(cart)
+    if not ActionsCheck:getSingleton():isActionAllowed(client) then return end
     if client and client.getFaction and client:getFaction() then 
-        if cart then
+        if cart and not self.m_InAir then
             local faction = client:getFaction()
             if not self.m_Order[faction] then
                 self.m_Order[faction] = {}
@@ -77,13 +87,17 @@ function ArmsDealer:checkoutCart(cart)
                             end
                         else 
                             if ArmsDealer.Data[category] and ArmsDealer.Data[category][product] then
-                                table.insert(self.m_Order[faction], {"Equipment", product, ArmsDealer.Data[category][product][1], ArmsDealer.Data[category][product][2] })
+                                table.insert(self.m_Order[faction], {"Equipment", product, ArmsDealer.Data[category][product][1], ArmsDealer.Data[category][product][2], ArmsDealer.Data[category][product][3] })
                             end
                         end
                     end
                 end
                 self:processCart( self.m_Order[faction], faction)
+            else 
+                client:sendError("Deine Fraktion hat bereits heute bestellt!")
             end
+        else 
+            client:sendError("Es läuft zurzeit bereits ein Airdrop!")
         end
     end
 end
@@ -92,7 +106,7 @@ function ArmsDealer:processCart( order, faction )
     local endPoint = factionAirDropPoint[faction:getId()]
     local etaTime
     if endPoint then
-        etaTime = self:setupPlane(endPoint, 200000, faction, order)
+        etaTime = self:setupPlane(endPoint, 400000, faction, order)
     end
 
     local text = "Jackal Weapon Delivery\n"
@@ -113,13 +127,14 @@ function ArmsDealer:processCart( order, faction )
     end
     text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(etaTime+getRealTime().timestamp, true))
     faction:sendShortMessage(text, -1)
-    self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket", {silent = true})
-    self.m_Order[faction] = false
+    faction:transferMoney(self.m_BankAccountServer, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket")
     self.m_Blip =  Blip:new("Marker.png", endPoint.x, endPoint.y, {faction = {faction:getId()}}, 9999, BLIP_COLOR_CONSTANTS.Red)
     self.m_Blip:attach(self.m_Plane)
 
     self.m_DropBlip = Blip:new("SniperGame.png", endPoint.x, endPoint.y,  {factionType = {"State", "Evil"}}, 9999, BLIP_COLOR_CONSTANTS.Blue)
     self.m_DropIndicator = createObject(354, endPoint.x, endPoint.y, endPoint.z)
+    PlayerManager:getSingleton():breakingNews("Ein nicht identifiziertes Flugzeug ist in den Flugraum von San Andreas eingedrungen!")
+    self.m_InAir = true
 end
 
 function ArmsDealer:isMagazin(product)
@@ -143,7 +158,7 @@ function ArmsDealer:sendInfo()
 end
 
 function ArmsDealer:startAirDrop(faction, order, acceleration)
-    local endPoint = factionWTDestination[faction:getId()]
+    local endPoint = factionAirDropPoint[faction:getId()]
     if endPoint then 
         local length = 30 / #order 
         for i, data in ipairs(order) do 
@@ -166,6 +181,7 @@ function ArmsDealer:setupPlane(pos, time, faction, order)
     local distanceAfterDrop = 6000 - distanceToDrop
     local endPoint = Vector3(3000, pos.y, 100)
     self.m_Plane =  TemporaryVehicle.create(592, -3000, pos.y, 100)
+    self.m_Plane:disableRespawn(true)
     self.m_Plane:setColor(0,0,0,0,0,0)
     self.m_Plane:setCollisionsEnabled(false)
     setVehicleLandingGearDown(self.m_Plane, false)
@@ -204,9 +220,11 @@ function ArmsDealer:clear()
     end
     if self.m_Plane and isElement(self.m_Plane) then 
         self.m_Plane:destroy()
+        self.m_Plane = nil
     end
     if self.m_MoveObject and isElement(self.m_MoveObject) then 
         self.m_MoveObject:destroy()
+        self.m_MoveObject = nil
     end
     if self.m_DropBlip then 
         self.m_DropBlip:delete()
@@ -214,7 +232,9 @@ function ArmsDealer:clear()
     end
     if self.m_DropIndicator and isElement(self.m_DropIndicator) then 
         self.m_DropIndicator:destroy()
+        self.m_DropIndicator = nil
     end
+    self.m_InAir = false
     ActionsCheck:getSingleton():endAction()
 end
 

@@ -112,7 +112,7 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 
-	if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 or self.m_WaffenAnzahl == 12 then
+	if self.m_WaffenAnzahl % 4 == 0 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else

@@ -157,26 +157,27 @@ end
 
 function KeyBinds:animationMenu()
 	if not localPlayer:isInVehicle() then
-		if not AnimationGUI:isInstantiated() then
-			AnimationGUI:new()
+		if not WalkingstyleGUI:isInstantiated() then
+			if not AnimationGUI:isInstantiated() then
+				AnimationGUI:new()
+			else
+				delete(AnimationGUI:getSingleton())
+			end
 		else
-			delete(AnimationGUI:getSingleton())
+			delete(WalkingstyleGUI:getSingleton())
 		end
 	end
 end
 
 function KeyBinds:policePanel()
-	if not PolicePanel:isInstantiated() then
-		if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 then
-			if localPlayer:getPublicSync("Faction:Duty") == true then
-				PolicePanel:new()
-			else
-				ErrorBox:new(_"Du bist nicht im Dienst!")
-			end
-		end
-	else
-		delete(PolicePanel:getSingleton())
+	if not (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) then return false end
+	if not localPlayer:getPublicSync("Faction:Duty") then return false end
+	if not PolicePanel:isInstantiated() then --cretae new
+		PolicePanel:new()
+		return true
 	end
+	
+	PolicePanel:getSingleton():toggle()	
 end
 
 function KeyBinds:helpMenu()
@@ -199,7 +200,10 @@ function KeyBinds:vehicleELS(__, keyState)
 	if localPlayer.vehicle and localPlayer.vehicle.m_ELSPreset then 
 		if localPlayer.vehicleSeat == 0 then
 			if VehicleELS:getSingleton():isEnabled() then
-			triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+				triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+				if localPlayer.vehicle.towedByVehicle and localPlayer.vehicle.towedByVehicle.m_ELSPreset and localPlayer.vehicle.towedByVehicle:getCategory() == 2 then -- trailer
+					triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle.towedByVehicle, not localPlayer.vehicle.towedByVehicle.m_ELSActive) 
+				end
 			else
 				WarningBox:new(_"Um die Rundumleuchten zu sehen musst du diese in den Einstellungen (F2) aktivieren.")
 			end
@@ -209,8 +213,29 @@ end
 
 function KeyBinds:tryEnterEntrance( __, keystate)
 	if keystate == "up" then
-		triggerServerEvent("onTryEnterTeleporter", localPlayer)
-		triggerEvent("onTryEnterance", localPlayer)
+		if not localPlayer.m_LastTryEntrance or localPlayer.m_LastTryEntrance+500 <= getTickCount() then
+			if localPlayer:getPublicSync("TeleporterPickup") and isElement(localPlayer:getPublicSync("TeleporterPickup")) then 
+				if Vector3(localPlayer:getPosition() - localPlayer:getPublicSync("TeleporterPickup"):getPosition()):getLength() < 3 then
+					triggerServerEvent("onTryEnterTeleporter", localPlayer)
+				end
+			end
+			if localPlayer:getPrivateSync("EntranceId") then
+				triggerEvent("onTryEnterance", localPlayer)
+			end
+			if localPlayer.m_Entrance then
+				if localPlayer.m_Entrance.m_Text == "AUFZUG" then
+					triggerServerEvent("onTryElevator", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "HAUS" then
+					triggerServerEvent("houseRequestGUI", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "FAHRZEUGE" then 
+					triggerServerEvent("onTryVehicleSpawner", localPlayer)
+				else
+					triggerServerEvent("GroupPropertyClientInput", localPlayer) 
+					triggerServerEvent("clientTryEnterEntrance", localPlayer)
+				end
+			end
+			localPlayer.m_LastTryEntrance = getTickCount()
+		end
 	end
 end
 

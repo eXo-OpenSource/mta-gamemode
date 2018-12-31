@@ -34,6 +34,7 @@ function MinigameManager:constructor()
 	-- Freak AchievementIds
 	self.m_FreakIds = {54, 55} -- Todo: add more Achievements!
 
+	SlotGameManager:new()
 	RouletteManager:new()
 end
 

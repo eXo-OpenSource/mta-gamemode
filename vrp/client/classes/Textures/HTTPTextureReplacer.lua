@@ -1,5 +1,5 @@
 HTTPTextureReplacer = inherit(TextureReplacer)
-HTTPTextureReplacer.BasePath = "http://picupload.pewx.de/textures/"
+HTTPTextureReplacer.BasePath = "https://picupload.pewx.de/textures/"
 HTTPTextureReplacer.ExternalPath = "http://i.imgur.com/"
 HTTPTextureReplacer.ClientPath = "files/images/Textures/remote/%s"
 HTTPTextureReplacer.Queue = Queue:new()
@@ -8,11 +8,11 @@ HTTPTextureReplacer.Queue = Queue:new()
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options, force)
 	assert(fileName and fileName:len() > 0 and (fileName:find(HTTPTextureReplacer.BasePath) or fileName:find(HTTPTextureReplacer.ExternalPath)), "Bad Argument @ HTTPTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options, force)
-	self.m_PathType = 1 
+	self.m_PathType = 1
 	if fileName:find(HTTPTextureReplacer.ExternalPath) then self.m_PathType = 2 end
 	if self.m_PathType == 2 then
 		self.m_FileName = fileName:gsub(HTTPTextureReplacer.ExternalPath, "")
-	else 
+	else
 		self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
 	end
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
@@ -46,7 +46,7 @@ function HTTPTextureReplacer:downloadTexture()
 			local provider
 			if self.m_PathType == 1 then
 				provider = HTTPProvider:new(HTTPTextureReplacer.BasePath, dgi)
-			else 
+			else
 				provider = HTTPProvider:new(HTTPTextureReplacer.ExternalPath, dgi)
 			end
 			if provider:startCustom(self.m_FileName, HTTPTextureReplacer.ClientPath:sub(0, -3), false, true) then

@@ -12,7 +12,7 @@ function GUIImage:constructor(posX, posY, width, height, path, parent)
 	self.m_Image = path
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, Color.White)
+	GUIColorable.constructor(self)
 end
 
 function GUIImage:drawThis()

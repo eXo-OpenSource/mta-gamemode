@@ -2,7 +2,7 @@ EasterEgg = inherit(Singleton)
 
 function EasterEgg:constructor()
 	EasterEgg.Scream:new()
-	--EasterEgg.QRCode:new()
+	EasterEgg.QRCode:new()
 	EasterEgg.DrWho:new()
 	EasterEgg.PewPew:new()
 

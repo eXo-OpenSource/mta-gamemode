@@ -10,7 +10,7 @@ inherit(GUIColorable, GUIRectangle)
 
 function GUIRectangle:constructor(posX, posY, width, height, color, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, color or Color.Black)
+	GUIColorable.constructor(self, color)
 end
 
 function GUIRectangle:drawThis()
