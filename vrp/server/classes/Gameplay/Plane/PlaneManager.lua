@@ -24,6 +24,9 @@ end
 
 function PlaneManager:createRoute(Accident)
     if Accident == true then
+        if self.m_PlaneAccidentInstance then
+            self:endAccident()
+        end
         local accidentRandom = math.random(1, #PlaneFlightRoutes[true])
         local table = PlaneFlightRoutes[true][accidentRandom]
         self.m_PlaneAccidentInstance = PlaneAccident:new(unpack(table))

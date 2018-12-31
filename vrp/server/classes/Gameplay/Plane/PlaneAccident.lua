@@ -43,6 +43,15 @@ function PlaneAccident:setAccidentPlane(flyingTime, colX, colY, colZ, colTime, s
     end
 end
 
+function PlaneAccident:destructor()
+    if isElement(self.m_Rubble) then
+        self.m_Rubble:destroy()
+    end
+    if isElement(self.m_TrashTruck) then
+        self.m_TrashTruck:destroy()
+    end
+end
+
 function PlaneAccident:createAccidentFire()
     local planePos = self.m_Plane:getPosition()
     local planeID = self.m_Plane:getModel()
