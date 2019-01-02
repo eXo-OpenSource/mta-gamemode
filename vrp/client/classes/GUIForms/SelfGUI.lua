@@ -797,8 +797,6 @@ function SelfGUI:onSettingChange(setting)
 	if self.m_SettingBG then delete(self.m_SettingBG) end
 	self.m_SettingBG = GUIRectangle:new(self.m_Width*0.34, self.m_Height*0.02, self.m_Width*0.66, self.m_Height*0.96, tocolor(0, 0, 0, 0), self.m_TabSettings)
 
-
-
 	if setting == "HUD" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", self.m_SettingBG)
 
@@ -1473,7 +1471,7 @@ function SelfGUI:onSettingChange(setting)
 			HUDAviation:getSingleton():setPFD( bool )
 			core:set("HUD", "AviationPFDOverlay", bool)
 		end
-		
+
 		self.m_AviationSFD = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.78, self.m_Width*0.6, self.m_Height*0.04, _"Sekundäre Fluganzeige (An/Aus)", self.m_SettingBG)
 		:setFont(VRPFont(25)):setFontSize(1)
 		self.m_AviationSFD:setChecked(core:get("HUD", "AviationSFDOverlay", true))

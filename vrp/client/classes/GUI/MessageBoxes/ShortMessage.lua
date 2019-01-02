@@ -38,9 +38,9 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 
 	-- Font and height calc
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))
-	local h = textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize)
+	local h = textHeight(self.m_Text, w - 8, self:getFont(), self:getFontSize())
 	if hasTitleBar then
-		self.m_TitleHeight = textHeight(self.m_Title, w - 8, self.m_Font, self.m_FontSize)
+		self.m_TitleHeight = textHeight(self.m_Title, w - 8, self:getFont(), self:getFontSize())
 		h = h + self.m_TitleHeight
 	end
 	if true then -- option to disable this?
@@ -119,7 +119,7 @@ end
 function ShortMessage:setText(text)
 	local success = GUIFontContainer.setText(self, text)
 	if success then
-		local h = textHeight(self.m_Text, self.m_Width - 8, self.m_Font, self.m_FontSize) + (self.m_TitleHeight or 0) + 4
+		local h = textHeight(self.m_Text, self.m_Width - 8, self:getFont(), self:getFontSize()) + (self.m_TitleHeight or 0) + 4
 		GUIElement.setSize(self, self.m_Width, h)
 		MessageBoxManager.resortPositions()
 	end
@@ -142,9 +142,9 @@ function ShortMessage:drawThis()
 
 	-- Draw message text
 	if hasTitleBar then
-		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self:getFontSize(), self:getFont(), "left", "top", false, true)
 	end
-	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self:getFontSize(), self:getFont(), "left", "top", false, true)
 end
 
 function ShortMessage:setTimeout(timeoutMs)

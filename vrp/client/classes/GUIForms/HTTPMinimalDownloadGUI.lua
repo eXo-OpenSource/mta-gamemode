@@ -16,7 +16,7 @@ function HTTPMinimalDownloadGUI:constructor()
 	end
 	GUIFontContainer.constructor(self, "Custom Textur wird geladen...\nTextur: -", 1, VRPFont(24))
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 0))
-	local h = textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize) + 4
+	local h = textHeight(self.m_Text, w - 8, self:getFont(), self:getFontSize()) + 4
 	GUIElement.constructor(self, x, y - 20 - h, w, h)
 
 	table.insert(MessageBoxManager.Map, self)
@@ -37,14 +37,14 @@ function HTTPMinimalDownloadGUI:drawThis()
 	-- Center the text
 	x = x + 4
 	w = w - 8
-	dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self:getFontSize(), self:getFont(), "left", "top", false, true)
 end
 
 function HTTPMinimalDownloadGUI:updateText(...)
 	self:setText(...)
 
 	local w, h = self:getSize()
-	self:setSize(w, textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize) + 4)
+	self:setSize(w, textHeight(self.m_Text, w - 8, self:getFont(), self:getFontSize()) + 4)
 	MessageBoxManager.resortPositions()
 end
 

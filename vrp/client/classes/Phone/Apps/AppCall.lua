@@ -14,10 +14,10 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
-	self.m_EasterEggFont = dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
+	self.m_EasterEggFont = VRPFont(35, Fonts.BitBold) --dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
 	self.m_EasterEggRenderFunction = function()
-		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, self.m_EasterEggFont, "center", "center")
-		dxDrawText("SUPER SMASH STROBE", 0,0, screenWidth, screenHeight, tocolor(201, 29, 0, 255), 1, self.m_EasterEggFont, "center", "center")
+		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, getVRPFont(self.m_EasterEggFont), "center", "center")
+		dxDrawText("SUPER SMASH STROBE", 0,0, screenWidth, screenHeight, tocolor(201, 29, 0, 255), 1, getVRPFont(self.m_EasterEggFont), "center", "center")
 	end
 
 	self.m_IncomingCallSMs = {}

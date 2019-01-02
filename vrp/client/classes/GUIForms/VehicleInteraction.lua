@@ -123,7 +123,7 @@ function VehicleInteraction:drawTextBox(text, count)
 	local width, height = 270, 16
 	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
 	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
-	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, self.m_Font, "center", "center", false, false, false, true, false)
+	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), self:getFontSize(), self:getFont(), "center", "center", false, false, false, true, false)
 end
 
 function VehicleInteraction:getDoor()
