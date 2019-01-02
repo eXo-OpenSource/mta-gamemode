@@ -6,6 +6,42 @@
 -- *
 -- ****************************************************************************
 Weather = inherit(Singleton)
+
+addRemoteEvents{"clientRequestWeatherList"}
+
+setWeather = nil -- Completetly disallow this function @ serverside!
+
+function Weather:constructor()
+	self.m_Weather = {}
+	self.ms_Random = Randomizer:new()
+
+	-- Setup weather for all zones
+	for zone, weatherIDs in pairs(WEATHER_ZONE_WEATHERS) do
+		self:updateWeather(zone, self.ms_Random:getRandomTableValue(weatherIDs))
+	end
+
+	addEventHandler("clientRequestWeatherList", root, bind(Weather.onClientRequestWeatherList, self))
+end
+
+function Weather:getWeather(zone)
+	return self.m_Weather[zone]
+end
+
+function Weather:getWeatherForPlayer(player)
+	return self:getWeather(player:getZoneName(true))
+end
+
+function Weather:updateWeather(zone, weatherId)
+	self.m_Weather[zone] = weatherId
+	--triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "receiveWeather", resourceRoot, zone, weatherId)
+end
+
+function Weather:onClientRequestWeatherList()
+	client:triggerEvent("receiveWeatherList", self.m_Weather)
+end
+
+
+--[[Weather = inherit(Singleton)
 local WEATHER_CHANGE_INTERVAL = 120*60*1000 -- it will bug without this as setWeatherBlended will perform the interpolation for a 2 hours period ingame
 
 Weather.Data = {
@@ -52,4 +88,4 @@ function Weather:setWeather()
 		self.m_CurrentWeather = self.m_NextWeather
 		setWeatherBlended(self.m_CurrentWeather[1])
 	end
-end
+end]]

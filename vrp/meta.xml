@@ -21,6 +21,7 @@
 	<script src="shared/constants/roulette.lua" type="shared"/>
 	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
+	<script src="shared/constants/weather.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -553,6 +554,7 @@
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
 	<script src="client/classes/WeaponRecorder.lua" type="client"/>
+	<script src="client/classes/Weather.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
