@@ -178,7 +178,7 @@ end
 function HUDUI:drawVRP()
 	local f = math.floor
 	dxDrawRectangle(screenWidth-0.195*screenWidth, 0.04*screenHeight, 0.195*screenWidth, 0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText("$"..convertNumber(self:getLocalTarget():getMoney()), screenWidth-0.14*screenWidth, 0.04*screenHeight, screenWidth-screenWidth*0.007, 0.04*screenHeight+0.092*screenHeight, Color.White, 1, self.m_Font, "right", "center")
+	dxDrawText("$"..convertNumber(self:getLocalTarget():getMoney()), screenWidth-0.14*screenWidth, 0.04*screenHeight, screenWidth-screenWidth*0.007, 0.04*screenHeight+0.092*screenHeight, Color.White, 1, getVRPFont(self.m_Font), "right", "center")
 
 	local munitionWindowActive = true
 
@@ -212,13 +212,13 @@ function HUDUI:drawVRP()
 	local inClip = getPedAmmoInClip(self:getLocalTarget())
 	local totalAmmo = getPedTotalAmmo(self:getLocalTarget())
 	local sMunition = ("%d - %d"):format(inClip,totalAmmo-inClip)
-	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2), -85+addY+screenHeight*0.015, 0.153*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,getVRPFont(self.m_Font))/2), -85+addY+screenHeight*0.015, 0.153*screenWidth,0.092*screenHeight,Color.White,1,getVRPFont(self.m_Font))
 
 
 	-- Wantedlevel
 	dxDrawRectangle(screenWidth-0.05*screenWidth,0.14*screenHeight,0.05*screenWidth,0.105*screenHeight,tocolor(0,0,0,150))
 	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, self:getLocalTarget():getWanteds() > 0 and Color.Yellow or Color.White)
-	dxDrawText     (self:getLocalTarget():getWanteds(),screenWidth-0.05*screenWidth,0.16*screenHeight+(0.09*screenHeight/2),screenWidth-0.05*screenWidth+0.05*screenWidth,0,Color.White,0.5,self.m_Font, "center")
+	dxDrawText     (self:getLocalTarget():getWanteds(),screenWidth-0.05*screenWidth,0.16*screenHeight+(0.09*screenHeight/2),screenWidth-0.05*screenWidth+0.05*screenWidth,0,Color.White,0.5,getVRPFont(self.m_Font), "center")
 
 	self:drawTimeRect()
 	self:drawLevelRect()
@@ -454,7 +454,7 @@ function HUDUI:drawChart()
 
 	local function dxDrawTextInCenter(text, x, y, w, h, icon, prog)
 		if not prog then prog = 0 end
-		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.changeAlphaRate(Color.White, prog), 1, icon and fontAwesome or font, "center", "center")
+		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.changeAlphaRate(Color.White, prog), 1, icon and getVRPFont(fontAwesome) or getVRPFont(font), "center", "center")
 	end
 
 	local function drawCol(col, progress, color, text, icon, iconBgColor, identifier, fadeOut)

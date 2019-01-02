@@ -319,7 +319,7 @@ function HUDRadar:draw()
 	if core:get("HUD", "drawZone", false) then
 		dxDrawRectangle(self.m_PosX, self.m_PosY+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
 		dxDrawText(getZoneName(localPlayer.position), self.m_PosX + self.m_Width/2, self.m_PosY+self.m_Height-self.m_Height/20, nil, nil,
-			Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
+			Color.White, 1, getVRPFont(VRPFont(self.m_Height/10)), "center", "center")
 	end
 
 	-- Draw the player blip

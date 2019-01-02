@@ -9,7 +9,7 @@ SprayWallManager = inherit(Singleton)
 
 function SprayWallManager:constructor()
 	self.m_Map = {}
-	self.m_Font = dxCreateFont("files/fonts/Ghetto.ttf", 20, false)
+	self.m_Font = VRPFont(32, Fonts.Ghetto) --dxCreateFont("files/fonts/Ghetto.ttf", 20, false)
 
 	for i, info in ipairs(SprayWallData) do
 		self.m_Map[i] = SprayWall:new(i, info.wallPosition, info.wallRotation)
@@ -20,7 +20,7 @@ function SprayWallManager:constructor()
 end
 
 function SprayWallManager:getFont()
-	return self.m_Font
+	return getVRPFont(self.m_Font)
 end
 
 function SprayWallManager:Event_onGroupChangeName(oldname, newname)

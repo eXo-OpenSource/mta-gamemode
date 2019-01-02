@@ -11,6 +11,8 @@ addRemoteEvents{"breakingNews"}
 function BreakingNews:constructor(text, title, color, titleColor)
 	self.m_Width, self.m_Height = screenWidth*0.6, screenWidth/38.4
 	self.m_RenderTarget = DxRenderTarget(self.m_Width, self.m_Height, true)
+	self.m_FontTitle = VRPFont(self.m_Height*.7, nil, true)
+	self.m_FontNews = VRPFont(self.m_Height*.7)
 	self.m_ScrollEnabled = true
 	self.m_Alpha = 0
 	self.m_NewsOffset = 0
@@ -20,7 +22,7 @@ function BreakingNews:constructor(text, title, color, titleColor)
 	if titleColor and type(titleColor) == "table" then titleColor = tocolor(unpack(titleColor)) end
 	self.m_TitleColor = titleColor or Color.White
 	self.m_Title = title or "Breaking News"
-	self.m_HeaderWidth = math.floor(dxGetTextWidth(self.m_Title, 1, VRPFont(self.m_Height*0.7, nil, true))+self.m_Height/2)
+	self.m_HeaderWidth = math.floor(dxGetTextWidth(self.m_Title, 1, getVRPFont(self.m_FontTitle))+self.m_Height/2)
 
 	self:updateRenderTarget()
 
@@ -98,11 +100,11 @@ function BreakingNews:updateRenderTarget()
 	dxDrawRectangle(self.m_HeaderWidth, 2, self.m_Width-self.m_HeaderWidth-2, math.floor(self.m_Height-4), Color.White)
 	--dxDrawImage(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color)
 	dxDrawImageSection(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, 1, 0, 30, 120, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color) -- image section cause of render issues
-	dxDrawText(self.m_Title, 0, 0, self.m_HeaderWidth, self.m_Height, self.m_TitleColor, 1, VRPFont(self.m_Height*0.7, nil, true), "center", "center")
+	dxDrawText(self.m_Title, 0, 0, self.m_HeaderWidth, self.m_Height, self.m_TitleColor, 1, getVRPFont(self.m_FontTitle), "center", "center")
 
 	for i, news in ipairs(self.m_News) do
 		local offset = (i-1)*self.m_Height - self.m_NewsOffset
-		dxDrawText(news, self.m_HeaderWidth+10+self.m_Height/4, offset, self.m_Width - screenWidth/20, offset + self.m_Height, Color.Black, 1, VRPFont(self.m_Height*0.7), "left", "center")
+		dxDrawText(news, self.m_HeaderWidth+10+self.m_Height/4, offset, self.m_Width - screenWidth/20, offset + self.m_Height, Color.Black, 1, getVRPFont(self.m_FontNews), "left", "center")
 	end
 
 	dxSetBlendMode("blend")
@@ -126,7 +128,7 @@ addEventHandler("breakingNews", root,
 		end
 		if core:get("HUD", "breakingNewsInChat", false) then
 			local r, g, b = fromcolor(Color.LightRed)
-			if color and type(color) == "table" then 
+			if color and type(color) == "table" then
 				r, g, b = unpack(color)
 			end
 			outputChatBox(("[Breaking News] #FFFFFF %s"):format(text, title, color, titleColor), r, g, b, true)

@@ -16,6 +16,7 @@ function CustomF11Map:constructor()
 	self.m_CenterPosY = screenHeight/2
 	self.m_Height = screenHeight
 	self.m_Zoom = 1
+	self.m_Font = VRPFont(25)
 
 	self.m_ClickOverlay = GUIElement:new(0, 0, screenWidth, screenHeight)
 	self.m_ClickOverlay:setVisible(false)
@@ -130,15 +131,15 @@ function CustomF11Map:updateBlipList()
 							end
 						end
 						GPS:getSingleton():startNavigationTo(target:getPosition(true))
-					end	
+					end
 					item.onLeftClick = function()
 						self.m_CurrentClickedBlip = text
-					end	
+					end
 					item.onRightClick = function()
 						core:set("BlipVisibility", saveName, not core:get("BlipVisibility", saveName, true))
 						item:setColumnColor(1, core:get("BlipVisibility", saveName, true) and color or Color.Clear)
 						item:setColor(core:get("BlipVisibility", saveName, true) and Color.White or Color.LightGrey)
-					end	
+					end
 
 					core:get("HUD", "coloredBlips", true)
 				end
@@ -165,8 +166,8 @@ function CustomF11Map:draw()
 	else
 		centerPosX, centerPosY = self:snapMapToScreenBounds(centerPosX, centerPosY, height, true) --snap actual map to prevent move bugs
 	end
-	
-	local mapPosX, mapPosY = centerPosX - height /2, centerPosY - height /2 
+
+	local mapPosX, mapPosY = centerPosX - height /2, centerPosY - height /2
 	-- Draw map
 	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():getImagePath(false, true), 0, 0, 0, tocolor(255, 255, 255, core:get("HUD","mapOpacity", 0.7)*255))
 	local routeRenderTarget = HUDRadar:getSingleton():getRouteRenderTarget()
@@ -176,7 +177,7 @@ function CustomF11Map:draw()
 
 	-- Draw GPS info
 	dxDrawRectangle(0, 0, screenWidth, 30, tocolor(0, 0, 0, 140))
-	dxDrawText(_"Informationen zur Bedienung der Karte findest du im F1-Hilfemenü", screenWidth/2, 15, nil, nil, Color.White, 1, VRPFont(25), "center", "center")
+	dxDrawText(_"Informationen zur Bedienung der Karte findest du im F1-Hilfemenü", screenWidth/2, 15, nil, nil, Color.White, 1, getVRPFont(self.m_Font), "center", "center")
 
 	-- Draw gang areas
 	for i, v in pairs(HUDRadar:getSingleton().m_Areas) do
@@ -218,10 +219,10 @@ function CustomF11Map:draw()
 				local size = blip:getSize() * Blip.getScaleMultiplier()
 				local isMouseOverBlip = isCursorOverArea(centerPosX + mapX - size/2, centerPosY + mapY - size/2, size, size) and not self.m_BlipToolTipShowing
 				if (self.m_CurrentClickedBlip and self.m_CurrentClickedBlip == blip:getDisplayText()) or isMouseOverBlip then size = size * 1.5 end
-				
+
 				local color = blip:getColor()
 				if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
-				
+
 				local imagePath = blip:getImagePath()
 				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
 					if math.abs(pz - blip:getZ()) > 3 then
@@ -254,7 +255,7 @@ function CustomF11Map:draw()
 		local cursorX, cursorY = getCursorPosition()
 		cursorX, cursorY = cursorX * screenWidth, cursorY * screenHeight
 		local mapX, mapY = self:cursorToMapPosition()
-		
+
 		local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
 		local text = getOpticalZoneName(worldX, worldY)
 		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["gotocords"] then
@@ -281,7 +282,7 @@ end
 function CustomF11Map:worldToMapPosition(worldX, worldY)
 	local mapX = worldX / ( 6000/self.m_Height/self.m_Zoom)
 	local mapY = worldY / (-6000/self.m_Height/self.m_Zoom)
-	
+
 	return mapX, mapY
 end
 
@@ -309,10 +310,10 @@ function CustomF11Map:snapMapToScreenBounds(centerX, centerY, height, withUpdate
 	elseif centerX + height/2 < screenWidth - offsX then
 		centerX = screenWidth - height/2 - offsX
 	end
-	if centerY - height/2 > 0 then 
-		centerY = height/2 
+	if centerY - height/2 > 0 then
+		centerY = height/2
 	elseif centerY + height/2 < screenHeight then
-		centerY = screenHeight - height/2 
+		centerY = screenHeight - height/2
 	end
 	if withUpdate then
 		self.m_CenterPosX = centerX
@@ -352,7 +353,7 @@ function CustomF11Map:Rightclick_ClickOverlay(element, cursorX, cursorY)
 				fadeCamera(true)
 				teleportElement:setFrozen(false)
 			end, 250, 1)
-		end, 2000, 1)	
+		end, 2000, 1)
 	else
 		GPS:getSingleton():stopNavigation()
 	end
@@ -360,7 +361,7 @@ end
 
 function CustomF11Map:zoom(zoomIn)
 	if self.m_Moving then return false end -- otherwise this causes trouble with the map center
-	local oldMapCenterX = screenWidth/2 - self.m_CenterPosX -- this saves the world position at the map center to re-center the map 
+	local oldMapCenterX = screenWidth/2 - self.m_CenterPosX -- this saves the world position at the map center to re-center the map
 	local oldMapCenterY = screenHeight/2 - self.m_CenterPosY
 	local oldWorldPosX, oldWorldPosY = self:mapToWorldPosition(oldMapCenterX, oldMapCenterY)
 	self.m_Zoom = math.clamp(1, self.m_Zoom + (zoomIn and 0.05 or -0.05), 2.5)

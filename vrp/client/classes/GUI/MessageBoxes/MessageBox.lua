@@ -48,7 +48,7 @@ function MessageBox:drawThis()
 	dxDrawImage(self.m_AbsoluteX + 10, self.m_AbsoluteY + self.m_Height/2 - 80/2, 85, 85, self:getImagePath())
 
 	-- Draw message text
-	dxDrawText(self.m_Text, self.m_AbsoluteX + 120, self.m_AbsoluteY + 20, self.m_AbsoluteX + self.m_Width - 5, self.m_AbsoluteY + self.m_Height - 10, Color.White, self.m_FontSize, self.m_Font, "left", "top", false, true)
+	dxDrawText(self.m_Text, self.m_AbsoluteX + 120, self.m_AbsoluteY + 20, self.m_AbsoluteX + self.m_Width - 5, self.m_AbsoluteY + self.m_Height - 10, Color.White, self:getFontSize(), self:getFont(), "left", "top", false, true)
 end
 
 function MessageBox.resortPositions ()
