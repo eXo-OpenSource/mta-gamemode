@@ -12,7 +12,7 @@ function ItemShop:constructor(id, name, position, rotation, typeData, dimension,
 
 	self.m_Type = "ItemShop"
 	self.m_Items = SHOP_ITEMS[typeData["Name"]]
-	self.m_SortedItems = SHOP_ITEM_SORT[typeData["Name"]]
+	self.m_SortedItems = SHOP_ITEM_SORT[typeData["Name"]] or false
 	self.m_WeaponItems = SHOP_ITEM_WEAPONS[typeData["Name"]]
 
 	if self.m_Ped then
