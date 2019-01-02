@@ -153,12 +153,59 @@ TODO by MegaThorx
 
 ## vrp_inventory_items
 > Id int PK
-> InventoryId int NOT NULL
-> SlotId int NOT NULL
+> InventoryId int NOT NULL FK
 > ItemId int NOT NULL FK
+> Slot int NOT NULL
 > Value int NOT NULL DEFAULT 0
 > Durability int NOT NULL DEFAULT 0
-> Metadata text NOT NULL DEFAULT ''
+> Metadata text NULL
+
+```sql
+CREATE TABLE `vrp_item_categories`  (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `Name` varchar(128) NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `vrp_items`  (
+  `Id` int(0) NOT NULL AUTO_INCREMENT,
+  `TechincalName` varchar(128) NOT NULL,
+  `CategoryId` int(0) NOT NULL,
+  `Name` varchar(128) NOT NULL,
+  `Description` text NOT NULL DEFAULT '',
+  `Icon` varchar(128) NOT NULL,
+  `ModelId` int(0) NOT NULL DEFAULT 0,
+  `MaxDurability` int(0) NOT NULL DEFAULT 0,
+  `Consumable` tinyint(1) NOT NULL DEFAULT 0,
+  `Tradeable` tinyint(1) NOT NULL DEFAULT 0,
+  `Expireable` tinyint(1) NOT NULL DEFAULT 0,
+  `IsUnique` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`Id`),
+  FOREIGN KEY (`CategoryId`) REFERENCES `vrp_item_categories` (`Id`)
+);
+
+CREATE TABLE `vrp_inventory`  (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `ElementId` int NOT NULL,
+  `ElementType` int NOT NULL,
+  `Size` int NOT NULL,
+  `AllowedCategories` text NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `vrp_inventory_items`  (
+  `Id` int(0) NOT NULL AUTO_INCREMENT,
+  `InventoryId` int(0) NOT NULL,
+  `ItemId` int(0) NOT NULL,
+  `Slot` int(0) NOT NULL,
+  `Value` int(0) NOT NULL,
+  `Durability` int(0) NOT NULL,
+  `Metadata` text NULL DEFAULT NULL,
+  PRIMARY KEY (`Id`),
+  FOREIGN KEY (`InventoryId`) REFERENCES `vrp_dev`.`vrp_inventory` (`Id`) ON DELETE CASCADE,
+  FOREIGN KEY (`ItemId`) REFERENCES `vrp_dev`.`vrp_items` (`Id`)
+);
+```
 
 # Inventartypen
 - Spieler
