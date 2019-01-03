@@ -163,6 +163,7 @@ TODO by MegaThorx
 ```sql
 CREATE TABLE `vrp_item_categories`  (
   `Id` int NOT NULL AUTO_INCREMENT,
+  `TechnicalName` varchar(128) NOT NULL,
   `Name` varchar(128) NOT NULL,
   PRIMARY KEY (`Id`)
 );
@@ -184,13 +185,30 @@ CREATE TABLE `vrp_items`  (
   FOREIGN KEY (`CategoryId`) REFERENCES `vrp_item_categories` (`Id`)
 );
 
+CREATE TABLE `vrp_inventory_types`  (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `TechnicalName` varchar(128) NOT NULL,
+  `Name` varchar(128) NOT NULL,
+  `Permissions` text NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+
+CREATE TABLE `vrp_inventory_type_categories`  (
+  `TypeId` int NOT NULL,
+  `CategoryId` int NOT NULL,
+  PRIMARY KEY (`TypeId`, `CategoryId`),
+  FOREIGN KEY (`TypeId`) REFERENCES `vrp_inventory_types` (`Id`),
+  FOREIGN KEY (`CategoryId`) REFERENCES `vrp_item_categories` (`Id`)
+);
+
 CREATE TABLE `vrp_inventory`  (
   `Id` int NOT NULL AUTO_INCREMENT,
   `ElementId` int NOT NULL,
   `ElementType` int NOT NULL,
   `Size` int NOT NULL,
-  `AllowedCategories` text NOT NULL,
-  PRIMARY KEY (`Id`)
+  `TypeId` int NOT NULL,
+  PRIMARY KEY (`Id`),
+  FOREIGN KEY (`TypeId`) REFERENCES `vrp_inventory_types` (`Id`)
 );
 
 CREATE TABLE `vrp_inventory_items`  (
@@ -202,9 +220,25 @@ CREATE TABLE `vrp_inventory_items`  (
   `Durability` int(0) NOT NULL,
   `Metadata` text NULL DEFAULT NULL,
   PRIMARY KEY (`Id`),
-  FOREIGN KEY (`InventoryId`) REFERENCES `vrp_dev`.`vrp_inventory` (`Id`) ON DELETE CASCADE,
-  FOREIGN KEY (`ItemId`) REFERENCES `vrp_dev`.`vrp_items` (`Id`)
+  FOREIGN KEY (`InventoryId`) REFERENCES `vrp_inventory` (`Id`) ON DELETE CASCADE,
+  FOREIGN KEY (`ItemId`) REFERENCES `vrp_items` (`Id`)
 );
+
+INSERT INTO vrp_item_categories VALUES (1, 'food', 'Essen'), (2, 'weapons', 'Waffen');
+INSERT INTO vrp_inventory_types VALUES (1, 'player_inventory', 'Spielerinventar', ''), (2, 'weaponbox', 'Waffenbox', '[["faction": [1, 2, 3]]]');
+INSERT INTO vrp_inventory_type_categories VALUES (1, 1), (1, 2), (2, 2);
+INSERT INTO vrp_items VALUES (1, 'burger', 1, 'Burger', 'Burgershot Burger', 'myAwesomeBurger.png', 0, 0, 1, 1, 1, 0);
+INSERT INTO vrp_inventory VALUES (1, 1, 4123, 32, 1), (2, 2, 1, 32, 2);
+INSERT INTO vrp_inventory_items VALUES (1, 1, 1, 1, 1, 0, '');
+```
+
+```sql
+DROP TABLE vrp_inventory_items;
+DROP TABLE vrp_inventory;
+DROP TABLE vrp_inventory_type_categories;
+DROP TABLE vrp_inventory_types;
+DROP TABLE vrp_items;
+DROP TABLE vrp_item_categories;
 ```
 
 # Inventartypen
