@@ -59,11 +59,10 @@ setTimer(
 				if isElement(font) and getTickCount() - font.lastUsed >= 60000 then
 					destroyElement(font)
 					VRPFonts[fontName][fontSize] = nil
-					outputChatBox(("Destroy: %s (%s)"):format(fontName, fontSize))
+					--outputChatBox(("Destroy: %s (%s)"):format(fontName, fontSize))
 				end
 			end
 		end
-
 	end, 10000, 0
 )
 
@@ -176,7 +175,7 @@ FontAwesomeSymbols = {
 }
 
 -- uncomment this to render a list of all loaded fonts
-addEventHandler("onClientRender", root,
+--[[addEventHandler("onClientRender", root,
 	function()
 		local i, total = 0, 0
 		for fontName, fontSizes in pairs(VRPFonts) do
@@ -192,7 +191,7 @@ addEventHandler("onClientRender", root,
 		i = i + 1
 		dxDrawText(("Total: %s"):format(total), 15, 250+(i*15))
 	end
-)
+)]]
 
 -- uncomment this to render a preview of all icons on the screen
 --[[addEventHandler("onClientRender", root,
