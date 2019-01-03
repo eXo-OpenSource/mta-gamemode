@@ -91,10 +91,10 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 	setTimer(
 		function()
 			if not isElement(player) then return end
+			setElementDimension(player,dimension)
 			setElementInterior(player,interior, pos)
 			player:setRotation(0, 0, rotation)
 			player:setPosition(pos)
-			setElementDimension(player,dimension)
 			player:setCameraTarget(player)
 			fadeCamera(player, true)
 			

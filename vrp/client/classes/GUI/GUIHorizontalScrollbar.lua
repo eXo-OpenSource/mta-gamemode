@@ -9,6 +9,7 @@
 GUIHorizontalScrollbar = inherit(GUIScrollbar)
 
 function GUIHorizontalScrollbar:constructor(posX, posY, width, height, parent)
+	self.m_Font = VRPFont(self.m_Height)
 	self.m_CursorMoveHandler = bind(GUIHorizontalScrollbar.Event_onClientCursorMove, self)
 end
 
@@ -68,7 +69,7 @@ function GUIHorizontalScrollbar:drawThis()
 	dxDrawRectangle(self.m_AbsoluteX + GUI_SCROLLBAR_ELEMENT_MARGIN + self.m_ScrollPosition * self.m_Width, self.m_AbsoluteY + GUI_SCROLLBAR_ELEMENT_MARGIN, 49, self.m_Height - 2*GUI_SCROLLBAR_ELEMENT_MARGIN, self.m_Color)
 
 	if self.m_Text then
-		dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width / 2, self.m_AbsoluteY + self.m_Height / 2, nil, nil, Color.White, 1, VRPFont(self.m_Height), "center", "center")
+		dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width / 2, self.m_AbsoluteY + self.m_Height / 2, nil, nil, Color.White, 1, getVRPFont(self.m_Font), "center", "center")
 	end
 
 end

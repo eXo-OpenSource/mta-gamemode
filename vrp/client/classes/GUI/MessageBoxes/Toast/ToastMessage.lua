@@ -6,7 +6,7 @@ function ToastMessage:constructor(text, timeout, title)
 	local x, y = HUDRadar:getSingleton():getPosition()
 	local w = HUDRadar:getSingleton():getWidth()
 	local h = 41
-	local textHeight = textHeight(self.m_Text, w - 70, self.m_Font, self.m_FontSize)
+	local textHeight = textHeight(self.m_Text, w - 70, self:getFont(), self:getFontSize())
 	h = h + textHeight
 	y = y - h - x
 
@@ -47,10 +47,10 @@ function ToastMessage:drawThis()
 	dxDrawImage(self.m_AbsoluteX + 20, self.m_AbsoluteY + self.m_Height/2 - 24/2, 24, 24, self:getImagePath(), 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 
 	-- Draw title
-	dxDrawText(self.m_Title, self.m_AbsoluteX + 60, self.m_AbsoluteY + 5, self.m_AbsoluteX + self.m_Width - 20, self.m_AbsoluteY + 15, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_TitleFont)
+	dxDrawText(self.m_Title, self.m_AbsoluteX + 60, self.m_AbsoluteY + 5, self.m_AbsoluteX + self.m_Width - 20, self.m_AbsoluteY + 15, tocolor(255, 255, 255, self.m_Alpha), self:getFontSize(), getVRPFont(self.m_TitleFont))
 
 	-- Draw text
-	dxDrawText(self.m_Text, self.m_AbsoluteX + 60, self.m_AbsoluteY + 30, self.m_AbsoluteX + self.m_Width - 20, self.m_AbsoluteY + self.m_Height - 30 - 10, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	dxDrawText(self.m_Text, self.m_AbsoluteX + 60, self.m_AbsoluteY + 30, self.m_AbsoluteX + self.m_Width - 20, self.m_AbsoluteY + self.m_Height - 30 - 10, tocolor(255, 255, 255, self.m_Alpha), self:getFontSize(), self:getFont(), "left", "top", false, true)
 end
 
 ToastMessage.getImagePath    = pure_virtual

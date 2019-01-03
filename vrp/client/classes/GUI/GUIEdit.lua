@@ -33,7 +33,7 @@ function GUIEdit:drawThis()
 	local white = tocolor(255, 255, 255, self:getAlpha())
 	if self.m_Icon then
 		dxDrawRectangle(self.m_AbsoluteX - 30, self.m_AbsoluteY, 30, self.m_Height, white)
-		dxDrawText(self.m_Icon, self.m_AbsoluteX - 30, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), FontAwesome(self.m_Height*.9), "center", "center")
+		dxDrawText(self.m_Icon, self.m_AbsoluteX - 30, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), getVRPFont(self.m_IconFont), "center", "center")
 	end
 
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, white)
@@ -287,6 +287,7 @@ end
 
 function GUIEdit:setIcon(icon)
 	self.m_Icon = icon
+	self.m_IconFont = FontAwesome(self.m_Height*.9)
 
 	local posX, posY = self:getPosition()
 	local width, height = self:getSize()

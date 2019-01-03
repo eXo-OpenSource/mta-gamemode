@@ -11,7 +11,7 @@ inherit(GUIFontContainer, GUIMovetext)
 function GUIMovetext:constructor(posX, posY, width, height, text, title, scrollspeed, startoffset, icon, postgui)
 	checkArgs("GUIMovetext:constructor", "number", "number", "number", "number","string","string" ,"number","number")
 	DxElement.constructor(self, posX, posY, width, height)
-	GUIFontContainer.constructor(self, text,1)
+	GUIFontContainer.constructor(self, text, 1, VRPFont(height))
 
 	self.m_NormalColor = Color.White
 	self.m_HoverColor = Color.Black
@@ -21,7 +21,6 @@ function GUIMovetext:constructor(posX, posY, width, height, text, title, scrolls
 	self.m_Start = startoffset or 0
 	self.m_Text = text
 	self.m_Title = title
-	self:setFont(VRPFont(height))
 	self.m_ScrollSpeed = scrollspeed
 	self.m_FontHeight = dxGetFontHeight(self:getFontSize(), self:getFont())
 	self.m_bindFunc = function() self:renderThis() end

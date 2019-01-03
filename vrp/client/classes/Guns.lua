@@ -21,25 +21,25 @@ local TOGGLE_WEAPONS =
 	[22] = true,
 }
 
-local WEAPON_RANGE_CHECK = 
+local WEAPON_RANGE_CHECK =
 {
 	[22] = true,
 	[23] = true,
 	[22] = true,
-	[24] = true, 
-	[25] = true, 
-	[26] = true, 
+	[24] = true,
+	[25] = true,
+	[26] = true,
 	[29] = true,
 	[30] = true,
 	[31] = true,
-	[32] = true, 
-	[33] = true, 
+	[32] = true,
+	[33] = true,
 	[34] = true,
 }
 
-local WEAPON_CACHE_MELEE_DAMAGE = 
+local WEAPON_CACHE_MELEE_DAMAGE =
 {
-	[17] = true, 
+	[17] = true,
 	[18] = true,
 	[37] = true,
 	[53] = true,
@@ -79,7 +79,7 @@ function Guns:constructor()
 	addEventHandler("clientMonochromeFlash", root, bind(self.monochromeFlash, self))
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
-	
+
 	self.m_HitMarkRender = bind(self.Event_RenderHitMarker, self)
 	self.m_HitMark = false
 	self.m_TracerEnabled = false
@@ -107,7 +107,7 @@ function Guns:toggleTracer( bool )
 		self.m_TracerTable = {}
 		removeEventHandler("onClientRender", root, bind(self.Event_renderTracer, self))
 		addEventHandler("onClientRender", root, bind(self.Event_renderTracer, self))
-	else 
+	else
 		self.m_TracerTable = {}
 		removeEventHandler("onClientRender", root, bind(self.Event_renderTracer, self))
 	end
@@ -121,7 +121,7 @@ end
 function Guns:Event_NetworkInterupt( status, ticks )
 	if (status == 0) then
 		if (not isElementFrozen(localPlayer)) then
-			setElementFrozen(localPlayer, true) 
+			setElementFrozen(localPlayer, true)
 			toggleControl("fire", false)
 			toggleControl("aim_weapon", false)
 			self.m_NetworkInteruptFreeze = true
@@ -131,8 +131,8 @@ function Guns:Event_NetworkInterupt( status, ticks )
 	elseif (status == 1) then
 		if (self.m_NetworkInteruptFreeze) then
 			setElementFrozen(localPlayer, false)
-			toggleControl("fire", true) 
-			toggleControl("aim_weapon", true) 
+			toggleControl("fire", true)
+			toggleControl("aim_weapon", true)
 			self.m_NetworkInteruptFreeze = false
 		end
 		--removeEventHandler( "onClientRender", root, self.HookDrawAttention)
@@ -140,7 +140,7 @@ function Guns:Event_NetworkInterupt( status, ticks )
 	end
 end
 
-function Guns:drawNetworkInterupt() 
+function Guns:drawNetworkInterupt()
 	if getTickCount() % 1000 <= 750 then
 		dxDrawImage(w*0.3-w*0.035, h*0.01, w*0.035, w*0.035, "files/images/warning.png")
 		dxDrawText("Netzwerkprobleme!", w*0.31, h*0.01+1, w, (h*0.01+w*0.035)+1, tocolor(0, 0, 0, 255), 2, "clear", "left", "center")
@@ -172,7 +172,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		end
 		cancelEvent()
-	elseif weapon == 17 then 
+	elseif weapon == 17 then
 		if source.getPublicSync and source:getPublicSync("HelmetItem") == "Gasmaske" then
 		else
 			if source == localPlayer then
@@ -195,7 +195,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 					if weapon ~= 17 or ( not WearableHelmet:getSingleton().m_GasMask ) then
 						bPlaySound = false
 						self:addMeleeDamage( source, weapon, bodypart, loss)
-					else 
+					else
 						cancelEvent()
 					end
 				end
@@ -214,7 +214,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound(self.m_hitpath or "files/audio/hitsound.wav")
 	end
-	if bPlaySound and self.m_HitMark and attacker == localPlayer  then 
+	if bPlaySound and self.m_HitMark and attacker == localPlayer  then
 		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
 		self.m_HitMarkRed = getElementHealth(source) == 0
 		self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
@@ -223,7 +223,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 end
 
-function Guns:isInRange( target, bodypart, weapon) 
+function Guns:isInRange( target, bodypart, weapon)
 	if target and isElement(target) and isElementStreamedIn(target) then
 		local targetPosition = Vector3(target:getPosition(targetPosition))
 		local position = Vector3(localPlayer:getPosition())
@@ -231,33 +231,33 @@ function Guns:isInRange( target, bodypart, weapon)
 		return ((math.floor((targetPosition - position):getLength())) <= weaponRange), weaponRange
 	end
 	return false
-end	
+end
 
-function Guns:isInMeleeRange( target ) 
+function Guns:isInMeleeRange( target )
 	if target and isElement(target) and isElementStreamedIn(target) then
 		local targetPosition = Vector3(target:getPosition(targetPosition))
 		local position = Vector3(localPlayer:getPosition())
 		return (targetPosition - position):getLength() <= 1
 	end
 	return false
-end	
+end
 
-function Guns:addMeleeDamage( player, weapon , bodypart, loss ) 
-	if self.m_MeleeCache then 
+function Guns:addMeleeDamage( player, weapon , bodypart, loss )
+	if self.m_MeleeCache then
 		if WEAPON_CACHE_MELEE_DAMAGE[weapon] then
-			if self.m_MeleeCache["Weapon"] and self.m_MeleeCache["Weapon"] == weapon and self.m_MeleeCache["Target"] and self.m_MeleeCache["Target"] == player then 
+			if self.m_MeleeCache["Weapon"] and self.m_MeleeCache["Weapon"] == weapon and self.m_MeleeCache["Target"] and self.m_MeleeCache["Target"] == player then
 				self.m_MeleeCache["Loss"] = self.m_MeleeCache["Loss"] + loss
-			else 
-				self.m_MeleeCache["Weapon"] = weapon 
-				self.m_MeleeCache["Target"] = player 
-				self.m_MeleeCache["Tick"] = getTickCount() 
+			else
+				self.m_MeleeCache["Weapon"] = weapon
+				self.m_MeleeCache["Target"] = player
+				self.m_MeleeCache["Tick"] = getTickCount()
 				self.m_MeleeCache["Bodypart"] = bodypart
 				self.m_MeleeCache["Loss"] = 0
 				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
 					playSound(self.m_hitpath or "files/audio/hitsound.wav")
 				end
 			end
-		else 
+		else
 			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
 			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
@@ -266,17 +266,17 @@ function Guns:addMeleeDamage( player, weapon , bodypart, loss )
 	end
 end
 
-function Guns:sendMeleeDamage() 
-	if self.m_MeleeCache then 
+function Guns:sendMeleeDamage()
+	if self.m_MeleeCache then
 		triggerServerEvent("gunsLogMeleeDamage", localPlayer, self.m_MeleeCache["Target"], self.m_MeleeCache["Weapon"], self.m_MeleeCache["Bodypart"], self.m_MeleeCache["Loss"])
 		self.m_MeleeCache = {}
 	end
 end
 
-function Guns:checkMeleeCache() 
-	if self.m_MeleeCache then 
+function Guns:checkMeleeCache()
+	if self.m_MeleeCache then
 		if self.m_MeleeCache["Tick"] then
-			if getTickCount() > self.m_MeleeCache["Tick"] + MELEE_CACHE_CHECK then 
+			if getTickCount() > self.m_MeleeCache["Tick"] + MELEE_CACHE_CHECK then
 				self:sendMeleeDamage()
 			end
 		end
@@ -358,7 +358,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 		if self.m_TracerEnabled then
 			local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
 			local flightVec = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getNormalized()*10
-			if flightVec:getLength() > Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getLength() then 
+			if flightVec:getLength() > Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getLength() then
 				flightVec = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz))
 			end
 			local length = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getLength()
@@ -377,7 +377,6 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 			v:hide()
 		end
 
-		--dxDrawText("Powered by #Pew#ff8000P#fffffforn.com", 10, 10, screenWidth, screenHeight, Color.White, 1, "clear", "left", "top", false, false, false, true)
 		dxDrawImage(0, screenHeight - 68, 142/1920*screenWidth, 68/1080*screenHeight, "files/images/Logo.png", 0, 0, 0, tocolor(255, 255, 255, 50))
 
 		nextframe(
@@ -477,10 +476,10 @@ function Guns:Event_RenderHitMarker()
 		local scale = 1 / self.m_HitAccuracy
 		local screenX1, screenY1 = getScreenFromWorldPosition ( hitX,hitY,hitZ )
 		local color =  not self.m_HitMarkRed and tocolor(255, 255, 255, 255) or tocolor(200, 0, 0, 255)
-		dxDrawImage(screenX1-(16*scale/2), screenY1-(16*scale/2), 16*scale, 16*scale, 'files/images/hit.png', 0, 0, 0, color)	
-	else 
+		dxDrawImage(screenX1-(16*scale/2), screenY1-(16*scale/2), 16*scale, 16*scale, 'files/images/hit.png', 0, 0, 0, color)
+	else
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
-	end	
+	end
 	if self.m_HitMarkEnd <= 0 then
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 	end
@@ -489,18 +488,18 @@ end
 function Guns:Event_renderTracer()
 	local now = getTickCount()
 	local interp, prog, startPos, vecFlight, bulletVec, length, startX, startY, startZ, updateVec, steps
-	for time, obj in pairs(self.m_TracerTable) do 
+	for time, obj in pairs(self.m_TracerTable) do
 		if time and obj then
 			startPos, endPos, maxSteps, flightVec, steps = obj[1], obj[2], obj[3], obj[4], obj[5]
 			steps = steps + 1
 			startX = startPos.x+flightVec.x
 			startY = startPos.y+flightVec.y
 			startZ = startPos.z+flightVec.z
-			if startPos and endPos then 
+			if startPos and endPos then
 				dxDrawLine3D(startX, startY, startZ, startX+flightVec.x, startY+flightVec.y, startZ+flightVec.z, tocolor(255, 255, 255, 80), 2 )
 			end
 			self.m_TracerTable[time] = {Vector3(startX, startY, startZ), obj[2], maxSteps, flightVec, steps}
-			if steps > maxSteps then 
+			if steps > maxSteps then
 				self.m_TracerTable[time] = nil
 			end
 		end
@@ -508,7 +507,7 @@ function Guns:Event_renderTracer()
 end
 
 function Guns:monochromeFlash()
-	if self.m_ChromeShader then 
+	if self.m_ChromeShader then
 		self.m_ChromeShader:flash()
 	end
 end
@@ -541,7 +540,7 @@ function Guns:Event_onClientPedDamage(attacker)
 			if core:get("Other", "HitSoundBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
-			if self.m_HitMark then 
+			if self.m_HitMark then
 				self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
 				self.m_HitMarkRed = getElementHealth(source) == 0
 				self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100

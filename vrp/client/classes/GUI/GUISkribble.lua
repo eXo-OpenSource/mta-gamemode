@@ -48,7 +48,7 @@ function GUISkribble:onCursorMove(_, _, x, y)
 
 		if self.m_LastPosition then
 			local pos = Vector2(self:getPosition(true))
-			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(self.m_DrawSize))
+			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, self:getFont(self.m_DrawSize))
 			local drawSize = Vector2(textWidth, textWidth)
 			local drawStart = (self.m_LastPosition - pos)
 			local drawEnd = cursorPosition - pos
@@ -57,7 +57,7 @@ function GUISkribble:onCursorMove(_, _, x, y)
 			self.m_RenderTarget:setAsTarget()
 			for i = 1, interpolateCount do
 				local drawStart = Vector2(interpolateBetween(drawStart.x, drawStart.y, 0, drawEnd.x, drawEnd.y, 0, i/interpolateCount, "Linear"))
-				dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, FontAwesome(self.m_DrawSize))
+				dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, self:getFont(self.m_DrawSize))
 			end
 
 			dxSetRenderTarget()
@@ -87,12 +87,12 @@ function GUISkribble:onInternalLeftClick(x, y)
 	self.m_LastClickPosition = cursorPosition
 
 	local pos = Vector2(self:getPosition(true))
-	local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(self.m_DrawSize))
+	local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, self:getFont(self.m_DrawSize))
 	local drawSize = Vector2(textWidth, textWidth)
 	local drawStart = cursorPosition - pos
 
 	self.m_RenderTarget:setAsTarget()
-	dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, FontAwesome(self.m_DrawSize))
+	dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, self:getFont(self.m_DrawSize))
 	dxSetRenderTarget()
 
 	table.insert(self.m_SyncData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
@@ -109,12 +109,12 @@ function GUISkribble:onClientRender()
 		local cx, cy = getCursorPosition()
 
 		if cx then
-			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(self.m_DrawSize))
+			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, self:getFont(self.m_DrawSize))
 			local drawSize = Vector2(textWidth, textWidth)
 			local drawStart = Vector2(cx * screenWidth, cy * screenHeight)
 
-			dxDrawText(FontAwesomeSymbols.Circle, drawStart - (drawSize + Vector2(2, 2))/2, Vector2(0,0), tocolor(0,0,0,30), .5, FontAwesome(self.m_DrawSize+5))
-			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, FontAwesome(self.m_DrawSize))
+			dxDrawText(FontAwesomeSymbols.Circle, drawStart - (drawSize + Vector2(2, 2))/2, Vector2(0,0), tocolor(0,0,0,30), .5, self:getFont(self.m_DrawSize+5))
+			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, self:getFont(self.m_DrawSize))
 		end
 	end
 end
@@ -163,25 +163,25 @@ function GUISkribble:drawSyncData(data, drawRestoreData)
 		elseif draw.type == 1 then
 			local drawStart = Vector2(unpack(draw.start))
 			local drawEnd = Vector2(unpack(draw.to))
-			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(draw.size))
+			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, self:getFont(draw.size))
 			local drawSize = Vector2(textWidth, textWidth)
 			local interpolateCount = math.ceil((drawStart - drawEnd).length)
 
 			self.m_RenderTarget:setAsTarget()
 			for i = 1, interpolateCount do
 				local drawStart = Vector2(interpolateBetween(drawStart.x, drawStart.y, 0, drawEnd.x, drawEnd.y, 0, i/interpolateCount, "Linear"))
-				dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, FontAwesome(draw.size))
+				dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, self:getFont(draw.size))
 			end
 			dxSetRenderTarget()
 
 			self:anyChange()
 		elseif draw.type == 2 then
 			local drawStart = Vector2(unpack(draw.start))
-			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(draw.size))
+			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, self:getFont(draw.size))
 			local drawSize = Vector2(textWidth, textWidth)
 
 			self.m_RenderTarget:setAsTarget()
-			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, FontAwesome(draw.size))
+			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, self:getFont(draw.size))
 			dxSetRenderTarget()
 		end
 
@@ -189,6 +189,10 @@ function GUISkribble:drawSyncData(data, drawRestoreData)
 			table.insert(self.m_RestorableDrawData, draw)
 		end
 	end
+end
+
+function GUISkribble:getFont(size)
+	return getVRPFont(FontAwesome(size))
 end
 
 function GUISkribble:onClientRestore(didClearRenderTargets)

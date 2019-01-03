@@ -147,11 +147,11 @@ function GUIGridList:onInternalSelectItem(item)
 		self.m_SelectedItem:setBackgroundColor(Color.Clear)
 		if item.m_InternalClickSavedColor then -- it had another color which got changed by click
 			for i, color in pairs(item.m_InternalClickSavedColor) do
-				self.m_SelectedItem:setColumnColor(i, color)	
-			end	
+				self.m_SelectedItem:setColumnColor(i, color)
+			end
 		end
 	end
-	
+
 	self.m_SelectedItem = item
 
 	item:setBackgroundColor(Color.Accent)
@@ -161,7 +161,7 @@ function GUIGridList:onInternalSelectItem(item)
 			if not item.m_InternalClickSavedColor then item.m_InternalClickSavedColor = {} end
 			item.m_InternalClickSavedColor[i] = Color.Accent
 		end
-	end	
+	end
 	self:anyChange()
 end
 
@@ -196,7 +196,7 @@ function GUIGridList:drawThis()
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.Accent)
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
-		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self.m_FontSize, self.m_Font)
+		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self:getFontSize(), self:getFont())
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
 end

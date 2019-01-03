@@ -6,6 +6,8 @@ function PublicTransport:constructor()
 	self.m_ActiveBusVehicles = {}
 	self.m_ActiveLines = {}
 	self.m_StreamedInBusObjects = {}
+	self.m_FontMain = VRPFont(25, Fonts.Digital)
+	self.m_Font = VRPFont(20, Fonts.Digital)
 
 	self.m_Event_BusStopStreamIn = bind(PublicTransport.busStopStreamIn, self)
 	self.m_Event_BusStopStreamOut = bind(PublicTransport.busStopStreamOut, self)
@@ -23,11 +25,11 @@ function PublicTransport:setBusDisplayText(vehicle, text, line)
 	end
 	dxSetRenderTarget(vehicle.Bus_TexReplace, true)
 	dxDrawRectangle(0, 80, 256, 60, Color.Grey)
-	dxDrawText(text, 0, 80, 256, 110, Color.Yellow, 1, VRPFont(25, Fonts.Digital), "center", "center", false, true)
+	dxDrawText(text, 0, 80, 256, 110, Color.Yellow, 1, getVRPFont(self.m_FontMain), "center", "center", false, true)
 	if line then
-		dxDrawText("Linie "..line, 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "left", "center", false, true)
+		dxDrawText("Linie "..line, 10, 110, 246, 140, Color.Yellow, 1, getVRPFont(self.m_Font), "left", "center", false, true)
 	end
-	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "right", "center", false, true)
+	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, getVRPFont(self.m_Font), "right", "center", false, true)
 	dxSetRenderTarget(nil)
 end
 
