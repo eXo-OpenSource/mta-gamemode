@@ -7,6 +7,7 @@ function SanNews:constructor()
 	self.m_onInterviewColshapeLeaveFunc = bind(self.onInterviewColshapeLeave, self)
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
 	self.m_SanNewsMessageEnabled = false
+	self.m_RunningEvent = false
 
 	local safe = createObject(2332, 732.40, -1341.90, 13, 0, 0, 90)
  	self:setSafe(safe)
@@ -17,7 +18,7 @@ function SanNews:constructor()
 
    	Gate:new(968, Vector3(781.40, -1384.60, 13.50), Vector3(0, 90, 180), Vector3(781.40, -1384.60, 13.50), Vector3(0, 5, 180), false).onGateHit = bind(self.onBarrierHit, self)
 	Gate:new(968, Vector3(781.30, -1330.30, 13.40), Vector3(0, 90, 180), Vector3(781.30, -1330.30, 13.40), Vector3(0, 5, 180), false).onGateHit = bind(self.onBarrierHit, self)
-	
+
 	-- Register in Player Hooks
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
@@ -202,7 +203,11 @@ function SanNews:Event_toggleMessage()
 end
 
 function SanNews:Event_startStreetrace()
-	EventManager:getSingleton():openRandomEvent()
+	if not EventManager:getSingleton():isEvent(self.m_RunningEvent) then
+		self.m_RunningEvent = EventManager:getSingleton():openRandomEvent()
+	else
+		client:sendError("Es läuft bereits ein Event!")
+	end
 end
 
 function SanNews:Event_sanNewsMessage(player, cmd, ...)
