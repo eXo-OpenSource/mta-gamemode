@@ -46,6 +46,26 @@ function CompanyGUI:constructor()
 
 		self.m_SanNewsStartStreetrace = GUIButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", tabAllgemein):setBarEnabled(true)
 		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
+
+		self.m_SanNewsAddBlip = GUIButton:new(self.m_Width*0.02, self.m_Height*0.84, self.m_Width*0.3, self.m_Height*0.07, _"Blip hinzufügen", tabAllgemein):setBarEnabled(true)
+		self.m_SanNewsAddBlip.onLeftClick =
+		function()
+			self:hide()
+			CustomF11Map:getSingleton():setCustomClickCallback(
+				function(posX, posY)
+					InputBox:new(_"Blip Beschreibung", _"Gib einen Namen für den Blip ein, der auf der F11 Karte angezeigt wird:",
+						function(text)
+							triggerServerEvent("sanNewsAddBlip", localPlayer, posX, posY, text)
+						end
+					)
+					return true
+				end
+			)
+		end
+
+		self.m_SanNewsDeleteBlips = GUIButton:new(self.m_Width*0.33, self.m_Height*0.84, self.m_Height*0.07, self.m_Height*0.07, FontAwesomeSymbols.Trash, tabAllgemein):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Red)
+		self.m_SanNewsDeleteBlips.onLeftClick = function() triggerServerEvent("sanNewsDeleteBlips", localPlayer) end
+		self.m_SanNewsDeleteBlips:setTooltip("Alle Blips löschen")
 	end
 
 	self.m_BindButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabAllgemein):setBarEnabled(true)
