@@ -48,7 +48,7 @@ function GUITooltip:createTooltip()
 	GUITooltip.ms_CurrentTooltip = self
 	self.m_TooltipActive = true
 
-	local f = VRPFont(20)
+	local f = getVRPFont(VRPFont(20))
 	local x, y = self:getPosition(true)
 	local w, h = self:getSize()
 	local textW = fontWidth(self.m_TooltipText, f, 1) + 10 -- 30 is the margin
