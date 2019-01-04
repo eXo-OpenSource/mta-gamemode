@@ -88,6 +88,10 @@ function PlayerManager:constructor()
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 end
 
+function PlayerManager:triggerEvent(ev, ...)
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), ev, resourceRoot, ...)
+end
+
 function PlayerManager:Event_onRequestGateOpen()
 	if client then
 		if Gate.Map then
