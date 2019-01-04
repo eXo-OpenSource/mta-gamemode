@@ -58,6 +58,7 @@ function BankManager:Event_Transfer(toPlayerName, amount)
 		if toPlayerName == "San News" then
 			client:transferBankMoney(CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS), amount, ("Spende an San News von %s"):format(client:getName()), "Gameplay", "SanNewsDonation")
 			client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
+			CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS):addLog(client, "Spenden", ("hat %d$ gespendet!"):format(amount))
 		elseif toPlayerName == "eXo Event-Team" then
 			client:transferBankMoney(Admin:getSingleton().m_BankAccount, amount, ("Spende an eXo Event-Team von %s"):format(client:getName()), "Gameplay", "eXoTeamDonation")
 			client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())

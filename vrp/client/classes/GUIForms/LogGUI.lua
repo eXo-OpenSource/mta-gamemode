@@ -11,21 +11,25 @@ function LogGUI:constructor(parent, url)
 		yOffset = 40
 	end
 
-	self.m_Url = url
-
 	GUILabel:new(parent.m_Width*0.02, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Filter:", parent)
 	self.m_Filter = GUIChanger:new(parent.m_Width*0.15, parent.m_Height*0.02+yOffset, parent.m_Width*0.25, parent.m_Height*0.07, parent)
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
+
 	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
-	self.m_Search = GUIEdit:new(parent.m_Width*0.57, parent.m_Height*0.02+yOffset, parent.m_Width*0.4, parent.m_Height*0.07, parent)
-	self.m_Search.onChange = function() self:setSearch() end
-	self.m_Categories = {}
+	self.m_Search = GUIEdit:new(parent.m_Width*0.57, parent.m_Height*0.02+yOffset, parent.m_Width*0.35, parent.m_Height*0.07, parent)
+
+	self.m_RefreshBtn = GUIButton:new(parent.m_Width*0.93, parent.m_Height*0.02+yOffset, parent.m_Height*0.07, parent.m_Height*0.07, FontAwesomeSymbols.Refresh, parent):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Accent)
+	self.m_RefreshBtn.onLeftClick = function() self:setSearch() end
+
 	self.m_LogGrid = GUIGridList:new(parent.m_Width*0.02, parent.m_Height*0.1+yOffset, parent.m_Width*0.96, parent.m_Height*0.87-yOffset, parent)
 	self.m_LogGrid:setFont(VRPFont(20))
 	self.m_LogGrid:setItemHeight(20)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
 	self.m_LogGrid:onScrollDown(bind(self.onScrollDown, self))
+
+	self.m_Url = url
+	self.m_Categories = {}
 	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
@@ -33,7 +37,7 @@ function LogGUI:updateLog(start, amount)
 	self.m_Cache = {}
 
 	local options = {
-		["postData"] =  ("secret=%s"):format("8H041OAyGYk8wEpIa1Fv")
+		["postData"] = ("secret=%s"):format("8H041OAyGYk8wEpIa1Fv")
 	}
 
 	local filter = "";
@@ -46,8 +50,8 @@ function LogGUI:updateLog(start, amount)
 		cat = "&cat="..self.m_CatFilter;
 	end
 
-	local url = ("%s&start=%d&amount=%d%s%s"):format(self.m_Url, start, amount, filter, cat)
-	--outputChatBox( url)
+	local url = ("%s&start=%d&amount=%d%s%s"):format(self.m_Url, start or 0, amount or LogGUI.AmountPerLoad , filter, cat)
+	--outputConsole(url)
 	fetchRemote(url, options,
 			function(responseData, responseInfo)
 				self.m_Cache = fromJSON(responseData)
