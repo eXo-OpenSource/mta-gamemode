@@ -93,7 +93,7 @@ function PolicePanel:constructor()
 	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.3)
 	self.m_JailPlayersGrid:addColumn(_"Zeit", 0.2)
 	self.m_JailPlayersGrid:addColumn(_"Fraktion", 0.2)
-	self.m_JailPlayersGrid:addColumn(_"Gang", 0.2)
+	self.m_JailPlayersGrid:addColumn(_"Firma/Gang", 0.2)
 	
 	self.m_JailRefreshBtn = GUIGridIconButton:new(15, 1, FontAwesomeSymbols.Refresh, self.m_Tabs[2])
 	self.m_JailRefreshBtn.onLeftClick = function()
@@ -184,6 +184,13 @@ function PolicePanel:TabPanel_TabChanged(tabId)
 	end
 end
 
+function PolicePanel:getPlayerLocatableState(player) -- 0 = phone off, 1 = interior, 2 = locatable
+	if player:getPublicSync("Phone") == true then
+		return (player:getInterior() == 0 and player:getDimension() == 0) and 2 or 1
+	end
+	return 0
+end
+
 function PolicePanel:loadPlayers()
 	self.m_PlayersGrid:clear()
 	for i, v in pairs(self.m_PlayerFuncElements) do
@@ -206,15 +213,16 @@ function PolicePanel:loadPlayers()
 		if self.m_GangFilter:isChecked() and v:getGroupType() ~= "Gang" then skip = true end
 		if #self.m_PlayerSearch:getText() <= 3 or string.find(string.lower(v:getName()), string.lower(self.m_PlayerSearch:getText())) then
 			if not skip then
-				self.m_Players[v] = v:getWanteds()
+				table.insert(self.m_Players, v, v:getWanteds())
 			end
 		end
 	end
 
 	if self.m_Players then
-		table.sort(self.m_Players, function(a, b) return a < b end)
+		table.sort(self.m_Players, function(a, b) return a[2] < b[2] end)
 		
-		for player in pairs(self.m_Players) do
+		for i = 1, #self.m_Players do
+			local player = self.m_Players[i][1]
 			if isElement(player) then
 				local item = self.m_PlayersGrid:addItem(
 					player:getWanteds(), 
@@ -227,19 +235,11 @@ function PolicePanel:loadPlayers()
 					self:onSelectPlayer(player)
 				end
 
-				if player:getPublicSync("Phone") == true then
-					if player:getInterior() == 0 and player:getDimension() == 0 then
-						item:setColumnColor(1, tocolor(200, 255, 200))
-					else
-						item:setColumnColor(1, tocolor(255, 220, 200))
-					end
+				local locState = self:getPlayerLocatableState(player)
+				if locState >= 1 then
+					item:setColumnColor(1, locState == 2 and tocolor(150, 255, 150) or tocolor(255, 200, 150))
 				else
-					item:setColumnColor(1, tocolor(255, 200, 200))
-				end
-
-				if player:getFaction() then
-					local color = player:getFaction():getColor()
-					item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+					item:setColumnColor(1, tocolor(255, 150, 150))
 				end
 
 				if player:getFaction() then
@@ -263,23 +263,40 @@ end
 function PolicePanel:receiveJailPlayers(playerTable)
 	self.m_JailPlayersGrid:clear()
 	for player, jailtime in pairs(playerTable) do
-		local item = self.m_JailPlayersGrid:addItem(player:getName(), jailtime)
+
+		local item = self.m_JailPlayersGrid:addItem(
+					player:getName(), 
+					jailtime,
+					player:getFaction() and player:getFaction():getShortName() or "-",
+					player:getGroupName() or "-"
+				)
 		item.player = player
 		item.onLeftClick = function()
 			self:onSelectJailPlayer(player)
+		end
+
+		if player:getFaction() then
+			local color = player:getFaction():getColor()
+			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+		end
+
+		if player:getGroupType() then
+			if player:getGroupType() == "Gang" then
+				item:setColumnColor(4, Color.Red)
+			elseif player:getGroupType() == "Firma" then
+				item:setColumnColor(4, Color.Accent)
+			end
 		end
 	end
 end
 
 function PolicePanel:checkLocateButtons(shouldBeEnabled)
 	if ElementLocateBlip then
-		outputDebug("ElementLocateBlip")
 		self.m_BugLocate:setEnabled(true)
 		self.m_BugLocate:setText(_"Orten beenden")
 		self.m_LocatePlayerBtn:setEnabled(true)
 		self.m_LocatePlayerBtn:setText(_"Orten beenden")
 	else
-		outputDebug("no ElementLocateBlip", shouldBeEnabled)
 		self.m_BugLocate:setEnabled(shouldBeEnabled)
 		self.m_BugLocate:setText(_"Orten")
 		self.m_LocatePlayerBtn:setEnabled(shouldBeEnabled)
@@ -372,8 +389,9 @@ function PolicePanel:bugAction(func)
 end
 
 function PolicePanel:onSelectPlayer(player)
-	self.m_InfoTextLabel:setText(_"STVO\n Auto\n Motorrad\n LKW\n Pilot")		
-	self.m_InfoDataLabel:setText(("\n%s\n%s\n%s\n%s"):format(player:getSTVO("Driving"), player:getSTVO("Bike"), player:getSTVO("Truck"), player:getSTVO("Pilot")))	
+	local locatableText = self:getPlayerLocatableState(player) == 2 and "Ja" or "Nein"
+	self.m_InfoTextLabel:setText(_"Ortbar\nSTVO\n Auto\n Motorrad\n LKW\n Pilot")		
+	self.m_InfoDataLabel:setText(("%s\n\n%s\n%s\n%s\n%s"):format(locatableText, player:getSTVO("Driving"), player:getSTVO("Bike"), player:getSTVO("Truck"), player:getSTVO("Pilot")))	
 	self.m_SelectedPlayer = player
 	for i, v in pairs(self.m_PlayerFuncElements) do
 		v:setEnabled(true)
