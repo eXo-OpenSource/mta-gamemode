@@ -37,10 +37,12 @@ end
 function WalkingstyleGUI:changeWalkingstyle()
 	if getTickCount() - self.m_LastWalkingStyleChange > 1000 then
 		if localPlayer:getPrivateSync("AlcoholLevel") == 0 then
-	    	if WALKINGSTYLES[self.m_WalkingstyleList:getSelectedItem().Name] then
-		    	ShortMessage:new(_"Laufstil geändert!")
-				triggerServerEvent("changeWalkingstyle", localPlayer, self.m_WalkingstyleList:getSelectedItem().Name)
-				self.m_LastWalkingStyleChange = getTickCount()
+			if not localPlayer:getPublicSync("cuffed") then
+				if WALKINGSTYLES[self.m_WalkingstyleList:getSelectedItem().Name] then
+		    		ShortMessage:new(_"Laufstil geändert!")
+					triggerServerEvent("changeWalkingstyle", localPlayer, self.m_WalkingstyleList:getSelectedItem().Name)
+					self.m_LastWalkingStyleChange = getTickCount()
+				end
 			end
         end
 	end
