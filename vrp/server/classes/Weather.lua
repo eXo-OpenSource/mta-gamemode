@@ -12,13 +12,17 @@ addRemoteEvents{"clientRequestWeatherList"}
 setWeather = nil -- Completetly disallow this function @ serverside!
 
 function Weather:constructor()
-	self.m_Weather = {}
 	self.ms_Random = Randomizer:new()
+	self.m_Weather = {}
+	self.m_WeatherStations = {}
 
 	-- Setup weather for all zones
 	for zone in pairs(WEATHER_ZONE_WEATHERS) do
 		self:updateWeather(zone)
 	end
+
+	-- Load weather stations
+	self:loadWeatherStations()
 
 	addEventHandler("clientRequestWeatherList", root, bind(Weather.onClientRequestWeatherList, self))
 	setTimer(bind(Weather.checkWeatherChange, self), 300000, 0)
@@ -64,4 +68,14 @@ end
 
 function Weather:onClientRequestWeatherList()
 	client:triggerEvent("receiveWeatherList", self.m_Weather)
+end
+
+
+function Weather:loadWeatherStations()
+	WeatherStation:new({MainStation = true, Name = "SanNews"})
+
+	local result = sql:queryFetch("SELECT Id, Name, UNIX_TIMESTAMP(LastMaintenance) AS LastMaintenance, Connected FROM ??_weather_stations", sql:getPrefix())
+	for i, station in pairs(result) do
+		self.m_WeatherStations[station.Name] = WeatherStation:new(station)
+	end
 end

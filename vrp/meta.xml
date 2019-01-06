@@ -84,6 +84,7 @@
 	<script src="server/classes/InstantTeleportArea.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
+	<script src="server/classes/WeatherStation.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
 	<script src="server/classes/Achievement.lua" type="server"/>
 	<script src="server/classes/InteriorManager.lua" type="server"/>
@@ -889,6 +890,7 @@
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/WeatherStationGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
 	<script src="client/classes/Faction/Gangwar/GangwarPickGUI.lua" type="client"/>

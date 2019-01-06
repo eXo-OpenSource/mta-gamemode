@@ -20,6 +20,21 @@ WEATHER_ZONE_WEATHERS = {
 	["Bone County"] = {17, 18, 19},
 }
 
+WEATHER_STATIONS = {
+	["SanNews"] = {position = Vector3(752, -1383, 27)},
+	["Los Santos"] = {position = Vector3(706.642, -917.409, 79.258)},
+	["San Fierro"] = {position = Vector3(-2496.885, -628.954, 149.967)},
+	["Whetstone"] = {position = Vector3(-2321.012, -1479.956, 399.169)},
+	["Las Venturas"] = {position = Vector3(2642.309, 1220.536, 29.855)},
+	["Tierra Robada"] = {position = Vector3(-791.124, 2432.467, 167.544)},
+	["Red County"] = {position = Vector3(1043.979, -57.730, 96.903)}, -- Los Santos County
+	["Flint County"] = {position = Vector3(-787.719, -1529.648, 135.380)},
+	["Bone County"] = {position = Vector3(-328.121, 1537.792, 80.957)},
+}
+
+WEATHER_STATIONS_MAINTENANCE_INTEVAL = 7 * 3600 * 24 -- days
+WEATHER_STATIONS_MAINTENANCE_SPREAD = 1.5 * 3600 * 24 -- days
+
 -- chance = duplicates the id x times to increase its chance
 -- minimumDuration = minimum duration in minutes
 -- changeChance = the chance in percent to change the weather after minimumDuration reached
