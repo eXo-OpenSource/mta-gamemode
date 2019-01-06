@@ -22,7 +22,7 @@ function AppCall:constructor()
 
 	self.m_IncomingCallSMs = {}
 
-	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy", "callIncomingSM", "callRemoveSM"}
+	addRemoteEvents{"receivePhoneNumbers", "callIncoming", "callReplace", "callAnswer", "callBusy", "callIncomingSM", "callRemoveSM"}
 
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
 	addEventHandler("callIncomingSM", root, bind(self.Event_callIncomingSM, self))
@@ -30,6 +30,7 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
+	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 end
 
 function AppCall:onOpen(form)
@@ -92,7 +93,7 @@ function AppCall:openMain()
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 
 	self.m_TabPanel.onTabChanged = function(tabId)
-		if tabId == self.m_Tabs["Players"].TabIndex then
+		if tabId ~= self.m_Tabs["Keyboard"].TabIndex then
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
 		end
 	end
@@ -110,11 +111,6 @@ function AppCall:openMain()
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallGroup.onLeftClick = function() self:startSpecialCall(self.m_GroupListGrid) end
-
-	triggerServerEvent("requestPhoneNumbers", localPlayer)
-
-	addRemoteEvents{"receivePhoneNumbers"}
-	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 
 	self.m_InCall = false
 end
