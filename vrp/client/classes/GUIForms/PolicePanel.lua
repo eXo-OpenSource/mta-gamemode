@@ -204,6 +204,7 @@ function PolicePanel:loadPlayers()
 	for i,v in pairs(getElementsByType("player")) do
 		local skip = false
 		--skip inactive players
+		if v:getName():find("Gast_") then skip = true end
 		if v:isAFK() then skip = true end
 		if v:getData("inAdminPrison") then skip = true end
 		if v:getData("inJail") then skip = true end
@@ -219,7 +220,7 @@ function PolicePanel:loadPlayers()
 	end
 
 	if self.m_Players then
-		table.sort(self.m_Players, function(a, b) return a[2] < b[2] end)
+		table.sort(self.m_Players, function(a, b) return a[2] > b[2] end)
 		
 		for i = 1, #self.m_Players do
 			local player = self.m_Players[i][1]
@@ -404,7 +405,7 @@ end
 function PolicePanel:onSelectPlayer(player)
 	local zoneName = getZoneName(player.position)
 	local locatableText = self:getPlayerLocatableState(player) == 2 and ("Ja (%s%s)"):format(zoneName:sub(0,12), (zoneName:sub(0,12) ~= zoneName) and "..." or "") or "Nein"
-	self.m_InfoTextLabel:setText(_"Position\nSTVO\n Auto\n Motorrad\n LKW\n Pilot")		
+	self.m_InfoTextLabel:setText(_"Ortbar\nSTVO\n Auto\n Motorrad\n LKW\n Pilot")		
 	self.m_InfoDataLabel:setText(("%s\n\n%s\n%s\n%s\n%s"):format(locatableText, player:getSTVO("Driving"), player:getSTVO("Bike"), player:getSTVO("Truck"), player:getSTVO("Pilot")))	
 	self.m_SelectedPlayer = player
 	for i, v in pairs(self.m_PlayerFuncElements) do
