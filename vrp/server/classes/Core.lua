@@ -65,7 +65,7 @@ function Core:constructor()
 	end)
 
 	-- Instantiate classes (Create objects)
-	if false then --not self.m_Failed then
+	if not self.m_Failed then
 		ServerSettings:new()
 		AntiCheat:new()
 		ModdingCheck:new()
@@ -186,9 +186,7 @@ function Core:constructor()
 
 		BindManager:new()
 		Forum:new()
-		if not DEBUG then
-			ServiceSync:new()
-		end
+		ServiceSync:new()
 		Discord:new()
 		TeleportManager:new()
 		Sewers:new()
@@ -245,38 +243,6 @@ function Core:constructor()
 			end, "Server Restart Message 2", nil, 04, 55)
 		end
 	end
-	local cache = {}
-		sqlLogs:queryFetch(function(result)
-			outputDebug(#result)
-			if #result > 0 then
-				for i, v in pairs(result) do
-
-					local json = fromJSON(v["Players"]) 
-					if json then
-						for playerId,points in pairs(json) do
-							local inserted = false
-							
-							for __, data in pairs(cache) do
-								
-								if data[1] == playerId then
-									
-									data[2] = data[2] + 1
-									data[3] = data[3] + points
-									inserted = true
-								end
-							end
-							if not inserted then 
-								table.insert(cache, {playerId, 1, points})
-							end
-						end
-					else
-						
-					end
-				end
-				table.sort(cache, function(a, b) return a[2] > b[2] end)
-				outputDebug(cache)
-			end
-		end, "SELECT * FROM vrpLogs_FireManager WHERE Date > DATE('2018-01-01');")
 end
 
 function Core:onClientInternalError (msg)
@@ -285,7 +251,7 @@ function Core:onClientInternalError (msg)
 end
 
 function Core:destructor()
-	if false then --not self.m_Failed then
+	if not self.m_Failed then
 		ACLGroup.get("Admin"):removeObject("user.exo_web")
 		if self.m_ACLAccount then
 			removeAccount(self.m_ACLAccount)

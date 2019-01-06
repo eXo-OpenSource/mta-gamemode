@@ -163,6 +163,7 @@ GUIForm.AllowedKeys = {
 	["pgup"] = true, 		-- scroll chatbox/debugscript
 	["pgdn"] = true,		-- scroll chatbox/debugscript
 	["t"] = true,
+	["r"] = true, 			-- reload Police Panel
 }
 
 GUIForm.keysEnabled = true

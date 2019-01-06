@@ -23,7 +23,7 @@ function PolicePanel:constructor()
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Polizeicomputer", true, false, self)
 	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Spieler", "Knast", "Wanzen", "Wantedregeln"}) 
 	self.m_TabPanel:updateGrid() 
-	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
+	self.m_TabPanel.onTabChanged = bind(self.updateCurrentView, self)
 
 	--
 	-- Allgemein
@@ -161,10 +161,10 @@ function PolicePanel:constructor()
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
 
-	self:loadPlayers()
-	self:bind("F5", function(self)
+	self:updateCurrentView()
+	self:bind("r", function(self)
 		if isCursorShowing() then
-			self:loadPlayers()
+			self:updateCurrentView()
 		end
 	end)
 end
@@ -173,13 +173,16 @@ addCommandHandler("pp", function()
 	PolicePanel:new()
 end)
 
-function PolicePanel:TabPanel_TabChanged(tabId)
+function PolicePanel:updateCurrentView()
 	self.m_WantedRules:setRenderingEnabled(false) --only render the browser if the player is on its tab
-	if tabId == 2 then
+	local curTab = self.m_TabPanel:getCurrentTab()
+	if curTab == 1 then
+		self:loadPlayers()
+	elseif curTab == 2 then
 		triggerServerEvent("factionStateLoadJailPlayers", root)
-	elseif tabId == 3 then
+	elseif curTab == 3 then
 		triggerServerEvent("factionStateLoadBugs", root)
-	elseif tabId == 4 then
+	elseif curTab == 4 then
 		self.m_WantedRules:setRenderingEnabled(true)
 	end
 end
@@ -207,13 +210,14 @@ function PolicePanel:loadPlayers()
 		--skip inactive players
 		if v:isAFK() then skip = true end
 		if v:getData("inAdminPrison") then skip = true end
+		if v:getData("inJail") then skip = true end
 		--filters
 		if self.m_WantedFilter:isChecked() and v:getWanteds() == 0 then skip = true end
 		if self.m_FactionFilter:isChecked() and (not v:getFaction() or not v:getFaction():isEvilFaction()) then skip = true end
 		if self.m_GangFilter:isChecked() and v:getGroupType() ~= "Gang" then skip = true end
 		if #self.m_PlayerSearch:getText() <= 3 or string.find(string.lower(v:getName()), string.lower(self.m_PlayerSearch:getText())) then
 			if not skip then
-				table.insert(self.m_Players, v, v:getWanteds())
+				table.insert(self.m_Players, {v, v:getWanteds()})
 			end
 		end
 	end
@@ -254,6 +258,11 @@ function PolicePanel:loadPlayers()
 						item:setColumnColor(4, Color.Accent)
 					end
 				end
+
+				if player == self.m_SelectedPlayer then
+					self.m_PlayersGrid:setSelectedItem(i)
+					self:onSelectPlayer(player)
+				end
 			end
 			
 		end
@@ -286,6 +295,11 @@ function PolicePanel:receiveJailPlayers(playerTable)
 			elseif player:getGroupType() == "Firma" then
 				item:setColumnColor(4, Color.Accent)
 			end
+		end
+
+		if player == self.m_JailSelectedPlayer then
+			self.m_JailPlayersGrid:setSelectedItem(i)
+			self:onSelectJailPlayer(player)
 		end
 	end
 end
@@ -337,6 +351,11 @@ function PolicePanel:receiveBugs(bugTable)
 			triggerServerEvent("factionStateLoadBugs", root)
 			self:onSelectBug(id)
 		end
+
+		if id == self.m_CurrentSelectedBugId then
+			self.m_BugsGrid:setSelectedItem(i)
+			self:onSelectBug(id)
+		end
 	end
 end
 
@@ -356,12 +375,10 @@ function PolicePanel:onSelectBug(id)
 			self.m_BugDisable:setEnabled(true)
 			self.m_BugClearLog:setEnabled(true)
 		end
-		self.m_BugRefresh:setEnabled(true)
 	else
 		self.m_BugLogGrid:clear()
 		self.m_BugDisable:setEnabled(false)
 		self.m_BugClearLog:setEnabled(false)
-		self.m_BugRefresh:setEnabled(false)
 	end
 	self:checkLocateButtons(true)
 end

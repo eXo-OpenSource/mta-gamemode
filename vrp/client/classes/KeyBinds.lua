@@ -170,14 +170,15 @@ function KeyBinds:animationMenu()
 end
 
 function KeyBinds:policePanel()
-	if not (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) then return false end
-	if not localPlayer:getPublicSync("Faction:Duty") then return false end
-	if not PolicePanel:isInstantiated() then --cretae new
+	local isValidCop = (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) and localPlayer:getPublicSync("Faction:Duty")
+	if not PolicePanel:isInstantiated() and isValidCop then --create new only if player is cop
 		PolicePanel:new()
 		return true
 	end
-	
-	PolicePanel:getSingleton():toggle()	
+	if PolicePanel:getSingleton():isVisible() or isValidCop then -- hide it anytime, show it only if player is cop
+		PolicePanel:getSingleton():toggle()	
+		PolicePanel:getSingleton():updateCurrentView()
+	end
 end
 
 function KeyBinds:helpMenu()
