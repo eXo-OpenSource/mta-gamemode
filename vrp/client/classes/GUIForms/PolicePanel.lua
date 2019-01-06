@@ -204,6 +204,7 @@ function PolicePanel:loadPlayers()
 	for i,v in pairs(getElementsByType("player")) do
 		local skip = false
 		--skip inactive players
+		--if v:isDead() then skip = true end does not work lol
 		if v:getName():find("Gast_") then skip = true end
 		if v:isAFK() then skip = true end
 		if v:getData("inAdminPrison") then skip = true end
@@ -229,7 +230,7 @@ function PolicePanel:loadPlayers()
 					player:getWanteds(), 
 					player:getName(), 
 					player:getFaction() and player:getFaction():getShortName() or "-",
-					player:getGroupName() or "-"
+					player:getGroupName() ~= "" and player:getGroupName() or "-"
 				)
 				item.player = player
 				item.onLeftClick = function()
@@ -274,7 +275,7 @@ function PolicePanel:receiveJailPlayers(playerTable)
 					player:getName(), 
 					jailtime,
 					player:getFaction() and player:getFaction():getShortName() or "-",
-					player:getGroupName() or "-"
+					player:getGroupName() ~= "" and player:getGroupName() or "-"
 				)
 		item.player = player
 		item.onLeftClick = function()
@@ -509,7 +510,7 @@ function PolicePanel:giveWanteds()
 	local item = self.m_PlayersGrid:getSelectedItem()
 	if item then
 		local player = item.player
-		GiveWantedBox:new(player, 1, MAX_WANTED_LEVEL, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
+		GiveWantedBox:new(player, 1, MAX_WANTED_LEVEL, "Wanteds geben", function(player, amount, reason) self:updateCurrentView() triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
 	end
@@ -520,9 +521,9 @@ function PolicePanel:giveSTVO(action)
 	if item then
 		local player = item.player
 		if action == "give" then
-			GiveSTVOBox:new(player, 1, 6, "STVO-Punkte geben", function(player, category, amount, reason) triggerServerEvent("factionStateGiveSTVO", localPlayer, player, category, amount, reason) end)
+			GiveSTVOBox:new(player, 1, 6, "STVO-Punkte geben", function(player, category, amount, reason) self:updateCurrentView() triggerServerEvent("factionStateGiveSTVO", localPlayer, player, category, amount, reason) end)
 		elseif action == "set" then
-			GiveSTVOBox:new(player, 0, 20, "STVO-Punkte setzen", function(player, category, amount, reason) triggerServerEvent("factionStateSetSTVO", localPlayer, player, category, amount, reason) end)
+			GiveSTVOBox:new(player, 0, 20, "STVO-Punkte setzen", function(player, category, amount, reason) self:updateCurrentView() triggerServerEvent("factionStateSetSTVO", localPlayer, player, category, amount, reason) end)
 		end
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
