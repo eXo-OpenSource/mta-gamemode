@@ -248,8 +248,8 @@ function BankPalomino:BombArea_Place(bombArea, player)
 
 	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
 
-	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
-		player:sendError(_("Um den Überfall starten zu können müssen mindestens 5 Staats-Fraktionisten online sein!", player))
+	if not DEBUG and FactionState:getSingleton():countPlayers() < 3 then
+		player:sendError(_("Um den Überfall starten zu können müssen mindestens 3 Staats-Fraktionisten online sein!", player))
 		return false
 	end
 
