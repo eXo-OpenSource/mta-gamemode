@@ -19,6 +19,8 @@ function GUIGridList:constructor(posX, posY, width, height, parent)
 	self.m_Columns = {}
 	self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
 	self.m_SelectedItem = nil
+
+	self:setSortable(true) --TODO: DEV, REMOVE THIS!
 end
 
 function GUIGridList:addItem(...)
@@ -166,6 +168,55 @@ function GUIGridList:onInternalSelectItem(item)
 	self:anyChange()
 end
 
+function GUIGridList:setSortable(sortable)
+	self.m_Sortable = sortable
+
+	if self.m_Sortable and not self.m_Header then
+		-- Create a dummy GUI element for header click
+		self.m_Header = GUIRectangle:new(0, 0, self.m_Width, self.m_ItemHeight, Color.Clear, self)
+		self.m_Header.onLeftClick = bind(GUIGridList.onHeaderClick, self)
+	elseif not self.m_Sortable and self.m_Header then
+		self.m_Header:delete()
+		self.m_Header = false
+	end
+end
+
+function GUIGridList:onHeaderClick(_, cx)
+	local clickedColumnId = false
+	local width = self:getPosition(true)
+
+	for id, column in pairs(self.m_Columns) do
+		if cx > width then
+			clickedColumnId = id
+		else
+			break
+		end
+
+		width = width + self.m_Width*column.width
+	end
+
+	if clickedColumnId then
+		if self.m_SortColumnIndex and self.m_SortColumnIndex == clickedColumnId then
+			self.m_SortColumnDirection = not self.m_SortColumnDirection
+		end
+		self.m_SortColumnIndex = clickedColumnId
+
+		local sortTable = {}
+		for k, v in pairs(self.m_ScrollArea.m_Children) do
+			table.insert(sortTable, {k, v:getColumnText(self.m_SortColumnIndex)})
+		end
+
+		local sortFunction = self.m_SortColumnDirection and function(a, b) return a[2] > b[2] end or function(a, b) return a[2] < b[2] end
+		table.sort(sortTable, sortFunction)
+
+		for k, v in pairs(sortTable) do
+			self.m_ScrollArea.m_Children[v[1]].m_PosY = self.m_ItemHeight*(k-1)
+		end
+
+		self:anyChange()
+	end
+end
+
 function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
 		dxSetBlendMode("modulate_add")
@@ -174,7 +225,7 @@ function GUIGridList:draw(incache) -- Swap render order
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight, self.m_Width, self.m_Height - self.m_ItemHeight, self.m_Color) -- don't draw column backgrounds -> self.m_ItemHeight
 
 		-- Draw items
-		for k, v in ipairs(self.m_Children) do
+		for k, v in pairs(self.m_Children) do
 			if v.m_Visible and v.draw then
 				v:draw(incache)
 			end
