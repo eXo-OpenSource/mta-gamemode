@@ -201,12 +201,12 @@ function GUIScrollableArea:onInternalMouseWheelDown()
 end
 
 function GUIScrollableArea:updateDrawnChildren()
-	--[[self.m_DrawnChildren = {}
+	self.m_DrawnChildren = {}
 	for k, v in pairs(self.m_Children) do
 		if v.m_PosY > -30 and v.m_PosY < self.m_Height + 30 then
         	table.insert(self.m_DrawnChildren, v)
 		end
-	end]]
+	end
 end
 
 function GUIScrollableArea:updateGrid()
