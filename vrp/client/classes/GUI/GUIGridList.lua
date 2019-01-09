@@ -32,6 +32,8 @@ function GUIGridList:addItem(...)
 	-- Resize the document
 	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * self.m_ItemHeight)
 
+	self:sortList()
+
 	return listItem
 end
 
@@ -61,6 +63,8 @@ function GUIGridList:removeItem(itemIndex)
 	end
 
 	delete(item)
+
+	self:sortList()
 	self:anyChange()
 end
 
@@ -201,19 +205,26 @@ function GUIGridList:onHeaderClick(_, cx)
 		end
 		self.m_SortColumnIndex = clickedColumnId
 
+		self:sortList()
+		self:anyChange()
+	end
+end
+
+function GUIGridList:sortList()
+	if self.m_Sortable and self.m_SortColumnIndex then
 		local sortTable = {}
 		for k, v in pairs(self.m_ScrollArea.m_Children) do
-			table.insert(sortTable, {k, v:getColumnText(self.m_SortColumnIndex)})
+			table.insert(sortTable, {k, v:getColumnText(self.m_SortColumnIndex), v.m_PosY})
 		end
 
 		local sortFunction = self.m_SortColumnDirection and function(a, b) return a[2] > b[2] end or function(a, b) return a[2] < b[2] end
 		table.sort(sortTable, sortFunction)
 
 		for k, v in pairs(sortTable) do
-			self.m_ScrollArea.m_Children[v[1]].m_PosY = self.m_ItemHeight*(k-1)
+			self.m_ScrollArea.m_Children[v[1]].m_PosY = self.m_ItemHeight*(k-1) + self.m_ScrollArea.m_ScrollY
 		end
 
-		self:anyChange()
+		self.m_ScrollArea:updateDrawnChildren()
 	end
 end
 
