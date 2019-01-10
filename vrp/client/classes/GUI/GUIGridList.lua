@@ -259,7 +259,17 @@ function GUIGridList:drawThis()
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.Accent)
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
-		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self:getFontSize(), self:getFont())
+		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + self.m_ItemHeight, Color.White, self:getFontSize(), self:getFont(), "left", "center")
+
+		if self.m_Sortable and (self.m_Sortable == true or type(self.m_Sortable) == "table" and table.find(self.m_Sortable, column.text)) then
+			local textWidth = dxGetTextWidth(column.text, self:getFontSize(), self:getFont())
+			local arrowUpColor = self.m_SortColumnIndex == k and (not self.m_SortColumnDirection and Color.Accent or Color.LightGrey) or Color.LightGrey
+			local arrowDownColor =  self.m_SortColumnIndex == k and (self.m_SortColumnDirection and Color.Accent or Color.LightGrey) or Color.LightGrey
+
+			dxDrawText("", self.m_AbsoluteX + currentXPos + textWidth + 10, self.m_AbsoluteY, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + self.m_ItemHeight/2 + 3, arrowUpColor, self:getFontSize(), getVRPFont(FontAwesome(15)), "left", "bottom")
+			dxDrawText("", self.m_AbsoluteX + currentXPos + textWidth + 10, self.m_AbsoluteY + self.m_ItemHeight/2 - 3, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + self.m_ItemHeight, arrowDownColor, self:getFontSize(), getVRPFont(FontAwesome(15)), "left", "top")
+		end
+
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
 end
