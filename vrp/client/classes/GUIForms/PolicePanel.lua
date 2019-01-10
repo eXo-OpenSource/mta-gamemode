@@ -215,13 +215,26 @@ function PolicePanel:loadPlayers()
 		if self.m_GangFilter:isChecked() and v:getGroupType() ~= "Gang" then skip = true end
 		if #self.m_PlayerSearch:getText() <= 3 or string.find(string.lower(v:getName()), string.lower(self.m_PlayerSearch:getText())) then
 			if not skip then
-				table.insert(self.m_Players, {v, v:getWanteds()})
+				table.insert(self.m_Players, {v, v:getWanteds(), v:getFaction() and v:getFaction():getId() or 0, v:getGroupType() == "Gang" and v:getGroupId() or 0})
 			end
 		end
 	end
 
 	if self.m_Players then
-		table.sort(self.m_Players, function(a, b) return a[2] > b[2] end)
+		if DEBUG_PD_NEW_SORTING then -- test it with many players first
+			table.sort(self.m_Players, function(a, b) 
+					if self.m_WantedFilter:isChecked() and a[2] ~= b[2] then
+						return a[2] > b[2] 
+					elseif self.m_FactionFilter:isChecked() and a[3] ~= b[3] then
+						return a[3] > b[3]
+					elseif self.m_GangFilter:isChecked() and a[4] ~= b[4] then
+						return a[4] > b[4]
+					end
+					return a[1]:getName() > a[2]:getName()
+			end)
+		else
+			table.sort(self.m_Players, function(a, b) return a[2] > b[2] end)
+		end
 		
 		for i = 1, #self.m_Players do
 			local player = self.m_Players[i][1]
