@@ -58,7 +58,7 @@
 	<map src="fishing/location_cave.map" />
 
 	<!--<map src="events/halloween.map" />-->
-	<!--<map src="events/auction.map" />--> <!-- Auction Event map at Veriona Beach -->
+	<map src="events/auction.map" /><!--auction in interior-->
 
 	<!--fixes-->
 	<map src="mapfixes/CrackPalace.map" />
@@ -116,5 +116,5 @@
 	<map src="sewer-ext.map"/>
 	<map src="minigamescafe.map" dimension="2" />
 
-	<map src="admin-auction.map" />
+	<!--<map src="admin-auction.map" />--> <!-- Auction Event map at Veriona Beach, ugly -->
 </meta>

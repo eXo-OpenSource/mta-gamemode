@@ -29,7 +29,7 @@ EVENT_CHRISTMAS = false --quests, mostly
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
 SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = true -- can users buy firework at the user meetup point`?
+FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
