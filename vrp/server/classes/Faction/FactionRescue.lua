@@ -454,7 +454,7 @@ function FactionRescue:createDeathPickup(player, ...)
 									rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
 								end
 							else
-								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
+								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage! (%s)", hitPlayer, inspect(hitPlayer.m_RescueStretcher.player)))
 							end
 						elseif hitPlayer.m_RescueDefibrillator then
 							self:useDefibrillator(hitPlayer, player)
@@ -530,7 +530,7 @@ function FactionRescue:createPedDeathPickup(ped, pedname)
 									hitPlayer:sendError(_("Der Spieler konnte nicht auf die Trage gelegt werden!", hitPlayer))
 								end
 							else
-								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
+								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage! (%s)", hitPlayer, inspect(hitPlayer.m_RescueStretcher.player)))
 							end
 						else
 							hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
