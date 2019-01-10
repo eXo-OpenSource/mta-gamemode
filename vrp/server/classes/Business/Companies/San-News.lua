@@ -207,19 +207,27 @@ end
 function SanNews:Event_startStreetrace()
 	if not EventManager:getSingleton():isEvent(self.m_RunningEvent) then
 		self.m_RunningEvent = EventManager:getSingleton():openRandomEvent()
+		self:addLog(client, "Events", "hat ein Straßenrennen gestartet!")
 	else
 		client:sendError("Es läuft bereits ein Event!")
 	end
 end
 
 function SanNews:Event_addBlip(posX, posY, text)
+	if self:getPlayerRank(client) == CompanyRank.Normal then
+		client:sendError("Du bist nicht berechtigt Marker zu erstellen!")
+		return
+	end
+	
 	local id = self:getId()
 	local color = {companyColors[id].r, companyColors[id].g, companyColors[id].b}
+	local blipName = ("San News - %s"):format(text or "Marker")
 	local blip = Blip:new("Marker.png", posX, posY, root, 10000, color)
-	blip:setDisplayText(("San News - %s"):format(text or "Marker"), BLIP_CATEGORY.Default) -- Maybe an extra categroy for san news blips?
+	blip:setDisplayText(blipName, BLIP_CATEGORY.Default)
 	table.insert(self.m_Blips, blip)
 
-	PlayerManager:getSingleton():sendShortMessage("Die San News hat einen Ort auf der Karte markiert!", ("San News - %s"):format(text or "Marker"), color, 15000)
+	self:addLog(client, "Marker", ("hat einen Marker erstellt: %s"):format(blipName))
+	--PlayerManager:getSingleton():sendShortMessage("Die San News hat einen Ort auf der Karte markiert!", ("San News - %s"):format(text or "Marker"), color, 15000)
 end
 
 function SanNews:Event_deleteBlips()
