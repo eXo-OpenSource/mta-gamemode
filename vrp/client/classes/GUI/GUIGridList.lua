@@ -131,6 +131,7 @@ function GUIGridList:setSelectedItem(itemIndex)
 end
 
 function GUIGridList:scrollToItem(itemIndex)
+	if self.m_ScrollArea.m_DocumentHeight < self.m_Height then return end -- don't scroll if there is no scroll bar
 	local max_scroll_down = -self.m_ScrollArea.m_DocumentHeight + self.m_Height - self.m_ItemHeight
 	self.m_ScrollArea:setScrollPosition(self.m_ScrollArea.m_ScrollX, math.clamp(max_scroll_down, -self.m_ItemHeight*itemIndex + self.m_Height/2, 0))
 end
