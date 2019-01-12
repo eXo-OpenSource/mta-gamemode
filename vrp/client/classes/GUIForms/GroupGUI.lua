@@ -44,17 +44,19 @@ function GroupGUI:constructor()
 	--self.m_GroupMoneyWithdrawButton = GUIButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", tabGroups):setBarEnabled(true)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.3, self.m_Width*0.25, self.m_Height*0.06, _"Payday:", tabGroups)
 	self.m_GroupPayDayLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.3, self.m_Width*0.25, self.m_Height*0.06, "test", tabGroups)
-	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.5, self.m_Height*0.5, tabGroups)
+	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.6, self.m_Height*0.5, tabGroups)
 	self.m_GroupPlayersGrid:addColumn(_"", 0.06)
-	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.49)
+	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_GroupPlayersGrid:addColumn(_"Aktivität", 0.27)
+	self.m_GroupPlayersGrid:setSortable{"Spieler", "Rang", "Aktivität"}
+	self.m_GroupPlayersGrid:setSortColumn(_"Rang", "down")
 
-	self.m_GroupAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabGroups):setBackgroundColor(Color.Green):setBarEnabled(true)
-	self.m_GroupRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
-	self.m_GroupRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabGroups):setBarEnabled(true)
-	self.m_GroupRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabGroups):setBarEnabled(true)
-	self.m_GroupToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabGroups):setBarEnabled(true)
+	self.m_GroupAddPlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabGroups):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_GroupRemovePlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_GroupRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabGroups):setBarEnabled(true)
+	self.m_GroupRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabGroups):setBarEnabled(true)
+	self.m_GroupToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabGroups):setBarEnabled(true)
 
 	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
 	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
@@ -102,8 +104,6 @@ function GroupGUI:constructor()
 	self.m_VehicleConvertToGroupButton:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
-
-
 
 	local tabBusiness = self.m_TabPanel:addTab(_"Geschäfte")
 	self.m_TabBusiness = tabBusiness
@@ -182,14 +182,14 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 		self.m_TypeLabel:setText(type..":")
 		self.m_VehicleConvertToGroupButton:setText(_("Fahrzeug zur\n%s hinzufügen", type))
 
-		players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
+		--players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
 
 		self.m_GroupPlayersGrid:clear()
-		for _, info in ipairs(players) do
+		for playerId, info in pairs(players) do
 			local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 			local item = self.m_GroupPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 			item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
-			item.Id = info.playerId
+			item.Id = playerId--info.playerId
 
 			item.onLeftClick =
 			function()

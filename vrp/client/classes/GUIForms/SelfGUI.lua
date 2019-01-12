@@ -53,7 +53,7 @@ SelfGUI.Stats = {
 	},
 	{
 		["Name"] = "LegendaryFishCaught",
-		["text"] = "    davon Legendäre",
+		["text"] = "  davon Legendäre",
 		["value"] = function(value) return value end
 	},
 	{

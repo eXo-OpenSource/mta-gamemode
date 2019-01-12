@@ -202,6 +202,14 @@ function FactionManager:getFromId(id)
 	return FactionManager.Map[id]
 end
 
+function FactionManager:getFromName(name)
+	for i, faction in pairs(self.Map) do
+		if faction.m_NameShort == name then
+			return faction
+		end
+	end
+end
+
 function FactionManager:getFactionNames()
 	local table = {}
 	for id, faction in pairs(FactionManager.Map) do

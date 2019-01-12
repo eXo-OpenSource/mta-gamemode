@@ -112,8 +112,12 @@ function GUIGridList:addColumn(text, width)
 	return self
 end
 
-function GUIGridList:getColumnIndex(column)
-	-- todo
+function GUIGridList:getColumnIndexByName(columnName)
+	for i, column in pairs(self.m_Columns) do
+		if column.text == columnName then
+			return i
+		end
+	end
 end
 
 function GUIGridList:setSortable(sortable)
@@ -121,8 +125,14 @@ function GUIGridList:setSortable(sortable)
 	return self
 end
 
-function GUIGridList:setSortColumnIndex(column)
-	-- todo
+function GUIGridList:setSortColumn(column, direction)
+	local columnIndex = self:getColumnIndexByName(column)
+	if direction ~= "up" and direction ~= "down" then direction = "up" end
+	if columnIndex then
+		self.m_SortColumnIndex = columnIndex
+		self.m_SortColumnDirection = direction or "up"
+	end
+	return self
 end
 
 function GUIGridList:getColumnCount()

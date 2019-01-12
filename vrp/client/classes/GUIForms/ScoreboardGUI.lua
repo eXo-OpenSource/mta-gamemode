@@ -27,6 +27,8 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:addColumn(_"Spielzeit", 0.08)
 	self.m_Grid:addColumn(_"Karma", 0.08)
 	self.m_Grid:addColumn(_"Ping", 0.11)
+	self.m_Grid:setSortable{"VIP", "Name", "Fraktion", "Unternehmen", "Gang/Firma", "Spielzeit"} --We can't sort Ping and Karma (Ping can be a number and also a string; karma is a numeric string eg. "+123" which will be not sort properly)
+	self.m_Grid:setSortColumn(_"Fraktion")
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
@@ -37,10 +39,7 @@ function ScoreboardGUI:constructor()
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 
 	self.m_ScrollBind = bind(self.onScoreBoardScroll, self)
-
 end
-
--- Right Click Shoot Bugfix
 
 function ScoreboardGUI:onShow()
 	toggleControl("next_weapon", false)
@@ -92,9 +91,8 @@ function ScoreboardGUI:refresh()
 
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
-		table.insert(self.m_Players, {player, factionId})
-
 		local companyId = player:getCompany() and player:getCompany():getId() or 0
+		table.insert(self.m_Players, player)
 
 		if factionId ~= 0 then
 			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
@@ -117,7 +115,6 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
-	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
 
 	local scrollAreaDocumentSize_new = self.m_Grid.m_ScrollArea.m_DocumentHeight
@@ -166,13 +163,11 @@ function ScoreboardGUI:addPlayerCount(name, value, valueAFK, color)
 	end
 
 	self.m_CountRow = self.m_CountRow + 1
-
 end
 
 function ScoreboardGUI:insertPlayers()
 	local gname
-	for index, data in ipairs(self.m_Players) do
-		local player = data[1]
+	for index, player in ipairs(self.m_Players) do
 		local karma = math.floor(player:getKarma() or 0)
 		local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 		local ping
@@ -191,16 +186,16 @@ function ScoreboardGUI:insertPlayers()
 		local item = self.m_Grid:addItem(
 			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
 			player:getName(),
-			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
+			player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keins -",
 			string.short(gname, 16),
-			hours..":"..minutes,
-			karma >= 0 and "+"..karma or " "..tostring(karma),
+			("%d:%.2d"):format(hours, minutes), --hours..":"..minutes,
+			("%s%d"):format(karma >= 0 and "+" or "-", math.abs(karma)), --karma >= 0 and "+"..karma or " "..tostring(karma),
 			ping or " - "
 		)
 		item:setColumnToImage(1, true, item.m_Height)
 		item:setFont(VRPFont(24))
-		if data[2] and player:getFaction() then
+		if player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
 		end
@@ -223,6 +218,48 @@ function ScoreboardGUI:insertPlayers()
 			item:setColumnColor(7, Color.Green)
 		elseif karma <= -5 then
 			item:setColumnColor(7, Color.Red)
+		end
+	end
+
+	if DEBUG and add then
+		local rndFaction = {"SAPD", "FBI", "SASF", "Rescue", "LCN", "Yakuzza", "Grove", "Ballas", "Outlaws", "Aztecas", "Kartell", "- Keine -"}
+		local rndCompany = {"Fahrschule", "M & T", "San News", "EPT", "- Keins -" }
+
+		for i = 1, 50 do
+			local faction = rndFaction[math.random(1, #rndFaction)]
+			local company = rndCompany[math.random(1, #rndCompany)]
+			local karma = math.random(-150, 150)
+			local ping = math.random(1,3) == 1 and (math.random(1,5) == 1 and "Knast" or "AFK") or math.random(15, 200)
+
+			local item = self.m_Grid:addItem(
+				math.random(1,2) == 1 and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
+				getRandomUniqueNick(),
+				faction,
+				company,
+				"- Keine -",
+				("%d:%.2d"):format(math.random(1, 1337), math.random(0, 59)),
+				("%s%d"):format(karma >= 0 and "+" or "-", math.abs(karma)),
+				ping or " - "
+			)
+			item:setColumnToImage(1, true, item.m_Height)
+			item:setFont(VRPFont(24))
+
+			if FactionManager:getSingleton():getFromName(faction) then
+				local color = FactionManager:getSingleton():getFromName(faction):getColor()
+				item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+			end
+
+			if ping == "AFK" then
+				item:setColumnColor(8, Color.Red)
+			elseif ping == "Knast" then
+				item:setColumnColor(8, Color.Yellow)
+			end
+
+			if karma >= 5 then
+				item:setColumnColor(7, Color.Green)
+			elseif karma <= -5 then
+				item:setColumnColor(7, Color.Red)
+			end
 		end
 	end
 end

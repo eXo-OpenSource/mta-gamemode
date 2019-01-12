@@ -81,6 +81,14 @@ function FactionManager:getFromId(Id)
 	return self.Map[Id]
 end
 
+function FactionManager:getFromName(name)
+	for i, faction in pairs(self.Map) do
+		if faction.m_Name_Short == name then
+			return faction
+		end
+	end
+end
+
 function FactionManager:Event_factionSaveRank(rank,loan,rankWeapons)
 	local faction = client:getFaction()
 	if faction then
