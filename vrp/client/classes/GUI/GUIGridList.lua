@@ -19,8 +19,6 @@ function GUIGridList:constructor(posX, posY, width, height, parent)
 	self.m_Columns = {}
 	self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
 	self.m_SelectedItem = nil
-
-	self:setSortable(true) --TODO: DEV, REMOVE THIS!
 end
 
 function GUIGridList:addItem(...)
@@ -31,7 +29,6 @@ function GUIGridList:addItem(...)
 
 	-- Resize the document
 	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * self.m_ItemHeight)
-
 	self:sortList()
 
 	return listItem
@@ -115,6 +112,19 @@ function GUIGridList:addColumn(text, width)
 	return self
 end
 
+function GUIGridList:getColumnIndex(column)
+	-- todo
+end
+
+function GUIGridList:setSortable(sortable)
+	self.m_Sortable = sortable
+	return self
+end
+
+function GUIGridList:setSortColumnIndex(column)
+	-- todo
+end
+
 function GUIGridList:getColumnCount()
 	return #self.m_Columns
 end
@@ -172,38 +182,31 @@ function GUIGridList:onInternalSelectItem(item)
 	self:anyChange()
 end
 
-function GUIGridList:setSortable(sortable)
-	self.m_Sortable = sortable
+function GUIGridList:onInternalLeftClick(cx, cy)
+	if not self.m_Sortable then return end
 
-	if self.m_Sortable and not self.m_Header then
-		-- Create a dummy GUI element for header click
-		self.m_Header = GUIRectangle:new(0, 0, self.m_Width, self.m_ItemHeight, Color.Clear, self)
-		self.m_Header.onLeftClick = bind(GUIGridList.onHeaderClick, self)
-	elseif not self.m_Sortable and self.m_Header then
-		self.m_Header:delete()
-		self.m_Header = false
-	end
-end
+	local posX, posY = self:getPosition(true)
+	posX, posY = cx - posX, cy - posY -- relative cursor positions
 
-function GUIGridList:onHeaderClick(_, cx)
-	local clickedColumnId = false
-	local width = self:getPosition(true)
+	if posY > self.m_ItemHeight then return	end
 
+	local clickedColumn = false
+	local width = 0
 	for id, column in pairs(self.m_Columns) do
-		if cx > width then
-			clickedColumnId = id
-		else
-			break
-		end
-
+		if posX < width then break end
+		clickedColumn = {id = id, text = column.text}
 		width = width + self.m_Width*column.width
 	end
 
-	if clickedColumnId then
-		if self.m_SortColumnIndex and self.m_SortColumnIndex == clickedColumnId then
-			self.m_SortColumnDirection = not self.m_SortColumnDirection
+	local sortDirections = {["none"] = "up", ["up"] = "down", ["down"] = "none"}
+	if clickedColumn and (self.m_Sortable == true or type(self.m_Sortable) == "table" and table.find(self.m_Sortable, clickedColumn.text)) then
+		if self.m_SortColumnIndex and self.m_SortColumnIndex == clickedColumn.id then
+			self.m_SortColumnDirection = sortDirections[self.m_SortColumnDirection]
+		else
+			self.m_SortColumnDirection = "up"
 		end
-		self.m_SortColumnIndex = clickedColumnId
+
+		self.m_SortColumnIndex = clickedColumn.id
 
 		self:sortList()
 		self:anyChange()
@@ -212,12 +215,14 @@ end
 
 function GUIGridList:sortList()
 	if self.m_Sortable and self.m_SortColumnIndex then
+		if self.m_SortColumnDirection == "none" then return end
+
 		local sortTable = {}
 		for k, v in pairs(self.m_ScrollArea.m_Children) do
 			table.insert(sortTable, {k, v:getColumnText(self.m_SortColumnIndex), v.m_PosY})
 		end
 
-		local sortFunction = self.m_SortColumnDirection and function(a, b) return a[2] > b[2] end or function(a, b) return a[2] < b[2] end
+		local sortFunction = self.m_SortColumnDirection == "up" and function(a, b) return a[2] < b[2] end or function(a, b) return a[2] > b[2] end
 		table.sort(sortTable, sortFunction)
 
 		for k, v in pairs(sortTable) do
@@ -263,8 +268,8 @@ function GUIGridList:drawThis()
 
 		if self.m_Sortable and (self.m_Sortable == true or type(self.m_Sortable) == "table" and table.find(self.m_Sortable, column.text)) then
 			local textWidth = dxGetTextWidth(column.text, self:getFontSize(), self:getFont())
-			local arrowUpColor = self.m_SortColumnIndex == k and (not self.m_SortColumnDirection and Color.Accent or Color.LightGrey) or Color.LightGrey
-			local arrowDownColor =  self.m_SortColumnIndex == k and (self.m_SortColumnDirection and Color.Accent or Color.LightGrey) or Color.LightGrey
+			local arrowUpColor = self.m_SortColumnIndex == k and (self.m_SortColumnDirection == "up" and Color.Accent or Color.LightGrey) or Color.LightGrey
+			local arrowDownColor =  self.m_SortColumnIndex == k and (self.m_SortColumnDirection  == "down" and Color.Accent or Color.LightGrey) or Color.LightGrey
 
 			dxDrawText("", self.m_AbsoluteX + currentXPos + textWidth + 10, self.m_AbsoluteY, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + self.m_ItemHeight/2 + 3, arrowUpColor, self:getFontSize(), getVRPFont(FontAwesome(15)), "left", "bottom")
 			dxDrawText("", self.m_AbsoluteX + currentXPos + textWidth + 10, self.m_AbsoluteY + self.m_ItemHeight/2 - 3, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + self.m_ItemHeight, arrowDownColor, self:getFontSize(), getVRPFont(FontAwesome(15)), "left", "top")
