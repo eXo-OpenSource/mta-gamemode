@@ -581,14 +581,13 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 				self.m_FactionNextActionLabel:setColor(Color.Red)
 			end
 
-			--players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
-
 			self.m_FactionPlayersGrid:clear()
 			for playerId, info in pairs(players) do
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
-				item.Id = playerId--info.playerId
+				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
+				item.Id = playerId
 
 				item.onLeftClick =
 					function()

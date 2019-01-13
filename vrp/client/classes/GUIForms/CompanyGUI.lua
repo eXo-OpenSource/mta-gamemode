@@ -202,6 +202,7 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local item = self.m_CompanyPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
+				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
 				item.Id = playerId
 
 				item.onLeftClick =
