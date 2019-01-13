@@ -7,107 +7,105 @@
 -- ****************************************************************************
 BankGUI = inherit(GUIForm)
 inherit(Singleton, BankGUI)
-addEvent("bankMoneyBalanceRetrieve", true)
+
+addRemoteEvents{"bankMoneyBalanceRetrieve", "groupMoneyBalanceRetrieve"}
 
 function BankGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.38/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.38, screenHeight*0.4)
+	GUIWindow.updateGrid()			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 17) 	-- width of the window
+	self.m_Height = grid("y", 6.5) 	-- height of the window
 
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bankautomat", true, true, self)
-	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/Shops/BankHeader.png", self.m_Window)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Kontostand:", self.m_Window):setColor(Color.Accent)
-	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.25, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", self.m_Window)
 
-	self.m_TabPanel = GUITabPanel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width-2*self.m_Width*0.02, self.m_Height*0.52, self.m_Window)
-	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
-	local tabWidth, tabHeight = self.m_TabPanel:getSize()
+	local tabs = {"Ein/Auszahlen", "Überweisung"}
+	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then table.insert(tabs, localPlayer:getGroupType() == "Firma" and "Firmenkonto" or "Gang-Konto") end
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel(tabs)
+	self.m_TabPanel:updateGrid()
 
-	self.m_TabWithdraw = self.m_TabPanel:addTab(_"Auszahlen")
-	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabWithdraw)
-	self.m_WithdrawAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabWithdraw)
-	self.m_WithdrawAmountEdit:setNumeric(true, true)
-	self.m_WithdrawButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Auszahlen", self.m_TabWithdraw):setBarEnabled(true)
-	self.m_WithdrawButton.onLeftClick = bind(self.WithdrawButton_Click, self)
+	self.m_PlayerBalanceLabel = GUIGridLabel:new(1, 1, 8, 1, "Kontostand: -", self.m_Tabs[1]):setHeader():setColor(Color.Accent)
+	self.m_PlayerBalanceLabel2 = GUIGridLabel:new(1, 1, 8, 1, "Kontostand: -", self.m_Tabs[2]):setHeader():setColor(Color.Accent)
+	self.m_GroupBalanceLabel = GUIGridLabel:new(1, 1, 8, 1, "Kontostand: -", self.m_Tabs[3]):setHeader():setColor(Color.Accent)
 
-	self.m_TabDeposit = self.m_TabPanel:addTab(_"Einzahlen")
-	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabDeposit)
-	self.m_DepositAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabDeposit)
-	self.m_DepositAmountEdit:setNumeric(true, true)
-	self.m_DepositButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Einzahlen", self.m_TabDeposit):setBarEnabled(true)
-	self.m_DepositButton.onLeftClick = bind(self.DepositButton_Click, self)
+	-- Ein/Auszahlen
+	GUIGridLabel:new(1, 2, 3, 1, "Betrag:", self.m_Tabs[1])
+	self.m_PlayerAmountEdit = GUIGridEdit:new(3, 2, 4, 1, self.m_Tabs[1]):setNumeric(true, true)
+	local playerDeposit = GUIGridButton:new(1, 3, 3, 1, "Einzahlen", self.m_Tabs[1])
+	local playerWithdraw = GUIGridButton:new(4, 3, 3, 1, "Auszahlen", self.m_Tabs[1])
 
-	self.m_TabTransfer = self.m_TabPanel:addTab(_"Überweisen")
-	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.2, tabHeight*0.15, _"Empfänger:", self.m_TabTransfer)
-	self.m_TransferToEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
-	GUILabel:new(tabWidth*0.03, tabHeight*0.28, tabWidth*0.2, tabHeight*0.15, _"Betrag:", self.m_TabTransfer)
-	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
-	self.m_TransferAmountEdit:setNumeric(true, true)
-	self.m_TransferButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.62, tabHeight*0.2, _"Überweisen", self.m_TabTransfer):setBarEnabled(true)
-	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
+	playerDeposit.onLeftClick = bind(BankGUI.balanceChange, self, self.m_PlayerAmountEdit, "bankDeposit")
+	playerWithdraw.onLeftClick = bind(BankGUI.balanceChange, self, self.m_PlayerAmountEdit, "bankWithdraw")
 
-	GUILabel:new(tabWidth*0.7, tabHeight*0.07, tabWidth*0.27, tabHeight*0.17, _"Spenden:", self.m_TabTransfer):setColor(Color.Accent)
+	-- Überweisung
+	GUIGridLabel:new(1, 2, 3, 1, "Empfänger:", self.m_Tabs[2])
+	GUIGridLabel:new(1, 3, 3, 1, "Grund:", self.m_Tabs[2])
+	GUIGridLabel:new(1, 4, 3, 1, "Betrag:", self.m_Tabs[2])
+
+	self.m_TransferToEdit = GUIGridEdit:new(4, 2, 6, 1, self.m_Tabs[2])
+	self.m_TransferReasonEdit = GUIGridEdit:new(4, 3, 6, 1, self.m_Tabs[2])
+	self.m_TransferAmountEdit = GUIGridEdit:new(6, 4, 4, 1, self.m_Tabs[2]):setNumeric(true, true)
+
+	local transferButton = GUIGridButton:new(1, 5, 9, 1, "Überweisen", self.m_Tabs[2])
+	transferButton.onLeftClick = bind(BankGUI.TransferButton_Click, self)
+
+	GUIGridLabel:new(10, 1, 3, 1, "Spenden", self.m_Tabs[2]):setHeader():setColor(Color.Accent)
 
 	local donate = {}
-	donate["San News"] = GUIButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", self.m_TabTransfer):setBackgroundColor(Color.Green):setBarEnabled(true)
-	donate["eXo Event-Team"] = GUIButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"eXo Event-Team", self.m_TabTransfer):setBackgroundColor(Color.Yellow):setBarEnabled(true)
+	donate["San News"] = GUIGridButton:new(10, 2, 3, 1, "San News", self.m_Tabs[2]):setBackgroundColor(Color.Orange)
+	donate["eXo Event-Team"] = GUIGridButton:new(13, 2, 4, 1, "eXo Event-Team", self.m_Tabs[2]):setBackgroundColor(Color.Green):setEnabled(false)
+	for index, btn in pairs(donate) do btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end end
 
-	for index, btn in pairs(donate) do
-		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
+	-- Gruppen Ein/Auszahlen
+	if self.m_Tabs[3] then
+		GUIGridLabel:new(1, 2, 3, 1, "Betrag:", self.m_Tabs[3])
+		self.m_GroupAmountEdit = GUIGridEdit:new(3, 2, 4, 1, self.m_Tabs[3]):setNumeric(true, true)
+
+		local groupDeposit = GUIGridButton:new(1, 3, 3, 1, "Einzahlen", self.m_Tabs[3])
+		local groupWithdraw = GUIGridButton:new(4, 3, 3, 1, "Auszahlen", self.m_Tabs[3])
+		groupDeposit.onLeftClick = bind(BankGUI.balanceChange, self, self.m_GroupAmountEdit, "groupDeposit")
+		groupWithdraw.onLeftClick = bind(BankGUI.balanceChange, self, self.m_GroupAmountEdit, "groupWithdraw")
 	end
 
-	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then
-		self.m_TabGroup = self.m_TabPanel:addTab(_("%s-Konto", localPlayer:getGroupType()))
-	end
-
-	-- add money receiv event
-	addEventHandler("bankMoneyBalanceRetrieve", root, bind(self.Event_OnMoneyReceive, self))
+	addEventHandler("bankMoneyBalanceRetrieve", root, bind(BankGUI.Event_OnMoneyReceive, self))
+	addEventHandler("groupMoneyBalanceRetrieve", root, bind(BankGUI.Event_OnMoneyReceive, self))
 end
 
 function BankGUI:onShow()
 	triggerServerEvent("bankMoneyBalanceRequest", root)
 
-	self.m_TabPanel:forceTab(self.m_TabWithdraw.TabIndex)
-end
-
-function BankGUI:Event_OnMoneyReceive(amount)
-	self.m_AccountBalanceLabel:setText(toMoneyString(amount))
-end
-
-function BankGUI:WithdrawButton_Click()
-	local amount = tonumber(self.m_WithdrawAmountEdit:getText())
-	if amount and amount > 0 then
-		triggerServerEvent("bankWithdraw", root, amount)
-		self.m_WithdrawAmountEdit:setText("0")
-	else
-		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+	if self.m_Tabs[3] then
+		triggerServerEvent("groupRequestMoney", localPlayer)
 	end
 end
 
-function BankGUI:DepositButton_Click()
-	local amount = tonumber(self.m_DepositAmountEdit:getText())
+function BankGUI:Event_OnMoneyReceive(amount)
+	local moneyString = ("Kontostand: %s"):format(toMoneyString(amount))
+	if eventName == "bankMoneyBalanceRetrieve" then
+		self.m_PlayerBalanceLabel:setText(moneyString)
+		self.m_PlayerBalanceLabel2:setText(moneyString)
+	elseif eventName == "groupMoneyBalanceRetrieve" then
+		self.m_GroupBalanceLabel:setText(moneyString)
+	end
+end
+
+function BankGUI:balanceChange(edit, event)
+	local amount = edit:getText(true)
 	if amount and amount > 0 then
-		triggerServerEvent("bankDeposit", root, amount)
-		self.m_DepositAmountEdit:setText("0")
+		triggerServerEvent(event, root, amount)
+		self.m_PlayerAmountEdit:setText(0)
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
 	end
 end
 
 function BankGUI:TransferButton_Click()
-	local amount = tonumber(self.m_TransferAmountEdit:getText())
+	local amount = self.m_TransferAmountEdit:getText(true)
 	local toCharName = self.m_TransferToEdit:getText()
+	local reason = self.m_TransferReasonEdit:getText()
 	if amount and amount > 0 then
-		triggerServerEvent("bankTransfer", root, toCharName, amount)
+		triggerServerEvent("bankTransfer", root, toCharName, amount, reason)
 		self.m_TransferAmountEdit:setText("0")
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
-	end
-end
-
-function BankGUI:TabPanel_TabChanged(tabId)
-	if self.m_TabGroup then
-		if tabId == self.m_TabGroup.TabIndex then
-			self:close()
-			triggerServerEvent("groupOpenBankGui", localPlayer)
-		end
 	end
 end
