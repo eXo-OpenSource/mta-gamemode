@@ -185,9 +185,11 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 		end
 	end
 
-	if rank == GroupRank.Leader then
-		self.m_GroupDeleteButton:setVisible(true)
-	elseif rank >= GroupRank.Manager then
+	if rank >= GroupRank.Manager then
+		if rank == GroupRank.Leader then
+			self.m_GroupDeleteButton:setVisible(true)
+		end
+
 		self.m_RankNames = rankNames
 		self.m_RankLoans = rankLoans
 		self:addLeaderTab()
