@@ -1295,7 +1295,8 @@
 	<vrpfile src="files/images/MessageBoxes/Toast/error.png" />
 	<vrpfile src="files/images/MessageBoxes/Toast/success.png"/>
 	<vrpfile src="files/images/Phone/AndroidPhone.png"/>
-	<vrpfile src="files/images/Phone/iPhone.png"/>
+	<vrpfile src="files/images/Phone/iPhone_weiss.png"/>
+	<vrpfile src="files/images/Phone/iPhone_schwarz.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconContacts.png"/>

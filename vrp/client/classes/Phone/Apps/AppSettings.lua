@@ -7,6 +7,18 @@
 -- ****************************************************************************
 AppSettings = inherit(PhoneApp)
 
+AppSettings.AppPath = {
+	["iPhone weiß"] = "iPhone",
+	["iPhone schwarz"] = "iPhone",
+	["Android"] = "AndroidPhone",
+}
+
+AppSettings.PhonePath = {
+	["iPhone weiß"] = "iPhone_weiss",
+	["iPhone schwarz"] = "iPhone_schwarz",
+	["Android"] = "AndroidPhone",
+}
+
 function AppSettings:constructor()
 	PhoneApp.constructor(self, "Einstellungen", "IconSettings.png")
 end
@@ -22,8 +34,9 @@ function AppSettings:onOpen(form)
 			Phone:getSingleton():setPhone(text)
 			core:getConfig():set("Phone", "Phone", text)
 		end
-	self.m_PhoneChanger:addItem("iPhone")
-	self.m_PhoneChanger:addItem("Android-Phone")
+	self.m_PhoneChanger:addItem("iPhone weiß")
+	self.m_PhoneChanger:addItem("iPhone schwarz")
+	self.m_PhoneChanger:addItem("Android")
 	if core:get("Phone", "Phone") then
 		self.m_PhoneChanger:setSelectedItem(core:get("Phone", "Phone"))
 	end
