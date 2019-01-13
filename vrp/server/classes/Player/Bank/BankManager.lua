@@ -46,20 +46,20 @@ function BankManager:Event_Deposit(amount)
 	end
 end
 
-function BankManager:Event_Transfer(toPlayerName, amount, reason)
+function BankManager:Event_Transfer(toPlayerName, amount, purpose)
 	local client = client
 	if tonumber(amount) and amount > 0 then
 		if isNan(amount) then return end
-		reason = reason or "-"
+		purpose = purpose or "-"
 
 		if client:getBankMoney() < amount then
 			client:sendError(_("Nicht genügend Geld!", client))
 			return
 		end
 		if toPlayerName == "San News" then
-			client:transferBankMoney(CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS), amount, ("Spende an San News von %s\nZweck: %s"):format(client:getName(), reason), "Gameplay", "SanNewsDonation")
+			client:transferBankMoney(CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS), amount, ("Spende an San News von %s\nZweck: %s"):format(client:getName(), purpose), "Gameplay", "SanNewsDonation")
 			client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
-			CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS):addLog(client, "Spenden", ("hat %d$ gespendet! (Zweck: %s)"):format(amount, reason))
+			CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS):addLog(client, "Spenden", ("hat %d$ gespendet! (Zweck: %s)"):format(amount, purpose))
 		elseif toPlayerName == "eXo Event-Team" then
 			client:transferBankMoney(Admin:getSingleton().m_BankAccount, amount, ("Spende an eXo Event-Team von %s"):format(client:getName()), "Gameplay", "eXoTeamDonation")
 			client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
@@ -70,19 +70,19 @@ function BankManager:Event_Transfer(toPlayerName, amount, reason)
 				return
 			end
 
-			if client:transferBankMoney({"player", id, true}, amount, ("Überweisung von %s an %s\nZweck: %s"):format(client:getName(), toPlayerName, reason), "Bank", "Transfer") then
+			if client:transferBankMoney({"player", id, true}, amount, ("Überweisung von %s an %s\nZweck: %s"):format(client:getName(), toPlayerName, purpose), "Bank", "Transfer") then
 
 				local toPlayer, offline = DatabasePlayer.get(id)
 				if not offline then
 					toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
-					toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!\nZweck: %s", toPlayer, client:getName(), amount, reason))
+					toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!\nZweck: %s", toPlayer, client:getName(), amount, purpose))
 				end
 
-				client:sendShortMessage(_("Du hast an %s %d$ überwiesen!\nZweck: %s", client, toPlayerName, amount, reason))
+				client:sendShortMessage(_("Du hast an %s %d$ überwiesen!\nZweck: %s", client, toPlayerName, amount, purpose))
 				client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 
 				if offline then
-					toPlayer:addOfflineMessage(("Du hast eine Offline-Überweisung über %s$ von %s erhalten.\nZweck: %s"):format(amount, client.name, reason), 1)
+					toPlayer:addOfflineMessage(("Du hast eine Offline-Überweisung über %s$ von %s erhalten.\nZweck: %s"):format(amount, client.name, purpose), 1)
 					delete(toPlayer)
 				end
 			end
