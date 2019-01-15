@@ -230,7 +230,7 @@ function PolicePanel:loadPlayers()
 					elseif self.m_GangFilter:isChecked() and a[4] ~= b[4] then
 						return a[4] > b[4]
 					end
-					return a[1]:getName() > a[2]:getName()
+					return a:getName() > b:getName()
 			end)
 		else
 			table.sort(self.m_Players, function(a, b) return a[2] > b[2] end)
