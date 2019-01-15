@@ -329,9 +329,9 @@ end
 
 function BankRobbery:getBlipVisibleTo()
 	if self.m_RobFaction:getAllianceFaction() then
-		return {faction = {self.m_RobFaction:getId(), self.m_RobFaction:getAllianceFaction():getId()}, factionType = "State"}
+		return {faction = {self.m_RobFaction:getId(), self.m_RobFaction:getAllianceFaction():getId()}, factionType = "State", duty = true}
 	else
-		return {faction = self.m_RobFaction:getId(), factionType = "State"}
+		return {faction = self.m_RobFaction:getId(), factionType = "State", duty = true}
 	end
 end
 
