@@ -52,7 +52,7 @@ function GUITooltip:createTooltip()
 	local x, y = self:getPosition(true)
 	local w, h = self:getSize()
 	local textW = fontWidth(self.m_TooltipText, f, 1) + 10 -- 30 is the margin
-	local textH = self.m_TooltipMultiline and (string.count(self.m_TooltipText, "\n")+1)*dxGetFontHeight(1, VRPFont(20)) or 20
+	local textH = self.m_TooltipMultiline and (string.count(self.m_TooltipText, "\n")+1)*dxGetFontHeight(1, getVRPFont(VRPFont(20))) or 20
 
 	if self.m_TooltipPos == "left" then
 		self.m_Tooltip = GUILabel:new(x - textH/2 - textW, y + h/2 - 10, textW, textH, self.m_TooltipText)
