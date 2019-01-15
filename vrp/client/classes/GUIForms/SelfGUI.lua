@@ -53,7 +53,7 @@ SelfGUI.Stats = {
 	},
 	{
 		["Name"] = "LegendaryFishCaught",
-		["text"] = "    davon Legendäre",
+		["text"] = "  davon Legendäre",
 		["value"] = function(value) return value end
 	},
 	{
@@ -135,16 +135,11 @@ function SelfGUI:constructor()
 	self.m_GroupMenuButton.onHover = function () self.m_GroupMenuButton:setColor(Color.White) end
 	self.m_GroupMenuButton.onUnhover = function () self.m_GroupMenuButton:setColor(Color.Accent) end
 	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
-	--self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
-	--self.m_GroupInvitationsLabel:setVisible(false)
 
 	addRemoteEvents{"groupInvitationRetrieve"}
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
-
-	--[[self.m_AdButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", tabGeneral):setBarEnabled(true)
-	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)]]
 
 	self.m_TicketButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", tabGeneral):setBarEnabled(true)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)

@@ -203,7 +203,7 @@ end
 function GUIScrollableArea:updateDrawnChildren()
 	self.m_DrawnChildren = {}
 	for k, v in pairs(self.m_Children) do
-		if v.m_PosY > -30 and v.m_PosY < self.m_Height + 30 then
+		if v.m_PosY + v.m_Height > 0 and v.m_PosY < self.m_Height then
         	table.insert(self.m_DrawnChildren, v)
 		end
 	end

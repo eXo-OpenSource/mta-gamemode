@@ -237,7 +237,7 @@ function AppCall:openIncoming(caller, voiceEnabled)
 
 	self.m_CallLabel = GUILabel:new(8, 10, width, 30, _("Eingehender Anruf von \n%s", caller:getName()), parent):setMultiline(true):setAlignX("center")
 	self.m_CallLabel:setColor(Color.Black)
-	self.m_WebView = GUIWebView:new(width/2-70, 70, 140, 200, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, parent)
+	self.m_WebView = GUIWebView:new(width/2-80, 70, 160, 250, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewHead.php?skin="..caller:getModel(), true, parent)
 	self.m_ButtonAnswer = GUIButton:new(10, height-50, 110, 30, _"Annehmen", parent)
 	self.m_ButtonAnswer:setBackgroundColor(Color.Green)
 	self.m_ButtonAnswer.onLeftClick = bind(self.ButtonAnswer_Click, self)
@@ -356,7 +356,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 		if voiceCall then
 			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", parent):setColor(Color.Black):setAlignX("center")
 		end
-		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, parent)
+		GUIWebView:new(self.m_Width/2-80, 80, 160, 250, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewHead.php?skin="..callee:getModel(), true, parent)
 		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", parent)
 		self.m_ButtonSendLocation:setBackgroundColor(Color.Green)
 		self.m_ButtonSendLocation.onLeftClick = function()

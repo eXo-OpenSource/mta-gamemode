@@ -38,7 +38,7 @@ function Phone:constructor()
 
 
 	-- Add GUI elements
-	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)
+	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, ("files/images/Phone/%s.png"):format(AppSettings.PhonePath[self.m_Phone]), self)
 	self.m_BackgroundImage = GUIImage:new(17, 71, 260, 460, ("files/images/Phone/Backgrounds/%s.png"):format(self.m_Background), self)
 
 	-- Create app icons
@@ -82,7 +82,7 @@ function Phone:isOn()
 end
 
 function Phone:loadHomeScreen()
-	local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
+	local iconPath = self:getAppPath()
 
 	self.m_AppIcons = {}
 	self.m_AppLabels = {}
@@ -100,23 +100,25 @@ function Phone:loadHomeScreen()
 	end
 end
 
+function Phone:getAppPath()
+	return ("files/images/Phone/Apps_%s/"):format(AppSettings.AppPath[self.m_Phone])
+end
+
 function Phone:refreshAppIcons()
-	local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
+	local iconPath = self:getAppPath()
 	for k, app in ipairs(self.m_Apps) do
 		self.m_AppIcons[k]:setImage(iconPath..app:getIcon())
 	end
 end
 
 function Phone:setPhone(phone)
-	self.m_PhoneImage:setImage("files/images/Phone/"..phone:gsub("-", "")..".png")
+	self.m_PhoneImage:setImage(("files/images/Phone/%s.png"):format(AppSettings.PhonePath[phone]))
 	self.m_Phone = phone
 	self:refreshAppIcons()
 end
 
 function Phone:setBackground(background)
 	self.m_BackgroundImage:setImage(("files/images/Phone/Backgrounds/%s.png"):format(background))
-	--self.m_Background = background
-	--self:refreshAppIcons()
 end
 
 function Phone:registerApp(appClasst)

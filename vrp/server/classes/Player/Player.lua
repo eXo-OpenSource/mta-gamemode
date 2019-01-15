@@ -271,7 +271,7 @@ function Player:loadCharacterInfo()
 	self:getOfflineMessages()
 	if self.m_OfflineMessages then
 		for key, msg in ipairs( self.m_OfflineMessages ) do
-			self:sendShortMessage(msg[1], "Offlinenachricht" )
+			self:sendShortMessage(msg[1], "Offlinenachricht", nil, -1)
 		end
 	end
 

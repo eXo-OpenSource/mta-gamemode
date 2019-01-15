@@ -67,17 +67,19 @@ function FactionGUI:constructor()
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
-	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
+	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)
 	self.m_FactionPlayersGrid:addColumn(_"", 0.06)
-	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.49)
+	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_FactionPlayersGrid:addColumn(_"Aktivität", 0.27)
+	self.m_FactionPlayersGrid:setSortable{"Spieler", "Rang", "Aktivität"}
+	self.m_FactionPlayersGrid:setSortColumn(_"Rang", "down")
 
-	self.m_FactionAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
-	self.m_FactionRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
-	self.m_FactionRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
-	self.m_FactionRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
-	self.m_FactionToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+	self.m_FactionAddPlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_FactionRemovePlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_FactionRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
+	self.m_FactionRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_FactionToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -147,10 +149,10 @@ function FactionGUI:addLeaderTab()
 
 		self:refreshLeaderTab()
 
-		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
+		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 		self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
 
-		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_FactionForumSyncButton.onLeftClick = bind(self.FactionForumSyncButton_Click, self)
 
 		self.m_Leader = true
@@ -579,14 +581,13 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 				self.m_FactionNextActionLabel:setColor(Color.Red)
 			end
 
-			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
-
 			self.m_FactionPlayersGrid:clear()
-			for _, info in ipairs(players) do
+			for playerId, info in pairs(players) do
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
-				item.Id = info.playerId
+				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
+				item.Id = playerId
 
 				item.onLeftClick =
 					function()
