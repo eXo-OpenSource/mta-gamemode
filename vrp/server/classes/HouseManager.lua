@@ -52,7 +52,7 @@ function HouseManager:constructor()
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
 
-function HouseManager:createNewHouse(player,cmd,...)
+function HouseManager:createNewHouse(player, cmd, ...)
 	if select("#",...) < 2 then player:sendMessage("Syntax: interior, price",255,0,0) return false end
 	if player:getRank() >= RANK.Administrator then
 		local interior, price = ...
@@ -60,7 +60,6 @@ function HouseManager:createNewHouse(player,cmd,...)
 		if interior and price and HOUSE_INTERIOR_TABLE[interior] then
 			local pos = player:getPosition()
 			self:newHouse(pos, interior, price)
-			player:sendMessage(("house created @ %f, %f, %f"):format(x,y,z), 255, 255, 255)
 		end
 	end
 end
@@ -264,8 +263,8 @@ function HouseManager:loadBlips(player)
 end
 
 function HouseManager:Event_requestGUI( )
-	if client.visitingHouse and client.lastHousePickup and isElement(client.lastHousePickup) then 
-		if Vector3(client:getPosition() - client.lastHousePickup:getPosition()):getLength() < 5 then 
+	if client.visitingHouse and client.lastHousePickup and isElement(client.lastHousePickup) then
+		if Vector3(client:getPosition() - client.lastHousePickup:getPosition()):getLength() < 5 then
 			self.m_Houses[client.visitingHouse]:showGUI(client)
 		end
 	end
