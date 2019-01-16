@@ -17,7 +17,11 @@ function AdminVehicleTextureEditGUI:constructor(vehicle, textures)
 
 	if textures then
 		for i,v in pairs(textures) do
-			self.m_Grid:addItem(i,v)
+			local item = self.m_Grid:addItem(i,v)
+			item.onLeftDoubleClick = function()
+				self.m_NameEdit:setText(i)
+				self.m_PathEdit:setText(v)
+			end
 		end
 	end
 
