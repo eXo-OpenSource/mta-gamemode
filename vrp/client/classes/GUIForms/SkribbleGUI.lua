@@ -67,6 +67,7 @@ function SkribbleGUI:virtual_destructor()
 	triggerServerEvent("skribbleLeaveLobby", localPlayer)
 
 	if isTimer(self.m_ChooseTimer) then killTimer(self.m_ChooseTimer) end
+	if ColorPicker:isInstantiated() then delete(ColorPicker:getSingleton()) end
 end
 
 function SkribbleGUI:showInfoText(text)
@@ -332,9 +333,8 @@ function SkribbleGUI:changeColor()
 
 	local cp = ColorPicker:new(updateColor, updateColor, updateColor, self.m_Skribble.m_DrawColor)
 
-	-- Chaning position of windows will cause weird bugs
-	--local posX, posY = self.m_Window:getPosition()
-	--cp:setPosition(posX + self.m_Width + 5, posY + self.m_Height - cp.m_Height)
+	local posX, posY = self:getPosition()
+	cp:setAbsolutePosition(posX + self.m_Width + 5, posY + self.m_Height/2 - cp.m_Height/2)
 end
 
 function SkribbleGUI:checkAFK()
