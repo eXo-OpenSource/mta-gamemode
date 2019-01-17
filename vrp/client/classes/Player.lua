@@ -43,6 +43,13 @@ end
 
 function Player:setPrivateSyncChangeHandler(key, handler)
 	self.m_PrivateSyncChangeHandler[key] = handler
+
+	-- Call the function immediately if we have already datas
+	local data =  self:getPrivateSync(key)
+	if data then
+		local f = self.m_PrivateSyncChangeHandler[key]
+		if f then f(data) end
+	end
 end
 
 function Player:setPublicSyncChangeHandler(key, handler)
