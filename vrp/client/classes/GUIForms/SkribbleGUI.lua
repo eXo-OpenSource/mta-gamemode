@@ -23,6 +23,7 @@ function SkribbleGUI:constructor()
 	self.m_TimeLeftLabel = GUIGridLabel:new(2, 1, 1, 1, "", self.m_Window)
 	self.m_RoundLabel = GUIGridLabel:new(1, 1, 5, 1, "", self.m_Window):setAlignX("right")
 	self.m_GuessingWordLabel = GUIGridLabel:new(10, 1, 10, 1, "", self.m_Window)
+	self.m_AFKWarningLabel = GUIGridLabel:new(17, 1, 7, 1, "", self.m_Window):setColor(Color.LightRed):setAlignX("right")
 
 	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Spieler", .5)
@@ -173,10 +174,6 @@ function SkribbleGUI:deleteResultLabels()
 	end
 end
 
-function SkribbleGUI:deleteGameResult()
-
-end
-
 function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, hints, syncData, timeLeft)
 	self.m_State = state
 	self.m_Players = players
@@ -243,6 +240,8 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 		if isTimer(self.m_TimeLeftTimer) then killTimer(self.m_TimeLeftTimer) end
 		self.m_TimeLeftLabel:setText("")
 	end
+
+	self:checkAFK()
 end
 
 function SkribbleGUI:updateGuessingWordLabel()
@@ -320,26 +319,38 @@ function SkribbleGUI:setDrawingEnabled(state)
 end
 
 function SkribbleGUI:changeColor()
-	ColorPicker:new(
+	if ColorPicker:isInstantiated() then
+		ColorPicker:getSingleton():bringToFront()
+		return
+	end
+
+	local updateColor =
 		function(r, g, b)
 			self.m_ChangeColor:setBackgroundColor(tocolor(r, g, b))
 			self.m_Skribble:setDrawColor(tocolor(r, g, b))
-		end,
-		function(r, g, b)
-			self.m_ChangeColor:setBackgroundColor(tocolor(r, g, b))
-		end,
-		function(r, g, b)
-			self.m_ChangeColor:setBackgroundColor(tocolor(r, g, b))
-			self.m_Skribble:setDrawColor(tocolor(r, g, b))
-		end,
-		self.m_Skribble.m_DrawColor
-	)
+		end
+
+	local cp = ColorPicker:new(updateColor, updateColor, updateColor, self.m_Skribble.m_DrawColor)
+
+	-- Chaning position of windows will cause weird bugs
+	--local posX, posY = self.m_Window:getPosition()
+	--cp:setPosition(posX + self.m_Width + 5, posY + self.m_Height - cp.m_Height)
 end
+
+function SkribbleGUI:checkAFK()
+	if localPlayer.m_AFKCheckCount and localPlayer.m_AFKCode then
+		self.m_AFKWarningLabel:setText(("AFK Warnung (/noafk %s)"):format(localPlayer.m_AFKCode))
+	else
+		self.m_AFKWarningLabel:setText("")
+	end
+end
+
 
 addEventHandler("skribbleSyncLobbyInfos", root,
 	function(...)
 		if not SkribbleGUI:isInstantiated() then
-			SkribbleGUI:new(...)
+			local instance = SkribbleGUI:new(...)
+			GUIForm.DoNotClose[instance] = true
 			Phone:getSingleton():close()
 		end
 

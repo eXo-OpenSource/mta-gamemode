@@ -53,7 +53,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setCanBeKnockedOffBike", root, bind(self.serverSetCanBeKnockedOffBike, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
-	addEventHandler("onTryEnterExit", root, bind(self.Event_tryEnterExit, self)) 
+	addEventHandler("onTryEnterExit", root, bind(self.Event_tryEnterExit, self))
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
@@ -63,18 +63,18 @@ function LocalPlayer:constructor()
 	--Alcoholsystem
 	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
-	
+
 	self:setPrivateSyncChangeHandler("SessionID", function()
 		core:onWebSessionCreated()
 	end)
 
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
-	
-	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37) 
+
+	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37)
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col)
-	
-	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 ) 
+
+	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 )
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col2)
 
 	local col3 = createColCuboid(1894.46, 968.18, 9.82, 1920.30-1894.46, 1018.40-968.18, 5) -- triad base
@@ -90,14 +90,14 @@ function LocalPlayer:constructor()
 end
 
 function LocalPlayer:startLookAt( )
-	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then 
+	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then
 		self:stopLookAt()
 	end
 	self.m_LookAtTimer = setTimer(bind(self.Event_PreRender, self), 100, 0)
 end
 
 function LocalPlayer:stopLookAt()
-	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then 
+	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then
 		killTimer(self.m_LookAtTimer)
 	end
 	setPedLookAt(localPlayer, 0, 0,0, 0)
@@ -471,7 +471,7 @@ function LocalPlayer:checkAFK()
 		if afkMinutes == 12 then
 			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
 				outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
-				self:sendTrayNotification("WARNUNG: Du wirst in 5 Minuten zum AFK-Cafe befördert!", "warning", true)
+				self:sendTrayNotification("WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", "warning", true)
 				self:generateAFKCode()
 				return
 			end
@@ -596,8 +596,8 @@ function LocalPlayer:generateAFKCode()
 	local char = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z","0","1","2","3","4","5","6","7","8","9"}
 	local code = {}
 	for z = 1,4 do
-		a = math.random(1,#char)
-		x = string.lower(char[a])
+		local a = math.random(1,#char)
+		local x = string.lower(char[a])
 		table.insert(code, x)
 	end
 	local fcode = table.concat(code)
@@ -673,7 +673,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		end)
-		
+
 		self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
 			if state then
 				if ego.Active then
@@ -870,7 +870,7 @@ function LocalPlayer:deactivateBlur(bool)
 end
 
 function LocalPlayer:Event_tryEnterExit(object, name, icon)
-	if not self.m_LastEntrance or self.m_LastEntrance + 500 < getTickCount() then 
+	if not self.m_LastEntrance or self.m_LastEntrance + 500 < getTickCount() then
 		if self.m_Entrance and self.m_Entrance:isInstantiated() then self.m_Entrance:delete() end
 		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon)
 		self.m_LastEntrance = getTickCount()
