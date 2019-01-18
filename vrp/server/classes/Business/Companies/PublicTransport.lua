@@ -133,7 +133,7 @@ end
 
 function PublicTransport:onVehicleEnter(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 or veh:getModel() == 580  then
+		if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
 			player:triggerEvent("showTaxoMeter")
 			veh:setData("EPT_Taxi", true, true)
 		elseif veh:getModel() == 437 then
@@ -148,7 +148,7 @@ function PublicTransport:onVehicleEnter(veh, player, seat)
 			end
 		end
 	else
-		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 or veh:getModel() == 580  then
+		if veh:getData("EPT_Taxi") then
 			if veh.controller then
 				veh.controller.m_TaxiData = veh
 				veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)

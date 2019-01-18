@@ -440,6 +440,7 @@ GAS_STATIONS = {
 		serviceStation = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	--[[
 	{
 		name = "LCN",
 		stations = {
@@ -449,6 +450,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	]]--
 	{
 		name = "Yakuza",
 		stations = {
@@ -476,17 +478,15 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	--[[
 	{
-		name = "Outlaws MC",
+		name = "Lost MC",
 		stations = {
-			{Vector3(693.11, -455.24, 16.92), 90, 1},
+			{Vector3( 734.34, 304.72, 20.23), 0, 1},
 		},
 		accessible =  {1, FactionStaticId.OUTLAWS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	]]
 	{
 		name = "Ballas",
 		stations = {

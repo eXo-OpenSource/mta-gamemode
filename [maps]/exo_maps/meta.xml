@@ -30,8 +30,8 @@
 	<map src="fraktionen/aztecas.map" />
 	<map src="fraktionen/cartell.map" />
 
-	<map src="fraktionen/biker.map" />
-	<map src="fraktionen/cosanostra.map" />
+	<!--<map src="fraktionen/biker.map" />--> <!--Outlaws base-->
+	<!--map src="fraktionen/cosanostra.map" /-->
 	<map src="fraktionen/lspd.map" />
 	<!--<map src="fraktionen/lspd-gate-access.map" />-->
 	<!--map src="fraktionen/PD-exit.map" /-->
@@ -40,6 +40,7 @@
 	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/rescue_int.map" />
+	<map src="fraktionen/lostmc.map" />
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
 	<map src="fraktionen/yakuza.map"/>
@@ -85,7 +86,7 @@
 	<map src="jobs/dumper.map" />
 
 	<!-- <map src="noobspawn_christmas.map" /> -->
-	<!--<map src="noobspawn.map" />-->
+	<map src="noobspawn.map" />
 	<map src="prison.map" />
 
 	<map src="shop/ammunation.map" />

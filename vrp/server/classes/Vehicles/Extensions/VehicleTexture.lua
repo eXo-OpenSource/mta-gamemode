@@ -9,6 +9,7 @@ VehicleTexture = inherit(Object)
 VehicleTexture.Map = {}
 VehicleTexture.WeirdCamperTexture = "#emapcamperbody256" -- fuck this, just hack it in. If some other vehicle has the same problem, maybe we should use a better system, but for now... /shrug
 
+
 function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, player, forceTexture)
 	if vehicle and isElement(vehicle) then
 		self.m_Id = #VehicleTexture.Map+1
