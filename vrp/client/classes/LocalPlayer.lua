@@ -634,7 +634,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		bindKey("lshift", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() and not vehicle.m_HasDI then
 						local vx, vy, vz = getElementVelocity(vehicle)
@@ -645,7 +645,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lalt", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*1.2)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -655,7 +655,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lctrl", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*0.8)*math.clamp(0.2, vehicle.velocity.length, 5))

@@ -9,12 +9,12 @@ VehicleManager = inherit(Singleton)
 VehicleManager.sPulse = TimedPulse:new(5*1000)
 
 function VehicleManager:constructor()
-	self.m_TuningClasses = 
+	self.m_TuningClasses =
 	{
 		["EngineKit"] = EngineTuning,
-		["BrakeKit"] = BrakeTuning, 
+		["BrakeKit"] = BrakeTuning,
 		["WheelKit"] = WheelTuning,
-		["SuspensionKit"] = SuspensionTuning, 
+		["SuspensionKit"] = SuspensionTuning,
 	}
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
@@ -67,6 +67,19 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSetTuningPropertyTable", root, bind(self.Event_SetPerformanceTuningTable, self))
 	addEventHandler("vehicleRequestHandling", root, bind(self.Event_GetVehicleHandling, self))
 	addEventHandler("vehicleResetHandling", root, bind(self.Event_ResetVehicleHandling, self))
+
+	addEventHandler("onVehicleExplode", root,
+		function()
+			if source.m_Magnet and source.m_GrabbedVehicle then
+				source.m_MagnetActivated = false
+				detachElements(source.m_GrabbedVehicle)
+				setElementData(source, "MagnetGrabbedVehicle", nil)
+
+				source.m_GrabbedVehicle:blow()
+			end
+		end
+	)
+
 	addEventHandler("clientToggleVehicleEngine", root,
 		function()
 			if client.vehicleSeat ~= 0 then return end
@@ -296,9 +309,9 @@ function VehicleManager:Event_GetVehicleHandling( vehicle )
 end
 
 function VehicleManager:Event_ResetVehicleHandling( )
-	local vehicle = client:getOccupiedVehicle() or client:getContactElement() 
-	if vehicle and isElement(vehicle) and getElementType(vehicle) == "vehicle" then 
-		if vehicle.m_Tunings then 
+	local vehicle = client:getOccupiedVehicle() or client:getContactElement()
+	if vehicle and isElement(vehicle) and getElementType(vehicle) == "vehicle" then
+		if vehicle.m_Tunings then
 			vehicle.m_Tunings:removeAllTuningKits()
 			client:sendInfo(_("Fahrzeug wurde zurückgesetzt!", client, name))
 		end
@@ -306,7 +319,7 @@ function VehicleManager:Event_ResetVehicleHandling( )
 end
 
 function VehicleManager:Event_SetPerformanceTuningTable( vehicle, tuningTable, reset )
-	if not vehicle.m_Tunings then 
+	if not vehicle.m_Tunings then
         vehicle.m_Tunings = VehicleTuning:new(vehicle)
     end
 	vehicle.m_Tunings:setPerformanceTuningTable( tuningTable, client, reset )
@@ -345,7 +358,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotZ = rotZ or 0
 	local premium = premium or 0
 	local shopIndex = shopIndex or 1
-	
+
 	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
 		return self:createVehicle(sql:lastInsertId(), template)
 	end
@@ -380,7 +393,7 @@ function VehicleManager:createVehicle(idOrData, handlingTemplate)
 		end
 		if handlingTemplate then
 			local template = TuningTemplateManager:getSingleton():getTemplateFromId( handlingTemplate )
-			if template then 
+			if template then
 				template:applyTemplate(vehicle)
 			end
 		end
