@@ -207,14 +207,14 @@ factionRankNames[9] = {
 [5] = "Vice-President",
 [6] = "President"
 }
-factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
-factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
-factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
+factionColors[9] = {["r"] = 86,["g"] =66,["b"] = 33}
+factionCarColors[9] = {["r"] = 190,["g"] = 193,["b"] = 198, ["r1"] = 190,["g1"] = 193,["b1"] = 198}
+factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true, [93]=true, [233]=true}
 factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[9] =  Vector3(687.20, -445.40, 16.3)
-factionWTDestination[9] =   Vector3(659.80,-463.10,14.5)
-factionSpawnpoint[9] = {Vector3(687.07, -453.29, 20.65), 0, 0}
-factionAirDropPoint[9] = Vector3(605.91, -484.64, 16.20)
+evilFactionInteriorEnter[9] =  Vector3(761.18, 379.50, 22.97)
+factionWTDestination[9] =   Vector3(755.24, 324.81, 18.88)
+factionSpawnpoint[9] = {Vector3(775.86, 376.73, 21.08), 0, 0}
+factionAirDropPoint[9] = Vector3(755.24, 324.81, 18.88)
 factionNavigationpoint[9] = evilFactionInteriorEnter[9]
 
 -- ID 10 = Vatos
