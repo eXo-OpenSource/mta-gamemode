@@ -43,7 +43,11 @@ end
 
 function BeggarPed:virtual_destructor()
 	if self.m_ColShape and isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
-
+	if self.m_AbortRescueTimer and isTimer(self.m_AbortRescueTimer) then killTimer(self.m_AbortRescueTimer) end
+	if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
+	if self.m_DeathPickup then
+		FactionRescue:getSingleton():removePedDeathPickup(self)
+	end
 	-- Remove ref
 	BeggarPedManager:getSingleton():removeRef(self)
 end
@@ -54,9 +58,6 @@ end
 
 function BeggarPed:despawn()
 	self.m_Despawning = true
-	if self.m_AbortRescueTimer and isTimer(self.m_AbortRescueTimer) then killTimer(self.m_AbortRescueTimer) end
-	if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
-
     setTimer(function ()
 		if self and isElement(self) and self:getAlpha() then
 			local newAlpha = self:getAlpha() - 10
@@ -154,8 +155,9 @@ function BeggarPed:isMoneyRobbable()
 end
 
 function BeggarPed:createLootPickup()
-	self.m_LootPickup = Pickup(self.position + Vector3((math.random(0, 2)-1)/10, (math.random(0, 2)-1)/10, -1), 3, 1279, 0)
+	self.m_LootPickup = Pickup(self.position + Vector3((math.random(0, 2)-1)/10, (math.random(0, 2)-1)/10, -0.7), 3, 1279, 0)
 	addEventHandler("onPickupHit", self.m_LootPickup, function(hitPlayer)
+		if self.m_Despawning then return end
 		if hitPlayer:getType() == "player" and not hitPlayer.vehicle then
 			if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
 			if source and isElement(source) then destroyElement(source) end

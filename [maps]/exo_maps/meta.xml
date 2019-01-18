@@ -30,7 +30,7 @@
 	<map src="fraktionen/aztecas.map" />
 	<map src="fraktionen/cartell.map" />
 
-	<map src="fraktionen/biker.map" />
+	<!--<map src="fraktionen/biker.map" />--> <!--Outlaws base-->
 	<!--map src="fraktionen/cosanostra.map" /-->
 	<map src="fraktionen/lspd.map" />
 	<!--<map src="fraktionen/lspd-gate-access.map" />-->
@@ -86,7 +86,7 @@
 	<map src="jobs/dumper.map" />
 
 	<!-- <map src="noobspawn_christmas.map" /> -->
-	<!--<map src="noobspawn.map" />-->
+	<map src="noobspawn.map" />
 	<map src="prison.map" />
 
 	<map src="shop/ammunation.map" />
