@@ -422,7 +422,7 @@ function FactionRescue:createDeathPickup(player, ...)
 	if not player:isInGangwar() then
 		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
 			local text = _("%s benötigt ärztliche Hilfe.\nPosition: %s - %s", rescuePlayer, player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true))
-			if rescuePlayer:isFactionDuty() and client:getPublicSync("Rescue:Type") == "medic" then
+			if rescuePlayer:isFactionDuty() and rescuePlayer:getPublicSync("Rescue:Type") == "medic" then
 				rescuePlayer:sendWarning(text, 10000, "Arzt benötigt")
 			else
 				rescuePlayer:sendShortMessage(text)
