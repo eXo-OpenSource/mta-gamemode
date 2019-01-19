@@ -235,13 +235,16 @@ end
 
 function VehicleManager:Event_AdminEdit(vehicle, changes)
 	local hasToBeSaved = false
+
 	if changes.Model then
 		if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleModel"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
 		local oldModel = vehicle:getModel()
 		vehicle:setModel(changes.Model)
+		vehicle.m_BuyPrice = OLD_VEHICLE_PRICES[changes.Model] or -1
 		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "changeModel", vehicle, oldModel.." -> "..(changes.Model))
 		hasToBeSaved = true
 	end
+
 	if changes.ELS then
 		if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleModel"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
 		vehicle:removeELS()
@@ -252,6 +255,7 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 		client:sendSuccess(_("ELS aktualisiert", client))
 		hasToBeSaved = true
 	end
+
 	--[[if changes.OwnerID then Note by MasterM: oh shit this code is so stupid, please shoot me so that I never have to look at it again
 		if vehicle.m_OwnerType == VehicleTypes.Player then -- check if the player is online
 
@@ -269,6 +273,7 @@ function VehicleManager:Event_AdminEdit(vehicle, changes)
 			end
 		end
 	end]]
+
 	if hasToBeSaved and instanceof(vehicle, PermanentVehicle) then
 		vehicle:saveAdminChanges()
 	end
