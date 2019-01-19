@@ -13,7 +13,6 @@ function DxRectangle:constructor(posX, posY, width, height, color, parent, isRel
 	GUIColorable.constructor(self, color)
 end
 
-
 function DxRectangle:drawThis()
 	if not self.m_Draw then return end
 

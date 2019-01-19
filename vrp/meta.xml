@@ -548,7 +548,6 @@
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
-	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
@@ -606,6 +605,7 @@
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
+	<script src="client/classes/GUI/GUIWebWindow.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
@@ -641,7 +641,6 @@
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
@@ -708,10 +707,8 @@
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastError.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
 
-	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
-	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
-	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/VRPFont.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/BusRoutePlan.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
@@ -726,7 +723,6 @@
 	<script src="client/classes/HUD/Help/ElementInfoManager.lua" type="client"/>
 
 	<!-- Forms -->
-	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
@@ -754,6 +750,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
@@ -778,16 +775,15 @@
 	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehiclePerformanceGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathGUI.lua" type="client"/>
@@ -825,7 +821,6 @@
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client"/>
@@ -863,7 +858,7 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TownHallInfoGUI.lua" type="client"/>

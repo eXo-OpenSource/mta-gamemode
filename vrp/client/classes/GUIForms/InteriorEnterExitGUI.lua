@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 InteriorEnterExitGUI = inherit(Singleton)
---inherit(Singleton, InteriorEnterExitGUI)
 
 InteriorEnterExitGUI.m_Font = VRPFont(60)
 InteriorEnterExitGUI.m_FontSmall = VRPFont(24)
@@ -31,7 +30,6 @@ function InteriorEnterExitGUI:constructor(entry, text, icon)
     self:start()
 end
 
-
 function InteriorEnterExitGUI:start()
     self.m_Height = self.m_Height*0.9
     self.m_X = screenWidth/2-(self.m_Width*0.15/2)
@@ -40,7 +38,6 @@ function InteriorEnterExitGUI:start()
     self.m_DrawBind = bind(self.draw, self)
     addEventHandler("onClientRender", root, self.m_DrawBind)
 end
-
 
 function InteriorEnterExitGUI:draw()
     localPlayer.m_LastEntrance = getTickCount()

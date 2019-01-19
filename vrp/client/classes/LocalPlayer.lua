@@ -10,7 +10,6 @@ addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCas
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"
 ,"onTryEnterExit"}
 
-local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
 	self.m_Job = false
@@ -29,6 +28,7 @@ function LocalPlayer:constructor()
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	self.m_FadeOut = bind(self.fadeOutScope, self)
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
+
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
@@ -682,23 +682,6 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		end)
-		--[[bindKey("f5", "down",
-			function()
-				if self:getRank() >= RANK.Moderator then
-					if MapGUI:isInstantiated() then
-						delete(MapGUI:getSingleton())
-					else
-						MapGUI:getSingleton(
-							function(posX, posY, posZ)
-								localPlayer:setPosition(posX, posY, posZ)
-								localPlayer:setInterior(0)
-								localPlayer:setDimension(0)
-							end
-							)
-					end
-				end
-			end
-		)]]
 
 		if rank >= ADMIN_RANK_PERMISSION["runString"] then
 			addCommandHandler("dcrun", function(cmd, ...)
@@ -846,7 +829,7 @@ end
 
 addEvent("showModCheck", true)
 addEventHandler("showModCheck",localPlayer, function(tbl)
-	local w,h = guiGetScreenSize()
+	local w, h = screenWidth, screenHeight
 	local tx = dxGetFontHeight(3,"default-bold")
 	local tx2 = dxGetFontHeight(2,"default")
 	addEventHandler("onClientRender", root, function()

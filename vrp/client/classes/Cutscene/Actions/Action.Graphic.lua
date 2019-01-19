@@ -4,9 +4,8 @@ Action.Graphic = inherit(Object)
 Action.Graphic.drawText = inherit(Object)
 Action.Graphic.drawText.constructor = function(self, data, scene)
 	self.text = data.text
-	local sw, sh = guiGetScreenSize()
-	self.x = data.pos[1] * sw
-	self.y = data.pos[2] * sh
+	self.x = data.pos[1] * screenWidth
+	self.y = data.pos[2] * screenHeight
 	self.color = data.color or tocolor(255, 255, 255)
 	self.scale = data.scale or 1
 	self.font = data.font or "default"
@@ -20,11 +19,10 @@ end
 Action.Graphic.drawImage = inherit(Object)
 Action.Graphic.drawImage.constructor = function(self, data, scene)
 	self.path = data.path
-	local sw, sh = guiGetScreenSize()
-	self.x = data.pos[1] * sw
-	self.y = data.pos[2] * sh
-	self.width = data.size[1] * sw
-	self.height = data.size[2] * sh
+	self.x = data.pos[1] * screenWidth
+	self.y = data.pos[2] * screenHeight
+	self.width = data.size[1] * screenWidth
+	self.height = data.size[2] * screenHeight
 	self.rotation = data.rotation or 0
 end
 
@@ -39,6 +37,5 @@ Action.Graphic.setLetterBoxText.constructor = function(self, data, scene)
 end
 
 Action.Graphic.setLetterBoxText.render = function(self)
-	local sw, sh = guiGetScreenSize()
-	dxDrawText(self.text, sw/2, sh*0.92, sw/2, sh*0.91, tocolor(255, 255, 255), 2, "default", "center", "center")
+	dxDrawText(self.text, screenWidth/2, screenHeight*0.92, screenWidth/2, screenHeight*0.91, tocolor(255, 255, 255), 2, "default", "center", "center")
 end

@@ -69,9 +69,8 @@ function GUIRenderer.process3DMouse()
 	end
 
 	-- Convert relative to absolute coordinates
-	local sw, sh = guiGetScreenSize()
-	cx = cx*sw
-	cy = cy*sh
+	cx = cx*screenWidth
+	cy = cy*screenHeight
 
 	-- Retrieve mouse states
 	local mouse1, mouse2 = getKeyState("mouse1"), getKeyState("mouse2")

@@ -159,8 +159,6 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
     end, 250, 1)
 end
 
-
-
 function TrunkGUI:checkAmount(text)
 	if not self.m_SelectedItemType then
 		return
@@ -245,8 +243,6 @@ function TrunkGUI:fromTrunk(type, id)
         ErrorBox:new(_"In diesem Slot ist kein Item!")
     end
 end
-
-
 
 addEventHandler("openTrunk", root, function()
     if TrunkGUI:getSingleton():isInstantiated() then

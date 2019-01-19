@@ -8,8 +8,6 @@
 BobberBar = inherit(Singleton)
 addRemoteEvents{"fishingBobberBar"}
 
-local screenWidth, screenHeight = guiGetScreenSize()
-
 function BobberBar:constructor(fishData, fishingRodName, baitName, accessorieName)
 	self.m_FisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
 

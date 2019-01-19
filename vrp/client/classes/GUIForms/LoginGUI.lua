@@ -42,11 +42,14 @@ function LoginGUI:constructor(savedName, savedPW)
 				if self.m_Elements.BtnRegister:isVisible() then
 					self.m_Elements.BtnRegister:onLeftClick()
 				end
-			--else
-			--	self.m_GuestGuestButton:onLeftClick()
 			end
 		end
 	)
+end
+
+function LoginGUI:virtual_destructor()
+	LoginGUI.stopCameraDrive()
+	Cursor:hide(true)
 end
 
 function LoginGUI:fadeElements(fadeIn)
@@ -250,12 +253,6 @@ end
 
 function LoginGUI:initClose(callback)
 	self:switchViews(true, true, callback)
-end
-
-function LoginGUI:destructor()
-	LoginGUI.stopCameraDrive()
-	Cursor:hide(true)
-	GUIForm.destructor(self)
 end
 
 function LoginGUI:checkRegister()

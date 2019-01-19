@@ -8,9 +8,9 @@
 WareGUI = inherit(GUIForm)
 inherit(Singleton, WareGUI)
 
-local MAX_PLAYERS_PER_WARE = 12
-addRemoteEvents{"Ware:wareOpenGUI", "Ware:closeGUI"}
+addRemoteEvents{"Ware:wareOpenGUI", "Ware:closeGUI" }
 
+local MAX_PLAYERS_PER_WARE = 12
 function WareGUI:constructor()
 	GUIWindow.updateGrid()			-- initialise the grid function to use a window
 	self.m_Width = grid("x", 15) 	-- width of the window

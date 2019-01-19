@@ -666,12 +666,12 @@ EASTEREGG_FILE_PATH = ":"..getResourceName(getThisResource()).."/files/fonts/"
 EASTEREGG_SFX_PATH = ":"..getResourceName(getThisResource()).."/files/audio/arcade-sfx/"
 EASTEREGG_TICK_CAP = 1000/ 59.99
 EASTEREGG_NATIVE_RATIO = {x=1024;y=512}
-EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = guiGetScreenSize()
+EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = screenWidth, screenHeight
 EASTEREGG_FONT_SCALE = 1
 EASTEREGG_JUMP_RATIO = 16
 EASTEREGG_PROJECTILE_SPEED = 3
 EASTEREGG_ARENA_IMAGE = "arena"
-local w, h = guiGetScreenSize()
+local w, h = screenWidth, screenHeight
 if EASTEREGG_WINDOW_WIDTH >= 1600 then
 	EASTEREGG_FONT_SCALE = 1
 	EASTEREGG_WINDOW = {{x=(w*0.5)-512;y=(h*0.5)-256}, {x=1024, y=512}}

@@ -6,11 +6,10 @@
 -- *
 -- ****************************************************************************
 GroupProperty = inherit( Singleton )
-local w,h = guiGetScreenSize()
-local width = w*0.18
-local height = h*0.12
+local width = screenWidth*0.18
+local height = screenHeight*0.12
 local sx = 0
-local sy = h*0.5-height/2
+local sy = screenHeight*0.5-height/2
 local fontHeight = dxGetFontHeight(1,"default-bold")
 addRemoteEvents{"showGroupEntrance", "hideGroupEntrance","createGroupBlip","destroyGroupBlip","addPickupToGroupStream","groupEntryMessage"}
 function GroupProperty:constructor( )
@@ -83,8 +82,8 @@ GroupPropertyEntryMessageGUI = inherit(GUIForm)
 inherit(Singleton, GroupPropertyEntryMessageGUI)
 
 function GroupPropertyEntryMessageGUI:constructor(text)
-	GUIForm.constructor(self, 0,0,w*0.9,h*0.9)
-	self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, self):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
+	GUIForm.constructor(self, 0,0,screenWidth*0.9,screenHeight*0.9)
+	self.m_Message = GUILabel:new( 0,0,screenWidth*0.9,screenHeight*0.9, text, self):setAlignX("right"):setAlignY("bottom"):setFont(VRPFont(screenHeight*0.1, Fonts.Rage))
 	showCursor(false)
 	Animation.FadeAlpha:new(self.m_Message, 1000, 0, 255)
 	setTimer(function()

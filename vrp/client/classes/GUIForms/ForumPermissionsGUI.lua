@@ -57,9 +57,8 @@ function ForumPermissionsGUI:constructor(factionOrCompany, id)
 	triggerServerEvent("forumPermissionsGet", localPlayer, self.m_FactionOrCompany, self.m_FactionOrCompanyId)
 end
 
-function ForumPermissionsGUI:destructor()
+function ForumPermissionsGUI:virtual_destructor()
 	removeEventHandler("forumPermissionsReceive", root, self.m_ReceiveForumPermissionsEvent)
-	GUIForm.destructor(self)
 end
 
 function ForumPermissionsGUI:Event_ReceiveForumPermissions(data)

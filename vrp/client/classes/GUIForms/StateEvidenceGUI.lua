@@ -8,7 +8,8 @@
 StateEvidenceGUI = inherit(GUIForm)
 inherit(Singleton, StateEvidenceGUI)
 
-addRemoteEvents{"State:sendEvidenceItems","State:clearEvidenceItems"}
+addRemoteEvents{"State:sendEvidenceItems", "State:clearEvidenceItems" }
+
 function StateEvidenceGUI:constructor( evidenceTable )
 	GUIForm.constructor(self, screenWidth/2-(500/2), screenHeight/2-(370/2), 500, 370)
 	self.m_Window = GUIWindow:new(0,0,500,370,_"Asservatenkammer",true,true,self)
@@ -19,12 +20,6 @@ function StateEvidenceGUI:constructor( evidenceTable )
 	self.m_List:addColumn(_"Von", 0.3)
 	self.m_List:addColumn(_"Datum", 0.2)
 	self.m_EvidenceTable = evidenceTable
-
---[[
-	self.m_mitKaution = GUIButton:new(30, 265, self.m_Width-60, 35,_"mit Kaution einknasten", self.m_Window)
-	self.m_mitKaution:setBackgroundColor(Color.Blue):setFont(VRPFont(28)):setFontSize(1)
-	self.m_mitKaution.onLeftClick = bind(self.factionArrestMitKaution,self)
-]]
 
 	self:refreshGrid()
 	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 90, 330, 180, 30, "Geld-Transport starten", self.m_Window)

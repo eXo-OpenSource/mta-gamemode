@@ -237,7 +237,7 @@ function CustomF11Map:draw()
 			end
 		end
 		if self.m_BlipToolTipShowing then --always draw tooltips on top of other blips
-			blip, x, y = unpack(self.m_BlipToolTipShowing)
+			local blip, x, y = unpack(self.m_BlipToolTipShowing)
 			dxDrawToolTip(x, y, blip:getDisplayText())
 		end
 		self.m_BlipToolTipShowing = nil

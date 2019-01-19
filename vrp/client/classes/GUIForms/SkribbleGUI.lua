@@ -1,12 +1,13 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/GUIForms/SkribbleGUI.lua
+-- *  PURPOSE:     Skribble Game GUI
 -- *
 -- ****************************************************************************
 SkribbleGUI = inherit(GUIForm)
 inherit(Singleton, SkribbleGUI)
+
 addRemoteEvents{"skribbleSyncLobbyInfos", "skribbleShowInfoText", "skribbleChoosingWord", "skribbleSyncDrawing"}
 
 function SkribbleGUI:constructor()

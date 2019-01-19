@@ -94,7 +94,7 @@ function PerformanceStatsGUI:refresh()
 					table.insert(blips, blip)
 				end
 				ShortMessage:new(text, _("Textur Info (%s)", path:gsub("files/images/Textures", "")), Color.Red, -1, function()
-					for i, v in pairs(blips) do 
+					for i, v in pairs(blips) do
 						v:delete()
 					end
 				end)
@@ -145,60 +145,3 @@ addEventHandler("onClientResourceStart", resourceRoot,
 		)
 	end
 )
-
-
---[[
-PerformanceStatsGUI = inherit(GUIForm)
-inherit(Singleton, PerformanceStatsGUI)
-
-function PerformanceStatsGUI:constructor()
-	
-	local screenWidth, screenHeight = 1920, 1080
-	
-	self.m_Width = screenWidth*0.3	-- width of the window
-	self.m_Height = 50 + screenWidth*0.2	-- height of the window
-	
-	local col = math.floor(self.m_Height/15)
-	local m = math.floor(col/3)
-	
-	local dxStats = dxGetStatus()
-	local memTotal = dxStats.VideoCardRAM
-	local memFree = dxStats.VideoMemoryFreeForMTA
-	local memForFonts = dxStats.VideoMemoryUsedByFonts
-	local memForTextures = dxStats.VideoMemoryUsedByTextures
-	local memForRTs = dxStats.VideoMemoryUsedByRenderTargets 
-
-	GUIForm.constructor(self, screenWidth-self.m_Width-m, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Performance und Debug", true, false, self)
-	self.m_Tabs = self.m_Window:addTabPanel({"Ressourcen", "Elemente", "Textur-Cache"})
-
-	GUILabel:new(m, m, self.m_Width-m*2, col, "Ressourcenverteilung", self.m_Tabs[1])
-	local barSize = self.m_Width-m*2
-	local barX = m
-	DxRectangle:new(barX, m*2 + col, barSize, col, Color.PrimaryNoClick, self.m_Tabs[1])
-	--actual values of bars
-	DxRectangle:new(barX, m*2 + col, barSize*(memForTextures/memTotal), col, Color.Accent, self.m_Tabs[1])
-	barX = barX + barSize*(memForTextures/memTotal)
-	DxRectangle:new(barX, m*2 + col, barSize*(memForFonts/memTotal), col, Color.Green, self.m_Tabs[1])
-	barX = barX + barSize*(memForFonts/memTotal)
-	DxRectangle:new(barX, m*2 + col, barSize*(memForRTs/memTotal), col, Color.Orange, self.m_Tabs[1])
-	barX = barX + barSize*(memForRTs/memTotal)
-	--legend
-	DxRectangle:new(m, m*3 + col*2, col, col, Color.Accent, self.m_Tabs[1])
-	GUILabel:new(m*2 + col, m*3 + col*2, self.m_Width-m*2, col, "Texturen", self.m_Tabs[1])
-	DxRectangle:new(m*6+col*5, m*3 + col*2, col, col, Color.Green, self.m_Tabs[1])
-	GUILabel:new(m*7 + col*6, m*3 + col*2, self.m_Width-m*2, col, "Fonts", self.m_Tabs[1])
-	DxRectangle:new(m*10+col*9, m*3 + col*2, col, col, Color.Orange, self.m_Tabs[1])
-	GUILabel:new(m*11 + col*10, m*3 + col*2, self.m_Width-m*2, col, "RenderTargets", self.m_Tabs[1])
-	
-	GUIRectangle:new(m, m*4 + col*3, self.m_Width-m*2, 2, Color.Accent, self.m_Tabs[1])
-	GUILabel:new(m, m*4 + col*3, self.m_Width-m*2, col, ("%s / %sMB belegt"):format(memTotal-memFree, memTotal), self.m_Tabs[1])
-	GUILabel:new(m, m*4 + col*3, self.m_Width-m*2, col, dxStats.VideoCardName, self.m_Tabs[1]):setAlignX("right")
-end
-
-function PerformanceStatsGUI:destructor()
-	GUIForm.destructor(self)
-end
-
-]]

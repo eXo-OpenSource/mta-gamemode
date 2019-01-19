@@ -10,9 +10,6 @@ inherit(Singleton, HouseEditGUI)
 
 addRemoteEvents{"getAdminHouseData"}
 
-HouseEditGUI = inherit(GUIForm)
-inherit(Singleton, HouseEditGUI)
-
 function HouseEditGUI:constructor()
 	GUIWindow.updateGrid()			-- initialise the grid function to use a window
 	self.m_Width = grid("x", 6) 	-- width of the window
@@ -30,7 +27,7 @@ function HouseEditGUI:constructor()
 
 	self.m_FreeBtn = GUIGridButton:new(1, 2, 5, 1, _"Zwangsenteignen", self.m_Window):setBackgroundColor(Color.Red)
 	self.m_FreeBtn.onLeftClick = function()
-		QuestionBox:new(_"Möchtest du das Haus wirklich enteignen? Mietverträge und die Hauskasse werden gelöscht und der Besitzer nicht entschädigt!", 
+		QuestionBox:new(_"Möchtest du das Haus wirklich enteignen? Mietverträge und die Hauskasse werden gelöscht und der Besitzer nicht entschädigt!",
 			function()
 				triggerServerEvent("houseAdminFree", root, tonumber(selected))
 			end
@@ -45,11 +42,6 @@ function HouseEditGUI:getHouseData(interior)
 	self.m_CurrentInterior = interior
 	self.m_InteriorChangeBtn:setText(_("Interior (%d) ändern", interior))
 end
-
-function HouseEditGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 
 HouseInteriorChanger = inherit(GUIForm)
 inherit(Singleton, HouseInteriorChanger)
@@ -89,7 +81,7 @@ function HouseInteriorChanger:setInterior(id)
 	localPlayer:setPosition(x, y, z)
 end
 
-function HouseInteriorChanger:destructor()
+function HouseInteriorChanger:virtual_destructor()
 	local int, dim, pos = unpack(self.m_OldPosition)
 	localPlayer:setInterior(int)
 	localPlayer:setDimension(dim)
@@ -97,5 +89,4 @@ function HouseInteriorChanger:destructor()
 
 	HouseGUI:getSingleton():show()
 	HouseEditGUI:getSingleton():show()
-	GUIForm.destructor(self)
 end

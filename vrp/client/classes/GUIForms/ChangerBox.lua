@@ -7,7 +7,7 @@
 -- ****************************************************************************
 ChangerBox = inherit(GUIForm)
 
-function ChangerBox:constructor(title, text,items, callback)
+function ChangerBox:constructor(title, text, items, callback)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.18/2, screenWidth*0.4, screenHeight*0.18)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, title, true, true, self)

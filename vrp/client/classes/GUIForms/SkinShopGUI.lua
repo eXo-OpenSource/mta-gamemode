@@ -7,7 +7,7 @@
 -- ****************************************************************************
 SkinShopGUI = inherit(GUIForm)
 inherit(Singleton, SkinShopGUI)
-addEvent("skinBought", true)
+addRemoteEvents{"skinBought"}
 
 function SkinShopGUI:constructor()
 	localPlayer:setFrozen(true)
@@ -43,7 +43,7 @@ function SkinShopGUI:constructor()
 	showChat(false)
 end
 
-function SkinShopGUI:destructor()
+function SkinShopGUI:virtual_destructor()
 	removeEventHandler("skinBought", root, self.m_SkinBought)
 	removeEventHandler("onClientPreRender", root, self.m_RotatePlayer)
 	localPlayer:setFrozen(false)
@@ -51,7 +51,6 @@ function SkinShopGUI:destructor()
 	setCameraTarget(localPlayer, localPlayer)
 	showChat(true)
 	setElementDimension( localPlayer, localPlayer.m_OrigDim)
-	GUIForm.destructor(self)
 end
 
 function SkinShopGUI:Event_SkinBought(skinId)

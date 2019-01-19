@@ -2,14 +2,14 @@ RadioStationEditGUI = inherit(GUIForm)
 inherit(Singleton, RadioStationEditGUI)
 
 function RadioStationEditGUI:constructor()
-	GUIWindow.updateGrid()			
-	self.m_Width = grid("x", 16) 	
-    self.m_Height = grid("y", 12) 
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 16)
+    self.m_Height = grid("y", 12)
     self.m_PreListenState = false
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Radiosender", true, true, self)
-	
+
 	self.m_InfoLabel = GUIGridLabel:new(1, 1, 15, 1, "Die Sender kannst du im Auto oder mit dem platzierbaren Radio anhören.", self.m_Window)
 	self.m_StreamGrid = GUIGridGridList:new(1, 2, 15, 7, self.m_Window)
 	self.m_StreamGrid:addColumn("Senderliste", 0.4)
@@ -22,20 +22,20 @@ function RadioStationEditGUI:constructor()
     self.m_DownBtn.onLeftClick = bind(RadioStationEditGUI.moveStation, self)
 	self.m_UpBtn = GUIGridIconButton:new(15, 2, FontAwesomeSymbols.Double_Up, self.m_Window)
     self.m_UpBtn.onLeftClick = bind(RadioStationEditGUI.moveStation, self, true)
-    
-	
+
+
 	self.m_InfoLabel2 = GUIGridLabel:new(1, 9, 11, 1, "Füge hier einen neuen Sender mit einer Stream-URL hinzu.", self.m_Window)
 	self.m_HelpLabel = GUIGridLabel:new(11, 9, 5, 1, "(Wo finde ich die URLs?)", self.m_Window):setAlignX("right"):setClickable(true)
 	self.m_HelpLabel.onLeftClick = function()
         ShortMessage:new("Radiostationen besitzen heutzutage meistens Webstreams. Diese findest du auf der Web-Seite des Radios oder auch in sog. Stream-Listen im Internet. Wichtig ist, dass der Link möglichst direkt zu dem Audio-Player führt bzw die Musik direkt beginnt. Du kannst auch eine URL eines bestehenden Radiosenders in deinen Browser einfügen und dir somit ein Beispiel anzeigen lassen.", nil, nil, 20000)
-        --GUIWebWindowForm:new(screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, "Das ist ganz einfach", "https://lmddgtfy.net/?q=radio%20stream%20liste", true, true)
+        --GUIWebWindow:new(screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, "Das ist ganz einfach", "https://lmddgtfy.net/?q=radio%20stream%20liste", true, true)
 	end
-	
-	
+
+
 	self.m_NameEdit = GUIGridEdit:new(1, 10, 13, 1, self.m_Window):setCaption("Name des Senders")
 	self.m_URLEdit = GUIGridEdit:new(1, 11, 14, 1, self.m_Window):setCaption("Stream-URL")
     self.m_SoundCheckBtn = GUIGridIconButton:new(15, 11, FontAwesomeSymbols.SoundOn, self.m_Window)
-    self.m_SoundCheckBtn.onLeftClick = function() 
+    self.m_SoundCheckBtn.onLeftClick = function()
         self:preListenStation(not self.m_PreListenState)
     end
     self.m_ListBtn = GUIGridIconButton:new(14, 10, FontAwesomeSymbols.List, self.m_Window):setTooltip("aus Standard-Liste auswählen")
@@ -47,7 +47,7 @@ function RadioStationEditGUI:constructor()
 
     self.m_NameEdit.onLeftClick = function() self:resetSelection() end
     self.m_URLEdit.onLeftClick = self.m_NameEdit.onLeftClick
-    
+
     self:loadDefaultStations()
     self:loadList()
     self:updateEditButtons()
@@ -149,8 +149,8 @@ function RadioStationEditGUI:updateEditButtons(show, moveUp, moveDown)
 end
 
 function RadioStationEditGUI:preListenStation(state)
-    if state == self.m_PreListenState then return end 
-    if state then 
+    if state == self.m_PreListenState then return end
+    if state then
         local url = self.m_URLEdit:getText()
         if url:find("http://") or url:find("https://") then -- you cannot preview gta channels
             self.m_PreviewSound = playSound(url)
@@ -163,7 +163,7 @@ function RadioStationEditGUI:preListenStation(state)
         if isElement(self.m_PreviewSound) then destroyElement(self.m_PreviewSound) end
         self.m_PreListenState = false
     end
-   
+
 end
 
 
@@ -179,9 +179,9 @@ inherit(Singleton, RadioStationPreviewGUI)
 
 function RadioStationPreviewGUI:constructor(radioEditInstance)
     local radioEditInstance = radioEditInstance
-	GUIWindow.updateGrid()			
-	self.m_Width = grid("x", 7) 	
-	self.m_Height = grid("y", 9) 	
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 7)
+	self.m_Height = grid("y", 9)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Standard-Stationen", true, true, self)

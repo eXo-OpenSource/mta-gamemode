@@ -6,11 +6,11 @@
 -- *
 -- ****************************************************************************
 HouseGUI = inherit(GUIForm)
-HouseGUI.Blips = {}
 inherit(Singleton, HouseGUI)
 
 addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
 
+HouseGUI.Blips = {}
 function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId)
 	self.m_isOwner = ownerName == localPlayer:getName()
 	self.m_isTenant = tenants and tenants[localPlayer:getPrivateSync("Id")]
@@ -124,10 +124,6 @@ function HouseGUI:loadOwnerOptions()
 	self.m_SellBtn.onLeftClick = bind(HouseGUI.sellHouse, self)
 end
 
-function HouseGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 function HouseGUI:deposit()
 	local amount = self.m_EditMoney:getText()
 	if amount and tonumber(amount) and tonumber(amount) > 0 then
@@ -170,8 +166,6 @@ function HouseGUI:sellHouse()
 	)
 
 end
-
-
 
 function HouseGUI:saveRent(disable)
 	local amount = disable == true and 0 or tonumber(self.m_EditRent:getText()) or 0

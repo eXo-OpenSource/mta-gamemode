@@ -66,8 +66,7 @@ function RadioGUI:constructor()
 	self:close()
 end
 
-function RadioGUI:destructor()
-	GUIForm.destructor(self)
+function RadioGUI:virtual_destructor()
 	self:stopSound()
 end
 

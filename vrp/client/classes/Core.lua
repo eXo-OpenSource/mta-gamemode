@@ -125,11 +125,11 @@ function Core:ready() --onClientResourceStart
 
 	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
 	if core:get("Other", "Movehead", true) then
-		localPlayer:startLookAt() 
+		localPlayer:startLookAt()
 	end
-	if core:get("Other","RenderDistance", false) then 
+	if core:get("Other","RenderDistance", false) then
 		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-	else 
+	else
 		setFarClipDistance(992)
 	end
 	NoDm:new()
@@ -146,8 +146,6 @@ function Core:ready() --onClientResourceStart
 	Neon.initalize()
 	CoronaEffect.initalize()
 	GroupSaleVehicles.initalize()
-	AccessoireClothes:new()
-	AccessoireClothes:triggerMode()
 	EasterEgg:new()
 	EasterEggArcade.Game:new()
 	EasterEggArcade.Game:getSingleton():setLevel(1)
@@ -188,7 +186,6 @@ end
 
 function Core:afterLogin()
 	RadioGUI:new()
-	KarmaBar:new()
 	HUDSpeedo:new()
 	HUDAviation:new()
 	HUDRadar:getSingleton():setEnabled(core:get("HUD", "showRadar", true))
@@ -204,7 +201,7 @@ function Core:afterLogin()
 	WheelOfFortune:new()
 	Atrium:new()
 	ElementInfoManager:new()
-	
+
 	for i = 1,#GUNBOX_CRATES do
 		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)
 	end
@@ -228,7 +225,6 @@ function Core:afterLogin()
 
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
-	PlantGUI.load()
 	Fishing.load()
 	TurtleRace.load()
 	GUIForm3D.load()
@@ -249,7 +245,7 @@ function Core:afterLogin()
 			table.insert(AppBank.ATMs, object)
 		end
 	end
-	
+
 	setElementData(localPlayer, "isEquipmentGUIOpen", false, true)
 end
 

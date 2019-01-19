@@ -5,14 +5,14 @@
 -- *  PURPOSE:     Boxer job class
 -- *
 -- ****************************************************************************
-
 JobBoxer = inherit(Job)
+addRemoteEvents{"boxerJobFightList", "boxerJobTopList", "boxerJobStartFight" }
 
 function JobBoxer:constructor()
     Job.constructor(self, 307, 2228.39, -1718.57, 13.55, 90.98, "BoxingGlove.png", {200, 40, 30}, "files/images/Jobs/HeaderBoxer.png", _(HelpTextTitles.Jobs.Boxer):gsub("Job: ", ""), _(HelpTexts.Jobs.Boxer))
     self:setJobLevel(JOB_LEVEL_BOXER)
 
-    addRemoteEvents{"boxerJobFightList", "boxerJobTopList", "boxerJobStartFight"}
+
     addEventHandler("boxerJobFightList", root, bind(self.openFightList, self))
     addEventHandler("boxerJobTopList", root, bind(self.openTopList, self))
     addEventHandler("boxerJobStartFight", root, bind(self.startFight, self))

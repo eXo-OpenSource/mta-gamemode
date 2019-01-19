@@ -11,7 +11,7 @@ inherit(GUIFontContainer, VehicleInteraction)
 addRemoteEvents{"onDoorOpened", "onDoorClosed"}
 
 function VehicleInteraction:constructor()
-	self.sWidth, self.sHeight = guiGetScreenSize()
+	self.sWidth, self.sHeight = screenWidth, screenHeight
 	self.m_minDistanceToVeh = 10
 	self.m_minDistanceToComp = 2
 	self.m_interactButton = "O"
