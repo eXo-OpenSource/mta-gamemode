@@ -20,6 +20,7 @@ Fonts = {
 	Gobold = "files/fonts/gobold-light.ttf",						-- Minigame: 2Cars
 	Mario256 = "files/fonts/SuperMario256.ttf",						-- WareGame
 	Ghetto = "files/fonts/Ghetto.ttf",								-- GangArea, SprayWall
+	Rage = "files/fonts/rage.ttf",									-- Vehicle radio
 }
 
 -- This rescales our font to look good on a certain pixel height

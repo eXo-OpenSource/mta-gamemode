@@ -25,9 +25,7 @@ function RadioGUI:constructor()
 	self.m_VolumeUp = GUIImage:new(self.m_Width*0.76, self.m_Height*0.24, self.m_Width*0.09, self.m_Height*0.23, "files/images/Radio/sound_normal.png", self.m_Background)
 	self.m_VolumeDown = GUIImage:new(self.m_Width*0.16, self.m_Height*0.24, self.m_Width*0.09, self.m_Height*0.23, "files/images/Radio/sound_down.png", self.m_Background)
 	self.m_ToggleSound = GUIImage:new(self.m_Width*0.44, self.m_Height*0.06, self.m_Width*0.12, self.m_Height*0.31, "files/images/Radio/sound_stop.png", self.m_Background)
-	self.m_Radioname = GUILabel:new(self.m_Width*0.06, self.m_Height*0.53, self.m_Width*0.88, self.m_Height*0.20, "", self.m_Background)
-		:setFont(RageFont(self.m_Height*0.2))
-		:setAlign("center", "center")
+	self.m_Radioname = GUILabel:new(self.m_Width*0.06, self.m_Height*0.53, self.m_Width*0.88, self.m_Height*0.20, "", self.m_Background):setFont(VRPFont(self.m_Height*0.2, Fonts.Rage)):setAlign("center", "center")
 
 	-- Add click events
 	self.m_Last.onLeftClick = function() self:previousStation() end

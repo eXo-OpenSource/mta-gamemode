@@ -709,7 +709,6 @@
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
 
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
