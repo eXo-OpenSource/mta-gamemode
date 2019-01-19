@@ -8,7 +8,7 @@
 GrowableManager = inherit(Singleton)
 GrowableManager.Types = {
 	["Weed"] = {
-		["Object"] = 3409,
+		["Object"] = 1870,
 		["ObjectSizeMin"] = 0.1,
 		["ObjectSizeSteps"] = 0.05,
 		["GrowPerHour"] = 1,
@@ -19,7 +19,8 @@ GrowableManager.Types = {
 		["Seed"] = "Weed-Samen",
 		["ItemPerSize"] = 1,
 		["TimesEarnedForDestroy"] = 1,
-		["Illegal"] = true
+		["Illegal"] = true,
+		["SizeBetweenPlants"] = 2
 	};
 	["Apfelbaum"] = {
 		["Object"] = 892,
@@ -33,7 +34,8 @@ GrowableManager.Types = {
 		["Seed"] = "Apfelbaum-Samen",
 		["ItemPerSize"] = 1,
 		["TimesEarnedForDestroy"] = 3,
-		["Illegal"] = false
+		["Illegal"] = false,
+		["SizeBetweenPlants"] = 3
 	};
 	["Blumen"] = {
 		["Object"] = 325,
@@ -47,7 +49,8 @@ GrowableManager.Types = {
 		["Seed"] = "Blumen-Samen",
 		["ItemPerSize"] = 0.1,
 		["TimesEarnedForDestroy"] = 1,
-		["Illegal"] = false
+		["Illegal"] = false,
+		["SizeBetweenPlants"] = 2
 	};
 }
 GrowableManager.Map = {}

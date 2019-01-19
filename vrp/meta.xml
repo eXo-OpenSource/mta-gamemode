@@ -2322,6 +2322,8 @@
 	<vrpfile src="files/models/objects/blitzer.col"/>
 	<vrpfile src="files/models/objects/blitzer.dff"/>
 	<vrpfile src="files/models/objects/blitzer.txd"/>
+	<vrpfile src="files/models/objects/Singleweed.dff"/>
+	<vrpfile src="files/models/objects/Singleweed.txd"/>
 	<vrpfile src="files/models/objects/worldItems/mushrooms.txd"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom01.dff"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom01.col"/>

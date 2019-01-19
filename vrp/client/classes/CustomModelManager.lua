@@ -78,6 +78,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/objects/gasstation.dff", 1676)
 
 	--other objects
+	self:loadImportTXD("files/models/objects/Singleweed.txd", 1870)
+	self:loadImportDFF("files/models/objects/Singleweed.dff", 1870)
+	self:setLODDistance(1870, 50)
 	-- Blitzer
 	self:loadImportCOL("files/models/objects/blitzer.col", 3902)
 	self:loadImportTXD("files/models/objects/blitzer.txd", 3902)
