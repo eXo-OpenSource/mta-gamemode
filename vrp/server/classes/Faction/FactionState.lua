@@ -815,7 +815,13 @@ function FactionState:getFullReasonFromShortcut(reason)
         amount = 6
     elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
-        amount = 12
+		amount = 12
+	elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
+		reason = "Gefängis-Ausbruch"
+		amount = 12
+	elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
+		reason = "Airdrop"
+		amount = 6
 	end
 	return reason, amount
 end
@@ -918,11 +924,20 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
+						if target.m_LastWantedsByReason then
+							if target.m_LastWantedsByReason[reason] and target.m_LastWantedsByReason[reason] > getTickCount() - 3*60*1000 then -- do not allow wanteds with same reason within three minutes
+								player:sendWarning(_("%s hat bereits in den letzten drei Minuten Wanteds wegen %s bekommen!", player, target:getName(), reson))
+								return 
+							end
+						else
+							target.m_LastWantedsByReason = {}
+						end
 						target:giveWanteds(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
+						target.m_LastWantedsByReason[reason] = getTickCount()
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
 					end
