@@ -29,6 +29,7 @@ function Pong:constructor(eTargetPlayer, playerType)
     self.fn_SetEnemyPosition =          bind(Pong.setEnemyPosition, self)
     self.fn_InterpolateEnemyPosition =  bind(Pong.interpolateEnemyPosition, self)
     self.fn_UpdateGameplay =            bind(Pong.updateGameplay, self)
+
     addEventHandler("onClientRender", root, self.fn_Render)
     addEventHandler("pongSetGameState", root, self.fn_SetGameState)
     addEventHandler("pongUpdateGameplay", root, self.fn_UpdateGameplay)
@@ -37,7 +38,9 @@ function Pong:constructor(eTargetPlayer, playerType)
 end
 
 function Pong:destructor()
+	if self.m_BackgroundMusic then stopSound(self.m_BackgroundMusic) end
 	localPlayer:setFrozen(false)
+
 	toggleControl("left", true)
 	toggleControl("right", true)
 	toggleControl("forwards", true)
@@ -48,6 +51,13 @@ function Pong:destructor()
 	removeEventHandler("pongUpdateGameplay", root, self.fn_UpdateGameplay)
 	removeEventHandler("pongSetEnemyPosition", root, self.fn_SetEnemyPosition)
 	removeEventHandler("pongInterpolateEnemyPosition", root, self.fn_InterpolateEnemyPosition)
+
+	unbindKey("backspace", "down", self.fn_CloseFunc)
+	unbindKey("space", "down", self.fn_OnReady)
+	unbindKey("w", "both", self.fn_MovePlayer)
+	unbindKey("s", "both", self.fn_MovePlayer)
+	unbindKey("arrow_u", "both", self.fn_MovePlayer)
+	unbindKey("arrow_d", "both", self.fn_MovePlayer)
 
 	self.anim_PosLocalPlayer:delete()
 	self.anim_PosRemotePlayer:delete()
@@ -159,7 +169,7 @@ end
 -- Managing Game States (controlled by server)
 ---
 
-function Pong:setGameState(sState)
+function Pong:setGameState(sState, data)
     if sState == "play" then
         self:GameStart()
         self:updateRenderTarget()
@@ -171,10 +181,15 @@ function Pong:setGameState(sState)
         self.anim_PosRemotePlayer:stopAnimation()
 
         stopSound(self.m_BackgroundMusic)
+		self.m_BackgroundMusic = false
         self:playSound("fail")
     elseif sState == "ready" then
         self.m_State = "ready"
         self:updateRenderTarget()
+	elseif sState == "playerWon" then
+		self.m_State = "playerWon"
+		self.m_PlayerWon = data
+		self:updateRenderTarget()
 	elseif sState == "close" then
 		delete(self)
     end
@@ -192,6 +207,7 @@ function Pong:GameFailed()
     self.anim_PosRemotePlayer:stopAnimation()
 
     stopSound(self.m_BackgroundMusic)
+	self.m_BackgroundMusic = false
     self:playSound("fail")
 end
 
@@ -255,8 +271,14 @@ function Pong:keyBinds()
             local duration = self.m_PlayerMoveSpeed*(1-(self.m_LocalPlayerPosY/(self.HEIGHT - self.m_PlayerHeight)))
             self.anim_PosLocalPlayer:startAnimation(duration, "Linear", self.HEIGHT - self.m_PlayerHeight)
         end
-    end
+	end
 
+	self.fn_CloseFunc =
+		function()
+			triggerServerEvent("pongPlayerLeave", localPlayer)
+		end
+
+	bindKey("backspace", "down", self.fn_CloseFunc)
     bindKey("space", "down", self.fn_OnReady)
     bindKey("w", "both", self.fn_MovePlayer, "up")
     bindKey("s", "both", self.fn_MovePlayer, "down")
@@ -279,13 +301,21 @@ function Pong:updateRenderTarget()
     self.m_RT_Background:setAsTarget(true)
 
     if self.m_State == "lobby" then
-        dxDrawText("°MTAPong°", 0, 100, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 3, "default", "center") --Todo: Logo
+        dxDrawText("°MTAPong°", 0, 100, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 3, "default", "center")
+        dxDrawText("°Erreiche 10 Punkte um zu gewinnen°\n'Backspace' = Beenden", 0, 480, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 1.5, "default", "center")
         if not self.m_IsReady then
-            dxDrawText("°Press 'space' when you're ready!°", 0, 150, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 3, "default", "center") --Todo: Logo
+            dxDrawText("°Press 'space' when you're ready!°", 0, 150, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 3, "default", "center")
         end
         dxSetRenderTarget()
         return
     end
+
+	if self.m_State == "playerWon" then
+		dxDrawText("°Ping Pong°", 0, 100, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 3, "default", "center")
+		dxDrawText(("°%s hat das Spiel gewonnen!°"):format(self.m_PlayerWon:getName()), 0, 150, self.WIDTH, self.HEIGHT, tocolor(255, 255, 255), 3, "default", "center")
+		dxSetRenderTarget()
+		return
+	end
 
     -- Line
     for i = 0, self.HEIGHT/50 do

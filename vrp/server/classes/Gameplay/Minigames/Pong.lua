@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Pong = inherit(Object)
-addRemoteEvents{"pongQuestion", "pongQuestionAccept", "pongQuestionDecline", "pongPlayerReady", "pongPlayerMove", "pongPlayerFailed"}
+addRemoteEvents{"pongQuestion", "pongQuestionAccept", "pongQuestionDecline", "pongPlayerReady", "pongPlayerMove", "pongPlayerFailed", "pongPlayerLeave"}
 
 Pong.Map = {}
 
@@ -15,7 +15,6 @@ function Pong:constructor(ePlayerHost, ePlayerTarget, bFastGame)
     Pong.Map[ePlayerHost] = self
     Pong.Map[ePlayerTarget] = self
 
-	self.m_FastGame = bFastGame
     self.m_PlayerEnemy = {}
     self.m_PlayerEnemy[ePlayerHost] = ePlayerTarget
     self.m_PlayerEnemy[ePlayerTarget] = ePlayerHost
@@ -35,7 +34,10 @@ function Pong:constructor(ePlayerHost, ePlayerTarget, bFastGame)
 end
 
 function Pong:destructor()
-
+	self.m_Players[1]:triggerEvent("pongSetGameState", "close")
+	self.m_Players[2]:triggerEvent("pongSetGameState", "close")
+	self.m_Players[1].pongPlaying = false
+	self.m_Players[2].pongPlaying = false
 end
 
 function Pong:createGameplay()
@@ -65,6 +67,16 @@ end
 
 -- Managing
 
+addEventHandler("pongPlayerLeave", root,
+	function()
+		local instance = Pong.Map[client]
+
+		if instance then
+			delete(instance)
+		end
+	end
+)
+
 addEventHandler("pongPlayerMove", resourceRoot,
     function(isMoving, direction_or_position)
         local instance = Pong.Map[client]
@@ -89,23 +101,28 @@ addEventHandler("pongPlayerFailed", resourceRoot,
         instance.m_Players[1]:triggerEvent("pongUpdateGameplay", instance.m_Points, instance.m_FirstDirectionX, instance.m_FirstDirectionY)
         instance.m_Players[2]:triggerEvent("pongUpdateGameplay", instance.m_Points, instance.m_FirstDirectionX, instance.m_FirstDirectionY)
 
-        setTimer(function(instance)
-			if instance.m_FastGame then
-				instance.m_Players[1]:triggerEvent("pongSetGameState", "close")
-				instance.m_Players[2]:triggerEvent("pongSetGameState", "close")
-				instance.m_Players[1].pongPlaying = false
-				instance.m_Players[2].pongPlaying = false
-				delete(instance)
-				return
-			end
+        setTimer(
+			function(instance, player)
+				if instance.m_Points[instance.m_PlayerEnemy[player]] >= 10 then
+				   	local playerWon = instance.m_PlayerEnemy[player]
+					instance.m_Players[1]:triggerEvent("pongSetGameState", "playerWon", playerWon)
+					instance.m_Players[2]:triggerEvent("pongSetGameState", "playerWon", playerWon)
 
-            instance.m_Players[1]:triggerEvent("pongSetGameState", "ready")
-            instance.m_Players[2]:triggerEvent("pongSetGameState", "ready")
-            setTimer(function(instance)
-                instance.m_Players[1]:triggerEvent("pongSetGameState", "play")
-                instance.m_Players[2]:triggerEvent("pongSetGameState", "play")
-            end, 3000, 1, instance)
-        end, 3000, 1, instance)
+					setTimer(function(player) delete(Pong.Map[player]) end, 3000, 1, player)
+					return
+				end
+
+				instance.m_Players[1]:triggerEvent("pongSetGameState", "ready")
+				instance.m_Players[2]:triggerEvent("pongSetGameState", "ready")
+
+				setTimer(
+					function(instance)
+						instance.m_Players[1]:triggerEvent("pongSetGameState", "play")
+						instance.m_Players[2]:triggerEvent("pongSetGameState", "play")
+					end, 3000, 1, instance
+				)
+        	end, 3000, 1, instance, client
+		)
     end
 )
 
@@ -122,7 +139,7 @@ addEventHandler("pongPlayerReady", resourceRoot,
 
 addEventHandler("pongQuestionAccept", root,
 	function(host)
-		Pong:new(host, client, true)
+		Pong:new(host, client)
 
 		client.pongPlaying = true
 		host.pongSendRequest = false
