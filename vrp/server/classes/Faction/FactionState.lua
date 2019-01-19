@@ -926,7 +926,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 					if string.len(reason) > 2 and string.len(reason) < 50 then
 						if target.m_LastWantedsByReason then
 							if target.m_LastWantedsByReason[reason] and target.m_LastWantedsByReason[reason] > getTickCount() - 3*60*1000 then -- do not allow wanteds with same reason within three minutes
-								player:sendWarning(_("%s hat bereits in den letzten drei Minuten Wanteds wegen %s bekommen!", player, target:getName(), reson))
+								player:sendWarning(_("%s hat bereits in den letzten drei Minuten Wanteds wegen %s bekommen!", player, target:getName(), reason))
 								return 
 							end
 						else
