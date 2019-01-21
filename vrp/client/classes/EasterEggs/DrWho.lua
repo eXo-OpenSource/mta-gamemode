@@ -5,14 +5,16 @@
 -- *  PURPOSE:     DrWho EasterEggs
 -- *
 -- ****************************************************************************
-EasterEgg.DrWho = inherit(Object)
+EasterEgg.DrWho = inherit(Singleton)
 
 function EasterEgg.DrWho:constructor()
 	self.m_Spawns = {
-		--Vector3(1474.652, -1678.340, 14.047),
-		Vector3(1392.468, 1898.531, 13.501),
-		Vector3(1252.972, -1523.225, 13.555),
-		Vector3(1365.577, -1527.504, 13.547),
+		Vector3(1287.36, -1562.03, 13.55),
+		Vector3(1447.57, -1665.66, 13.55),
+		Vector3(1507.50, -1752.94, 13.55),
+		Vector3(1566.87, -1585.09, 13.55),
+		Vector3(1551.29, -1698.58, 13.55),
+		Vector3(1419.23, -1722.03, 13.55),
 	}
 
 	self.m_ColHitAnimation = bind(EasterEgg.DrWho.hitAnimation, self)
@@ -28,11 +30,11 @@ function EasterEgg.DrWho:spawnTardis()
 
 	if math.random(1, 50) == 1 then
 		self.m_Position = self.m_Spawns[math.random(1, #self.m_Spawns)]
-		self.m_Tardis = createObject(1337, self.m_Position) --todo change object
+		self.m_Tardis = createObject(1881, self.m_Position)
 		self.m_AnimationColshape = createColSphere(self.m_Position, 40)
 		self.m_AchievementColshape = createColSphere(self.m_Position, 3)
 		self.m_TardisSound = playSound3D("files/audio/DrWho/tardis_landing.mp3", self.m_Position)
-		self.m_TardisSound:setMaxDistance(200)
+		self.m_TardisSound:setMaxDistance(300)
 
 		addEventHandler("onClientColShapeHit", self.m_AnimationColshape, self.m_ColHitAnimation)
 		addEventHandler("onClientColShapeHit", self.m_AchievementColshape, self.m_ColHitAchievement)
