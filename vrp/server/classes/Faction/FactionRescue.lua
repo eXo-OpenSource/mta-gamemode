@@ -577,7 +577,8 @@ function FactionRescue:Event_OnPlayerWastedFinish()
 	source:fadeCamera(true, 1)
 	
 	local position = false
-	if source:getFaction() and source:isFactionDuty() then
+	if source:getFaction() and source.m_WasOnDuty then
+		source.m_WasOnDuty = false
 		position = factionSpawnpoint[source:getFaction():getId()][1]
 	end
 	

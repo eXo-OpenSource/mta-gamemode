@@ -1429,7 +1429,10 @@ function FactionState:isPlayerInDutyPickup(player)
 end
 
 function FactionState:Event_toggleDuty(wasted, preferredSkin)
-	if wasted then client:removeFromVehicle() end
+	if wasted then
+		client:removeFromVehicle()
+		client.m_WasOnDuty = true
+	end
 
 	if getPedOccupiedVehicle(client) then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
