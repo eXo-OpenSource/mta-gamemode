@@ -494,17 +494,16 @@ function Player:respawn(position, rotation, bJailSpawn)
 	else
 		position, rotation = position, rotation
 	end
+
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
 	end
+
 	if self.m_JailTime == 0 or not self.m_JailTime then
-
-		self:setHeadless(false)
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
-
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
-		self:setHeadless(false)
+
 		if not bJailSpawn then
 			self:moveToJail(false,true)
 		end
@@ -516,11 +515,13 @@ function Player:respawn(position, rotation, bJailSpawn)
 		self:setArmor(100)
 		giveWeapon(self, 24, 35)
 	end
+
+	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
-	FactionState:getSingleton():uncuffPlayer( self )
+	FactionState:getSingleton():uncuffPlayer(self)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 

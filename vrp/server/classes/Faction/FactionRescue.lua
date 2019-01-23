@@ -575,14 +575,17 @@ end
 function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
-	
-	local position = false
+
 	if source:getFaction() and source.m_WasOnDuty then
 		source.m_WasOnDuty = false
-		position = factionSpawnpoint[source:getFaction():getId()][1]
+		local position = factionSpawnpoint[source:getFaction():getId()]
+		source:respawn(position[1])
+		source:setInterior(position[2])
+		source:setDimension(position[3])
+		return
 	end
-	
-	source:respawn(position)
+
+	source:respawn()
 end
 
 function FactionRescue:Event_healPlayerQuestion(target)
