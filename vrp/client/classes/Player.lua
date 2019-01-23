@@ -174,6 +174,7 @@ function Player:getMatchID ()
 	)
 end
 
+-- This function may depricated
 function Player:getSurfingCar()
 	local result = {processLineOfSight(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -1.5)), false, true, false, false, false, false, false, false, localPlayer, false, true)}
 	return result[5]

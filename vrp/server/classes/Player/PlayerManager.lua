@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
+addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
@@ -58,12 +58,11 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
 	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
 	addEventHandler("onPlayerFinishArcadeEasterEgg", root, bind(self.Event_onPlayerFinishArcadeEasterEgg, self))
-	addEventHandler("onPlayerPrivateMessage", root, function()
-		cancelEvent()
-	end)
-
 	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
+	addEventHandler("unfreezePlayer", root, bind(self.Event_onUnfreezePlayer, self))
+	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
+
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
@@ -86,6 +85,10 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+end
+
+function PlayerManager:Event_onUnfreezePlayer()
+	client:setFrozen(false)
 end
 
 function PlayerManager:Event_onRequestGateOpen()

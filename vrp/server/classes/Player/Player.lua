@@ -392,8 +392,6 @@ function Player:spawn()
 				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
 				if house and house:isValidToEnter(self) then
 					if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
-						--if it works, don't delete it
-						self:setFrozen(true)
 						spawnSuccess = true
 					end
 				else
@@ -410,8 +408,8 @@ function Player:spawn()
 				local position = companySpawnpoint[self:getCompany():getId()]
 				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 			end
-			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+		--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+		--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
 			local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
 			if self:getGroup() and #groupProperties > 0 then
@@ -438,6 +436,7 @@ function Player:spawn()
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
 	self:setCorrectSkin()
+	self:setFrozen(true)
 
 	if self:isPremium() then
 		self:setArmor(100)
@@ -458,8 +457,6 @@ function Player:spawn()
 		giveWeapon(self, info[1], info[2])
 	end
 
-	-- gets unfrozen if he has a session id
-	self:setFrozen(true)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
@@ -475,7 +472,6 @@ function Player:spawn()
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
-
 
 	self:triggerEvent("checkNoDm")
 	triggerEvent("WeaponAttach:removeAllWeapons", self)

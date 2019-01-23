@@ -321,6 +321,7 @@ addEventHandler("loginsuccess", root,
 		else
 			core:set("Login", "password", "")
 		end
+
 		core:afterLogin()
 		lgi:initClose()
 	end
