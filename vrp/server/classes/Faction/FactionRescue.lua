@@ -578,10 +578,10 @@ function FactionRescue:Event_OnPlayerWastedFinish()
 	
 	local position = false
 	if source:getFaction() and source:isFactionDuty() then
-		position = factionSpawnpoint[source:getFaction():getId()]
+		position = factionSpawnpoint[source:getFaction():getId()][1]
 	end
 	
-	source:respawn(position[1])
+	source:respawn(position)
 end
 
 function FactionRescue:Event_healPlayerQuestion(target)
