@@ -214,6 +214,13 @@
 
 	<script src="server/constants/planes.lua" type="server"/>
 
+	<!-- Drug Factories -->
+	<script src="server/classes/Gameplay/DrugFactories/DrugFactory.lua" type="server" />
+	<script src="server/classes/Gameplay/DrugFactories/DrugFactoryManager.lua" type="server" />
+	<script src="server/classes/Gameplay/DrugFactories/Factories/WeedFactory.lua" type="server" />
+
+	<script src="server/constants/drugfactories.lua" type="server" />
+
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
