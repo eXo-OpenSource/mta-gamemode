@@ -1570,6 +1570,7 @@
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
 	<vrpfile src="files/images/Radar/Blips/Turtle.png"/>
 	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
+	<vrpfile src="files/images/Radar/Blips/Factory.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
