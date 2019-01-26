@@ -1441,6 +1441,8 @@
 	<vrpfile src="files/images/Textures/Other/trans.png"/>
 	<vrpfile src="files/images/Textures/Other/garage.jpg"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
+	<vrpfile src="files/images/Other/antenna_c.png"/>
+	<vrpfile src="files/images/Other/antenna_nc.png"/>
 	<vrpfile src="files/images/Other/arrow.png"/>
 	<vrpfile src="files/images/Other/arrow_ta.png"/>
 	<vrpfile src="files/images/Other/BreakingNewsArrow.png"/>

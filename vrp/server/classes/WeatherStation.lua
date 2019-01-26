@@ -13,6 +13,8 @@ function WeatherStation:constructor(data)
 	self.m_StationName = data.Name
 	self.m_LastMaintenance = data.LastMaintenance
 	self.m_Connected = data.Connected
+	self.m_Frequency = math.random(30, 300) -- Useless but better then generate a random frequency everytime when the gui get opened
+	self.m_Weather = false
 
 	self:checkMaintenance()
 
@@ -26,6 +28,10 @@ function WeatherStation:update(updateMaintenance)
 	sql:queryExec(("UPDATE ??_weather_stations SET %sConnected = ? WHERE Id = ?"):format(updateMaintenance and "LastMaintenance = NOW(), " or ""), sql:getPrefix(), self.m_Connected, self.m_Id)
 end
 
+function WeatherStation:setWeather(weatherId)
+	self.m_Weather = weatherId
+end
+
 function WeatherStation:onStationClicked(button, state, player)
 	-- Todo: Check San News
 
@@ -34,7 +40,7 @@ function WeatherStation:onStationClicked(button, state, player)
 			local weatherStations = Weather:getSingleton().m_WeatherStations
 			player:triggerEvent("onMainWeatherStationClicked", weatherStations)
 		else
-			player:triggerEvent("onWeatherStationClicked", self.m_StationName, self.m_LastMaintenance, self.m_Connected)
+			player:triggerEvent("onWeatherStationClicked", self.m_StationName, self.m_LastMaintenance, self.m_Connected, self.m_Frequency)
 		end
 	end
 end

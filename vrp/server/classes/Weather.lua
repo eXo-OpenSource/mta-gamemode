@@ -16,13 +16,13 @@ function Weather:constructor()
 	self.m_Weather = {}
 	self.m_WeatherStations = {}
 
+	-- Load weather stations
+	self:loadWeatherStations()
+
 	-- Setup weather for all zones
 	for zone in pairs(WEATHER_ZONE_WEATHERS) do
 		self:updateWeather(zone)
 	end
-
-	-- Load weather stations
-	self:loadWeatherStations()
 
 	addEventHandler("clientRequestWeatherList", root, bind(Weather.onClientRequestWeatherList, self))
 	setTimer(bind(Weather.checkWeatherChange, self), 300000, 0)
@@ -30,6 +30,7 @@ end
 
 function Weather:setWeather(zone, weatherId)
 	self.m_Weather[zone] = {Id = weatherId, performed = getTickCount()}
+	self.m_WeatherStations[zone]:setWeather(weatherId)
 	PlayerManager:getSingleton():triggerEvent("receiveWeather", zone, weatherId)
 end
 
