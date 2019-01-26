@@ -52,7 +52,7 @@ function KeyBindings:loadGridList()
     local currKey
     for index, key in pairs(self.ms_Keys) do
         local currKey = core:get("KeyBindings", index) or key["defaultKey"]
-        item = self.m_KeyGridList:addItem(key.name, currKey:upper())
+        local item = self.m_KeyGridList:addItem(key.name, currKey:upper())
         item.index = index
         item.onLeftClick = function() self:onKeySelect(index) end
     end

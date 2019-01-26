@@ -1,6 +1,6 @@
-
 TexturePreviewGUI = inherit(GUIForm)
 inherit(Singleton, TexturePreviewGUI)
+
 addRemoteEvents{"texturePreviewLoadTextures", "texturePreviewForceClose"}
 
 function TexturePreviewGUI:constructor()
@@ -32,12 +32,11 @@ function TexturePreviewGUI:constructor()
 	addEventHandler("onClientPreRender", root, self.m_RotateBind)
 end
 
-function TexturePreviewGUI:destructor()
+function TexturePreviewGUI:virtual_destructor()
 	setCameraTarget(localPlayer)
 	removeEventHandler("onClientPreRender", root, self.m_RotateBind)
 	showChat(true)
 	triggerServerEvent("texturePreviewClose", localPlayer)
-	GUIForm.destructor(self)
 end
 
 function TexturePreviewGUI:openAdmin()

@@ -148,12 +148,7 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 
 		local jwtBase = base64Encode(header) .. "." .. base64Encode(payload)
 
-		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData)
-			player:setSessionId(jwtBase.."."..responseData)
-			setTimer(function()
-				player:setFrozen(false)
-			end, 1000, 1)
-		end)
+		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) player:setSessionId(jwtBase.."."..responseData)	end)
 	end
 end
 

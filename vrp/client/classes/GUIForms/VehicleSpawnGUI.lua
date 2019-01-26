@@ -8,6 +8,8 @@
 VehicleSpawnGUI = inherit(GUIForm)
 inherit(Singleton, VehicleSpawnGUI)
 
+addRemoteEvents{"vehicleSpawnGUI"}
+
 function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisement)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth/4/2, screenHeight/2 - screenHeight/2.5/2, screenWidth/4, screenHeight/2.5)
 	self.m_SpawnerId = spawnerId
@@ -32,7 +34,6 @@ function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisemen
 		self.m_CallButton.onLeftClick = bind(self.CallEPT_Click, self)
 	end
 end
-addEvent("vehicleSpawnGUI", true)
 addEventHandler("vehicleSpawnGUI", root, function(...) VehicleSpawnGUI:new(...) end)
 
 function VehicleSpawnGUI:SpawnButton_Click()

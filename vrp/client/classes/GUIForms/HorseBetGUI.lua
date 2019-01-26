@@ -6,11 +6,11 @@
 -- *
 -- ****************************************************************************
 HorseBetGUI = inherit(GUIForm)
-HorseBetGUI.Bets = {10, 100, 1000, 5000, 10000, 50000, 100000}
 inherit(Singleton, HorseBetGUI)
 
 addRemoteEvents{"showHorseBetGUI", "receiveKartDatas"}
 
+HorseBetGUI.Bets = {10, 100, 1000, 5000, 10000, 50000, 100000}
 function HorseBetGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 460)
 

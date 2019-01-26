@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
+addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
@@ -58,12 +58,11 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
 	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
 	addEventHandler("onPlayerFinishArcadeEasterEgg", root, bind(self.Event_onPlayerFinishArcadeEasterEgg, self))
-	addEventHandler("onPlayerPrivateMessage", root, function()
-		cancelEvent()
-	end)
-
 	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
+	addEventHandler("unfreezePlayer", root, bind(self.Event_onUnfreezePlayer, self))
+	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
+
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
@@ -88,8 +87,19 @@ function PlayerManager:constructor()
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 end
 
+function PlayerManager:destructor()
+	for k, v in pairs(getElementsByType("player")) do
+		delete(v)
+		v:setName(getRandomUniqueNick())
+	end
+end
+
 function PlayerManager:triggerEvent(ev, ...)
 	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), ev, resourceRoot, ...)
+end
+
+function PlayerManager:Event_onUnfreezePlayer()
+	client:setFrozen(false)
 end
 
 function PlayerManager:Event_onRequestGateOpen()
@@ -196,12 +206,6 @@ function PlayerManager:Event_switchSpawnWithFaction( state )
 	client.m_SpawnWithFactionSkin = state
 end
 
-function PlayerManager:destructor()
-	for k, v in pairs(getElementsByType("player")) do
-		delete(v)
-	end
-end
-
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
 		if v and isElement(v) and v.updateSync then
@@ -306,7 +310,6 @@ end
 function PlayerManager:playerJoin()
 	-- Set a random nick to prevent blocking nicknames
 	source:setName(getRandomUniqueNick())
-
 	source:join()
 end
 
@@ -323,7 +326,6 @@ function PlayerManager:playerCommand(cmd)
 			cancelEvent()
 		end
 	end
-
 end
 
 function PlayerManager:playerQuit()
@@ -792,10 +794,12 @@ end
 
 function PlayerManager:Event_changeWalkingstyle(walkingstyle)
 	if client:getPrivateSync("AlcoholLevel") == 0 then
-		if WALKINGSTYLES[walkingstyle] then
-			client:changeWalkingstyle(WALKINGSTYLES[walkingstyle].id)
-		else
-			client:sendError("Internal Error! Laufstil nicht gefunden!")
+		if not client:isStateCuffed() then
+			if WALKINGSTYLES[walkingstyle] then
+				client:changeWalkingstyle(WALKINGSTYLES[walkingstyle].id)
+			else
+				client:sendError("Internal Error! Laufstil nicht gefunden!")
+			end
 		end
 	end
 end

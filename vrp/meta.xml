@@ -532,8 +532,7 @@
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/RenderTargetTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/StaticTextureReplacer.lua" type="client"/>
-	<script src="client/classes/NonCollidingArea.lua" type="client"/>
-	<script src="client/classes/NonCollidingSphere.lua" type="client"/>
+	<script src="client/classes/NonCollisionArea.lua" type="client"/>
 	<script src="client/classes/NonOcclusionZone.lua" type="client"/>
 	<script src="client/classes/NoParkingZone.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
@@ -550,7 +549,6 @@
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
-	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
@@ -609,6 +607,7 @@
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
+	<script src="client/classes/GUI/GUIWebWindow.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
@@ -644,7 +643,6 @@
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
@@ -711,11 +709,8 @@
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastError.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
 
-	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
-	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
-	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/VRPFont.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/BusRoutePlan.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
@@ -730,7 +725,6 @@
 	<script src="client/classes/HUD/Help/ElementInfoManager.lua" type="client"/>
 
 	<!-- Forms -->
-	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
@@ -758,6 +752,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
@@ -782,16 +777,15 @@
 	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehiclePerformanceGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathGUI.lua" type="client"/>
@@ -829,7 +823,6 @@
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client"/>
@@ -867,7 +860,7 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TownHallInfoGUI.lua" type="client"/>
@@ -1299,26 +1292,28 @@
 	<vrpfile src="files/images/MessageBoxes/Toast/warning.png"/>
 	<vrpfile src="files/images/MessageBoxes/Toast/error.png" />
 	<vrpfile src="files/images/MessageBoxes/Toast/success.png"/>
-	<vrpfile src="files/images/Phone/AndroidPhone.png"/>
-	<vrpfile src="files/images/Phone/iPhone.png"/>
 
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconContacts.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOff.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOn.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSanNews.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconAmmuNation.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconDashboard.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconBank.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSnake.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconEPT.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNotes.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconScribble.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconWeather.png"/>
+	<vrpfile src="files/images/Phone/Nexus_5.png"/>
+	<vrpfile src="files/images/Phone/iPhone_weiss.png"/>
+	<vrpfile src="files/images/Phone/iPhone_schwarz.png"/>
+
+	<vrpfile src="files/images/Phone/Apps_Android/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconContacts.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconMessage.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconSettings.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconYouTube.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconOff.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconOn.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconSanNews.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconAmmuNation.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconDashboard.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconBank.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconSnake.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconNavigator.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconEPT.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconScribble.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconWeather.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
@@ -1623,7 +1618,7 @@
 	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
 	<vrpfile src="files/images/Nametag/San News.png"/>
 	<vrpfile src="files/images/Nametag/MT.png"/>
-
+	<vrpfile src="files/images/Nametag/LostMC.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
@@ -2334,6 +2329,8 @@
 	<vrpfile src="files/models/objects/blitzer.col"/>
 	<vrpfile src="files/models/objects/blitzer.dff"/>
 	<vrpfile src="files/models/objects/blitzer.txd"/>
+	<vrpfile src="files/models/objects/Singleweed.dff"/>
+	<vrpfile src="files/models/objects/Singleweed.txd"/>
 	<vrpfile src="files/models/objects/worldItems/mushrooms.txd"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom01.dff"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom01.col"/>

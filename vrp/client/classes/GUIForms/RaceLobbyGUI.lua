@@ -8,7 +8,7 @@
 RaceLobbyGUI = inherit(GUIForm)
 inherit(Singleton, RaceLobbyGUI)
 
-RaceLobbyGUI.PreviewPosition = 
+RaceLobbyGUI.PreviewPosition =
 {
 	{1, 1387.68, -23.05, 1000.73, 0, 0,  235.46, 1390.58, -23.80, 1001.92, 1393.50, -34.33, 1001.91}
 }
@@ -16,7 +16,7 @@ RaceLobbyGUI.PreviewPosition =
 function RaceLobbyGUI:constructor()
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 16)
-	self.m_Height = grid("y", 12) 
+	self.m_Height = grid("y", 12)
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, self.m_Width, self.m_Height)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Rennstrecke", true, true, self)
@@ -38,11 +38,11 @@ function RaceLobbyGUI:constructor()
 
 	GUIGridRectangle:new(1,10, 10, 1, Color.Grey, self.m_Window)
 	GUIGridRectangle:new(1,11, 10, 1, Color.Grey, self.m_Window)
-	
+
 	GUIGridIconButton:new(1, 10, FontAwesomeSymbols.Comment, self.m_Window)
 	self.m_NameLabel = GUIGridLabel:new(1, 10, 10, 1, "Keine ausgewählt", self.m_Window)
 	:setAlignX("center")
-	
+
 	GUIGridIconButton:new(1, 11, FontAwesomeSymbols.Book, self.m_Window)
 	self.m_MapLabel = GUIGridLabel:new(1, 11, 10, 1, "Keine ausgewählt", self.m_Window)
 	:setAlignX("center")
@@ -51,13 +51,7 @@ function RaceLobbyGUI:constructor()
 	self.m_DestroyVehicle = true
 end
 
-function RaceLobbyGUI:setup(cameraDrive, previewVehicle)
-	self.m_CamDrive = cameraDrive
-	self.m_PreviewVehicle = previewVehicle
-	self:Event_GetLobbyData({}, localPlayer.vehicle)
-end
-
-function RaceLobbyGUI:destructor()
+function RaceLobbyGUI:virtual_destructor()
 	if self.m_DestroyVehicle then
 		if self.m_CamDrive then
 			self.m_CamDrive:delete()
@@ -67,13 +61,12 @@ function RaceLobbyGUI:destructor()
 		end
 	end
 	self:close()
-	GUIForm.destructor(self)
 end
 
-function RaceLobbyGUI:onShow()
-end
-
-function RaceLobbyGUI:onHide()
+function RaceLobbyGUI:setup(cameraDrive, previewVehicle)
+	self.m_CamDrive = cameraDrive
+	self.m_PreviewVehicle = previewVehicle
+	self:Event_GetLobbyData({}, localPlayer.vehicle)
 end
 
 function RaceLobbyGUI:receiveLobbys(lobbyTable)
@@ -121,7 +114,7 @@ function RaceLobbyGUI:Event_GetLobbyData( data )
 end
 
 function RaceLobbyGUI:tryJoinLobby()
-	selectedItem = self.m_LobbyGrid:getSelectedItem()
+	local selectedItem = self.m_LobbyGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		if selectedItem.Password and selectedItem.Password ~= "" then
 			InputBox:new(_"Passwort eingeben", _"Diese Lobby ist Passwort geschützt! Gib das Passwort ein:",

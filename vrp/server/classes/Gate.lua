@@ -23,6 +23,7 @@ function Gate:addGate(model, pos, rot, openPos, openRot, playSound, interior, di
 end
 
 function Gate:triggerMovement(hitEle)
+    if not timestampCoolDown(self.m_LastInteraction or 0, 1) then return false end 
     local function rotationDifference(isRotation, targetRotation)
         if math.round(isRotation) == math.round(targetRotation) then return 0 end
         local diff = ((targetRotation - isRotation) + 180) % 360 - 180
@@ -48,7 +49,7 @@ function Gate:triggerMovement(hitEle)
                     rotationDifference(gate.rotation.y, gate.openRot.y),
                     rotationDifference(gate.rotation.z, gate.openRot.z)
                 )
-                gate:move((gate.position - gate.openPos).length * 800 + targetRot.length * 50, gate.openPos, targetRot, "InOutQuad")
+                gate:move((gate.position - gate.openPos).length * 700 + targetRot.length * 30, gate.openPos, targetRot, "InOutQuad")
                 if gate.playSound then triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3") end
 			end
 
@@ -62,12 +63,13 @@ function Gate:triggerMovement(hitEle)
                     rotationDifference(gate.rotation.y, gate.closedRot.y),
                     rotationDifference(gate.rotation.z, gate.closedRot.z) 
                 )
-				gate:move((gate.position - gate.closedPos).length * 800 + targetRot.length * 50, gate.closedPos, targetRot, "InOutQuad")
+				gate:move((gate.position - gate.closedPos).length * 700 + targetRot.length * 30, gate.closedPos, targetRot, "InOutQuad")
 				if gate.playSound then triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3") end
 			end
 
             self.m_Closed = true
          end
+         self.m_LastInteraction = getRealTime().timestamp
      end
 end
 

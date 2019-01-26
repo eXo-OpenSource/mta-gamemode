@@ -5,7 +5,6 @@
 -- *  PURPOSE:     VehicleShopGUI class
 -- *
 -- ****************************************************************************
-
 VehicleSellGUI = inherit(GUIForm)
 inherit(Singleton, VehicleSellGUI)
 
@@ -27,10 +26,6 @@ function VehicleSellGUI:constructor( ts, veh )
 	self.m_AcceptButton.onLeftClick = bind(self.AcceptButton_applyContract, self)
 end
 
-function VehicleSellGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 function VehicleSellGUI:AcceptButton_applyContract()
 	local name = self.m_Edit:getDrawnText()
 	local price = self.m_Edit2:getDrawnText()
@@ -38,12 +33,12 @@ function VehicleSellGUI:AcceptButton_applyContract()
 		if #name > 0 then
 			if #price > 0 then
 				if tonumber( price ) then
-					local player = getPlayerFromName( name ) 
+					local player = getPlayerFromName( name )
 					if player then
 						local px,py = getElementPosition( localPlayer )
 						local mx,my = getElementPosition( player )
 						local distance = getDistanceBetweenPoints2D( px, py, mx, my)
-						if distance <= 10 then 
+						if distance <= 10 then
 							triggerServerEvent("VehicleSell_requestSell", localPlayer, name, price, self.m_Veh)
 						else ErrorBox:new(_"Käufer zu weit entfernt!")
 						end

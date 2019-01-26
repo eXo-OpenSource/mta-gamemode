@@ -7,15 +7,16 @@
 -- ****************************************************************************
 SkinSelectGUI = inherit(GUIForm)
 inherit(Singleton, SkinSelectGUI)
+
 addRemoteEvents{"openSkinSelectGUI"}
-local images_per_row = 5
 --[[
 	skinTable = { skinId1, skinId2}
 	allSkins = {[skinId1] = rank, [skinId2] = rank2}
 ]]
 
+local images_per_row = 5
 function SkinSelectGUI:constructor(skinTable, groupId, groupType, editable, allSkins)
-	
+
 	local skin_count = skinTable and type(skinTable) == "table" and table.size(skinTable) or 0
 	local areaHeight = math.min(math.ceil(skin_count/5)*5, 10)
 	self.m_SkinCount = skin_count
@@ -28,9 +29,9 @@ function SkinSelectGUI:constructor(skinTable, groupId, groupType, editable, allS
 	self.m_SkinsEditable = editable -- boolean
 	self.m_GroupId = groupId
 	self.m_GroupType = groupType
-	GUIWindow.updateGrid()		
-	self.m_Width = grid("x", 16) 	
-	self.m_Height = grid("y", areaHeight + 1) 
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 16)
+	self.m_Height = grid("y", areaHeight + 1)
 
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
@@ -39,8 +40,17 @@ function SkinSelectGUI:constructor(skinTable, groupId, groupType, editable, allS
 		self.m_Window:addTitlebarButton(FontAwesomeSymbols.Cogs, bind(SkinSelectGUI.setEditable, self))
 	end
 	self.m_ScrollableArea = GUIGridScrollableArea:new(1, 1, 15, areaHeight, 15, 0 , true, false, self.m_Window, 1)
-	
+
 	self:loadSkins()
+end
+
+function SkinSelectGUI:virtual_destructor()
+	if isTimer(self.m_SkinUpdateTimer) then
+		killTimer(self.m_SkinUpdateTimer)
+	end
+	if self.m_Edit then
+		ErrorBox:new(_"Einstellungen wurden nicht gespeichert (Bitte zuerst Edit-Modus beenden)!")
+	end
 end
 
 function SkinSelectGUI:loadSkins()
@@ -52,9 +62,9 @@ function SkinSelectGUI:loadSkins()
 	self.m_ScrollableArea:resize(15, math.ceil(skin_count/5)*5)
 	self.m_ScrollableArea:updateGrid()
 	self.m_SkinUpdateTimer = setTimer(function()
-		local skinId = self.m_Edit and self.m_SkinTableEdit[i] or self.m_SkinTable[i] 
+		local skinId = self.m_Edit and self.m_SkinTableEdit[i] or self.m_SkinTable[i]
 		local x, y, w, h = (i-1)*3 + 1 - row*images_per_row*3, row*images_per_row + 1, 3, 5
-		
+
 		local image = GUIGridWebView:new(x, y, w, h, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..skinId, true, self.m_ScrollableArea)
 		image.onDocumentReady = function()
 			nextframe(function()
@@ -62,7 +72,7 @@ function SkinSelectGUI:loadSkins()
 				image:setControlsEnabled(false)
 			end)
 		end
-		image.onLeftClick = function()	
+		image.onLeftClick = function()
 			if self.m_Edit then return false end
 			if self.m_GroupType == "faction" then
 				triggerServerEvent("factionPlayerSelectSkin", localPlayer, skinId)
@@ -74,7 +84,7 @@ function SkinSelectGUI:loadSkins()
 		end
 		if self.m_Edit then
 			local changer = GUIGridChanger:new(x, y + h - 1, w, 1, self.m_ScrollableArea)
-			for i = 0, (self.m_GroupType == "company" and 5 or 6) do	
+			for i = 0, (self.m_GroupType == "company" and 5 or 6) do
 				changer:addItem("Rang "..i)
 			end
 			if self.m_GroupType == "faction" then
@@ -120,23 +130,12 @@ function SkinSelectGUI:setEditable()
 			triggerServerEvent("companyUpdateSkinPermissions", localPlayer, self.m_AllSkins)
 		end
 		self.m_Edit = false --skins get reloaded as gui gets rebuilt
-	else 
+	else
 		self.m_Edit = true
 		self:loadSkins()
 	end
-	
-end
 
-function SkinSelectGUI:destructor()
-	if isTimer(self.m_SkinUpdateTimer) then
-		killTimer(self.m_SkinUpdateTimer)
-	end
-	if self.m_Edit then
-		ErrorBox:new(_"Einstellungen wurden nicht gespeichert (Bitte zuerst Edit-Modus beenden)!")
-	end
-	GUIForm.destructor(self)
 end
-
 
 function SkinSelectGUI.open(skinTable, groupId, groupType, editable, allSkins)
 	if SkinSelectGUI:isInstantiated() then

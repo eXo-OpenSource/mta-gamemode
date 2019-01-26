@@ -10,7 +10,7 @@ Growable = inherit(Object)
 function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, lastGrown, lastWatered, timesEarned)
 	self.m_Id = id
 	self.m_Type = type
-	self.m_Object = createObject(typeData["Object"], pos)
+	self.m_Object = createObject(typeData["Object"], pos, 0, 0, math.random(0,360))
 	self.m_Object:setCollisionsEnabled(false)
 	self.m_Planted = planted
 	self.m_Size = size

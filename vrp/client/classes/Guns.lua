@@ -5,9 +5,8 @@
 -- *  PURPOSE:     Client Gun Class
 -- *
 -- ****************************************************************************
-
 Guns = inherit(Singleton)
-local w,h = guiGetScreenSize()
+local w, h = screenWidth, screenHeight
 local NO_TRACERS = {
 	[25] = true,
 	[26] = true,

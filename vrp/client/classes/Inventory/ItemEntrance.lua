@@ -1,16 +1,15 @@
 ItemEntrance = inherit(GUIForm)
 inherit(Singleton, ItemEntrance)
 local lastTitle, lastDesc
-local w,h = guiGetScreenSize()
 local fontHeight = dxGetFontHeight(3, "default-bold")
 local fontHeight2 = dxGetFontHeight(1.5, "default-bold")
 local lastEntranceTry = getTickCount()
 addEvent("drawEntranceTitleDesc", true)
-addEventHandler("drawEntranceTitleDesc", localPlayer, function(state, title, desc) 
-	if not state then 
+addEventHandler("drawEntranceTitleDesc", localPlayer, function(state, title, desc)
+	if not state then
 		removeEventHandler("onClientRender", root, ItemEntrance.Event_OnRender)
-	else 
-		lastTitle = title 
+	else
+		lastTitle = title
 		lastDesc = desc
 		removeEventHandler("onClientRender", root, ItemEntrance.Event_OnRender)
 		addEventHandler("onClientRender", root, ItemEntrance.Event_OnRender)
@@ -18,10 +17,10 @@ addEventHandler("drawEntranceTitleDesc", localPlayer, function(state, title, des
 end)
 
 addEvent("onTryEnterance")
-addEventHandler("onTryEnterance", root, function() 
+addEventHandler("onTryEnterance", root, function()
 	local id = localPlayer:getPrivateSync("EntranceId")
 	local now = getTickCount()
-	if id and now >= lastEntranceTry+1000 then 
+	if id and now >= lastEntranceTry+1000 then
 		lastEntranceTry = now
 		triggerServerEvent("confirmEntranceEnter", localPlayer, id)
 	end
@@ -33,9 +32,9 @@ addEventHandler("promptEntranceOption", localPlayer,
 	function(id, pos)
 		if not instance then
 			instance = ItemEntrance:new(id, pos)
-		else 
+		else
 			--instance:setIdLabel( id )
-			instance:setPosLabel ( pos ) 
+			instance:setPosLabel ( pos )
 		end
 	end
 )
@@ -46,10 +45,10 @@ addEventHandler("itemEntrancePlayLock", root,
 		if isElement(source.Sound) then
 			source.Sound:destroy()
 		end
-		local sound 
+		local sound
 		if state then
 			sound = Sound3D.create("files/audio/Items/doorLockSound.mp3", source:getPosition())
-		else 
+		else
 			sound = Sound3D.create("files/audio/Items/doorUnlockSound.mp3", source:getPosition())
 		end
 		sound:setInterior(source:getInterior())
@@ -73,21 +72,21 @@ addEventHandler("itemEntrancePlayEnter", root,
 	end
 )
 
-function ItemEntrance:Event_OnRender() 
-	if lastTitle and lastDesc then 
-		dxDrawText(lastTitle, 0, 0, w, h*0.9+1, tocolor(0, 0, 0, 255), 3, "default-bold", "center", "bottom")
-		dxDrawText(lastTitle, 0, 0, w, h*0.9, tocolor(255, 255, 255, 255), 3, "default-bold", "center", "bottom")
-		dxDrawText(lastDesc, 0, 0, w, (h*0.9+fontHeight)+1, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
-		dxDrawText(lastDesc, 0, 0, w, h*0.9+fontHeight, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
+function ItemEntrance:Event_OnRender()
+	if lastTitle and lastDesc then
+		dxDrawText(lastTitle, 0, 0, screenWidth, screenHeight*0.9+1, tocolor(0, 0, 0, 255), 3, "default-bold", "center", "bottom")
+		dxDrawText(lastTitle, 0, 0, screenWidth, screenHeight*0.9, tocolor(255, 255, 255, 255), 3, "default-bold", "center", "bottom")
+		dxDrawText(lastDesc, 0, 0, screenWidth, (screenHeight*0.9+fontHeight)+1, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
+		dxDrawText(lastDesc, 0, 0, screenWidth, screenHeight*0.9+fontHeight, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
 	end
 	local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
-	dxDrawText(("Drücke %s zum Eintreten!"):format(key:upper()), 0, 0, w, h*0.9+fontHeight*1.1+fontHeight2*1.1, tocolor(255, 255, 255, 255), 1, "default-bold", "center", "bottom")
+	dxDrawText(("Drücke %s zum Eintreten!"):format(key:upper()), 0, 0, screenWidth, screenHeight*0.9+fontHeight*1.1+fontHeight2*1.1, tocolor(255, 255, 255, 255), 1, "default-bold", "center", "bottom")
 end
 
 function ItemEntrance:constructor( id, pos )
-	GUIWindow.updateGrid()        
-	self.m_Width = grid("x", 10) 
-	self.m_Height = grid("y", 7) 
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 10)
+	self.m_Height = grid("y", 7)
 	GUIForm.constructor(self, screenWidth/2-(350/2)/2, 300, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Eingang", true, false, self)
 	self.m_CoordLabel = GUIGridLabel:new(1, 1, 12, 1, "Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3], self.m_Window):setFont(VRPFont(18, Fonts.EkMukta))
@@ -105,20 +104,7 @@ function ItemEntrance:constructor( id, pos )
 	self.m_AcceptButton.onLeftClick = bind(self.closeForm, self)
 	self.m_DeclineButton = GUIGridButton:new(6, 6, 4, 1, FontAwesomeSymbols.Accept, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(0, 140, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
 	self.m_DeclineButton.onLeftClick = bind(self.submitForm, self)
-	--self:setIdLabel( id ) 
-end
-
-
-function ItemEntrance:setIdLabel( id ) 
-	if self.m_Window then 
-		self.m_Window:setTitleBarText ( "Gehört zu Keypad #"..id )
-	end
-end
-
-function ItemEntrance:setPosLabel( pos ) 
-	if self.m_Window then 
-		instance.m_CoordLabel:setText ("Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3])
-	end
+	--self:setIdLabel( id )
 end
 
 function ItemEntrance:destructor()
@@ -126,23 +112,35 @@ function ItemEntrance:destructor()
 	instance = nil
 end
 
-function ItemEntrance:closeForm() 
+function ItemEntrance:setIdLabel( id )
+	if self.m_Window then
+		self.m_Window:setTitleBarText ( "Gehört zu Keypad #"..id )
+	end
+end
+
+function ItemEntrance:setPosLabel( pos )
+	if self.m_Window then
+		instance.m_CoordLabel:setText ("Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3])
+	end
+end
+
+function ItemEntrance:closeForm()
 	delete(self)
 end
 
-function ItemEntrance:submitForm() 
+function ItemEntrance:submitForm()
 	local addKeyPad = self.m_EditKeyPadLink:getText()
 	local removeKeyPad = self.m_RemoveKeyPadLink:getText()
 	local interior = self.m_EditInterior:getText()
-	local posX = self.m_EntrancePosX:getText() 
-	local posY = self.m_EntrancePosY:getText() 
-	local posZ = self.m_EntrancePosZ:getText() 
+	local posX = self.m_EntrancePosX:getText()
+	local posY = self.m_EntrancePosY:getText()
+	local posZ = self.m_EntrancePosZ:getText()
 	local title = self.m_EntranceTitel:getText()
 	local desc = self.m_EntranceDesc:getText()
 	local entranceLink = self.m_EntranceLink:getText()
-	if not posX or not posY or not posZ then 
-		posX = false 
-		posY = false 
+	if not posX or not posY or not posZ then
+		posX = false
+		posY = false
 		posZ = false
 		entranceLink = false
 	end

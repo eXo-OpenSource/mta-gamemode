@@ -23,11 +23,9 @@ function HTTPMinimalDownloadGUI:constructor()
 	MessageBoxManager.resortPositions()
 end
 
-function HTTPMinimalDownloadGUI:destructor()
+function HTTPMinimalDownloadGUI:virtual_destructor()
 	table.removevalue(MessageBoxManager.Map, self)
 	MessageBoxManager.resortPositions()
-
-	GUIElement.destructor(self)
 end
 
 function HTTPMinimalDownloadGUI:drawThis()

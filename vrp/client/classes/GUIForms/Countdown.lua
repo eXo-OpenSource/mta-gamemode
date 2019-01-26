@@ -1,12 +1,11 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Countdown.lua
+-- *  FILE:        client/classes/GUIForms/Countdown.lua
 -- *  PURPOSE:     Countdown class
 -- *
 -- ****************************************************************************
 Countdown = inherit(GUIForm)
-
 Countdown.Map = {}
 
 function Countdown:constructor(seconds, title)

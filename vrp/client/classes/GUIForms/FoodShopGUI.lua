@@ -66,9 +66,8 @@ function FoodShopGUI:constructor()
 	addEventHandler("refreshFoodShopMenu", root, self.m_RefreshBind)
 end
 
-function FoodShopGUI:destructor()
+function FoodShopGUI:virtual_destructor()
 	self:playSFX("leave")
-	return GUIForm.destructor(self)
 end
 
 function FoodShopGUI:onHide()
@@ -91,18 +90,14 @@ function FoodShopGUI:refreshFoodShopMenu(shopId, type, menues, items)
 		item = self.m_FoodList:addItem(menu["Name"], tostring(menu["Price"]).."$")
 		item.Id = index
 		item.Type = "Menu"
-		item.onLeftClick = function()
-								self:onSelectMenu(index, type)
-							end
+		item.onLeftClick = function() self:onSelectMenu(index, type) end
 	end
 	self.m_FoodList:addItemNoClick("zum mitnehmen", "")
 	for name, price in pairs(items) do
 		item = self.m_FoodList:addItem(name, tostring(price.."$"))
 		item.Id = name
 		item.Type = "Item"
-		item.onLeftClick = function()
-								self:onSelectItem(name)
-							end
+		item.onLeftClick = function() self:onSelectItem(name) end
 	end
 end
 

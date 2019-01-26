@@ -5,12 +5,12 @@
 -- *  PURPOSE:     Weed class client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
 DrugsWeed = inherit( Object )
 
-
 function DrugsWeed:constructor( )
+end
 
+function DrugsWeed:destructor( )
 end
 
 function DrugsWeed:onUse(  )
@@ -29,7 +29,7 @@ function DrugsWeed:onUse(  )
   if self.m_RenderBindFunc then
     removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   end
-  self.m_ScreenSource = dxCreateScreenSource( w, h)
+  self.m_ScreenSource = dxCreateScreenSource( screenWidth, screenHeight)
   self.m_Shader = dxCreateShader( "files/shader/drug-weedshader.fx" )
   self.m_RenderBindFunc = function() self:onRender() end
   self.m_StartTick = getTickCount()
@@ -49,7 +49,7 @@ function DrugsWeed:onRender()
   dxUpdateScreenSource( self.m_ScreenSource )
   dxSetShaderValue( self.m_Shader, "alpha", alpha)
   dxSetShaderValue( self.m_Shader, "ScreenTexture", self.m_ScreenSource)
-  dxDrawImage( 0, 0, w, h , self.m_Shader)
+  dxDrawImage( 0, 0, screenWidth, screenHeight , self.m_Shader)
   if prog >= 1 then
     self.m_StartTick = getTickCount()
     self.m_EndTick = self.m_StartTick + 1000
@@ -74,8 +74,4 @@ function DrugsWeed:onExpire()
   if self.m_Shader then
     destroyElement( self.m_Shader )
   end
-end
-
-function DrugsWeed:destructor( )
-
 end

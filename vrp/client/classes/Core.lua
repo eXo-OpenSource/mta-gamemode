@@ -73,12 +73,9 @@ function Core:onDownloadComplete()
 	local username = core:get("Login", "username", "")
 	lgi = LoginGUI:new(username, pwhash)
 
-
-
 	-- other
 	setAmbientSoundEnabled( "gunfire", false )
 	showChat(true)
-
 end
 
 function Core:ready() --onClientResourceStart
@@ -132,6 +129,7 @@ function Core:ready() --onClientResourceStart
 	else
 		setFarClipDistance(992)
 	end
+
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()
@@ -146,11 +144,8 @@ function Core:ready() --onClientResourceStart
 	Neon.initalize()
 	CoronaEffect.initalize()
 	GroupSaleVehicles.initalize()
-	AccessoireClothes:new()
-	AccessoireClothes:triggerMode()
 	EasterEgg:new()
 	EasterEggArcade.Game:new()
-	EasterEggArcade.Game:getSingleton():setLevel(1)
 	Shaders.load()
 
 	GroupProperty:new()
@@ -167,29 +162,26 @@ function Core:ready() --onClientResourceStart
 	ClientStatistics:new()
 	Nametag:new()
 	PickupWeaponManager:new()
+
 	if EVENT_HALLOWEEN then
 		Halloween:new()
 	end
-
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
 	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --these are only slot machine textures
 		Easter.updateTextures()
 	end
-	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 
+	ItemSmokeGrenade:new() -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 	ExplosiveTruckManager:new()
-
 	VehicleTurbo:new()
-
 	PlaneManager:new()
 end
 
 function Core:afterLogin()
 	Weather:new()
 	RadioGUI:new()
-	KarmaBar:new()
 	HUDSpeedo:new()
 	HUDAviation:new()
 	HUDRadar:getSingleton():setEnabled(core:get("HUD", "showRadar", true))
@@ -229,11 +221,10 @@ function Core:afterLogin()
 
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
-	PlantGUI.load()
 	Fishing.load()
 	TurtleRace.load()
 	GUIForm3D.load()
-	NonCollidingSphere.load()
+	NonCollisionArea.load()
 	TextureReplacer.loadBacklog()
 
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
@@ -252,6 +243,15 @@ function Core:afterLogin()
 	end
 
 	setElementData(localPlayer, "isEquipmentGUIOpen", false, true)
+
+	setTimer(
+		function()
+			if localPlayer:isWorldLoaded() then
+				triggerServerEvent("unfreezePlayer", localPlayer) -- do not unfreeze player on client cause of sync issues
+				if isTimer(sourceTimer) then killTimer(sourceTimer) end
+			end
+		end, 1000, 0
+	)
 end
 
 function Core:onWebSessionCreated() -- this gets called from LocalPlayer when the client recieves it's web session ID

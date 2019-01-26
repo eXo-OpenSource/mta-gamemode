@@ -271,7 +271,7 @@ function Player:loadCharacterInfo()
 	self:getOfflineMessages()
 	if self.m_OfflineMessages then
 		for key, msg in ipairs( self.m_OfflineMessages ) do
-			self:sendShortMessage(msg[1], "Offlinenachricht" )
+			self:sendShortMessage(msg[1], "Offlinenachricht", nil, -1)
 		end
 	end
 
@@ -392,8 +392,6 @@ function Player:spawn()
 				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
 				if house and house:isValidToEnter(self) then
 					if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
-						--if it works, don't delete it
-						self:setFrozen(true)
 						spawnSuccess = true
 					end
 				else
@@ -410,8 +408,8 @@ function Player:spawn()
 				local position = companySpawnpoint[self:getCompany():getId()]
 				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 			end
-			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+		--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+		--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
 			local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
 			if self:getGroup() and #groupProperties > 0 then
@@ -438,6 +436,7 @@ function Player:spawn()
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
 	self:setCorrectSkin()
+	self:setFrozen(true)
 
 	if self:isPremium() then
 		self:setArmor(100)
@@ -458,8 +457,6 @@ function Player:spawn()
 		giveWeapon(self, info[1], info[2])
 	end
 
-	-- gets unfrozen if he has a session id
-	self:setFrozen(true)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
@@ -475,7 +472,6 @@ function Player:spawn()
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
-
 
 	self:triggerEvent("checkNoDm")
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
@@ -494,17 +490,16 @@ function Player:respawn(position, rotation, bJailSpawn)
 	else
 		position, rotation = position, rotation
 	end
+
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
 	end
+
 	if self.m_JailTime == 0 or not self.m_JailTime then
-
-		self:setHeadless(false)
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
-
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
-		self:setHeadless(false)
+
 		if not bJailSpawn then
 			self:moveToJail(false,true)
 		end
@@ -516,11 +511,13 @@ function Player:respawn(position, rotation, bJailSpawn)
 		self:setArmor(100)
 		giveWeapon(self, 24, 35)
 	end
+
+	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
-	FactionState:getSingleton():uncuffPlayer( self )
+	FactionState:getSingleton():uncuffPlayer(self)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 

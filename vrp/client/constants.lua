@@ -652,18 +652,26 @@ HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512
 
 CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
 
+PHONE_MODELS = {
+	{Name = "Nexus 5", Image = "Nexus_5.png", IconPreset = "Android"},
+	{Name = "iPhone schwarz", Image = "iPhone_schwarz.png", IconPreset = "iPhone"},
+	{Name = "iPhone weiß", Image = "iPhone_weiss.png", IconPreset = "iPhone"},
+}
+for k, v in pairs(PHONE_MODELS) do if type(v) == "table" then PHONE_MODELS[v.Name] = k end end
+
+
 --[[ EASTEREGG-ARCADE ]]
 EASTEREGG_IMAGE_PATH = ":"..getResourceName(getThisResource()).."/files/images/arcade-game/"
 EASTEREGG_FILE_PATH = ":"..getResourceName(getThisResource()).."/files/fonts/"
 EASTEREGG_SFX_PATH = ":"..getResourceName(getThisResource()).."/files/audio/arcade-sfx/"
 EASTEREGG_TICK_CAP = 1000/ 59.99
 EASTEREGG_NATIVE_RATIO = {x=1024;y=512}
-EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = guiGetScreenSize()
+EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = screenWidth, screenHeight
 EASTEREGG_FONT_SCALE = 1
 EASTEREGG_JUMP_RATIO = 16
 EASTEREGG_PROJECTILE_SPEED = 3
 EASTEREGG_ARENA_IMAGE = "arena"
-local w, h = guiGetScreenSize()
+local w, h = screenWidth, screenHeight
 if EASTEREGG_WINDOW_WIDTH >= 1600 then
 	EASTEREGG_FONT_SCALE = 1
 	EASTEREGG_WINDOW = {{x=(w*0.5)-512;y=(h*0.5)-256}, {x=1024, y=512}}
@@ -719,10 +727,10 @@ KMH_TO_KNOTS = 0.539957
 ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM = {
 	PFD = {
 		INDEX = 1,
-		--//PRIMARY FLIGHT DISPLAY 
-		GROUNDSPEED_DISPLAY = 1; 
+		--//PRIMARY FLIGHT DISPLAY
+		GROUNDSPEED_DISPLAY = 1;
 		ARTIFICIAL_HORIZON = 2;
-		ALTIMETER = 3; 
+		ALTIMETER = 3;
 	};
 	SFD = {
 		INDEX = 2;

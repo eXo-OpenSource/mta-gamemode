@@ -187,7 +187,6 @@ function Core:constructor()
 		BindManager:new()
 		Forum:new()
 		ServiceSync:new()
-
 		Discord:new()
 		TeleportManager:new()
 		Sewers:new()

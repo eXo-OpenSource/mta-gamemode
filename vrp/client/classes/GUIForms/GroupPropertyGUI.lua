@@ -80,10 +80,6 @@ function GroupPropertyGUI:openDepot( )
 	triggerServerEvent("requestPropertyItemDepot", localPlayer)
 end
 
-function GroupPropertyGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 function GroupPropertyGUI:OnSellClick()
 	QuestionBox:new(
 		_"Bist du dir sicher, dass du diese Immobilie verkaufen möchtest?",

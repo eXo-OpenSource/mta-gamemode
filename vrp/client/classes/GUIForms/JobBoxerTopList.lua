@@ -5,11 +5,10 @@
 -- *  PURPOSE:     Boxer job toplist gui class
 -- *
 -- ****************************************************************************
-
 JobBoxerTopList = inherit(GUIForm)
 
 function JobBoxerTopList:constructor(table, playertable)
-    GUIWindow.updateGrid()			
+    GUIWindow.updateGrid()
 	self.m_Width = grid("x", 12)
 	self.m_Height = grid("y", 11)
 

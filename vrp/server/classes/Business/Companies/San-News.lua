@@ -3,10 +3,12 @@ SanNews = inherit(Company)
 function SanNews:constructor()
 	self.m_isInterview = false
 	self.m_InterviewPlayer = {}
+	self.m_Blips = {}
 	self.m_NextAd = getRealTime().timestamp
 	self.m_onInterviewColshapeLeaveFunc = bind(self.onInterviewColshapeLeave, self)
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
 	self.m_SanNewsMessageEnabled = false
+	self.m_RunningEvent = false
 
 	local safe = createObject(2332, 732.40, -1341.90, 13, 0, 0, 90)
  	self:setSafe(safe)
@@ -17,21 +19,22 @@ function SanNews:constructor()
 
    	Gate:new(968, Vector3(781.40, -1384.60, 13.50), Vector3(0, 90, 180), Vector3(781.40, -1384.60, 13.50), Vector3(0, 5, 180), false).onGateHit = bind(self.onBarrierHit, self)
 	Gate:new(968, Vector3(781.30, -1330.30, 13.40), Vector3(0, 90, 180), Vector3(781.30, -1330.30, 13.40), Vector3(0, 5, 180), false).onGateHit = bind(self.onBarrierHit, self)
-	
+
 	-- Register in Player Hooks
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
 
-	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage", "sanNewsStartStreetrace"}
+	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage", "sanNewsStartStreetrace", "sanNewsAddBlip", "sanNewsDeleteBlips"}
 	addEventHandler("sanNewsStartInterview", root, bind(self.Event_startInterview, self))
 	addEventHandler("sanNewsStopInterview", root, bind(self.Event_stopInterview, self))
 	addEventHandler("sanNewsAdvertisement", root, bind(self.Event_advertisement, self))
 	addEventHandler("sanNewsToggleMessage", root, bind(self.Event_toggleMessage, self))
 	addEventHandler("sanNewsStartStreetrace", root, bind(self.Event_startStreetrace, self))
+	addEventHandler("sanNewsAddBlip", root, bind(self.Event_addBlip, self))
+	addEventHandler("sanNewsDeleteBlips", root, bind(self.Event_deleteBlips, self))
 
 	addCommandHandler("news", bind(self.Event_news, self))
 	addCommandHandler("sannews", bind(self.Event_sanNewsMessage, self), false, false)
-
 end
 
 function SanNews:destuctor()
@@ -202,7 +205,38 @@ function SanNews:Event_toggleMessage()
 end
 
 function SanNews:Event_startStreetrace()
-	EventManager:getSingleton():openRandomEvent()
+	if not EventManager:getSingleton():isEvent(self.m_RunningEvent) then
+		self.m_RunningEvent = EventManager:getSingleton():openRandomEvent()
+		self:addLog(client, "Events", "hat ein Straßenrennen gestartet!")
+	else
+		client:sendError("Es läuft bereits ein Event!")
+	end
+end
+
+function SanNews:Event_addBlip(posX, posY, text)
+	if self:getPlayerRank(client) == CompanyRank.Normal then
+		client:sendError("Du bist nicht berechtigt Marker zu erstellen!")
+		return
+	end
+	
+	local id = self:getId()
+	local color = {companyColors[id].r, companyColors[id].g, companyColors[id].b}
+	local blipName = ("San News - %s"):format(text or "Marker")
+	local blip = Blip:new("Marker.png", posX, posY, root, 10000, color)
+	blip:setDisplayText(blipName, BLIP_CATEGORY.Default)
+	table.insert(self.m_Blips, blip)
+
+	self:addLog(client, "Marker", ("hat einen Marker erstellt: %s"):format(blipName))
+	--PlayerManager:getSingleton():sendShortMessage("Die San News hat einen Ort auf der Karte markiert!", ("San News - %s"):format(text or "Marker"), color, 15000)
+end
+
+function SanNews:Event_deleteBlips()
+	for _, blip in pairs(self.m_Blips) do
+		blip:delete()
+	end
+	self.m_Blips = {}
+
+	client:sendInfo("Alle Blips entfernt!")
 end
 
 function SanNews:Event_sanNewsMessage(player, cmd, ...)

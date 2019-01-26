@@ -134,12 +134,11 @@ function dxDrawText3D(text, x, y, z)
 	local scx,scy = getScreenFromWorldPosition(x, y, z)
 	if scx and scy then
 		dxDrawText("[Debug] "..text, scx, scy, nil, nil, Color.White, 1, "default-bold", "center", "center")
-	end		
+	end
 end
 
-
 function dxDrawToolTip(x, y, text)
-	local f = VRPFont(30)
+	local f = getVRPFont(VRPFont(30))
 	local h = fontHeight(f, 1)/2
 	local w = fontWidth(text, f, 1)+30
 	dxDrawRectangle(x-w/2, y-h, w, h, tocolor(0, 0, 0, 150))
@@ -297,15 +296,15 @@ function isPedAiming ( thePedToCheck )
 	return false
 end
 
-function dxDrawBoxShape( x, y, w, h , ...) 
-	dxDrawLine( x, y, x+w,y,...) 
+function dxDrawBoxShape( x, y, w, h , ...)
+	dxDrawLine( x, y, x+w,y,...)
 	dxDrawLine( x, y+h , x +w , y+h,...)
 	dxDrawLine( x , y ,x , y+h , ... )
 	dxDrawLine( x+w , y ,x+w , y+h , ...)
 end
 
-function dxDrawBoxText( text , x, y , w , h , ... ) 
-	dxDrawText( text , x , y , x + w , y + h , ... ) 
+function dxDrawBoxText( text , x, y , w , h , ... )
+	dxDrawText( text , x , y , x + w , y + h , ... )
 end
 
 function getLineAngle( cx, cy, r, t)

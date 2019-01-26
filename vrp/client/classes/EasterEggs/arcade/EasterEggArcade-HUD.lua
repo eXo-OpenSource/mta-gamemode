@@ -101,7 +101,6 @@ function EasterEggArcade.HUD:addDamage( obj )
 end
 
 function EasterEggArcade.HUD:drawOverlay()
-	local w,h = guiGetScreenSize()
 	dxDrawImage(EASTEREGG_WINDOW[1].x-EASTEREGG_WINDOW[2].x*0.46, EASTEREGG_WINDOW[1].y-EASTEREGG_WINDOW[2].y*0.1, EASTEREGG_WINDOW[2].x*1.9, EASTEREGG_WINDOW[2].y*1.2, EASTEREGG_IMAGE_PATH.."/overlay.png" )
 end
 

@@ -36,7 +36,6 @@ function WeaponLevelGUI:constructor()
 	else
 		GUILabel:new(10, 285, 280, 25, _"Du hast das maximale Waffenlevel bereits erreicht!", self):setMultiline(true)
 	end
-
 end
 
 addEventHandler("openWeaponLevelGUI", root, function()

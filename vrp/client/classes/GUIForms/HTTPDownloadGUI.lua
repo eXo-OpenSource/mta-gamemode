@@ -12,7 +12,7 @@ function HTTPDownloadGUI:constructor()
 	self.m_DownloadBar = GUIProgressBar:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, self)
 	if core:get("Login", "LoginMusic", true) then
 		self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
-	else 
+	else
 		self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu starten!", self):setAlignX("center")
 	end
 
@@ -20,12 +20,11 @@ function HTTPDownloadGUI:constructor()
 	self:launchMusic()
 end
 
-function HTTPDownloadGUI:destructor()
+function HTTPDownloadGUI:virtual_destructor()
 	if self.m_Music and isElement(self.m_Music) then
 		stopSound(self.m_Music)
 	end
 
-	GUIForm.destructor(self)
 	fadeCamera(true)
 end
 
@@ -55,7 +54,7 @@ function HTTPDownloadGUI:launchMusic()
 	end
 	if core:get("Login", "LoginMusic", true) then
 		self:bind("m", self.m_StopMusicFunc)
-	else 
+	else
 		self:bind("m", self.m_StartMusicFunc)
 	end
 end

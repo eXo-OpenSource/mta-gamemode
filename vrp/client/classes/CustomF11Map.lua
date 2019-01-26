@@ -225,7 +225,7 @@ function CustomF11Map:draw()
 
 				local imagePath = blip:getImagePath()
 				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
-					if math.abs(pz - blip:getZ()) > 3 then
+					if math.abs(pz - blip:getZ()) > 3 and getTickCount() % 2000 > 1000 then
 						local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
 						imagePath = HUDRadar:getSingleton():getImagePath(markerImage)
 					end
@@ -237,7 +237,7 @@ function CustomF11Map:draw()
 			end
 		end
 		if self.m_BlipToolTipShowing then --always draw tooltips on top of other blips
-			blip, x, y = unpack(self.m_BlipToolTipShowing)
+			local blip, x, y = unpack(self.m_BlipToolTipShowing)
 			dxDrawToolTip(x, y, blip:getDisplayText())
 		end
 		self.m_BlipToolTipShowing = nil

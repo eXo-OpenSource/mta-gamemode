@@ -8,8 +8,6 @@
 VehicleCustomTextureGUI = inherit(GUIForm)
 addRemoteEvents{"vehicleCustomTextureShopEnter", "vehicleCustomTextureShopExit", "vehicleCustomTextureShopInfo"}
 
-
-
 function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
     GUIForm.constructor(self, 10, 10, screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight*0.7)
 
@@ -97,7 +95,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 
 end
 
-function VehicleCustomTextureGUI:destructor(closedByServer)
+function VehicleCustomTextureGUI:virtual_destructor(closedByServer)
     if not closedByServer then
 		if self.m_Vehicle and isElement(self.m_Vehicle) then
 			TextureReplacer.deleteFromElement(self.m_Vehicle)
@@ -118,7 +116,6 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
     showChat(true)
 	RadioGUI:getSingleton():setVolume(self.m_CarRadioVolume)
 	HUDRadar:getSingleton():show()
-    GUIForm.destructor(self)
 end
 
 function VehicleCustomTextureGUI:rotateVehicle()

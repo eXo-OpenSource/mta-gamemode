@@ -77,7 +77,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
 			if self.m_StartFaction == faction or self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
 				dest = self:addDestinationMarker(faction, "evil")
-				self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State", faction = EvilBlipVisible}, 9999, BLIP_COLOR_CONSTANTS.Red)
+				self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State", faction = EvilBlipVisible, duty = true}, 9999, BLIP_COLOR_CONSTANTS.Red)
 				self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
 				self.m_DestinationBlips[faction:getId()]:setZ(dest.z)
 			end
@@ -88,14 +88,14 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
 			dest = self:addDestinationMarker(faction, "evil")
-			self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State", faction = faction:getId()}, 9999, BLIP_COLOR_CONSTANTS.Red)
+			self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State", faction = faction:getId(), duty = true}, 9999, BLIP_COLOR_CONSTANTS.Red)
 			self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
 			self.m_DestinationBlips[faction:getId()]:setZ(dest.z)
 		end
 	end
 
 	dest = self:addDestinationMarker(self.m_Type == "state" and self.m_StartFaction or FactionManager:getSingleton():getFromId(3), "state") -- State
-	self.m_DestinationBlips["state"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = {"State", "Evil"}}, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_DestinationBlips["state"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = {"State", "Evil", duty = true}}, 9999, BLIP_COLOR_CONSTANTS.Red)
 	self.m_DestinationBlips["state"]:setDisplayText("Waffentruck-Abgabe (Staat)")
 	self.m_DestinationBlips["state"]:setZ(dest.z)
 

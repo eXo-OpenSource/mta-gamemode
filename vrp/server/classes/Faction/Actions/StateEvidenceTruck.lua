@@ -51,7 +51,7 @@ function StateEvidenceTruck:constructor(driver, money)
 
 	local dest = StateEvidenceTruck.Destination
 
-	self.m_DestinationBlips["State"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_DestinationBlips["State"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State", duty = true}, 9999, BLIP_COLOR_CONSTANTS.Red)
 	self.m_DestinationBlips["State"]:setDisplayText("Geldtruck-Abgabepunkt")
 
 	for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do

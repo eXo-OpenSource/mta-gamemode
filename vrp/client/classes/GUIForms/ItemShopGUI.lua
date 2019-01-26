@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/ItemShopGUI.lua
+-- *  FILE:        client/classes/GUIForms/ItemShopGUI.lua
 -- *  PURPOSE:     Item shop GUI class
 -- *
 -- ****************************************************************************

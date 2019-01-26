@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 WareClient = inherit(Singleton)
-local w,h = guiGetScreenSize()
+local w, h = screenWidth, screenHeight
 local showDesc = false
 local showBest = false
 local showWinner = false

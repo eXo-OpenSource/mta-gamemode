@@ -48,7 +48,7 @@ function WeedTruck:constructor(driver)
 	Discord:getSingleton():outputBreakingNews("Ein Weed-Transport wurde soeben gestartet!")
 	FactionState:getSingleton():sendWarning("Ein Weed-Transport wurde gestartet!", "Neuer Einsatz", true, serialiseVector(WeedTruck.spawnPos))
 
-	self.m_Blip = Blip:new("Marker.png", WeedTruck.Destination.x, WeedTruck.Destination.y, {faction = self.m_StartFaction:getId(), factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_Blip = Blip:new("Marker.png", WeedTruck.Destination.x, WeedTruck.Destination.y, {faction = self.m_StartFaction:getId(), factionType = "State", duty = true}, 9999, BLIP_COLOR_CONSTANTS.Red)
 	self.m_DestinationMarker = createMarker(WeedTruck.Destination,"cylinder",8)
 	addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
 

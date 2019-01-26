@@ -28,17 +28,19 @@ BindGUI.Functions = {
 	["g"] = "Beamten (/g)",
 }
 
+MAX_PARAMETER_LENGTH = 37
+
 addRemoteEvents{"bindReceive"}
 
 function BindGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 500)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Binds", true, true, self)
 	self.m_Window:deleteOnClose(true)
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.595, self)
-	self.m_Grid:addColumn("Funktion", 0.2)
-	self.m_Grid:addColumn("Text", 0.6)
-	self.m_Grid:addColumn("Tasten", 0.2)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.50, self)
+	self.m_Grid:addColumn("Funktion", 0.15)
+	self.m_Grid:addColumn("Text", 0.52)
+	self.m_Grid:addColumn("Tasten", 0.28)
 
 	self.m_Footer = {}
 
@@ -50,6 +52,8 @@ function BindGUI:constructor()
 		self.m_EditBindButton:setVisible(false)
 		self.m_DeleteBindButton:setVisible(false)
 	end
+
+	self.m_SelectedBindLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.96, self.m_Height*0.055, "", self.m_Window):setColor(Color.Accent)
 
 	--default Bind
 	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
@@ -126,13 +130,13 @@ function BindGUI:loadLocalBinds()
 
 	for index, data in pairs(binds) do
 		if not data.keys or #data.keys == 0 then
-			keys = "-keine-"
+			keys = "-"
 		elseif #data.keys == 1 then
 			keys = BindGUI.Modifiers[data.keys[1]] and BindGUI.Modifiers[data.keys[1]] or data.keys[1]:upper()
 		else
 			keys = table.concat({BindGUI.Modifiers[data.keys[1]] and BindGUI.Modifiers[data.keys[1]] or data.keys[1]:upper(), BindGUI.Modifiers[data.keys[2]] and BindGUI.Modifiers[data.keys[2]] or data.keys[2]:upper()}, " + ")
 		end
-		item = self.m_Grid:addItem(data.action.name, data.action.parameters, keys)
+		item = self.m_Grid:addItem(data.action.name, string.short(data.action.parameters, MAX_PARAMETER_LENGTH), keys)
 		item.index = index
 		item.type = "local"
 		item.action =  data.action.name
@@ -166,7 +170,7 @@ function BindGUI:Event_onReceive(type, id, binds)
 	local item
 	self.m_Grid:addItemNoClick(BindGUI.Headers[type], "", "")
 	for id, data in pairs(binds) do
-		item = self.m_Grid:addItem(data["Func"], data["Message"], "-keine-")
+		item = self.m_Grid:addItem(data["Func"], string.short(data["Message"], MAX_PARAMETER_LENGTH), "-")
 		item.type = "server"
 		item.action =  data["Func"]
 		item.parameter =  data["Message"]
@@ -186,6 +190,7 @@ end
 
 function BindGUI:onBindSelect(item, index)
     self.m_SelectedBind = item
+	self.m_SelectedBindLabel:setText(("Text: %s"):format(item.parameter))
 	if item.type == "local" then
 		self:changeFooter("local")
 		if BindManager:getSingleton().m_Binds[index] and BindManager:getSingleton().m_Binds[index].keys then
@@ -362,7 +367,7 @@ function BindManageGUI:Event_onReceive(type, id, binds)
 	self.m_Grid:clear()
 	self.m_Grid:addItemNoClick(BindGUI.Headers[type], "")
 	for id, data in pairs(binds) do
-		item = self.m_Grid:addItem(data["Func"], data["Message"])
+		local item = self.m_Grid:addItem(data["Func"], data["Message"])
 		item.action =  data["Func"]
 		item.parameter =  data["Message"]
 		item.id = id

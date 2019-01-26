@@ -17,7 +17,7 @@ function FactionEvil:constructor()
 	self.m_Raids = {}
 
 	nextframe(function()
-		self:loadLCNGates(5)
+		--self:loadLCNGates(5)
 		self:loadCartelGates(11)
 		self:loadYakGates(6)
 	end)
@@ -406,7 +406,10 @@ function FactionEvil:isPlayerInDutyPickup(player)
 end
 
 function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
-	if wasted then client:removeFromVehicle() end
+	if wasted then
+		client:removeFromVehicle()
+		client.m_WasOnDuty = true
+	end
 
 	if getPedOccupiedVehicle(client) then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")

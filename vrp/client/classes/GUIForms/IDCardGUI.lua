@@ -11,7 +11,6 @@ inherit(Singleton, IDCardGUI)
 addRemoteEvents{"showIDCard"}
 
 function IDCardGUI:constructor(player)
-
 	if not player then player = localPlayer end
 
 	GUIForm.constructor(self, screenWidth/2-400/2, screenHeight/2-320/2, 400, 320)

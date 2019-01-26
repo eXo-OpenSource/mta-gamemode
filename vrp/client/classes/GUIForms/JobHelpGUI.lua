@@ -8,7 +8,6 @@
 JobHelpGUI = inherit(GUIForm)
 inherit(Singleton, JobHelpGUI)
 
-
 function JobHelpGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
@@ -27,11 +26,6 @@ function JobHelpGUI:constructor()
 		item.onLeftDoubleClick = function () self:showJob( pos, job.m_Ped ) end
 	end
 end
-
-function JobHelpGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 
 function JobHelpGUI:showJob( pos, ped )
 	if self.m_JobBlip then

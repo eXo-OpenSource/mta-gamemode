@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 InteriorEnterExitGUI = inherit(Singleton)
---inherit(Singleton, InteriorEnterExitGUI)
 
 InteriorEnterExitGUI.m_Font = VRPFont(60)
 InteriorEnterExitGUI.m_FontSmall = VRPFont(24)
@@ -22,15 +21,14 @@ function InteriorEnterExitGUI:constructor(entry, text, icon)
     self.m_Icon = icon
     local textWidth = dxGetTextWidth(self.m_Text, 1, getVRPFont(self.m_Font))
     if textWidth > self.m_Width*0.6 then
-        local exceed = (textWidth - self.m_Width*0.6) / (self.m_Width*0.6)
-        self.m_Font = getVRPFont(VRPFont(math.ceil(60-(60*exceed))))
+		local exceed = (textWidth - self.m_Width*0.6) / (self.m_Width*0.6)
+        self.m_Font = VRPFont(math.ceil(60-(60*exceed)))
     end
     local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
     self.m_KeyText = ("Drücke %s[%s]%s zum Betreten!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
 
     self:start()
 end
-
 
 function InteriorEnterExitGUI:start()
     self.m_Height = self.m_Height*0.9
@@ -40,7 +38,6 @@ function InteriorEnterExitGUI:start()
     self.m_DrawBind = bind(self.draw, self)
     addEventHandler("onClientRender", root, self.m_DrawBind)
 end
-
 
 function InteriorEnterExitGUI:draw()
     localPlayer.m_LastEntrance = getTickCount()

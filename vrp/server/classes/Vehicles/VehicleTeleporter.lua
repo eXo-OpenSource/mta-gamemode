@@ -14,9 +14,9 @@ function VehicleTeleporter:constructor(entryPosition, exitPosition, enterRotatio
 	self.m_ExitMarker = createMarker(exitPosition - vectorMarkerOffset, marker or "cylinder", radius or 10, 58, 186, 242, 100)
 
 	self.m_EnterNoCollisionArea = createColSphere(entryPosition, radius or 10)
-	self.m_EnterNoCollisionArea:setData("NonCollidingSphere", true, true)
+	self.m_EnterNoCollisionArea:setData("NonCollisionArea", {players = true}, true)
 	self.m_ExitNoCollisionArea = createColSphere(exitPosition, radius or 10)
-	self.m_ExitNoCollisionArea:setData("NonCollidingSphere", true, true)
+	self.m_ExitNoCollisionArea:setData("NonCollisionArea", {players = true}, true)
 
 	interiorId = interiorId or 0
 	dimension = dimension or 0
@@ -73,13 +73,13 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 		self:cancelExitingForOccupants(vehicle, true)
 		vehicle:toggleHandBrake(player, true)
 	end
-	
+
 	setTimer(
 		function()
 			if not self:isValidPort(player, isVehicle, vehicle) then return false end
-			
 
-			if (player.position - marker.position).length < 20 then 
+
+			if (player.position - marker.position).length < 20 then
 				player:setInterior(interior)
 				player:setDimension(dimension)
 				player:setCameraTarget(player)
@@ -89,7 +89,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 					vehicle:setInterior(interior)
 					vehicle:setDimension(dimension)
 					vehicle:setFrozen(true)
-					for seat, occ in pairs(getVehicleOccupants(vehicle)) do 
+					for seat, occ in pairs(getVehicleOccupants(vehicle)) do
 						if seat > 0 then
 							occ:setInterior(interior)
 							occ:setDimension(dimension)
@@ -105,7 +105,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 				player:sendWarning(_("Du musst im Marker bleiben!", player))
 			end
 			fadeCamera(player, true)
-			
+
 			setTimer(function() --map glitch fix
 				if not self:isValidPort(player, isVehicle, vehicle) then return false end
 				setElementFrozen( player, false)
@@ -113,7 +113,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 					self:cancelExitingForOccupants(vehicle, false)
 					vehicle:toggleHandBrake(player, false)
 					vehicle:setFrozen(false)
-					for seat, occ in pairs(getVehicleOccupants(vehicle)) do 
+					for seat, occ in pairs(getVehicleOccupants(vehicle)) do
 						if seat > 0 then
 							occ:triggerEvent("checkNoDm")
 							occ:setFrozen(false)
@@ -138,7 +138,7 @@ end
 function VehicleTeleporter:isValidPort(player, isVehicle, vehicle)
 	if not isVehicle then
 		return (isElement(player) and getElementType(player) == "player")
-	else 
+	else
 		return (isElement(player) and getElementType(player) == "player") and (isElement(vehicle) and getElementType(vehicle) == "vehicle")
 	end
 end

@@ -88,13 +88,12 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	MessageBoxManager.resortPositions()
 end
 
-function ShortMessage:destructor(force)
+function ShortMessage:virtual_destructor(force)
 	if self.m_Timeout and isTimer(self.m_Timeout) then
 		killTimer(self.m_Timeout)
 	end
 	if not force then
 		Animation.FadeAlpha:new(self, 200, 200, 0).onFinish = function ()
-			GUIElement.destructor(self)
 			if self.m_Texture then
 				delete(self.m_Texture)
 			end
@@ -106,7 +105,6 @@ function ShortMessage:destructor(force)
 			Animation.FadeAlpha:new(self.m_Texture, 200, 200, 0)
 		end
 	else
-		GUIElement.destructor(self)
 		if self.m_Texture then
 			delete(self.m_Texture)
 		end

@@ -6,11 +6,10 @@
 -- *
 -- ****************************************************************************
 InventoryActionGUI = inherit(GUIButtonMenu)
-local w,h = guiGetScreenSize()
 
 function InventoryActionGUI:constructor(action)
-	GUIButtonMenu.constructor(self, "Inventar - Item "..action, nil, nil, nil, h*0.2)
-	
+	GUIButtonMenu.constructor(self, "Inventar - Item "..action, nil, nil, nil, screenHeight*0.2)
+
 	-- Add the Items
 	self:addItems()
 end
