@@ -168,8 +168,12 @@ end
 function ScoreboardGUI:insertPlayers()
 	local gname
 	for index, player in ipairs(self.m_Players) do
-		local karma = math.floor(player:getKarma() or 0)
-		local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
+		local isLoggedIn = not player:getName():find("Gast_")
+
+		local playtime = ("%d:%.2d"):format(math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60))
+		local karmaValue = player:getKarma()
+		local karma = ("%s%d"):format(karmaValue >= 0 and "+" or "-", math.abs(karmaValue))
+
 		local ping
 		if player:isAFK() then
 			ping = "AFK"
@@ -181,20 +185,21 @@ function ScoreboardGUI:insertPlayers()
 
 		gname = player:getGroupName()
 		if gname == "" or #gname == 0 then
-			gname = "-Keine-"
+			gname = "- Keine -"
 		end
 		local item = self.m_Grid:addItem(
-			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
+			(isLoggedIn and player:isPremium()) and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
 			player:getName(),
-			player:getFaction() and player:getFaction():getShortName() or "- Keine -",
-			player:getCompany() and player:getCompany():getShortName()  or "- Keins -",
-			string.short(gname, 16),
-			("%d:%.2d"):format(hours, minutes), --hours..":"..minutes,
-			("%s%d"):format(karma >= 0 and "+" or "-", math.abs(karma)), --karma >= 0 and "+"..karma or " "..tostring(karma),
+			isLoggedIn and (player:getFaction() and player:getFaction():getShortName() or "- Keine -") or "-",
+			isLoggedIn and (player:getCompany() and player:getCompany():getShortName()  or "- Keins -") or "-",
+			isLoggedIn and string.short(gname, 16) or "-",
+			isLoggedIn and playtime or "-",
+			isLoggedIn and karma or "-",
 			ping or " - "
 		)
 		item:setColumnToImage(1, true, item.m_Height)
 		item:setFont(VRPFont(24))
+
 		if player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
@@ -214,10 +219,12 @@ function ScoreboardGUI:insertPlayers()
 			item:setColumnColor(8, Color.Yellow)
 		end
 
-		if karma >= 5 then
-			item:setColumnColor(7, Color.Green)
-		elseif karma <= -5 then
-			item:setColumnColor(7, Color.Red)
+		if isLoggedIn then
+			if karmaValue >= 5 then
+				item:setColumnColor(7, Color.Green)
+			elseif karmaValue <= -5 then
+				item:setColumnColor(7, Color.Red)
+			end
 		end
 	end
 

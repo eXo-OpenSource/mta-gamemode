@@ -46,7 +46,7 @@ end
 
 function GUIGridListItem:setColumnToImage(columnIndex, state, width)
 	self.m_Columns[columnIndex].image = state
-	self.m_Columns[columnIndex].imageWidth = width or getColumnWidth(columnIndex)*self.m_Width - 10
+	self.m_Columns[columnIndex].imageWidth = width or self:getGridList():getColumnWidth(columnIndex)*self.m_Width - 10
 	self:anyChange()
 	return self
 end
@@ -80,7 +80,7 @@ function GUIGridListItem:drawThis()
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
 		if self.m_Columns[columnIndex].image then
-			dxDrawImage(self.m_AbsoluteX + currentXPos + 6, self.m_AbsoluteY + 3, self.m_AbsoluteX + currentXPos + self.m_Columns[columnIndex].imageWidth, self.m_Height - 6, self.m_Columns[columnIndex].text, 0, 0, 0, self.m_Columns[columnIndex].color or self.m_Color)
+			dxDrawImage(self.m_AbsoluteX + currentXPos + 3, self.m_AbsoluteY + 3, self.m_Columns[columnIndex].imageWidth - 6, self.m_Height - 6, self.m_Columns[columnIndex].text, 0, 0, 0, self.m_Columns[columnIndex].color or self.m_Color)
 		else
 			local font = self.m_Columns[columnIndex].font and getVRPFont(self.m_Columns[columnIndex].font) or self:getFont()
 			local fontSize = self.m_Columns[columnIndex].fontSize or self:getFontSize()

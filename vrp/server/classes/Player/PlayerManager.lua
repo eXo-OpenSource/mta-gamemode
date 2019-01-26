@@ -87,6 +87,13 @@ function PlayerManager:constructor()
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 end
 
+function PlayerManager:destructor()
+	for k, v in pairs(getElementsByType("player")) do
+		delete(v)
+		v:setName(getRandomUniqueNick())
+	end
+end
+
 function PlayerManager:Event_onUnfreezePlayer()
 	client:setFrozen(false)
 end
@@ -195,12 +202,6 @@ function PlayerManager:Event_switchSpawnWithFaction( state )
 	client.m_SpawnWithFactionSkin = state
 end
 
-function PlayerManager:destructor()
-	for k, v in pairs(getElementsByType("player")) do
-		delete(v)
-	end
-end
-
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
 		if v and isElement(v) and v.updateSync then
@@ -305,7 +306,6 @@ end
 function PlayerManager:playerJoin()
 	-- Set a random nick to prevent blocking nicknames
 	source:setName(getRandomUniqueNick())
-
 	source:join()
 end
 
@@ -322,7 +322,6 @@ function PlayerManager:playerCommand(cmd)
 			cancelEvent()
 		end
 	end
-
 end
 
 function PlayerManager:playerQuit()
