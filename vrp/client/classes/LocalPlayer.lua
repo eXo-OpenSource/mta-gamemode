@@ -804,7 +804,7 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 end
 
 function LocalPlayer:isWorldLoaded()
-	return not isLineOfSightClear(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -2)), true, false, false, true, false, false, false, localPlayer)
+	return not isLineOfSightClear(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -3)), true, false, false, true, false, false, false, localPlayer)
 end
 
 function LocalPlayer:startAnimation(_, ...)
