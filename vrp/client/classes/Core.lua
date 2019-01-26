@@ -223,7 +223,7 @@ function Core:afterLogin()
 	Fishing.load()
 	TurtleRace.load()
 	GUIForm3D.load()
-	NonCollidingSphere.load()
+	NonCollisionArea.load()
 	TextureReplacer.loadBacklog()
 
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)

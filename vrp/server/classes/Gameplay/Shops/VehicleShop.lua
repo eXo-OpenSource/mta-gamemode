@@ -42,7 +42,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
 	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
-	self.m_NonCollissionCol:setData("NonCollidingSphere", true, true)
+	self.m_NonCollissionCol:setData("NonCollisionArea", {players = true}, true)
 
 	self.m_Ped:setData("clickable",true,true)
 	addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
@@ -72,10 +72,10 @@ function VehicleShop:onMarkerHit(hitElement, dim)
 
 		local vehicles = {}
 		for model, vehicleData in pairs(self.m_VehicleList) do
-			if not vehicles[model] then 
+			if not vehicles[model] then
 				vehicles[model] = {}
 			end
-			for i = 1, #self.m_VehicleList[model] do 
+			for i = 1, #self.m_VehicleList[model] do
 				vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level}
 			end
 		end
@@ -129,7 +129,7 @@ function VehicleShop:getMoney()
 end
 
 function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot, TemplateId)
-	if not self.m_VehicleList[Model] then 
+	if not self.m_VehicleList[Model] then
 		self.m_VehicleList[Model] = {}
 	end
 	local index = #self.m_VehicleList[Model]+1
@@ -159,29 +159,29 @@ function VehicleShop:save()
 end
 
 function VehicleShop:setProperty(model, index, property, value, player)
-	if self.m_VehicleList[model][index] then 
+	if self.m_VehicleList[model][index] then
 		if property == "model" then
-			if self.m_VehicleList[model][index].vehicle and isElement(self.m_VehicleList[model][index].vehicle) then 
+			if self.m_VehicleList[model][index].vehicle and isElement(self.m_VehicleList[model][index].vehicle) then
 				self.m_VehicleList[model][index].vehicle:setModel(value)
 				self.m_VehicleList[model][index].templateId = 0
 				self.m_VehicleList[model][index].template =  ""
 			end
 		elseif property == "template-add" then
 			if TuningTemplateManager:getSingleton():getVehicleFromId( value ) ==  self.m_VehicleList[model][index].vehicle:getModel() then
-				self.m_VehicleList[model][index].templateId = value 
+				self.m_VehicleList[model][index].templateId = value
 				self.m_VehicleList[model][index].template =  TuningTemplateManager:getSingleton():getNameFromId( value ) or ""
-			else 
+			else
 				player:sendError(_("Die angegebene Vorlage ist nicht kompatibel mit dem Modell oder nicht gefunden worden!", player))
 				return
 			end
 		elseif property == "template-remove" then
 			self.m_VehicleList[model][index].templateId = 0
 			self.m_VehicleList[model][index].template =  ""
-		else 
+		else
 			self.m_VehicleList[model][index][property] = value
 		end
 		player:sendInfo(_("Das Fahrzeug im Shop %s wurde aktualisiert!", player,  self.m_Name))
-		sql:queryExec("UPDATE ??_vehicle_shop_veh SET Price=?, Level=?, Model=?, TemplateId=? WHERE Id = ?", sql:getPrefix(), self.m_VehicleList[model][index].price, 
+		sql:queryExec("UPDATE ??_vehicle_shop_veh SET Price=?, Level=?, Model=?, TemplateId=? WHERE Id = ?", sql:getPrefix(), self.m_VehicleList[model][index].price,
 		self.m_VehicleList[model][index].level, self.m_VehicleList[model][index].vehicle:getModel(), self.m_VehicleList[model][index].templateId, self.m_VehicleList[model][index].id)
 	end
 end

@@ -2,22 +2,24 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/NonCollisionArea.lua
--- *  PURPOSE:     Area where vehicles don't collide with others entities
+-- *  PURPOSE:     Serverside area where vehicles don't collide with others entities
 -- *
 -- ****************************************************************************
 NonCollisionArea = inherit(Object)
 NonCollisionArea.Vehicles = {}
-function NonCollisionArea:constructor( col )
+
+function NonCollisionArea:constructor(col)
 	self.m_ColShape = col
+
 	addEventHandler("onColShapeHit", self.m_ColShape,
 		function(hitElement, matchingDimension)
 			if not hitElement.towingVehicle and getElementType(hitElement) == "vehicle" and matchingDimension then
-				if not instanceof(hitElement, FactionVehicle) and not instanceof(hitElement, CompanyVehicle) then -- ??????
+				if not instanceof(hitElement, FactionVehicle) and not instanceof(hitElement, CompanyVehicle) then
 					local occupant = getVehicleOccupant(hitElement, 0)
 					if not occupant then
 						setElementAlpha(hitElement, 200)
-						setElementCollisionsEnabled(hitElement,false)
-						setElementFrozen(hitElement,true)
+						setElementCollisionsEnabled(hitElement, false)
+						setElementFrozen(hitElement, true)
 					end
 					NonCollisionArea[hitElement] = true
 				end
@@ -57,5 +59,4 @@ function NonCollisionArea:constructor( col )
 			end
 		end
 	)
-
 end

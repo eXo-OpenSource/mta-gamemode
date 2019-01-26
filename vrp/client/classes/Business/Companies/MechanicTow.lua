@@ -22,11 +22,7 @@ function MechanicTow:constructor()
 	)
 
 	SpeakBubble3D:new(self.m_Ped, _"Fahrzeug freikaufen", _"Klicke mich an!")
-
-	NonCollidingArea:new(894.25, -1188.40, 16.98, 10)
-	NonCollidingArea:new(915.76, -1192.84, 16.72, 10)
-	NonCollidingArea:new(908.032, -1259.658, 15, 15)
-	-- NonCollidingArea:new(864.61, -1272.77, 15, 15)
+	NonCollisionArea:new("Cuboid", {Vector3(895.609, -1191, 16), 25, 25, 5})
 
 	self.m_BugPed = createPed(50, 850.305, -1226.058, 17.269, 290)
 	setElementData(self.m_BugPed, "clickable", true)

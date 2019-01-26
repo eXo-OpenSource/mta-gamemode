@@ -82,7 +82,7 @@ function FactionState:constructor()
 	self:createEquipmentEvidence(Vector3( 1538.44, -1708.12, 5.22), 0, 5, 133)
 	self:createEquipmentEvidence(Vector3( 136.93, 1857.62, 16.68), 0, 0, 275)
 	self:createEquipmentEvidence(Vector3( 1211.52, -1820.59, 12.60), 0, 0, 0)
-	
+
 
 	self.m_Items = {
 		["Barrikade"] = 0,
@@ -219,18 +219,18 @@ end
 function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isStateFaction() then
-			if player:isFactionDuty() then 
+			if player:isFactionDuty() then
 				local box = player:getPlayerAttachedObject()
 				if box and isElement(box) and box.m_Content then
 					self:putEvidenceInDepot(player, box)
 				else
 					if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
-						setElementData(player, "isEquipmentGUIOpen", true, true) 
+						setElementData(player, "isEquipmentGUIOpen", true, true)
 						player.m_LastEquipmentDepot = source
 						player:getFaction():getDepot():showEquipmentDepot(player)
 					end
 				end
-			else 
+			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
 			end
 		else
@@ -283,7 +283,7 @@ function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 0, 5) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 0, 5)
-	
+
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
@@ -301,7 +301,7 @@ function FactionState:loadLSPD(factionId)
 	gate2:setGateScale(1.0285093)
 	gate2:addGate(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), false, 0, 0, 1.0285093)
 	]]
-	createColCuboid( 1582.064, -1665.5, 5.080, 21.7, 27.6, 13):setData("NonCollidingSphere", "ignoreDimension", true) -- nc area inside garage to prevent cars from spawning inside each other
+	createColCuboid(1582.064, -1665.5, 5.080, 21.7, 27.6, 13):setData("NonCollisionArea", {ignoreDimension = true}, true) -- nc area inside garage to prevent cars from spawning inside each other
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
@@ -927,7 +927,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						if target.m_LastWantedsByReason then
 							if target.m_LastWantedsByReason[reason] and target.m_LastWantedsByReason[reason] > getTickCount() - 3*60*1000 then -- do not allow wanteds with same reason within three minutes
 								player:sendWarning(_("%s hat bereits in den letzten drei Minuten Wanteds wegen %s bekommen!", player, target:getName(), reason))
-								return 
+								return
 							end
 						else
 							target.m_LastWantedsByReason = {}
@@ -1808,14 +1808,14 @@ function FactionState:Event_putItemInVehicle(itemName, amount, inventory)
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() == true then
 			local veh = inventory and source or client.vehicle
 			if veh:getFaction() and veh:getFaction():isStateFaction() then
-				if FACTION_TRUNK_SWAT_ITEMS[itemName] then 
-					if client.vehicle and client.vehicle:getModel() ~= 427 then 
+				if FACTION_TRUNK_SWAT_ITEMS[itemName] then
+					if client.vehicle and client.vehicle:getModel() ~= 427 then
 						client:sendError(_("Dieses Item kann nur in einen Enforcer getan werden!", client))
-						return 
+						return
 					else
-						if not client.vehicle then 
+						if not client.vehicle then
 							client:sendError(_("Kein Fahrzeug gefunden!", client))
-							return 
+							return
 						end
 					end
 				end
@@ -1935,8 +1935,8 @@ function FactionState:isBugActive()
 end
 
 function FactionState:checkInsideGarage(player)
-	if player and isElement(player) and isElementWithinColShape ( player, self.m_InstantTeleportCol) then 
-		if player:getDimension() == 5 then 
+	if player and isElement(player) and isElementWithinColShape ( player, self.m_InstantTeleportCol) then
+		if player:getDimension() == 5 then
 			player:triggerEvent("setOcclusion", false)
 		end
 	end

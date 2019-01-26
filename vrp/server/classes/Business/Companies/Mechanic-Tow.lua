@@ -10,13 +10,6 @@ function MechanicTow:constructor()
 
 	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
 
-	self.m_NonCollissionCols = {}
-	for index, pos in pairs(MechanicTow.SpawnPositions) do
-		local x, y, z, rot = unpack(pos)
-		self.m_NonCollissionCols[index] = createColSphere(x, y, z, 10)
-		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
-	end
-
 	local blip = Blip:new("CarLot.png", 913.83, -1234.65, root, 400)
 	blip:setOptionalColor({150, 150, 150})
 	blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
@@ -188,7 +181,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	-- Spawn vehicle in non-collision zone
 	source:setPositionType(VehiclePositionType.World)
 	source:setDimension(0)
-	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
+	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(MechanicTow.SpawnPositions))
 	if source:isAirVehicle() then
 		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
 	elseif source:isWaterVehicle() then
