@@ -117,5 +117,8 @@
 	<map src="sewer-ext.map"/>
 	<map src="minigamescafe.map" dimension="2" />
 
+	<map src="factories/weedfactory.map" />
+	<map src="factories/cocainefactory.map" />
+
 	<!--<map src="admin-auction.map" />--> <!-- Auction Event map at Veriona Beach, ugly -->
 </meta>

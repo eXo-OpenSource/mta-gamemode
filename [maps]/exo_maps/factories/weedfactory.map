@@ -1,0 +1,8 @@
+<map edf:definitions="editor_main">
+    <object id="object (imrancomp1_las2) (2)" breakable="true" interior="1" collisions="true" alpha="255" model="5131" doublesided="false" scale="1" dimension="3" posX="2155" posY="-2274.8999" posZ="958.39996" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (imracompint_las2) (3)" breakable="true" interior="1" collisions="true" alpha="255" model="5129" doublesided="false" scale="1" dimension="3" posX="2150.3398" posY="-2274.4238" posZ="957.07202" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (imcompstrs02) (1)" breakable="true" interior="1" collisions="true" alpha="255" model="5130" doublesided="false" scale="1" dimension="3" posX="2145.5449" posY="-2282.2539" posZ="956.42346" rotX="0" rotY="0" rotZ="44.995"></object>
+    <object id="object (chinaTgarageDoor) (1)" breakable="true" interior="1" collisions="true" alpha="255" model="2957" doublesided="false" scale="1.5" dimension="3" posX="2161.1162" posY="-2243.0996" posZ="955.10004" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (imracompral_las2) (2)" breakable="true" interior="1" collisions="true" alpha="255" model="5268" doublesided="false" scale="1" dimension="3" posX="2144.9199" posY="-2276.7568" posZ="960.034" rotX="0" rotY="0" rotZ="44.995"></object>
+    <object id="object (imy_la_door) (1)" breakable="true" interior="1" collisions="true" alpha="255" model="3109" doublesided="false" scale="1.02" dimension="3" posX="2133.6499" posY="-2297.9399" posZ="960.60004" rotX="0" rotY="0" rotZ="90"></object>
+</map>

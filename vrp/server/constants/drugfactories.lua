@@ -1,3 +1,7 @@
+DRUGFACTORY_MAX_PAYDAY_WEED = 500
+DRUGFACTORY_MAX_PAYDAY_COCAINE = 40
+DRUGFACTORY_MAX_PAYDAY_HEROINE = 150
+
 WEED_GROW_STATION_OFFSETS = {
     {model=3409,   doublesided=false,   scale=0.93000001,   posX=0,            posY=0,             posZ=0,         rotX=0, rotY=0,       rotZ=0}, --Weedpflanze
     {model=2986,   doublesided=false,   scale=4.25,         posX=2.0994,       posY=-0.0799,       posZ=0.12299,   rotX=0, rotY=0,       rotZ=0}, --Boden
@@ -14,7 +18,7 @@ WEED_GROW_STATION_OFFSETS = {
     {model=2957,   doublesided=false,   scale=0,            posX=-2.1555,      posY=0.0799,        posZ=1.70001,   rotX=0, rotY=0,       rotZ=90},--Collision 
     {model=2957,   doublesided=false,   scale=0,            posX=2.2095,       posY=-0.0801,       posZ=1.70001,   rotX=0, rotY=0,       rotZ=90},--Collision 
     {model=2957,   doublesided=false,   scale=0,            posX=-0.0005,      posY=-2.1799,       posZ=1.70001,   rotX=0, rotY=0,       rotZ=0}, --Collision 
-    {model=5302,   doublesided=false,   scale=0,            posX=-0.0994,      posY=-0.0799,       posZ=3.40002,   rotX=0, rotY=90,      rotZ=0} --Collision 
+    {model=5302,   doublesided=false,   scale=0,            posX=-0.0994,      posY=-0.0799,       posZ=3.40002,   rotX=0, rotY=90,      rotZ=0}, --Collision 
 }
 
 WEED_GROW_STATIONS = { -- Breite: 4,55
@@ -52,4 +56,41 @@ WEED_GROW_STATIONS = { -- Breite: 4,55
     {2141.2998046875, -2286.3, 953.5, 180},
     {2145.8505859375, -2286.3, 953.5, 180},
     {2150.4003906255, -2286.3, 953.5, 180},
+}
+
+WEED_WORKERS = {
+    {1, 2132.09937, -2256.09937, 953.04913, 180},
+    {8, 2152.30396, -2251.52026, 953.04553, 0},
+    {13, 2146.01782, -2269.39185, 953.04590, 0},
+    {20, 2133.79395, -2293.38647, 954.52710, 180},
+    {24, 2151.86987, -2293.43237, 954.52002, 180},
+    {29, 2146.18311, -2288.97266, 954.51715, 0}
+}
+
+WEED_WORKER_SKINS = {1, 28, 29, 30, 143, 156}
+
+WEED_WORKER_ANIMATIONS = {
+    {"BOMBER", "BOM_Plant_Loop"},
+    {"cop_ambient", "Coplook_loop"}
+}
+
+COCAINE_STATIONS = {
+    {2734.2600097656, -1318.66015625, 1174.5, false},
+    {2726.6005859375, -1318.66015625, 1174.5, false},
+    {2718.6005859375, -1318.66015625, 1174.5, false},
+
+    {2734.2600097656, -1312.8000488281, 1174.5, true},
+    {2726.6005859375, -1312.8000488281, 1174.5, true},
+    {2718.6005859375, -1312.8000488281, 1174.5, true},
+
+    {2734.2600097656, -1326.1999511719, 1174.5, false},
+    {2726.6005859375, -1326.1999511719, 1174.5, false},
+    {2718.6005859375, -1326.1999511719, 1174.5, false},
+    
+    {2734.2597656250, -1305.1199951172, 1174.5, true},
+    {2726.6005859375, -1305.1199951172, 1174.5, true},
+    {2718.6005859375, -1305.1199951172, 1174.5, true},
+
+    {2709.6005859375, -1326.1999511719, 1174.5, false},
+    {2709.6005859375, -1318.66015625, 1174.5, false},
 }

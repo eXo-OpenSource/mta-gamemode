@@ -65,6 +65,14 @@ function FactionGUI:constructor()
 		self.m_EquipmentPermGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 	end
 
+	self.m_FactoryButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Fabriken", tabAllgemein):setBarEnabled(true)
+	self.m_FactoryButton.onLeftClick = function()
+		if self.m_FactoryGUI then delete(self.m_FactoryGUI) end
+		self:close()
+		self.m_FactoryGUI = DrugFactoryGUI:new()
+		self.m_FactoryGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
+	end
+
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
 	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)

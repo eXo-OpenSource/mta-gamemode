@@ -1,0 +1,14 @@
+<map edf:definitions="editor_main">
+    <object id="object (Carter_drugfloor) (1)" breakable="true" interior="2" alpha="255" model="14412" doublesided="false" scale="1" dimension="3" posX="2727.6001" posY="-1316" posZ="1182.5" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (carter-cage) (1)" breakable="true" interior="2" alpha="255" model="14459" doublesided="true" scale="1" dimension="3" posX="2722.8601" posY="-1316.0229" posZ="1180.1" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (Gen_doorEXT16) (1)" breakable="true" interior="2" alpha="255" model="1537" doublesided="true" scale="1.005" dimension="3" posX="2696.262" posY="-1322.51" posZ="1177.3" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (Gen_doorEXT16) (2)" breakable="true" interior="2" alpha="255" model="1537" doublesided="true" scale="1.005" dimension="3" posX="2696.2617" posY="-1324.0127" posZ="1177.3" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (carter-stairs07) (1)" breakable="true" interior="2" alpha="255" model="14416" doublesided="false" scale="1" dimension="3" posX="2706.8501" posY="-1309.1" posZ="1174.124" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (Gen_doorEXT16) (3)" breakable="true" interior="2" alpha="255" model="1537" doublesided="true" scale="1.005" dimension="3" posX="2751.3621" posY="-1312.04" posZ="1173.14" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (Gen_doorEXT16) (4)" breakable="true" interior="2" alpha="255" model="1537" doublesided="true" scale="1.005" dimension="3" posX="2751.3621" posY="-1313.5283" posZ="1173.14" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (Gen_doorINT05) (1)" breakable="true" interior="2" alpha="255" model="1499" doublesided="false" scale="1" dimension="3" posX="2704.7" posY="-1329.3" posZ="1177.3" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (Gen_doorINT05) (2)" breakable="true" interior="2" alpha="255" model="1499" doublesided="false" scale="1" dimension="3" posX="2704.6819" posY="-1326.2998" posZ="1177.3" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (Gen_doorINT05) (3)" breakable="true" interior="2" alpha="255" model="1499" doublesided="false" scale="1" dimension="3" posX="2745.0371" posY="-1322.5" posZ="1173.155" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (Gen_doorINT05) (4)" breakable="true" interior="2" alpha="255" model="1499" doublesided="false" scale="1" dimension="3" posX="2745.0549" posY="-1325.5" posZ="1173.155" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (carter-column02) (1)" breakable="true" interior="2" alpha="255" model="14445" doublesided="true" scale="1" dimension="3" posX="2714.6001" posY="-1322.72" posZ="1179.2" rotX="0" rotY="0" rotZ="180"></object>
+</map>

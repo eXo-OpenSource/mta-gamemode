@@ -217,7 +217,9 @@
 	<!-- Drug Factories -->
 	<script src="server/classes/Gameplay/DrugFactories/DrugFactory.lua" type="server" />
 	<script src="server/classes/Gameplay/DrugFactories/DrugFactoryManager.lua" type="server" />
+	<script src="server/classes/Gameplay/DrugFactories/FactoryWarManager.lua" type="server" />
 	<script src="server/classes/Gameplay/DrugFactories/Factories/WeedFactory.lua" type="server" />
+	<script src="server/classes/Gameplay/DrugFactories/Factories/CocaineFactory.lua" type="server" />
 
 	<script src="server/constants/drugfactories.lua" type="server" />
 
@@ -901,6 +903,8 @@
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareRoundGUI.lua" type="client"/>
+
+	<script src="client/classes/GUIForms/DrugFactoryGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client"/>

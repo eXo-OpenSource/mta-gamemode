@@ -1,7 +1,0 @@
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Gameplay/DrugFactories/FactoryWar.lua
--- *  PURPOSE:     Factory War class
--- *
--- ****************************************************************************

@@ -5,15 +5,16 @@
 -- *  PURPOSE:     Drug Factory Manager class
 -- *
 -- ****************************************************************************
-
 DrugFactoryManager = inherit(Singleton)
 DrugFactoryManager.Map = {}
 
+addRemoteEvents{"requestDrugFactoryData", "requestFactoryRecruitWorker", "requestFactoryBuildWorkingStation", "onFactoryRecruitWorker", "onFactoryBuildWorkingStation"}
+
 function DrugFactoryManager:constructor()
     self.m_FactoryTypes = {
-        [1] = {DrugFactory, 2, 2570.18, -1301.94, 1044.13, 90},
-        [2] = {WeedFactory, 1, 2132.84, -2297.11, 960.42, 0},
-        [3] = {DrugFactory, 0, 0, 0, 0, 0}
+        [1] = {CocaineFactory, "Kokain", 2, 2750.60, -1312.00, 1174.19, 90},
+        [2] = {WeedFactory, "Weed", 1, 2132.84, -2297.11, 960.42, 0},
+        [3] = {DrugFactory, "Heroin", 0, 0, 0, 0, 0}
     }
     self.m_FactoryColors = {
         [1] = {255, 255, 255},
@@ -21,21 +22,105 @@ function DrugFactoryManager:constructor()
         [3] = {0, 0, 0}
     }
     self:loadFactories()
+    FactoryWarManager:new()
+    self.m_GlobalTimerId = GlobalTimer:getSingleton():registerEvent(bind(self.onFactoryPayday, self), "Fabrik-Payday",false,false,0)
+
+    addEventHandler("requestDrugFactoryData", root, bind(self.sendDataToClient, self))
+
+    addEventHandler("requestFactoryRecruitWorker", root, bind(self.requestFactoryRecruitWorker, self))
+    addEventHandler("requestFactoryBuildWorkingStation", root, bind(self.requestFactoryBuildWorkingStation, self))
+    addEventHandler("onFactoryRecruitWorker", root, bind(self.onFactoryRecruitWorker, self))
+    addEventHandler("onFactoryBuildWorkingStation", root, bind(self.onFactoryBuildWorkingStation, self))
 end
 
 function DrugFactoryManager:destructor()
-    
+    FactoryWarManager:delete()
+    for key, factory in ipairs(DrugFactoryManager.Map) do
+        factory:delete()
+    end
 end
 
 function DrugFactoryManager:loadFactories()
 	local result = sql:queryFetch("SELECT * FROM ??_drug_factories", sql:getPrefix())
     for k, row in ipairs(result) do
         if self.m_FactoryTypes[row.type] then
-            DrugFactoryManager.Map[row.id] = self.m_FactoryTypes[row.type][1]:new(row.type, row.progress, row.x, row.y, row.z, row.rot, row.dimension, self.m_FactoryTypes[row.type][2], self.m_FactoryTypes[row.type][3], self.m_FactoryTypes[row.type][4], self.m_FactoryTypes[row.type][5], self.m_FactoryTypes[row.type][6], self.m_FactoryColors[row.type])
+            DrugFactoryManager.Map[row.id] = self.m_FactoryTypes[row.type][1]:new(row.id, row.type, row.owner, row.progress, {x=tonumber(row.managerX), y=tonumber(row.managerY), z=tonumber(row.managerZ), rot=tonumber(row.managerRot)}, row.workingstations, row.lastattack, row.workers, tonumber(row.x), tonumber(row.y), tonumber(row.z), tonumber(row.rot), row.dimension, self.m_FactoryTypes[row.type][3], self.m_FactoryTypes[row.type][4], self.m_FactoryTypes[row.type][5], self.m_FactoryTypes[row.type][6], self.m_FactoryTypes[row.type][7], self.m_FactoryColors[row.type])
         end
 	end
 end
 
-function DrugFactoryManager:updateFactoryWorkStates()
-    
+function DrugFactoryManager:saveFactories()
+    for key, factory in ipairs(DrugFactoryManager.Map) do
+        sql:queryFetch("UPDATE ??_drug_factories SET owner = ?, lastattack = ?, workingstations = ?, workers = ?", sql:getPrefix(), factory:getOwner(), factory:getLastAttack(), factory:getWorkingStationCount(), factory:getWorkerCount())
+    end
+end
+
+function DrugFactoryManager:onFactoryPayday()
+    for key, factory in ipairs(DrugFactoryManager.Map) do
+        local factoryOwners = FactionManager:getSingleton():getFromId(factory:getOwner())
+        if factoryOwners then
+            if #factoryOwners:getOnlinePlayers() > 2 then
+                factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: [Menge] Einheiten "..factory:getType(), 0, 200, 0, true)
+            else
+                factoryOwners:sendMessage("Fabrik Payday: Es sind nicht genügend Spieler online für den Fabrik Payday!", 200, 0, 0, true)
+            end
+        end
+    end
+end
+
+function DrugFactoryManager:sendDataToClient(player)
+    local table = {}
+    for key, factory in ipairs(DrugFactoryManager.Map) do
+        table[key] = {
+            ["ID"] = key,
+            ["Type"] = factory:getType(),
+            ["Owner"] = FactionManager:getSingleton():getFromId(factory:getOwner()):getName(),
+            ["Progress"] = factory:getProgress(),
+            ["LastAttack"] = getOpticalTimestamp(factory:getLastAttack()),
+            ["Position"] = getZoneName(factory.m_Blip:getPosition()),
+            ["WorkingStations"] = factory:getWorkingStationCount(),
+            ["Workers"] = factory:getWorkerCount()
+        }
+    end
+    player:triggerEvent("onFactoryDataReceive", table)
+end
+
+function DrugFactoryManager:requestFactoryRecruitWorker(id)
+    if DrugFactoryManager.Map[id] and DrugFactoryManager.Map[id]:getOwner() == client:getFaction():getId() then
+        if client:getFaction():getPlayerRank(client) > 4 then
+            QuestionBox:new(client, client, "Willst du Arbeiter für die Fabrik anwerben?", "onFactoryRecruitWorker", false, id)
+        else
+            client:sendError("Dazu bist nicht berechtigt!")
+        end
+    else
+        client:sendError("Die Fabrik gehört nicht deiner Fraktion!")
+    end
+end
+
+function DrugFactoryManager:requestFactoryBuildWorkingStation(id)
+    if DrugFactoryManager.Map[id] and DrugFactoryManager.Map[id]:getOwner() == client:getFaction():getId() then
+        if client:getFaction():getPlayerRank(client) > 4 then
+            QuestionBox:new(client, client, "Willst du Verarbeitungsstellen für die Fabrik bauen?", "onFactoryBuildWorkingStation", false, id)
+        else
+            client:sendError("Dazu bist nicht berechtigt!")
+        end
+    else
+        client:sendError("Die Fabrik gehört nicht deiner Fraktion!")
+    end
+end
+
+function DrugFactoryManager:onFactoryRecruitWorker(id)
+    local factory = DrugFactoryManager.Map[id]
+    if factory:getWorkerCount() < factory:getMaxWorkers() then
+        factory:setWorkerCount(factory:getWorkerCount() + 1)
+        client:sendInfo("Arbeiter angeworben!")
+    end
+end
+
+function DrugFactoryManager:onFactoryBuildWorkingStation(id)
+    local factory = DrugFactoryManager.Map[id]
+    if factory:getWorkingStationCount() < factory:getMaxWorkingStations() then
+        factory:setWorkingStationCount(factory:getWorkingStationCount() + 1)
+        client:sendInfo("Verarbeitungsstelle gebaut!")
+    end
 end
