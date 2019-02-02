@@ -81,3 +81,15 @@ end
 function WeedFactory:getMaxWorkers()
     return #WEED_WORKERS
 end
+
+function WeedFactory:canBuyWorkers()
+    local buyCounter = 0
+    for index = 1, self:getWorkingStationCount() do
+        for key, table in ipairs(WEED_WORKERS) do
+            if table[1] == index then
+                buyCounter = buyCounter + 1
+            end
+        end
+    end
+    return buyCounter
+end

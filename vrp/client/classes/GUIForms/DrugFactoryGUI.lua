@@ -59,8 +59,8 @@ function DrugFactoryGUI:onFactoryDataReceive(table)
 				self.m_OwnerLabel:setText(("Besitzer: %s"):format(factory.Owner))
 				self.m_ProgressLabel:setText(("Fortschritt: %s%%"):format(factory.Progress))
 				self.m_LastAttackLabel:setText(("Letzter Angriff: %s"):format(factory.LastAttack))
-				self.m_WorkingStationsLabel:setText(("Verarbeitungsstellen: %s"):format(factory.WorkingStations))
-				self.m_WorkersLabel:setText(("Arbeiter: %s"):format(factory.Workers))
+				self.m_WorkingStationsLabel:setText(("Verarbeitungsstellen: %s/%s"):format(factory.WorkingStations, factory.maxWorkingStations))
+				self.m_WorkersLabel:setText(("Arbeiter: %s/%s"):format(factory.Workers, factory.maxWorkers))
 			end
 		end
     end

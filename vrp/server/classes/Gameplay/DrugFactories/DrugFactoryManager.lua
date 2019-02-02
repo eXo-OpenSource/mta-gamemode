@@ -59,8 +59,15 @@ function DrugFactoryManager:onFactoryPayday()
     for key, factory in ipairs(DrugFactoryManager.Map) do
         local factoryOwners = FactionManager:getSingleton():getFromId(factory:getOwner())
         if factoryOwners then
-            if #factoryOwners:getOnlinePlayers() > 2 then
-                factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: [Menge] Einheiten "..factory:getType(), 0, 200, 0, true)
+            if #factoryOwners:getOnlinePlayers(true) > 2 or DEBUG then
+                local workers = factory:getWorkerCount()
+                local workingstations = factory:getWorkingStationCount()
+                local maxWorkers = factory:getMaxWorkers()
+                local maxWorkingstations = factory:getMaxWorkingStations()
+
+                local calculation = math.floor(((workers*100/maxWorkers/2) + (workingstations*100/maxWorkingstations/2))/100*(factory.m_Type == 1 and DRUGFACTORY_MAX_PAYDAY_COCAINE or factory.m_Type == 2 and DRUGFACTORY_MAX_PAYDAY_WEED))
+
+                factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: "..calculation.." Einheiten "..factory:getType(), 0, 200, 0, true)
             else
                 factoryOwners:sendMessage("Fabrik Payday: Es sind nicht genügend Spieler online für den Fabrik Payday!", 200, 0, 0, true)
             end
@@ -79,7 +86,9 @@ function DrugFactoryManager:sendDataToClient(player)
             ["LastAttack"] = getOpticalTimestamp(factory:getLastAttack()),
             ["Position"] = getZoneName(factory.m_Blip:getPosition()),
             ["WorkingStations"] = factory:getWorkingStationCount(),
-            ["Workers"] = factory:getWorkerCount()
+            ["Workers"] = factory:getWorkerCount(),
+            ["maxWorkers"] = factory:getMaxWorkers(),
+            ["maxWorkingStations"] = factory:getMaxWorkingStations()
         }
     end
     player:triggerEvent("onFactoryDataReceive", table)
@@ -88,7 +97,7 @@ end
 function DrugFactoryManager:requestFactoryRecruitWorker(id)
     if DrugFactoryManager.Map[id] and DrugFactoryManager.Map[id]:getOwner() == client:getFaction():getId() then
         if client:getFaction():getPlayerRank(client) > 4 then
-            QuestionBox:new(client, client, "Willst du Arbeiter für die Fabrik anwerben?", "onFactoryRecruitWorker", false, id)
+            QuestionBox:new(client, client, "Willst du Arbeiter für die Fabrik anwerben?", "onFactoryRecruitWorker", false, client, id)
         else
             client:sendError("Dazu bist nicht berechtigt!")
         end
@@ -100,7 +109,7 @@ end
 function DrugFactoryManager:requestFactoryBuildWorkingStation(id)
     if DrugFactoryManager.Map[id] and DrugFactoryManager.Map[id]:getOwner() == client:getFaction():getId() then
         if client:getFaction():getPlayerRank(client) > 4 then
-            QuestionBox:new(client, client, "Willst du Verarbeitungsstellen für die Fabrik bauen?", "onFactoryBuildWorkingStation", false, id)
+            QuestionBox:new(client, client, "Willst du Verarbeitungsstellen für die Fabrik bauen?", "onFactoryBuildWorkingStation", false, client, id)
         else
             client:sendError("Dazu bist nicht berechtigt!")
         end
@@ -109,18 +118,26 @@ function DrugFactoryManager:requestFactoryBuildWorkingStation(id)
     end
 end
 
-function DrugFactoryManager:onFactoryRecruitWorker(id)
+function DrugFactoryManager:onFactoryRecruitWorker(player, id)
     local factory = DrugFactoryManager.Map[id]
-    if factory:getWorkerCount() < factory:getMaxWorkers() then
-        factory:setWorkerCount(factory:getWorkerCount() + 1)
-        client:sendInfo("Arbeiter angeworben!")
+    if factory:canBuyWorkers() > factory:getWorkerCount() then
+        if factory:getWorkerCount() < factory:getMaxWorkers() then
+            factory:setWorkerCount(factory:getWorkerCount() + 1)
+            player:sendInfo("Arbeiter angeworben!")
+        else
+            player:sendError("Die Fabrik hat bereits die maximale Anzahl an Arbeitern!")
+        end
+    else
+        player:sendError("Die Fabrik hat nicht genug Arbeitsplätze!")
     end
 end
 
-function DrugFactoryManager:onFactoryBuildWorkingStation(id)
+function DrugFactoryManager:onFactoryBuildWorkingStation(player, id)
     local factory = DrugFactoryManager.Map[id]
     if factory:getWorkingStationCount() < factory:getMaxWorkingStations() then
         factory:setWorkingStationCount(factory:getWorkingStationCount() + 1)
-        client:sendInfo("Verarbeitungsstelle gebaut!")
+        player:sendInfo("Verarbeitungsstelle gebaut!")
+    else
+        player:sendError("Die Fabrik hat bereits die maximale Anzahl an Verarbeitungsstellen!")
     end
 end

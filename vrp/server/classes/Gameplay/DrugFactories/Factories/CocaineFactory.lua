@@ -70,3 +70,7 @@ end
 function CocaineFactory:getMaxWorkers()
     return #COCAINE_STATIONS
 end
+
+function CocaineFactory:canBuyWorkers()
+    return self:getWorkingStationCount()
+end
