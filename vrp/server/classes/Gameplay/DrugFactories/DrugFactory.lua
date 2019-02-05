@@ -49,7 +49,7 @@ function DrugFactory:spawnNPC()
 end
 
 function DrugFactory:PedTargetted(ped, attacker)
-    FactoryWarManager:getSingleton():startAttack(self.Id, attacker:getFaction():getId(), attacker)
+    FactoryWarManager:getSingleton():prepareAttack(self.Id, attacker:getFaction():getId(), attacker)
 end
 
 function DrugFactory:getOwner()
@@ -82,4 +82,8 @@ end
 
 function DrugFactory:setWorkerCount(amount)
     self.m_Workers = amount
+end
+
+function DrugFactory:getManager()
+    return self.m_Manager
 end

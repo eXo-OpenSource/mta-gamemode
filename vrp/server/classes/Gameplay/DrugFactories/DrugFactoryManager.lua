@@ -67,7 +67,7 @@ function DrugFactoryManager:onFactoryPayday()
 
                 local calculation = math.floor(((workers*100/maxWorkers/2) + (workingstations*100/maxWorkingstations/2))/100*(factory.m_Type == 1 and DRUGFACTORY_MAX_PAYDAY_COCAINE or factory.m_Type == 2 and DRUGFACTORY_MAX_PAYDAY_WEED))
 
-                factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: "..calculation.." Einheiten "..factory:getType(), 0, 200, 0, true)
+                factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: "..calculation.." Gramm "..factory:getType(), 0, 200, 0, true)
             else
                 factoryOwners:sendMessage("Fabrik Payday: Es sind nicht genügend Spieler online für den Fabrik Payday!", 200, 0, 0, true)
             end
