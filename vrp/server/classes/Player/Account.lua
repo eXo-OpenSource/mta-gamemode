@@ -136,7 +136,9 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
 
-	ServiceSync:getSingleton():syncPlayer(Id)
+	if not DEBUG and SERVICE_SYNC then
+		ServiceSync:getSingleton():syncPlayer(Id)
+	end
 
 	player:loadCharacter()
 	player:spawn()
