@@ -877,3 +877,75 @@ function Faction:takeEquipment(player)
 		end
 	end
 end
+
+
+function Faction:storageWeapons(player)
+	local depot = self:getDepot()
+	local logData = {}
+	for i= 1, 12 do
+		if player:getWeapon(i) > 0 then
+			local weaponId = player:getWeapon(i)
+			local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
+			if WEAPON_CLIPS[weaponId] then
+				clipAmmo = WEAPON_CLIPS[weaponId]
+			end
+
+			local magazines = clipAmmo > 0 and math.floor(player:getTotalAmmo(i)/clipAmmo) or 0
+			if THROWABLE_WEAPONS[weaponId] then -- don't divide by magazine size
+				magazines = player:getTotalAmmo(i)
+			end
+
+			local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
+			local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
+			
+			if THROWABLE_WEAPONS[weaponId] then -- grenade etc
+				if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
+					depot:addWeaponD(weaponId, magazines)
+					takeWeapon(player, weaponId)
+					logData[WEAPON_NAMES[weaponId]] = magazines
+				elseif magazines > 0 then
+					local weaponsToMax = depotMaxWeapons - depotWeapons
+					depot:addWeaponD(weaponId, weaponsToMax)
+					setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - weaponsToMax)
+					if magsToMax > 0 then
+						logData[WEAPON_NAMES[weaponId]] = weaponsToMax
+						player:sendError(_("Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert.", player, magazines, WEAPON_NAMES[weaponId], weaponsToMax))
+					end
+				end
+			else
+				if depotWeapons+1 <= depotMaxWeapons then
+					if depotMagazines + magazines <= depotMaxMagazines then
+						depot:addWeaponD(weaponId, 1)
+						depot:addMagazineD(weaponId, magazines)
+						takeWeapon(player, weaponId)
+						logData[WEAPON_NAMES[weaponId]] = magazines
+					elseif magazines > 0 then
+						local magsToMax = depotMaxMagazines - depotMagazines
+						depot:addMagazineD(weaponId, magsToMax)
+						setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - magsToMax*clipAmmo)
+						if magsToMax > 0 then
+							logData[WEAPON_NAMES[weaponId]] = magsToMax
+							player:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", player, magazines, WEAPON_NAMES[weaponId], magsToMax))
+						end
+					end
+
+				else
+					player:sendError(_("Im Depot ist nicht Platz für eine/n %s!", player, WEAPON_NAMES[weaponId]))
+				end
+			end
+		end
+	end
+	local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
+	local wepaponsPut = false
+	for i,v in pairs(logData) do
+		wepaponsPut = true
+		textForPlayer = textForPlayer.."\n"..i
+		if v > 0 then
+			textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
+			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
+		else
+			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
+		end
+	end
+	if wepaponsPut then player:sendInfo(textForPlayer) end
+end

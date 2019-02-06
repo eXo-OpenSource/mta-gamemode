@@ -454,51 +454,7 @@ function FactionEvil:Event_storageWeapons(player)
 	local faction = client:getFaction()
 	if faction and faction:isEvilFaction() then
 		if client:isFactionDuty() then
-			local depot = faction:getDepot()
-			local logData = {}
-			for i= 1, 12 do
-				if client:getWeapon(i) > 0 then
-					local weaponId = client:getWeapon(i)
-					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
-					if WEAPON_CLIPS[weaponId] then
-						clipAmmo = WEAPON_CLIPS[weaponId]
-					end
-
-					local magazines = clipAmmo > 0 and math.floor(client:getTotalAmmo(i)/clipAmmo) or 0
-
-					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
-					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
-					if depotWeapons+1 <= depotMaxWeapons then
-						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines or WEAPON_PROJECTILE[weaponId] then
-							depot:addWeaponD(weaponId, 1)
-							depot:addMagazineD(weaponId, magazines)
-							takeWeapon(client, weaponId)
-							logData[WEAPON_NAMES[weaponId]] = magazines
-						elseif magazines > 0 then
-							local magsToMax = depotMaxMagazines - depotMagazines
-							depot:addMagazineD(weaponId, magsToMax)
-							setWeaponAmmo(client, weaponId, getPedTotalAmmo(client, i) - magsToMax*clipAmmo)
-							logData[WEAPON_NAMES[weaponId]] = magsToMax
-							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
-						end
-					else
-						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
-					end
-				end
-			end
-			local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
-			local wepaponsPut = false
-			for i,v in pairs(logData) do
-				wepaponsPut = true
-				textForPlayer = textForPlayer.."\n"..i
-				if v > 0 then
-					textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
-					faction:addLog(client, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
-				else
-					faction:addLog(client, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
-				end
-			end
-			if wepaponsPut then client:sendInfo(textForPlayer) end
+			faction:storageWeapons(client)
 		end
 	end
 end

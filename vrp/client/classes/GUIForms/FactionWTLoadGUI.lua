@@ -28,7 +28,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_WaffenColumn = 0
 	self.m_TotalCosts = 0
 
-	self.m_MaxLoad = localPlayer:getFaction():isStateFaction() and WEAPONTRUCK_MAX_LOAD_STATE or WEAPONTRUCK_MAX_LOAD
+	self.m_MaxLoad = WEAPONTRUCK_MAX_LOAD
 	self.m_MaxLoadPerBox = math.floor(self.m_MaxLoad/8)
 
 	self.m_BoxContent = {}
@@ -300,7 +300,7 @@ function FactionWTLoadGUI:factionReceiveWeaponShopInfos()
 end
 
 function FactionWTLoadGUI:factionWeaponTruckLoad()
-	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
+	triggerServerEvent("onWeaponTruckLoad",root,self.m_BoxContent)
 	delete(self)
 end
 

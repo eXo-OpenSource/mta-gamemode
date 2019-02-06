@@ -206,7 +206,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 						else
 							logData[WEAPON_NAMES[weaponID]] = logData[WEAPON_NAMES[weaponID]] + 1
 						end
-						if not WEAPON_PROJECTILE[weaponID] then 
+						if not THROWABLE_WEAPONS[weaponID] then 
 							giveWeapon(player,weaponID, NO_MUNITION_WEAPONS[weaponID] and 1 or 0) -- not usable shovel and night vision fix
 						else 
 							giveWeapon(player,weaponID, amount, true)
