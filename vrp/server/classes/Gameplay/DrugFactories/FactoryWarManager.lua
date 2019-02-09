@@ -83,6 +83,7 @@ function FactoryWarManager:onColShapeHit(hitElement, matchingDimension)
                         player:outputChat("[Fabrikwar] #FFFFFFDu nimmst am Fabrikwar teil! Sucht euch Deckung, in 2 Minuten geht der Kampf los!", 50, 200, 50, true)
                         self.m_Participants[#self.m_Participants+1] = player
                         player.m_FactoryWarParticipant = true
+                        player:triggerEvent("Countdown", 1200, "Fabrikwar")
                     end
                 end
                 setTimer(self.startAttack, 120000, 1, self)
@@ -146,6 +147,12 @@ function FactoryWarManager:endAttack(faction)
         self.m_Attackers = false
         self.m_Defenders = false
         self.m_ColShape:destroy()
+        for i = 1, #self.m_Participants do
+            if isElement(self.m_Participants[i]) then
+                local player = self.m_Participants[i]
+                player:triggerEvent("CountdownStop", "Fabrikwar")
+            end
+        end
     end
 end
 
