@@ -332,6 +332,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 						if deadPlayer:giveReviveWeapons() then
 							deadPlayer:sendSuccess(_("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer))
 						end
+						deadPlayer:clearReviveWeapons()
 					else
 						player:sendShortMessage(_("Der Spieler ist nicht tot!", player))
 					end
