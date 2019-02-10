@@ -64,10 +64,18 @@ function DrugFactoryManager:onFactoryPayday()
                 local workingstations = factory:getWorkingStationCount()
                 local maxWorkers = factory:getMaxWorkers()
                 local maxWorkingstations = factory:getMaxWorkingStations()
-
-                local calculation = math.floor(((workers*100/maxWorkers/2) + (workingstations*100/maxWorkingstations/2))/100*(factory.m_Type == 1 and DRUGFACTORY_MAX_PAYDAY_COCAINE or factory.m_Type == 2 and DRUGFACTORY_MAX_PAYDAY_WEED))
-
-                factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: "..calculation.." Gramm "..factory:getType(), 0, 200, 0, true)
+                local amount = math.floor(((workers*100/maxWorkers/2) + (workingstations*100/maxWorkingstations/2))/100*(factory.m_Type == 1 and DRUGFACTORY_MAX_PAYDAY_COCAINE or factory.m_Type == 2 and DRUGFACTORY_MAX_PAYDAY_WEED))
+                local item = factory.m_Type == 1 and "Kokain" or factory.m_Type == 2 and "Weed"
+                if amount > 0 then
+                    factoryResult = factoryOwners:getDepot():addItem(false, item, amount, true)
+                else
+                    factoryResult = true
+                end
+                if factoryResult == true then
+                    factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion erhält: "..amount.." Gramm "..factory:getType(), 0, 200, 0, true)
+                else
+                    factoryOwners:sendMessage("Fabrik Payday: #FFFFFFEure Fraktion hat nicht genug Platz für "..amount.." Gramm "..factory:getType().." im Depot!", 200, 0, 0, true)
+                end
             else
                 factoryOwners:sendMessage("Fabrik Payday: Es sind nicht genügend Spieler online für den Fabrik Payday!", 200, 0, 0, true)
             end

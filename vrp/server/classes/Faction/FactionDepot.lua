@@ -263,29 +263,63 @@ end
 
 
 function Depot:addItem(player, item, amount, giveItemFromServer)
+	local freeItemSlot = false
 	for i=1, 6 do
 		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
-		if self.m_Items[i]["Item"] == 0 then
-			if item ~= "Kleidung" then --wtf we cant check if the item has a value wtf wtf wtf - MasterM 2017
+		if self.m_Items[i]["Item"] ~= 0 then
+			if self.m_Items[i]["Item"] == item then
 				if giveItemFromServer or player:getInventory():removeItem(item, amount) then
-					self.m_Items[i]["Item"] = item
-					self.m_Items[i]["Amount"] = amount
-					player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
-					player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
-					StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, amount)
-					self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s in das Lager gelegt!"):format(amount, item))
-					return
+					self.m_Items[i]["Amount"] = self.m_Items[i]["Amount"] + amount
+					if player then
+						player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
+						player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+						StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, amount)
+						self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s in das Lager gelegt!"):format(amount, item))
+					end
+					return true
 				else
-					player:sendError(_("Du hast nicht genug %s!", player, item))
-					return
+					if player then
+						player:sendError(_("Du hast nicht genug %s!", player, item))
+					end
+					return false
 				end
-			else
-				player:sendError(_("Du kannst dieses Item nicht einlagern!", player, item))
-				return
+			end
+		else
+			if freeItemSlot == false then
+				freeItemSlot = i
 			end
 		end
 	end
-	player:sendError(_("Es gibt keinen freien Item-Slot in diesem Depot!", player))
+	if freeItemSlot then
+		if self.m_Items[freeItemSlot]["Item"] == 0 then
+			if item ~= "Kleidung" then --wtf we cant check if the item has a value wtf wtf wtf - MasterM 2017
+				if giveItemFromServer or player:getInventory():removeItem(item, amount) then
+					self.m_Items[freeItemSlot]["Item"] = item
+					self.m_Items[freeItemSlot]["Amount"] = amount
+					if player then
+						player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, freeItemSlot))
+						player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+						StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, amount)
+						self.m_Owner:addLog(player, "Itemlager", ("hat %s  %s in das Lager gelegt!"):format(amount, item))
+					end
+					return true
+				else
+					if player then
+						player:sendError(_("Du hast nicht genug %s!", player, item))
+					end
+					return false
+				end
+			else
+				if player then
+					player:sendError(_("Du kannst dieses Item nicht einlagern!", player, item))
+				end
+				return false
+			end
+		end
+	end
+	if player then
+		player:sendError(_("Es gibt keinen freien Item-Slot in diesem Depot!", player))
+	end
 end
 
 function Depot:takeItem(player, slotId)
