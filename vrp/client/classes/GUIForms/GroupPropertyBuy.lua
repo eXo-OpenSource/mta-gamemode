@@ -48,10 +48,10 @@ function GroupPropertyBuy:PreviewButton_Click()
 			local interior = self.m_ImmoTable[selected.Id].m_Interior
 			local dimension = self.m_ImmoTable[selected.Id].m_Dimension
 			self:setVisible(false)
-			setTimer(function() self:setVisible(true) end, 5000, 1)
-			--setElementInterior(localPlayer,interior)
-			--setElementDimension( localPlayer, dimension)
-			--setCameraInterior(interior)
+			setTimer(function() self:setVisible(true) end, 7500, 1)
+			setElementInterior(localPlayer, 0)
+			setElementDimension(localPlayer, 0)
+			setCameraInterior(0)
 			setCameraMatrix(matrix[1], matrix[2], matrix[3],matrix[4], matrix[5], matrix[6])
 		end
 	end
