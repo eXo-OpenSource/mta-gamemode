@@ -953,8 +953,8 @@ function Admin:onlineList(player)
 
 	if table.size(self.m_OnlineAdmins) > 0 then
 		outputChatBox("Folgende Teammitglieder sind derzeit online:", player, 50, 200, 255)
-		for player, rank in pairs(self.m_OnlineAdmins) do
-			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[rank], player:getName()), player, unpack(self.m_RankColors[rank]))
+		for onlineAdmin, rank in pairs(self.m_OnlineAdmins) do
+			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
 		end
 	else
 		outputChatBox("Derzeit sind keine Teammitglieder online!", player, 255, 0, 0)
