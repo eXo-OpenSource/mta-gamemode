@@ -197,7 +197,7 @@ function HUDUI:drawVRP()
 	local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutBack"))
 	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.04*screenHeight,0.05*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
 
-	local weaponIconPath = WeaponIcons[self:getLocalTarget():getWeapon()]
+	local weaponIconPath = FileModdingHelper:getSingleton():getWeaponImage(self:getLocalTarget():getWeapon())
 	if weaponIconPath then
 		if munitionWindowActive then
 			dxDrawImage(f(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)), f(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)), f(0.033*screenWidth), f(0.059*screenHeight), weaponIconPath)
@@ -366,7 +366,7 @@ function HUDUI:drawExo()
 	dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 	dxDrawText ("KARMA: "..math.round(self:getLocalTarget():getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 
-	dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, WeaponIcons[self:getLocalTarget():getWeapon()])
+	dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, FileModdingHelper:getSingleton():getWeaponImage(self:getLocalTarget():getWeapon()))
 	local tAmmo = getPedTotalAmmo( self:getLocalTarget() )
 	local iClip = getPedAmmoInClip( self:getLocalTarget() )
 	local weaponSlot = getPedWeaponSlot(self:getLocalTarget())
@@ -530,7 +530,7 @@ function HUDUI:drawChart()
 	drawCol(2, 0, Color.Clear, math.min(self.m_FPSLimit, localPlayer.FPS.frames + 1), FontAwesomeSymbols.Desktop, Color.Clear, "fps", not core:get("HUD", "chartFPSVisible", true))
 
 	--weapons
-	local weaponIconPath = WeaponIcons[self:getLocalTarget():getWeapon()]
+	local weaponIconPath = FileModdingHelper:getSingleton():getWeaponImage(self:getLocalTarget():getWeapon())
 	if weaponIconPath and (self:getLocalTarget():getWeapon() ~= 0 or getProgress("weapon", true, true) > 0) then
 		local prog = getProgress("weapon", self:getLocalTarget():getWeapon() == 0)
 		local base_y = border + (height + margin)*col1_i - margin * (1 - prog)

@@ -15,53 +15,6 @@ FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/release/product
 TEXTURE_HTTP_URL = "https://picupload.pewx.de/textures"
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
-WeaponIcons = {
-	[0] = "Fist.png",
-	[1] = "BrassKnuckles.png",
-	[2] = "Golf.png",
-	[3] = "Nightstick.png",
-	[4] = "Knife.png",
-	[5] = "BaseballBat.png",
-	[6] = "Shovel.png",
-	[7] = "Cue.png",
-	[8] = "Katana.png",
-	[9] = "Chainsaw.png",
-	[10] = "Dildo.png",
-	[11] = "DildoSmall.png",
-	[12] = "Vibrator.png",
-	[14] = "Flowers.png",
-	[15] = "Cane.png",
-	[16] = "Grenade.png",
-	[17] = "Teargas.png",
-	[18] = "Molotov.png",
-	[22] = "Pistol.png",
-	[23] = "Taser.png",
-	[24] = "Deagle.png",
-	[25] = "Shotgun.png",
-	[26] = "SawnOffShotgun.png",
-	[27] = "SPAZ-12.png",
-	[28] = "Uzi.png",
-	[29] = "MP5.png",
-	[30] = "AK-47.png",
-	[31] = "M4.png",
-	[32] = "TEC-9.png",
-	[33] = "CountryRifle.png",
-	[34] = "Sniper.png",
-	[35] = "RPG.png",
-	[36] = "RocketHS.png",
-	[37] = "FlameThrower.png",
-	[38] = "Minigun.png",
-	[39] = "Satchel.png",
-	[40] = "SatchelDetonator.png",
-	[41] = "Spraycan.png",
-	[42] = "FireExtinguisher.png",
-	[43] = "Camera.png",
-	[44] = "Nightvision.png",
-	[45] = "Nightvision.png",
-	[46] = "Parachute.png",
-}
-for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v end
-
 RadarDesign = {Monochrome = 1, GTA = 2}
 for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 

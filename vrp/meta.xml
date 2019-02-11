@@ -554,6 +554,7 @@
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
+	<script src="client/classes/Utils/FileModdingHelper.lua" type="client"/>
 	<script src="client/classes/Utils/RadioStationManager.lua" type="client"/>
 
 	<!-- GUI system -->
@@ -1381,52 +1382,51 @@
 	<vrpfile src="files/images/Speedo/overlay_glass.png"/>
 	<vrpfile src="files/images/Speedo/radar_circle.png"/>
 
-
-	<vrpfile src="files/images/Weapons/AK-47.png"/>
-	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
-	<vrpfile src="files/images/Weapons/BrassKnuckles.png"/>
-	<vrpfile src="files/images/Weapons/Camera.png"/>
-	<vrpfile src="files/images/Weapons/Cane.png"/>
-	<vrpfile src="files/images/Weapons/Chainsaw.png"/>
-	<vrpfile src="files/images/Weapons/CountryRifle.png"/>
-	<vrpfile src="files/images/Weapons/Rifle.png"/>
-	<vrpfile src="files/images/Weapons/Deagle.png"/>
-	<vrpfile src="files/images/Weapons/Dildo.png"/>
-	<vrpfile src="files/images/Weapons/DildoSmall.png"/>
-	<vrpfile src="files/images/Weapons/FireExtinguisher.png"/>
-	<vrpfile src="files/images/Weapons/Fist.png"/>
-	<vrpfile src="files/images/Weapons/FlameThrower.png"/>
-	<vrpfile src="files/images/Weapons/Flowers.png"/>
-	<vrpfile src="files/images/Weapons/Golf.png"/>
-	<vrpfile src="files/images/Weapons/Grenade.png"/>
-	<vrpfile src="files/images/Weapons/Katana.png"/>
-	<vrpfile src="files/images/Weapons/Knife.png"/>
-	<vrpfile src="files/images/Weapons/M4.png"/>
-	<vrpfile src="files/images/Weapons/Minigun.png"/>
-	<vrpfile src="files/images/Weapons/Molotov.png"/>
-	<vrpfile src="files/images/Weapons/MP5.png"/>
-	<vrpfile src="files/images/Weapons/Nightstick.png"/>
-	<vrpfile src="files/images/Weapons/Nightvision.png"/>
-	<vrpfile src="files/images/Weapons/Parachute.png"/>
-	<vrpfile src="files/images/Weapons/Pistol.png"/>
-	<vrpfile src="files/images/Weapons/RocketHS.png"/>
-	<vrpfile src="files/images/Weapons/RPG.png"/>
-	<vrpfile src="files/images/Weapons/Satchel.png"/>
-	<vrpfile src="files/images/Weapons/SatchelDetonator.png"/>
-	<vrpfile src="files/images/Weapons/SawnOffShotgun.png"/>
-	<vrpfile src="files/images/Weapons/SPAZ-12.png"/>
-	<vrpfile src="files/images/Weapons/Shotgun.png"/>
-	<vrpfile src="files/images/Weapons/Shovel.png"/>
-	<vrpfile src="files/images/Weapons/Taser.png"/>
-	<vrpfile src="files/images/Weapons/Sniper.png"/>
-	<vrpfile src="files/images/Weapons/Spraycan.png"/>
-	<vrpfile src="files/images/Weapons/Teargas.png"/>
-	<vrpfile src="files/images/Weapons/TEC-9.png"/>
-	<vrpfile src="files/images/Weapons/Uzi.png"/>
-	<vrpfile src="files/images/Weapons/Vibrator.png"/>
-	<vrpfile src="files/images/Weapons/Vest.png"/>
-	<vrpfile src="files/images/Weapons/Cue.png"/>
-
+	<vrpfile src="files/images/Weapons/-1.png"/>
+	<vrpfile src="files/images/Weapons/0.png"/>
+	<vrpfile src="files/images/Weapons/1.png"/>
+	<vrpfile src="files/images/Weapons/2.png"/>
+	<vrpfile src="files/images/Weapons/3.png"/>
+	<vrpfile src="files/images/Weapons/4.png"/>
+	<vrpfile src="files/images/Weapons/5.png"/>
+	<vrpfile src="files/images/Weapons/6.png"/>
+	<vrpfile src="files/images/Weapons/7.png"/>
+	<vrpfile src="files/images/Weapons/8.png"/>
+	<vrpfile src="files/images/Weapons/9.png"/>
+	<vrpfile src="files/images/Weapons/10.png"/>
+	<vrpfile src="files/images/Weapons/11.png"/>
+	<vrpfile src="files/images/Weapons/12.png"/>
+	<vrpfile src="files/images/Weapons/14.png"/>
+	<vrpfile src="files/images/Weapons/15.png"/>
+	<vrpfile src="files/images/Weapons/16.png"/>
+	<vrpfile src="files/images/Weapons/17.png"/>
+	<vrpfile src="files/images/Weapons/18.png"/>
+	<vrpfile src="files/images/Weapons/22.png"/>
+	<vrpfile src="files/images/Weapons/23.png"/>
+	<vrpfile src="files/images/Weapons/24.png"/>
+	<vrpfile src="files/images/Weapons/25.png"/>
+	<vrpfile src="files/images/Weapons/26.png"/>
+	<vrpfile src="files/images/Weapons/27.png"/>
+	<vrpfile src="files/images/Weapons/28.png"/>
+	<vrpfile src="files/images/Weapons/29.png"/>
+	<vrpfile src="files/images/Weapons/30.png"/>
+	<vrpfile src="files/images/Weapons/31.png"/>
+	<vrpfile src="files/images/Weapons/32.png"/>
+	<vrpfile src="files/images/Weapons/33.png"/>
+	<vrpfile src="files/images/Weapons/34.png"/>
+	<vrpfile src="files/images/Weapons/35.png"/>
+	<vrpfile src="files/images/Weapons/36.png"/>
+	<vrpfile src="files/images/Weapons/37.png"/>
+	<vrpfile src="files/images/Weapons/38.png"/>
+	<vrpfile src="files/images/Weapons/39.png"/>
+	<vrpfile src="files/images/Weapons/40.png"/>
+	<vrpfile src="files/images/Weapons/41.png"/>
+	<vrpfile src="files/images/Weapons/42.png"/>
+	<vrpfile src="files/images/Weapons/43.png"/>
+	<vrpfile src="files/images/Weapons/44.png"/>
+	<vrpfile src="files/images/Weapons/45.png"/>
+	<vrpfile src="files/images/Weapons/46.png"/>
+	
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Other/info.png"/>

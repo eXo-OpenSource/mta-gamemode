@@ -86,7 +86,7 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 	self.m_GUIWeapons[weaponID] = true
 	self.m_WeaponsName[weaponID] = GUILabel:new(self.m_WaffenRow*120, self.m_WaffenColumn*200, 100, 25, WEAPON_NAMES[weaponID], self.m_WeaponArea)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
-	self.m_WeaponsImage[weaponID] = GUIImage:new(20+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_WeaponArea)
+	self.m_WeaponsImage[weaponID] = GUIImage:new(20+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 60, 60, FileModdingHelper:getSingleton():getWeaponImage(weaponID), self.m_WeaponArea)
 	self.m_WeaponsMenge[weaponID] = GUILabel:new(self.m_WaffenRow*120, 100+self.m_WaffenColumn*200, 100, 20, "Waffenlager: "..Waffen, self.m_WeaponArea)
 	self.m_WeaponsMenge[weaponID]:setAlignX("center")
 	self.m_WeaponsBuyGun[weaponID] = GUIButton:new(self.m_WaffenRow*120, 135+self.m_WaffenColumn*200, 100, 20,"+ Waffe", self.m_WeaponArea)

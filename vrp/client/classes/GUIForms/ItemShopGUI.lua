@@ -63,7 +63,7 @@ function ItemShopGUI:refreshItemShopGUI(shopId, items, sortedItems, weaponItems)
 				item.isWeapon = true
 
 				item.onLeftClick = function()
-					self.m_Preview:setImage(WeaponIcons[id])
+					self.m_Preview:setImage(FileModdingHelper:getSingleton():getWeaponImage(id))
 					self.m_LabelDescription:setText(WEAPON_NAMES[id])
 				end
 			end
