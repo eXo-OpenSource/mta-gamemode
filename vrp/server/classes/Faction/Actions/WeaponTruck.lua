@@ -49,6 +49,14 @@ function WeaponTruck:constructor(driver, boxContent, totalAmount, type)
 	self.m_Truck:toggleRespawn(false)
 	self.m_Truck:setAlwaysDamageable(true)
 	self.m_Truck.m_DisableToggleHandbrake = true
+	-- edit handling to match Barracks' handling
+	self.m_Truck:setHandling("engineInertia", 25)
+	self.m_Truck:setHandling("dragCoeff", 4)
+	self.m_Truck:setHandling("brakeBias", 0.4)
+	self.m_Truck:setHandling("engineAcceleration", 8)
+	self.m_Truck:setHandling("brakeDeceleration", 4)
+	
+	
 
 	self.m_StartTime = getTickCount()
 	self.m_DestinationBlips = {}
