@@ -368,6 +368,7 @@
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobberyManager.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
+	<script src="server/classes/Faction/StateEvidence.lua" type="server"/>
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
 	<script src="server/classes/Faction/FactionRescue.lua" type="server"/>
 	<script src="server/classes/Faction/FactionEvil.lua" type="server"/>

@@ -20,15 +20,14 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_Truck = TemporaryVehicle.create(428, StateEvidenceTruck.spawnPos, StateEvidenceTruck.spawnRot)
 	self.m_Truck:setData("State Evidence Truck", true, true)
     self.m_Truck:setColor(0, 50, 0, 0, 50, 0)
-	self.m_Truck:setFrozen(true)
-	self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setMaxHealth(1500, true)
 	self.m_Truck:setBulletArmorLevel(2)
 	self.m_Truck:setRepairAllowed(false)
 	self.m_Truck:toggleRespawn(false)
 	self.m_Truck:setAlwaysDamageable(true)
-	self.m_Truck.m_DisableToggleHandbrake = true
+	self.m_Truck:setFrozen(true)
+	self.m_Truck:initObjectLoading()
 	self.m_Timer = setTimer(bind(self.timeUp, self), StateEvidenceTruck.Time, 1)
 
 	self.m_StartTime = getTickCount()
@@ -114,9 +113,6 @@ end
 
 function StateEvidenceTruck:loadBag(player, veh, bag)
 	if #getAttachedElements(self.m_Truck) >= #StateEvidenceTruck.MoneyBagSpawns then
-		self.m_Truck:setFrozen(false)
-		self.m_Truck.m_DisableToggleHandbrake = false
-		self.m_Truck:setLocked(false)
 		FactionState:getSingleton():sendShortMessage("Der Geldtransporter wurde fertig beladen!")
 	end
 end
@@ -178,26 +174,8 @@ end
 function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
 	local bag = false
-	local finish = false
-	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-		hitElement:sendInfo(_("Bitte steig aus um die Kisten zu entladen!", hitElement))
-		return
-	end
 
-	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-		bags = getAttachedElements(self.m_Truck)
-		hitElement:sendInfo(_("Geldtransporter erfolgreich abgegeben!",hitElement))
-		self:Event_OnTruckExit(hitElement,0)
-		if faction:isEvilFaction() then
-			faction:giveKarmaToOnlineMembers(-10, "Geld-Transport gestohlen!")
-			PlayerManager:getSingleton():breakingNews("Der Geldtransport wurde von der Fraktion %s gestohlen!", faction:getName())
-		else
-			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Geld-Transport abgegeben!")
-			PlayerManager:getSingleton():breakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
-			Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
-		end
-		finish = true
-	elseif hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
+	if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
 			--bags = getAttachedElements(hitElement)
 			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcke wurden abgegeben!", #StateEvidenceTruck.MoneyBagSpawns-self:getRemainingBagAmount()+1, #StateEvidenceTruck.MoneyBagSpawns)
 			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
@@ -207,19 +185,10 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 		hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abladen!", hitElement))
 		return
 	end
-	--[[
-	local totalMoney = 0
-	for key, value in pairs (bags) do
-		if value and isElement(value) and value:getModel() == 1550 then
-			totalMoney = totalMoney + value.money
-			value:destroy()
-		end
-	end
-	]]
 
 	self.m_BankAccountServer:transferMoney(faction, bag.money, "Geldsack (Geldtransport)", "Action", "EvidenceTruck")
 	bag:destroy()
-	if self:getRemainingBagAmount() == 0 or finish == true then
+	if self:getRemainingBagAmount() == 0 then
 		delete(self)
 	end
 end
@@ -236,7 +205,7 @@ function StateEvidenceTruck:Event_OnTruckDestroy()
 		self.m_Destroyed = true
 		self:Event_OnTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Geldtransporter wurde zerstört!")
-		Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
+		Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde zerstört!")
 		self:delete()
 	end
 end

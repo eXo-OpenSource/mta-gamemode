@@ -74,9 +74,6 @@ function FactionState:constructor()
 
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker(  Vector3(249.51, 67.46, 1003.64), 6, 0 )
-	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
-	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 0, 5)
-
 
 	self.m_EvidenceEquipmentBox = {}
 	self:createEquipmentEvidence(Vector3( 1538.44, -1708.12, 5.22), 0, 5, 133)
@@ -110,7 +107,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:startEvidenceTruck",
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
 	"factionStateCuff", "factionStateUncuff", "factionStateTie"
 	}
 
@@ -159,19 +156,9 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
-	addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
-
-	local row = sql:queryFetch("SELECT * FROM ??_StateEvidence", sql:getPrefix())
-	self.m_EvidenceRoomItems = {}
-	if row then
-		for i, v in ipairs(row) do
-
-			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {v.Type, v.Var1, v.Var2, v.Var3, v.Cop, v.Date}
-		end
-	end
 end
 
 
@@ -247,12 +234,12 @@ function FactionState:putEvidenceInDepot(player, box)
 	if type == "Waffe" then
 		if id then
 			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
-			self:addWeaponToEvidence(player, id, amount, 0, true)
+			StateEvidence:getSingleton():addWeaponToEvidence(player, id, amount, 0, true)
 		end
 	elseif type == "Munition" then
 		if id then
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
-			self:addWeaponToEvidence(player, id, amount, 0, true)
+			StateEvidence:getSingleton():addWeaponToEvidence(player, id, amount, 0, true)
 		end
 	else
 		player:getFaction():sendShortMessage(("%s hat %s Stück %s (%s $) konfesziert!"):format(player:getName(), amount, product, price))
@@ -690,25 +677,6 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 	end
 	)
 	ElementInfo:new(pickup, "Einsperren", 1)
-end
-
-function FactionState:createEvidencePickup( x,y,z, int, dim )
-	local pickup = createPickup(x,y,z,3, 2061, 10)
-	setElementInterior(pickup, int)
-	setElementDimension(pickup, dim)
-	self.m_EvidenePickup = pickup
-	addEventHandler("onPickupUse", pickup, function( hitElement )
-		local dim = source:getDimension() == hitElement:getDimension()
-		if hitElement:getType() == "player" and dim then
-			if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-				hitElement.evidencePickup = source
-				self:showEvidenceStorage( hitElement )
-			else
-				hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
-			end
-		end
-	end)
-	ElementInfo:new(pickup, "Asservatenkammer", 1 )
 end
 
 function FactionState:getFullCategoryFromShurtcut(category)
@@ -1918,75 +1886,6 @@ function FactionState:Event_attachBug()
 		self:sendShortMessage(client:getName().." hat Wanze "..id.." an ein/en "..typeName.." angebracht!")
 	else
 		client:sendError(_("Alle verfügbaren Wanzen sind aktiv!", client))
-	end
-end
-
-function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID, noMessage)
-	if self.m_EvidenceRoomItems then
-		if #self.m_EvidenceRoomItems < STATEFACTION_EVIDENCE_MAXITEMS  then
-			local type_ = "Waffe"
-			local copName = "Unbekannt"
-			local timeStamp =  getRealTime().timestamp
-			if isElement(cop) then
-				copName = getPlayerName(cop)
-			end
-			sql:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Cop, Date) VALUES(?, ?, ?, ?, ?, ?)",
-				sql:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0, copName, timeStamp)
-			if not noMessage then self:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!") end
-			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, timeStamp}
-		else
-			self:sendShortMessage("Die Asservatenkammer ist voll, die Waffe konnte nicht mehr eingelagert werden!")
-		end
-	end
-end
-
-function FactionState:showEvidenceStorage(player)
-	if player then
-		if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() then
-			player:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems)
-		end
-	end
-end
-
-function FactionState:Event_startEvidenceTruck()
-	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-		if ActionsCheck:getSingleton():isActionAllowed(client) then
-			local evObj, weapon, weaponAmmo, weaponMoney, ammoMoney
-			local totalMoney = 0
-			for i = 1, #self.m_EvidenceRoomItems do
-				evObj = self.m_EvidenceRoomItems[i]
-				if evObj and evObj[1] and evObj[1] == "Waffe" then
-					weapon = evObj[2]
-					weaponAmmo = evObj[3]
-					if weapon then
-						weapon = tonumber(weapon)
-						if AmmuNationInfo[weapon] then
-							weaponMoney  = AmmuNationInfo[weapon].Weapon
-							ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
-						else
-							weaponMoney = 500
-							ammoMoney = 0
-						end
-						if weaponMoney and ammoMoney then
-							totalMoney = totalMoney + (weaponMoney + ammoMoney)
-						end
-					end
-				end
-			end
-			if totalMoney > 0 then
-				ActionsCheck:getSingleton():setAction("Geldtransport")
-				FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
-				StateEvidenceTruck:new(client, totalMoney)
-				PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-				Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-				self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
-				sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-				self.m_EvidenceRoomItems = {}
-				triggerClientEvent(root,"State:clearEvidenceItems", root)
-			else
-				client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
-			end
-		end
 	end
 end
 
