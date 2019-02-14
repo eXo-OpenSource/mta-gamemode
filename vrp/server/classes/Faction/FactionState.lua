@@ -379,6 +379,10 @@ function FactionState:loadArmy(factionId)
 	areaGateBack.m_Gates[1]:setDoubleSided(true)
 	areaGateBack.onGateHit = bind(self.onBarrierGateHit, self)
 
+	local areaGatesSmall = Gate:new(988, Vector3(97.400001525879, 1920.8000488281, 18), Vector3(0, 0, 270), Vector3(97.400001525879, 1924.8000488281, 18))
+	areaGatesSmall.m_Gates[1]:setDoubleSided(true)
+	areaGatesSmall.onGateHit = bind(self.onBarrierGateHit, self)
+
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
 		areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
