@@ -127,38 +127,38 @@ Items dürfen bei einer Transaction nicht ihre ID ändern! (Nachverfolgbarkeit)
 TODO by MegaThorx
 
 ## vrp_item_categories
-> Id int PK
-> Name varchar(128) NOT NULL
+* Id int PK
+* Name varchar(128) NOT NULL
 
 ## vrp_items
-> Id int PK
-> TechincalName varchar(128) NOT NULL
-> CategoryId int NOT NULL FK
-> Name varchar(128) NOT NULL
-> Description text NOT NULL DEFAULT ''
-> Consumable bool NOT NULL DEFAULT 0
-> Icon varchar(128) NOT NULL
-> ModelId int NOT NULL DEFAULT 0
-> MaxDurability int NOT NULL DEFAULT 0
-> Tradeable bool NOT NULL DEFAULT 0
-> Expireable bool NOT NULL DEFAULT 0
-> IsUnique bool NOT NULL DEFAULT 0
+* Id int PK
+* TechincalName varchar(128) NOT NULL
+* CategoryId int NOT NULL FK
+* Name varchar(128) NOT NULL
+* Description text NOT NULL DEFAULT ''
+* Consumable bool NOT NULL DEFAULT 0
+* Icon varchar(128) NOT NULL
+* ModelId int NOT NULL DEFAULT 0
+* MaxDurability int NOT NULL DEFAULT 0
+* Tradeable bool NOT NULL DEFAULT 0
+* Expireable bool NOT NULL DEFAULT 0
+* IsUnique bool NOT NULL DEFAULT 0
 
 ## vrp_inventory
-> Id int PK
-> ElementId int NOT NULL
-> ElementType int NOT NULL (1 - player, 2 - faction, 3 - company, 4 - vehicle, 5 - house, 6 - TBD)
-> Size int NOT NULL
-> AllowedCategories text NOT NULL (json array with types)
+* Id int PK
+* ElementId int NOT NULL
+* ElementType int NOT NULL (1 - player, 2 - faction, 3 - company, 4 - vehicle, 5 - house, 6 - TBD)
+* Size int NOT NULL
+* AllowedCategories text NOT NULL (json array with types)
 
 ## vrp_inventory_items
-> Id int PK
-> InventoryId int NOT NULL FK
-> ItemId int NOT NULL FK
-> Slot int NOT NULL
-> Value int NOT NULL DEFAULT 0
-> Durability int NOT NULL DEFAULT 0
-> Metadata text NULL
+* Id int PK
+* InventoryId int NOT NULL FK
+* ItemId int NOT NULL FK
+* Slot int NOT NULL
+* Value int NOT NULL DEFAULT 0
+* Durability int NOT NULL DEFAULT 0
+* Metadata text NULL
 
 ```sql
 CREATE TABLE `vrp_item_categories`  (

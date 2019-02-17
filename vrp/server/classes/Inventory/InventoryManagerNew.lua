@@ -30,6 +30,8 @@ function InventoryManagerNew:constructor()
 	self.m_Items = {}
 	self.m_ItemIdToName = {}
 	self:loadItems()
+
+	self.m_Inventories = {}
 end
 
 function InventoryManagerNew:loadItems()
@@ -103,13 +105,21 @@ function InventoryManagerNew:loadInventory(inventoryId)
 end
 
 function InventoryManagerNew:unloadInventory(inventoryId)
-    save()
-    unload()
+	if self.m_Inventories[inventoryId] then
+		delete(self.m_Inventories[inventoryId])
+		return true
+	else
+		return false
+	end
 end
 
 function InventoryManagerNew:deleteInventory(inventoryId)
-    unload()
-    delete()
+	if self.m_Inventories[inventoryId] then
+		self.m_Inventories[inventoryId]:delete()
+		return true
+	else
+		return false
+	end
 end
 
 function InventoryManagerNew:isItemGivable(inventoryId, itemId, amount)

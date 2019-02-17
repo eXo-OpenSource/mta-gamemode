@@ -30,8 +30,20 @@ function InventoryNew:constructor(inventory, items)
 	self.m_Size = inventory.Size
 	self.m_AllowedCategories = fromJSON(inventory.AllowedCategories)
 	if not self.m_AllowedCategories then self.m_AllowedCategories = {} end
+	self.m_IsDirty = false
+	self.m_DirtySince = 0
 
 	self.m_Items = items
+end
+
+function InventoryNew:destructor()	
+	self:save()
+end
+
+function InventoryNew:save(force)
+	if self.m_IsDirty then
+		
+	end
 end
 
 function InventoryNew:hasPlayerAccessTo(ele player)
