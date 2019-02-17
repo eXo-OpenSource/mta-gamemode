@@ -453,8 +453,12 @@ function VehicleManager:destroyUnusedVehicles( player )
 	if player then
 		local vehTable = self:getPlayerVehicles(player)
 		if vehTable then
+			local tempTable = {}
+			for k, vehicle in ipairs(vehTable) do
+				tempTable[k] = vehicle
+			end
 			local counter = 0
-			for k , vehicle in pairs(vehTable) do
+			for k , vehicle in pairs(tempTable) do
 				if vehicle then
 					if vehicle.m_HasBeenUsed then
 						if vehicle.m_HasBeenUsed == 0 then
