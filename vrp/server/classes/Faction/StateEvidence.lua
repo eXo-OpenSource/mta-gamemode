@@ -27,7 +27,7 @@ function StateEvidence:constructor()
 end
 
 function StateEvidence:loadObjectData()
-	self.m_EvidenceRoomItems = sql:queryFetch("SELECT * FROM ??_StateEvidence", sql:getPrefix()) or {}
+	self.m_EvidenceRoomItems = sql:queryFetch("SELECT * FROM ??_state_evidence", sql:getPrefix()) or {}
 	self.m_FillState = 0
 	for i, v in pairs(self.m_EvidenceRoomItems) do
 		self.m_EvidenceRoomItems[i].UserName = Account.getNameFromId(v.UserId) or "Unbekannt"
@@ -64,7 +64,7 @@ function StateEvidence:insertNewObject(type, object, amount, userid)
 	local timeStamp = getRealTime().timestamp
     if self.m_EvidenceRoomItems then
 		if self.m_FillState < STATE_EVIDENCE_MAX_OBJECTS  then
-            sql:queryExec("INSERT INTO ??_StateEvidence (Type, Object, Amount, UserId, Timestamp) VALUES(?, ?, ?, ?, ?)",
+            sql:queryExec("INSERT INTO ??_state_evidence (Type, Object, Amount, UserId, Timestamp) VALUES(?, ?, ?, ?, ?)",
             sql:getPrefix(), type, object, amount, userid, timeStamp)
 			table.insert(self.m_EvidenceRoomItems, {
 				Type = type, 
@@ -148,7 +148,7 @@ function StateEvidence:Event_startEvidenceTruck()
 				StatisticsLogger:getSingleton():addActionLog("Geld-Transport", "start", client, client:getFaction(), "faction")
 				sql:queryFetchSingle(function()
 					self:loadObjectData()
-				end, "DELETE FROM ??_StateEvidence WHERE Id IN (??)",sql:getPrefix(), table.concat(objToDelete, ","))
+				end, "DELETE FROM ??_state_evidence WHERE Id IN (??)",sql:getPrefix(), table.concat(objToDelete, ","))
 				
 			else
 				client:sendError(_("In der Asservatenkammer befindet sich zu wenig Material!", client))
