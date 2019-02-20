@@ -458,7 +458,15 @@ HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
 HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hangar", [2] = "Hangar: Unkown Hangar", [3] = "Hangar: Unkown Hangar"}
 
-WEAPONTRUCK_MAX_LOAD = 60000
+WEAPONTRUCK_MAX_LOAD = 60000 -- Dollars
+EVIDENCETRUCK_MAX_LOAD = 60000 -- Dollars
+STATE_EVIDENCE_MAX_OBJECTS = 100000 -- dollars
+STATE_EVIDENCE_OBJECT_PRICE = {
+	Waffe = 1, -- * weapon cost
+	Munition = 1, -- * munition cost
+	Item = 10
+}
+
 
 PlayerAttachObjects = {
 	[1550] = {model = 1550, name = "Geldsack", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 0, 180), blockJump = true, bone = 3, placeDown = true},

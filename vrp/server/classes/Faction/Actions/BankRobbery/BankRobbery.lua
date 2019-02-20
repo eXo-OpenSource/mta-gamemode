@@ -226,7 +226,7 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
 				return false
 			end
-			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers then
+			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers and not DEBUG then
 				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, self.ms_MinBankrobStateMembers))
 				return false
 			end

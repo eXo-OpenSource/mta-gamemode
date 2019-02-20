@@ -105,6 +105,7 @@ function Core:constructor()
 		ActorManager:new()
 		InteriorManager:new()
 		FactionManager:new()
+		StateEvidence:new()
 		CompanyManager:new()
 		Guns:new()
 		InventoryManager:new()
@@ -203,12 +204,14 @@ function Core:constructor()
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")
 			local files = {}
+			local st = getTickCount()
 			for k, v in pairs(xmlNodeGetChildren(xml)) do
 				if xmlNodeGetName(v) == "vrpfile" then
 					files[#files+1] = xmlNodeGetAttribute(v, "src")
 					Provider:getSingleton():offerFile(xmlNodeGetAttribute(v, "src"))
 				end
 			end
+			outputDebug("offered files in ", getTickCount()-st, "ms")
 			Package.save("vrp.list", files, true)
 			Provider:getSingleton():offerFile("vrp.list")
 		end

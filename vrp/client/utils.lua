@@ -66,23 +66,28 @@ function textHeight(text, lineWidth, font, size)
 	return height
 end
 
+CUSTOM_GUI = 1
 local offset = 0
 local outMargin = 0
-function grid(type, pos)
+function grid(typ, pos, ignorecustom)
+	if not ignorecustom then 
+		local erg = grid(typ, pos, true) 
+		return type(erg) == "number" and erg*CUSTOM_GUI or erg 
+	end
 	if not pos then pos = 1 end
-	if type == "offset" then
+	if typ == "offset" then
 		offset = pos
 		return true
-	elseif type == "outMargin" then
+	elseif typ == "outMargin" then
 		outMargin = pos
 		return true
-	elseif type == "reset" then -- reset all previous settings
+	elseif typ == "reset" then -- reset all previous settings
 		offset = 0
 		outMargin = 0
 		return true
-	elseif type == "x" then
+	elseif typ == "x" then
 		return 30*(pos - 1) + 10*pos + outMargin
-	elseif type == "y" then
+	elseif typ == "y" then
 		return offset + 30*(pos - 1) + 10*pos + outMargin
 	end
 	return 30*pos + 10*(pos - 1)

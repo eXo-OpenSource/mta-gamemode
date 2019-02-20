@@ -560,23 +560,22 @@ function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 			end
 		end
 	end
-	--Remaining Weapons (if they do not fit in Depot)
+
+	--Remaining Weapons evidence/money
 	local evidenceString = {}	
-	if faction:isStateFaction() then
-		for weaponID, v in pairs(weaponTable) do
-			local remainingMunition = weaponTable[weaponID]["Munition"] or 0
-			if weaponTable[weaponID]["Waffe"] then
-				for i = 1, weaponTable[weaponID]["Waffe"] do
-					FactionState:getSingleton():addWeaponToEvidence(player, weaponID, remainingMunition, self.m_StartFaction:getId(), true)
-					evidenceString[#evidenceString+1] = WEAPON_NAMES[weaponID].." mit "..weaponTable[weaponID]["Munition"].." Magazin/e \n"
-					remainingMunition = 0
-				end
-			end
-		end
-	else
-		for weaponID, v in pairs(weaponTable) do
-			for typ, amount in pairs(weaponTable[weaponID]) do
-				if amount > 0 then
+
+	for weaponID, v in pairs(weaponTable) do
+		for typ, amount in pairs(weaponTable[weaponID]) do
+			if amount > 0 then
+				if faction:isStateFaction() then -- state evidence
+					if typ == "Waffe" then
+						StateEvidence:getSingleton():addWeaponsToEvidence(player, weaponID, amount, true)
+						evidenceString[#evidenceString+1] = amount.." "..WEAPON_NAMES[weaponID].."\n"
+					elseif typ == "Munition" then
+						StateEvidence:getSingleton():addMunitionToEvidence(player, weaponID, amount, true)
+						evidenceString[#evidenceString+1] = amount.." "..WEAPON_NAMES[weaponID].."-Magazine\n"
+					end
+				else
 					if typ == "Waffe" then
 						money = money + amount * factionWeaponDepotInfo[weaponID]["WaffenPreis"]
 					elseif typ == "Munition" then
@@ -585,9 +584,9 @@ function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 				end
 			end
 		end
-		if money > 0 then
-			self.m_BankAccountServer:transferMoney(faction, money, "Waffentruck Kisten", "Action", "WeaponTruck")
-		end
+	end
+	if money > 0 then
+		self.m_BankAccountServer:transferMoney(faction, money, "Waffentruck Kisten", "Action", "WeaponTruck")
 	end
 
 	local shortmessageString = "Ins Depot gelegt:"
