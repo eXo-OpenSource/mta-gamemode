@@ -129,8 +129,12 @@ function Trunk:takeItem(player, slot)
 
 			local success = false
 			if isCopSeizing then
-				success = StateEvidence:getSingleton():addItemToEvidence(player, item, amount)
-				if success then self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName())) end
+				if FactionState:getSingleton():isItemIllegal(item) then 
+					success = StateEvidence:getSingleton():addItemToEvidence(player, item, amount)
+					if success then self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName())) end
+				else
+					player:sendError(_("Dieses Item ist nicht illegal!", player))
+				end
 			else
 				success = player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
 				if success then player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot)) end
