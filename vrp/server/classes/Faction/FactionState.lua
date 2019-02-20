@@ -233,13 +233,13 @@ function FactionState:putEvidenceInDepot(player, box)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" then
 		if id then
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
-			StateEvidence:getSingleton():addWeaponToEvidence(player, id, amount, 0, true)
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))		
+			StateEvidence:getSingleton():addWeaponsToEvidence(player, id, amount, true)
 		end
 	elseif type == "Munition" then
 		if id then
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
-			StateEvidence:getSingleton():addWeaponToEvidence(player, id, amount, 0, true)
+			StateEvidence:getSingleton():addMunitionToEvidence(player, id, amount, true)
 		end
 	else
 		player:getFaction():sendShortMessage(("%s hat %s Stück %s (%s $) konfesziert!"):format(player:getName(), amount, product, price))
@@ -1704,6 +1704,7 @@ function FactionState:Event_takeDrugs(target)
 					client:sendMessage(_("%d %s", client, amount, item), 255, 125, 0)
 					target:sendMessage(_("%d %s", target, amount, item), 255, 125, 0)
 					inv:removeAllItem(item)
+					StateEvidence:getSingleton():addItemToEvidence(client,item,amount)
 				end
 			end
 			if not drugsTaken then
@@ -1722,7 +1723,14 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
+			for i = 0, 8 do 
+				local w = getPedWeapon(me,i)
+				if w ~= 0 then 
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(me, i))
+				end 
+			end
 			takeAllWeapons(target)
+
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end

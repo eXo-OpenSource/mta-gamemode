@@ -11,9 +11,9 @@ StateEvidenceTruck.Time = 20*60*1000 -- in ms
 StateEvidenceTruck.spawnPos = Vector3(1591.18, -1685.65, 6.02)
 StateEvidenceTruck.spawnRot = Vector3(0, 0, 0)
 StateEvidenceTruck.Destination = Vector3(119.08, 1902.07, 17.5)
-StateEvidenceTruck.MoneyBagSpawns = {
-	Vector3(1583.20, -1686.1, 5.7), Vector3(1583.17, -1690.72, 5.7),
-	Vector3(1586.17, -1689.46, 5.7), Vector3(1586.37, -1686.45, 5.7),
+StateEvidenceTruck.MoneyBagSpawns = { -- 10
+	Vector3(1581.15, -1690.91, 5.61),Vector3(1582.36, -1691.19, 5.61),Vector3(1581.64, -1691.72, 5.61),Vector3(1581.30, -1692.48, 5.61),Vector3(1582.35, -1692.36, 5.61),
+	Vector3(1583.17, -1691.73, 5.61),Vector3(1583.39, -1692.46, 5.61),Vector3(1582.48, -1692.85, 5.61),Vector3(1581.88, -1693.05, 5.61),Vector3(1583.71, -1693.12, 5.61),
 }
 
 function StateEvidenceTruck:constructor(driver, money)
@@ -27,6 +27,8 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_Truck:toggleRespawn(false)
 	self.m_Truck:setAlwaysDamageable(true)
 	self.m_Truck:setFrozen(true)
+	self.m_Truck:setInterior(0)
+	self.m_Truck:setDimension(5)
 	self.m_Truck:initObjectLoading()
 	self.m_Timer = setTimer(bind(self.timeUp, self), StateEvidenceTruck.Time, 1)
 
@@ -36,6 +38,7 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 	self.m_Money = money
+	self.ms_MoneyPerBag = math.floor(EVIDENCETRUCK_MAX_LOAD/10) -- 10 bags
 	self.m_MoneyBag = {}
 	self.m_BankAccountServer = BankServer.get("action.evidence_trunk")
 
@@ -96,25 +99,23 @@ function StateEvidenceTruck:timeUp()
 end
 
 function StateEvidenceTruck:spawnMoneyBags()
-	for i, position in pairs(StateEvidenceTruck.MoneyBagSpawns) do
-		self.m_MoneyBag[i] = createObject(1550, position, 0, 0, math.random(0,360))
-		addEventHandler("onElementClicked", self.m_MoneyBag[i], self.m_Event_onBagClickFunc)
-		local money = math.floor(self.m_Money/#StateEvidenceTruck.MoneyBagSpawns)
-		self.m_MoneyBag[i].money = money
-		self.m_MoneyBag[i]:setData("Money", money, true)
-		self.m_MoneyBag[i]:setData("MoneyBag", true, true)
-		self.m_MoneyBag[i].LoadHook = bind(self.loadBag, self)
-		self.m_MoneyBag[i]:setInterior(0)
-		self.m_MoneyBag[i]:setDimension(5)
-	end
-	self.m_Truck:setInterior(0)
-	self.m_Truck:setDimension(5)
-end
+	local moneyLeft = self.m_Money
+	local bagid = 1
+	while (moneyLeft > 0 and bagid <= 10) do
+		local position = StateEvidenceTruck.MoneyBagSpawns[bagid]
+		self.m_MoneyBag[bagid] = createObject(1550, position, 0, 0, math.random(0,360))
+		addEventHandler("onElementClicked", self.m_MoneyBag[bagid], self.m_Event_onBagClickFunc)
+		local money = math.min(moneyLeft, self.ms_MoneyPerBag)
+		self.m_MoneyBag[bagid].money = money
+		self.m_MoneyBag[bagid]:setData("Money", money, true)
+		self.m_MoneyBag[bagid]:setData("MoneyBag", true, true)
+		self.m_MoneyBag[bagid]:setInterior(0)
+		self.m_MoneyBag[bagid]:setDimension(5)
 
-function StateEvidenceTruck:loadBag(player, veh, bag)
-	if #getAttachedElements(self.m_Truck) >= #StateEvidenceTruck.MoneyBagSpawns then
-		FactionState:getSingleton():sendShortMessage("Der Geldtransporter wurde fertig beladen!")
+		bagid = bagid + 1
+		moneyLeft = moneyLeft - money
 	end
+	self.m_BagAmount = bagid - 1
 end
 
 function StateEvidenceTruck:addDestinationMarker(factionId, type, isEvil)
@@ -177,7 +178,7 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 
 	if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
 			--bags = getAttachedElements(hitElement)
-			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcke wurden abgegeben!", #StateEvidenceTruck.MoneyBagSpawns-self:getRemainingBagAmount()+1, #StateEvidenceTruck.MoneyBagSpawns)
+			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcke wurden abgegeben!", self.m_BagAmount-self:getRemainingBagAmount()+1, self.m_BagAmount)
 			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
 			bag = hitElement:getPlayerAttachedObject()
 			hitElement:detachPlayerObject(bag)
@@ -206,7 +207,7 @@ function StateEvidenceTruck:Event_OnTruckDestroy()
 		self:Event_OnTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Geldtransporter wurde zerstört!")
 		Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde zerstört!")
-		self:delete()
+		delete(self)
 	end
 end
 

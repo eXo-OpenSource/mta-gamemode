@@ -64,7 +64,6 @@ function DutyGUI:loadCompanyItems(cmp, isOnDuty)
 end
 
 function DutyGUI:itemEvent(eventName, arg1, arg2)
-    outputDebug("item")
     if type(arg1) ~= "table" then -- prevent triggering whole class instances 
         triggerServerEvent(eventName, localPlayer, arg1, arg2)
     else

@@ -464,7 +464,7 @@ STATE_EVIDENCE_MAX_OBJECTS = 100000 -- dollars
 STATE_EVIDENCE_OBJECT_PRICE = {
 	Waffe = 1, -- * weapon cost
 	Munition = 1, -- * munition cost
-	Item = 50
+	Item = 10
 }
 
 

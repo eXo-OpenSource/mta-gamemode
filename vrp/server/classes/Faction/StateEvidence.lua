@@ -72,7 +72,8 @@ function StateEvidence:insertNewObject(type, object, amount, userid)
 				Amount = amount, 
 				UserId = userid,
 				Date = timeStamp, 
-				UserName = Account.getNameFromId(userid)
+				UserName = Account.getNameFromId(userid),
+				Id = sql:lastInsertId()
 			})
 			self.m_FillState = self.m_FillState + self:getObjectPrice(type, object, amount)
             return true
@@ -84,16 +85,18 @@ end
 
 --multiple weapons
 function StateEvidence:addWeaponsToEvidence(player, weaponId, weaponCount, noMessage)	
-    if self:insertNewObject("Waffe", weaponId, weaponCount, player and player:getId() or 0) then
-        if not noMessage then FactionState:getSingleton():sendShortMessage(("%s hat %s %s konfisziert"):format(player and player:getName() or "Unbekannt", weaponCount, WEAPON_NAMES[weaponId or 0])) end
+	if self:insertNewObject("Waffe", weaponId, weaponCount, player and player:getId() or 0) then
+		player:getFaction():addLog(player, "Asservate", ("hat %s %s konfisziert!"):format(weaponCount, WEAPON_NAMES[weaponId or 0]))
+        if not noMessage then player:sendShortMessage(("Du hast %s %s konfisziert."):format(weaponCount, WEAPON_NAMES[weaponId or 0])) end
         return true
     end
 end
 
 --ammo without weapon
 function StateEvidence:addMunitionToEvidence(player, weaponId, ammo, noMessage)	
-    if self:insertNewObject("Munition", weaponId, ammo, player and player:getId() or 0) then
-        if not noMessage then FactionState:getSingleton():sendShortMessage(("%s hat %s %s-Schuss konfisziert"):format(player and player:getName() or "Unbekannt", ammo, WEAPON_NAMES[weaponId or 0])) end
+	if self:insertNewObject("Munition", weaponId, ammo, player and player:getId() or 0) then
+		player:getFaction():addLog(player, "Asservate", ("hat %s %s-Munition konfisziert!"):format(ammo, WEAPON_NAMES[weaponId or 0]))
+        if not noMessage then player:sendShortMessage(("Du hast %s %s-Schuss konfisziert."):format(ammo, WEAPON_NAMES[weaponId or 0])) end
         return true
     end
 end
@@ -101,13 +104,14 @@ end
 --one weapon with ammo (utility function)
 function StateEvidence:addWeaponWithMunitionToEvidence(player, weaponId, ammo, noMessage)	
     if self:addWeaponsToEvidence(player, weaponId, 1, true) and self:addMunitionToEvidence(player, weaponId, ammo, true) then
-        if not noMessage then FactionState:getSingleton():sendShortMessage(("%s hat ein/e(n) %s mit %s Schuss konfisziert"):format(player and player:getName() or "Unbekannt", WEAPON_NAMES[weaponId or 0], ammo)) end
+        if not noMessage then player:sendShortMessage(("Du hast ein/e(n) %s mit %s Schuss konfisziert."):format(WEAPON_NAMES[weaponId or 0], ammo)) end
     end
 end
 
 function StateEvidence:addItemToEvidence(player, itemName, amount, noMessage)
-    if self:insertNewObject("Item", itemName, amount, player and player:getId() or 0) then
-        if not noMessage then FactionState:getSingleton():sendShortMessage(("%s hat %s%s konfisziert"):format(player and player:getName() or "Unbekannt", amount, itemName)) end
+	if self:insertNewObject("Item", itemName, amount, player and player:getId() or 0) then
+		player:getFaction():addLog(player, "Asservate", ("hat %s %s konfisziert!"):format(amount, itemName))
+        if not noMessage then player:sendShortMessage(("Du hast %s %s konfisziert."):format(amount, itemName)) end
     end
 end
 
@@ -132,8 +136,6 @@ function StateEvidence:Event_startEvidenceTruck()
 				if(totalMoney + price <= EVIDENCETRUCK_MAX_LOAD) then
 					totalMoney = totalMoney + price
 					table.insert(objToDelete, evObj.Id)
-				else
-					break
 				end
 			end
 			if totalMoney > 0 then
@@ -144,9 +146,10 @@ function StateEvidence:Event_startEvidenceTruck()
 				Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 				FactionState:getSingleton():sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
 				StatisticsLogger:getSingleton():addActionLog("Geld-Transport", "start", client, client:getFaction(), "faction")
-				--sql:queryExec("DELETE FROM ??_StateEvidence WHERE Id IN (??)",sql:getPrefix(), unpack(objToDelete, ","))
-				--self:loadObjectData()
-				client:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems, self.m_FillState)
+				sql:queryFetchSingle(function()
+					self:loadObjectData()
+				end, "DELETE FROM ??_StateEvidence WHERE Id IN (??)",sql:getPrefix(), table.concat(objToDelete, ","))
+				
 			else
 				client:sendError(_("In der Asservatenkammer befindet sich zu wenig Material!", client))
 			end

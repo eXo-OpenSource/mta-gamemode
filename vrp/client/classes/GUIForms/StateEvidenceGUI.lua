@@ -43,6 +43,7 @@ function StateEvidenceGUI:constructor(evidenceTable, fillState)
 	
 	self.m_Btn.onLeftClick = function ()
 		QuestionBox:new(_"Möchtest du wirklich einen Asservaten Geld-Truck starten?", function()
+			self:close()
 			triggerServerEvent("State:startEvidenceTruck", localPlayer)
 		end)
 	end
@@ -57,6 +58,10 @@ function StateEvidenceGUI:constructor(evidenceTable, fillState)
 	self.m_EvidenceTable = evidenceTable
 	self.m_FillState = fillState
 	self:refreshGrid()
+end
+
+function StateEvidenceGUI:destructor()
+	GUIForm.destructor(self)
 end
 
 function StateEvidenceGUI:clearList()

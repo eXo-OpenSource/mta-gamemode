@@ -30,7 +30,7 @@ function PickupWeapon:pickup( player )
 				giveWeapon(player, self.m_WeaponID, self.m_Ammo, true)
 				client:sendSuccess(_("Du hast die Waffe erhalten!", client))
 			else
-				FactionState:getSingleton():addWeaponToEvidence( player, self.m_WeaponID, self.m_Ammo, self.m_OwnerFaction or "Keine")
+				StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(player, self.m_WeaponID, self.m_Ammo)
 			end
 			player:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 			setPedAnimation( player, PICKUP_ANIMATION_BLOCK, PICKUP_ANIMATION_NAME, 500, false, false, false)
