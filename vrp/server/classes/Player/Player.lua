@@ -346,10 +346,10 @@ function Player:save()
 		local sSkin = self.m_Skin
 		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
-
+		local timeDiff = self:getPlayTime() - self.m_StartTime
 		DatabasePlayer.save(self)
-		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_IsDead or 0, self.m_Id)
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), timeDiff, spawnWithFac, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 
