@@ -42,7 +42,7 @@ function ServiceSync:loadGroupNames()
 		local result = Async.wait()
 		local data = fromJSON(result)
 
-		if data.status == 200 then
+		if data and data.status == 200 then
 			self.m_ForumGroups[id] = data.data.groupName
 			self.m_ForumGroupMembers[id] = data.data.members
 		end
@@ -242,7 +242,7 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 			local result = Async.wait()
 			local data = fromJSON(result)
 
-			if data.status == 200 then
+			if data and data.status == 200 then
 				local currentGroupUsers = {}
 				local requiredChanges = {
 					add = {},
@@ -272,7 +272,7 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 					Forum:getSingleton():groupRemoveMember(requiredChanges.remove, groupId, Async.waitFor(self))
 					local data = Async.wait()
 
-					if data.status == 200 then
+					if data and data.status == 200 then
 						self.m_ForumGroupMembers[groupId] = data.data.members
 					end
 				end
@@ -281,7 +281,7 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 					Forum:getSingleton():groupAddMember(requiredChanges.add, groupId, Async.waitFor(self))
 					local data = Async.wait()
 
-					if data.status == 200 then
+					if data and data.status == 200 then
 						self.m_ForumGroupMembers[groupId] = data.data.members
 					end
 				end
@@ -360,7 +360,7 @@ function ServiceSync:syncUser(forumId, factionId, factionRank, companyId, compan
 
 	local forumGroups = {}
 
-	if data.status == 200 then
+	if data and data.status == 200 then
 		for _, v in pairs(data.data.groups) do
 			table.insert(forumGroups, v.groupID)
 		end
@@ -377,7 +377,7 @@ function ServiceSync:syncUser(forumId, factionId, factionRank, companyId, compan
 		local result = Async.wait()
 		local data = fromJSON(result)
 
-		if data.status == 200 then
+		if data and data.status == 200 then
 			self.m_ForumGroupMembers[groupId] = data.data.members
 		end
 	end
@@ -387,7 +387,7 @@ function ServiceSync:syncUser(forumId, factionId, factionRank, companyId, compan
 		local result = Async.wait()
 		local data = fromJSON(result)
 
-		if data.status == 200 then
+		if data and data.status == 200 then
 			self.m_ForumGroupMembers[groupId] = data.data.members
 		end
 	end
