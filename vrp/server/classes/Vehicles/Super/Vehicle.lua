@@ -679,7 +679,7 @@ function Vehicle:setCurrentPositionAsSpawn(type)
   self.m_SpawnInt = self:getInterior()
 end
 
-function Vehicle:respawnOnSpawnPosition()
+function Vehicle:respawnOnSpawnPosition()  
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
@@ -696,6 +696,7 @@ function Vehicle:respawnOnSpawnPosition()
 		self:toggleELS(false)
 		self:toggleDI(false)
 		self:resetIndicator()
+		self.m_HasBeenUsed = 0
 
 		if self.despawned then
 			self.despawned = false
