@@ -164,6 +164,7 @@ function DatabasePlayer:load(sync)
 	self:setAlcoholLevel(row.AlcoholLevel)
 	self:setPlayTime(row.PlayTime)
 	self.m_StartTime = row.PlayTime
+	self.m_PlayTimeAtLastSave = row.PlayTime
 	self.m_LoginTime = getRealTime().timestamp
 	self:setPrison(0)
 	self:setWarns()
