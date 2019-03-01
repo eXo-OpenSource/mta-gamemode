@@ -360,6 +360,8 @@ function Player:save()
 		if DEBUG_LOAD_SAVE then
 			outputDebugString("Saved Data for Player "..self:getName())
 		end
+
+		self.m_StartTime = self:getPlayTime()
 	end
 end
 
