@@ -47,6 +47,10 @@ function CompanyVehicle:constructor(data)
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
 
+	if self:getModel() == 560 and self:getCompany():getId() == 4 then
+		PublicTransport:createTaxiSign(self)
+	end
+
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(
 			function(veh)

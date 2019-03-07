@@ -11,6 +11,7 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 }
 
 local TAXI_PRICE_PER_KM = 40
+PublicTransport.m_TaxiSigns = {}
 
 function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
@@ -154,6 +155,13 @@ function PublicTransport:onVehicleEnter(veh, player, seat)
 				veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)
 			end
 		end
+	end
+end
+
+function PublicTransport:createTaxiSign(veh)
+	if veh then
+		self.m_TaxiSigns[veh] = createObject(1853, veh:getPosition())
+		self.m_TaxiSigns[veh]:attach(veh, 0, -0.23, 0.9175)
 	end
 end
 

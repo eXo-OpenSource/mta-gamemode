@@ -160,6 +160,8 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/vehicles/extensions/fire_main.col", 1932)
 	self:loadImportTXD("files/models/vehicles/extensions/fire_main.txd", 1932)
 	self:loadImportDFF("files/models/vehicles/extensions/fire_main.dff", 1932)
+	self:loadImportTXD("files/models/vehicles/extensions/taxi_sign.txd", 1853)
+	self:loadImportDFF("files/models/vehicles/extensions/taxi_sign.dff", 1853)
 
 	self:loadImportDFF("files/models/vehicles/dozer.dff", 486)
 	self:loadImportDFF("files/models/vehicles/dumper.dff", 406)

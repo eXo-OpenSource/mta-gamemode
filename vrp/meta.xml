@@ -2352,6 +2352,8 @@
 	<vrpfile src="files/models/vehicles/extensions/fire_main.txd" />
 	<vrpfile src="files/models/vehicles/extensions/fire_main.dff" />
 	<vrpfile src="files/models/vehicles/extensions/fire_main.col" />
+	<vrpfile src="files/models/vehicles/extensions/taxi_sign.txd" />
+	<vrpfile src="files/models/vehicles/extensions/taxi_sign.dff" />
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>
