@@ -179,6 +179,9 @@ function Player:loadCharacter()
 	-- Add Payday
 	self:setNextPayday()
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
+	Async.create(function(player)
+		player.m_InventoryNew = InventoryManagerNew:getSingleton():loadInventory(player)
+	end)(self)
 
 	-- Add binds
 	self:initialiseBinds()
@@ -645,6 +648,10 @@ function DatabasePlayer:setSessionId(hash) self.m_SessionId = hash if self:isAct
 
 function Player:getInventory()
 	return self.m_Inventory
+end
+
+function Player:getInventoryNew()
+	return self.m_InventoryNew
 end
 
 function Player.staticGroupChatHandler(self, command, ...)

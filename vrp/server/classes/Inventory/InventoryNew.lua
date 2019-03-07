@@ -17,8 +17,8 @@ function InventoryNew.load(inventoryId)
 	if not inventory then
 		return false
 	end
-
-	local items = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+	-- TODO: Rename _inventory_items2 TO _inventory_items
+	local items = sql:queryFetch("SELECT * FROM ??_inventory_items2 WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
 
 	return InventoryNew:new(inventory, items)
 end
@@ -36,17 +36,17 @@ function InventoryNew:constructor(inventory, items)
 	self.m_Items = items
 end
 
-function InventoryNew:destructor()	
+function InventoryNew:destructor()
 	self:save()
 end
 
 function InventoryNew:save(force)
 	if self.m_IsDirty then
-		
+
 	end
 end
 
-function InventoryNew:hasPlayerAccessTo(ele player)
+function InventoryNew:hasPlayerAccessTo(player)
 	-- Typbasierte Checks, bspw.:
 	--  Fraktion: ist der Spieler OnDuty in der Besitzerfraktion
 	--  Kofferrraum: hat Spieler einen Schlüssel für das Fahrzeug / ist CopDuty

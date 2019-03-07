@@ -136,6 +136,8 @@
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/StaticWorldItems.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryNew.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryManagerNew.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
 
@@ -741,6 +743,7 @@
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 

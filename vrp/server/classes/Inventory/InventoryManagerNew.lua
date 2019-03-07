@@ -13,6 +13,12 @@ InventoryTypes = {
 	Company = 3;
 	GroupProperty = 4;
 	VehicleTrunk = 5;
+
+	player = 1;
+	faction = 2;
+	company = 3;
+	group_property = 4;
+	vehicle_trunk = 5;
 }
 
 InventoryTemplates = {
@@ -31,7 +37,18 @@ function InventoryManagerNew:constructor()
 	self.m_ItemIdToName = {}
 	self:loadItems()
 
+	addRemoteEvents{"syncInventory"}
+
+	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
+
 	self.m_Inventories = {}
+end
+
+function InventoryManagerNew:Event_syncInventory()
+	if not client.m_Disconnecting then
+		local inventory = client:getInventoryNew()
+		client:triggerEvent("syncInventory", inventory.m_Items)
+	end
 end
 
 function InventoryManagerNew:loadItems()
@@ -94,6 +111,38 @@ function InventoryManagerNew:getInventory(inventoryIdOrElementType, elementId)
 end
 
 function InventoryManagerNew:loadInventory(inventoryId)
+	if type(inventoryId) ~= "number" then
+		local elementId = 0
+		local elementType = 0
+
+		if type(inventoryId) == "table" then
+			if not InventoryTypes[inventoryId[1]] or table.size(inventoryId) ~= 2 then
+				return false
+			end
+			elementId = inventoryId[2]
+			elementType =InventoryTypes[inventoryId[1]]
+		elseif instanceof(inventoryId, Player) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Player
+		elseif instanceof(inventoryId, Faction) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Faction
+		elseif instanceof(inventoryId, Company) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Company
+		elseif instanceof(inventoryId, Group) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Group
+		end
+
+		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ?", sql:getPrefix(), elementId, elementType)
+		if not row then
+			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
+			return false
+		end
+		inventoryId = row.Id
+	end
+
 	local inventory = InventoryNew.load(inventoryId)
 
 	if inventory then
@@ -127,7 +176,7 @@ function InventoryManagerNew:isItemGivable(inventoryId, itemId, amount)
     checkIfSpace()
 end
 
-function InventoryManagerNew:isItemRemovable(int Uid, int itemId, int amount)
+function InventoryManagerNew:isItemRemovable(inventoryId, itemId, amount)
     checkIfCategoryAllowed()
     checkIfSpace()
 end
@@ -148,7 +197,7 @@ function InventoryManagerNew:giveItem()
     return false
 end
 
-function InventoryManagerNew:transactItem(int givingInventoryUId, int recievingInventoryUid, int itemId, int amount, [string value])
+function InventoryManagerNew:transactItem(fromInventoryId, toInventoryId, itemId, amount, value)
     if self:isItemRemovable() and self:isItemGivable() then
         self:removeItem()
         self:giveItem()
