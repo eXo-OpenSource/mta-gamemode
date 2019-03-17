@@ -624,6 +624,10 @@ end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
+	if FactionEvil:getSingleton().m_Raids[client:getName()] and not timestampCoolDown(FactionEvil:getSingleton().m_Raids[client:getName()], 15) then
+		client:sendError(_("Du kannst während eines Überfalls niemandem dein Geld geben!", client))
+		return
+	end
 	amount = math.floor(amount)
 	if amount <= 0 then return end
 	if client:getMoney() >= amount then

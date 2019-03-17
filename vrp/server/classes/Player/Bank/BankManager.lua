@@ -32,6 +32,10 @@ function BankManager:Event_Withdraw(amount)
 end
 
 function BankManager:Event_Deposit(amount)
+	if FactionEvil:getSingleton().m_Raids[client:getName()] and not timestampCoolDown(FactionEvil:getSingleton().m_Raids[client:getName()], 15) then
+		client:sendError(_("Du kannst während eines Überfalls kein Geld einzahlen!", client))
+		return
+	end
 	amount = tonumber(amount)
 	if not amount or amount <= 0 then return end
 	if isNan(amount) then return end
