@@ -282,7 +282,7 @@ function FactionEvil:loadLCNGates(factionId)
 end
 
 function FactionEvil:onBarrierGateHit(player, gate)
-    if player:getFaction() == gate:getOwner() then
+    if player:getFaction() == gate:getOwner() or player:getFaction():getAllianceFaction() == gate:getOwner() then 
 		return true
 	else
 		return false
