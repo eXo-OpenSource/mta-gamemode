@@ -145,6 +145,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 				end
 
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+				target:dropPlayerAttachedObjectOnDamage()
 			end
 		end
 	end

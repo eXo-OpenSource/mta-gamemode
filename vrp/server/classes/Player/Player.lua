@@ -1393,6 +1393,12 @@ function Player:getPlayerAttachedObject()
 	return self.m_PlayerAttachedObject
 end
 
+function Player:dropPlayerAttachedObjectOnDamage()
+	if self:getPlayerAttachedObject() and self:getPlayerAttachedObject():getModel() == 2912 then
+		self:detachPlayerObject(self:getPlayerAttachedObject(), true)
+	end
+end
+
 function Player:attachToVehicle(forceDetach)
 	if self:getPrivateSync("isAttachedToVehicle") then
 		self:setPrivateSync("isAttachedToVehicle", false)
