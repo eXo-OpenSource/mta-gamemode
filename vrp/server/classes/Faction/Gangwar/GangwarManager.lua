@@ -140,7 +140,9 @@ function Gangwar:Event_OnPickupHit( player )
 	local mArea = player.m_InsideArea
 	if dim == pDim then
 		if mArea then
-			player:triggerEvent("Gangwar_shortMessageAttack" , mArea)
+			if source:getModel() == 2993 then
+				player:triggerEvent("Gangwar_shortMessageAttack" , mArea)
+			end
 		end
 	end
 end
