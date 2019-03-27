@@ -134,18 +134,20 @@ end
 
 function PublicTransport:onVehicleEnter(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
-			player:triggerEvent("showTaxoMeter")
-			veh:setData("EPT_Taxi", true, true)
-		elseif veh:getModel() == 437 then
-			veh:setVariant(0, 0)
-			veh:setData("EPT_Bus", true, true)
-			veh:setHandling("handlingFlags", 18874448)
-			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
-			if self:isBusOnTour(veh) then
-				self:startBusTour_Driver(player, veh.Bus_NextStop, veh.Bus_Line)
-			else
-				triggerClientEvent("busReachNextStop", root, veh, "Ausser Dienst", false)
+		if player:getCompany() == self and player:isCompanyDuty() then
+			if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
+				player:triggerEvent("showTaxoMeter")
+				veh:setData("EPT_Taxi", true, true)
+			elseif veh:getModel() == 437 then
+				veh:setVariant(0, 0)
+				veh:setData("EPT_Bus", true, true)
+				veh:setHandling("handlingFlags", 18874448)
+				veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
+				if self:isBusOnTour(veh) then
+					self:startBusTour_Driver(player, veh.Bus_NextStop, veh.Bus_Line)
+				else
+					triggerClientEvent("busReachNextStop", root, veh, "Ausser Dienst", false)
+				end
 			end
 		end
 	else
