@@ -29,6 +29,7 @@ function ExecutionPed:constructor( player, weapon, bodypart )
 	self.m_Player = player
 	setElementAlpha(player, 0)
 	setElementCollisionsEnabled(player, false)
+	player:attach(self.m_Entity)
 	self:setRandomAnimation()
 	ExecutionPed.Map[player] = self
 end

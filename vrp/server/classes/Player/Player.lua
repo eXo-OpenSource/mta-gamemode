@@ -497,6 +497,14 @@ function Player:respawn(position, rotation, bJailSpawn)
 		self:setPrison(self.m_PrisonTime, true)
 	end
 
+	if self.m_ReviveWeapons then
+		for i = 1, 12 do
+			if isElement(self.m_ReviveWeapons[i].m_Entity) then
+				self.m_ReviveWeapons[i].m_Entity:detach()
+			end
+		end
+	end
+
 	if self.m_JailTime == 0 or not self.m_JailTime then
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 	else
@@ -546,20 +554,27 @@ function Player:dropReviveWeapons()
 		local pickupWeapon, weapon, ammo, model, x, y, z, dim, int
 		for i = 1, 12 do
 			if self.m_ReviveWeaponsInfo[i] then
-				x,y,z = getElementPosition(self)
-				x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
+				px,py,z = getElementPosition(self)
+				x,y = getPointFromDistanceRotation(px, py, 3, 360*(i/12))
 				int = getElementInterior(self)
 				dim = getElementDimension(self)
 				weapon =  self.m_ReviveWeaponsInfo[i][1]
 				ammo = self.m_ReviveWeaponsInfo[i][2]
 				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 and weapon ~= 9 then
-					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self)
+					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self, false, true, x-px, y-py)
 					if pickupWeapon then
 						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon
 					end
 				end
 			end
 		end
+		nextframe( --Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
+			function ()
+				local model = self:getModel()
+				self:setModel(0)
+				self:setModel(model)
+			end
+		)
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end
