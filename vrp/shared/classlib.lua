@@ -283,6 +283,33 @@ function pure_virtual()
 	error("Function implementation missing")
 end
 
+function writeLogBind ( text ) 
+    if not ( fileExists ( "logs/bindLog.log" ) ) then fileCreate ( "logs/bindLog.log" ); end 
+    local file = fileOpen ( "logs/bindLog.log" ) 
+    if ( file ) then 
+        pos = fileGetSize( file ); 
+        newPos = fileSetPos ( file, pos ); 
+        writeFile = fileWrite ( file, text .."\n" ); 
+        if ( writeFile ) then 
+            fileClose ( file ); 
+        else 
+            outputDebugString ( "Error writing the logs." ); 
+            fileClose ( file ); 
+            return false; 
+        end 
+    end      
+end 
+if CLIENT then 
+	if fileExists ( "logs/bindLog.log" ) then 
+		fileDelete("logs/bindLog.log")
+	end
+end
+BIND_SPAM_TIME = 200
+BIND_SPAM_COUNT = 10
+bindSpamTable = {}
+bindSpamCount = {}
+bindSpamCall = {}
+local lastCall = getTickCount()
 function bind(func, ...)
 	if not func then
 		if DEBUG then
@@ -293,7 +320,23 @@ function bind(func, ...)
 		end
 		error("Bad function pointer @ bind. See console for more details")
 	end
-
+	if CLIENT then 
+		local traceback = debug.traceback()
+		local hash = md5(traceback)
+		bindSpamCount[hash] = (bindSpamCount[hash] and bindSpamCount[hash] + 1) or 0
+		if not bindSpamCall[hash] then bindSpamCall[hash] = getTickCount() end
+		if bindSpamCount[hash] >= BIND_SPAM_COUNT and (bindSpamCall[hash] + BIND_SPAM_TIME > getTickCount()) then 	
+			if not bindSpamTable[hash] then
+				bindSpamTable[hash] = traceback
+				writeLogBind("stacktraceback bind (" ..bindSpamCount[hash] .. " calls in " ..((getTickCount() - bindSpamCall[hash])) .." ms): "..traceback)
+			end
+		else 
+			if bindSpamCall[hash] + BIND_SPAM_TIME < getTickCount() then 
+				bindSpamCall[hash] = getTickCount()
+				bindSpamCount[hash] = 0
+			end
+		end
+	end
 	local boundParams = {...}
 	return
 		function(...)

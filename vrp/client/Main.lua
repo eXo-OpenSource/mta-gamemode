@@ -1,15 +1,16 @@
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        client/Main.lua
--- *  PURPOSE:     Entry script
--- *
--- *****************************************************************************
 _setTimer = setTimer
 bindTable = {}
 timerTable = {}
-
+lastCall = getTickCount()
+spamTimerTable = {}
+TIMER_SPAM_TIME = 200
 function setTimer(...)
+	if lastCall + TIMER_SPAM_TIME > getTickCount() then 
+		local traceback = debug.traceback()
+		local hash = md5(traceback)
+		spamTimerTable[hash] = traceback
+	end
+	lastCall = getTickCount();
 	local func = unpack(arg)
 	if func and type(func) == "function" then 	
 		local timer = _setTimer(unpack(arg))
@@ -21,7 +22,6 @@ end
 function getTimerTrace(timer)
 	return timerTable[timer] 
 end
-
 
 function printTimerTrace(timer)
 	outputConsole("  ")
