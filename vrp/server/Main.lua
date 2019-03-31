@@ -1,3 +1,28 @@
+_setTimer = setTimer
+bindTable = {}
+timerTable = {}
+
+function setTimer(...)
+	local func = unpack(arg)
+	if func and type(func) == "function" then 	
+		local timer = _setTimer(unpack(arg))
+		timerTable[timer] = debug.traceback()
+		return timer
+	end
+end
+
+function getTimerTrace(timer)
+	return timerTable[timer] 
+end
+
+function printTimerTrace(timer)
+	print("  ")
+	print(">>> TRACE for Timer >>>")
+	print(getTimerTrace(timer))
+	print("<<<<<<<<<<<<<<<<<<<<<<<")
+	print("  ")
+end
+
 Main = {}
 
 function Main.resourceStart()
