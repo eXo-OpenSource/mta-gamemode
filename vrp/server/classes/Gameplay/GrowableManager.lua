@@ -82,7 +82,11 @@ end
 function GrowableManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_plants", sql:getPrefix())
 	for i, row in pairs(result) do
-		GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered, row.times_earned)
+		if getRealTime().timestamp - row.planted < 604800 then
+			GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered, row.times_earned)
+		else
+			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), row.Id)
+		end
 	end
 end
 
