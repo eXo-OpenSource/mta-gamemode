@@ -14,13 +14,13 @@ function setTimer(...)
 	local func = unpack(arg)
 	if func and type(func) == "function" then 	
 		local timer = _setTimer(unpack(arg))
-		timerTable[timer] = debug.traceback()
+		timerTable[timer] = func
 		return timer
 	end
 end
 
 function getTimerTrace(timer)
-	return timerTable[timer] 
+	return timerTable[timer]
 end
 
 function printTimerTrace(timer)

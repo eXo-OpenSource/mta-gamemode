@@ -1,5 +1,4 @@
 _setTimer = setTimer
-bindTable = {}
 timerTable = {}
 lastCall = getTickCount()
 spamTimerTable = {}
