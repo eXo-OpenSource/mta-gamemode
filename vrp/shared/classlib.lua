@@ -340,28 +340,33 @@ function bind(func, ...)
 			--[[if not triggerServerEvent then
 				removeDebugHook("preFunction", dHook)
 			end]]
-
+			local time = getTickCount() - perfTest
+			countCall( debug.traceback(), time)
 			--[[if not triggerServerEvent then
-				local time = getTickCount() - perfTest
+				
 				if time >= 50 then -- log everthing over 50ms ;)
 					local data = inspect({...}, {newline=' ', indent=""}) .. " - " .. inspect({source = source, this = this, client = client, eventName = eventName}, {newline=' ', indent=""})
 					data = data .. " -  " .. hookInfo .. " "
 					FileLogger:getSingleton():addPerfLog(time, "classlib@bind", data)
 				end
 			end]]
-			return retValue
+			return {retValue}, time
 		end
-	bindTable[retFunc] = debug.traceback()
 	return function(...) 
-		countCall(bindTable[retFunc])
-		return retFunc(...)
+		local vale = retFunc(...)
+		return vale
 	end
 end
 
 funcCount = {}
-function countCall(func) 
-	if not funcCount[func] then funcCount[func] = 0 end
-	funcCount[func] = funcCount[func] + 1
+function countCall(func, time) 
+	if not funcCount[func] then funcCount[func] = {0, time, 0} end
+	funcCount[func] = {funcCount[func][1] + 1, funcCount[func][2] + time}
+	if funcCount[func][2] > 0 then
+		funcCount[func][3] = funcCount[func][2] / funcCount[func][1]
+	else 
+		funcCount[func][3] = 0
+	end
 end
 
 function load(class, ...)
