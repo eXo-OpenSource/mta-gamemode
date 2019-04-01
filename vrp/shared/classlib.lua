@@ -310,6 +310,7 @@ function bind(func, ...)
 		end
 		error("Bad function pointer @ bind. See console for more details")
 	end
+	local roottrace = debug.traceback()
 	local boundParams = {...}
 	local retFunc =
 		function(...)
@@ -341,7 +342,7 @@ function bind(func, ...)
 				removeDebugHook("preFunction", dHook)
 			end]]
 			local time = getTickCount() - perfTest
-			countCall( debug.traceback(), time)
+			countCall( roottrace, time)
 			--[[if not triggerServerEvent then
 				
 				if time >= 50 then -- log everthing over 50ms ;)
