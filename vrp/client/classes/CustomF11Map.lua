@@ -125,8 +125,9 @@ function CustomF11Map:updateBlipList()
 					item.onLeftDoubleClick = function()
 						local closest, target = math.huge
 						for i, b in pairs(blips) do
-							if getDistanceBetweenPoints3D(localPlayer.position, b:getPosition(true)) < closest then
-								closest = getDistanceBetweenPoints3D(localPlayer.position, b:getPosition(true))
+							local x, y, z = getElementPosition(localPlayer)
+							if getDistanceBetweenPoints3D(x, y, z, b:getPosition(true)) < closest then
+								closest = getDistanceBetweenPoints3D(x, y, z, b:getPosition(true))
 								target = b
 							end
 						end

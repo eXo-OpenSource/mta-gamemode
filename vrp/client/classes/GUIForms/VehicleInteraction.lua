@@ -63,15 +63,14 @@ end
 
 function VehicleInteraction:render()
     if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/VehicleInteraction") end
-	local playerPos = localPlayer:getPosition()
 	self.m_lookAtVehicle = localPlayer:getWorldVehicle()
 	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getPedControlState("aim_weapon") then
 		local vehicleModel = self.m_lookAtVehicle:getModel()
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
             if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
-                local vehPos = self.m_lookAtVehicle:getPosition()
+                local vehX, vehY, vehZ = getElementPosition(self.m_lookAtVehicle)
                 local doorId = self:getDoor()
-                if getDistanceBetweenPoints3D(vehPos, playerPos) < self.m_minDistanceToVeh and doorId then
+                if getDistanceBetweenPoints3D(vehX, vehY, vehZ, getElementPosition(localPlayer)) < self.m_minDistanceToVeh and doorId then
                     if not isVehicleLocked(self.m_lookAtVehicle) then
                         local isDoorBroken = getVehicleDoorState(self.m_lookAtVehicle, doorId) == 4
                         local doorName = self.m_doorNames[doorId]
@@ -145,7 +144,7 @@ function VehicleInteraction:getDoor()
         end
 
         if compPos then
-            local distToComp = getDistanceBetweenPoints3D(compPos, localPlayer.position)
+            local distToComp = getDistanceBetweenPoints3D(compPos, getElementPosition(localPlayer))
             if distToComp < self.m_minDistanceToComp and distToComp < min then -- get the closest component
                 min = distToComp
                 minid = id

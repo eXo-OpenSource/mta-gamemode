@@ -93,7 +93,7 @@ end
 
 function Vehicle:magnetVehicleCheck()
 	local vehicle = self:getData("MagnetGrabbedVehicle")
-	local groundPosition = vehicle and getGroundPosition(vehicle.position)
+	local groundPosition = vehicle and getGroundPosition(getElementPosition(vehicle))
 
 	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
 end
@@ -405,7 +405,9 @@ addEventHandler("onClientRender", root,
 			local magnet = getElementData(vehicle, "Magnet")
 			if magnet then
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
-				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+				local x, y, z = getElementPosition(vehicle)
+				local mx, my, mz = getElementPosition(magnet)
+				dxDrawLine3D(x, y, z, mx, my, mz, tocolor(100, 100, 100, 255), 10)
 			end
 		end
 		for engine, magnet in pairs(JobTreasureSeeker.Rope) do

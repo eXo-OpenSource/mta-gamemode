@@ -50,7 +50,9 @@ function MechanicTow:renderFuelHose()
 		if isElement(element) then
 			local vehicle = element:getData("attachedToVehicle")
 			if isElement(vehicle) and vehicle.towingVehicle then
-				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
+				local x, y, z = getElementPosition(vehicle)
+				local endX, endY, endZ = x+0.07, y, z-0.11
+				dxDrawLine3D(x, y, z, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
 				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
 					local worldVehicle = localPlayer:getWorldVehicle()
@@ -61,7 +63,7 @@ function MechanicTow:renderFuelHose()
 						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
 					end
 
-					if localPlayer.vehicle or (vehicle.position - element.position).length > 10 then
+					if localPlayer.vehicle or getDistanceBetweenPoints3D(x, y, z, getElementPosition(element)) > 10 then
 						self.m_RenderFuelHoles[element] = nil
 						triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
 					end

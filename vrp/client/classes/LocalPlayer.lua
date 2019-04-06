@@ -316,7 +316,7 @@ function LocalPlayer:onDeathTimerUp()
 	ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
 
 	-- render camera drive
-	self.m_Add = 0
+	self.m_Add = 3
 	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 	fadeCamera(false, soundLength)
 
@@ -741,8 +741,12 @@ function LocalPlayer:sendTrayNotification(text, icon, sound)
 end
 
 function LocalPlayer:getWorldObject()
-	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
-	local result = {processLineOfSight(localPlayer.position, lookAt, true, false, false, true, false, false, false, true, localPlayer, true) }
+	local x, y, z, lx, ly, lz = getCameraMatrix()
+	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
+	local px, py, pz = getElementPosition(localPlayer)
+	--local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local lookX, lookY, lookZ = px+(nx*3), py+(ny*3), pz+(nz*3)
+	local result = {processLineOfSight(px, py, pz, lookX, lookY, lookZ, true, false, false, true, false, false, false, true, localPlayer, true) }
 
 	if result[1] then
 		if result[5] then
@@ -756,8 +760,11 @@ function LocalPlayer:getWorldObject()
 end
 
 function LocalPlayer:getWorldVehicle()
-	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
-	local result = {processLineOfSight(localPlayer.position, lookAt, true, true, false, false, false, false, false, true, localPlayer, true) }
+	local x, y, z, lx, ly, lz = getCameraMatrix()
+	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
+	local px, py, pz = getElementPosition(localPlayer)
+	local lookX, lookY, lookZ = px+(nx)*3, py+(ny)*3, pz+(nz)*3
+	local result = {processLineOfSight(px, py, pz, lookX, lookY, lookZ, true, true, false, false, false, false, false, true, localPlayer, true) } 
 
 	if result[1] then
 		if result[5] then

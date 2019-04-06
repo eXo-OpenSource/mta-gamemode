@@ -37,7 +37,8 @@ function PublicTransport:busStopStreamIn(obj)
 	local source = source -- scope to local
 	if obj then source = obj end
 	if not source.m_BusCol then
-		source.m_BusCol = createColSphere(source.position, 3)
+		local x, y, z = getElementPosition(source)
+		source.m_BusCol = createColSphere(x, y, z, 3)
 		self.m_StreamedInBusObjects[source] = source:getData("EPT_bus_station")
 		addEventHandler("onClientColShapeHit", source.m_BusCol, function(hit, dim)
 			if not dim then return end

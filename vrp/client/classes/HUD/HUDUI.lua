@@ -508,7 +508,7 @@ function HUDUI:drawChart()
 	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and karma.." Karma" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
 	drawCol(1, 0, Color.Clear, toMoneyString(self:getLocalTarget():getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
 	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(1, 0, Color.Clear, getZoneName(self:getLocalTarget().position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", self:getLocalTarget():getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
+	drawCol(1, 0, Color.Clear, getZoneName(getElementPosition(self:getLocalTarget())), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", self:getLocalTarget():getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
 
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
 	if core:get("HUD", "chartSkinVisible", false) or getProgress("skin", true, true) > 0 then
