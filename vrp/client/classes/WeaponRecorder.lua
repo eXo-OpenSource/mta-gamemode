@@ -21,10 +21,10 @@ function WeaponRecorder:draw()
 	for player, data in pairs(self.m_Data) do
 		if isElementStreamedIn(player) then
 			for i, weaponData in pairs(data.data) do
-				if (getTickCount() - weaponData[3]) > WeaponRecorder.MAX_DISPLAY_TIME then
+				if (getTickCount() - weaponData[7]) > WeaponRecorder.MAX_DISPLAY_TIME then
 					data.data[i] = nil
 				else
-					dxDrawLine3D(weaponData[1], weaponData[2], data.color, 1.5, false)
+					dxDrawLine3D(weaponData[1], weaponData[2], weaponData[3], weaponData[4], weaponData[5], weaponData[6], data.color, 1.5, false)
 				end
 			end
 		else
@@ -45,7 +45,8 @@ function WeaponRecorder:record(weapon, ammo, ammoInClip, hitX, hitY, hitZ, hitEl
 		if #self.m_Data[source].data > WeaponRecorder.MAX_PER_PLAYER then
 			self.m_Data[source].data[#self.m_Data[source].data] = nil
 		end
-		table.insert(self.m_Data[source].data, 1, {Vector3(getPedWeaponMuzzlePosition(source)), Vector3(hitX, hitY, hitZ), getTickCount()})
+		local x, y, z = getPedWeaponMuzzlePosition(source)
+		table.insert(self.m_Data[source].data, 1, {x, y, z, hitX, hitY, hitZ, getTickCount()})
 	else
 		if self.m_Data[source] then
 			self.m_Data[source] = nil

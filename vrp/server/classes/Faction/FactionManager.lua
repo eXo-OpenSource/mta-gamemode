@@ -44,7 +44,7 @@ function FactionManager:constructor()
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	FactionState:new()
 	FactionRescue:new()
-	FactionInsurgent:new()
+	--FactionInsurgent:new()
 	FactionEvil:new(self.EvilFactions)
 end
 

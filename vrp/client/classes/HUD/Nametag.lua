@@ -44,7 +44,7 @@ function Nametag:draw()
 			if (bDistance <= maxDistance) or localPlayer:getPrivateSync("isSpecting") then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
-					local bLineOfSight = isLineOfSightClear(Vector3(cx, cy, cz), Vector3(phX, phY, phZ), true, false, false, true, false, false, false, localPlayer)
+					local bLineOfSight = isLineOfSightClear(cx, cy, cz, phX, phY, phZ, true, false, false, true, false, false, false, localPlayer)
 					for col, bool in pairs(ItemSmokeGrenade.Map) do
 						if col and isElement(col) then
 							local point, hit = checkRaySphere(Vector3(cx, cy, cz), (Vector3(phX, phY, phZ) - Vector3(cx, cy, cz)):getNormalized(), col:getPosition(), 3)

@@ -72,7 +72,29 @@ function FerrisWheel:setPaused()
             v:forceRemovePlayers()
         end
     end
-    setTimer(function()
+    if self:isWheelInUse() then
+        self:startMoving()
+    end
+end
+
+function FerrisWheel:startMoving()
+    self.m_PauseTimer = setTimer(function()
         FerrisWheelManager:getSingleton():registerUpdate(self)
     end, FerrisWheelManager.PauseInterval, 1)
+end
+
+function FerrisWheel:abortMovingStart()
+    if isTimer(self.m_PauseTimer) then
+        killTimer(self.m_PauseTimer)
+    end
+end
+
+function FerrisWheel:isWheelInUse()
+    local isWheelInUse = false
+    for k, gond in ipairs(self.m_Gonds) do
+        for k, v in pairs(gond.m_Occupants) do
+            isWheelInUse = true
+        end
+    end
+    return isWheelInUse
 end

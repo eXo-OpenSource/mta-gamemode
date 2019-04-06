@@ -921,3 +921,11 @@ end
 function isValidElement(data, type)
     return isElement(data) and (not type or (getElementType(data) == type))
 end
+
+function normalize(x, y, z)
+	local len = (x^2+y^2+z^2)^0.5
+	x = x / len
+	y = y / len
+	z = z / len
+	return x,y,z
+end

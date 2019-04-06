@@ -224,19 +224,19 @@ end
 
 function Guns:isInRange( target, bodypart, weapon)
 	if target and isElement(target) and isElementStreamedIn(target) then
-		local targetPosition = Vector3(target:getPosition(targetPosition))
-		local position = Vector3(localPlayer:getPosition())
+		local tx, ty, tz = getElementPosition(target)
+		local px, py, pz = getElementPosition(localPlayer)
 		local weaponRange = getWeaponProperty( weapon, "std", "weapon_range")
-		return ((math.floor((targetPosition - position):getLength())) <= weaponRange), weaponRange
+		return (math.floor(getDistanceBetweenPoints3D(tx, ty, tz, px, py, pz)) <= weaponRange), weaponRange
 	end
 	return false
 end
 
 function Guns:isInMeleeRange( target )
 	if target and isElement(target) and isElementStreamedIn(target) then
-		local targetPosition = Vector3(target:getPosition(targetPosition))
-		local position = Vector3(localPlayer:getPosition())
-		return (targetPosition - position):getLength() <= 1
+		local tx, ty, tz = getElementPosition(target)
+		local px, py, pz = getElementPosition(localPlayer)
+		return getDistanceBetweenPoints3D(tx, ty, tz, px, py, pz) <= 1
 	end
 	return false
 end
@@ -356,13 +356,14 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 		end
 		if self.m_TracerEnabled then
 			local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
-			local flightVec = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getNormalized()*10
-			if flightVec:getLength() > Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getLength() then
-				flightVec = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz))
+			local x, y, z = normalize(hitX-wx, hitY-wy, hitZ-wz)
+			local x, y, z = x*10, y*10, z*10
+			if (x^2+y^2+z^2)^0.5 > getDistanceBetweenPoints3D(wx, wy, wz, hitX, hitY, hitZ) then
+				x, y, z = hitX-wx, hitY-wy, hitZ-wz
 			end
-			local length = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getLength()
-			local steps = length / flightVec:getLength()
-			self.m_TracerTable[getTickCount()] = {Vector3(wx-flightVec.x, wy-flightVec.y, wz-flightVec.z), Vector3(hitX, hitY, hitZ), steps, flightVec, 0}
+			local length = getDistanceBetweenPoints3D(hitX, hitY, hitZ, wx, wy, wz)
+			local steps = length / (x^2+y^2+z^2)^0.5
+			self.m_TracerTable[getTickCount()] = {wx-x, wy-y, wz-z, hitX, hitY, hitZ, steps, x, y, z, 0}
 		end
 	end
 
@@ -457,11 +458,11 @@ function Guns:Event_onTaserRender()
 			end
 		end
 
-		local muzzlePos = Vector3(getPedWeaponMuzzlePosition(self.m_TaserAttacker))
+		local muzzlePosX, muzzlePosY, muzzlePosZ = getPedWeaponMuzzlePosition(self.m_TaserAttacker)
 		local effect = math.random(0,10)/10
 		if math.random(0,1) == 1 then self.m_HitPos.z = self.m_HitPos.z+effect/20 else self.m_HitPos.z = self.m_HitPos.z-effect/20 end
 
-		dxDrawMaterialLine3D (muzzlePos,self.m_HitPos,self.m_TaserImage, 0.8+effect)
+		dxDrawMaterialLine3D (muzzlePosX, muzzlePosY, muzzlePosZ,self.m_HitPos,self.m_TaserImage, 0.8+effect)
 	else
 		removeEventHandler("onClientRender",root,self.m_TaserRender)
 	end
@@ -489,15 +490,16 @@ function Guns:Event_renderTracer()
 	local interp, prog, startPos, vecFlight, bulletVec, length, startX, startY, startZ, updateVec, steps
 	for time, obj in pairs(self.m_TracerTable) do
 		if time and obj then
-			startPos, endPos, maxSteps, flightVec, steps = obj[1], obj[2], obj[3], obj[4], obj[5]
+			startPosX, startPosY, startPosZ, endPosX, endPosY, endPosZ, maxSteps, flightX, flightY, flightZ, steps = obj[1], obj[2], obj[3], obj[4], obj[5], obj[6], obj[7], obj[8], obj[9], obj[10], obj[11]
+			--startPos, endPos, maxSteps, flightVec, steps = obj[1], obj[2], obj[3], obj[4], obj[5]
 			steps = steps + 1
-			startX = startPos.x+flightVec.x
-			startY = startPos.y+flightVec.y
-			startZ = startPos.z+flightVec.z
-			if startPos and endPos then
-				dxDrawLine3D(startX, startY, startZ, startX+flightVec.x, startY+flightVec.y, startZ+flightVec.z, tocolor(255, 255, 255, 80), 2 )
+			startX = startPosX+flightX
+			startY = startPosY+flightY
+			startZ = startPosZ+flightZ
+			if startPosX and endPosX then
+				dxDrawLine3D(startX, startY, startZ, startX+flightX, startY+flightY, startZ+flightZ, tocolor(255, 255, 255, 80), 2 )
 			end
-			self.m_TracerTable[time] = {Vector3(startX, startY, startZ), obj[2], maxSteps, flightVec, steps}
+			self.m_TracerTable[time] = {startX, startY, startZ, obj[4], obj[5], obj[6], maxSteps, obj[8], obj[9], obj[10], steps}
 			if steps > maxSteps then
 				self.m_TracerTable[time] = nil
 			end

@@ -96,7 +96,10 @@ end
 
 
 function InteriorEnterExitGUI:check()
-    return Vector3(self.m_Entry:getPosition() - localPlayer:getPosition()):getLength() < 3
+    if not isElement(self.m_Entry) then return end
+    local x, y, z = getElementPosition(self.m_Entry)
+    local px, py, pz = getElementPosition(localPlayer)
+    return getDistanceBetweenPoints3D(x, y, z, px, py, pz) < 3
 end
 
 function InteriorEnterExitGUI:destructor()

@@ -422,9 +422,9 @@ function LocalPlayer:restartDeathBleeding()
 end
 
 function LocalPlayer:deathRender(deltaTime)
-	local pos = localPlayer.position + localPlayer.matrix.up*11
+	local x, y, z = getElementPosition(localPlayer)
 	self.m_Add = self.m_Add+0.005*deltaTime
-	Camera.setMatrix(Vector3(pos.x, pos.y, pos.z + self.m_Add), pos)
+	Camera.setMatrix(x, y, z + self.m_Add, x, y, z)
 end
 
 function LocalPlayer:abortDeathGUI(force)
@@ -552,7 +552,7 @@ function LocalPlayer:renderPedNameTags()
 			x,y,z = getElementPosition(ped)
 			local dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz)
 			if dist <= 20 then
-				if isLineOfSightClear( Vector3(px, py, pz), Vector3(x, y, z), true, false, false, true, false, false, false,localPlayer ) then
+				if isLineOfSightClear(px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
 						x,y = getScreenFromWorldPosition(x,y,z+1)
 						if x and y then
@@ -804,7 +804,8 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 end
 
 function LocalPlayer:isWorldLoaded()
-	return not (getGroundPosition(localPlayer.position) == 0 and isLineOfSightClear(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -3)), true, false, false, true, false, false, false, localPlayer))
+	local x, y, z = getElementPosition(localPlayer)
+	return not (getGroundPosition(x, y, z) == 0 and isLineOfSightClear(x, y, z, x, y, z-3, true, false, false, true, false, false, false, localPlayer))
 end
 
 function LocalPlayer:startAnimation(_, ...)

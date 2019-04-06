@@ -142,7 +142,6 @@ function Core:constructor()
 		ClientStatistics:new()
 		SkribbleManager:new()
 		TSConnect:new()
-		BotManager:new()
 		PickupWeaponManager:new()
 		InteriorEnterExitManager:new()
 		ElevatorManager:new()
@@ -152,6 +151,7 @@ function Core:constructor()
 
 		if EVENT_CHRISTMAS then
 			Christmas:new()
+			BotManager:new()
 		end
 
 		GPS:new()
