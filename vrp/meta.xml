@@ -218,8 +218,10 @@
 	<script src="server/classes/Gameplay/DrugFactories/DrugFactory.lua" type="server" />
 	<script src="server/classes/Gameplay/DrugFactories/DrugFactoryManager.lua" type="server" />
 	<script src="server/classes/Gameplay/DrugFactories/FactoryWarManager.lua" type="server" />
+	<script src="server/classes/Gameplay/DrugFactories/DrugFactoryEasterEgg.lua" type="server" />
 	<script src="server/classes/Gameplay/DrugFactories/Factories/WeedFactory.lua" type="server" />
 	<script src="server/classes/Gameplay/DrugFactories/Factories/CocaineFactory.lua" type="server" />
+	<script src="server/classes/Gameplay/DrugFactories/Factories/HeroinFactory.lua" type="server" />
 
 	<script src="server/constants/drugfactories.lua" type="server" />
 
@@ -1107,6 +1109,9 @@
 	<!-- Roaming Planes/Accident Planes -->
 	<script src="client/classes/Gameplay/PlaneManager.lua" type="client" />
 	<script src="client/classes/Gameplay/Plane.lua" type="client" />
+
+	<!-- Drug Factories -->
+	<script src="client/classes/Gameplay/DrugFactory.lua" type="client" />
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>

@@ -119,6 +119,7 @@
 
 	<map src="factories/weedfactory.map" />
 	<map src="factories/cocainefactory.map" />
+	<map src="factories/heroinfactory.map" />
 
 	<!--<map src="admin-auction.map" />--> <!-- Auction Event map at Veriona Beach, ugly -->
 </meta>

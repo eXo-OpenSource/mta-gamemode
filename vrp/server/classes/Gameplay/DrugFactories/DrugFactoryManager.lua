@@ -14,15 +14,17 @@ function DrugFactoryManager:constructor()
     self.m_FactoryTypes = {
         [1] = {CocaineFactory, "Kokain", 2, 2750.60, -1312.00, 1174.19, 90},
         [2] = {WeedFactory, "Weed", 1, 2132.84, -2297.11, 960.42, 0},
-        [3] = {DrugFactory, "Heroin", 0, 0, 0, 0, 0}
+        [3] = {HeroinFactory, "Heroin", 3, 2680.73, -1552.4, 2904.40, 270},
+        [4] = {ShroomFactory, "Mushrooms", 0, 0, 0, 0, 0}
     }
     self.m_FactoryColors = {
         [1] = {255, 255, 255},
         [2] = {0, 200, 50},
-        [3] = {0, 0, 0}
+        [3] = {200, 100, 50}
     }
     self:loadFactories()
     FactoryWarManager:new()
+    DrugFactoryEasterEgg:new()
     self.m_GlobalTimerId = GlobalTimer:getSingleton():registerEvent(bind(self.onFactoryPayday, self), "Fabrik-Payday",false,false,0)
 
     addEventHandler("requestDrugFactoryData", root, bind(self.sendDataToClient, self))
@@ -64,8 +66,8 @@ function DrugFactoryManager:onFactoryPayday()
                 local workingstations = factory:getWorkingStationCount()
                 local maxWorkers = factory:getMaxWorkers()
                 local maxWorkingstations = factory:getMaxWorkingStations()
-                local amount = math.floor(((workers*100/maxWorkers/2) + (workingstations*100/maxWorkingstations/2))/100*(factory.m_Type == 1 and DRUGFACTORY_MAX_PAYDAY_COCAINE or factory.m_Type == 2 and DRUGFACTORY_MAX_PAYDAY_WEED))
-                local item = factory.m_Type == 1 and "Kokain" or factory.m_Type == 2 and "Weed"
+                local amount = math.floor(((workers*100/maxWorkers/2) + (workingstations*100/maxWorkingstations/2))/100*(factory.m_Type == 1 and DRUGFACTORY_MAX_PAYDAY_COCAINE or factory.m_Type == 2 and DRUGFACTORY_MAX_PAYDAY_WEED or factory.m_Type == 3 and DRUGFACTORY_MAX_PAYDAY_HEROIN))
+                local item = factory.m_Type == 1 and "Kokain" or factory.m_Type == 2 and "Weed" or factory.m_Type == 3 and "Heroin"
                 if amount > 0 then
                     factoryResult = factoryOwners:getDepot():addItem(false, item, amount, true)
                 else

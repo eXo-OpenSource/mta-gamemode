@@ -177,6 +177,7 @@ function Core:ready() --onClientResourceStart
 	ExplosiveTruckManager:new()
 	VehicleTurbo:new()
 	PlaneManager:new()
+	DrugFactory:new()
 end
 
 function Core:afterLogin()
