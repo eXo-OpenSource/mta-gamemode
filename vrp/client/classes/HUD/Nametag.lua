@@ -36,7 +36,7 @@ function Nametag:draw()
 			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
 			setPlayerNametagShowing(player, false)
 			local pX, pY, pZ = getElementPosition(player)
-			local phX, phY, phZ = player:getBonePosition(8)
+			local phX, phY, phZ = getPedBonePosition(player, 8)
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
 			local smokeHit = false
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
