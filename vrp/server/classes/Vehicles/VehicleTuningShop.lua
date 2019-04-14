@@ -237,13 +237,13 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
         end
     end
 
-    if client:getMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
+    if client:getBankMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
         client:sendError(_("Du hast nicht genügend Geld!", client))
         return
     end
 
     if not client.m_VehicleTuningAdminMode then
-        client:transferMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
+        client:transferBankMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
     else
         StatisticsLogger:getSingleton():addAdminVehicleAction(client, "tuningShop", vehicle, toJSON(cartContent))
     end

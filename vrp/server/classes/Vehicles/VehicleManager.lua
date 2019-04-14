@@ -1490,7 +1490,9 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 end
 
 function VehicleManager:Event_SetVariant(variant1, variant2)
+	local enginestate = source:getEngineState()
 	source:setVariant(variant1, variant2)
+	source:setEngineState(enginestate)
 end
 
 function VehicleManager:migrate()

@@ -1544,6 +1544,7 @@ function Player:districtChat(...)
 end
 
 function Player:moveToJail(CUTSCENE, alreadySpawned)
+	if self.m_PrisonTime > 0 then return end
 	if self.m_JailTime > 0 then
 		if not alreadySpawned and not self.m_DeathInJail then
 			self:respawn(false, false, true)

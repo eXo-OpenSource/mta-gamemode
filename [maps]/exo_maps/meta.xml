@@ -52,7 +52,7 @@
 
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
-	<map src="unternehmen/mechanic_miami.map" />
+	<!-- <map src="unternehmen/mechanic_miami.map" /> -->
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 
