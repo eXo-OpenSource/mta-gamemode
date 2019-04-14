@@ -119,7 +119,7 @@ function CustomF11Map:updateBlipList()
 					local color = blip:getColor()
 					local saveName = blip:getSaveName()
 					if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
-					item:setColumnToImage(1, true, item.m_Height - 6)
+					item:setColumnToImage(1, true, item.m_Height)
 					item:setColumnColor(1, core:get("BlipVisibility", saveName, true) and color or Color.Clear)
 					item:setColor(core:get("BlipVisibility", saveName, true) and Color.White or Color.LightGrey)
 					item.onLeftDoubleClick = function()
