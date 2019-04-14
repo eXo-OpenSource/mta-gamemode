@@ -70,7 +70,7 @@ factionRankNames[2] = {
 [2] = "Sen. Special Agent",
 [3] = "Supervisory Agent",
 [4] = "Section Chief",
-[5] = "Assistant Director",
+[5] = "Deputy Director",
 [6] = "FBI-Director"
 }
 factionColors[2] = {["r"] = 50,["g"] = 100,["b"] = 150}
