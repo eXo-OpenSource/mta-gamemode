@@ -179,6 +179,8 @@ function VehicleManager:constructor()
 	end
 
 	TuningTemplateManager:new()
+
+	setTimer(bind(self.destroyInactiveVehicles, bind), 3600000, 0)
 end
 
 function VehicleManager:destructor()
@@ -1493,6 +1495,24 @@ function VehicleManager:Event_SetVariant(variant1, variant2)
 	local enginestate = source:getEngineState()
 	source:setVariant(variant1, variant2)
 	source:setEngineState(enginestate)
+end
+
+function VehicleManager:destroyInactiveVehicles()
+	local counter = 0
+	local lastUseTimeToBeDestroyed = getTickCount() - 1800000
+	for key, vehicle in ipairs(getElementsByType("vehicle")) do
+		if vehicle.m_OwnerType == 1 then
+			if lastUseTimeToBeDestroyed > vehicle:getLastUseTime() then
+				if vehicle:getOccupantsCount() == 0 then
+					if vehicle.m_Owner and not DatabasePlayer.Map[vehicle.m_Owner]:isActive() then
+						vehicle:destroy()
+						counter = counter + 1
+					end
+				end
+			end
+		end
+	end
+	outputDebugString("[Vehicle-Manager] Cleaned "..counter.." inactive vehicles!")
 end
 
 function VehicleManager:migrate()
