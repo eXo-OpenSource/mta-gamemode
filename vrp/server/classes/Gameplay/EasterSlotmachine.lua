@@ -293,13 +293,13 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		StatisticsLogger:addCasino(player, name, 1)
 	elseif name == "Vehicle" then
 		local vehicles = {
-			{ id=447, name="Seasparrow", 	spawnPosX=1902, spawnPosY=-2630.7, spawnPosZ=13.8, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }, 	-- Seasparrow
-			{ id=476, name="Rustler", 		spawnPosX=1902, spawnPosY=-2630.7, spawnPosZ=13.3, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }	-- Rustler
+			{ id=495, name="Sandking", 	spawnPosX=1452.8, spawnPosY=-1747.3, spawnPosZ=14.1, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }, 	-- Sandking
+			{ id=480, name="Comet", 	spawnPosX=1452.8, spawnPosY=-1747.3, spawnPosZ=14.1, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }		-- Comet
 		}
 		local vehicleData = vehicles[math.random(1, 2)]
 
 		player:sendInfo("Du hast einen " .. vehicleData.name .. " gewonnen! Gückwunsch!")
-		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleData.id, vehicleData.spawnPosX, vehicleData.spawnPosY, vehicleData.spawnPosZ, vehicleData.spawnPosXR, vehicleData.spawnPosYR, vehicleData.spawnPosZR, 0)
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleData.id, vehicleData.spawnPosX, vehicleData.spawnPosY, vehicleData.spawnPosZ, vehicleData.spawnPosXR, vehicleData.spawnPosYR, vehicleData.spawnPosZR, 0, -1, -1, 0)
 		if vehicle then
 			warpPedIntoVehicle(player, vehicle)
 			player:triggerEvent("vehicleBought")

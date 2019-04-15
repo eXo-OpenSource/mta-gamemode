@@ -22,8 +22,8 @@ MAX_FISHING_LEVEL = 15
 MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
-EVENT_EASTER = false
-EVENT_EASTER_SLOTMACHINES_ACTIVE = false
+EVENT_EASTER = true
+EVENT_EASTER_SLOTMACHINES_ACTIVE = true
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false --quests, mostly
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
