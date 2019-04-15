@@ -243,6 +243,8 @@ function GroupPropertyManager:clearProperty(id, groupId, price)
 	if property.m_Pickup and isElement(property.m_Pickup) then
 		setPickupType(property.m_Pickup, 3, 1273)
 	end
-	self.m_BankAccountServer:transferMoney(GroupManager.Map[groupId].m_BankAccount, math.floor(price * 0.66), "Inactivity", "Group", "PropertyClear")
-	sqlLogs:queryExec("INSERT INTO ??_propertiesfreed (GroupId, PropertyID, Date) VALUES (?, ?, Now())", sqlLogs:getPrefix(), groupId, id)
+	if GroupManager.Map[groupId] then
+		self.m_BankAccountServer:transferMoney(GroupManager.Map[groupId].m_BankAccount, math.floor(price * 0.66), "Inactivity", "Group", "PropertyClear")
+		sqlLogs:queryExec("INSERT INTO ??_propertiesfreed (GroupId, PropertyID, Date) VALUES (?, ?, Now())", sqlLogs:getPrefix(), groupId, id)
+	end
 end
