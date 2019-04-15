@@ -189,7 +189,7 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	end
 	if player:getInventory():getItemAmount(item) >= amount then 
 		if target:getMoney() >= money then
-			if target:getInventory():getPlaceForItem(item, amount) then
+			if target:getInventory():giveItem(item, amount, value) then
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
 				if amount <= 10 then
@@ -201,7 +201,6 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 				end
 				player:getInventory():removeItem(item, amount, value)
 				WearableManager:getSingleton():removeWearable( player, item, value )
-				target:getInventory():giveItem(item, amount, value)
 				target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
 				StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
@@ -210,7 +209,7 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 				end
 			else
 				target:sendError(_("Du hast nicht genug Platz für dieses Item!", player))
-				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player))
+				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player, target:getName()))
 			end
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
