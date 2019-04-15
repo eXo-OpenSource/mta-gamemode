@@ -60,6 +60,7 @@ function StateEvidence:getObjectPrice(type, object, amount)
 	if type == "Munition" then return STATE_EVIDENCE_OBJECT_PRICE.Munition * amount * factionWeaponDepotInfo[tonumber(object)].MagazinPreis end
 end
 
+--base function (do not call directly)
 function StateEvidence:insertNewObject(type, object, amount, userid)
 	local timeStamp = getRealTime().timestamp
     if self.m_EvidenceRoomItems then
@@ -101,17 +102,20 @@ function StateEvidence:addMunitionToEvidence(player, weaponId, ammo, noMessage)
     end
 end
 
---one weapon with ammo (utility function)
+--one weapon with ammo (utility function, e.g. frisking)
 function StateEvidence:addWeaponWithMunitionToEvidence(player, weaponId, ammo, noMessage)	
     if self:addWeaponsToEvidence(player, weaponId, 1, true) and self:addMunitionToEvidence(player, weaponId, ammo, true) then
-        if not noMessage then player:sendShortMessage(("Du hast ein/e(n) %s mit %s Schuss konfisziert."):format(WEAPON_NAMES[weaponId or 0], ammo)) end
+		if not noMessage then player:sendShortMessage(("Du hast ein/e(n) %s mit %s Schuss konfisziert."):format(WEAPON_NAMES[weaponId or 0], ammo)) end
+		return true
     end
 end
 
+--one item with optional stack size
 function StateEvidence:addItemToEvidence(player, itemName, amount, noMessage)
 	if self:insertNewObject("Item", itemName, amount, player and player:getId() or 0) then
 		player:getFaction():addLog(player, "Asservate", ("hat %s %s konfisziert!"):format(amount, itemName))
-        if not noMessage then player:sendShortMessage(("Du hast %s %s konfisziert."):format(amount, itemName)) end
+		if not noMessage then player:sendShortMessage(("Du hast %s %s konfisziert."):format(amount, itemName)) end
+		return true
     end
 end
 

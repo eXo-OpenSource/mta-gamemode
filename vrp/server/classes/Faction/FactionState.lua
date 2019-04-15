@@ -1691,6 +1691,13 @@ function FactionState:Event_givePANote(target, note)
 	end
 end
 
+function FactionState:isItemIllegal(itemName)
+	for index, item in pairs(self.ms_IllegalItems) do
+		if item == itemName then return true end
+	end
+	return false
+end
+
 function FactionState:Event_takeDrugs(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
