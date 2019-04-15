@@ -1504,9 +1504,11 @@ function VehicleManager:destroyInactiveVehicles()
 		if vehicle.m_OwnerType == 1 then
 			if lastUseTimeToBeDestroyed > vehicle:getLastUseTime() then
 				if vehicle:getOccupantsCount() == 0 then
-					if vehicle.m_Owner and not DatabasePlayer.Map[vehicle.m_Owner]:isActive() then
-						vehicle:destroy()
-						counter = counter + 1
+					if vehicle.m_Owner then 
+						if DatabasePlayer.Map[vehicle.m_Owner] and DatabasePlayer.Map[vehicle.m_Owner]:isActive() then
+							vehicle:destroy()
+							counter = counter + 1
+						end
 					end
 				end
 			end
