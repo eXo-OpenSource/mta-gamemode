@@ -472,15 +472,15 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 				money = {
 					mode = "give",
 					bank = true,
-					amount = math.round(340 * (dist/1000)),-- 340 / km
+					amount = math.round(490 * (dist/1000)),-- 340 / km
 					toOrFrom = self.m_BankAccountServer,
 					category = "Company",
 					subcategory = "Bus"
 				},
 				points = math.round(5 * (dist/1000)),--5 / km
 			})
-			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Bus")
-			player.Bus_Statistics.money = player.Bus_Statistics.money + math.round(150 * (dist/1000))
+			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(490 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Bus")
+			player.Bus_Statistics.money = player.Bus_Statistics.money + math.round(490 * (dist/1000))
 			player.Bus_Statistics.stations = player.Bus_Statistics.stations + 1
 		end
 
