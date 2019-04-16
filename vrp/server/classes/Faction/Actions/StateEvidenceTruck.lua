@@ -178,7 +178,7 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 
 	if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
 			--bags = getAttachedElements(hitElement)
-			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcke wurden abgegeben!", self.m_BagAmount-self:getRemainingBagAmount()+1, self.m_BagAmount)
+			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcken wurden abgegeben!", self.m_BagAmount-self:getRemainingBagAmount()+1, self.m_BagAmount)
 			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
 			bag = hitElement:getPlayerAttachedObject()
 			hitElement:detachPlayerObject(bag)
