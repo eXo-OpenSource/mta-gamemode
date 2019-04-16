@@ -499,7 +499,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	PickupWeaponManager:getSingleton():detachWeapons(self)
 
-	if self.m_JailTime == 0 or not self.m_JailTime then
+	if not self.m_JailTime or self.m_JailTime == 0 then
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)

@@ -56,7 +56,7 @@ end
 
 function StateEvidence:getObjectPrice(type, object, amount)
 	if type == "Item" then return STATE_EVIDENCE_OBJECT_PRICE.Item * amount end
-	if type == "Waffe" then return STATE_EVIDENCE_OBJECT_PRICE.Waffe * amount * factionWeaponDepotInfo[tonumber(object)].WaffenPreis end
+	if type == "Waffe" then return STATE_EVIDENCE_OBJECT_PRICE.Waffe * amount * (factionWeaponDepotInfo[tonumber(object)] and factionWeaponDepotInfo[tonumber(object)].WaffenPreis or 0) end
 	if type == "Munition" then return STATE_EVIDENCE_OBJECT_PRICE.Munition * (amount / (getWeaponProperty(tonumber(object), "pro", "maximum_clip_ammo") or 1)) * factionWeaponDepotInfo[tonumber(object)].MagazinPreis end
 end
 

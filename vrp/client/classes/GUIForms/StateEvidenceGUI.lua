@@ -99,7 +99,8 @@ function StateEvidenceGUI:refreshGrid()
 	self.m_WeaponCountLbl:setText(convertNumber(statistics.amount.Waffe or 0))
 	self.m_MuniCountLbl:setText(convertNumber(statistics.amount.Munition or 0))
 	self.m_ItemCountLbl:setText(convertNumber(statistics.amount.Item or 0))
-	self.m_ProgContent:setProgress(math.floor(self.m_FillState/STATE_EVIDENCE_MAX_OBJECTS*100) <= 100 or 100)
+	local fillstate = math.floor(self.m_FillState/STATE_EVIDENCE_MAX_OBJECTS*100)
+	self.m_ProgContent:setProgress(fillstate <= 100 and fillstate or 100)
 	self.m_Btn:setEnabled(self.m_ProgContent:getProgress() > 0)
 end
 
