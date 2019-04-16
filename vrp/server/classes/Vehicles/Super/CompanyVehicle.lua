@@ -173,18 +173,20 @@ function CompanyVehicle:canBeModified()
   return self:getCompany():canVehiclesBeModified()
 end
 
-function CompanyVehicle:respawn(force)
+function CompanyVehicle:respawn(force, ignoreCooldown)
     local vehicleType = self:getVehicleType()
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getCompany():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
 
-	if self.m_LastDrivers[#self.m_LastDrivers] then
-		local lastDriver = getPlayerFromName(self.m_LastDrivers[#self.m_LastDrivers])
-		if lastDriver and (not lastDriver:getCompany() or lastDriver:getCompany() and lastDriver:getCompany() ~= self:getCompany()) then
-			if self.m_LastUseTime and getTickCount() - self.m_LastUseTime < 300000 then
-				return false
+	if not ignoreCooldown then
+		if self.m_LastDrivers[#self.m_LastDrivers] then
+			local lastDriver = getPlayerFromName(self.m_LastDrivers[#self.m_LastDrivers])
+			if lastDriver and (not lastDriver:getCompany() or lastDriver:getCompany() and lastDriver:getCompany() ~= self:getCompany()) then
+				if self.m_LastUseTime and getTickCount() - self.m_LastUseTime < 300000 then
+					return false
+				end
 			end
 		end
 	end

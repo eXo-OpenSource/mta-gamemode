@@ -497,13 +497,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 		self:setPrison(self.m_PrisonTime, true)
 	end
 
-	if self.m_ReviveWeapons then
-		for i = 1, 12 do
-			if isElement(self.m_ReviveWeapons[i].m_Entity) then
-				self.m_ReviveWeapons[i].m_Entity:detach()
-			end
-		end
-	end
+	PickupWeaponManager:getSingleton():detachWeapons(self)
 
 	if self.m_JailTime == 0 or not self.m_JailTime then
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
@@ -1409,7 +1403,7 @@ function Player:getPlayerAttachedObject()
 end
 
 function Player:dropPlayerAttachedObjectOnDamage()
-	if self:getPlayerAttachedObject() and self:getPlayerAttachedObject():getModel() == 2912 then
+	if self.m_PlayerAttachedObject and self.m_PlayerAttachedObject:getModel() == 2912 then
 		self:detachPlayerObject(self:getPlayerAttachedObject(), true)
 	end
 end

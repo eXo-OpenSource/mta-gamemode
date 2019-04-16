@@ -24,3 +24,13 @@ end
 function PickupWeaponManager:Event_Quit( player ) 
 	player:dropReviveWeapons()
 end
+
+function PickupWeaponManager:detachWeapons(player)
+	if player.m_ReviveWeapons then
+		for i = 1, 12 do
+			if isElement(player.m_ReviveWeapons[i].m_Entity) then
+				player.m_ReviveWeapons[i].m_Entity:detach()
+			end
+		end
+	end
+end

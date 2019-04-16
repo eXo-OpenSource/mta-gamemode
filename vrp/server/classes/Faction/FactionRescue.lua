@@ -270,11 +270,12 @@ function FactionRescue:getStretcher(player, vehicle)
 	if player:getExecutionPed() then delete(player:getExecutionPed()) end
 	-- Move the Stretcher to the Player
 	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
+	PickupWeaponManager:getSingleton():detachWeapons(player)
 	player:setFrozen(true)
 
 	setTimer(
 		function (player)
-			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5)) 
 			if player:getExecutionPed() then
 				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
 			end

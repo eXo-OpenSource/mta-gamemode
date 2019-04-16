@@ -594,7 +594,7 @@ function Faction:respawnVehicles( isAdmin )
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn(true) then
+			if not vehicle:respawn(true, isAdmin and true or false) then
 				fails = fails + 1
 			else
 				vehicle:setInterior(vehicle.m_SpawnInt or 0)

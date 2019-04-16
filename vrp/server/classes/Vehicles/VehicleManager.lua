@@ -988,7 +988,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if instanceof(source, FactionVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
-			source:respawn(true)
+			source:respawn(true, true)
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
@@ -1008,7 +1008,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if instanceof(source, CompanyVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
-			source:respawn( true )
+			source:respawn(true, true)
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
@@ -1505,7 +1505,7 @@ function VehicleManager:destroyInactiveVehicles()
 			if lastUseTimeToBeDestroyed > vehicle:getLastUseTime() then
 				if vehicle:getOccupantsCount() == 0 then
 					if vehicle.m_Owner then 
-						if DatabasePlayer.Map[vehicle.m_Owner] and DatabasePlayer.Map[vehicle.m_Owner]:isActive() then
+						if DatabasePlayer.Map[vehicle.m_Owner] and not DatabasePlayer.Map[vehicle.m_Owner]:isActive() then
 							vehicle:destroy()
 							counter = counter + 1
 						end
