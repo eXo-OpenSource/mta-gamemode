@@ -26,8 +26,9 @@ function ExecutionPed:constructor( player, weapon, bodypart )
 	self.m_Entity.m_ExecutedPlayer = player
 	self.m_Player = player
 	setElementAlpha(player, 0)
-	nextframe(function() attachElements(player, self.m_Entity) self:setRandomAnimation() setElementHealth(self.m_Entity, 20) end)
-	setTimer(setElementCollisionsEnabled, 3000, 1, player, false)
+	nextframe(function() attachElements(self.m_Entity, player) self:setRandomAnimation() end)
+	setTimer(function() setElementHealth(self.m_Entity, 20) end, 1000, 1)
+	--setTimer(setElementCollisionsEnabled, 3000, 1, player, false)
 	toggleAllControls(player, false)
 	player:setWeaponSlot(0)
 	ExecutionPed.Map[player] = self
@@ -49,6 +50,6 @@ function ExecutionPed:destructor()
 	if isElement( self.m_Entity ) then destroyElement( self.m_Entity ) end 
 	setElementAlpha(self.m_Player, 255)
 	toggleAllControls(self.m_Player, true)
-	setElementCollisionsEnabled( self.m_Player, true)
+	--setElementCollisionsEnabled( self.m_Player, true)
 	if ExecutionPed.Map[self.m_Player] then ExecutionPed.Map[self.m_Player] = nil end
 end
