@@ -18,9 +18,7 @@ function ExecutionPed:constructor( player, weapon, bodypart )
 	self.m_Entity = createPed(source:getModel(), x, y, z, rz)
 	self.m_Entity:setDimension(dim)
 	self.m_Entity:setInterior(int)
-	if bodypart == 9 then
-		setPedHeadless(self.m_Entity, true)
-	end
+
 	setElementData(self.m_Entity, "NPC:namePed", getPlayerName(source))
 	setElementData(self.m_Entity, "NPC:isDyingPed", true)
 	self.m_Entity.m_ExecutedPlayer = player
