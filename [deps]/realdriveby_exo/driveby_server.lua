@@ -66,7 +66,7 @@ addEventHandler ( "createPedForDrivebyFix", root, function ( )
 	if isElement ( veh ) then
 		local x, y, z = getElementPosition ( client )
 		playerpeds[client] = createPed ( 0, x+100, y, z )
-		--setElementAlpha ( playerpeds[client], 0 )
+		setElementAlpha ( playerpeds[client], 0 )
 		setElementCollisionsEnabled ( playerpeds[client], false )
 		setElementDimension ( playerpeds[client], getElementDimension ( client ) )
 		setElementInterior ( playerpeds[client], getElementInterior( client ) )
