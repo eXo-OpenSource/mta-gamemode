@@ -152,7 +152,7 @@ function PublicTransport:onVehicleEnter(veh, player, seat)
 		end
 	else
 		if veh:getData("EPT_Taxi") then
-			if veh.controller then
+			if veh.controller and veh.controller:getCompany() == self and veh.controller:isCompanyDuty() then
 				veh.controller.m_TaxiData = veh
 				veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)
 			end

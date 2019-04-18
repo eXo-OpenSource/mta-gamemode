@@ -16,9 +16,9 @@ function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner, ignor
 		setElementDoubleSided(self.m_Entity, true)
 		setElementDimension(self.m_Entity, dim)
 		setElementInterior(self.m_Entity, int)
-		if attachToPlayer then 
+		--[[if attachToPlayer then 
 			self.m_Entity:attach(owner, xOffset, yOffset, 0)
-		end
+		end]]
 		self.m_Entity.m_DroppedWeapon = true
 		self.m_IgnoreHoursPlayed = ignoreHours
 		setElementData( self.m_Entity, "pickupWeapon", true) -- just for client check-purposes

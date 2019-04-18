@@ -925,3 +925,32 @@ function FactionRescue:addVehicleFire(veh)
 		self.m_VehicleFires[veh] = nil
 	end, zone)
 end
+
+function FactionRescue:outputMegaphone(player, ...)
+	local faction = player:getFaction()
+	if faction and faction:isRescueFaction() == true then
+		if player:isFactionDuty() then
+			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():getFaction():isRescueFaction() then
+				local playerId = player:getId()
+				local playersToSend = player:getPlayersInChatRange(3)
+				local receivedPlayers = {}
+				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
+				for index = 1,#playersToSend do
+					playersToSend[index]:sendMessage(text, 255, 255, 0)
+					if playersToSend[index] ~= player then
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
+					end
+				end
+
+				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, receivedPlayers)
+				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
+				return true
+			else
+				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
+	end
+	return false
+end

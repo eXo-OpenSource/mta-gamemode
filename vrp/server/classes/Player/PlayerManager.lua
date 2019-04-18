@@ -548,6 +548,10 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 		local success = FactionState:getSingleton():outputMegaphone(source, ...)
 		if success then return true end -- cancel screaming if megaphone succeeds
 	end
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle():getFaction() and source:getOccupiedVehicle():getFaction():isRescueFaction() then
+		local success = FactionRescue:getSingleton():outputMegaphone(source, ...)
+		if success then return true end -- cancel screaming if megaphone succeeds
+	end
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then

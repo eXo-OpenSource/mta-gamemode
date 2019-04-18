@@ -461,6 +461,7 @@ HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hang
 WEAPONTRUCK_MAX_LOAD = 60000 -- Dollars
 EVIDENCETRUCK_MAX_LOAD = 60000 -- Dollars
 STATE_EVIDENCE_MAX_OBJECTS = 100000 -- dollars
+STATE_EVIDENCE_MAX_CLIPS = 50
 STATE_EVIDENCE_OBJECT_PRICE = {
 	Waffe = 1, -- * weapon cost
 	Munition = 1, -- * munition cost

@@ -57,7 +57,7 @@ end
 function StateEvidence:getObjectPrice(type, object, amount)
 	if type == "Item" then return STATE_EVIDENCE_OBJECT_PRICE.Item * amount end
 	if type == "Waffe" then return STATE_EVIDENCE_OBJECT_PRICE.Waffe * amount * (factionWeaponDepotInfo[tonumber(object)] and factionWeaponDepotInfo[tonumber(object)].WaffenPreis or 0) end
-	if type == "Munition" then return STATE_EVIDENCE_OBJECT_PRICE.Munition * (amount / (getWeaponProperty(tonumber(object), "pro", "maximum_clip_ammo") or 1)) * factionWeaponDepotInfo[tonumber(object)].MagazinPreis end
+	if type == "Munition" then return STATE_EVIDENCE_OBJECT_PRICE.Munition * (amount / (getWeaponProperty(tonumber(object), "pro", "maximum_clip_ammo") and getWeaponProperty(tonumber(object), "pro", "maximum_clip_ammo") or 1)) * (factionWeaponDepotInfo[tonumber(object)] and factionWeaponDepotInfo[tonumber(object)].MagazinPreis or 0) end
 end
 
 --base function (do not call directly)
@@ -95,6 +95,11 @@ end
 
 --ammo without weapon
 function StateEvidence:addMunitionToEvidence(player, weaponId, ammo, noMessage)	
+	if getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") then
+		if tonumber(ammo) / getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") > STATE_EVIDENCE_MAX_CLIPS then
+			ammo = getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") * STATE_EVIDENCE_MAX_CLIPS
+		end
+	end
 	if self:insertNewObject("Munition", weaponId, ammo, player and player:getId() or 0) then
 		player:getFaction():addLog(player, "Asservate", ("hat %s %s-Munition konfisziert!"):format(ammo, WEAPON_NAMES[weaponId or 0]))
         if not noMessage then player:sendShortMessage(("Du hast %s %s-Schuss konfisziert."):format(ammo, WEAPON_NAMES[weaponId or 0])) end

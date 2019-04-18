@@ -23,6 +23,8 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
+		--Uzi:
+		setWeaponProperty(28, skill, "accuracy",1.1999999523163)
 		-- MP5:
 		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
 
