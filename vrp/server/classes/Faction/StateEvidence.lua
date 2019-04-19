@@ -86,24 +86,28 @@ end
 
 --multiple weapons
 function StateEvidence:addWeaponsToEvidence(player, weaponId, weaponCount, noMessage)	
-	if self:insertNewObject("Waffe", weaponId, weaponCount, player and player:getId() or 0) then
-		player:getFaction():addLog(player, "Asservate", ("hat %s %s konfisziert!"):format(weaponCount, WEAPON_NAMES[weaponId or 0]))
-        if not noMessage then player:sendShortMessage(("Du hast %s %s konfisziert."):format(weaponCount, WEAPON_NAMES[weaponId or 0])) end
-        return true
+	if tonumber(weaponId) and tonumber(weaponId) then
+		if self:insertNewObject("Waffe", weaponId, weaponCount, player and player:getId() or 0) then
+			player:getFaction():addLog(player, "Asservate", ("hat %s %s konfisziert!"):format(weaponCount, WEAPON_NAMES[weaponId or 0]))
+        	if not noMessage then player:sendShortMessage(("Du hast %s %s konfisziert."):format(weaponCount, WEAPON_NAMES[weaponId or 0])) end
+			return true
+		end
     end
 end
 
 --ammo without weapon
 function StateEvidence:addMunitionToEvidence(player, weaponId, ammo, noMessage)	
-	if getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") then
-		if tonumber(ammo) / getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") > STATE_EVIDENCE_MAX_CLIPS then
-			ammo = getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") * STATE_EVIDENCE_MAX_CLIPS
+	if tonumber(weaponId) and tonumber(weaponId) then
+		if getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") then
+			if tonumber(ammo) / getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") > STATE_EVIDENCE_MAX_CLIPS then
+				ammo = getWeaponProperty(tonumber(weaponId), "pro", "maximum_clip_ammo") * STATE_EVIDENCE_MAX_CLIPS
+			end
 		end
-	end
-	if self:insertNewObject("Munition", weaponId, ammo, player and player:getId() or 0) then
-		player:getFaction():addLog(player, "Asservate", ("hat %s %s-Munition konfisziert!"):format(ammo, WEAPON_NAMES[weaponId or 0]))
-        if not noMessage then player:sendShortMessage(("Du hast %s %s-Schuss konfisziert."):format(ammo, WEAPON_NAMES[weaponId or 0])) end
-        return true
+		if self:insertNewObject("Munition", weaponId, ammo, player and player:getId() or 0) then
+			player:getFaction():addLog(player, "Asservate", ("hat %s %s-Munition konfisziert!"):format(ammo, WEAPON_NAMES[weaponId or 0]))
+        	if not noMessage then player:sendShortMessage(("Du hast %s %s-Schuss konfisziert."):format(ammo, WEAPON_NAMES[weaponId or 0])) end
+			return true
+		end
     end
 end
 
