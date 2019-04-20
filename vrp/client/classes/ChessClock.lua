@@ -1,7 +1,7 @@
 ChessClock = inherit(Object)
-local w, h = guiGetScreenSize()
+local w, h = screenWidth, screenHeight
 -- test2
-function ChessClock:constructor( super ) 
+function ChessClock:constructor( super )
 	self.m_Super = super
 	self.m_X = CHESS_CONSTANT.CLOCK_X
 	self.m_Y = CHESS_CONSTANT.CLOCK_Y
@@ -11,9 +11,9 @@ function ChessClock:constructor( super )
 	self.m_InactiveColor = tocolor(128, 128, 128)
 	self.m_TimeData = {}
 	self.m_Turn = false
-	if w >= 1600 and h >= 720 then 
+	if w >= 1600 and h >= 720 then
 		self.m_FontScale = 2
-	else 
+	else
 		self.m_FontScale = 1
 	end
 end
@@ -42,28 +42,28 @@ end
 function ChessClock:drawTime()
 	local time, active, name
 	local x, y
-	for i = 1,#self.m_TimeData do 
+	for i = 1,#self.m_TimeData do
 		active, time = self.m_TimeData[i][1] == self.m_Turn, self.m_TimeData[i][2]
 		time = string.format("%.2d:%.2d", time/60%60, time%60)
 		if isElement( self.m_TimeData[i][1] ) then
 			name = getPlayerName(self.m_TimeData[i][1])
-		else 
+		else
 			name = "-/-"
 		end
-		if #name >= 8 then 
+		if #name >= 8 then
 			name = string.sub(name,1,8).."."
 		end
 		x = self.m_X+(self.m_Width*0.05*i)+self.m_Width*0.4*(i-1)+self.m_Width*0.05*(i-1)
 		y = self.m_Y+self.m_Height*0.1
 		if active then
 			dxDrawRectangle( x, y, self.m_Width*0.4, self.m_Height*0.8, self.m_ActiveColor)
-		else 
+		else
 			dxDrawRectangle( x, y, self.m_Width*0.4, self.m_Height*0.8, self.m_InactiveColor)
 		end
 		if active then
 			dxDrawText(name,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(200,200,200,255),1,CHESS_CONSTANT.FONT_CHAPAZA,"center","top")
 			dxDrawText(time,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(200,200,200,255),self.m_FontScale,"default-bold","center","bottom")
-		else 
+		else
 			dxDrawText(name,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(0,0,0,255),1,CHESS_CONSTANT.FONT_CHAPAZA,"center","top")
 			dxDrawText(time,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(0,0,0,255),self.m_FontScale,"default-bold","center","bottom")
 		end

@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Faction Client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
@@ -77,7 +76,7 @@ function FactionManager:Event_onPlayerCuff( bool )
 end
 
 function FactionManager:drawCuff()
-	dxDrawImage(w*0.88, h - w*0.1, w*0.08,w*0.0436,"files/images/Other/cuff.png")
+	dxDrawImage(screenWidth*0.88, screenHeight - screenWidth*0.1, screenWidth*0.08,screenWidth*0.0436,"files/images/Other/cuff.png")
 end
 
 function FactionManager:Event_selfArrestMarker( client )
@@ -123,9 +122,9 @@ function FactionManager:OnRenderSpeed()
 					local text = ("Radar: %s fährt %s km/h in %sem %s!"):format(occ and occ:getName() or "-", speed, colName, vName)
 
 					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/SpeedCamText", true) end
-					dxDrawText(text, 0, 1, w, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
-					dxDrawText(text, 1, 1, w+1, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
-					dxDrawText(text, 0, 0, w, h*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
+					dxDrawText(text, 0, 1, screenWidth, screenHeight*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 1, 1, screenWidth+1, screenHeight*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 0, 0, screenWidth, screenHeight*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
 
 					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
 					if speeder then
@@ -148,7 +147,7 @@ function FactionManager:OnRenderSpeed()
 						if speeder then
 							local x,y,z = getElementPosition(localVeh)
 							local px,py,pz = getPedBonePosition(speeder,8)
-							local bLineCheck = isLineOfSightClear (Vector3(x, y, z), Vector3(px, py, pz), true, false, false, true)
+							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 							if bLineCheck then
 								self.m_bLineChecked = self.m_SpeedCamVehicle
 								self.m_RemoveDraw = self.m_DrawStart + 10000
@@ -165,7 +164,7 @@ function FactionManager:OnRenderSpeed()
 					if speeder then
 						local x,y,z = getElementPosition(localVeh)
 						local px,py,pz = getPedBonePosition(speeder,8)
-						local bLineCheck = isLineOfSightClear (Vector3(x, y, z), Vector3(px, py, pz), true, false, false, true)
+						local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 						if bLineCheck then
 							self.m_bLineChecked = self.m_SpeedCamVehicle
 							self.m_RemoveDraw = self.m_DrawStart + 10000
@@ -200,6 +199,14 @@ end
 
 function FactionManager:getFromId(id)
 	return FactionManager.Map[id]
+end
+
+function FactionManager:getFromName(name)
+	for i, faction in pairs(self.Map) do
+		if faction.m_NameShort == name then
+			return faction
+		end
+	end
 end
 
 function FactionManager:getFactionNames()

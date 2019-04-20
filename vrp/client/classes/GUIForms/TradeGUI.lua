@@ -110,7 +110,7 @@ function TradeGUI:loadWeapons()
 						self.m_SelectedItem = weaponId
 						self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
 						self.m_ButtonTrade:setEnabled(true)
-						self.m_Preview:setImage(WeaponIcons[weaponId])
+						self.m_Preview:setImage(FileModdingHelper:getSingleton():getWeaponImage(weaponId))
 						self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
 					end
 			end

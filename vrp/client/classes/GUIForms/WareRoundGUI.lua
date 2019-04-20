@@ -6,8 +6,9 @@
 -- *
 -- ****************************************************************************
 WareRoundGUI = inherit(GUIForm)
-WareRoundGUI.Current = false
 inherit(Singleton, WareRoundGUI)
+
+WareRoundGUI.Current = false
 
 function WareRoundGUI:constructor(winner, loser, modeDesc)
 	GUIForm.constructor(self, screenWidth-410, screenHeight-460, 400, 450, false)
@@ -28,10 +29,6 @@ function WareRoundGUI:constructor(winner, loser, modeDesc)
 	self.m_LeaveButton.onLeftClick = bind(self.leaveLobby, self)
 
 	self:refresh(winner, loser)
-end
-
-function WareRoundGUI:destructor()
-	GUIForm.destructor(self)
 end
 
 function WareRoundGUI:leaveLobby()

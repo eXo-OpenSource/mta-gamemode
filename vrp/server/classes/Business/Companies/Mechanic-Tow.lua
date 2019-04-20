@@ -10,13 +10,6 @@ function MechanicTow:constructor()
 
 	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
 
-	self.m_NonCollissionCols = {}
-	for index, pos in pairs(MechanicTow.SpawnPositions) do
-		local x, y, z, rot = unpack(pos)
-		self.m_NonCollissionCols[index] = createColSphere(x, y, z, 10)
-		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
-	end
-
 	local blip = Blip:new("CarLot.png", 913.83, -1234.65, root, 400)
 	blip:setOptionalColor({150, 150, 150})
 	blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
@@ -188,7 +181,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	-- Spawn vehicle in non-collision zone
 	source:setPositionType(VehiclePositionType.World)
 	source:setDimension(0)
-	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
+	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(MechanicTow.SpawnPositions))
 	if source:isAirVehicle() then
 		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
 	elseif source:isWaterVehicle() then
@@ -204,6 +197,7 @@ end
 function MechanicTow:onEnterTowLot(hitElement)
 	if getElementType(hitElement) ~= "player" then return end
 	if hitElement:getCompany() ~= self then return end
+	if hitElement:isCompanyDuty() ~= true then return end
 	if not hitElement.vehicle or not hitElement.vehicle.getCompany or hitElement.vehicle:getCompany() ~= self or (hitElement.vehicle:getModel() ~= 525 and hitElement.vehicle:getModel() ~= 417) then return end
 
 	local towingBike = hitElement.vehicle:getData("towingBike")
@@ -262,13 +256,15 @@ end
 
 function MechanicTow:onAttachVehicleToTow(towTruck)
 	local driver = getVehicleOccupant(towTruck)
-	if driver then
-		if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
-			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
-				source:toggleRespawn(false)
-				source.m_HasBeenUsed = 1 --disable despawn on logout
-			else
-				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+	if driver and getElementType(driver) == "player" then
+		if driver:getCompany() == self and driver:isCompanyDuty() then
+			if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
+				if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
+					source:toggleRespawn(false)
+					source.m_HasBeenUsed = 1 --disable despawn on logout
+				else
+					driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+				end
 			end
 		end
 	end
@@ -280,24 +276,26 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 
 	local driver = getVehicleOccupant(towTruck)
 	if driver and driver.m_InTowLot then
-		if towTruck.getCompany and towTruck:getCompany() == self then
-			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
-				if not source.burned then
-					self:respawnVehicle(source)
-					driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
-					StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
-					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
-				else
-					if source.Blip then
-						source.Blip:delete()
+		if driver:getCompany() == self and driver:isCompanyDuty() then
+			if towTruck.getCompany and towTruck:getCompany() == self then
+				if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
+					if not source.burned then
+						self:respawnVehicle(source)
+						driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+						StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
+						self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+					else
+						if source.Blip then
+							source.Blip:delete()
+						end
+						self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s) abgeschleppt!"):format(source:getName()))
+						source:destroy()
+						driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
+						self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
 					end
-					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s) abgeschleppt!"):format(source:getName()))
-					source:destroy()
-					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
-					self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
+				else
+					driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 				end
-			else
-				driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end
 		end
 	end

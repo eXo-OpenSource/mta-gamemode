@@ -11,6 +11,7 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 }
 
 local TAXI_PRICE_PER_KM = 40
+PublicTransport.m_TaxiSigns = {}
 
 function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
@@ -133,23 +134,25 @@ end
 
 function PublicTransport:onVehicleEnter(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 or veh:getModel() == 580  then
-			player:triggerEvent("showTaxoMeter")
-			veh:setData("EPT_Taxi", true, true)
-		elseif veh:getModel() == 437 then
-			veh:setVariant(0, 0)
-			veh:setData("EPT_Bus", true, true)
-			veh:setHandling("handlingFlags", 18874448)
-			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
-			if self:isBusOnTour(veh) then
-				self:startBusTour_Driver(player, veh.Bus_NextStop, veh.Bus_Line)
-			else
-				triggerClientEvent("busReachNextStop", root, veh, "Ausser Dienst", false)
+		if player:getCompany() == self and player:isCompanyDuty() then
+			if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
+				player:triggerEvent("showTaxoMeter")
+				veh:setData("EPT_Taxi", true, true)
+			elseif veh:getModel() == 437 then
+				veh:setVariant(0, 0)
+				veh:setData("EPT_Bus", true, true)
+				veh:setHandling("handlingFlags", 18874448)
+				veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
+				if self:isBusOnTour(veh) then
+					self:startBusTour_Driver(player, veh.Bus_NextStop, veh.Bus_Line)
+				else
+					triggerClientEvent("busReachNextStop", root, veh, "Ausser Dienst", false)
+				end
 			end
 		end
 	else
-		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 or veh:getModel() == 580  then
-			if veh.controller then
+		if veh:getData("EPT_Taxi") then
+			if veh.controller and veh.controller:getCompany() == self and veh.controller:isCompanyDuty() then
 				veh.controller.m_TaxiData = veh
 				veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)
 			end
@@ -157,9 +160,16 @@ function PublicTransport:onVehicleEnter(veh, player, seat)
 	end
 end
 
+function PublicTransport:createTaxiSign(veh)
+	if veh then
+		self.m_TaxiSigns[veh] = createObject(1853, veh:getPosition())
+		self.m_TaxiSigns[veh]:attach(veh, 0, -0.23, 0.9175)
+	end
+end
+
 function PublicTransport:onVehicleStartEnter(veh, player, seat)
 	if seat > 0 and not veh:getOccupant(0) then
-		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 or veh:getModel() == 580 then
+		if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
 			cancelEvent()
 			player:sendError(_("Es sitzt kein %s.", player, veh:getModel() == 487 and "Pilot im Helikopter" or "Fahrer im Taxi"))
 		elseif veh:getModel() == 437 then
@@ -174,7 +184,7 @@ end
 
 function PublicTransport:onVehiceExit(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 or veh:getModel() == 580 then
+		if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
 			player:triggerEvent("hideTaxoMeter")
 			if veh:getModel() == 420 or veh:getModel() == 438 then
 				veh:setTaxiLightOn(false)
@@ -462,15 +472,15 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 				money = {
 					mode = "give",
 					bank = true,
-					amount = math.round(340 * (dist/1000)),-- 340 / km
+					amount = math.round(490 * (dist/1000)),-- 340 / km
 					toOrFrom = self.m_BankAccountServer,
 					category = "Company",
 					subcategory = "Bus"
 				},
 				points = math.round(5 * (dist/1000)),--5 / km
 			})
-			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Bus")
-			player.Bus_Statistics.money = player.Bus_Statistics.money + math.round(150 * (dist/1000))
+			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(490 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Bus")
+			player.Bus_Statistics.money = player.Bus_Statistics.money + math.round(490 * (dist/1000))
 			player.Bus_Statistics.stations = player.Bus_Statistics.stations + 1
 		end
 

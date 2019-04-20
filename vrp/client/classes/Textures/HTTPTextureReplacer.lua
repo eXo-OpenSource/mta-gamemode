@@ -4,9 +4,30 @@ HTTPTextureReplacer.ExternalPath = "http://i.imgur.com/"
 HTTPTextureReplacer.ClientPath = "files/images/Textures/remote/%s"
 HTTPTextureReplacer.Queue = Queue:new()
 
+--[[
+Async.create(function()
+	DEBUG_VEHS_MM = {}
+	for i,vehicle in pairs(getElementsByType("vehicle")) do
+		if vehicle.getTunings and type(vehicle:getTunings()) == "table" and vehicle:getTunings().m_Tuning["Texture"] then
+			for i,v in pairs(vehicle:getTunings().m_Tuning["Texture"]) do
+				if v:find("http://picupload") then
+					table.insert(DEBUG_VEHS_MM, vehicle)
+					vehicle:getTunings().m_Tuning["Texture"][i] = v:gsub("http://picupload", "https://picupload")
+				end
+			end
+		end
+    end
+    outputConsole("vehicles: "..(table.size(DEBUG_VEHS_MM)))
+end)()]]
+
 -- normal methods
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options, force)
-	assert(fileName and fileName:len() > 0 and (fileName:find(HTTPTextureReplacer.BasePath) or fileName:find(HTTPTextureReplacer.ExternalPath)), "Bad Argument @ HTTPTextureReplacer:constructor #2")
+	--do not use assert as it produces a "real" lua error and blocks any textures loading afterwards
+	if not (fileName and fileName:len() > 0 and (fileName:find(HTTPTextureReplacer.BasePath) or fileName:find(HTTPTextureReplacer.ExternalPath))) then
+		outputDebugString("Bad Argument @ HTTPTextureReplacer:constructor #2", 1)
+		outputDebugString(fileName, 1)
+	 	return
+	end
 	TextureReplacer.constructor(self, element, textureName, options, force)
 	self.m_PathType = 1
 	if fileName:find(HTTPTextureReplacer.ExternalPath) then self.m_PathType = 2 end
@@ -33,6 +54,7 @@ function HTTPTextureReplacer:load()
 end
 
 function HTTPTextureReplacer:unload()
+	if not self.m_PixelFileName then return TextureReplacer.Status.FAILURE end
 	local a = TextureCache.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 	local b = self:detach()
 	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE

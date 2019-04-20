@@ -111,6 +111,8 @@ function WearableManager:removeAllWearables( player )
 		destroyElement(player.m_Shirt)
 		player.m_IsWearingShirt = false
 		player.m_Shirt = false
+		setElementData(player,"CanWeaponBeConcealed",false)
+		triggerEvent("WeaponAttach:unconcealWeapons", player)
 	end
 	if player.m_Portables then
 		destroyElement(player.m_Portables)
@@ -140,6 +142,8 @@ function WearableManager:removeWearable( player, itemName, value )
 						if isElement(player.m_Shirt) then destroyElement(player.m_Shirt) end
 						player.m_IsWearingShirt = false
 						player.m_Shirt = false
+						setElementData(player,"CanWeaponBeConcealed",false)
+						triggerEvent("WeaponAttach:unconcealWeapons", player)
 					elseif wearableClass == WearableClothes then
 						if getElementModel(player) == tonumber(value) then
 							player:setSkin(252)

@@ -46,7 +46,7 @@ end
 
 function GUIGridListItem:setColumnToImage(columnIndex, state, width)
 	self.m_Columns[columnIndex].image = state
-	self.m_Columns[columnIndex].imageWidth = width or getColumnWidth(columnIndex)*self.m_Width - 10
+	self.m_Columns[columnIndex].imageWidth = width or self:getGridList():getColumnWidth(columnIndex)*self.m_Width - 10
 	self:anyChange()
 	return self
 end
@@ -80,9 +80,11 @@ function GUIGridListItem:drawThis()
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
 		if self.m_Columns[columnIndex].image then
-			dxDrawImage(self.m_AbsoluteX + currentXPos + 6, self.m_AbsoluteY + 3, self.m_AbsoluteX + currentXPos + self.m_Columns[columnIndex].imageWidth, self.m_Height - 6, self.m_Columns[columnIndex].text, 0, 0, 0, self.m_Columns[columnIndex].color or self.m_Color)
+			dxDrawImage(self.m_AbsoluteX + currentXPos + 3, self.m_AbsoluteY + 3, self.m_Columns[columnIndex].imageWidth - 6, self.m_Height - 6, self.m_Columns[columnIndex].text, 0, 0, 0, self.m_Columns[columnIndex].color or self.m_Color)
 		else
-			dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_AbsoluteY + self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, self.m_Columns[columnIndex].fontSize or self.m_FontSize, self.m_Columns[columnIndex].font or self.m_Font, self.m_Columns[columnIndex].alignX, "center")
+			local font = self.m_Columns[columnIndex].font and getVRPFont(self.m_Columns[columnIndex].font) or self:getFont()
+			local fontSize = self.m_Columns[columnIndex].fontSize or self:getFontSize()
+			dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_AbsoluteY + self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, fontSize, font, self.m_Columns[columnIndex].alignX, "center")
 		end
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end

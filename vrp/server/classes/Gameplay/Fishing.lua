@@ -496,6 +496,7 @@ function Fishing:updatePricing()
 end
 
 function Fishing:inventoryUse(player, fishingRodName)
+	if player.isTasered then return end
 	if self.m_Players[player] then
 		local fishingRod = self.m_Players[player].fishingRod
 		if fishingRod then fishingRod:destroy() end

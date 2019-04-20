@@ -47,6 +47,7 @@ function KeyBinds:constructor()
 		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Rundumleuchten", ["func"] = self.m_VehicleELS, ["trigger"] = "down"};
 		["KeyToggleReddot"]			= {["defaultKey"] =  "N/A", ["name"] = "Reddot Umschalten", ["func"] = function() HUDUI:getSingleton().m_RedDot = not HUDUI:getSingleton().m_RedDot end, ["trigger"] = "up"};
 		["KeyEntranceUse"]			= {["defaultKey"] =  "f", ["name"] = "Betreten", ["func"] = self.m_Entrance, ["trigger"] = "up"};
+		["KeyToggleTaser"]			= {["defaultKey"] = "o", ["name"] = "Taser ziehen", ["func"] = function() if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then triggerServerEvent("onPlayerItemUseServer", localPlayer, false, false, "Taser") end end, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
@@ -170,14 +171,15 @@ function KeyBinds:animationMenu()
 end
 
 function KeyBinds:policePanel()
-	if not (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) then return false end
-	if not localPlayer:getPublicSync("Faction:Duty") then return false end
-	if not PolicePanel:isInstantiated() then --cretae new
+	local isValidCop = (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) and localPlayer:getPublicSync("Faction:Duty")
+	if not PolicePanel:isInstantiated() and isValidCop then --create new only if player is cop
 		PolicePanel:new()
 		return true
 	end
-	
-	PolicePanel:getSingleton():toggle()	
+	if PolicePanel:getSingleton():isVisible() or isValidCop then -- hide it anytime, show it only if player is cop
+		PolicePanel:getSingleton():toggle()	
+		PolicePanel:getSingleton():updateCurrentView()
+	end
 end
 
 function KeyBinds:helpMenu()

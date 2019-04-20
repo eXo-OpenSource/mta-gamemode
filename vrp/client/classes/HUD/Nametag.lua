@@ -36,7 +36,7 @@ function Nametag:draw()
 			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
 			setPlayerNametagShowing(player, false)
 			local pX, pY, pZ = getElementPosition(player)
-			local phX, phY, phZ = player:getBonePosition(8)
+			local phX, phY, phZ = getPedBonePosition(player, 8)
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
 			local smokeHit = false
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
@@ -44,7 +44,7 @@ function Nametag:draw()
 			if (bDistance <= maxDistance) or localPlayer:getPrivateSync("isSpecting") then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
-					local bLineOfSight = isLineOfSightClear(Vector3(cx, cy, cz), Vector3(phX, phY, phZ), true, false, false, true, false, false, false, localPlayer)
+					local bLineOfSight = isLineOfSightClear(cx, cy, cz, phX, phY, phZ, true, false, false, true, false, false, false, localPlayer)
 					for col, bool in pairs(ItemSmokeGrenade.Map) do
 						if col and isElement(col) then
 							local point, hit = checkRaySphere(Vector3(cx, cy, cz), (Vector3(phX, phY, phZ) - Vector3(cx, cy, cz)):getNormalized(), col:getPosition(), 3)

@@ -9,7 +9,7 @@ GUIFontContainer = inherit(Object)
 
 function GUIFontContainer:constructor(text, size, font)
 	self.m_Text		= text or ""
-	self.m_FontSize = size or 10
+	self.m_FontSize = size or 1
 	self.m_Font		= font or "default-bold"
 end
 
@@ -33,11 +33,15 @@ function GUIFontContainer:isEmpty()
 end
 
 function GUIFontContainer:getFont()
+	if type(self.m_Font) == "table" then
+		return getVRPFont(self.m_Font)
+	end
+
 	return self.m_Font
 end
 
 function GUIFontContainer:setFont(font, size)
-	assert(type(font) == "string" or (type(font) == "userdata" and getElementType(font) == "dx-font"), "Bad argument @ GUIFontContainer.setFont")
+	--assert(type(font) == "string" or (type(font) == "userdata" and getElementType(font) == "dx-font"), "Bad argument @ GUIFontContainer.setFont")
 
 	self.m_Font = font
 	if size then

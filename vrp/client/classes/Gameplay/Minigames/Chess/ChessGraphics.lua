@@ -1,7 +1,7 @@
 ChessGraphics = inherit(Object)
-local w,h = guiGetScreenSize()
+local w,h = screenWidth, screenHeight
 local BEAT_ICON_SIZE = w*0.1
-local centerX = (CHESS_CONSTANT.START_X + CHESS_CONSTANT.WIDTH*0.5) 
+local centerX = (CHESS_CONSTANT.START_X + CHESS_CONSTANT.WIDTH*0.5)
 local centerY = (CHESS_CONSTANT.START_Y + CHESS_CONSTANT.HEIGHT*0.5)
 local imageWidth = CHESS_CONSTANT.WIDTH*0.15
 
@@ -69,7 +69,7 @@ function ChessGraphics:draw()
 	if self.m_EndReason and self.m_Loser then
 		self:drawEndReason()
 	end
-	self:drawPawnSelection() 
+	self:drawPawnSelection()
 end
 
 function ChessGraphics:drawEndReason( )
@@ -122,20 +122,20 @@ function ChessGraphics:drawButtons()
 	end
 end
 
-function ChessGraphics:drawPawnSelection() 
-	if self.m_DrawPawnSelection then 
+function ChessGraphics:drawPawnSelection()
+	if self.m_DrawPawnSelection then
 
 		dxDrawRectangle(centerX-imageWidth*1.1, centerY-imageWidth*0.6, imageWidth*2.2, imageWidth*1.3, tocolor(0, 0, 0, 255))
-		
+
 		dxDrawImage(centerX-imageWidth, centerY-imageWidth*0.5,  imageWidth, imageWidth,  CHESS_CONSTANT.PATH.."tile.png", 0, 0, 0, tocolor(244, 125, 66, 255))
 		dxDrawImage(centerX-imageWidth, centerY-imageWidth*0.5,  imageWidth, imageWidth, CHESS_CONSTANT.PATH..CHESS_CONSTANT.CHESS_URL[2]..".png")
-		
+
 		dxDrawImage(centerX+imageWidth*0.05, centerY-imageWidth*0.5,  imageWidth, imageWidth, CHESS_CONSTANT.PATH.."tile.png", 0, 0, 0, tocolor(244, 125, 66, 255))
 		dxDrawImage(centerX+imageWidth*0.05, centerY-imageWidth*0.5,  imageWidth, imageWidth, CHESS_CONSTANT.PATH..CHESS_CONSTANT.CHESS_URL[5]..".png")
-		
+
 		dxDrawText("Tausche die Figur aus! (Autom. Dame)", centerX-imageWidth*1.1, centerY-imageWidth*0.7+1, centerX*2, centerY-imageWidth*0.6+1, tocolor(0, 0, 0, 255), 1, "default-bold", "left", "top")
 		dxDrawText("Tausche die Figur aus! (Autom. Dame)", centerX-imageWidth*1.1, centerY-imageWidth*0.7, centerX*2, centerY-imageWidth*0.6, tocolor(255, 255, 255, 255), 1, "default-bold", "left", "top")
-		
+
 	end
 end
 
@@ -213,7 +213,7 @@ function ChessGraphics:click( button, state)
 	if button == "left" and state == "up" then
 		if self.m_CurrentCursorTile then
 			self:onClick()
-			if not self.m_DrawPawnSelection then 
+			if not self.m_DrawPawnSelection then
 				self.m_CurrentCursorTile:onClick()
 				self.m_LastClick = self.m_CurrentCursorTile
 				self:showAvailableMoves()
@@ -245,8 +245,8 @@ function ChessGraphics:onClick()
 					end
 				end
 			end
-			if self.m_DrawPawnSelection then 
-				local hasSelectedPawn = false 
+			if self.m_DrawPawnSelection then
+				local hasSelectedPawn = false
 				local selectionPiece = 2
 				if cx >= centerX-imageWidth and cx <= centerX then
 					if cy >= centerY-imageWidth*0.5 and cy <= centerY + imageWidth*0.5 then
@@ -260,11 +260,11 @@ function ChessGraphics:onClick()
 						hasSelectedPawn = true
 					end
 				end
-				if hasSelectedPawn then 
-					if self.m_SelectionTimeout then 
-						killTimer(self.m_SelectionTimeout) 
-					end 
-					self:Event_PawnSelectionConfirm( selectionPiece ) 
+				if hasSelectedPawn then
+					if self.m_SelectionTimeout then
+						killTimer(self.m_SelectionTimeout)
+					end
+					self:Event_PawnSelectionConfirm( selectionPiece )
 				end
 			end
 		end
@@ -420,27 +420,27 @@ function ChessGraphics:setCurrentCursorTile( tile )
 end
 
 function ChessGraphics:startPawnSelection( indexPiece, team )
-	self.m_DrawPawnSelection = true 
+	self.m_DrawPawnSelection = true
 	self.m_SelectionIndexPiece = indexPiece
 	self.m_SelectionTeam = team
 	self.m_TimerTimeoutFunction = bind(ChessGraphics.Event_ChessSelectionTimeout, self)
 	self.m_SelectionTimeout = setTimer(  self.m_TimerTimeoutFunction, 10000, 1)
 end
 
-function ChessGraphics:Event_PawnSelectionConfirm( piece ) 
-	if self.m_SelectionIndexPiece then 
+function ChessGraphics:Event_PawnSelectionConfirm( piece )
+	if self.m_SelectionIndexPiece then
 		triggerServerEvent( "onServerGetChessPawnSelection", localPlayer, self.m_SelectionIndexPiece, piece or 2, self.m_SelectionTeam)
 	end
 	self.m_DrawPawnSelection = false
-	self.m_SelectionIndexPiece = nil 
-	self.m_SelectionTeam = nil 
+	self.m_SelectionIndexPiece = nil
+	self.m_SelectionTeam = nil
 end
 
-function ChessGraphics:Event_ChessSelectionTimeout( ) 
-	if self.m_SelectionIndexPiece then 
+function ChessGraphics:Event_ChessSelectionTimeout( )
+	if self.m_SelectionIndexPiece then
 		triggerServerEvent( "onServerGetChessPawnSelection", localPlayer, self.m_SelectionIndexPiece, 2, self.m_SelectionTeam)
 	end
 	self.m_DrawPawnSelection = false
-	self.m_SelectionIndexPiece = nil 
-	self.m_SelectionTeam = nil 
+	self.m_SelectionIndexPiece = nil
+	self.m_SelectionTeam = nil
 end

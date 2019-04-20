@@ -27,7 +27,6 @@ function RouletteGUI:constructor()
     triggerServerEvent("rouletteCreateNew", localPlayer)
 end
 
-function RouletteGUI:destructor()
-	GUIForm.destructor(self)
+function RouletteGUI:virtual_destructor()
 	triggerServerEvent("rouletteDelete", localPlayer)
 end

@@ -7,7 +7,6 @@
 -- ****************************************************************************
 HUDSpeedo = inherit(Singleton)
 
-
 function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
@@ -15,6 +14,8 @@ function HUDSpeedo:constructor()
 	self:setLightOption()
 	self.m_Draw = bind(self.draw, self)
 	self.m_Indicator = {["left"] = 0, ["right"] = 0}
+	self.m_DigitalFont = VRPFont(30, Fonts.Digital)
+	self.m_MileageFont = VRPFont(20)
 
 	-- Add event handlers
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
@@ -125,14 +126,14 @@ function HUDSpeedo:draw()
 		else
 			local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
 			if cruiseSpeed then
-				dxDrawText(("%i"):format(math.floor(cruiseSpeed)), drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Yellow, self.m_Alpha), 1, VRPFont(30, Fonts.Digital), "center")
+				dxDrawText(("%i"):format(math.floor(cruiseSpeed)), drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Yellow, self.m_Alpha), 1, getVRPFont(self.m_DigitalFont), "center")
 			else
 				local speedLimit = SpeedLimit:getSingleton():getSpeed()
-				dxDrawText(speedLimit and math.floor(speedLimit) or "-", drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Orange, self.m_Alpha), 1, VRPFont(30, Fonts.Digital), "center")
+				dxDrawText(speedLimit and math.floor(speedLimit) or "-", drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Orange, self.m_Alpha), 1, getVRPFont(self.m_DigitalFont), "center")
 			end
 		end
 
-		dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, self.m_Alpha), 1, VRPFont(20), "center")
+		dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, self.m_Alpha), 1, getVRPFont(self.m_MileageFont), "center")
 		if vehicle:getVehicleType() == VehicleType.Automobile then
 			if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
 				if getTickCount()%1000 > 500 then

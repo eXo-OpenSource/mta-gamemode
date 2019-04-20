@@ -138,9 +138,10 @@ function GUIForm:unbind(key)
 	unbindKey(key, "down", self.m_KeyBinds[key])
 end
 
+GUIForm.DoNotClose = {}
 function GUIForm.closeAll()
 	for _, form in pairs(GUIForm.Map) do
-		if form then
+		if form and not GUIForm.DoNotClose[form] then
 			form:close(false)
 		end
 	end
@@ -163,6 +164,7 @@ GUIForm.AllowedKeys = {
 	["pgup"] = true, 		-- scroll chatbox/debugscript
 	["pgdn"] = true,		-- scroll chatbox/debugscript
 	["t"] = true,
+	["r"] = true, 			-- reload Police Panel
 }
 
 GUIForm.keysEnabled = true

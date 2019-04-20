@@ -16,6 +16,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 		owner = false
 	end
 
+	self.hasRobbedHouse = {}
 	self.m_CurrentRobber = false
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
@@ -379,7 +380,7 @@ function House:enterHouse(player)
 	local isRobberEntering = false
 
 	if self.m_RobGroup then
-		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self and self:isValidRob(player) then
+		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self and self:isValidRob(player) and not self.hasRobbedHouse[player:getId()] then
 			isRobberEntering = true
 		end
 	end
@@ -391,10 +392,12 @@ function House:enterHouse(player)
 			if player.m_LastRobHouse ~= self then
 				player:triggerEvent("onClientStartHouseRob", int, self, {x,y,z})
 				player.m_LastRobHouse = self
+				self.hasRobbedHouse[player:getId()] = true
 			end
 		else
 			player:triggerEvent("onClientStartHouseRob", int, self, {x,y,z})
 			player.m_LastRobHouse = self
+			self.hasRobbedHouse[player:getId()] = true
 		end
 	else
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")

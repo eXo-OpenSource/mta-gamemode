@@ -43,6 +43,13 @@ end
 
 function Player:setPrivateSyncChangeHandler(key, handler)
 	self.m_PrivateSyncChangeHandler[key] = handler
+
+	-- Call the function immediately if we have already datas
+	local data =  self:getPrivateSync(key)
+	if data then
+		local f = self.m_PrivateSyncChangeHandler[key]
+		if f then f(data) end
+	end
 end
 
 function Player:setPublicSyncChangeHandler(key, handler)
@@ -167,6 +174,7 @@ function Player:getMatchID ()
 	)
 end
 
+-- This function may depricated
 function Player:getSurfingCar()
 	local result = {processLineOfSight(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -1.5)), false, true, false, false, false, false, false, false, localPlayer, false, true)}
 	return result[5]

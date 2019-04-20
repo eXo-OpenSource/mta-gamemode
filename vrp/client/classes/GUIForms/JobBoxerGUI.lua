@@ -5,11 +5,11 @@
 -- *  PURPOSE:     Boxer job gui class
 -- *
 -- ****************************************************************************
-
 JobBoxerGUI = inherit(GUIForm)
+inherit(Singleton, JobBoxerGUI)
 
 function JobBoxerGUI:constructor()
-	GUIWindow.updateGrid()			
+	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 12)
 	self.m_Height = grid("y", 9)
 
@@ -37,5 +37,6 @@ function JobBoxerGUI:startButtonClick()
     if self.m_Type then
         JobBoxer:getSingleton():startJob(self.m_Type)
         self:close()
+        self.m_Window:close()
     end
 end

@@ -164,6 +164,7 @@ function DatabasePlayer:load(sync)
 	self:setAlcoholLevel(row.AlcoholLevel)
 	self:setPlayTime(row.PlayTime)
 	self.m_StartTime = row.PlayTime
+	self.m_PlayTimeAtLastSave = row.PlayTime
 	self.m_LoginTime = getRealTime().timestamp
 	self:setPrison(0)
 	self:setWarns()
@@ -195,13 +196,13 @@ function DatabasePlayer:save()
 		end
 
 		local row = sql:queryFetchSingle("SELECT Id FROM ??_accountActivity WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
-
+		local timeDiff = self:getPlayTime() - self.m_StartTime
 		if not row then
 			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(),
-			self.m_LoginTime, self:getId(), self.m_LoginTime, self:getPlayTime() - self.m_StartTime)
+			self.m_LoginTime, self:getId(), self.m_LoginTime, timeDiff)
 		else
 			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(),
-			self:getPlayTime() - self.m_StartTime, row.Id)
+			timeDiff, row.Id)
 		end
 		
 		if self:isActive() then

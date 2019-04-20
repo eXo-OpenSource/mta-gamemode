@@ -2,25 +2,26 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIForms/VehicleTuningTemplateGUI.lua
--- *  PURPOSE:     VehicleTuningTemplate-GUI, managing tuning templates 
+-- *  PURPOSE:     VehicleTuningTemplate-GUI, managing tuning templates
 -- *
 -- ****************************************************************************
-
 VehicleTuningTemplateGUI = inherit(GUIForm)
 inherit(Singleton, VehicleTuningTemplateGUI)
-addRemoteEvents{"onReceiveHandlingTemplates", "onReceiveVehicleShops"}
+
+addRemoteEvents{"onReceiveHandlingTemplates", "onReceiveVehicleShops" }
+
 function VehicleTuningTemplateGUI:constructor()
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 16)
-	self.m_Height = grid("y", 12) 
+	self.m_Height = grid("y", 12)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Admin: Fahrzeug-Menü", true, true, self)
 
 	self.m_Window:addBackButton(function ()  delete(self) AdminGUI:getSingleton():show() end)
-	
-	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Vorlagen", "Entwicklung", "Shop-Fahrzeuge"}) 
+
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Vorlagen", "Entwicklung", "Shop-Fahrzeuge"})
 	if self.m_TabPanel then
 		self.m_TabPanel:updateGrid()
 		self:setupTemplateTab()
@@ -40,7 +41,7 @@ function VehicleTuningTemplateGUI:setupTemplateTab()
 
 	self.m_ModelSearch = GUIGridEdit:new(12, 2, 2, 1, self.m_Tabs[1]):setCaption("Modell"):setNumeric(true)
 	self.m_ModelSearch.onChange = function () self:onSearch() end
-	
+
 	self.m_SearchButton = GUIGridIconButton:new(14, 2, FontAwesomeSymbols.Search, self.m_Tabs[1]):setTooltip("Nach Vorlage anhand von Modell & Name suchen!", "top")
 	self.m_RefreshButton = GUIGridIconButton:new(15, 2, FontAwesomeSymbols.Refresh, self.m_Tabs[1]):setTooltip("Vorlagen manuell vom Server aktualisieren!", "top")
 	self.m_SearchButton.onLeftClick = function () self:onSearch() end
@@ -52,7 +53,7 @@ function VehicleTuningTemplateGUI:setupTemplateTab()
 	self.m_TemplateGrid:addColumn(_"Model", 0.3)
 	GUIGridRectangle:new(1, 10, 11, 1, Color.Grey, self.m_Tabs[1])
 	self.m_TemplateInfoLabel = GUIGridLabel:new(1, 10, 11, 1, "Vorlage #", self.m_Tabs[1]):setAlignX("center")
-	
+
 	self.m_ApplyButton = GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[1]):setTooltip("Auf aktuelles Fahrzeug anwenden", "bottom"):setBackgroundColor(Color.Green)
 	self.m_ApplyButton.onLeftClick = function() self:applyClick() end
 
@@ -61,12 +62,12 @@ function VehicleTuningTemplateGUI:setupTemplateTab()
 
 	self.m_TemplateSave = GUIGridIconButton:new(14, 10, FontAwesomeSymbols.Save, self.m_Tabs[1]):setTooltip("Vorlage überschreiben", "bottom"):setBackgroundColor(Color.Red)
 	self.m_TemplateSave.onLeftClick = function() self:saveClick() end
-	
+
 	self.m_TemplateDelete = GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Trash, self.m_Tabs[1]):setTooltip("Vorlage löschen", "bottom"):setBackgroundColor(Color.Red)
 	self.m_TemplateDelete.onLeftClick = function() self:deleteClick() end
 
 	self.m_SelectedName = ""
-	self.m_SelectedModel = 0 
+	self.m_SelectedModel = 0
 end
 
 function VehicleTuningTemplateGUI:setupShop()
@@ -107,11 +108,11 @@ function VehicleTuningTemplateGUI:fillGrid( data ) -- [ Table-structure: data [ 
 	local totalCount = 0
 	local checkIfModelNotEmpty = false
 	if data then
-		for model, subData in pairs(data) do 
+		for model, subData in pairs(data) do
 			checkIfModelNotEmpty = false
 			for name, content in pairs(subData) do
 				if name:find(self.m_NameSearch:getText()) and (self.m_ModelSearch:getText() == "" or tonumber(self.m_ModelSearch:getText()) == model) then
-					if not checkIfModelNotEmpty then 
+					if not checkIfModelNotEmpty then
 						checkIfModelNotEmpty = true
 							modelCount = modelCount + 1
 						end
@@ -133,7 +134,7 @@ function VehicleTuningTemplateGUI:fillShopGrid( data ) -- [ Table-structure: dat
 	local vehicleCount = 0
 	local shopCount = 0
 	if data then
-		for id, shop in pairs(data) do 
+		for id, shop in pairs(data) do
 			shopCount = shopCount + 1
 			self.m_ShopChanger:addItem(shop.m_Name)
 			self.m_ShopVehicles[shop.m_Name] = {}
@@ -160,11 +161,11 @@ function VehicleTuningTemplateGUI:addShopGrid( name )
 	self:resetShopEdits()
 	local id, model, price, level
 	if self.m_ShopVehicles[name] then
-		for id, data in ipairs(self.m_ShopVehicles[name]) do 
+		for id, data in ipairs(self.m_ShopVehicles[name]) do
 			id, model, price, level, template, index, shop = unpack(data)
 			if template == "" then template = "Standard" end
 			local item = self.m_ShopGrid:addItem(id, getVehicleNameFromModel(model), ("$%i"):format(price), level, template)
-			item.index = index 
+			item.index = index
 			item.model = model
 			item.shop = shop
 			item.onLeftClick = function() self:onItemShopClick(item) end
@@ -180,7 +181,7 @@ function VehicleTuningTemplateGUI:onSearch()
 end
 
 function VehicleTuningTemplateGUI:onItemClick(name, model, content)
-	if self.m_TemplateShortMessage then 
+	if self.m_TemplateShortMessage then
 		self.m_TemplateShortMessage:delete()
 	end
 	self.m_TemplateShortMessage = ShortMessage:new("", ("Performance-Vorlage: #%i"):format(content.m_Id), tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
@@ -190,25 +191,25 @@ function VehicleTuningTemplateGUI:onItemClick(name, model, content)
 	self.m_SelectedModel = model
 end
 
-function VehicleTuningTemplateGUI:onItemShopClick(item) 
+function VehicleTuningTemplateGUI:onItemShopClick(item)
 	self:resetShopEdits()
 	self.m_LastShopShop = item.shop -- yea i know
-	self.m_LastShopIndex = item.index 
+	self.m_LastShopIndex = item.index
 	self.m_LastShopModel = item.model
 end
 
 function VehicleTuningTemplateGUI:onShopEditClick( edit )
 	if self.m_LastShopShop and self.m_LastShopIndex and self.m_LastShopModel then
 		local value
-		if edit == "template-add" then 
+		if edit == "template-add" then
 			value = tonumber(self.m_ShopTemplateEdit:getText())
 		elseif edit == "template-remove" then
 			value = -1
-		elseif edit == "price" then 
+		elseif edit == "price" then
 			value = tonumber(self.m_ShopPriceEdit:getText())
-		elseif edit == "level" then 
+		elseif edit == "level" then
 			value = tonumber(self.m_ShopLevelEdit:getText())
-		else 
+		else
 			value = tonumber(self.m_ShopModelEdit:getText())
 		end
 		if value then
@@ -219,7 +220,7 @@ end
 
 function VehicleTuningTemplateGUI:resetShopEdits()
 	self.m_LastShopShop = false -- yea i know
-	self.m_LastShopIndex = false 
+	self.m_LastShopIndex = false
 	self.m_LastShopModel = false
 	self.m_ShopModelEdit:setText("")
 	self.m_ShopLevelEdit:setText("")
@@ -229,55 +230,55 @@ end
 
 
 function VehicleTuningTemplateGUI:saveClick()
-	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()  
-	if vehicle and getElementType(vehicle) =="vehicle" then	
+	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()
+	if vehicle and getElementType(vehicle) =="vehicle" then
 		QuestionBox:new(_("Möchtest du diese Vorlage %s überschreiben?", self.m_SelectedName),
-		function() 
+		function()
 			triggerServerEvent("saveHandlingTemplate", localPlayer, self.m_SelectedName, self.m_SelectedModel, vehicle, true)
-		end)	
-	else 
+		end)
+	else
 		ErrorBox:new(_"Es wurd kein Fahrzeug gefunden für die Vorlage!")
 	end
 end
 
 function VehicleTuningTemplateGUI:deleteClick()
 	QuestionBox:new(_("Möchtest du diese Vorlage %s löschen?", self.m_SelectedName),
-		function() 
-			triggerServerEvent("deleteHandlingTemplate", localPlayer, self.m_SelectedName, self.m_SelectedModel) 
+		function()
+			triggerServerEvent("deleteHandlingTemplate", localPlayer, self.m_SelectedName, self.m_SelectedModel)
 		end)
 end
 
 function VehicleTuningTemplateGUI:applyClick()
-	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()  
-	if vehicle and getElementType(vehicle) =="vehicle" then	
+	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()
+	if vehicle and getElementType(vehicle) =="vehicle" then
 		QuestionBox:new(_("Möchtest du diese Vorlage %s auf das Fahrzeug anwenden (Sitze drinnen oder stehe drauf)? ", self.m_SelectedName),
-		function() 
+		function()
 			triggerServerEvent("applyHandlingTemplate", localPlayer, self.m_SelectedName, self.m_SelectedModel)
-		end)	
-		
-	else 
+		end)
+
+	else
 		ErrorBox:new(_"Es wurd kein Fahrzeug gefunden zum Anwenden!")
 	end
 end
 
-function VehicleTuningTemplateGUI:resetClick() 
-	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()  
-	if vehicle and getElementType(vehicle) =="vehicle" then	
+function VehicleTuningTemplateGUI:resetClick()
+	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()
+	if vehicle and getElementType(vehicle) =="vehicle" then
 		QuestionBox:new(_("Möchtest du das Handling dieses Fahrzeuges auf die Original-Werte zurücksetzen? "),
-		function() 
+		function()
 			triggerServerEvent("vehicleResetHandling", localPlayer)
-		end)	
-		
-	else 
+		end)
+
+	else
 		ErrorBox:new(_"Es wurd kein Fahrzeug gefunden zum Anwenden!")
 	end
 end
 
 function VehicleTuningTemplateGUI:mergeSearch(result, result2)
 	local results = { }
-	for i = 1, #result do 
-		for i = 1, #result2 do 
-			if result[i] == result[2] then 
+	for i = 1, #result do
+		for i = 1, #result2 do
+			if result[i] == result[2] then
 				table.insert(results, result[i])
 			end
 		end
@@ -286,7 +287,7 @@ function VehicleTuningTemplateGUI:mergeSearch(result, result2)
 end
 
 function VehicleTuningTemplateGUI:Event_GetHandlingTemplates( data )
-	if data then 
+	if data then
 		self.m_TemplateGridData = data
 		self.m_TemplateGrid:clear()
 		self:fillGrid( data )
@@ -295,7 +296,7 @@ end
 
 
 function VehicleTuningTemplateGUI:Event_GetVehicleShops( data )
-	if data then 
+	if data then
 		self.m_ShopGrid:clear()
 		self:fillShopGrid( data )
 	end
@@ -313,7 +314,7 @@ end
 
 function VehicleTuningTemplateGUI:onHide()
 	SelfGUI:getSingleton():removeWindow(self)
-	if self.m_TemplateShortMessage then 
+	if self.m_TemplateShortMessage then
 		self.m_TemplateShortMessage:delete()
 	end
 end

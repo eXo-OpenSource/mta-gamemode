@@ -241,6 +241,9 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.checkpoints = {}
 			playerPointer.laps = playerPointer.laps + 1
 
+			playerPointer.vehicle:setFuel(100)
+
+
 			if oldToptime then
 				local deltaTime = lapTime - oldToptime
 				player:triggerEvent("HUDRaceUpdateDelta", deltaTime)

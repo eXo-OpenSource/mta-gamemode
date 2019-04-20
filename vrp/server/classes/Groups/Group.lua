@@ -628,16 +628,6 @@ function Group:initalizePlayers()
 	self:updateRankNameSync()
 end
 
-
-function Group:openBankGui(player)
-	player:triggerEvent("bankAccountGUIShow", self:getName(), "groupDeposit", "groupWithdraw")
-	self:refreshBankGui(player)
-end
-
-function Group:refreshBankGui(player)
-	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
-end
-
 function Group:addLog(player, category, text)
 	StatisticsLogger:getSingleton():addGroupLog(player, "group", self, category, text)
 end

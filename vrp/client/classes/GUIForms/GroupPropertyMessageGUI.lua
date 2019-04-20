@@ -23,10 +23,6 @@ function GroupPropertyMessageGUI:constructor( superClass )
 	self.m_Super = superClass
 end
 
-function GroupPropertyMessageGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 function GroupPropertyMessageGUI:AcceptButton_message()
 	if self.m_Super then
 		self.m_Super:setMessage( self.m_Edit:getDrawnText())

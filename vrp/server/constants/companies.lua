@@ -35,7 +35,7 @@ companyRankNames[1] = {
 [1] = "Auszubildender",
 [2] = "Fahrlehrer",
 [3] = "Ausbilder",
-[4] = "Geschäftsführer Stellv.",
+[4] = "Stellv. Geschäftsführer",
 [5] = "Geschäftsführer"
 }
 companyColors[1] = {["r"] = 255,["g"] = 255,["b"] = 255}

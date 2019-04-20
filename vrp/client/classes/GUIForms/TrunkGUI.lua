@@ -142,7 +142,7 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
             local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
             self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
             self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
-            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+            self.m_WeaponSlots[index].Image:setImage(FileModdingHelper:getSingleton():getWeaponImage(weapon.WeaponId))
             self.m_WeaponSlots[index].TakeButton:setEnabled(true)
         else
             self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)
@@ -158,8 +158,6 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
         self.m_LoadingLabel:setVisible(false)
     end, 250, 1)
 end
-
-
 
 function TrunkGUI:checkAmount(text)
 	if not self.m_SelectedItemType then
@@ -245,8 +243,6 @@ function TrunkGUI:fromTrunk(type, id)
         ErrorBox:new(_"In diesem Slot ist kein Item!")
     end
 end
-
-
 
 addEventHandler("openTrunk", root, function()
     if TrunkGUI:getSingleton():isInstantiated() then

@@ -15,10 +15,6 @@ function DownloadGUI:constructor()
 	fadeCamera(false)
 end
 
-function DownloadGUI:destructor()
-	GUIForm.destructor(self)
-end
-
 function DownloadGUI:onProgress(p, fullSize)
 	self.m_ProgressBar:setProgress(tonumber(p) or 0)
 

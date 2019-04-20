@@ -19,11 +19,15 @@ function ServerSettings:constructor()
 				setServerPassword()
 			end
 		end
+
 		if row.Index == "FPSLimit" then
 			setFPSLimit(tonumber(row.Value) or 60)
 		end
 
+		if row.Index == "ServiceSync" then
+			SERVICE_SYNC = toboolean(row.Value)
+		end
+
 		self.m_Settings[row.Index] = row.Value
 	end
-
 end

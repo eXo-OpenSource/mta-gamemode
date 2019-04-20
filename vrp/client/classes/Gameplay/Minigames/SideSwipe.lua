@@ -8,8 +8,8 @@
 SideSwipe = inherit(Object)
 
 function SideSwipe:constructor()
-	self.JosefinSans30 = dxCreateFont("files/fonts/JosefinSans-Regular.ttf", 30)
-	self.JosefinSans100 = dxCreateFont("files/fonts/JosefinSans-Regular.ttf", 100)
+	self.JosefinSans30 = VRPFont(48, Fonts.JosefinSansRegular) -- dxCreateFont("files/fonts/JosefinSans-Regular.ttf", 30)
+	self.JosefinSans100 = VRPFont(160, Fonts.JosefinSansRegular) --dxCreateFont("files/fonts/JosefinSans-Regular.ttf", 100)
 
 	self.state = "Home"
 	self.width, self.height = 400, 600
@@ -59,7 +59,6 @@ function SideSwipe:destructor()
 
 	collectgarbage()
 	localPlayer:setFrozen(false)
-
 end
 
 ----
@@ -483,9 +482,9 @@ function SideSwipe:updateRenderTarget()
 		dxDrawRectangle(0, 0, self.swipeToRightWidth, self.height - 60, tocolor(0, 150, 255, 100))
 		dxDrawRectangle(self.width - self.swipeToLeftWidth, 0, self.swipeToLeftWidth, self.height - 60, tocolor(255, 70, 0, 100))
 
-		dxDrawText(self.Score, 0, 0, self.width, self.height, self.white, 1, self.JosefinSans100, "center", "center")
+		dxDrawText(self.Score, 0, 0, self.width, self.height, self.white, 1, getVRPFont(self.JosefinSans100), "center", "center")
 		dxDrawLine(self.width/2 - 60, self.height/2 + 65, self.width/2+60, self.height/2 + 65, self.white, 1)
-		dxDrawText("Score", 0, self.height/2 + 85, self.width, self.height/2 + 85, self.white, 1, self.JosefinSans30, "center", "center")
+		dxDrawText("Score", 0, self.height/2 + 85, self.width, self.height/2 + 85, self.white, 1, getVRPFont(self.JosefinSans30), "center", "center")
 
 		for ID, drop in ipairs(self.Drops) do
 			if not drop.killed then
@@ -511,9 +510,9 @@ function SideSwipe:updateRenderTarget()
 	if self.state == "Died" then
 		dxDrawRectangle(self.width/2 - self.blackWidth/2, self.blackY, self.blackWidth, self.height, tocolor(0, 0, 0, 100))
 
-		dxDrawText(self.Score, 0, 0, self.width, self.height, self.white, 1, self.JosefinSans100, "center", "center")
+		dxDrawText(self.Score, 0, 0, self.width, self.height, self.white, 1, getVRPFont(self.JosefinSans100), "center", "center")
 		dxDrawLine(self.width/2 - 60, self.height/2 + 65, self.width/2+60, self.height/2 + 65, self.white, 1)
-		dxDrawText("Score", 0, self.height/2 + 85, self.width, self.height/2 + 85, self.white, 1, self.JosefinSans30, "center", "center")
+		dxDrawText("Score", 0, self.height/2 + 85, self.width, self.height/2 + 85, self.white, 1, getVRPFont(self.JosefinSans30), "center", "center")
 
 		if self.explosionBalls then
 			for ID in ipairs(self.explosionBalls) do

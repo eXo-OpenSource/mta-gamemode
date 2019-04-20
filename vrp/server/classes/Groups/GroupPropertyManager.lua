@@ -233,3 +233,18 @@ function GroupPropertyManager:takePropsFromGroup(group) --in case the group gets
 		end
 	end
 end
+
+function GroupPropertyManager:clearProperty(id, groupId, price)
+	local property = self.Map[id]			
+	property.m_Owner = false
+	property.m_OwnerID = 0
+	sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)
+	property.m_Open = 1
+	if property.m_Pickup and isElement(property.m_Pickup) then
+		setPickupType(property.m_Pickup, 3, 1273)
+	end
+	if GroupManager.Map[groupId] then
+		self.m_BankAccountServer:transferMoney(GroupManager.Map[groupId].m_BankAccount, math.floor(price * 0.66), "Inactivity", "Group", "PropertyClear")
+		sqlLogs:queryExec("INSERT INTO ??_propertiesfreed (GroupId, PropertyID, Date) VALUES (?, ?, Now())", sqlLogs:getPrefix(), groupId, id)
+	end
+end

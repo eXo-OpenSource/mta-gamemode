@@ -80,6 +80,19 @@ function FactionVehicle:onStartEnter(player, seat)
 end
 
 function FactionVehicle:onEnter(player, seat)
+	if self:getModel() == 425 or self:getModel() == 520 or self:getModel() == 432 then
+		if not player:getFaction() or not player:isFactionDuty() or (player:getFaction() and player:getFaction():getId() ~= self:getOwner()) then
+			player:sendError(_("Du bist kein Soldat im Dienst!", player))
+			removePedFromVehicle(player)
+			local x,y,z = getElementPosition(player)
+			setElementPosition(player,x,y,z)
+			return false
+		end
+	end
+	return true
+end
+--[[
+function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
 		if player:getFaction() then
 			if not player:isFactionDuty() then
@@ -109,6 +122,7 @@ function FactionVehicle:onEnter(player, seat)
 		setElementPosition(player,x,y,z)
 	end
 end
+]]
 --[[
 function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
@@ -233,11 +247,22 @@ function FactionVehicle:takeFactionItem(player, itemName)
 	end
 end
 
-function FactionVehicle:respawn(force)
+function FactionVehicle:respawn(force, ignoreCooldown)
     local vehicleType = self:getVehicleType()
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
+	end
+	
+	if not ignoreCooldown then
+		if self.m_LastDrivers[#self.m_LastDrivers] then
+			local lastDriver = getPlayerFromName(self.m_LastDrivers[#self.m_LastDrivers])
+			if lastDriver and (not lastDriver:getFaction() or lastDriver:getFaction() and lastDriver:getFaction() ~= self:getFaction()) then
+				if self.m_LastUseTime and getTickCount() - self.m_LastUseTime < 300000 then
+					return false
+				end
+			end
+		end
 	end
 
 	-- Teleport to Spawnlocation

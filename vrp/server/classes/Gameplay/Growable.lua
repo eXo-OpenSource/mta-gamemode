@@ -10,7 +10,7 @@ Growable = inherit(Object)
 function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, lastGrown, lastWatered, timesEarned)
 	self.m_Id = id
 	self.m_Type = type
-	self.m_Object = createObject(typeData["Object"], pos)
+	self.m_Object = createObject(typeData["Object"], pos, 0, 0, math.random(0,360))
 	self.m_Object:setCollisionsEnabled(false)
 	self.m_Planted = planted
 	self.m_Size = size
@@ -100,8 +100,9 @@ function Growable:harvest(player)
 		end
 
 		if self.ms_Illegal and player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-			player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
-			self.m_BankAccountServer:transferMoney(player:getFaction(), amount*5, "Drogen-Asservation", "Faction", "Drugs")
+			if amount > 0 then
+				StateEvidence:getSingleton():addItemToEvidence(player, self.ms_Item, amount)
+			end
 			player:triggerEvent("hidePlantGUI")
 			self.m_Size = 0
 			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)

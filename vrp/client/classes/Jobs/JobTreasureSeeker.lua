@@ -13,8 +13,7 @@ function JobTreasureSeeker:constructor()
 	self:setJobLevel(JOB_LEVEL_TREASURESEEKER)
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.TreasureSeeker):gsub("Job: ", ""), "jobs.treasureseeker")
-	NonCollidingArea:new(717, -1708.08, 8, 18)
-
+	NonCollisionArea:new("Cuboid", {Vector3(717, -1707, -1), 8, 17, 6})
 end
 
 function JobTreasureSeeker:start()

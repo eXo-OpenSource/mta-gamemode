@@ -76,7 +76,3 @@ function HistoryPlayerGUI:Event_OnPlayerHistoryReceived(infos)
 		end
 	end
 end
-
-function HistoryPlayerGUI:destructor()
-	GUIForm.destructor(self)
-end

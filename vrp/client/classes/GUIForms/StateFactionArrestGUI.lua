@@ -67,13 +67,6 @@ function StateFactionArrestGUI:refreshGrid()
 	end
 end
 
-addEventHandler("showStateFactionArrestGUI", root,
-		function(col)
-			StateFactionArrestGUI:new(col)
-		end
-	)
-
-
 function StateFactionArrestGUI:hide()
 	GUIForm.destructor(self)
 	if isTimer(self.m_refreshTimer) then killTimer(self.m_refreshTimer) end
@@ -107,3 +100,9 @@ function StateFactionArrestGUI:factionArrestOhneKaution()
 		ErrorBox:new(_"Du hast keinen Spieler ausgewählt!")
 	end
 end
+
+addEventHandler("showStateFactionArrestGUI", root,
+	function(col)
+		StateFactionArrestGUI:new(col)
+	end
+)

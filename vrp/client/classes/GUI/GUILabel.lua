@@ -15,7 +15,7 @@ function GUILabel:constructor(posX, posY, width, height, text, parent)
 	width, height = math.floor(width), math.floor(height)
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, text, 1)
+	GUIFontContainer.constructor(self, text, 1, VRPFont(height))
 	GUIColorable.constructor(self)
 
 	self.m_LineSpacing = 10
@@ -23,7 +23,6 @@ function GUILabel:constructor(posX, posY, width, height, text, parent)
 	self.m_AlignX = "left"
 	self.m_AlignY = "top"
 	self.m_Rotation = 0
-	self:setFont(VRPFont(height))
 end
 
 function GUILabel:drawThis(incache)

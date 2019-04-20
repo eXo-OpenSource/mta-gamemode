@@ -14,7 +14,7 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUIButton:constructor", "number", "number", "number", "number", "string")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, text, 1, VRPFont(math.floor(height*.9)))
+	GUIFontContainer.constructor(self, text, 1, VRPFont(height*.8))
 
 	self.m_NormalColor = Color.White
 	self.m_HoverColor = Color.Black

@@ -5,12 +5,12 @@
 -- *  PURPOSE:     Shroom class client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
 DrugsShroom = inherit( Object )
 
-
 function DrugsShroom:constructor( )
+end
 
+function DrugsShroom:destructor( )
 end
 
 function DrugsShroom:onUse(  )
@@ -23,7 +23,7 @@ function DrugsShroom:onUse(  )
   if self.m_RenderBindFunc then
     removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   end
-  self.m_ScreenSource = dxCreateScreenSource( w, h)
+  self.m_ScreenSource = dxCreateScreenSource( screenWidth, screenHeight)
   self.m_Shader = dxCreateShader( "files/shader/drug-Shroomshader.fx" )
   self.m_RenderBindFunc = function() self:onRender() end
   self.m_StartTick = getTickCount()
@@ -57,7 +57,7 @@ function DrugsShroom:onRender()
   dxSetShaderValue( self.m_Shader, "Threshhold", amount)
   dxSetShaderValue( self.m_Shader, "alpha", alpha)
   dxSetShaderValue( self.m_Shader, "ScreenTexture", self.m_ScreenSource)
-  dxDrawImage( 0, 0, w, h , self.m_Shader)
+  dxDrawImage( 0, 0, screenWidth, screenHeight , self.m_Shader)
   if prog >= 2 then
     self.m_StartTick = getTickCount()
     self.m_EndTick = self.m_StartTick + 1000
@@ -75,8 +75,4 @@ function DrugsShroom:onExpire()
     destroyElement( self.m_Shader )
   end
   setGameSpeed( 1 )
-end
-
-function DrugsShroom:destructor( )
-
 end

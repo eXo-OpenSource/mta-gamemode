@@ -1,7 +1,6 @@
 DeathGUI = inherit(GUIForm)
 inherit(Singleton, DeathGUI)
 
-
 function DeathGUI:constructor(time, callback)
 	GUIForm.constructor(self, screenWidth-500, screenHeight-210, 450, 200, false)
 	GUIRectangle:new(0,0, self.m_Width, self.m_Height, tocolor(0,0,0,125), self)

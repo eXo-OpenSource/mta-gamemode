@@ -74,15 +74,12 @@ function FactionState:constructor()
 
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker(  Vector3(249.51, 67.46, 1003.64), 6, 0 )
-	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
-	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 0, 5)
-
 
 	self.m_EvidenceEquipmentBox = {}
 	self:createEquipmentEvidence(Vector3( 1538.44, -1708.12, 5.22), 0, 5, 133)
 	self:createEquipmentEvidence(Vector3( 136.93, 1857.62, 16.68), 0, 0, 275)
 	self:createEquipmentEvidence(Vector3( 1211.52, -1820.59, 12.60), 0, 0, 0)
-	
+
 
 	self.m_Items = {
 		["Barrikade"] = 0,
@@ -110,7 +107,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:startEvidenceTruck",
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
 	"factionStateCuff", "factionStateUncuff", "factionStateTie"
 	}
 
@@ -159,19 +156,9 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
-	addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
-
-	local row = sql:queryFetch("SELECT * FROM ??_StateEvidence", sql:getPrefix())
-	self.m_EvidenceRoomItems = {}
-	if row then
-		for i, v in ipairs(row) do
-
-			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {v.Type, v.Var1, v.Var2, v.Var3, v.Cop, v.Date}
-		end
-	end
 end
 
 
@@ -219,18 +206,18 @@ end
 function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isStateFaction() then
-			if player:isFactionDuty() then 
+			if player:isFactionDuty() then
 				local box = player:getPlayerAttachedObject()
 				if box and isElement(box) and box.m_Content then
 					self:putEvidenceInDepot(player, box)
 				else
 					if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
-						setElementData(player, "isEquipmentGUIOpen", true, true) 
+						setElementData(player, "isEquipmentGUIOpen", true, true)
 						player.m_LastEquipmentDepot = source
 						player:getFaction():getDepot():showEquipmentDepot(player)
 					end
 				end
-			else 
+			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
 			end
 		else
@@ -246,13 +233,13 @@ function FactionState:putEvidenceInDepot(player, box)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" then
 		if id then
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
-			self:addWeaponToEvidence(player, id, amount, 0, true)
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))		
+			StateEvidence:getSingleton():addWeaponsToEvidence(player, id, amount, true)
 		end
 	elseif type == "Munition" then
 		if id then
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
-			self:addWeaponToEvidence(player, id, amount, 0, true)
+			StateEvidence:getSingleton():addMunitionToEvidence(player, id, amount, true)
 		end
 	else
 		player:getFaction():sendShortMessage(("%s hat %s Stück %s (%s $) konfesziert!"):format(player:getName(), amount, product, price))
@@ -283,7 +270,7 @@ function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 0, 5) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 0, 5)
-	
+
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
@@ -301,7 +288,7 @@ function FactionState:loadLSPD(factionId)
 	gate2:setGateScale(1.0285093)
 	gate2:addGate(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), false, 0, 0, 1.0285093)
 	]]
-	createColCuboid( 1582.064, -1665.5, 5.080, 21.7, 27.6, 13):setData("NonCollidingSphere", "ignoreDimension", true) -- nc area inside garage to prevent cars from spawning inside each other
+	createColCuboid(1582.064, -1665.5, 5.080, 21.7, 27.6, 13):setData("NonCollisionArea", {ignoreDimension = true}, true) -- nc area inside garage to prevent cars from spawning inside each other
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
@@ -378,6 +365,15 @@ function FactionState:loadArmy(factionId)
 	local areaGateBack = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
 	areaGateBack.m_Gates[1]:setDoubleSided(true)
 	areaGateBack.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local areaGatesSmall = Gate:new(983, Vector3(97.55, 1920.5, 19.200), Vector3(0, 0, 0), Vector3(97.55, 1923.520, 19.200))
+	local collision = createObject(3049, 96.699996948242, 1921.0999755859, 17, 0, 90, 90)
+	collision:setScale(0)
+	areaGatesSmall.m_Gates[1]:setDoubleSided(true)
+	areaGatesSmall.m_Gates[1]:setScale(1, 0.4749, 3)
+	collision:attach(areaGatesSmall.m_Gates[1], 0, 0.5, -2, 0, 90, 90)
+	areaGatesSmall.m_Gates[1]:setCollisionsEnabled(false)
+	areaGatesSmall.onGateHit = bind(self.onBarrierGateHit, self)
 
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
@@ -692,25 +688,6 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 	ElementInfo:new(pickup, "Einsperren", 1)
 end
 
-function FactionState:createEvidencePickup( x,y,z, int, dim )
-	local pickup = createPickup(x,y,z,3, 2061, 10)
-	setElementInterior(pickup, int)
-	setElementDimension(pickup, dim)
-	self.m_EvidenePickup = pickup
-	addEventHandler("onPickupUse", pickup, function( hitElement )
-		local dim = source:getDimension() == hitElement:getDimension()
-		if hitElement:getType() == "player" and dim then
-			if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-				hitElement.evidencePickup = source
-				self:showEvidenceStorage( hitElement )
-			else
-				hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
-			end
-		end
-	end)
-	ElementInfo:new(pickup, "Asservatenkammer", 1 )
-end
-
 function FactionState:getFullCategoryFromShurtcut(category)
 	local bMatch = false
 
@@ -815,7 +792,13 @@ function FactionState:getFullReasonFromShortcut(reason)
         amount = 6
     elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
-        amount = 12
+		amount = 12
+	elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
+		reason = "Gefängis-Ausbruch"
+		amount = 12
+	elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
+		reason = "Airdrop"
+		amount = 6
 	end
 	return reason, amount
 end
@@ -918,11 +901,20 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
+						if target.m_LastWantedsByReason then
+							if target.m_LastWantedsByReason[reason] and target.m_LastWantedsByReason[reason] > getTickCount() - 3*60*1000 then -- do not allow wanteds with same reason within three minutes
+								player:sendWarning(_("%s hat bereits in den letzten drei Minuten Wanteds wegen %s bekommen!", player, target:getName(), reason))
+								return
+							end
+						else
+							target.m_LastWantedsByReason = {}
+						end
 						target:giveWanteds(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
+						target.m_LastWantedsByReason[reason] = getTickCount()
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
 					end
@@ -1414,7 +1406,10 @@ function FactionState:isPlayerInDutyPickup(player)
 end
 
 function FactionState:Event_toggleDuty(wasted, preferredSkin)
-	if wasted then client:removeFromVehicle() end
+	if wasted then
+		client:removeFromVehicle()
+		client.m_WasOnDuty = true
+	end
 
 	if getPedOccupiedVehicle(client) then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
@@ -1478,8 +1473,11 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 	end
 	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	local faction = client:getFaction()
+	outputDebug("ja")
 	if faction and faction:isStateFaction() then
+		outputDebug("faction")
 		if client:isFactionDuty() or ignoreDutyCheck then
+			outputDebug("isFactionDuty")
 
 			--switch tazer if it is being used
 			local weapon = getPedWeapon(client, 2)
@@ -1487,52 +1485,7 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 				ItemManager.Map["Taser"]:use(client)
 			end
 			--storage weapons
-			local depot = faction:getDepot()
-			local logData = {}
-			for i= 1, 12 do
-				if client:getWeapon(i) > 0 then
-					local weaponId = client:getWeapon(i)
-					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
-					if WEAPON_CLIPS[weaponId] then
-						clipAmmo = WEAPON_CLIPS[weaponId]
-					end
-
-					local magazines = clipAmmo > 0 and math.floor(client:getTotalAmmo(i)/clipAmmo) or 0
-
-					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
-					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
-					if depotWeapons+1 <= depotMaxWeapons then
-						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
-							depot:addWeaponD(weaponId, 1)
-							depot:addMagazineD(weaponId, magazines)
-							takeWeapon(client, weaponId)
-							logData[WEAPON_NAMES[weaponId]] = magazines
-						elseif magazines > 0 then
-							local magsToMax = depotMaxMagazines - depotMagazines
-							depot:addMagazineD(weaponId, magsToMax)
-							setWeaponAmmo(client, weaponId, getPedTotalAmmo(client, i) - magsToMax*clipAmmo)
-							logData[WEAPON_NAMES[weaponId]] = magsToMax
-							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
-						end
-
-					else
-						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
-					end
-				end
-			end
-			local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
-			local wepaponsPut = false
-			for i,v in pairs(logData) do
-				wepaponsPut = true
-				textForPlayer = textForPlayer.."\n"..i
-				if v > 0 then
-					textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
-					faction:addLog(client, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
-				else
-					faction:addLog(client, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
-				end
-			end
-			if wepaponsPut then client:sendInfo(textForPlayer) end
+			faction:storageWeapons(client)
 		end
 	end
 end
@@ -1577,7 +1530,7 @@ function FactionState:checkLogout(player)
 		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() and not cop:isDead() then
 			if player:getInterior() == cop:getInterior() and player:getDimension() == cop:getDimension() then
 				self:Event_JailPlayer(player, false, false, cop, false, false, true)
-				player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Knast ist dadurch länger!", 1)
+				player:addOfflineMessage( "Du wurdest offline eingesperrt! Die Knastzeit ist dadurch länger!", 1)
 				return
 			end
 		end
@@ -1743,6 +1696,13 @@ function FactionState:Event_givePANote(target, note)
 	end
 end
 
+function FactionState:isItemIllegal(itemName)
+	for index, item in pairs(self.ms_IllegalItems) do
+		if item == itemName then return true end
+	end
+	return false
+end
+
 function FactionState:Event_takeDrugs(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
@@ -1760,6 +1720,7 @@ function FactionState:Event_takeDrugs(target)
 					client:sendMessage(_("%d %s", client, amount, item), 255, 125, 0)
 					target:sendMessage(_("%d %s", target, amount, item), 255, 125, 0)
 					inv:removeAllItem(item)
+					StateEvidence:getSingleton():addItemToEvidence(client,item,amount)
 				end
 			end
 			if not drugsTaken then
@@ -1778,7 +1739,14 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
+			for i = 0, 8 do 
+				local w = getPedWeapon(me,i)
+				if w ~= 0 then 
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(me, i))
+				end 
+			end
 			takeAllWeapons(target)
+
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
@@ -1790,14 +1758,14 @@ function FactionState:Event_putItemInVehicle(itemName, amount, inventory)
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() == true then
 			local veh = inventory and source or client.vehicle
 			if veh:getFaction() and veh:getFaction():isStateFaction() then
-				if FACTION_TRUNK_SWAT_ITEMS[itemName] then 
-					if client.vehicle and client.vehicle:getModel() ~= 427 then 
+				if FACTION_TRUNK_SWAT_ITEMS[itemName] then
+					if client.vehicle and client.vehicle:getModel() ~= 427 then
 						client:sendError(_("Dieses Item kann nur in einen Enforcer getan werden!", client))
-						return 
+						return
 					else
-						if not client.vehicle then 
+						if not client.vehicle then
 							client:sendError(_("Kein Fahrzeug gefunden!", client))
-							return 
+							return
 						end
 					end
 				end
@@ -1917,8 +1885,8 @@ function FactionState:isBugActive()
 end
 
 function FactionState:checkInsideGarage(player)
-	if player and isElement(player) and isElementWithinColShape ( player, self.m_InstantTeleportCol) then 
-		if player:getDimension() == 5 then 
+	if player and isElement(player) and isElementWithinColShape ( player, self.m_InstantTeleportCol) then
+		if player:getDimension() == 5 then
 			player:triggerEvent("setOcclusion", false)
 		end
 	end
@@ -1942,75 +1910,6 @@ function FactionState:Event_attachBug()
 		self:sendShortMessage(client:getName().." hat Wanze "..id.." an ein/en "..typeName.." angebracht!")
 	else
 		client:sendError(_("Alle verfügbaren Wanzen sind aktiv!", client))
-	end
-end
-
-function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID, noMessage)
-	if self.m_EvidenceRoomItems then
-		if #self.m_EvidenceRoomItems < STATEFACTION_EVIDENCE_MAXITEMS  then
-			local type_ = "Waffe"
-			local copName = "Unbekannt"
-			local timeStamp =  getRealTime().timestamp
-			if isElement(cop) then
-				copName = getPlayerName(cop)
-			end
-			sql:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Cop, Date) VALUES(?, ?, ?, ?, ?, ?)",
-				sql:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0, copName, timeStamp)
-			if not noMessage then self:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!") end
-			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, timeStamp}
-		else
-			self:sendShortMessage("Die Asservatenkammer ist voll, die Waffe konnte nicht mehr eingelagert werden!")
-		end
-	end
-end
-
-function FactionState:showEvidenceStorage(player)
-	if player then
-		if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() then
-			player:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems)
-		end
-	end
-end
-
-function FactionState:Event_startEvidenceTruck()
-	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-		if ActionsCheck:getSingleton():isActionAllowed(client) then
-			local evObj, weapon, weaponAmmo, weaponMoney, ammoMoney
-			local totalMoney = 0
-			for i = 1, #self.m_EvidenceRoomItems do
-				evObj = self.m_EvidenceRoomItems[i]
-				if evObj and evObj[1] and evObj[1] == "Waffe" then
-					weapon = evObj[2]
-					weaponAmmo = evObj[3]
-					if weapon then
-						weapon = tonumber(weapon)
-						if AmmuNationInfo[weapon] then
-							weaponMoney  = AmmuNationInfo[weapon].Weapon
-							ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
-						else
-							weaponMoney = 500
-							ammoMoney = 0
-						end
-						if weaponMoney and ammoMoney then
-							totalMoney = totalMoney + (weaponMoney + ammoMoney)
-						end
-					end
-				end
-			end
-			if totalMoney > 0 then
-				ActionsCheck:getSingleton():setAction("Geldtransport")
-				FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
-				StateEvidenceTruck:new(client, totalMoney)
-				PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-				Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-				self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
-				sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-				self.m_EvidenceRoomItems = {}
-				triggerClientEvent(root,"State:clearEvidenceItems", root)
-			else
-				client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
-			end
-		end
 	end
 end
 

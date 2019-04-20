@@ -5,7 +5,6 @@
 -- *  PURPOSE:     ScoreGUI
 -- *
 -- ****************************************************************************
-
 ScoreGUI = inherit(GUIForm)
 inherit(Singleton, ScoreGUI)
 

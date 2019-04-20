@@ -5,12 +5,12 @@
 -- *  PURPOSE:     Heroin class client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
 DrugsHeroin = inherit( Object )
 
-
 function DrugsHeroin:constructor( )
+end
 
+function DrugsHeroin:destructor( )
 end
 
 function DrugsHeroin:onUse(  )
@@ -23,7 +23,7 @@ function DrugsHeroin:onUse(  )
   if self.m_RenderBindFunc then
     removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   end
-  self.m_ScreenSource = dxCreateScreenSource( w, h)
+  self.m_ScreenSource = dxCreateScreenSource( screenWidth, screenHeight)
   self.m_Shader = dxCreateShader( "files/shader/drug-heroinshader.fx" )
   self.m_RenderBindFunc = function() self:onRender() end
   addEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
@@ -45,7 +45,6 @@ function DrugsHeroin:stopRender( )
   end
 end
 
-
 function DrugsHeroin:onRender()
   local now = getTickCount()
   local elap = now - self.m_StartTick
@@ -56,7 +55,7 @@ function DrugsHeroin:onRender()
   dxSetShaderValue( self.m_Shader, "Amount", amount)
   dxSetShaderValue( self.m_Shader, "Width", width)
   dxSetShaderValue( self.m_Shader, "ScreenTexture", self.m_ScreenSource)
-  dxDrawImage( 0, 0, w, h , self.m_Shader)
+  dxDrawImage( 0, 0, screenWidth, screenHeight , self.m_Shader)
   if prog >= 1 then
     self.m_StartTick = getTickCount()
     self.m_EndTick = self.m_StartTick + 1000
@@ -75,8 +74,4 @@ function DrugsHeroin:onExpire()
   if self.m_Shader then
     destroyElement( self.m_Shader )
   end
-end
-
-function DrugsHeroin:destructor( )
-
 end

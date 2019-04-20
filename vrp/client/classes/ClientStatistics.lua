@@ -13,12 +13,10 @@ function ClientStatistics:constructor()
 end
 
 function ClientStatistics:Event_RequestStatistics()
-    local tX, tY = guiGetScreenSize()
-
     self.m_Data = {}
     self.m_Data = dxGetStatus()
     self.m_Data["VideoCardName"] = self.m_Data["VideoCardName"]:match("^%s*(.-)%s*$")
-    self.m_Data["Resolution"] = tX.."x"..tY
+    self.m_Data["Resolution"] = ("%sx%s"):format(screenWidth, screenHeight)
 
     if not self.m_FpsTimerStarted then
         setTimer(bind(self.getFps, self), 1000 * 60 * 5, 1)

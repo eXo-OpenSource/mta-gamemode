@@ -8,6 +8,8 @@
 VehicleHealth = inherit(GUIForm)
 inherit(Singleton, VehicleHealth)
 
+addRemoteEvents{"VehicleHealth", "VehicleHealthStop"}
+
 function VehicleHealth:constructor()
 	GUIForm.constructor(self, screenWidth/2-187/2, 150, 187, 30, false)
 	self.m_Progress = GUIProgressBar:new(0,0,self.m_Width, self.m_Height,self)
@@ -31,9 +33,9 @@ end
 
 function VehicleHealth:refresh()
 	if not localPlayer:isInVehicle() then self:stopVehicleHealth() return end
-	
+
 	self.m_Health = localPlayer.vehicle:getHealthInPercent()
-	self.m_VehicleHealthLabel:setText("Zustand: "..self.m_Health.."%") 
+	self.m_VehicleHealthLabel:setText("Zustand: "..self.m_Health.."%")
 	self.m_Progress:setProgress(self.m_Health)
 end
 
@@ -45,14 +47,12 @@ function VehicleHealth:stopVehicleHealth()
 	end
 end
 
-addEvent("VehicleHealth", true)
 addEventHandler("VehicleHealth", root,
 	function()
 		VehicleHealth:getSingleton():startVehicleHealth()
 	end
 )
 
-addEvent("VehicleHealthStop", true)
 addEventHandler("VehicleHealthStop", root,
 	function()
 		if VehicleHealth:isInstantiated() then

@@ -39,18 +39,26 @@ function ShootingRanch:constructor()
 		[2] = createColSphere(-7185.4, -2468.36, 31.5, 2),
 		[3] = createColSphere(-7185.4, -2463.43, 31.5, 2)
 	}
-	self:addTargets()
+	--self:addTargets()
 
 	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if dim and hitElement:getType() == "player" then
 			hitElement:triggerEvent("toggleRadar", false)
+			if not self.m_Targets then
+				self:addTargets()
+			end
 		end
 	end)
 
 	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
 		if dim and hitElement:getType() == "player" then
 			hitElement:triggerEvent("toggleRadar", true)
+			if #source:getElementsWithin("player") == 0 then
+				if self.m_Targets then
+					self:killTargets()
+				end
+			end
 		end
 	end)
 
@@ -188,4 +196,5 @@ function ShootingRanch:killTargets()
 		setElementData(target, "hitAble", nil)
 		target:destroy()
 	end
+	self.m_Targets = nil
 end

@@ -11,7 +11,7 @@ inherit(GUIFontContainer, VehicleInteraction)
 addRemoteEvents{"onDoorOpened", "onDoorClosed"}
 
 function VehicleInteraction:constructor()
-	self.sWidth, self.sHeight = guiGetScreenSize()
+	self.sWidth, self.sHeight = screenWidth, screenHeight
 	self.m_minDistanceToVeh = 10
 	self.m_minDistanceToComp = 2
 	self.m_interactButton = "O"
@@ -63,15 +63,14 @@ end
 
 function VehicleInteraction:render()
     if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/VehicleInteraction") end
-	local playerPos = localPlayer:getPosition()
 	self.m_lookAtVehicle = localPlayer:getWorldVehicle()
 	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getPedControlState("aim_weapon") then
 		local vehicleModel = self.m_lookAtVehicle:getModel()
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
             if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
-                local vehPos = self.m_lookAtVehicle:getPosition()
+                local vehX, vehY, vehZ = getElementPosition(self.m_lookAtVehicle)
                 local doorId = self:getDoor()
-                if getDistanceBetweenPoints3D(vehPos, playerPos) < self.m_minDistanceToVeh and doorId then
+                if getDistanceBetweenPoints3D(vehX, vehY, vehZ, getElementPosition(localPlayer)) < self.m_minDistanceToVeh and doorId then
                     if not isVehicleLocked(self.m_lookAtVehicle) then
                         local isDoorBroken = getVehicleDoorState(self.m_lookAtVehicle, doorId) == 4
                         local doorName = self.m_doorNames[doorId]
@@ -123,7 +122,7 @@ function VehicleInteraction:drawTextBox(text, count)
 	local width, height = 270, 16
 	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
 	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
-	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, self.m_Font, "center", "center", false, false, false, true, false)
+	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), self:getFontSize(), self:getFont(), "center", "center", false, false, false, true, false)
 end
 
 function VehicleInteraction:getDoor()
@@ -145,7 +144,7 @@ function VehicleInteraction:getDoor()
         end
 
         if compPos then
-            local distToComp = getDistanceBetweenPoints3D(compPos, localPlayer.position)
+            local distToComp = getDistanceBetweenPoints3D(compPos, getElementPosition(localPlayer))
             if distToComp < self.m_minDistanceToComp and distToComp < min then -- get the closest component
                 min = distToComp
                 minid = id

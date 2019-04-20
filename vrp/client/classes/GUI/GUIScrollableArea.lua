@@ -48,7 +48,7 @@ function GUIScrollableArea:draw(incache)
 	-- Absolute X = Real X for drawing on the render target
 	local refreshAbsolutePosition
 	refreshAbsolutePosition = function(element)
-		for k, v in ipairs(element.m_Children) do
+		for k, v in pairs(element.m_DrawnChildren and element.m_DrawnChildren or element.m_Children) do
 			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
 			v.m_AbsoluteY = element.m_AbsoluteY + v.m_PosY
 			refreshAbsolutePosition(v)
@@ -65,7 +65,7 @@ function GUIScrollableArea:draw(incache)
 	if self.drawThis then self:drawThis(incache) end
 
 	-- Draw children
-	for k, v in ipairs(self.m_Children) do
+	for k, v in pairs(self.m_DrawnChildren and self.m_DrawnChildren or self.m_Children) do
 		if v.draw then v:draw(incache) end
 	end
 	dxSetRenderTarget(self.m_CacheArea and self.m_CacheArea.m_RenderTarget or nil)
@@ -77,6 +77,7 @@ function GUIScrollableArea:draw(incache)
 	if GUI_DEBUG then
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 	end
+
 	dxSetBlendMode("add")
 	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_PageTarget)
 	dxSetBlendMode("blend")
@@ -84,6 +85,8 @@ end
 
 function GUIScrollableArea:clear()
 	self:clearChildren()
+
+	self.m_DrawnChildren = false
 
 	self.m_ScrollX = 0
 	self.m_ScrollY = 0
@@ -104,7 +107,7 @@ function GUIScrollableArea:setScrollPosition(x, y)
 
 	local refreshAbsolutePosition
 	refreshAbsolutePosition = function(element)
-		for k, v in ipairs(element.m_Children) do
+		for k, v in pairs(element.m_Children) do
 			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
 			v.m_AbsoluteY = element.m_AbsoluteY + v.m_PosY
 			refreshAbsolutePosition(v)
@@ -112,12 +115,13 @@ function GUIScrollableArea:setScrollPosition(x, y)
 	end
 
 	local diffX, diffY = x - oldScrollX, y - oldScrollY
-	for k, v in ipairs(self.m_Children) do
+	for k, v in pairs(self.m_Children) do
 		v.m_PosX = v.m_PosX - diffX
 		v.m_PosY = v.m_PosY + diffY
 		refreshAbsolutePosition(v)
 	end
 
+	self:updateDrawnChildren()
 	self:anyChange()
 	return self
 end
@@ -194,6 +198,15 @@ function GUIScrollableArea:onInternalMouseWheelDown()
 	end
 
 	self:setScrollPosition(scrollX, scrollY - diff)
+end
+
+function GUIScrollableArea:updateDrawnChildren()
+	self.m_DrawnChildren = {}
+	for k, v in pairs(self.m_Children) do
+		if v.m_PosY + v.m_Height > 0 and v.m_PosY < self.m_Height then
+        	table.insert(self.m_DrawnChildren, v)
+		end
+	end
 end
 
 function GUIScrollableArea:updateGrid()

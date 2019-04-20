@@ -23,6 +23,8 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
+		--Uzi:
+		setWeaponProperty(28, skill, "accuracy",1.1999999523163)
 		-- MP5:
 		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
 
@@ -122,7 +124,6 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 				end
 			end
 			target:triggerEvent("clientBloodScreen")
-			target:setHeadless(true)
 			self:killPed(target, attacker, weapon, bodypart)
 		end
 	else
@@ -145,6 +146,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 				end
 
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+				target:dropPlayerAttachedObjectOnDamage()
 			end
 		end
 	end
@@ -155,7 +157,7 @@ function Guns:killPed(target, attacker, weapon, bodypart)
 end
 
 
-function Guns:Event_OnWasted(totalAmmo, killer, weapon)
+function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 	local killer = killer
 	if isElement(killer) and getElementType(killer) == "vehicle" then
 		killer = killer.controller
@@ -169,7 +171,14 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 
 	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
 		local inv = source:getInventory()
-		ExecutionPed:new( source, weapon, bodypart)
+		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
+			source:setHeadless(true)
+			source:setReviveWeapons(source:getFaction() and not source:getFaction():isEvilFaction() and source:isFactionDuty())
+			source:dropReviveWeapons()
+			source:clearReviveWeapons()
+		else
+			ExecutionPed:new( source, weapon, bodypart)
+		end
 		if inv then
 			if inv:getItemAmount("Diebesgut") > 0 then
 				inv:removeAllItem("Diebesgut")

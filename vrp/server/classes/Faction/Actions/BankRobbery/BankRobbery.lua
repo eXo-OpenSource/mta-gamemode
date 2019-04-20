@@ -226,7 +226,7 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
 				return false
 			end
-			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers then
+			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers and not DEBUG then
 				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, self.ms_MinBankrobStateMembers))
 				return false
 			end
@@ -329,9 +329,9 @@ end
 
 function BankRobbery:getBlipVisibleTo()
 	if self.m_RobFaction:getAllianceFaction() then
-		return {faction = {self.m_RobFaction:getId(), self.m_RobFaction:getAllianceFaction():getId()}, factionType = "State"}
+		return {faction = {self.m_RobFaction:getId(), self.m_RobFaction:getAllianceFaction():getId()}, factionType = "State", duty = true}
 	else
-		return {faction = self.m_RobFaction:getId(), factionType = "State"}
+		return {faction = self.m_RobFaction:getId(), factionType = "State", duty = true}
 	end
 end
 

@@ -94,7 +94,7 @@ function GunBoxGUI:refreshData(weapons)
     	            local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
     	            self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
     	            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
-    	            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+    	            self.m_WeaponSlots[index].Image:setImage(FileModdingHelper:getSingleton():getWeaponImage(weapon.WeaponId))
     	            self.m_WeaponSlots[index].TakeButton:setEnabled(true)
     	        else
     	            self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)

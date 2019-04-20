@@ -22,11 +22,7 @@ function MechanicTow:constructor()
 	)
 
 	SpeakBubble3D:new(self.m_Ped, _"Fahrzeug freikaufen", _"Klicke mich an!")
-
-	NonCollidingArea:new(894.25, -1188.40, 16.98, 10)
-	NonCollidingArea:new(915.76, -1192.84, 16.72, 10)
-	NonCollidingArea:new(908.032, -1259.658, 15, 15)
-	-- NonCollidingArea:new(864.61, -1272.77, 15, 15)
+	NonCollisionArea:new("Cuboid", {Vector3(895.609, -1191, 16), 25, 25, 5})
 
 	self.m_BugPed = createPed(50, 850.305, -1226.058, 17.269, 290)
 	setElementData(self.m_BugPed, "clickable", true)
@@ -54,7 +50,9 @@ function MechanicTow:renderFuelHose()
 		if isElement(element) then
 			local vehicle = element:getData("attachedToVehicle")
 			if isElement(vehicle) and vehicle.towingVehicle then
-				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
+				local x, y, z = getElementPosition(vehicle)
+				local endX, endY, endZ = x+0.07, y, z-0.11
+				dxDrawLine3D(x, y, z, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
 				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
 					local worldVehicle = localPlayer:getWorldVehicle()
@@ -65,7 +63,7 @@ function MechanicTow:renderFuelHose()
 						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
 					end
 
-					if localPlayer.vehicle or (vehicle.position - element.position).length > 10 then
+					if localPlayer.vehicle or getDistanceBetweenPoints3D(x, y, z, getElementPosition(element)) > 10 then
 						self.m_RenderFuelHoles[element] = nil
 						triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
 					end

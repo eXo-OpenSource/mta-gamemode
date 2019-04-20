@@ -78,6 +78,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/objects/gasstation.dff", 1676)
 
 	--other objects
+	self:loadImportTXD("files/models/objects/Singleweed.txd", 1870)
+	self:loadImportDFF("files/models/objects/Singleweed.dff", 1870)
+	self:setLODDistance(1870, 50)
 	-- Blitzer
 	self:loadImportCOL("files/models/objects/blitzer.col", 3902)
 	self:loadImportTXD("files/models/objects/blitzer.txd", 3902)
@@ -157,6 +160,8 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/vehicles/extensions/fire_main.col", 1932)
 	self:loadImportTXD("files/models/vehicles/extensions/fire_main.txd", 1932)
 	self:loadImportDFF("files/models/vehicles/extensions/fire_main.dff", 1932)
+	self:loadImportTXD("files/models/vehicles/extensions/taxi_sign.txd", 1853)
+	self:loadImportDFF("files/models/vehicles/extensions/taxi_sign.dff", 1853)
 
 	self:loadImportDFF("files/models/vehicles/dozer.dff", 486)
 	self:loadImportDFF("files/models/vehicles/dumper.dff", 406)

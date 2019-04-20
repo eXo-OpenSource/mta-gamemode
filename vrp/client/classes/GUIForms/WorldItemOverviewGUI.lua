@@ -5,11 +5,11 @@
 -- *  PURPOSE:     overview of world items of a specified owner
 -- *
 -- ****************************************************************************
-
-
 WorldItemOverviewGUI = inherit(GUIForm)
 inherit(Singleton, WorldItemOverviewGUI)
-addRemoteEvents{"recieveWorldItemListOfOwner"}
+
+addRemoteEvents{"recieveWorldItemListOfOwner" }
+
 WorldItemOverviewGUI.Action = {
 	Mark = "Mark",
 	Collect = "Collect",
@@ -71,9 +71,8 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_DeleteBtn.onLeftClick = bind(WorldItemOverviewGUI.Event_OnActionButtonClick, self, WorldItemOverviewGUI.Action.Delete)
 end
 
-function WorldItemOverviewGUI:destructor()
+function WorldItemOverviewGUI:virtual_destructor()
 	self:updateDebugArrow(true)
-	GUIForm.destructor(self)
 end
 
 function WorldItemOverviewGUI:loadObjectsInList(tblObjects)

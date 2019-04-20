@@ -163,6 +163,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
+            if not vehicle:getGroup() ~= hitElement:getGroup() then
+                hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+                return
+            end
             if not vehicle:canBeModified()  then
                 hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
                 return
@@ -233,13 +237,13 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
         end
     end
 
-    if client:getMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
+    if client:getBankMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
         client:sendError(_("Du hast nicht genügend Geld!", client))
         return
     end
 
     if not client.m_VehicleTuningAdminMode then
-        client:transferMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
+        client:transferBankMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
     else
         StatisticsLogger:getSingleton():addAdminVehicleAction(client, "tuningShop", vehicle, toJSON(cartContent))
     end

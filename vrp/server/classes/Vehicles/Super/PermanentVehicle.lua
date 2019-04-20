@@ -236,8 +236,8 @@ function PermanentVehicle:save()
 end
 
 function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
-	return sql:queryExec("UPDATE ??_vehicles SET Model = ?, ELSPreset = ? WHERE Id = ?", sql:getPrefix(),
-    self:getModel(), self.m_ELSPreset, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Model = ?, BuyPrice = ?, ELSPreset = ? WHERE Id = ?", sql:getPrefix(),
+    self:getModel(), self.m_BuyPrice, self.m_ELSPreset, self.m_Id)
 end
 
 function PermanentVehicle:getId()

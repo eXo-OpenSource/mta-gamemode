@@ -12,11 +12,11 @@ function StreetRaceEvent:constructor()
 	local x, y, z, randomIndex = self.getRandomPosition()
 	self.m_StartIndex = randomIndex
 	self.m_BankAccountServer = BankServer.get("event.street_race")
+	self.m_onExitFunc = bind(StreetRaceEvent.onPlayerExit, self)
 end
 
 function StreetRaceEvent:onStart()
 	-- Start the countdown
-	self.m_onExitFunc = bind(StreetRaceEvent.onPlayerExit, self)
 	for k, player in pairs(self.m_Players) do
 		player:triggerEvent("countdownStart", 3)
 		player:setData("inEvent", true)
@@ -62,14 +62,14 @@ function StreetRaceEvent:onPlayerExit()
 	if source:getData("inEvent") then
 		source:sendError("Du wurdest disqualifiziert!")
 		self:quit(source)
-		removeEventHandler("onPlayerVehicleExit",source,self.m_onExitFunc)
+		removeEventHandler("onPlayerVehicleExit", source, self.m_onExitFunc)
 	end
 end
 
 function StreetRaceEvent:destructor()
 	for k, player in pairs(self.m_Players) do
 		player:setData("inEvent", false)
-		removeEventHandler("onPlayerVehicleExit",player,self.m_onExitFunc)
+		removeEventHandler("onPlayerVehicleExit", player, self.m_onExitFunc)
 	end
 
 	if self.m_DestinationBlip then
@@ -84,9 +84,8 @@ function StreetRaceEvent:destructor()
 	if self.m_TimeoutTimer and isTimer(self.m_TimeoutTimer) then
 		killTimer(self.m_TimeoutTimer)
 	end
+
 	delete(self.m_EventBlip)
-
-
 end
 
 function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)

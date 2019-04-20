@@ -370,6 +370,7 @@
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobberyManager.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
+	<script src="server/classes/Faction/StateEvidence.lua" type="server"/>
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
 	<script src="server/classes/Faction/FactionRescue.lua" type="server"/>
 	<script src="server/classes/Faction/FactionEvil.lua" type="server"/>
@@ -532,8 +533,7 @@
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/RenderTargetTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/StaticTextureReplacer.lua" type="client"/>
-	<script src="client/classes/NonCollidingArea.lua" type="client"/>
-	<script src="client/classes/NonCollidingSphere.lua" type="client"/>
+	<script src="client/classes/NonCollisionArea.lua" type="client"/>
 	<script src="client/classes/NonOcclusionZone.lua" type="client"/>
 	<script src="client/classes/NoParkingZone.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
@@ -550,7 +550,6 @@
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
-	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
@@ -558,6 +557,7 @@
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
+	<script src="client/classes/Utils/FileModdingHelper.lua" type="client"/>
 	<script src="client/classes/Utils/RadioStationManager.lua" type="client"/>
 
 	<!-- GUI system -->
@@ -608,6 +608,7 @@
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
+	<script src="client/classes/GUI/GUIWebWindow.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
@@ -643,7 +644,6 @@
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
@@ -710,11 +710,8 @@
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastError.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
 
-	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
-	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
-	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/VRPFont.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/BusRoutePlan.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
@@ -729,7 +726,6 @@
 	<script src="client/classes/HUD/Help/ElementInfoManager.lua" type="client"/>
 
 	<!-- Forms -->
-	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
@@ -758,6 +754,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
@@ -782,16 +779,15 @@
 	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehiclePerformanceGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathGUI.lua" type="client"/>
@@ -829,7 +825,6 @@
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client"/>
@@ -867,7 +862,7 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TownHallInfoGUI.lua" type="client"/>
@@ -1297,25 +1292,26 @@
 	<vrpfile src="files/images/MessageBoxes/Toast/warning.png"/>
 	<vrpfile src="files/images/MessageBoxes/Toast/error.png" />
 	<vrpfile src="files/images/MessageBoxes/Toast/success.png"/>
-	<vrpfile src="files/images/Phone/AndroidPhone.png"/>
-	<vrpfile src="files/images/Phone/iPhone.png"/>
+	<vrpfile src="files/images/Phone/Nexus_5.png"/>
+	<vrpfile src="files/images/Phone/iPhone_weiss.png"/>
+	<vrpfile src="files/images/Phone/iPhone_schwarz.png"/>
 
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconContacts.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOff.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOn.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSanNews.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconAmmuNation.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconDashboard.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconBank.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSnake.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconEPT.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNotes.png"/>
-	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconScribble.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconContacts.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconMessage.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconSettings.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconYouTube.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconOff.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconOn.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconSanNews.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconAmmuNation.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconDashboard.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconBank.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconSnake.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconNavigator.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconEPT.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_Android/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
@@ -1390,52 +1386,51 @@
 	<vrpfile src="files/images/Speedo/overlay_glass.png"/>
 	<vrpfile src="files/images/Speedo/radar_circle.png"/>
 
-
-	<vrpfile src="files/images/Weapons/AK-47.png"/>
-	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
-	<vrpfile src="files/images/Weapons/BrassKnuckles.png"/>
-	<vrpfile src="files/images/Weapons/Camera.png"/>
-	<vrpfile src="files/images/Weapons/Cane.png"/>
-	<vrpfile src="files/images/Weapons/Chainsaw.png"/>
-	<vrpfile src="files/images/Weapons/CountryRifle.png"/>
-	<vrpfile src="files/images/Weapons/Rifle.png"/>
-	<vrpfile src="files/images/Weapons/Deagle.png"/>
-	<vrpfile src="files/images/Weapons/Dildo.png"/>
-	<vrpfile src="files/images/Weapons/DildoSmall.png"/>
-	<vrpfile src="files/images/Weapons/FireExtinguisher.png"/>
-	<vrpfile src="files/images/Weapons/Fist.png"/>
-	<vrpfile src="files/images/Weapons/FlameThrower.png"/>
-	<vrpfile src="files/images/Weapons/Flowers.png"/>
-	<vrpfile src="files/images/Weapons/Golf.png"/>
-	<vrpfile src="files/images/Weapons/Grenade.png"/>
-	<vrpfile src="files/images/Weapons/Katana.png"/>
-	<vrpfile src="files/images/Weapons/Knife.png"/>
-	<vrpfile src="files/images/Weapons/M4.png"/>
-	<vrpfile src="files/images/Weapons/Minigun.png"/>
-	<vrpfile src="files/images/Weapons/Molotov.png"/>
-	<vrpfile src="files/images/Weapons/MP5.png"/>
-	<vrpfile src="files/images/Weapons/Nightstick.png"/>
-	<vrpfile src="files/images/Weapons/Nightvision.png"/>
-	<vrpfile src="files/images/Weapons/Parachute.png"/>
-	<vrpfile src="files/images/Weapons/Pistol.png"/>
-	<vrpfile src="files/images/Weapons/RocketHS.png"/>
-	<vrpfile src="files/images/Weapons/RPG.png"/>
-	<vrpfile src="files/images/Weapons/Satchel.png"/>
-	<vrpfile src="files/images/Weapons/SatchelDetonator.png"/>
-	<vrpfile src="files/images/Weapons/SawnOffShotgun.png"/>
-	<vrpfile src="files/images/Weapons/SPAZ-12.png"/>
-	<vrpfile src="files/images/Weapons/Shotgun.png"/>
-	<vrpfile src="files/images/Weapons/Shovel.png"/>
-	<vrpfile src="files/images/Weapons/Taser.png"/>
-	<vrpfile src="files/images/Weapons/Sniper.png"/>
-	<vrpfile src="files/images/Weapons/Spraycan.png"/>
-	<vrpfile src="files/images/Weapons/Teargas.png"/>
-	<vrpfile src="files/images/Weapons/TEC-9.png"/>
-	<vrpfile src="files/images/Weapons/Uzi.png"/>
-	<vrpfile src="files/images/Weapons/Vibrator.png"/>
-	<vrpfile src="files/images/Weapons/Vest.png"/>
-	<vrpfile src="files/images/Weapons/Cue.png"/>
-
+	<vrpfile src="files/images/Weapons/-1.png"/>
+	<vrpfile src="files/images/Weapons/0.png"/>
+	<vrpfile src="files/images/Weapons/1.png"/>
+	<vrpfile src="files/images/Weapons/2.png"/>
+	<vrpfile src="files/images/Weapons/3.png"/>
+	<vrpfile src="files/images/Weapons/4.png"/>
+	<vrpfile src="files/images/Weapons/5.png"/>
+	<vrpfile src="files/images/Weapons/6.png"/>
+	<vrpfile src="files/images/Weapons/7.png"/>
+	<vrpfile src="files/images/Weapons/8.png"/>
+	<vrpfile src="files/images/Weapons/9.png"/>
+	<vrpfile src="files/images/Weapons/10.png"/>
+	<vrpfile src="files/images/Weapons/11.png"/>
+	<vrpfile src="files/images/Weapons/12.png"/>
+	<vrpfile src="files/images/Weapons/14.png"/>
+	<vrpfile src="files/images/Weapons/15.png"/>
+	<vrpfile src="files/images/Weapons/16.png"/>
+	<vrpfile src="files/images/Weapons/17.png"/>
+	<vrpfile src="files/images/Weapons/18.png"/>
+	<vrpfile src="files/images/Weapons/22.png"/>
+	<vrpfile src="files/images/Weapons/23.png"/>
+	<vrpfile src="files/images/Weapons/24.png"/>
+	<vrpfile src="files/images/Weapons/25.png"/>
+	<vrpfile src="files/images/Weapons/26.png"/>
+	<vrpfile src="files/images/Weapons/27.png"/>
+	<vrpfile src="files/images/Weapons/28.png"/>
+	<vrpfile src="files/images/Weapons/29.png"/>
+	<vrpfile src="files/images/Weapons/30.png"/>
+	<vrpfile src="files/images/Weapons/31.png"/>
+	<vrpfile src="files/images/Weapons/32.png"/>
+	<vrpfile src="files/images/Weapons/33.png"/>
+	<vrpfile src="files/images/Weapons/34.png"/>
+	<vrpfile src="files/images/Weapons/35.png"/>
+	<vrpfile src="files/images/Weapons/36.png"/>
+	<vrpfile src="files/images/Weapons/37.png"/>
+	<vrpfile src="files/images/Weapons/38.png"/>
+	<vrpfile src="files/images/Weapons/39.png"/>
+	<vrpfile src="files/images/Weapons/40.png"/>
+	<vrpfile src="files/images/Weapons/41.png"/>
+	<vrpfile src="files/images/Weapons/42.png"/>
+	<vrpfile src="files/images/Weapons/43.png"/>
+	<vrpfile src="files/images/Weapons/44.png"/>
+	<vrpfile src="files/images/Weapons/45.png"/>
+	<vrpfile src="files/images/Weapons/46.png"/>
+	
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Other/info.png"/>
@@ -1619,7 +1614,7 @@
 	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
 	<vrpfile src="files/images/Nametag/San News.png"/>
 	<vrpfile src="files/images/Nametag/MT.png"/>
-
+	<vrpfile src="files/images/Nametag/LostMC.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
@@ -2330,6 +2325,8 @@
 	<vrpfile src="files/models/objects/blitzer.col"/>
 	<vrpfile src="files/models/objects/blitzer.dff"/>
 	<vrpfile src="files/models/objects/blitzer.txd"/>
+	<vrpfile src="files/models/objects/Singleweed.dff"/>
+	<vrpfile src="files/models/objects/Singleweed.txd"/>
 	<vrpfile src="files/models/objects/worldItems/mushrooms.txd"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom01.dff"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom01.col"/>
@@ -2358,6 +2355,8 @@
 	<vrpfile src="files/models/vehicles/extensions/fire_main.txd" />
 	<vrpfile src="files/models/vehicles/extensions/fire_main.dff" />
 	<vrpfile src="files/models/vehicles/extensions/fire_main.col" />
+	<vrpfile src="files/models/vehicles/extensions/taxi_sign.txd" />
+	<vrpfile src="files/models/vehicles/extensions/taxi_sign.dff" />
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>

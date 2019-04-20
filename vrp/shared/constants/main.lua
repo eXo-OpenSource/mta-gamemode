@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.8"
+PROJECT_VERSION = "1.8.1"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -22,14 +22,14 @@ MAX_FISHING_LEVEL = 15
 MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
-EVENT_EASTER = false
-EVENT_EASTER_SLOTMACHINES_ACTIVE = false
+EVENT_EASTER = true
+EVENT_EASTER_SLOTMACHINES_ACTIVE = true
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false --quests, mostly
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
 SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = true -- can users buy firework at the user meetup point`?
+FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -458,8 +458,16 @@ HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
 HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hangar", [2] = "Hangar: Unkown Hangar", [3] = "Hangar: Unkown Hangar"}
 
-WEAPONTRUCK_MAX_LOAD = 60000
-WEAPONTRUCK_MAX_LOAD_STATE = 60000
+WEAPONTRUCK_MAX_LOAD = 60000 -- Dollars
+EVIDENCETRUCK_MAX_LOAD = 60000 -- Dollars
+STATE_EVIDENCE_MAX_OBJECTS = 100000 -- dollars
+STATE_EVIDENCE_MAX_CLIPS = 50
+STATE_EVIDENCE_OBJECT_PRICE = {
+	Waffe = 1, -- * weapon cost
+	Munition = 1, -- * munition cost
+	Item = 10
+}
+
 
 PlayerAttachObjects = {
 	[1550] = {model = 1550, name = "Geldsack", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 0, 180), blockJump = true, bone = 3, placeDown = true},
@@ -489,111 +497,6 @@ AD_DURATIONS = {
 	["45 Sekunden"] = 45
 }
 
-WEAPON_NAMES = {
-	[0] = "Faust",
-	[1] = "Schlagring",
-	[2] = "Golfschläger",
-	[3] = "Schlagstock",
-	[4] = "Messer",
-	[5] = "Baseball Schläger",
-	[6] = "Schaufel",
-	[7] = "Billiard Queue",
-	[8] = "Katana",
-	[9] = "Kettensäge",
-	[10] = "Langer Dildo",
-	[11] = "Kurzer Dildo",
-	[12] = "Vibrator",
-	[14] = "Blumen",
-	[15] = "Gehstock",
-	[16] = "Granaten",
-	[17] = "Tränengas",
-	[18] = "Molotov Cocktails",
-	[22] = "9mm Pistole",
-	[23] = "Taser",
-	[24] = "Desert Eagle",
-	[25] = "Schrotflinte",
-	[26] = "Abgesägte Schrot",
-	[27] = "SPAZ-12",
-	[28] = "Uzi",
-	[29] = "MP5",
-	[30] = "AK-47",
-	[31] = "M4",
-	[32] = "TEC-9",
-	[33] = "Jagd Gewehr",
-	[34] = "Sniper",
-	[35] = "Raketenwerfer",
-	[36] = "RPG",
-	[37] = "Flammenwerfer",
-	[38] = "Minigun",
-	[39] = "Rucksack-Bomben",
-	[40] = "Bomben Auslöser",
-	[41] = "Spray-Dose",
-	[42] = "Feuerlöscher",
-	[43] = "Kamera",
-	[44] = "Nachtsicht-Gerät",
-	[45] = "Wärmesicht-Gerät",
-	[46] = "Fallschirm"
-}
-
-WEAPON_PROJECTILE =
-{
-	[17] = true,
-	[18] = true,
-	[39] = true,
-}
-
-WEAPON_CLIPS = {
-	[25] = 6,
-	[33] = 5,
-	[34] = 4
-}
-
-MIN_WEAPON_LEVELS = {
-	[0] = 0, -- Faust
-	[1] = 0, -- Schlagring
-	[2] = 0, -- Golfschläger
-	[3] = 0, -- Schlagstock
-	[4] = 0, -- Messer
-	[5] = 0, -- Baseball Schläger
-	[6] = 0, -- Schaufel
-	[7] = 0, -- Billiard Queue
-	[8] = 1, -- Katana
-	[9] = 1, -- Kettensäge
-	[10] = 0, -- Langer Pinker Dildo
-	[11] = 0, -- Kurzer Dildo
-	[12] = 0, -- Vibrator
-	[14] = 0, -- Blumen
-	[15] = 0, -- Gehstock
-	[16] = 6, -- Granaten
-	[17] = 6, -- Tränengas
-	[18] = 6, -- Molotov Cocktails
-	[22] = 3, -- 9mm Pistole
-	[23] = 3, -- Taser
-	[24] = 4, -- Desert Eagle
-	[25] = 5, -- Schrotflinte
-	[26] = 6, -- Abgesägte Schrotflinte
-	[27] = 7, -- SPAZ-12 Spezialwaffe
-	[28] = 7, -- Uzi
-	[29] = 7, -- MP5
-	[30] = 8, -- AK-47
-	[31] = 8, -- M4
-	[32] = 7, -- TEC-9
-	[33] = 7, -- Jagd Gewehr
-	[34] = 8, -- Sniper
-	[35] = 8, -- Raketenwerfer
-	[36] = 8, -- RPG
-	[37] = 8, -- Flammenwerfer
-	[38] = 10, -- Minigun
-	[39] = 8, -- Rucksack-Bomben
-	[40] = 8, -- Bomben Auslöser
-	[41] = 1, -- Spray-Dose
-	[42] = 0, -- Feuerlöscher
-	[43] = 0, -- Kamera
-	[44] = 0, -- Nachtsicht-Gerät
-	[45] = 0, -- Wärmesicht-Gerät
-	[46] = 0, -- Fallschirm"
-}
-
 BODYPART_NAMES = {
 	[3] = "Körper",
 	[4] =  "Arsch",
@@ -603,11 +506,6 @@ BODYPART_NAMES = {
 	[8] =  "Rechtes Bein",
 	[9] =  "Kopf"
 }
-
-WEAPON_IDS = {}
-for id, name in pairs(WEAPON_NAMES) do
-	WEAPON_IDS[name] = id
-end
 
 MEDIC_TIME = 180000
 DEATH_TIME = 30000

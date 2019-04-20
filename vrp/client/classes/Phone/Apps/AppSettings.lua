@@ -18,15 +18,20 @@ function AppSettings:onOpen(form)
 	GUILabel:new(10, 65, 200, 20, _"Handy", form):setColor(Color.Black)
 	self.m_PhoneChanger = GUIChanger:new(10, 85, 200, 30, form)
 	self.m_PhoneChanger.onChange =
-		function(text)
-			Phone:getSingleton():setPhone(text)
-			core:getConfig():set("Phone", "Phone", text)
+		function(modelName)
+			local modelId = PHONE_MODELS[modelName]
+			Phone:getSingleton():setPhone(modelId)
+			core:getConfig():set("Phone", "PhoneModel", modelId)
 		end
-	self.m_PhoneChanger:addItem("iPhone")
-	self.m_PhoneChanger:addItem("Android-Phone")
-	if core:get("Phone", "Phone") then
-		self.m_PhoneChanger:setSelectedItem(core:get("Phone", "Phone"))
+
+	for _, model in pairs(PHONE_MODELS) do
+		if type(model) == "table" then
+			self.m_PhoneChanger:addItem(model.Name)
+		end
 	end
+
+	local currentModelId = Phone:getSingleton().m_Phone
+	self.m_PhoneChanger:setSelectedItem(PHONE_MODELS[currentModelId].Name)
 
 	GUILabel:new(10, 130, 200, 20, _"Hintergrund", form):setColor(Color.Black)
 	self.m_BackgroundChanger = GUIChanger:new(10, 150, 200, 30, form)

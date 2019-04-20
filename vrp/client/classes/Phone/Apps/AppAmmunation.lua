@@ -180,7 +180,7 @@ function AppAmmunation:onWeaponChange(name)
 
 		if name == "Schutzweste" then
 			self.m_SelectedWeaponId = 0
-			self.m_WeaponImage:setImage("files/images/Weapons/Vest.png")
+			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(-1)) 
 			self.m_WeaponName:setText(name)
 			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon))
 			self.m_MagazineBuyBtn:setVisible(false)
@@ -189,7 +189,7 @@ function AppAmmunation:onWeaponChange(name)
 			local weaponID = WEAPON_IDS[name]
 			self.m_SelectedWeaponId = weaponID
 
-			self.m_WeaponImage:setImage(WeaponIcons[weaponID])
+			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(weaponID))
 			self.m_WeaponName:setText(_("Waffe: %s (Level: %i)", name, MIN_WEAPON_LEVELS[weaponID]))
 			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
 			if AmmuNationInfo[weaponID].Magazine then

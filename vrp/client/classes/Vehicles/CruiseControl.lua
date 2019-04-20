@@ -64,6 +64,7 @@ function CruiseControl:Tick_CruiseTimer()
 		return
 	end
 	if not vehicle:getEngineState() then
+		setPedControlState(localPlayer, "accelerate", false)
 		return
 	end
 	if getPedControlState(localPlayer, "handbrake") then

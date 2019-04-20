@@ -1,0 +1,8 @@
+<map edf:definitions="editor_main">
+    <object id="object (CJ_HOBBY_C_4) (1)" breakable="true" interior="0" alpha="255" model="2459" doublesided="false" scale="0" dimension="0" posX="1498.6" posY="-1750.2" posZ="16.5" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_HOBBY_C_4) (2)" breakable="true" interior="0" alpha="255" model="2459" doublesided="false" scale="0" dimension="0" posX="1494.8" posY="-1750.2" posZ="16.5" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_HOBBY_C_4) (3)" breakable="true" interior="0" alpha="255" model="2459" doublesided="false" scale="0" dimension="0" posX="1466" posY="-1750.3" posZ="16.5" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_HOBBY_C_4) (4)" breakable="true" interior="0" alpha="255" model="2459" doublesided="false" scale="0" dimension="0" posX="1491.8" posY="-1772.7" posZ="19.7" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_HOBBY_C_4) (5)" breakable="true" interior="0" alpha="255" model="2459" doublesided="false" scale="0" dimension="0" posX="1461.7998" posY="-1749.9004" posZ="16.5" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_HOBBY_C_4) (6)" breakable="true" interior="0" alpha="255" model="2459" doublesided="false" scale="0" dimension="0" posX="1468.5996" posY="-1772.7002" posZ="20" rotX="0" rotY="90" rotZ="0"></object>
+</map>

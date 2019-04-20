@@ -22,7 +22,7 @@ end
 
 function FerrisWheelManager:addWheel(position, rotation)
     local wheel = FerrisWheel:new(position, rotation)
-    self:registerUpdate(wheel)
+    --self:registerUpdate(wheel)
     table.insert(FerrisWheelManager.Map, wheel)
 end
 

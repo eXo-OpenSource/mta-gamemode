@@ -136,7 +136,9 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
 
-	ServiceSync:getSingleton():syncPlayer(Id)
+	if not DEBUG and SERVICE_SYNC then
+		ServiceSync:getSingleton():syncPlayer(Id)
+	end
 
 	player:loadCharacter()
 	player:spawn()
@@ -148,13 +150,10 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 
 		local jwtBase = base64Encode(header) .. "." .. base64Encode(payload)
 
-		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData)
-			player:setSessionId(jwtBase.."."..responseData)
-			setTimer(function()
-				player:setFrozen(false)
-			end, 1000, 1)
-		end)
+		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) player:setSessionId(jwtBase.."."..responseData)	end)
 	end
+
+	ServiceSync:getSingleton():syncPlayer(Id)
 end
 
 function Account.checkCharacter(Id)

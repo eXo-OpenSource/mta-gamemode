@@ -24,9 +24,9 @@ function GUIMouseMenuNoClickItem:drawThis()
 
 	-- Draw item text
 	if self.m_Icon then
-		dxDrawText(self.m_Icon, self.m_AbsoluteX + 10, self.m_AbsoluteY + 8, self.m_AbsoluteX + 5 + self.m_Height, self.m_Height - 6, self.m_TextColor, self.m_FontSize, self.m_IconFont)
-		dxDrawText(self.m_Text, self.m_AbsoluteX + 5 + self.m_Height, self.m_AbsoluteY + 3, self.m_Width - 10 - self.m_Width/10, self.m_Height - 6, self.m_TextColor, self.m_FontSize, self.m_Font)
+		dxDrawText(self.m_Icon, self.m_AbsoluteX + 10, self.m_AbsoluteY + 8, self.m_AbsoluteX + 5 + self.m_Height, self.m_Height - 6, self.m_TextColor, self:getFontSize(), getVRPFont(self.m_IconFont))
+		dxDrawText(self.m_Text, self.m_AbsoluteX + 5 + self.m_Height, self.m_AbsoluteY + 3, self.m_Width - 10 - self.m_Width/10, self.m_Height - 6, self.m_TextColor, self:getFontSize(), self:getFont())
 	else
-		dxDrawText(self.m_Text, self.m_AbsoluteX + 5, self.m_AbsoluteY + 3, self.m_Width - 10, self.m_Height - 6, self.m_TextColor, self.m_FontSize, self.m_Font)
+		dxDrawText(self.m_Text, self.m_AbsoluteX + 5, self.m_AbsoluteY + 3, self.m_Width - 10, self.m_Height - 6, self.m_TextColor, self:getFontSize(), self:getFont())
 	end
 end

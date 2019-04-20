@@ -5,16 +5,17 @@
 -- *  PURPOSE:     ItemManager client
 -- *
 -- ****************************************************************************
-
 ItemManager = inherit( Singleton )
-local w,h = guiGetScreenSize()
+addRemoteEvents{ "onClientItemUse", "onClientItemExpire" }
 
-addRemoteEvents{ "onClientItemUse", "onClientItemExpire"}
 function ItemManager:constructor( )
     self:loadEffectItems( )
 	self:initWearables()
     addEventHandler( "onClientItemUse", localPlayer, bind( ItemManager.onItemUse, self))
     addEventHandler( "onClientItemExpire", localPlayer, bind( ItemManager.onItemExpire, self))
+end
+
+function ItemManager:destructor( )
 end
 
 function ItemManager:onItemUse( Item , Expiretime)
@@ -45,7 +46,7 @@ function ItemManager:renderExpireTime( )
       removeEventHandler( "onClientRender", root, self.m_ExpireFunc )
     end
   end
-  dxDrawText( self.m_ItemExpire, 0 ,h*0.1 ,w , h, tocolor( 255,255,255,255), 1, "default-bold","center","top")
+  dxDrawText( self.m_ItemExpire, 0 ,screenHeight*0.1 ,screenWidth , screenHeight, tocolor( 255,255,255,255), 1, "default-bold","center","top")
 end
 
 function ItemManager:onItemExpire( Item )
@@ -57,21 +58,16 @@ end
 
 function ItemManager:loadEffectItems( )
   self.m_Items = {  }
-  self.m_Items["Weed"] = DrugsWeed:new();
-  self.m_Items["Heroin"] = DrugsHeroin:new();
-  self.m_Items["Shrooms"] = DrugsShroom:new();
-  self.m_Items["Kokain"] = DrugsCocaine:new();
-  self.m_Items["Weed-Samen"] = Plant:new();
+  self.m_Items["Weed"] = DrugsWeed:new()
+  self.m_Items["Heroin"] = DrugsHeroin:new()
+  self.m_Items["Shrooms"] = DrugsShroom:new()
+  self.m_Items["Kokain"] = DrugsCocaine:new()
+  self.m_Items["Weed-Samen"] = Plant:new()
 
-  ItemDestructable:new();
-  ItemSlam:new();
+  ItemDestructable:new()
+  ItemSlam:new()
 end
 
 function ItemManager:initWearables()
 	  WearableHelmet:new()
-end
-
-
-function ItemManager:destructor( )
-
 end
