@@ -44,6 +44,7 @@ function StateEvidenceGUI:constructor(evidenceTable, fillState)
 	self.m_Btn.onLeftClick = function ()
 		QuestionBox:new(_"Möchtest du wirklich einen Asservaten Geld-Truck starten?", function()
 			self:close()
+			self.m_Window:close()
 			triggerServerEvent("State:startEvidenceTruck", localPlayer)
 		end)
 	end

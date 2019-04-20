@@ -10,7 +10,7 @@ StateEvidenceTruck = inherit(Singleton)
 StateEvidenceTruck.Time = 20*60*1000 -- in ms
 StateEvidenceTruck.spawnPos = Vector3(1591.18, -1685.65, 6.02)
 StateEvidenceTruck.spawnRot = Vector3(0, 0, 0)
-StateEvidenceTruck.Destination = Vector3(119.08, 1902.07, 17.5)
+StateEvidenceTruck.Destination = Vector3(135.33, 1964.97, 19)
 StateEvidenceTruck.MoneyBagSpawns = { -- 10
 	Vector3(1581.15, -1690.91, 5.61),Vector3(1582.36, -1691.19, 5.61),Vector3(1581.64, -1691.72, 5.61),Vector3(1581.30, -1692.48, 5.61),Vector3(1582.35, -1692.36, 5.61),
 	Vector3(1583.17, -1691.73, 5.61),Vector3(1583.39, -1692.46, 5.61),Vector3(1582.48, -1692.85, 5.61),Vector3(1581.88, -1693.05, 5.61),Vector3(1583.71, -1693.12, 5.61),

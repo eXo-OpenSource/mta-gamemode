@@ -366,9 +366,14 @@ function FactionState:loadArmy(factionId)
 	areaGateBack.m_Gates[1]:setDoubleSided(true)
 	areaGateBack.onGateHit = bind(self.onBarrierGateHit, self)
 
-	--[[local areaGatesSmall = Gate:new(988, Vector3(97.400001525879, 1920.8000488281, 18), Vector3(0, 0, 270), Vector3(97.400001525879, 1924.8000488281, 18))
+	local areaGatesSmall = Gate:new(983, Vector3(97.55, 1920.5, 19.200), Vector3(0, 0, 0), Vector3(97.55, 1923.520, 19.200))
+	local collision = createObject(3049, 96.699996948242, 1921.0999755859, 17, 0, 90, 90)
+	collision:setScale(0)
 	areaGatesSmall.m_Gates[1]:setDoubleSided(true)
-	areaGatesSmall.onGateHit = bind(self.onBarrierGateHit, self)]]
+	areaGatesSmall.m_Gates[1]:setScale(1, 0.4749, 3)
+	collision:attach(areaGatesSmall.m_Gates[1], 0, 0.5, -2, 0, 90, 90)
+	areaGatesSmall.m_Gates[1]:setCollisionsEnabled(false)
+	areaGatesSmall.onGateHit = bind(self.onBarrierGateHit, self)
 
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))

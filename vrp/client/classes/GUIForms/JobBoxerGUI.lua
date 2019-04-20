@@ -37,5 +37,6 @@ function JobBoxerGUI:startButtonClick()
     if self.m_Type then
         JobBoxer:getSingleton():startJob(self.m_Type)
         self:close()
+        self.m_Window:close()
     end
 end
