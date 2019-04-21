@@ -1231,6 +1231,7 @@
 	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />
 	<vrpfile src="files/images/Events/Christmas/QuestGray.png" />
 
+	<vrpfile src="files/images/Events/BattleRoyaleBorder.png" />
 	<!-- Events End -->
 
 
@@ -2254,6 +2255,8 @@
 	<vrpfile src="files/audio/gangwar_notify.ogg" />
 
 	<vrpfile src="files/audio/sniper.ogg" />
+
+	<vrpfile src="files/audio/battleroyaledeath.ogg" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/piss.dff" />

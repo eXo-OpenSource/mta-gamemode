@@ -5,6 +5,8 @@ function AdminEvent:constructor()
     self.m_Vehicles = {}
     self.m_AuctionsPerEvent = {}
     self.m_VehiclesAmount = 0
+    self.m_WastedBind = bind(self.Event_WastedHandler, self)
+    addEventHandler("onPlayerWasted", root, self.m_WastedBind)
 end
 
 function AdminEvent:setTeleportPoint(eventManager)
@@ -228,4 +230,33 @@ function AdminEvent:outputAuctionDataToPlayer(player)
         end
     end
 
+end
+
+--EASTER EVENT: BATTLE ROYALE--
+
+function AdminEvent:activateBattleRoyaleTextures()
+    for key, player in ipairs(self.m_Players) do
+        if player and isElement(player) then
+            player:triggerEvent("adminEventCreateBattleRoyaleTextures", player)
+        end
+    end
+end
+
+function AdminEvent:deactivateBattleRoyaleTextures()
+    for key, player in ipairs(self.m_Players) do
+        if player and isElement(player) then
+            player:triggerEvent("adminEventDeleteBattleRoyaleTextures", player)
+        end
+    end
+end
+
+function AdminEvent:Event_WastedHandler(ammo, killer, killerWeapon, bodypart)
+    if self:isPlayerInEvent(source) then
+        for key, player in ipairs(self.m_Players) do
+            if player and isElement(player) then
+                outputChatBox("[EVENT]: #EE2222"..source:getName().." #FFFFFFist gefallen!", player, 255, 255, 255, true)
+                player:triggerEvent("adminEventBattleRoyaleDeath", player, source)
+            end
+        end
+    end
 end
