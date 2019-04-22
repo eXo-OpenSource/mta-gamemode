@@ -3,9 +3,9 @@ addRemoteEvents{"adminEventPrepareClient", "adminEventSendAuctionData", "adminEv
 
 function AdminEvent:constructor()
     addEventHandler("adminEventSendAuctionData", resourceRoot, bind(AdminEvent.sendAuctionData, self))
-    addEventHandler("adminEventCreateBattleRoyaleTextures", root, bind(self.createTexturesForBattleRoyale, self))
+    --[[addEventHandler("adminEventCreateBattleRoyaleTextures", root, bind(self.createTexturesForBattleRoyale, self))
     addEventHandler("adminEventDeleteBattleRoyaleTextures", root, bind(self.deleteTexturesFromBattleRoyale, self))
-    addEventHandler("adminEventBattleRoyaleDeath", root, bind(self.createDeathSign, self))
+    addEventHandler("adminEventBattleRoyaleDeath", root, bind(self.createDeathSign, self))]]
 end
 
 function AdminEvent:sendAuctionData(data)
@@ -41,7 +41,7 @@ end
 addEventHandler("adminEventPrepareClient", root, AdminEvent.start)
 
 --EASTEREVENT: BATTLE ROYALE--
-
+--[[
 function AdminEvent:createTexturesForBattleRoyale()
     local texture = dxCreateTexture("files/images/Events/BattleRoyaleBorder.png")
     local shader = dxCreateShader("files/shader/texreplace.fx")
@@ -67,3 +67,4 @@ function AdminEvent:createDeathSign(player)
     playSound("files/audio/battleroyaledeath.ogg")
     ItemFireworkRocket:new(player:getPosition())
 end
+]]--

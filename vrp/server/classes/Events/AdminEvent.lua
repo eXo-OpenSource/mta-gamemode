@@ -5,8 +5,8 @@ function AdminEvent:constructor()
     self.m_Vehicles = {}
     self.m_AuctionsPerEvent = {}
     self.m_VehiclesAmount = 0
-    self.m_WastedBind = bind(self.Event_WastedHandler, self)
-    addEventHandler("onPlayerWasted", root, self.m_WastedBind)
+    --[[self.m_WastedBind = bind(self.Event_WastedHandler, self)
+    addEventHandler("onPlayerWasted", root, self.m_WastedBind)]]
 end
 
 function AdminEvent:setTeleportPoint(eventManager)
@@ -233,7 +233,7 @@ function AdminEvent:outputAuctionDataToPlayer(player)
 end
 
 --EASTER EVENT: BATTLE ROYALE--
-
+--[[
 function AdminEvent:activateBattleRoyaleTextures()
     for key, player in ipairs(self.m_Players) do
         if player and isElement(player) then
@@ -260,3 +260,4 @@ function AdminEvent:Event_WastedHandler(ammo, killer, killerWeapon, bodypart)
         end
     end
 end
+]]
