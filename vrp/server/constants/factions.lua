@@ -305,9 +305,12 @@ factionWeaponDepotInfo = {
 
 factionWeaponDepotInfoState = {}
 for index, key in pairs(factionWeaponDepotInfo) do
+	multiplier = 4
+	if index == 34 then multiplier = 3 end
+
 	factionWeaponDepotInfoState[index] = {
-		["Waffe"] = key["Waffe"]*4,
-		["Magazine"] = key["Magazine"]*4,
+		["Waffe"] = key["Waffe"]*multiplier,
+		["Magazine"] = key["Magazine"]*multiplier,
 		["WaffenPreis"] = key["WaffenPreis"],
 		["MagazinPreis"] = key["MagazinPreis"]
 		}

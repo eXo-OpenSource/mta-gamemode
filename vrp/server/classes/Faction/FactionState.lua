@@ -1405,7 +1405,7 @@ function FactionState:isPlayerInDutyPickup(player)
 	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
-function FactionState:Event_toggleDuty(wasted, preferredSkin)
+function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 	if wasted then
 		client:removeFromVehicle()
 		client.m_WasOnDuty = true
@@ -1425,7 +1425,9 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 					self:Event_storageWeapons(client)
 					takeAllWeapons(client) -- due to attached weapons
 				end
-				client:setCorrectSkin()
+				if not dontChangeSkin then
+					client:setCorrectSkin()
+				end
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:getInventory():removeAllItem("Taser")
@@ -1439,8 +1441,9 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					--return false
+					client:triggerEvent("companyForceOffduty")
 				end
 				client:setFactionDuty(true)
 				faction:changeSkin(client, preferredSkin)

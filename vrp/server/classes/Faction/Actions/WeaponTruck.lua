@@ -122,7 +122,8 @@ function WeaponTruck:constructor(driver, boxContent, totalAmount, type)
 	self.m_Destroyed = false
 	self.m_DestroyFunc = bind(self.Event_OnWeaponTruckDestroy,self)
 
-
+	self.m_WaterCheckTimer = setTimer(bind(self.isWeaponTruckInWater, self), 10000, 0)
+	self.m_IsSubmerged = false
 
 	addRemoteEvents{"weaponTruckDeloadBox", "weaponTruckLoadBox"}
 
@@ -172,6 +173,8 @@ function WeaponTruck:destructor()
 		 	value:destroy()
 		end
 	end
+	killTimer(self.m_WaterCheckTimer)
+	if isTimer(self.m_WaterNotificationTimer) then killTimer(self.m_WaterNotificationTimer) end
 end
 
 
@@ -407,6 +410,33 @@ function WeaponTruck:Event_DeloadBox(veh)
 		end
 	else
 		client:sendError(_("Nur Fraktionisten können Kisten abladen!",client))
+	end
+end
+
+function WeaponTruck:isWeaponTruckInWater()
+	if not self.m_IsSubmerged then
+		if isElementInWater(self.m_Truck) then
+			self:forceBoxesToDrop()
+			self.m_WaterNotificationTimer = setTimer(
+				function()
+					PlayerManager:getSingleton():breakingNews("Neueste Quellen berichten, dass der Waffentruck einen Unfall hatte und ins Wasser gefahren ist!")
+				end
+			, 180000, 1)
+			self.m_IsSubmerged = true
+		end
+	end
+end
+
+function WeaponTruck:forceBoxesToDrop()
+	for key, box in pairs (getAttachedElements(self.m_Truck)) do
+		if box.model == 2912 then
+			box:setScale(1)
+			box:detach(self.m_Truck)
+			nextframe(function() --to "prevent" it from spawning in another player / vehicle (added for RTS)
+				box:setCollisionsEnabled(true)
+			end)
+			addEventHandler("onElementClicked", box, self.m_Event_onBoxClickFunc)
+		end
 	end
 end
 

@@ -168,12 +168,14 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
+function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
-				client:setCorrectSkin()
+				if not dontChangeSkin then
+					client:setCorrectSkin()
+				end
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Rescue:Type",false)
@@ -183,8 +185,9 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 			else
 				if wasted then return end
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					--return false
+					client:triggerEvent("companyForceOffduty")
 				end
 				takeAllWeapons(client)
 				if type == "fire" then

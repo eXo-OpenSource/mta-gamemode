@@ -379,17 +379,20 @@ function FactionEvil:loadDiplomacy()
 	end
 end
 
-function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferredSkin)
+function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferredSkin, dontChangeSkin)
 	local faction = player:getFaction()
 	if not state and player:isFactionDuty() then
-		player:setCorrectSkin(true)
+		if not dontChangeSkin then
+			player:setCorrectSkin(true)
+		end
 		player:setFactionDuty(false)
 		player:sendInfo(_("Du bist nun in zivil unterwegs!", player))
 		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	elseif state and not player:isFactionDuty() then
 		if player:getPublicSync("Company:Duty") and player:getCompany() then
-			player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
-			return false
+			--player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
+			--return false
+			client:triggerEvent("companyForceOffduty")
 		end
 		player:setFactionDuty(true)
 		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
@@ -405,7 +408,7 @@ function FactionEvil:isPlayerInDutyPickup(player)
 	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
-function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
+function FactionEvil:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 	if wasted then
 		client:removeFromVehicle()
 		client.m_WasOnDuty = true
@@ -417,7 +420,7 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	local faction = client:getFaction()
 	if faction:isEvilFaction() then
 		if wasted or (client.m_CurrentDutyPickup and getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10) then
-			self:setPlayerDuty(client, not client:isFactionDuty(), wasted, preferredSkin)
+			self:setPlayerDuty(client, not client:isFactionDuty(), wasted, preferredSkin, dontChangeSkin)
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end

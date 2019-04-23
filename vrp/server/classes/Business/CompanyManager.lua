@@ -352,7 +352,7 @@ function CompanyManager:Event_changeSkin()
 	end
 end
 
-function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
+function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 	if getPedOccupiedVehicle(client) and not wasted then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
@@ -360,7 +360,9 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 	if company then
 		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 or wasted then
 			if client:isCompanyDuty() then
-				client:setCorrectSkin(true)
+				if not dontChangeSkin then
+					client:setCorrectSkin(true)
+				end
 				client:setCompanyDuty(false)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
@@ -371,10 +373,11 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 				end
 			else
 				if client:isFactionDuty() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
+					--return false
+					client:triggerEvent("factionForceOffduty", true)
 				end
-				company:changeSkin(client, preferredSkin)
+				company:changeSkin(client, preferredSkin) 
 				client:setCompanyDuty(true)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))

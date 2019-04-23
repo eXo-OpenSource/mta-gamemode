@@ -1,5 +1,6 @@
 RouletteManager = inherit(Singleton)
 RouletteManager.Map = {}
+RouletteManager.Bets = {}
 
 function RouletteManager:constructor()
 	self.m_Stats = StatisticsLogger:getSingleton():getGameStats("Roulette")
@@ -31,6 +32,11 @@ end
 
 function RouletteManager:Event_spinRoulette(bets)
 	if not RouletteManager.Map[client] then return end
+	if RouletteManager.Bets[client:getId()] >= ROULETTE_MAX_BETS_PER_DAY then
+		client:sendError("Du hast heute genug Roulette gespielt, Du solltest eine Pause einlegen!")
+		client:triggerEvent("rouletteRemoveTableLock")
+		return 
+	end
 	RouletteManager.Map[client]:spin(bets)
 end
 

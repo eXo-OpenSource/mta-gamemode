@@ -13,7 +13,7 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder"}
+	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder", "factionForceOffduty"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
@@ -21,6 +21,7 @@ function FactionManager:constructor()
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
 	addEventHandler("SpeedCam:showSpeeder", localPlayer, bind(self.Event_OnSpeederCatch,self))
+	addEventHandler("factionForceOffduty", localPlayer, bind(self.factionForceOffduty, self))
 
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
@@ -215,6 +216,18 @@ function FactionManager:getFactionNames()
 		table[id] = faction:getShortName()
 	end
 	return table
+end
+
+function FactionManager:factionForceOffduty()
+	if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+		if localPlayer:getFaction():isStateFaction() then
+			triggerServerEvent("factionStateToggleDuty", localPlayer, true, false, true)
+		elseif localPlayer:getFaction():isRescueFaction() then
+			triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true, false, true)
+		elseif localPlayer:getFaction():isEvilFaction() then
+			triggerServerEvent("factionEvilToggleDuty", localPlayer, true, false, true)
+		end
+	end
 end
 
 Faction = inherit(Object)

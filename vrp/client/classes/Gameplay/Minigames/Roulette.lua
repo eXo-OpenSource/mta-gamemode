@@ -11,7 +11,7 @@ Roulette.ColorNames = {
     ["black"] = "schwarz"
 }
 
-addRemoteEvents{"rouletteOpen", "rouletteClose", "rouletteStartSpin"}
+addRemoteEvents{"rouletteOpen", "rouletteClose", "rouletteStartSpin", "rouletteRemoveTableLock"}
 
 function Roulette:constructor()
     GUIForm.constructor(self, screenWidth/2 - 1024/2, screenHeight/2-506/2, 1024, 506, false)
@@ -41,13 +41,16 @@ function Roulette:constructor()
     self:createTokens()
 
     self.m_StartSpinEvent = bind(self.Event_startSpin, self)
+    self.m_TableLockBind = bind(self.removeTableLock, self)
 
     addEventHandler("rouletteStartSpin", root, self.m_StartSpinEvent)
+    addEventHandler("rouletteRemoveTableLock", root, self.m_TableLockBind)
 end
 
 function Roulette:destructor()
     GUIForm.destructor(self)
-	removeEventHandler("rouletteStartSpin", root, self.m_StartSpinEvent)
+    removeEventHandler("rouletteStartSpin", root, self.m_StartSpinEvent)
+    removeEventHandler("rouletteRemoveTableLock", root, self.m_TableLockBind)
 end
 
 function Roulette:loadColors()
@@ -312,6 +315,10 @@ function Roulette:createTokens()
         self.m_Token[color].onLeftClick = function() self:attachTokenToMouse(color) end
         i = i+1
     end
+end
+
+function Roulette:removeTableLock()
+    self.m_TableLocked = false
 end
 
 addEventHandler("rouletteOpen", root, function()
