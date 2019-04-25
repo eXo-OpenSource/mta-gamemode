@@ -82,6 +82,7 @@
 	<map src="gangwar/KLM-GW.map" />
 	<map src="gangwar/Raffi-GW.map" />
 	<map src="gangwar/gangwar.map" />
+	<map src="gangwar/drogenlabor-lv.map" />
 
 	<map src="jobs/gabelstapler.map" />
 	<map src="jobs/logistican.map" />

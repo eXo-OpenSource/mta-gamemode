@@ -163,7 +163,7 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
-            if not vehicle:getGroup() ~= hitElement:getGroup() then
+            if not vehicle:getGroup() == hitElement:getGroup() then
                 hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
                 return
             end
