@@ -147,7 +147,7 @@ function SlotGame:evaluatePay()
         if self.m_Wins[i] then
 
             if #self.m_Wins[i] > 2 then
-                self.m_Pay = math.floor(self.m_Pay + (self.m_Bet * ((self.m_WinIcon[i]+i+#self.m_Wins[i])*0.25))) * SlotGame.Bonus
+                self.m_Pay = math.floor(self.m_Pay + (self.m_Bet * ((self.m_WinIcon[i]+i+#self.m_Wins[i])*0.25) * SlotGame.Bonus)) 
             end
         end
     end
