@@ -189,7 +189,7 @@ function Roulette:placeToken(field)
 
     local color = self.m_AttachedToken
 
-    if self:calcBet() + ROULETTE_TOKENS[color] > ROULETTE_MAX_BET then
+    if self:calcBet() + ROULETTE_TOKENS[color] > ROULETTE_MAX_BET and not (Sewers:getSingleton().m_AppliedCasino) then
         ErrorBox:new(_("Der maximal Einsatz beträgt %s!", toMoneyString(ROULETTE_MAX_BET)))
         return
     end

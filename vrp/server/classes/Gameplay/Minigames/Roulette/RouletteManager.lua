@@ -26,13 +26,13 @@ function RouletteManager:Event_delete()
 	RouletteManager.Map[client] = nil
 end
 
-function RouletteManager:Event_createRoulette()
-	RouletteManager.Map[client] = Roulette:new(client)
+function RouletteManager:Event_createRoulette(custombank)
+	RouletteManager.Map[client] = Roulette:new(client, custombank)
 end
 
 function RouletteManager:Event_spinRoulette(bets)
 	if not RouletteManager.Map[client] then return end
-	if RouletteManager.Bets[client:getId()] >= ROULETTE_MAX_BETS_PER_DAY then
+	if not Sewers:getSingleton().m_CasinoMembers[client] and RouletteManager.Bets[client:getId()] >= ROULETTE_MAX_BETS_PER_DAY then
 		client:sendError("Du hast heute genug Roulette gespielt, Du solltest eine Pause einlegen!")
 		client:triggerEvent("rouletteRemoveTableLock")
 		return 
@@ -51,6 +51,7 @@ function RouletteManager:Event_cheatSpinRoulette(bets, target)
 end
 
 function RouletteManager:setStats(sum, played)
+	if not self.m_Stats then return end -- development server fix
 	if played then
 		self.m_Stats["Played"] = self.m_Stats["Played"]+1
 	end

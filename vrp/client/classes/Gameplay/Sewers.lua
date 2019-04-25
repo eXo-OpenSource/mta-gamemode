@@ -12,7 +12,7 @@ Sewers.Textures = {  "newaterfal1_256", "LSV2"}
 Sewers.CasinoTextures = {"cj_tickm", "concretenewb256", "cj_sprunk_front", "mp_gs_libwall", "cj_don_post_1", "cj_don_post_2", "cj_tv_screen", "cj_pokerscreen2", "bigsprunkcan", "bigsprunkends", "streetsign2_256", "forlease_law", "cj_sex_sign1"}
 Sewers.TexturePath = "files/images/Textures/Sewers"
 addRemoteEvents{"Sewers:applyTexture", "Sewers:removeTexture", "Sewers:getRadioLocation",
-"Sewers:casinoApplyTexture", "Sewers:casinoRemoveTexture", "Sewers:updateCasinoRadio"}
+"Sewers:casinoApplyTexture", "Sewers:casinoRemoveTexture", "Sewers:updateCasinoRadio", "Sewers:onWinJackpot"}
 
 function Sewers:constructor()
 
@@ -184,3 +184,18 @@ function Sewers:removeInteriorTexture()
 	end
 	HUDRadar:getSingleton():show()
 end
+
+
+addEventHandler("Sewers:onWinJackpot", localPlayer, function(x, y, z)
+	setTimer(function()
+		local sfx = playSound3D("files/audio/hitsound.wav", x, y, z)
+		sfx:setVolume(3)
+		setSoundEffectEnabled(sfx, "reverb", true)
+		sfx:setDimension(3)
+		sfx:setInterior(18)
+		for i = 1, 10, 1 do
+			fxAddSparks(x, y, z, 0, 0, 2, 5, 20, 0, 0, 0, false, 0.5, 5)
+		end
+	end, 300, 10)
+end)
+

@@ -1,7 +1,7 @@
 RouletteGUI = inherit(GUIForm)
 inherit(Singleton, RouletteGUI)
 
-function RouletteGUI:constructor()
+function RouletteGUI:constructor(customBank)
     GUIForm.constructor(self, screenWidth/2-330/2, 5, 330, 105, false)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "eXo Roulette", true, true, self)
 	self.m_Window:deleteOnClose(true)
@@ -24,7 +24,7 @@ function RouletteGUI:constructor()
 ]]
     self.m_BetLabel = GUILabel:new(170, 40, 150, 25, "Gesamter Einsatz:\n0$", self.m_Window):setMultiline(true)
 
-    triggerServerEvent("rouletteCreateNew", localPlayer)
+    triggerServerEvent("rouletteCreateNew", localPlayer, customBank)
 end
 
 function RouletteGUI:virtual_destructor()

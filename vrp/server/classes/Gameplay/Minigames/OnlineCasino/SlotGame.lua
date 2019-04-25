@@ -2,13 +2,12 @@ SlotGame = inherit(Object)
 addRemoteEvents{"onOnlineSlotmachineUse", "onOnlineSlotmachineRequest"}
 
 SlotGame.Bonus = 1
+SlotGame.HighStake = false
 SlotGame.Lines  = 
 {
     {{1,1}, {2,2}, {3,3}, {4,2}, {5,1}}, --yellow
     {{1,3}, {2,2}, {3,1}, {4,2}, {5,3}}, -- red
-    {{1,1}, {2,1}, {3,1}, {4,1}, {5,1}}, -- green #2
     {{1,2}, {2,2}, {3,2}, {4,2}, {5,2}}, -- green #1
-    {{1,3}, {2,3}, {3,3}, {4,3}, {5,3}},  -- green #3
 }
 
 function SlotGame:constructor(object)
@@ -18,6 +17,7 @@ function SlotGame:constructor(object)
     self.m_Pay = 0
     self.m_Player = nil
     self.m_LastPay = 0
+    self.m_Object = object
     object:setData("clickable", true, true)
     addEventHandler("onElementClicked", object, function(button, state, player)
         if getElementData(player, "slotMachineisOpen") then return end
@@ -38,14 +38,20 @@ function SlotGame:constructor(object)
 end
 
 function SlotGame:use(data, bet)
-    if client:transferMoney(self.m_BankAccountServer, bet, "Spielothek-Einsatz", "Gameplay", "Spielothek-Automat", {silent = true}) then
-        local spin
-        self:setup(data)
-        self.m_Bet = bet or 200
-        self:spin()
-        self:evaluate()
-        self:evaluatePay()
-        client:triggerEvent("onGetOnlineCasinoResults", self.m_Spins, self.m_Wins, self.m_Pay, self.m_Pay - self.m_LastPay)
+    if bet <= 2000 or SlotGame.HighStake then
+        if client:transferMoney(self.m_BankAccountServer, bet, "Spielothek-Einsatz", "Gameplay", "Spielothek-Automat", {silent = true}) then
+            local spin
+            self:setup(data)
+            self.m_Bet = bet or 200
+            self:spin()
+            self:evaluate()
+            self:evaluatePay()
+            client:triggerEvent("onGetOnlineCasinoResults", self.m_Spins, self.m_Wins, self.m_Pay, self.m_Pay - self.m_LastPay)
+        else 
+            client:sendError(_("Du hast nicht genug Geld!", client))
+        end
+    else 
+        client:sendError(_("High-Stake Wetten sind zurzeit nicht erlaubt!", client))
     end
 end
 
@@ -53,9 +59,9 @@ function SlotGame:requestPay()
     if self.m_Player == client then 
         self.m_BankAccountServer:transferMoney(client, self.m_Pay, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
         if SlotGame.Bonus ~= 1 then 
-            client:sendShortMessage(("Dir wurden $ %s ausgezahlt! (Bonus-Faktor: %s)"):format(self.m_Pay, SlotGame.Bonus), "Spielothek")
+            client:sendShortMessage(("Dir wurden $%s ausgezahlt! (Bonus-Faktor: %s)"):format(self.m_Pay, SlotGame.Bonus), "Spielothek")
         else
-            client:sendShortMessage(("Dir wurden $ %s ausgezahlt!"):format(self.m_Pay), "Spielothek")
+            client:sendShortMessage(("Dir wurden $%s ausgezahlt!"):format(self.m_Pay), "Spielothek")
         end
         self.m_Pay = 0
     end
@@ -146,7 +152,10 @@ function SlotGame:evaluatePay()
     self.m_LastPay = self.m_Pay
     for i = 1, #self.Lines do 
         if self.m_Wins[i] then
-
+            local x, y, z = getElementPosition(self.m_Object)
+            if self.m_Bet >= 8000 then
+                setTimer(function() triggerClientEvent(getRootElement(), "onSlotmachineJackpot", getRootElement(), x, y, z) end, 2000, 1)
+            end
             if #self.m_Wins[i] > 2 then
                 self.m_Pay = math.floor(self.m_Pay + (self.m_Bet * ((self.m_WinIcon[i]+i+#self.m_Wins[i])*0.25) * SlotGame.Bonus)) 
             end

@@ -43,9 +43,7 @@ SlotGame.Lines  =
 {
     {{1,1}, {2,2}, {3,3}, {4,2}, {5,1}}, --yellow
     {{1,3}, {2,2}, {3,1}, {4,2}, {5,3}}, -- red
-    {{1,2}, {2,2}, {3,2}, {4,2}, {5,2}}, -- green #1
     {{1,1}, {2,1}, {3,1}, {4,1}, {5,1}}, -- green #2
-    {{1,3}, {2,3}, {3,3}, {4,3}, {5,3}},  -- green #3
 }
 
 SlotGame.HelpText = "Drehe mit dem Button >>Play<< \nAchtung! Dein Gewinn wird nicht sofort ausgezahlt erst wenn du den Button >Cash out< drückst!\nDein Gewinn steht oben im Feld >Win<.\nDein aktueller Einsatz im Feld >Credits<.\nDu kannst diesen mit dem Button >Bet up< und >Bet down< erhöhen/vermindern.\nGelbe Linie = 1xGewinn |Rote Linie = 2xGewinn\nObere Grüne =3xGewinn | Untere Grüne = 4x Gewinn | Mittlere Grüne = 5x Gewinn\nSymbole = Alarm < Haken < Blume < Geist < Würfel < Schildkröte (< heisst weniger Wert)"
@@ -58,6 +56,9 @@ SlotGame.BetAmount =
 	[5] = 1000, 
 	[6] = 1500, 
 	[7] = 2000,
+	[8] = 4000,
+	[9] = 8000,
+	[10] = 50000,
 }
 
 addRemoteEvents{"onOnlineCasinoShow", "onOnlineCasinoHide", "onGetOnlineCasinoResults"}
@@ -89,13 +90,13 @@ function SlotGame:constructor()
 	self.m_PayOut.onUnhover = function() self.m_PayOut:setColor(tocolor(255, 255, 255, 0)) end
 	
 	self.m_BetDown = GUIRectangle:new(self.m_Width*0.51, self.m_Height-self.m_Height*0.15, self.m_Width*0.07, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
-	self.m_BetDown.onLeftClick = function() self.m_Bet = self.m_Bet-1; if self.m_Bet < 1 then self.m_Bet = 1; end self.m_BetLabel:setText(("$ %s"):format(self.BetAmount[self.m_Bet])) end
+	self.m_BetDown.onLeftClick = function() self.m_Bet = self.m_Bet-1; if self.m_Bet < 1 then self.m_Bet = 1; end self.m_BetLabel:setText(("$%s"):format(self.BetAmount[self.m_Bet])) end
 	self.m_BetDown.onHover = function() self.m_BetDown:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_BetDown.onUnhover = function() self.m_BetDown:setColor(tocolor(255, 255, 255, 0)) end
 	
 		
 	self.m_BetUp = GUIRectangle:new(self.m_Width*0.65, self.m_Height-self.m_Height*0.15, self.m_Width*0.06, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
-	self.m_BetUp.onLeftClick = function() self.m_Bet = self.m_Bet+1;  if self.m_Bet > 7 then self.m_Bet = 7; end self.m_BetLabel:setText(("$ %s"):format(self.BetAmount[self.m_Bet])) end
+	self.m_BetUp.onLeftClick = function() self.m_Bet = self.m_Bet+1;  if self.m_Bet > 10 then self.m_Bet = 10; end self.m_BetLabel:setText(("$%s"):format(self.BetAmount[self.m_Bet])) end
 	self.m_BetUp.onHover = function() self.m_BetUp:setColor(tocolor(244, 206, 66, 100)) end
 	self.m_BetUp.onUnhover = function() self.m_BetUp:setColor(tocolor(255, 255, 255, 0)) end
 	
@@ -215,7 +216,7 @@ function SlotGame:showWin()
 		self.m_StopDisable = setTimer(function() self.m_Disable = false; self.m_Play:setColor(tocolor(244, 206, 66, 100)) end, 2500, 1)
 		self.m_WinSound = playSound("files/audio/arcade-sfx/win.ogg")
 		setSoundEffectEnabled(self.m_WinSound, "reverb", true)
-		outputChatBox(("#FFFF00[Spielothekok]#FFFFFFDu hast #00FF00$%s#FFFFFF dazu gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
+		outputChatBox(("#FFFF00[Spielothekok]#FFFFFF Du hast #00FF00$%s#FFFFFF dazu gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
 	else 
 		self.m_StopDisable = setTimer(function() self.m_Disable = false; self.m_Play:setColor(tocolor(244, 206, 66, 100)) end, 1000, 1)
 	end
