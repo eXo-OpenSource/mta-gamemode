@@ -27,7 +27,7 @@ function SlotGame:constructor(object)
                 self.m_Player = player
                 player.m_OnlineSlotMachine = self
                 if SlotGame.Bonus ~= 1 then
-                    outputChatBox(("Aktuell ist der Bonus beim Spielen bei Faktor %s"):format(SlotGame.Bonus), player)
+                    outputChatBox(("[BONUS]#FFFFFF Aktuell ist der Bonus beim Spielen bei Faktor %s"):format(SlotGame.Bonus), player, 200, 200, 0, true)
                     player:sendInfo(_("Aktuell ist der Bonus beim Spielen bei Faktor: %s!", player, SlotGame.Bonus))
                 end
 			else
