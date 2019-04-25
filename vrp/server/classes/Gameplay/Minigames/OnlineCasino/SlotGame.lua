@@ -1,6 +1,7 @@
 SlotGame = inherit(Object)
 addRemoteEvents{"onOnlineSlotmachineUse", "onOnlineSlotmachineRequest"}
 
+SlotGame.Bonus = 1
 SlotGame.Lines  = 
 {
     {{1,1}, {2,2}, {3,3}, {4,2}, {5,1}}, --yellow
@@ -25,6 +26,9 @@ function SlotGame:constructor(object)
 				player:triggerEvent("onOnlineCasinoShow")
                 self.m_Player = player
                 player.m_OnlineSlotMachine = self
+                if SlotGame.Bonus ~= 1 then
+                    player:sendInfo(_("Aktuell ist der Bonus beim Spielen bei Faktor: %s!", player, SlotGame.Bonus))
+                end
 			else
 				player:sendError(_("Der Automat ist schon in Benutzung!", player))
 			end
@@ -47,7 +51,11 @@ end
 function SlotGame:requestPay()
     if self.m_Player == client then 
         self.m_BankAccountServer:transferMoney(client, self.m_Pay, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
-        client:sendShortMessage(("Dir wurden $ %s ausgezahlt!"):format(self.m_Pay), "Spielothek")
+        if SlotGame.Bonus ~= 1 then 
+            client:sendShortMessage(("Dir wurden $ %s ausgezahlt! (Bonus-Faktor: %s)"):format(self.m_Pay, SlotGame.Bonus), "Spielothek")
+        else
+            client:sendShortMessage(("Dir wurden $ %s ausgezahlt!"):format(self.m_Pay), "Spielothek")
+        end
         self.m_Pay = 0
     end
 end
@@ -139,7 +147,7 @@ function SlotGame:evaluatePay()
         if self.m_Wins[i] then
 
             if #self.m_Wins[i] > 2 then
-                self.m_Pay = math.floor(self.m_Pay + (self.m_Bet * ((self.m_WinIcon[i]+i+#self.m_Wins[i])*0.25)))
+                self.m_Pay = math.floor(self.m_Pay + (self.m_Bet * ((self.m_WinIcon[i]+i+#self.m_Wins[i])*0.25))) * SlotGame.Bonus
             end
         end
     end

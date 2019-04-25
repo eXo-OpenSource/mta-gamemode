@@ -38,7 +38,11 @@ Sewers.EntranceExternal =
 addRemoteEvents{"Sewers:requestRadioLocation"}
 function Sewers:constructor()
     self.m_Dimension = 3
+    self.m_RadioLink = "files/audio/Ambient/BENITRATOR.mp3"
+    self.m_RadioVolume = 1
+    self.m_NoRadioReverb = false
     self.m_Entrances = {}
+    self.m_CasinoMembers = {}
     self.m_EntranceMarkers = {}
     self:createMap()
 
@@ -230,12 +234,14 @@ function Sewers:createSewerCasino()
 
     addEventHandler("onColShapeHit", self.m_EffectShape, function( hE, bDim)
         if isValidElement(hE, "player") and bDim and hE:getInterior() == 18 then
-            hE:triggerEvent("Sewers:casinoApplyTexture")
+            hE:triggerEvent("Sewers:casinoApplyTexture", self.m_RadioLink, self.m_RadioVolume, self.m_NoRadioReverb)
+            self.m_CasinoMembers[hE] = true
         end
     end)
     addEventHandler("onColShapeLeave", self.m_EffectShape, function( hE, bDim)
         if isValidElement(hE, "player") then
             hE:triggerEvent("Sewers:casinoRemoveTexture")
+            self.m_CasinoMembers[hE] = nil
         end
     end)
 
@@ -258,6 +264,19 @@ function Sewers:createSewerCasino()
     Slotmachine:new(502.22, -1703.63, 801.32, 0, 0, 90, 18, 3)
 end
 
+function Sewers:setCasinoRadio(url, volume, noreverb)
+    if url and url ~= "" then
+        self.m_RadioLink = url
+        self.m_NoRadioReverb = noreverb
+        for player, bool in pairs(self.m_CasinoMembers) do
+            player:triggerEvent("Sewers:updateCasinoRadio", url, volume or 1, noreverb)
+        end
+    end
+end
+
+function Sewers:lockCasino(state) 
+    self.m_EnterCasino.m_Locked = state
+end
 
 function Sewers:Event_onPedClick(button, state, player)
 	local faction = player:getFaction()

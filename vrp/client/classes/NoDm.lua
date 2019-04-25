@@ -47,7 +47,7 @@ function NoDm:onNoDmZoneHit(hitElement, dim)
 end
 
 function NoDm:onNoDmZoneLeave(hitElement, dim)
-	if hitElement== localPlayer and dim then
+	if hitElement== localPlayer and (dim or hitElement:getDimension() > 0) then
 		self:setPlayerNoDm(false)
 	end
 end

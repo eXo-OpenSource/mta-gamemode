@@ -73,10 +73,10 @@ function SlotGame:constructor()
 	self.m_Bet = 1
 	self.m_Table = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/OnlineCasino/overlay.png", self)
 
-	self.m_BetLabel = GUILabel:new(self.m_Width*0.09, self.m_Height*0.06, self.m_Width*0.2, self.m_Height*0.08, "$50", self):setColor(Color.Green)
-	self.m_BetLabel:setFont(FontMario256(30))
-	self.m_PayLabel = GUILabel:new(self.m_Width*0.81, self.m_Height*0.06, self.m_Width*0.2, self.m_Height*0.08, "$0", self):setColor(Color.Green)
-	self.m_PayLabel:setFont(FontMario256(30))
+	self.m_BetLabel = GUILabel:new(self.m_Width*0.09, self.m_Height*0.056, self.m_Width*0.2, self.m_Height*0.07, "$50", self):setColor(Color.Green)
+	self.m_BetLabel:setFont(VRPFont(30, Fonts.Mario256))
+	self.m_PayLabel = GUILabel:new(self.m_Width*0.81, self.m_Height*0.056, self.m_Width*0.2, self.m_Height*0.07, "$0", self):setColor(Color.Green)
+	self.m_PayLabel:setFont(VRPFont(30, Fonts.Mario256))
 	self.m_BetLabel:setText(("$ %s"):format(self.BetAmount[self.m_Bet]))
 	self.m_Help = GUIRectangle:new(self.m_Width*0.02, self.m_Height-self.m_Height*0.15, self.m_Width*0.11, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
 	self.m_Help.onLeftClick = function()  ShortMessage:new(self.HelpText, "Spielo-Automat", nil, -1) end
@@ -102,7 +102,7 @@ function SlotGame:constructor()
 
 	self.m_Play = GUIRectangle:new(self.m_Width*0.86, self.m_Height-self.m_Height*0.15, self.m_Width*0.12, self.m_Height*0.1, tocolor(100, 100, 100, 0), self)
 	self.m_Play.onLeftClick = function() self:turn() end
-	self.m_Play.onHover = function() self.m_Play:setColor(tocolor(244, 206, 66, 100)) end
+	self.m_Play.onHover = function() if not self.m_Disable then self.m_Play:setColor(tocolor(244, 206, 66, 100)) else self.m_Play:setColor(tocolor(200, 0, 0, 100))  end end
 	self.m_Play.onUnhover = function() self.m_Play:setColor(tocolor(255, 255, 255, 0)) end
 	
 	self.m_CloseBtn = GUIButton:new(self.m_Width-self.m_Width*0.03, 0, self.m_Width*0.03, self.m_Width*0.03, FontAwesomeSymbols.Close, self)
@@ -183,6 +183,7 @@ function SlotGame:Event_GetTurnResults(data, win, pay, lastpay)
 	self.m_Pay = pay
 	self.m_LastPay = lastpay
 	self.m_Disable = true
+	self.m_Play:setColor(tocolor(200, 0, 0, 100))
 end
 
 function SlotGame:showWinCondition() 
@@ -206,11 +207,19 @@ function SlotGame:showWin()
 			self:showWinLine(line)
 		end
 	end
+	if self.m_PlaySound and isElement(self.m_PlaySound) then stopSound(self.m_PlaySound) end
 	self:showWinLines()
+	if self.m_StopDisable and isTimer(self.m_StopDisable) then killTimer(self.m_StopDisable) end
+
 	if self.m_LastPay > 0 then
+		self.m_StopDisable = setTimer(function() self.m_Disable = false; self.m_Play:setColor(tocolor(244, 206, 66, 100)) end, 2500, 1)
+		self.m_WinSound = playSound("files/audio/arcade-sfx/win.ogg")
+		setSoundEffectEnabled(self.m_WinSound, "reverb", true)
 		outputChatBox(("#FFFF00[Spielothekok]#FFFFFFDu hast #00FF00$%s#FFFFFF dazu gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
+	else 
+		self.m_StopDisable = setTimer(function() self.m_Disable = false; self.m_Play:setColor(tocolor(244, 206, 66, 100)) end, 1000, 1)
 	end
-	self.m_PayLabel:setText(("$ %s"):format(self.m_Pay))
+	self.m_PayLabel:setText(("$%s"):format(self.m_Pay))
 end
 
 function SlotGame:showWinLine(index)
@@ -240,19 +249,27 @@ function SlotGame:markWinLine(index)
 end
 
 function SlotGame:spin(col, times)
+	if self.m_WinTimer and isTimer(self.m_WinTimer) then killTimer(self.m_WinTimer) end
 	local delayTime = 100
 	for i = 1, col-1 do 
 		delayTime = delayTime + (self.m_Spins[i]*50) + 100
 	end
 	setTimer(function() setTimer(bind(self.setNextImage, self), 50, times, col) end, delayTime, 1)
 	if col == 5 then 
-		setTimer(function() self:showWin(); self.m_Disable = false end, delayTime+500, 1)
+		setTimer(function() self:showWin(); end, delayTime+500, 1)
 	end
+	if self.m_WinSound and isElement(self.m_WinSound) then stopSound(self.m_WinSound) end
+	if self.m_PlaySound and isElement(self.m_PlaySound) then stopSound(self.m_PlaySound) end
+	self.m_PlaySound = playSound("files/audio/online_casino_roll.mp3", true)
+	setSoundSpeed(self.m_PlaySound, 0.8)
+	setSoundEffectEnabled(self.m_PlaySound, "reverb", true)
 end
 
 function SlotGame:forceOut() 
 	triggerServerEvent("onOnlineSlotmachineRequestPay", localPlayer)
 	triggerServerEvent("onOnlineSlotMachineForceOut", localPlayer)
+	if self.m_PlaySound and isElement(self.m_PlaySound) then stopSound(self.m_PlaySound) end
+	if self.m_WinSound and isElement(self.m_WinSound) then stopSound(self.m_WinSound) end
 end
 
 function SlotGame:turn()

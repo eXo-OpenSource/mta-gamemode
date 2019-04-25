@@ -1744,7 +1744,11 @@
 	<vrpfile src="files/images/Textures/Sewers/texCasino6.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino7.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino8.jpg"/>
-
+	<vrpfile src="files/images/Textures/Sewers/texCasino9.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino10.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino11.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino12.jpg"/>
+	<vrpfile src="files/images/Textures/Sewers/texCasino13.jpg"/>
 	<!-- onlinecasino -->
 	<vrpfile src="files/images/OnlineCasino/overlay.png"/>
 
@@ -2080,7 +2084,7 @@
 
 	<vrpfile src="files/audio/Ambient/sewer.mp3" />
 	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
-	<vrpfile src="files/audio/Ambient/spielo.ogg" />
+	<vrpfile src="files/audio/Ambient/BENITRATOR.mp3" />
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
@@ -2246,6 +2250,9 @@
 
 	<!-- Gangwar -->
 	<vrpfile src="files/audio/hitsound.wav"/>
+
+	<!-- slotcasino -->
+	<vrpfile src="files/audio/online_casino_roll.mp3"/>
 
 	<!-- Vehicle Headlight -->
 	<vrpfile src="files/audio/headlight_down.mp3" />

@@ -8,7 +8,7 @@
 InteriorEnterExit = inherit(Object)
 
 function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, enterInterior, enterDimension)
-	
+	self.m_Locked = 0 -- || 0 = unlocked, 1 = entry-locked; 2 = exit-locked; -1 any locked
 	InteriorEnterExitManager.Map[#InteriorEnterExitManager.Map+1] = self
 	self.m_Id = #InteriorEnterExitManager.Map
 	
@@ -62,12 +62,24 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 end
 
 function InteriorEnterExit:enter(player)
-	self:teleport(player, "enter", unpack(self.m_EntranceData))
+	if self.m_Locked == 0 or self.m_Locked == 2 then
+		self:teleport(player, "enter", unpack(self.m_EntranceData))
+	else 
+		player:sendInfo(_("Der Eingang ist verschlossen!", client))
+	end
 end
 
 function InteriorEnterExit:exit(player)
-	self:teleport(player, "exit", unpack(self.m_ExitData))
+	if self.m_Locked == 0  or self.m_Locked == 1 then
+		self:teleport(player, "exit", unpack(self.m_ExitData))
+	else 
+		player:sendInfo(_("Der Ausgang ist verschlossen!", client))
+	end
 end
+
+function InteriorEnterExit:setEntryLocked() self.m_Locked = 1 end
+function InteriorEnterExit:setExitLocked() self.m_Locked = 2 end
+function InteriorEnterExit:setLocked(bool) self.m_Locked = bool and -1 or 0 end
 
 function InteriorEnterExit:setMarkerType(type)
 	self.m_ExitMarker:setType(type)
