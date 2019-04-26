@@ -267,6 +267,7 @@ end
 function Sewers:setCasinoRadio(url, volume, noreverb)
     if url and url ~= "" then
         self.m_RadioLink = url
+        self.m_RadioVolume = volume
         self.m_NoRadioReverb = noreverb
         for player, bool in pairs(self.m_CasinoMembers) do
             player:triggerEvent("Sewers:updateCasinoRadio", url, volume or 1, noreverb)
