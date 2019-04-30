@@ -44,6 +44,7 @@ function BankGUI:constructor()
 
 	self.m_TransferToEdit = GUIGridEdit:new(4, 2, 7, 1, self.m_Tabs[2])
 	self.m_TransferPurposeEdit = GUIGridEdit:new(4, 4, 7, 1, self.m_Tabs[2])
+	self.m_TransferPurposeEdit:setMaxLength(20)
 	self.m_TransferAmountEdit = GUIGridEdit:new(6, 5, 5, 1, self.m_Tabs[2]):setNumeric(true, true)
 
 	local transferButton = GUIGridButton:new(1, 6, 10, 1, "Überweisen", self.m_Tabs[2])
