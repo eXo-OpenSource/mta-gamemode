@@ -108,7 +108,10 @@ function SlotGame:use(data, bet)
                 end
                 setTimer(function() 
                             local x, y, z = getElementPosition(self.m_Object)
-                            self.m_Player:triggerEvent("onShowWinOnlineCasino");
+                            if self.m_Player and isElement(self.m_Player) then
+                                
+                                self.m_Player:triggerEvent("onShowWinOnlineCasino");
+                            end
                             self.m_Spinning = false
                             if sendWin > 1 and self.m_Bet >= 50000 then 
                                 triggerClientEvent(getRootElement(), "onOnlineSlotMachineEffect", getRootElement(), sendWin, x, y, z)
