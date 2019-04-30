@@ -50,6 +50,7 @@ function InventoryManager:loadItems()
 	for i, row in ipairs(result) do
 		itemName = row["Objektname"]
 		itemData[itemName] = {}
+		itemData[itemName]["Id"] = tonumber(row["ID"]) or nil
 		itemData[itemName]["Name"] = itemName
 		itemData[itemName]["Info"] = utf8.escape(row["Info"])
 		itemData[itemName]["Tasche"] = row["Tasche"]
@@ -64,6 +65,14 @@ function InventoryManager:loadItems()
 	end
 
 	return itemData
+end
+
+function InventoryManager:getItemNameFromId(id) 
+	for itemName, data in pairs(self.m_ItemData) do 
+		if data["Id"] == id then 
+			return itemName
+		end
+	end
 end
 
 function InventoryManager:loadInventory(player)

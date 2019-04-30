@@ -335,7 +335,7 @@ function Inventory:removeItem(item, amount, value)
 						end
 					else
 						itemValue = self:getItemValueByBag(bag, place)
-						if itemValue == value then
+						if tostring(itemValue) == value then
 							return self:removeItemFromPlace(bag, place, amount, value)
 						end
 					end
@@ -364,7 +364,7 @@ function Inventory:removeAllItem(item, value)
 						return true
 					else
 						itemValue = self:getItemValueByBag(bag, place)
-						if itemValue == value then
+						if tostring(itemValue) == value then
 							self:removeItemFromPlace(bag, place)
 							return true
 						end
@@ -397,7 +397,7 @@ function Inventory:getPlaceForItem(item, itemAmount)
 	end
 end
 
-function Inventory:getItemAmount(item, inStack)
+function Inventory:getItemAmount(item, inStack, value)
 	if self.m_Debug then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
 	end
@@ -412,7 +412,11 @@ function Inventory:getItemAmount(item, inStack)
 				local id = self:getItemID(bag, place)
 				if id then
 					if self.m_Items[id]["Objekt"] == item then
-						amount = amount+self.m_Items[id]["Menge"]
+						if value and tostring(self.m_Items[id]["Value"]) == value then
+							amount = amount+self.m_Items[id]["Menge"]
+						elseif not value then
+							amount = amount+self.m_Items[id]["Menge"]
+						end
 					end
 				end
 			end
@@ -421,9 +425,16 @@ function Inventory:getItemAmount(item, inStack)
 				local id = self:getItemID(bag, place)
 				if id then
 					if self.m_Items[id]["Objekt"] == item then
-						local stackAmount = self.m_Items[id]["Menge"]
-						if stackAmount > amount then
-							amount = stackAmount
+						if value and tostring(self.m_Items[id]["Value"]) == value then
+							local stackAmount = self.m_Items[id]["Menge"]
+							if stackAmount > amount then
+								amount = stackAmount
+							end
+						elseif not value then
+							local stackAmount = self.m_Items[id]["Menge"]
+							if stackAmount > amount then
+								amount = stackAmount
+							end
 						end
 					end
 				end
@@ -449,7 +460,7 @@ function Inventory:giveItem(item, amount, value)
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
 	end
 
-	if value == "" then value = false end
+	if tostring(value) == "" then value = false end
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]

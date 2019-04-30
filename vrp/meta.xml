@@ -20,6 +20,7 @@
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
 	<script src="shared/constants/vehicle.lua" type="shared"/>
+	<script src="shared/constants/marketplace.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
@@ -350,6 +351,11 @@
 	<script src="server/classes/Business/Companies/San-News.lua" type="server"/>
 	<script src="server/classes/Business/Companies/PublicTransport.lua" type="server"/>
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
+
+	<script src="server/classes/Business/MarketPlace/MarketPlaceManager.lua" type="server"/>
+	<script src="server/classes/Business/MarketPlace/MarketOffer.lua" type="server"/>
+	<script src="server/classes/Business/MarketPlace/MarketPlace.lua" type="server"/>
+
 
 	<!-- Factions -->
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
