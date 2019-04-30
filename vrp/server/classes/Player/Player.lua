@@ -179,9 +179,7 @@ function Player:loadCharacter()
 	-- Add Payday
 	self:setNextPayday()
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
-	Async.create(function(player)
-		player.m_InventoryNew = InventoryManagerNew:getSingleton():loadInventory(player)
-	end)(self)
+	self.m_InventoryNew = InventoryManagerNew:getSingleton():getInventory(self)
 
 	-- Add binds
 	self:initialiseBinds()

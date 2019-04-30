@@ -12,13 +12,13 @@ function InventoryNew.create()
 end
 
 function InventoryNew.load(inventoryId)
-	local inventory = sql:queryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
+	local inventory = sql:asyncQueryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
 
 	if not inventory then
 		return false
 	end
 	-- TODO: Rename _inventory_items2 TO _inventory_items
-	local items = sql:queryFetch("SELECT * FROM ??_inventory_items2 WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+	local items = sql:asyncQueryFetch("SELECT ii.*, i.TechnicalName, i.CategoryId, i.Name, i.Description, i.Icon, i.ModelId, i.MaxDurability, i.Consumable, i.Tradeable, i.Expireable, i.IsUnique FROM ??_inventory_items2 ii INNER JOIN ??_items i ON i.Id = ii.ItemId WHERE InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
 
 	return InventoryNew:new(inventory, items)
 end
@@ -28,7 +28,7 @@ function InventoryNew:constructor(inventory, items)
 	self.m_ElementId = inventory.ElementId
 	self.m_ElementType = inventory.ElementType
 	self.m_Size = inventory.Size
-	self.m_AllowedCategories = fromJSON(inventory.AllowedCategories)
+	self.m_AllowedCategories = inventory.AllowedCategories == nil and {} or fromJSON(inventory.AllowedCategories)
 	if not self.m_AllowedCategories then self.m_AllowedCategories = {} end
 	self.m_IsDirty = false
 	self.m_DirtySince = 0
@@ -44,6 +44,39 @@ function InventoryNew:save(force)
 	if self.m_IsDirty then
 
 	end
+end
+
+function InventoryNew:giveItem(item, value, durability, metadata)
+	-- Does the item exist?
+	if type(item) == "string" then
+		item = InventoryManagerNew:getSingleton().m_ItemIdToName[item]
+	end
+
+	if not InventoryManagerNew:getSingleton().m_Items[item] then
+		return false
+	end
+	
+	-- TODO: Do some magical checks here
+
+	self.m_IsDirty = true
+
+	local itemData = InventoryManagerNew:getSingleton().m_Items[item]
+
+	local data = {
+		Id = -1,
+		ItemId = item,
+		Value = value,
+		Durability = durability,
+		Metadata = metadata
+	}
+
+	for k, v in pairs(itemData) do
+		if k ~= "Id" then
+			data[k] = v
+		end
+	end
+
+	table.insert(self.m_Items, data)
 end
 
 function InventoryNew:hasPlayerAccessTo(player)

@@ -37,8 +37,8 @@ function InventoryGUI:onShow()
 end
 
 function InventoryGUI:Event_syncInventory(data)
+	self.m_InventoryList:clear()
 	for k, v in pairs(data) do
-
 		self.m_InventoryList:addItem(v.Name, v.Value)
 	end
 end

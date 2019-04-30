@@ -98,7 +98,7 @@ function InventoryManagerNew:getInventory(inventoryIdOrElementType, elementId)
 			end
 		end
 
-		local result = sql:queryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		local result = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
 
 		if not result then
 			return false
@@ -120,7 +120,7 @@ function InventoryManagerNew:loadInventory(inventoryId)
 				return false
 			end
 			elementId = inventoryId[2]
-			elementType =InventoryTypes[inventoryId[1]]
+			elementType = InventoryTypes[inventoryId[1]]
 		elseif instanceof(inventoryId, Player) then
 			elementId = inventoryId.m_Id
 			elementType = InventoryTypes.Player
@@ -136,6 +136,7 @@ function InventoryManagerNew:loadInventory(inventoryId)
 		end
 
 		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ?", sql:getPrefix(), elementId, elementType)
+		
 		if not row then
 			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
 			return false

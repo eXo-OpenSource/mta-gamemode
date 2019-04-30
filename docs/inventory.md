@@ -158,6 +158,7 @@ TODO by MegaThorx
 -   ElementType int NOT NULL (1 - player, 2 - faction, 3 - company, 4 - vehicle, 5 - house, 6 - TBD)
 -   Size int NOT NULL
 -   AllowedCategories text NOT NULL (json array with types)
+-   Deleted datetime NULL
 
 ## vrp_inventory_items
 
@@ -216,6 +217,7 @@ CREATE TABLE `vrp_inventories`  (
   `ElementType` int NOT NULL,
   `Size` int NOT NULL,
   `TypeId` int NOT NULL,
+  `Deleted` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`Id`),
   FOREIGN KEY (`TypeId`) REFERENCES `vrp_inventory_types` (`Id`)
 );
