@@ -21,7 +21,8 @@ function MarketPlace:constructor(id, name, storage, bank, open)
 		self.m_Bank = BankServer.get("gameplay.marketplace")
 		self:setOpenState(open)
 		self:save()
-		self:map() -- load and store offers in a sorted table with indexes
+		self:map() -- load and store offers in a sorted table with indexes#
+		self.m_DealHandler = MarketDealHandler:new(self, 0)
 	end
 	if not self.m_Valid then
 		if DEBUG then outputDebugString( ("[Marketplace] Could not create Market due to duplicate name (%s)!"):format(name), 2) end
@@ -36,6 +37,14 @@ function MarketPlace:destructor(save)
 		end
 		if not save then
 			sql:queryExec("DELETE FROM ??_marketplaces  WHERE Id = ?", sql:getPrefix(), self.m_Id)
+			local result = sql:queryFetchSingle("SELECT COUNT(*) As Count FROM ??_marketplaces", sql:getPrefix())
+			if result then 
+				if result.Count then 
+					if result.Count == 0 then 
+						self:truncate()
+					end
+				end
+			end
 		else 
 			self:save()
 		end
@@ -55,18 +64,17 @@ function MarketPlace:map()
 				if instance and instance:isValid() then
 					loadCount = loadCount + 1
 				else
-					if not instance:isValid() then outputChatBox("not valid2") end
 					instance:delete()
 				end
 			end
 		end
-		if DEBUG then outputDebugString( ("[Marketplace] Loaded %s marketplace-offers for (Id: %s)"):format(loadCount, self.m_Name), 0, 150, 150, 0) end
+		if DEBUG then outputDebugString( ("[Marketplace] Loaded %s marketplace-offers for (Id: %s)"):format(loadCount, self:getName()), 0, 150, 150, 0) end
 	end
 end
 
 function MarketPlace:save()
 	local query = "INSERT INTO ??_marketplaces (Id, Name, Date) VALUES(?, ?,  NOW()) ON DUPLICATE KEY UPDATE Open=?, Storage=?, Bank=?"
-	sql:queryExec(query, sql:getPrefix(), self.m_Id, self.m_Name, fromboolean(self.m_Open), toJSON(self.m_Storage, true), self.m_ImaginaryBank)
+	sql:queryExec(query, sql:getPrefix(), self:getId(), self:getName(), fromboolean(self:isOpen()), toJSON(self:getStorage(), true), self:getBankAmount())
 	if self.m_Id == 0 then
 		self.m_Id = sql:lastInsertId()
 		if DEBUG then outputDebugString( ("[Marketplace] Created market (Name: %s, Id: %s)"):format(self:getName(), self:getId()), 0, 200, 200, 0) end
@@ -76,26 +84,31 @@ function MarketPlace:save()
 	MarketPlaceManager.Map[self:getId()] = self 
 end
 
+function MarketPlace:truncate() 
+	sql:queryExec("TRUNCATE ??_marketplaces", sql:getPrefix())
+	if DEBUG then outputDebugString( ("[Marketplace] Truncated %s_marketplaces"):format(sql:getPrefix()), 0, 200, 200, 200) end
+end
 
 function MarketPlace:show(player)
 	if player and isElement(player) then 
-		player:triggerEvent("Marketplace:show", self.m_Id, self.m_Offers)
+		player:triggerEvent("Marketplace:show", self:getId(), self:getMap())
 	end
 end
 
 function MarketPlace:hide(player)
 	if player and isElement(player) then 
-		player:triggerEvent("Marketplace:abort", self.m_Id)
+		player:triggerEvent("Marketplace:abort", self:getId())
 	end
 end
 
 function MarketPlace:update(player)
 	if player and isElement(player) then 
-		player:triggerEvent("Marketplace:update", self.m_Id, self.m_Offers)
+		player:triggerEvent("Marketplace:update", self:getId(), self:getMap())
 	end
 end
 
 function MarketPlace:updateAll() 
+	self.m_DealHandler:pulse()
 	for client, bool in pairs(self.m_Clients) do
 		self:update(client)
 	end
@@ -126,12 +139,10 @@ function MarketPlace:loadOffer(id, marketid, playerId, offerType, item, quantity
 	if validOffer then
 		itemValue = itemValue and tostring(itemValue) or ""
 		return MarketOffer:new(id, marketid, playerId, item, quantity, price, itemValue, offerType, category, done)
-	else 
-		outputChatBox(validOffer)
 	end
 end
 
-function MarketPlace:addOffer(playerId, offerType, item, quantity, price, itemValue)
+function MarketPlace:addOffer(playerId, offerType, item, quantity, price, itemValue, category)
 	local validOffer = self:validateOffer(playerId, offerType, item, quantity, price)
 	if validOffer then
 		local player, isOffline = DatabasePlayer.get(playerId)
@@ -158,7 +169,7 @@ function MarketPlace:addOffer(playerId, offerType, item, quantity, price, itemVa
 					return "Nicht genug Geld zum kaufen!"
 				end
 			end
-			MarketOffer:new(0, self:getId(), playerId, item, quantity, price, itemValue, offerType)
+			MarketOffer:new(0, self:getId(), playerId, item, quantity, price, itemValue, offerType, category)
 		end
 	else 
 		return validOffer
@@ -183,20 +194,20 @@ function MarketPlace:giveMoney(player, price)
 	local priorityBar = bar >= bank
 	if bar+bank >= price then 
 		if bar > price then 
-			self:transferMoney(player, self.m_Bank, price, true)
+			self:transferMoney(player, self:getBank(), price, true)
 		elseif bank > price then 
-			self:transferMoney(player:getBankAccount(), self.m_Bank, price, true)
+			self:transferMoney(player:getBankAccount(), self:getBank(), price, true)
 		else 
 			if priorityBar then
-				self:transferMoney(player, self.m_Bank, price-bank, true)
-				self:transferMoney(player:getBankAccount(), self.m_Bank, bank, true)
+				self:transferMoney(player, self:getBank(), price-bank, true)
+				self:transferMoney(player:getBankAccount(), self:getBank(), bank, true)
 				
 			else 
-				self:transferMoney(player:getBankAccount(), self.m_Bank, price-bar, true)
-				self:transferMoney(player, self.m_Bank, bar, true)
+				self:transferMoney(player:getBankAccount(), self:getBank(), price-bar, true)
+				self:transferMoney(player, self:getBank(), bar, true)
 			end
 		end
-		self.m_ImaginaryBank = self.m_ImaginaryBank + price
+		self.m_ImaginaryBank = self:getBankAmount() + price
 		return true
 	else
 		return false
@@ -204,9 +215,9 @@ function MarketPlace:giveMoney(player, price)
 end
 
 function MarketPlace:takeMoney(player, money) 
-	if self.m_ImaginaryBank - money >= 0 then
-		self.m_ImaginaryBank = self.m_ImaginaryBank - money
-		self:transferMoney(self.m_Bank, player, money, false)
+	if self:getBankAmount() - money >= 0 then
+		self.m_ImaginaryBank = self:getBankAmount() - money
+		self:transferMoney(self:getBank(), player, money, false)
 		return true
 	end
 	return false
@@ -281,8 +292,11 @@ end
 function MarketPlace:isValid() return self.m_Valid end
 function MarketPlace:isOpen() return self.m_Open end
 function MarketPlace:getId() return self.m_Id end
+function MarketPlace:getMap() return self.m_Map end
 function MarketPlace:getName() return self.m_Name end
-
+function MarketPlace:getBankAmount() return self.m_ImaginaryBank end
+function MarketPlace:getBank() return self.m_Bank end
+function MarketPlace:getStorage() return self.m_Storage end
 function MarketPlace:getStorageCount(item, value) 
 	if not self.m_Storage[item] then 
 		return 0
@@ -292,14 +306,15 @@ function MarketPlace:getStorageCount(item, value)
 	end
 	return self.m_Storage[item][value]
 end
-
-function MarketPlace:getOffer(player, item, value, offerType, price) 
-	if self.m_Offers[player] then 
-		if self.m_Offers[player][item] then 
-			if self.m_Offers[player][item][value] then 
-				if self.m_Offers[player][item][value][offerType] then 
-					if self.m_Offers[player][item][value][offerType][price] then 
-						return self.m_Offers[player][item][value][offerType][price]
+function MarketPlace:getOfferFromId(id) return self.m_Map[id] end
+function MarketPlace:getOffer() return self.m_Offers end
+function MarketPlace:getOffers(player, item, value, offerType, price) 
+	if self.m_Offers[item] then 
+		if self.m_Offers[item][value] then 
+			if self.m_Offers[item][value][offerType] then 
+				if self.m_Offers[item][value][offerType][price] then 
+					if self.m_Offers[item][value][offerType][price][player] then 
+						return self.m_Offers[item][value][offerType][price][player] 
 					end
 				end
 			end

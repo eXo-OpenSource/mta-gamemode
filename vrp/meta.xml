@@ -355,7 +355,7 @@
 	<script src="server/classes/Business/MarketPlace/MarketPlaceManager.lua" type="server"/>
 	<script src="server/classes/Business/MarketPlace/MarketOffer.lua" type="server"/>
 	<script src="server/classes/Business/MarketPlace/MarketPlace.lua" type="server"/>
-
+	<script src="server/classes/Business/MarketPlace/MarketDealHandler.lua" type="server"/>
 
 	<!-- Factions -->
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
