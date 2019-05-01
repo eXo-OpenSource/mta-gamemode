@@ -196,7 +196,7 @@ function Core:constructor()
 
 		
 		--//marketplace
-		MarketPlaceManager:new()
+		MarketPlaceManager:new():initialize()
 		
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
@@ -285,6 +285,7 @@ function Core:destructor()
 		delete(StatisticsLogger:getSingleton())
 		delete(BankServer:getSingleton())
 		ItemManager:updateOnQuit()
+		delete(MarketPlaceManager:getSingleton())
 		delete(sql) -- Very slow
 	end
 end

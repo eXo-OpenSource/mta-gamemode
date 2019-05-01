@@ -7,34 +7,42 @@
 -- ****************************************************************************
 MarketOffer = inherit(Object)
 
-function MarketOffer:constructor(market, id, playerId, item, quantity, price, value, offerType, category) 
-	self.m_Market = market
-	self.m_Item = item 
-	self.m_Value = value 
-	self.m_Type = offerType
-	self.m_Price = price
-	self.m_Quantity = quantity
-	self.m_Player = playerId
-	self.m_Category = category
-	self.m_HasSqlEntry = false
-	if not market.m_Offers[playerId] then  market.m_Offers[playerId] = {} end
-	if not market.m_Offers[playerId][item] then market.m_Offers[playerId][item] = {} end
-	if not market.m_Offers[playerId][item][value] then market.m_Offers[playerId][item][value] = {} end
-	if not market.m_Offers[playerId][item][value][offerType] then market.m_Offers[playerId][item][value][offerType] = {} end
+function MarketOffer:constructor(id, market, playerId, item, quantity, price, value, offerType, category, done) 
+	self.m_Market = MarketPlaceManager:getSingleton():getId(market)
+	self.m_Valid = false
+	if self.m_Market and self.m_Market:isValid() then
+		self.m_Valid = true
+		self.m_Item = item 
+		self.m_Value = value 
+		self.m_Type = offerType
+		self.m_Price = price
+		self.m_Quantity = quantity
+		self.m_Player = playerId
+		self.m_Done = done or false
+		self.m_Category = category or 1
 
-	if market.m_Offers[playerId][item][value][offerType][price] then 
-		local previousQuantity = market.m_Offers[playerId][item][value][offerType][price]:getQuantity()
-		market.m_Offers[playerId][item][value][offerType][price]:delete()
-		self.m_Quantity = quantity + previousQuantity
+		self.m_HasSqlEntry = false
+		if not self.m_Market.m_Offers[playerId] then  self.m_Market.m_Offers[playerId] = {} end
+		if not self.m_Market.m_Offers[playerId][item] then self.m_Market.m_Offers[playerId][item] = {} end
+		if not self.m_Market.m_Offers[playerId][item][value] then self.m_Market.m_Offers[playerId][item][value] = {} end
+		if not self.m_Market.m_Offers[playerId][item][value][offerType] then self.m_Market.m_Offers[playerId][item][value][offerType] = {} end
+
+		if self.m_Market.m_Offers[playerId][item][value][offerType][price] then 
+			local previousQuantity = self.m_Market.m_Offers[playerId][item][value][offerType][price]:getQuantity()
+			self.m_Market.m_Offers[playerId][item][value][offerType][price]:delete()
+			self.m_Quantity = quantity + previousQuantity
+		end
+
+		self.m_Market.m_Offers[playerId][item][value][offerType][price] = self
+
+		self.m_Id = id
+
+		self:save()
+		self.m_Market.m_Map[self:getId()] = self
 	end
-
-	market.m_Offers[playerId][item][value][offerType][price] = self
-	
-	self.m_Id = id
-
-	self:save()
 end
 
+function MarketOffer:isValid() return self.m_Valid end
 function MarketOffer:getItem() return self.m_Item end
 function MarketOffer:getValue() return self.m_Value end
 function MarketOffer:getType() return self.m_Type end
@@ -50,7 +58,13 @@ function MarketOffer:save()
 end
 
 
-function MarketOffer:destructor()
-	self.m_Market.m_Offers[self.m_Player][self.m_Item][self.m_Value][self.m_Type][self.m_Price] = nil
-	sql:queryExec("DELETE FROM ??_marketplace_offers  WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+function MarketOffer:destructor(save)
+	if self:isValid() then
+		if not save then
+			sql:queryExec("DELETE FROM ??_marketplace_offers  WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+		else 
+			self:save()
+		end
+		self.m_Market.m_Offers[self.m_Player][self.m_Item][self.m_Value][self.m_Type][self.m_Price] = nil
+	end
 end

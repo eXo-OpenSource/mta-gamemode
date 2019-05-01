@@ -11,17 +11,48 @@ addRemoteEvents{"Marketplace:showMarket", "Marketplace:closeMarket"}
 
 MarketPlaceManager.Map = {}
 
-function MarketPlaceManager:constructor( )
+function MarketPlaceManager:constructor()
 	addEventHandler("Marketplace:showMarket", root, bind(self.Event_showMarket, self))
 	addEventHandler("Marketplace:closeMarket", root, bind(self.Event_showMarket, self))
 	self.m_UpdateTimer = setTimer(bind(self.upatePulse, self), MARKETPLACE_UPDATE_RATE, 0)
-	MarketPlace:new(1, "General", {}, {}, 0, true) 
 end
 
-function MarketPlaceManager:destructor()
-	for id, market in pairs(self.m_Markets) do 
-		market:delete()
+function MarketPlaceManager:destructor() 
+	for id, instance in pairs(MarketPlaceManager.Map) do 
+		instance:delete(true)
 	end
+end
+
+function MarketPlaceManager:createMarket(name)
+	local instance = MarketPlace:new(0, name, {}, 0, true) 
+	if instance then 
+		if not instance.m_Valid then 
+			instance:delete()
+		else 
+			MarketPlaceManager.Map[instance.m_Id] = instance
+		end
+	end
+end
+
+function MarketPlaceManager:initialize()
+	local query = "SELECT * FROM ??_marketplaces"
+	local result = sql:queryFetch(query, sql:getPrefix())
+	local loadCount = 0
+	if result then
+		for index, row in pairs(result) do
+			local instance = MarketPlace:new(row.Id, row.Name, row.Storage, row.Bank, toboolean(row.Open))
+			if instance:isValid() then
+				loadCount = loadCount + 1
+			else 
+				instance:delete()
+			end
+		end
+	end
+	if DEBUG then outputDebugString( ("[Marketplace] Loaded %s marketplaces"):format(loadCount), 0, 200, 200, 0) end
+end
+
+function MarketPlaceManager:getId(id)
+	return MarketPlaceManager.Map[id]
 end
 
 function MarketPlaceManager:Event_showMarket(marketId)
