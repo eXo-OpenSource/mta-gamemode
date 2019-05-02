@@ -13,7 +13,7 @@ function MarketDealHandler:constructor(market, tax) -- automatically finds the b
 end
 
 function MarketDealHandler:pulse() 
-	local offers = self.m_Market:getOffer()
+	local offers = self:getMarket():getOffer()
 	if offers then
 		for item, data in pairs(offers) do 
 			for value, subdata in pairs(data) do 
@@ -27,7 +27,7 @@ function MarketDealHandler:pulse()
 							while(bestBuy and entry:getQuantity() > 0) do
 								bestBuy = self:getMaxPrice(buy, entry:getPrice()) -- get the highest FiFo buy-offer for the lowest sell price, then repeat untill everything is sold in case we have more to sell
 								if bestBuy then
-									self:deal(entry, bestBuy)
+									bestBuy = self:deal(entry, bestBuy)
 								end
 							end
 						end
@@ -57,6 +57,8 @@ function MarketDealHandler:deal(sell, buy)
 	local take = (buyQuantity >= sellQuantity and sellQuantity) or buyQuantity
 	sell:setQuantity(sellQuantity - take)
 	buy:setQuantity(buyQuantity - take)
+	MarketDeal:new(self:getMarket():getDealManager(), MARKETPLACE_EMTPY_ID, self:getMarket():getId(), sell:getId(), buy:getId(), take)
+	
 	--// todo: log this deal so buyer and seller can get their cut when visiting later
 end 
 
@@ -64,10 +66,16 @@ function MarketDealHandler:getMaxPrice(entry, limitPrice)
 	local max = 0
 	local found
 	for price, data in pairs(entry) do
-		if price >= limitPrice then
-			if price >= max then
-				max = price
-				found = true
+		if entry[price] then
+			for player, subdata in pairs(entry[price]) do
+				if subdata and subdata:getQuantity() > 0 then
+					if price >= limitPrice then
+						if price >= max then
+							max = price
+							found = true
+						end
+					end
+				end
 			end
 		end 
 	end
@@ -86,3 +94,5 @@ end
 function MarketDealHandler:destructor()
 
 end
+
+function MarketDealHandler:getMarket() return self.m_Market end

@@ -21,8 +21,9 @@ function MarketPlace:constructor(id, name, storage, bank, open)
 		self.m_Bank = BankServer.get("gameplay.marketplace")
 		self:setOpenState(open)
 		self:save()
-		self:map() -- load and store offers in a sorted table with indexes#
-		self.m_DealHandler = MarketDealHandler:new(self, 0)
+		self:map() -- load and store offers in a sorted table with indexes
+		self.m_MarketDealManager = MarketDealManager:new(self)
+		self.m_MarketDealManager:map()
 	end
 	if not self.m_Valid then
 		if DEBUG then outputDebugString( ("[Marketplace] Could not create Market due to duplicate name (%s)!"):format(name), 2) end
@@ -75,7 +76,7 @@ end
 function MarketPlace:save()
 	local query = "INSERT INTO ??_marketplaces (Id, Name, Date) VALUES(?, ?,  NOW()) ON DUPLICATE KEY UPDATE Open=?, Storage=?, Bank=?"
 	sql:queryExec(query, sql:getPrefix(), self:getId(), self:getName(), fromboolean(self:isOpen()), toJSON(self:getStorage(), true), self:getBankAmount())
-	if self.m_Id == 0 then
+	if self.m_Id == MARKTPLACE_EMTPY_ID then
 		self.m_Id = sql:lastInsertId()
 		if DEBUG then outputDebugString( ("[Marketplace] Created market (Name: %s, Id: %s)"):format(self:getName(), self:getId()), 0, 200, 200, 0) end
 	else
@@ -107,8 +108,10 @@ function MarketPlace:update(player)
 	end
 end
 
-function MarketPlace:updateAll() 
-	self.m_DealHandler:pulse()
+function MarketPlace:pulse()
+	if self:getDealManager() then
+		self:getDealManager():pulse()
+	end
 	for client, bool in pairs(self.m_Clients) do
 		self:update(client)
 	end
@@ -169,7 +172,7 @@ function MarketPlace:addOffer(playerId, offerType, item, quantity, price, itemVa
 					return "Nicht genug Geld zum kaufen!"
 				end
 			end
-			MarketOffer:new(0, self:getId(), playerId, item, quantity, price, itemValue, offerType, category)
+			MarketOffer:new(MARKETPLACE_EMTPY_ID, self:getId(), playerId, item, quantity, price, itemValue, offerType, category)
 		end
 	else 
 		return validOffer
@@ -322,3 +325,4 @@ function MarketPlace:getOffers(player, item, value, offerType, price)
 	end
 	return false
 end
+function MarketPlace:getDealManager() return self.m_MarketDealManager end

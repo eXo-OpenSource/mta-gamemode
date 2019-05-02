@@ -70,7 +70,7 @@ end
 function MarketPlaceManager:upatePulse()
 	for id, market in pairs(MarketPlaceManager.Map) do 
 		if market and market.isOpen and market:isOpen() then 
-			market:updateAll()
+			market:pulse()
 		end
 	end
 end

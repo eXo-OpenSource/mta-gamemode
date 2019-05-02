@@ -353,8 +353,13 @@
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 
 	<script src="server/classes/Business/MarketPlace/MarketPlaceManager.lua" type="server"/>
+	
 	<script src="server/classes/Business/MarketPlace/MarketOffer.lua" type="server"/>
 	<script src="server/classes/Business/MarketPlace/MarketPlace.lua" type="server"/>
+
+	<script src="server/classes/Business/MarketPlace/MarketDealManager.lua" type="server"/>
+	<script src="server/classes/Business/MarketPlace/MarketDeal.lua" type="server"/>
+
 	<script src="server/classes/Business/MarketPlace/MarketDealHandler.lua" type="server"/>
 
 	<!-- Factions -->
