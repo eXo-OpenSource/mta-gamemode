@@ -20,11 +20,11 @@ function MarketDealHandler:pulse()
 				local sell = offers[item][value]["sell"]
 				local buy = offers[item][value]["buy"]
 				if sell and buy then 
-					if table.size(buy) > 0 then
+					if table.size(buy) > 0 and table.size(sell) > 0 then
 						for index, id in ipairs(self:getSorted(sell)) do -- first-come-first-serve for selling
 							local bestBuy = true 
 							local entry = self.m_Market:getOfferFromId(id)
-							while(bestBuy and entry:getQuantity() > 0) do
+							while(entry and bestBuy and entry:getQuantity() > 0) do
 								bestBuy = self:getMaxPrice(buy, entry:getPrice()) -- get the highest FiFo buy-offer for the lowest sell price, then repeat untill everything is sold in case we have more to sell
 								if bestBuy then
 									bestBuy = self:deal(entry, bestBuy)

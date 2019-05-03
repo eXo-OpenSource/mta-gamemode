@@ -7,25 +7,31 @@
 -- ****************************************************************************
 MarketDeal = inherit(Object)
 
-function MarketDeal:constructor(manager, id, market, selloffer, buyoffer, amount, confirmTake, confirmTake) 
+function MarketDeal:constructor(manager, id, market, selloffer, buyoffer, amount, confirmTake, confirmPay) 
 	self.m_Valid = false
 	self.m_Manager = manager
 	self.m_Market = MarketPlaceManager:getSingleton():getId(market)
-	if self.m_Market and self.m_Market:isValid() and amount > 0 then 
+	if self:getMarket() and self:getMarket():isValid() and amount > 0 then 
 		self.m_Id = id
-		self.m_Sell = self.m_Market:getOfferFromId(selloffer)
-		self.m_Buy = self.m_Market:getOfferFromId(buyoffer)
+		self.m_Sell = self:getMarket():getOfferFromId(selloffer)
+		self.m_Buy = self:getMarket():getOfferFromId(buyoffer)
 		self.m_Amount = amount
 		self.m_ConfirmTake = confirmTake and fromboolean(confirmTake) or false 
 		self.m_ConfirmPay = confirmPay and fromboolean(confirmPay) or false
-		if self.m_Sell and self.m_Sell:isValid() and self.m_Buy and self.m_Buy:isValid() then 
+		if self:getSell() and self:getSell():isValid() and self:getBuy() and self:getBuy():isValid() then
+			self:getSell():setDealt(true)
+			self:getSell():save()
+			self:getBuy():setDealt(true)
+			self:getBuy():save()
 			self.m_Valid = true
 			if id == 0 then
 				self:save()
 			end
-			self.m_Manager:getMap()[self:getId()] = self
-			self.m_Manager:addToPlayerMap(self.m_Sell:getPlayer(), self)
-			self.m_Manager:addToPlayerMap(self.m_Buy:getPlayer(), self)
+			self:getManager():getMap()[self:getId()] = self
+			self:getManager():addToPlayerMap(self:getSell():getPlayer(), self)
+			self:getManager():addToPlayerMap(self:getBuy():getPlayer(), self)
+			self:getManager():addBuyerToMap(self:getBuy(), self)
+			self:getManager():addSellerToMap(self:getSell(), self)
 			self:notify()
 		end
 	end
@@ -34,10 +40,10 @@ end
 function MarketDeal:destructor(save)
 	if self:isValid() then
 		if not save then
-			if self:getBuy():getQuantity() == 0 then
+			if table.size(self:getManager():getBuyerLookup()[self:getBuy():getId()]) < 2  then
 				self:getBuy():delete()
 			end
-			if self:getSell():getQuantity() == 0 then
+			if table.size(self:getManager():getSellerLookup()[self:getSell():getId()]) < 2 then
 				self:getSell():delete()
 			end
 			sql:queryExec("DELETE FROM ??_marketplace_deals  WHERE Id = ?;", sql:getPrefix(), self:getId())
@@ -59,6 +65,8 @@ function MarketDeal:destructor(save)
 		if self:getManager():getPlayerMap()[self:getBuy():getPlayer()] then 
 			self:getManager():getPlayerMap()[self:getBuy():getPlayer()][self:getId()] = nil
 		end
+		self:getManager():removeBuyerFromMap(self:getBuy(), self)
+		self:getManager():removeSellerFromMap(self:getSell(), self)
 	end
 end
 
@@ -79,8 +87,8 @@ end
 
 function MarketDeal:save()
 	local query = "INSERT INTO ??_marketplace_deals (Id, MarketId, SellId, BuyId, Amount, Date) VALUES(?, ?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE ConfirmTake=?, ConfirmPay=?"
-	sql:queryExec(query, sql:getPrefix(), self:getId(), self.m_Market:getId(), self:getSell():getId(), self:getBuy():getId(), self:getAmount(), fromboolean(self:isTaken()), fromboolean(self:isPaid()))
-	if self.m_Id == MARKTPLACE_EMTPY_ID then
+	sql:queryExec(query, sql:getPrefix(), self:getId(), self:getMarket():getId(), self:getSell():getId(), self:getBuy():getId(), self:getAmount(), fromboolean(self:isTaken()), fromboolean(self:isPaid()))
+	if self:getId() == MARKETPLACE_EMTPY_ID then
 		self.m_Id = sql:lastInsertId()
 	end
 end

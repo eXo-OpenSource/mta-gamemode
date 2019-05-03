@@ -61,7 +61,7 @@ function MarketPlace:map()
 		local loadCount = 0
 		if result then
 			for index, row in pairs(result) do
-				local instance = self:loadOffer(row.Id, row.MarketId, row.PlayerId, row.Type, row.Item, row.Quantity, row.Price, row.Value, row.Category, fromboolean(row.Done))
+				local instance = self:loadOffer(row.Id, row.MarketId, row.PlayerId, row.Type, row.Item, row.Quantity, row.Price, row.Value, row.Category, fromboolean(row.Dealt))
 				if instance and instance:isValid() then
 					loadCount = loadCount + 1
 				else
@@ -76,7 +76,7 @@ end
 function MarketPlace:save()
 	local query = "INSERT INTO ??_marketplaces (Id, Name, Date) VALUES(?, ?,  NOW()) ON DUPLICATE KEY UPDATE Open=?, Storage=?, Bank=?"
 	sql:queryExec(query, sql:getPrefix(), self:getId(), self:getName(), fromboolean(self:isOpen()), toJSON(self:getStorage(), true), self:getBankAmount())
-	if self.m_Id == MARKTPLACE_EMTPY_ID then
+	if self.m_Id == MARKETPLACE_EMTPY_ID then
 		self.m_Id = sql:lastInsertId()
 		if DEBUG then outputDebugString( ("[Marketplace] Created market (Name: %s, Id: %s)"):format(self:getName(), self:getId()), 0, 200, 200, 0) end
 	else
@@ -185,12 +185,6 @@ function MarketPlace:add(item, itemValue)
 	self.m_Storage[item][itemValue] = self.m_Storage[item][itemValue] + 1
 end
 
-function MarketPlace:remove(item, itemValue)
-	if not self.m_Storage[item] then self.m_Storage[item] = {} end
-	if not self.m_Storage[item][itemValue] then self.m_Storage[item][itemValue] = 0 end 
-	self.m_Storage[item][itemValue] = self.m_Storage[item][itemValue] + 1
-end
-
 function MarketPlace:giveMoney(player, price) 
 	local bar = player:getMoney() 
 	local bank = player:getBankAccount():getMoney()
@@ -228,43 +222,6 @@ end
 
 function MarketPlace:transferMoney(sender, receiver, amount, type)
 	sender:transferMoney(receiver, amount, ("%s - %s"):format(self:getName(), type and "Marktplatz-Kaufangebot" or "Marktplatz-Kaufangebot Rückzahlung"), "Gameplay", "Marketplace")
-end
-
-function MarketPlace:removeOffer(playerId, offerType, item, price, itemValue)
-	local validOffer = self:validOffer(playerId, 1, offerType, item, price)
-	if validOffer then
-		itemValue = itemValue and tostring(itemValue) or ""
-		local itemName = InventoryManager:getSingleton():getItemNameFromId(item)
-		if not itemName then return "Kein Gegenstand gefunden!" end
-		local player, isOffline = DatabasePlayer.get(playerId)
-		if not isOffline then
-			local offer = self:getOffer(playerId, item, itemValue, offerType, price) 
-			if offer then 
-				local quantity = offer:getQuantity()
-				if offerType == "sell" then 
-					if self:getStorageCount(item, itemValue) - quantity >= 0 then
-						for i = 1, quantity do
-							self:remove(item, itemValue)
-							player:getInventory():giveItem(itemName, 1, self:formatItemValue(itemValue))
-						end
-					else	 
-						return "Es können nicht so viele Gegenstände rausgeholt werden!"
-					end
-				elseif offerType == "buy" then
-					if not self:takeMoney(player, price*quantity) then 
-						return "Die Bank hat kein Geld!"
-					end
-				end
-				offer:delete()
-			else
-				return "Spieler hat keinen Eintrag!"
-			end
-		else 
-			return "Spieler nicht gefunden!"
-		end
-	else 
-		return validOffer
-	end
 end
 
 function MarketPlace:validateOffer(player, quantity, offerType, item, price) 
