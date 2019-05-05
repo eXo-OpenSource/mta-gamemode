@@ -178,6 +178,7 @@ function Core:ready() --onClientResourceStart
 	VehicleTurbo:new()
 	PlaneManager:new()
 	FileModdingHelper:new()
+	PoliceAnnouncements:new()
 end
 
 function Core:afterLogin()
