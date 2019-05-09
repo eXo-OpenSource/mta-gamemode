@@ -19,7 +19,7 @@ function FactionEvil:constructor()
 	nextframe(function()
 		--self:loadLCNGates(5)
 		self:loadCartelGates(11)
-		self:loadYakGates(6)
+		--self:loadYakGates(6)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -33,6 +33,7 @@ function FactionEvil:constructor()
 		self:loadDiplomacy()
 	end)
 
+	setGarageOpen(9, true) -- Grove Street Garage
 
 	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid", "factionEvilFailedRaid", "factionEvilToggleDuty", "factionEvilRearm", "factionEvilStorageWeapons"}
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
