@@ -160,19 +160,19 @@ factionAirDropPoint[6] = Vector3(1452.09, -1443.78, 13.39)
 
 -- ID 7 = Grove
 factionRankNames[7] = {
-[0] = "Crackhead",
-[1] = "Hustler",
-[2] = "Homie",
-[3] = "Loc",
-[4] = "Jacker",
-[5] = "Hawg",
-[6] = "Shot Caller"
+[0] = "Newbie",
+[1] = "Hoody",
+[2] = "Homeboy",
+[3] = "Pimp",
+[4] = "Violent",
+[5] = "Cuzz",
+[6] = "Junkie"
 }
 factionColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52}
 factionCarColors[7] = {["r"] = 20,["g"] = 90,["b"] = 10, ["r1"] = 20,["g1"] = 90,["b1"] = 10}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [293]=true, [300]=true, [301]=true, [311]=true}
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[7] = Vector3(2522.5205078125, -1679.2890625, 15.996999740601)
+evilFactionInteriorEnter[7] = Vector3(2522.5205078125, -1679.2890625, 15.496999740601)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 factionSpawnpoint[7] = {Vector3(2501.12, -1666.82, 13.36), 0, 0}
 factionNavigationpoint[7] = evilFactionInteriorEnter[7]
