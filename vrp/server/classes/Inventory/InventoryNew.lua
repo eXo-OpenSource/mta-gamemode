@@ -61,6 +61,19 @@ function InventoryNew:giveItem(item, value, durability, metadata)
 	self.m_IsDirty = true
 
 	local itemData = InventoryManagerNew:getSingleton().m_Items[item]
+	-- itemData.IsUnique
+	-- metadata
+
+	for k, v in pairs(self.m_Items) do
+		if v.ItemId == item then
+			if (v.Metadata and #v.Metadata > 0) or metadata or itemData.MaxDurability > 0 then
+				iprint({v.Metadata, metadata, itemData.MaxDurability})
+			else
+				v.Value = v.Value + value
+				return
+			end
+		end
+	end
 
 	local data = {
 		Id = -1,
