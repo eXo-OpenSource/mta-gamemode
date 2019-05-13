@@ -692,9 +692,7 @@ function AttackSession:destroyWeaponBox()
 end
 
 function AttackSession:destroyTeamBlips()
-	for key, player in ipairs(self.m_Blips) do
-		delete(self.m_Blips[player])
-	end
+	player:triggerEvent("Gangwar:destroyTeamBlips")
 end
 
 function AttackSession:createTeamBlips()
@@ -716,13 +714,6 @@ function AttackSession:createTeamBlips()
 		elseif player:getFaction() == self.m_Faction2 then
 			visibleTo = faction2
 		end
-		for k, p in pairs(visibleTo) do
-			if p == player then
-				visibleTo[k] = visibleTo[#visibleTo]
-			end
-		end
-		self.m_Blips[player] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, visibleTo, 700, {235, 125, 15}, {235, 125, 15})
-		self.m_Blips[player]:attach(player)
-		self.m_Blips[player]:setDisplayText(player:getName(), "Gangwar-Teilnehmer")
+		player:triggerEvent("Gangwar:createTeamBlips", visibleTo)
 	end
 end
