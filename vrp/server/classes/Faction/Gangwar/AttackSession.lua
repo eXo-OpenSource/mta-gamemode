@@ -718,7 +718,7 @@ function AttackSession:createTeamBlips()
 		end
 		for k, p in pairs(visibleTo) do
 			if p == player then
-				visibleTo[k] = nil
+				visibleTo[k] = visibleTo[#visibleTo]
 			end
 		end
 		self.m_Blips[player] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, visibleTo, 700, {235, 125, 15}, {235, 125, 15})
