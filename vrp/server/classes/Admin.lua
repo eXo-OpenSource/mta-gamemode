@@ -1068,7 +1068,7 @@ local tpTable = {
         ["cjkleidung"] =    {["pos"] = Vector3(1128.82, -1452.29, 15.48),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
-        ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
+        ["mechaniker"] =    {["pos"] = Vector3(2406.46, -2089.79, 13.55),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
 		["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},

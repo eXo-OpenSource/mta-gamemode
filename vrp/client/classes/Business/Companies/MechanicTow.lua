@@ -1,7 +1,7 @@
 MechanicTow = inherit(Singleton)
 
 function MechanicTow:constructor()
-	self.m_Ped = createPed(50, 913.83, -1234.65, 16.98)
+	self.m_Ped = createPed(50, 2466.00, -2096.02, 13.55)
 	setElementData(self.m_Ped, "clickable", true)
 	self.m_Ped:setData("NPC:Immortal", true)
 	self.m_Ped:setFrozen(true)
@@ -22,9 +22,9 @@ function MechanicTow:constructor()
 	)
 
 	SpeakBubble3D:new(self.m_Ped, _"Fahrzeug freikaufen", _"Klicke mich an!")
-	NonCollisionArea:new("Cuboid", {Vector3(895.609, -1191, 16), 25, 25, 5})
+	NonCollisionArea:new("Cuboid", {Vector3(2425.22, -2143.81, 12), 23, 18, 5})
 
-	self.m_BugPed = createPed(50, 850.305, -1226.058, 17.269, 290)
+	self.m_BugPed = createPed(50, 2446.57, -2110.89, 13.55, 109.26)
 	setElementData(self.m_BugPed, "clickable", true)
 	self.m_BugPed:setData("BugChecker", true)
 	self.m_BugPed:setData("NPC:Immortal", true)

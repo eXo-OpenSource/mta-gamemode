@@ -71,10 +71,10 @@ function LocalPlayer:constructor()
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
 
-	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37)
+	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37) --hospital
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col)
 
-	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 )
+	local col2 = createColRectangle(2401.71, -2190.33, 210, 150) -- mech and tow
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col2)
 
 	local col3 = createColCuboid(1894.46, 968.18, 9.82, 1920.30-1894.46, 1018.40-968.18, 5) -- triad base

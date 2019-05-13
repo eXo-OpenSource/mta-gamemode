@@ -17,8 +17,8 @@ function CustomModelManager:constructor()
 	self:createObjectsForMods()
 
 	--world objects
-	self:loadImportCOL("files/models/buildings/mech.col", 7520)
-	self:loadImportDFF("files/models/buildings/mech.dff", 7520)
+	--self:loadImportCOL("files/models/buildings/mech.col", 7520)
+	--self:loadImportDFF("files/models/buildings/mech.dff", 7520)
 
 	--Kart-Track
 	self:loadImportCOL("files/models/buildings/kart.col", 13083)

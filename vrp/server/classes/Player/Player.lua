@@ -562,13 +562,13 @@ function Player:dropReviveWeapons()
 				end
 			end
 		end
-		nextframe( --Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
+		--[[nextframe( Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
 			function ()
 				local model = self:getModel()
 				self:setModel(0)
 				self:setModel(model)
 			end
-		)
+		)]]
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end
