@@ -31,6 +31,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_Active = true
 	self.m_DecisionEnded = false
 	self.m_Blips = {}
+	self:createTeamBlips()
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
@@ -55,7 +56,6 @@ function AttackSession:destructor()
 		killTimer( self.m_NotifiyAgainTimer )
 	end
 	self.m_Active = false
-	self:destroyTeamBlips()
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
@@ -425,6 +425,7 @@ end
 
 function AttackSession:stopClients( bNoOutput )
 	local allGangwarPlayers = {}
+	self:destroyTeamBlips()
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
 		allGangwarPlayers[#allGangwarPlayers+1] = v

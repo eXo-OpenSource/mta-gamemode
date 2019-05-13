@@ -8,7 +8,7 @@ function MechanicTow:constructor()
 	safe:setScale(0.7)
 	self:setSafe(safe)
 
-	self.m_TowColShape = createColRectangle(2659.02, -2122.29, 8.5, 10.5)
+	self.m_TowColShape = createColRectangle(2649.02, -2122.29, 18.5, 10.5)
 
 	local blip = Blip:new("CarLot.png", 2661.91, -2104.90, root, 400)
 	blip:setOptionalColor({150, 150, 150})
@@ -502,8 +502,8 @@ function MechanicTow:checkLeviathanTowing(player, vehicle)
 end
 
 MechanicTow.SpawnPositions = {
-	{2434.95, -2130.05, 13.55, 180},
-	{2434.95,  -2138.81, 13.55, 180},
+	{2434.95, -2130.05, 12.5, 270},
+	{2434.95,  -2138.81, 12.5, 270},
 	--{833.2, -1198.1, 17.70, 180},
 	--{1091.7, -1198.3, 17.70, 180},
 	--
