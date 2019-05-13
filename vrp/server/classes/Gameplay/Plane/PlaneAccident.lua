@@ -133,7 +133,7 @@ function PlaneAccident:removeRubble(button, state, player)
                                     self.m_TrashDeliveryMarker:setAlpha(255)
                                     self.m_TrashTruckLoaded = true
                                     player:sendInfo("Fahre nun die Überreste zurück zur Mech&Tow Base!")
-                                    self.m_AccidentDeliveryBlip = Blip:new("Marker.png", 869.36, -1280.87, {company = 2}, 400, {255, 255, 255}, {175, 175, 175})
+                                    self.m_AccidentDeliveryBlip = Blip:new("Marker.png", 2500, -2132.931, {company = 2}, 400, {255, 255, 255}, {175, 175, 175})
                                     self.m_AccidentMechanicBlip:delete()
                                 end
                             , 15100, 1, player)
@@ -157,7 +157,7 @@ function PlaneAccident:createTrashTruck()
     if isElement(self.m_TrashTruck) then
         self.m_TrashTruck:destroy()
     end
-    self.m_TrashTruck = TemporaryVehicle.create(455, 869.36, -1280.87, 14.77, 0) -- <- Mech&Tow Flatbed
+    self.m_TrashTruck = TemporaryVehicle.create(455, 2482.089, -2137.905, 13.985, 0) -- <- Mech&Tow Flatbed
     self.m_TrashTruck:setData("TrashTruck", true, true)
     self.m_TrashTruck:toggleRespawn(false)
     self.m_TrashTruck:setVariant(4, 3)
@@ -184,7 +184,7 @@ function PlaneAccident:createTrashTruck()
         end
     )
 
-    self.m_TrashDeliveryMarker = Marker(869.36, -1280.87, 13.3, "cylinder", 4.0, 255, 0, 0, 0)
+    self.m_TrashDeliveryMarker = Marker(2500, -2132.931, 12.5, "cylinder", 4.0, 255, 0, 0, 0)
 
     local planePos = self.m_Plane:getPosition()
     local zone = getZoneName(planePos.x, planePos.y, planePos.z)
