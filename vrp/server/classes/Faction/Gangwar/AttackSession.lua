@@ -692,7 +692,9 @@ function AttackSession:destroyWeaponBox()
 end
 
 function AttackSession:destroyTeamBlips()
-	player:triggerEvent("Gangwar:destroyTeamBlips")
+	for key, player in pairs(self.m_Participants) do
+		player:triggerEvent("Gangwar:destroyTeamBlips")
+	end
 end
 
 function AttackSession:createTeamBlips()
