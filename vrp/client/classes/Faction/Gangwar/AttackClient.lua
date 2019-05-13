@@ -258,6 +258,6 @@ end
 addEvent("Gangwar:destroyTeamBlips",true)
 function AttackClient:destroyTeamBlips()
 	for player, blip in ipairs(self.m_Blips) do
-		delete(self.m_Blips[player])
+		delete(blip)
 	end
 end

@@ -24,7 +24,7 @@ function MechanicTow:constructor()
 	SpeakBubble3D:new(self.m_Ped, _"Fahrzeug freikaufen", _"Klicke mich an!")
 	NonCollisionArea:new("Cuboid", {Vector3(2425.22, -2143.81, 12), 23, 18, 5})
 
-	self.m_BugPed = createPed(50, 2446.57, -2110.89, 13.55, 109.26)
+	self.m_BugPed = createPed(50, 2450.26, -2110.89, 13.55, 109.26)
 	setElementData(self.m_BugPed, "clickable", true)
 	self.m_BugPed:setData("BugChecker", true)
 	self.m_BugPed:setData("NPC:Immortal", true)
