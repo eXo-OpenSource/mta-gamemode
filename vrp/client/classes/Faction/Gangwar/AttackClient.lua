@@ -248,7 +248,7 @@ addEvent("Gangwar:createTeamBlips",true)
 function AttackClient:createTeamBlips(playertable)
 	for key, player in pairs(playertable) do
 		if not player == localPlayer then
-			self.m_Blips[player] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, visibleTo, 700, {235, 125, 15}, {235, 125, 15})
+			self.m_Blips[player] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
 			self.m_Blips[player]:attach(player)
 			self.m_Blips[player]:setDisplayText(player:getName(), "Anderes")
 		end
