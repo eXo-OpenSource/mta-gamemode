@@ -407,9 +407,10 @@ GAS_STATIONS = {
 	{
 		name = "M&T",
 		stations = {
-			{Vector3(877, -1184.6, 17.8), 90, 1},
+			{Vector3(2450.25, -2089.645, 14.1), 0, 1},
+			{Vector3(2452.1499, -2089.6445, 14.1), 0, 1}
 		},
-		accessible =  {2, CompanyStaticId.MECHANIC},
+		accessible =  {2, CompanyStaticId.MECHANIC}, 
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},

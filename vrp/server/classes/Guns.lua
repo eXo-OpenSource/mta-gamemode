@@ -169,7 +169,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 
-	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
+	if not killer and (not source:getData("isInDeathMatch") and not source:getData("inWare")) then
 		local inv = source:getInventory()
 		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
 			source:setHeadless(true)

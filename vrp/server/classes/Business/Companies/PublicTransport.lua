@@ -444,6 +444,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		if not vehicle or getElementModel(vehicle) ~= 437 then
 			return
 		end
+		if not player:getCompany() or not player:getCompany() == self then return end
 
 		-- Check if this is really the destination bus stop
 		local lastId = vehicle.Bus_LastStop

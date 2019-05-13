@@ -7,6 +7,7 @@
 -- ****************************************************************************
 AttackSession = inherit(Object)
 addRemoteEvents{"GangwarPick:submit"}
+GANGWAR_TEAMBLIPS = true
 
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
 function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPlayer )
@@ -682,5 +683,35 @@ function AttackSession:destroyWeaponBox()
 			self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:forceClose")
 		end
 		self.m_WeaponBoxAttendants = {}
+	end
+end
+
+function AttackSession:destroyTeamBlips()
+	for key, player in ipairs(self.m_Blips) do
+		delete(self.m_Blips[player])
+	end
+end
+
+function AttackSession:createTeamBlips()
+	if GANGWAR_TEAMBLIPS == false then return end
+	self.m_Blips = {}
+	local faction1 = {}
+	local faction2 = {}
+	for key, player in pairs(self.m_Participants) do
+		if player:getFaction() == self.m_Faction1 then
+			faction1[#faction1+1] = player
+		elseif player:getFaction() == self.m_Faction2 then
+			faction2[#faction2+1] = player
+		end
+	end
+	for key, player in pairs(self.m_Participants) do
+		if player:getFaction() == self.m_Faction1 then
+			visibleTo = faction1
+		elseif player:getFaction() == self.m_Faction2 then
+			visibleTo = faction2
+		end
+		self.m_Blips[player] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, visibleTo, 700, {235, 125, 15}, {235, 125, 15})
+		self.m_Blips[player]:attach(player)
+		self.m_Blips[player]:setDisplayText(player:getName(), "Gangwar-Teilnehmer")
 	end
 end
