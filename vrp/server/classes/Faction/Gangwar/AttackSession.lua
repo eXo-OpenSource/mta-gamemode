@@ -30,6 +30,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self:createWeaponBox()
 	self.m_Active = true
 	self.m_DecisionEnded = false
+	self.m_Blips = {}
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
@@ -54,6 +55,7 @@ function AttackSession:destructor()
 		killTimer( self.m_NotifiyAgainTimer )
 	end
 	self.m_Active = false
+	self:destroyTeamBlips()
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
@@ -224,10 +226,12 @@ function AttackSession:joinPlayer( player )
 			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
 		end
 	end
+	self:createTeamBlips()
 end
 
 function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
+	self:createTeamBlips()
 end
 
 function AttackSession:onPurposlyDisqualify( player, bAfk, bPick)
@@ -537,6 +541,7 @@ function AttackSession:onDecisionTimeEnd()
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
 		v:triggerEvent("GangwarPick:close")
 	end
+	self:createTeamBlips()
 	self.m_DecisionEnded = true
 end
 
@@ -694,6 +699,7 @@ end
 
 function AttackSession:createTeamBlips()
 	if GANGWAR_TEAMBLIPS == false then return end
+	self:destroyTeamBlips()
 	self.m_Blips = {}
 	local faction1 = {}
 	local faction2 = {}
@@ -709,6 +715,11 @@ function AttackSession:createTeamBlips()
 			visibleTo = faction1
 		elseif player:getFaction() == self.m_Faction2 then
 			visibleTo = faction2
+		end
+		for k, p in pairs(visibleTo) do
+			if p == player then
+				visibleTo[k] = nil
+			end
 		end
 		self.m_Blips[player] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, visibleTo, 700, {235, 125, 15}, {235, 125, 15})
 		self.m_Blips[player]:attach(player)
