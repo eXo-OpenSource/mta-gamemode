@@ -169,7 +169,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 
-	if not killer and (not source:getData("isInDeathMatch") and not source:getData("inWare")) then
+	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
 		local inv = source:getInventory()
 		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
 			source:setHeadless(true)
@@ -177,7 +177,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 			source:dropReviveWeapons()
 			source:clearReviveWeapons()
 		else
-			ExecutionPed:new( source, weapon, bodypart)
+			ExecutionPed:new(source, weapon, bodypart)
 		end
 		if inv then
 			if inv:getItemAmount("Diebesgut") > 0 then
