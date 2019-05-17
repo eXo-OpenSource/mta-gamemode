@@ -693,30 +693,30 @@ function AttackSession:destroyWeaponBox()
 end
 
 function AttackSession:destroyTeamBlips()
-	for key, player in pairs(self.m_Participants) do
+	for key, player in pairs(getElementsByType("player")) do
 		player:triggerEvent("Gangwar:destroyTeamBlips")
 	end
 end
 
 function AttackSession:createTeamBlips()
 	if GANGWAR_TEAMBLIPS == false then return end
-	self:destroyTeamBlips()
-	self.m_Blips = {}
 	local faction1 = {}
 	local faction2 = {}
 	for key, player in pairs(self.m_Participants) do
-		if player:getFaction() == self.m_Faction1 then
-			faction1[#faction1+1] = player
-		elseif player:getFaction() == self.m_Faction2 then
-			faction2[#faction2+1] = player
+		if not self:isPlayerDisqualified(player) then
+			if player:getFaction() == self.m_Faction1 then
+				faction1[#faction1+1] = player
+			elseif player:getFaction() == self.m_Faction2 then
+				faction2[#faction2+1] = player
+			end
 		end
 	end
 	for key, player in pairs(self.m_Participants) do
 		if player:getFaction() == self.m_Faction1 then
-			visibleTo = faction1
+			playertable = faction1
 		elseif player:getFaction() == self.m_Faction2 then
-			visibleTo = faction2
+			playertable = faction2
 		end
-		player:triggerEvent("Gangwar:createTeamBlips", visibleTo)
+		player:triggerEvent("Gangwar:createTeamBlips", visibleTo) 
 	end
 end
