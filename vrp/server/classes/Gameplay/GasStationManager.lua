@@ -487,7 +487,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	--[[{
+	{
 		name = "Ballas",
 		stations = {
 			{Vector3(2241.83, -1443.94, 24.63), 90, 1},
@@ -495,7 +495,8 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.BALLAS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
-	},]]
+	},
+	--[[
 	{
 		name = "Kartell",
 		stations = {
@@ -505,6 +506,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	]]
 	{
 		name = "Aztecas",
 		stations = {
