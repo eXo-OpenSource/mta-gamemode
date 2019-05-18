@@ -48,6 +48,10 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	--addEventHandler("onClientPlayerDamage",root, self.m_BindNoRushFunc)
 	self.m_bindPickClose = bind(AttackClient.closeGangwarPick, self)
 	addEventHandler("GangwarPick:close", localPlayer, self.m_bindPickClose)
+	self.m_bindTeamBlipCreate = bind(self.createTeamBlips, self)
+	addEventHandler("Gangwar:createTeamBlips", localPlayer, self.m_bindTeamBlipCreate)
+	self.m_bindTeamBlipDestroy = bind(self.destroyTeamBlips, self)
+	addEventHandler("Gangwar:destroyTeamBlips", localPlayer, self.m_bindTeamBlipDestroy)
 end
 
 function AttackClient:onDamage( attacker )
@@ -241,8 +245,8 @@ function AttackClient:forceClose( )
 end
 
 addEvent("Gangwar:createTeamBlips",true)
-function AttackClient.createTeamBlips(playertable)
-	AttackClient.destroyTeamBlips()
+function AttackClient:createTeamBlips(playertable)
+	self:destroyTeamBlips()
 	for key, player in ipairs(playertable) do
 		if player ~= localPlayer then
 			AttackClient.Blips[player:getName()] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
@@ -251,13 +255,11 @@ function AttackClient.createTeamBlips(playertable)
 		end
 	end
 end
-addEventHandler("Gangwar:createTeamBlips", localPlayer, AttackClient.createTeamBlips)
 
 addEvent("Gangwar:destroyTeamBlips",true)
-function AttackClient.destroyTeamBlips()
+function AttackClient:destroyTeamBlips()
 	for player, blip in pairs(AttackClient.Blips) do
 		delete(blip)
 	end
 	AttackClient.Blips = {}
 end
-addEventHandler("Gangwar:destroyTeamBlips", localPlayer, AttackClient.destroyTeamBlips)
