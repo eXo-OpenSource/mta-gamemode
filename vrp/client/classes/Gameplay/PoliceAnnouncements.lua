@@ -138,13 +138,32 @@ function PoliceAnnouncements:getColorSound(vehcolor)
     end
 end
 
-function PoliceAnnouncements:playChaseSound(copcar, type, id)
+function PoliceAnnouncements:playChaseSound(vehicle, type, id)
     if core:get("Sounds", "PoliceMegaphoneEnabled", true) == false then return end
     local soundId = POLICE_ANNOUNCEMENT_CHASE_SOUNDS[type][id]
-    local sound = playSFX3D("spc_fa", 10, soundId, copcar:getPosition())
+    local sound = playSFX3D("spc_fa", 10, soundId, vehicle:getPosition())
     if sound then
-        sound:attach(copcar)
+        sound:attach(vehicle)
         sound:setVolume(core:get("Sounds", "PoliceMegaphoneVolume", 1))
         sound:setMaxDistance(175)
     end
 end
+
+function PoliceAnnouncement:syncSirens(sirenTable)
+    for key, value in pairs(sirenTable) do
+
+    end
+end
+
+function PoliceAnnouncements:playSiren(vehicle, type)
+    if type == 1 then
+        vehicle.sirenSound = playSFX("genrl", 67, 10)
+    elseif type == 2 then
+        vehicle.sirenSound = playSFX("genrl", 67, 11)
+    end
+end
+
+function PoliceAnnouncement:stopSirenOnDestroy()
+
+end
+--addEventHandler("onClientElementDestroy", root)

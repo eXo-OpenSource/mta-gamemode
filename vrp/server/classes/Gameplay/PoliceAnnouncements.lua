@@ -9,6 +9,8 @@ PoliceAnnouncements = inherit(Singleton)
 
 addRemoteEvents{"PoliceAnnouncements:triggerChaseSound"}
 function PoliceAnnouncements:constructor()
+    self.m_SirenVehicles = {}
+
     self.m_ChaseSoundBind = bind(self.triggerChaseSound, self)
     addEventHandler("PoliceAnnouncements:triggerChaseSound", root, self.m_ChaseSoundBind)
 end
@@ -53,4 +55,8 @@ function PoliceAnnouncements:triggerChaseSound(vehicle)
             player:triggerEvent("PoliceAnnouncement:chase", vehicle, chaseSoundType, chaseSoundRandom)
         end
     end
+end
+
+function PoliceAnnouncement:triggerSiren(vehicle)
+
 end
