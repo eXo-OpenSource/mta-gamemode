@@ -717,6 +717,6 @@ function AttackSession:createTeamBlips()
 		elseif player:getFaction() == self.m_Faction2 then
 			playertable = faction2
 		end
-		player:triggerEvent("Gangwar:createTeamBlips", visibleTo) 
+		player:triggerEvent("Gangwar:createTeamBlips", playertable) 
 	end
 end
