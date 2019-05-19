@@ -38,13 +38,13 @@ function PoliceAnnouncements:playSound(container, bank, id, x, y, z, loop)
     if customid < 10 then customiid = "0"..id end
     local path = "_custom/files/audio/police/"..container.."/Bank_0"..custombank.."/sound_0"..customid..".wav"
     if fileExists(path) then
-        if type(x) == "bool" or not x then
+        if type(x) == "boolean" or not x then
             return playSound(path, x)
         else
             return playSound3D(path, x, y, z, loop)
         end
     else
-        if type(x) == "bool" or not x then
+        if type(x) == "boolean" or not x then
             return playSFX(container, bank, id, x)
         else
             return playSFX3D(container, bank, id, x, y, z, loop)
