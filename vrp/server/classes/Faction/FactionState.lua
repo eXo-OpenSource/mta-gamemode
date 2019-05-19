@@ -92,6 +92,9 @@ function FactionState:constructor()
 		["DefuseKit"] = 1000,
 	}
 
+	self.m_AlertBind = bind(self.startAreaAlert, self)
+	self.m_LeaveBind = bind(self.stopAreaAlert, self)
+
 	nextframe(
 		function ()
 			self:loadLSPD(1)
@@ -378,6 +381,36 @@ function FactionState:loadArmy(factionId)
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
 		areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local corners = {
+		112.889, 1799.158,
+		275.738, 1799.291,
+		276.803, 1783.479,
+		321.146, 1783.330,
+		356.127, 1806.452,
+		355.028, 1876.203,
+		389.539, 1890.022,
+		389.524, 2080.764,
+		237.930, 2080.900,
+		206.732, 2082.555,
+		204.228, 2092.311,
+		197.533, 2097.855,
+		188.231, 2099.769,
+		178.509, 2097.390,
+		171.304, 2091.416,
+		169.398, 2082.381,
+		171.998, 2072.544,
+		178.719, 2066.266,
+		188.813, 2063.285,
+		188.994, 1940.739,
+		98.153, 1941.039,
+		98.15, 1809.77
+	}
+	self.m_AreaColShape = createColPolygon(211.43, 1874.85, unpack(corners))
+	addEventHandler("onColShapeHit", self.m_AreaColShape, bind(self.onAreaColShapeHit, self))
+	addEventHandler("onColShapeLeave", self.m_AreaColShape, bind(self.onAreaColShapeLeave, self))
+
+	self.m_AreaAlert = false
 end
 
 function FactionState:createTakeItemsPickup(pos, int, dim)
@@ -935,6 +968,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
+						PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
 						target.m_LastWantedsByReason[reason] = getTickCount()
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -1570,6 +1604,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
+			PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
@@ -1985,4 +2020,58 @@ function FactionState:sendMoveRequest(targetChannel, text)
 	for k, faction in pairs(self:getFactions()) do
 		faction:sendMoveRequest(targetChannel, text)
 	end
+end
+
+function FactionState:onAreaColShapeHit(hitElement, match)
+	if hitElement:getType() == "player" then
+		if (hitElement:getFaction() and not hitElement:getFaction():isStateFaction()) or not hitElement:getFaction() then
+			if not isTimer(self.m_AlertTimer) then
+				if not self.m_AreaAlert then
+					self.m_AlertTimer = setTimer(self.m_AlertBind, 10000, 1)
+					triggerClientEvent("playAreaAlertMessage", root, "blue")
+				end
+			end
+			if isTimer(self.m_LeaveTimer) then
+				killTimer(self.m_LeaveTimer)
+			end
+		end
+	end
+end
+
+function FactionState:onAreaColShapeLeave(leaveElement, match)
+	if leaveElement:getType() == "player" then
+		local counter = 0
+		for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+			if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+				counter = counter + 1
+			end
+		end
+		if counter == 0 then
+			if self.m_AreaAlert then
+				self.m_LeaveTimer = setTimer(self.m_LeaveBind, 10000, 1)
+			end
+		end
+	end
+end
+
+function FactionState:startAreaAlert()
+	local counter = 0
+	for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+		if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+			counter = counter + 1
+		end
+	end
+	if counter > 0 then
+		for key, player in ipairs(getElementsByType("player")) do
+			triggerClientEvent("startAreaAlert", player)
+		end
+		self.m_AreaAlert = true
+	else
+		triggerClientEvent("playAreaAlertMessage", root, "normalized")
+	end
+end
+
+function FactionState:stopAreaAlert()
+	triggerClientEvent("stopAreaAlert", root)
+	self.m_AreaAlert = false
 end

@@ -512,6 +512,12 @@ function SelfGUI:RadioStationButton_Click()
 	RadioStationEditGUI:getSingleton():setMainWindow(self)
 end
 
+function SelfGUI:PoliceSoundsButton_Click()
+	self:close()
+	PoliceSoundsGUI:getSingleton():open()
+	PoliceSoundsGUI:getSingleton():setMainWindow(self)
+end
+
 function SelfGUI:setFactionInfo(id, name, rank, __, __, __, rankNames)
 	local faction = localPlayer:getFaction()
 	if faction then
@@ -1381,8 +1387,11 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Sounds", "Navi", state)
 		end
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"Radio-Sender", self.m_SettingBG)
-		self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.59, self.m_Width*0.35, self.m_Height*0.07, _"Radiostationen", self.m_SettingBG):setBarEnabled(true)
+		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)
+		self.m_PoliceSoundsButton.onLeftClick = bind(self.PoliceSoundsButton_Click, self)
+
+		--GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"Radio-Sender", self.m_SettingBG)
+		self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.80, self.m_Width*0.35, self.m_Height*0.07, _"Radiostationen", self.m_SettingBG):setBarEnabled(true)
 		self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
 
 	elseif setting == "Fahrzeuge" then
