@@ -6,12 +6,16 @@
 -- *
 -- ****************************************************************************
 PoliceAnnouncements = inherit(Singleton)
+POLICE_SIREN_SYNC_INTERVAL = 600000
 
 addRemoteEvents{"PoliceAnnouncements:triggerChaseSound"}
 function PoliceAnnouncements:constructor()
-    self.m_SirenVehicles = {}
-
+    self.m_SirenVehicles = {} -- states: active, secondary, inactive
+    self.m_BindFunction = bind(self.handleBind, self)
     self.m_ChaseSoundBind = bind(self.triggerChaseSound, self)
+    self.m_SirenSyncBind = bind(self.syncSirens, self)
+    
+    self.m_SirenSyncTimer = setTimer(self.m_SirenSyncBind, POLICE_SIREN_SYNC_INTERVAL, 0)
     addEventHandler("PoliceAnnouncements:triggerChaseSound", root, self.m_ChaseSoundBind)
 end
 
@@ -57,6 +61,50 @@ function PoliceAnnouncements:triggerChaseSound(vehicle)
     end
 end
 
-function PoliceAnnouncement:triggerSiren(vehicle)
+function PoliceAnnouncements:isValidVehicle(vehicle)
+    if getElementData(vehicle, "StateVehicle") and vehicle:getVehicleType() ~= "Helicopter" and vehicle:getVehicleType() ~= "Plane" and vehicle:getModel() ~= 432 then
+        return true
+    end
+end
 
+function PoliceAnnouncements:syncSirens()
+    for key, player in ipairs(getElementsByType("player")) do
+        player:triggerEvent("PoliceAnnouncement:syncSiren", self.m_SirenVehicles)
+    end
+end
+
+function PoliceAnnouncements:setSirenState(vehicle, sirenType)
+    if self:isValidVehicle(vehicle) then 
+        self.m_SirenVehicles[vehicle] = sirenType
+        for key, player in ipairs(getElementsByType("player")) do
+            player:triggerEvent("PoliceAnnouncement:siren", vehicle, sirenType)
+        end
+    end
+end
+
+function PoliceAnnouncements:getSirenState(vehicle)
+    return self.m_SirenVehicles[vehicle] and self.m_SirenVehicles[vehicle] or "inactive"
+end
+
+function PoliceAnnouncements:handleBind(player, key, keystate)
+    if keystate == "down" then
+        player.m_LastSirenAction = getTickCount()
+        if self:getSirenState(player.vehicle) == "active" then
+            self:setSirenState(player.vehicle, "secondary")
+        end
+    elseif keystate == "up" then
+        if getTickCount() - player.m_LastSirenAction < 200 then
+            if self:getSirenState(player.vehicle) == "inactive" then
+                self:setSirenState(player.vehicle, "active")
+            elseif self:getSirenState(player.vehicle) == "active" then
+                self:setSirenState(player.vehicle, "inactive")
+            elseif self:getSirenState(player.vehicle) == "secondary" then
+                self:setSirenState(player.vehicle, "inactive")
+            end
+        else
+            if self:getSirenState(player.vehicle) == "secondary" then
+                self:setSirenState(player.vehicle, "active")
+            end
+        end
+    end
 end

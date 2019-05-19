@@ -17,11 +17,13 @@ function FactionVehicle:constructor(data)
 	setElementData(self, "OwnerType", "faction")
 	setElementData(self, "StateVehicle", self.m_Faction:isStateFaction())
 
-    addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+		addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+		addEventHandler("onVehicleExit", self, bind(self.onExit, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
     addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
 			veh:respawn(true)
+			PoliceAnnouncements:getSingleton():setSirenState(veh, "inactive")
 		end, 10000, 1, source)
 	end)
 
@@ -90,6 +92,12 @@ function FactionVehicle:onEnter(player, seat)
 		end
 	end
 	return true
+end
+
+function FactionVehicle:onExit(player, seat)
+	if seat == 0 then
+		PoliceAnnouncements:getSingleton():setSirenState(source, "inactive")
+	end
 end
 --[[
 function FactionVehicle:onEnter(player, seat)

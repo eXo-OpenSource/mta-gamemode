@@ -20,6 +20,7 @@ function PoliceSoundsGUI:constructor()
     self.m_WantedSoundCheckBox:setChecked(core:get("Sounds", "WantedRadioEnabled", true))
     self.m_WantedSoundCheckBox.onChange = function (state)
         core:set("Sounds", "WantedRadioEnabled", state)
+        self.m_WantedSoundSlider:setEnabled(state)
     end
 
     self.m_WantedSoundSlider = GUIGridSlider:new(1, 2, 6, 1, self.m_Window)
@@ -34,6 +35,7 @@ function PoliceSoundsGUI:constructor()
     self.m_MegaphoneCheckBox:setChecked(core:get("Sounds", "PoliceMegaphoneEnabled", true))
     self.m_MegaphoneCheckBox.onChange = function (state)
         core:set("Sounds", "PoliceMegaphoneEnabled", state)
+        self.m_MegaphoneSlider:setEnabled(state)
     end
 
     self.m_MegaphoneSlider = GUIGridSlider:new(1, 5, 6, 1, self.m_Window)
@@ -44,11 +46,11 @@ function PoliceSoundsGUI:constructor()
         core:set("Sounds", "PoliceMegaphoneVolume", volume)
     end
     
-    --[[
     self.m_SirenHallCheckBox = GUIGridCheckbox:new(1, 7, 1, 1, "Sirenenhall", self.m_Window)
-    self.m_SirenHallCheckBox:setChecked(core:get("Sounds", "SirenenhallEnabled", true))
+    self.m_SirenHallCheckBox:setChecked(core:get("Sounds", "SirenhallEnabled", true))
     self.m_SirenHallCheckBox.onChange = function (state)
-        core:set("Sounds", "SirenenhallEnabled", state)
+        core:set("Sounds", "SirenhallEnabled", state)
+        self.m_SirenHallSlider:setEnabled(state)
     end
 
     self.m_SirenHallSlider = GUIGridSlider:new(1, 8, 6, 1, self.m_Window)
@@ -57,8 +59,14 @@ function PoliceSoundsGUI:constructor()
     self.m_SirenHallSlider.onUpdate = function(volume)
         local scale = math.round(volume, 1)
         core:set("Sounds", "SirenhallVolume", volume)
+        PoliceAnnouncements:getSingleton():setSirenVolume(volume)
     end
-	]]
+    local testsound = playSFX("spc_fa", 10, 34)
+    if testsound then
+        stopSound(testsound)
+    else
+        self.m_Label = GUIGridLabel:new(1, 9, 7, 1, "Fehler: Dir fehlen Sound-Dateien, lade Sie dir im Forum herunter!", self.m_Window)
+    end
 end
 
 function PoliceSoundsGUI:destructor()
