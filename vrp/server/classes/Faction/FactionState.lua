@@ -1799,9 +1799,9 @@ function FactionState:Event_takeWeapons(target)
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
 			for i = 0, 8 do 
-				local w = getPedWeapon(me,i)
+				local w = getPedWeapon(target,i)
 				if w ~= 0 then 
-					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(me, i))
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(target, i))
 				end 
 			end
 			takeAllWeapons(target)
