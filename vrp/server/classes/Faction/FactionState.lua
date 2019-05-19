@@ -2027,7 +2027,7 @@ function FactionState:onAreaColShapeLeave(leaveElement, match)
 		end
 		if counter == 0 then
 			if self.m_AreaAlert then
-				self.m_LeaveTimer = setTimer(self.m_LeaveBind, 10000, 1)
+				self.m_LeaveTimer = setTimer(self.m_LeaveBind, 30000, 1)
 			end
 		end
 	end

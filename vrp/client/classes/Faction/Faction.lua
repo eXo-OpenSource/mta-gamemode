@@ -273,7 +273,7 @@ function FactionManager:playAreaAlertMessage(type, forceId)
 	if forceId then
 		SoundId = forceId
 	end
-	local sound = playSFX3D("script", 58, SoundId, 211.55, 1810.88, 25.12)
+	local sound = PoliceAnnouncements:getSingleton():playSound("script", 58, SoundId, 211.55, 1810.88, 25.12)
 	if sound then 
 		sound:setVolume(5)
 		sound:setMaxDistance(300)
