@@ -67,7 +67,11 @@ function PoliceAnnouncements:isValidVehicle(vehicle)
     end
 end
 
-function PoliceAnnouncements:syncSirens()
+function PoliceAnnouncements:syncSirens(singlePlayer)
+    if singlePlayer then
+        singlePlayer:triggerEvent("PoliceAnnouncement:syncSiren", self.m_SirenVehicles)
+        return
+    end
     for key, player in ipairs(getElementsByType("player")) do
         player:triggerEvent("PoliceAnnouncement:syncSiren", self.m_SirenVehicles)
     end

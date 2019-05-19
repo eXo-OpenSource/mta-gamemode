@@ -33,10 +33,16 @@ end
 
 function PoliceAnnouncements:playSound(container, bank, id, x, y, z, loop)
     local custombank = bank + 1
-    if custombank < 10 then custombank = "0"..id end
+    if custombank < 10 then custombank = "0"..custombank end
     local customid = id + 1
-    if customid < 10 then customiid = "0"..id end
-    local path = "_custom/files/audio/police/"..container.."/Bank_0"..custombank.."/sound_0"..customid..".wav"
+    if customid < 10 then 
+        customid = "00"..customid
+    elseif customid < 100 then 
+        customid = "0"..customid 
+    end
+    outputChatBox("bank: "..bank..", custombank: "..custombank..", id: "..id..", customid: "..customid)
+    local path = "_custom/files/audio/police/"..container.."/Bank_0"..custombank.."/sound_"..customid..".wav"
+    outputChatBox(path)
     if fileExists(path) then
         if type(x) == "boolean" or not x then
             return playSound(path, x)
