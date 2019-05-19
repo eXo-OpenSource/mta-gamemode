@@ -73,7 +73,7 @@ function Guns:Event_onTaser(target)
 	client:giveAchievement(65)
 
 	if target.vehicle then
-		local seat = target.vehicle:getOccupiedVehicleSeat()
+		local seat = target:getOccupiedVehicleSeat()
 		target.vehicle:setDoorOpenRatio(seat+2, 1)
 		target:removeFromVehicle()
 	end

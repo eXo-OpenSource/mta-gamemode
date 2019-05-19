@@ -61,11 +61,13 @@ function PoliceSoundsGUI:constructor()
         core:set("Sounds", "SirenhallVolume", volume)
         PoliceAnnouncements:getSingleton():setSirenVolume(volume)
     end
-    local testsound = playSFX("spc_fa", 10, 34)
+    local testsound = playSFX("script", 3, 0)
     if testsound then
         stopSound(testsound)
     else
-        self.m_Label = GUIGridLabel:new(1, 9, 7, 1, "Fehler: Dir fehlen Sound-Dateien, lade Sie dir im Forum herunter!", self.m_Window)
+        if not fileExists("_custom/files/audio/police/script/Bank_004/sound_001.wav") then
+            self.m_Label = GUIGridLabel:new(1, 9, 7, 1, "Fehler: Dir fehlen Sound-Dateien, lade Sie dir im Forum herunter!", self.m_Window)
+        end
     end
 end
 
