@@ -73,9 +73,13 @@ function Guns:Event_onTaser(target)
 	client:giveAchievement(65)
 
 	if target.vehicle then
-		local seat = target:getOccupiedVehicleSeat()
-		target.vehicle:setDoorOpenRatio(seat+2, 1)
-		target:removeFromVehicle()
+		if target.vehicle:getSpeed() < 10 then
+			local seat = target:getOccupiedVehicleSeat()
+			target.vehicle:setDoorOpenRatio(seat+2, 1)
+			target:removeFromVehicle()
+		else
+			return
+		end
 	end
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
