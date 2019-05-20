@@ -251,7 +251,7 @@ function KeyBinds:usePoliceMegaphone()
 
 	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() then
 		if localPlayer:getPublicSync("Faction:Duty") then 
-			if localPlayer.vehicle and getElementData(localPlayer.vehicle, "StateVehicle") then
+			if localPlayer.vehicle and getElementData(localPlayer.vehicle, "StateVehicle") and localPlayer == localPlayer.vehicle.controller then
 				self.m_LastMegaphoneUsage = getTickCount()
 				triggerServerEvent("PoliceAnnouncements:triggerChaseSound", localPlayer, localPlayer.vehicle) 
 			end 

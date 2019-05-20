@@ -91,6 +91,7 @@ function PoliceAnnouncements:getSirenState(vehicle)
 end
 
 function PoliceAnnouncements:handleBind(player, key, keystate)
+    if player ~= vehicle.controller then return end
     if keystate == "down" then
         player.m_LastSirenAction = getTickCount()
         if self:getSirenState(player.vehicle) == "active" then
