@@ -287,6 +287,7 @@ function Player:initialiseBinds()
 	if self:getFaction() then
 		bindKey(self, "y", "down", "chatbox", "Fraktion")
 	end
+	bindKey(self, "horn", "both", PoliceAnnouncements:getSingleton().m_BindFunction)
 end
 
 function Player:buckleSeatBelt(vehicle)

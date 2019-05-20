@@ -18,6 +18,7 @@
 	<script src="shared/constants/animations.lua" type="shared"/>
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
+	<script src="shared/constants/policeannouncements.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
 	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
@@ -201,6 +202,9 @@
 
 	<!-- New Years Eve -->
 	<script src="server/classes/Gameplay/NewYearsEve.lua" type="server" />
+
+	<!-- PoliceAnnouncements -->
+	<script src="server/classes/Gameplay/PoliceAnnouncements.lua" type="server" />
 
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
@@ -900,6 +904,7 @@
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/PoliceSoundsGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1122,6 +1127,9 @@
 	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
 
 	<script src="client/classes/Gameplay/Places/Atrium.lua" type="client"/>
+
+	<!-- PoliceAnnouncements -->
+	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />

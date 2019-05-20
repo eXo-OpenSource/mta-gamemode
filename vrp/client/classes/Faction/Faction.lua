@@ -13,7 +13,7 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder", "factionForceOffduty"}
+	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder", "factionForceOffduty", "startAreaAlert", "stopAreaAlert", "playAreaAlertMessage"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
@@ -22,6 +22,9 @@ function FactionManager:constructor()
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
 	addEventHandler("SpeedCam:showSpeeder", localPlayer, bind(self.Event_OnSpeederCatch,self))
 	addEventHandler("factionForceOffduty", localPlayer, bind(self.factionForceOffduty, self))
+	addEventHandler("startAreaAlert", localPlayer, bind(self.startAreaAlert, self))
+	addEventHandler("stopAreaAlert", localPlayer, bind(self.stopAreaAlert, self))
+	addEventHandler("playAreaAlertMessage", localPlayer, bind(self.playAreaAlertMessage, self))
 
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
@@ -228,6 +231,67 @@ function FactionManager:factionForceOffduty()
 			triggerServerEvent("factionEvilToggleDuty", localPlayer, true, false, true)
 		end
 	end
+end
+
+function FactionManager:startAreaAlert()
+	self.m_AreaAlertTimer = setTimer(
+		function()
+			local sound = playSFX3D("script", 20, 1, 211.55, 1810.88, 25.12)
+			if sound then 
+				sound:setVolume(5)
+				sound:setMaxDistance(300)
+			end
+		end, 1800, 0)
+	self:playAreaAlertMessage("red", 12)
+	self.m_AreaMessageTimer = setTimer(
+		function()
+			local rndm = math.random(1, 3)
+			if rndm == 1 then
+				self:playAreaAlertMessage("red")
+			else
+				self:playAreaAlertMessage("towercommands")
+			end
+		end, 10000, 0)
+end
+
+function FactionManager:playAreaAlertMessage(type, forceId)
+	if type == "blue" then
+		SoundId = math.random(1, 4)
+	end
+	if type == "normalized" then
+		SoundId = math.random(5, 8)
+	end
+	if type == "red" then
+		SoundId = math.random(9, 12)
+	end
+	if type == "lockdown" then
+		SoundId = math.random(13, 16)
+	end
+	if type == "towercommands" then
+		SoundId = math.random(17, 18)
+	end
+	if forceId then
+		SoundId = forceId
+	end
+	local sound = PoliceAnnouncements:getSingleton():playSound("script", 58, SoundId, 211.55, 1810.88, 25.12)
+	if sound then 
+		sound:setVolume(5)
+		sound:setMaxDistance(300)
+	end
+end
+
+function FactionManager:stopAreaAlert()
+	if isTimer(self.m_AreaAlertTimer) then
+		killTimer(self.m_AreaAlertTimer)
+	end
+	if isTimer(self.m_AreaMessageTimer) then
+		killTimer(self.m_AreaMessageTimer)
+	end
+	setTimer(
+		function()
+			self:playAreaAlertMessage("normalized", 6)
+		end
+	, 7500, 1)
 end
 
 Faction = inherit(Object)
