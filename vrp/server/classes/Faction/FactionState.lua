@@ -94,6 +94,7 @@ function FactionState:constructor()
 
 	self.m_AlertBind = bind(self.startAreaAlert, self)
 	self.m_LeaveBind = bind(self.stopAreaAlert, self)
+	addEventHandler("onPlayerQuit", root, function() self:onAreaColShapeLeave() end)
 
 	nextframe(
 		function ()
@@ -2039,17 +2040,15 @@ function FactionState:onAreaColShapeHit(hitElement, match)
 end
 
 function FactionState:onAreaColShapeLeave(leaveElement, match)
-	if leaveElement:getType() == "player" then
-		local counter = 0
-		for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
-			if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
-				counter = counter + 1
-			end
+	local counter = 0
+	for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+		if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+			counter = counter + 1
 		end
-		if counter == 0 then
-			if self.m_AreaAlert then
-				self.m_LeaveTimer = setTimer(self.m_LeaveBind, 30000, 1)
-			end
+	end
+	if counter == 0 then
+		if self.m_AreaAlert and not isTimer(self.m_LeaveTimer) then
+			self.m_LeaveTimer = setTimer(self.m_LeaveBind, 30000, 1)
 		end
 	end
 end

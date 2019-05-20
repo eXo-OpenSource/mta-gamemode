@@ -40,9 +40,7 @@ function PoliceAnnouncements:playSound(container, bank, id, x, y, z, loop)
     elseif customid < 100 then 
         customid = "0"..customid 
     end
-    outputChatBox("bank: "..bank..", custombank: "..custombank..", id: "..id..", customid: "..customid)
     local path = "_custom/files/audio/police/"..container.."/Bank_0"..custombank.."/sound_"..customid..".wav"
-    outputChatBox(path)
     if fileExists(path) then
         if type(x) == "boolean" or not x then
             return playSound(path, x)
@@ -194,7 +192,7 @@ function PoliceAnnouncements:syncSirens(sirenTable)
 end
 
 function PoliceAnnouncements:playSiren(vehicle, sirenType)
-    if core:get("Sounds", "SirenhallEnabled", true) == false then return end
+    if core:get("Sounds", "SirenhallEnabled", false) == false then return end
     local x, y, z = getElementPosition(vehicle)
     if vehicle.controller then vehicle.controller:setControlState("horn", false) end
     vehicle:setSirensOn(false)

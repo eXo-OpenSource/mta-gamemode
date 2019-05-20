@@ -47,7 +47,7 @@ function PoliceSoundsGUI:constructor()
     end
     
     self.m_SirenHallCheckBox = GUIGridCheckbox:new(1, 7, 1, 1, "Sirenenhall", self.m_Window)
-    self.m_SirenHallCheckBox:setChecked(core:get("Sounds", "SirenhallEnabled", true))
+    self.m_SirenHallCheckBox:setChecked(core:get("Sounds", "SirenhallEnabled", false))
     self.m_SirenHallCheckBox.onChange = function (state)
         core:set("Sounds", "SirenhallEnabled", state)
         self.m_SirenHallSlider:setEnabled(state)
