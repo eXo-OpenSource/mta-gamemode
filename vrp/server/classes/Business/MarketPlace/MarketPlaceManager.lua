@@ -24,7 +24,7 @@ function MarketPlaceManager:destructor()
 end
 
 function MarketPlaceManager:createMarket(name)
-	local instance = MarketPlace:new(0, name, {}, 0, true) 
+	local instance = MarketPlace:new(0, name, {}, 0, 0, true) 
 	if instance then 
 		if not instance.m_Valid then 
 			instance:delete()
@@ -40,7 +40,7 @@ function MarketPlaceManager:initialize()
 	local loadCount = 0
 	if result then
 		for index, row in pairs(result) do
-			local instance = MarketPlace:new(row.Id, row.Name, row.Storage, row.Bank, toboolean(row.Open))
+			local instance = MarketPlace:new(row.Id, row.Name, row.Storage, row.Bank, row.Type, toboolean(row.Open))
 			if instance:isValid() then
 				loadCount = loadCount + 1
 			else 

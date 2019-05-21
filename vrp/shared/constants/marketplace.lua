@@ -43,3 +43,9 @@ function fromMarketPlaceItem(item)
 		return item
 	end
 end
+
+MARKETPLACE_TYPE_NAME = 
+{
+	[0] = "Legal",
+	[1] = "Illegal",
+}

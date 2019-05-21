@@ -61,6 +61,7 @@
 	<script src="server/constants/companies.lua" type="server"/>
 	<script src="server/constants/beggar.lua" type="server"/>
 	<script src="server/constants/tollstations.lua" type="server"/>
+	<script src="server/constants/marketplace.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Config.lua" type="server"/>
 	<script src="server/classes/FileLogger.lua" type="server"/>

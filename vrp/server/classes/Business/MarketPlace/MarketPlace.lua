@@ -7,11 +7,12 @@
 -- ****************************************************************************
 MarketPlace = inherit(Object)
 
-function MarketPlace:constructor(id, name, storage, bank, open) 
+function MarketPlace:constructor(id, name, storage, bank, marketType, open) 
 	self.m_Valid = false
 	if id > 0 or self:validateName(name) then -- this checks for duplicate names within the database, though a unique-key would have been more handy it would take more work to revert a failed INSERTION 
 		self.m_Valid = true
 		self.m_Id = id
+		self.m_Type = marketType or 0
 		self.m_Clients = {}
 		self.m_Map = {} -- used for quick access, stores offers unsorted in a general table for quick iteration
 		self.m_Open = open or true
@@ -74,8 +75,8 @@ function MarketPlace:map()
 end
 
 function MarketPlace:save()
-	local query = "INSERT INTO ??_marketplaces (Id, Name, Date) VALUES(?, ?,  NOW()) ON DUPLICATE KEY UPDATE Open=?, Storage=?, Bank=?"
-	sql:queryExec(query, sql:getPrefix(), self:getId(), self:getName(), fromboolean(self:isOpen()), toJSON(self:getStorage(), true), self:getBankAmount())
+	local query = "INSERT INTO ??_marketplaces (Id, Name, Type, Date) VALUES(?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE Open=?, Storage=?, Bank=?, Type=?"
+	sql:queryExec(query, sql:getPrefix(), self:getId(), self:getName(), self:getType(), fromboolean(self:isOpen()), toJSON(self:getStorage(), true), self:getBankAmount(), self:getType())
 	if self.m_Id == MARKETPLACE_EMTPY_ID then
 		self.m_Id = sql:lastInsertId()
 		if DEBUG then outputDebugString( ("[Marketplace] Created market (Name: %s, Id: %s)"):format(self:getName(), self:getId()), 0, 200, 200, 0) end
@@ -151,28 +152,37 @@ function MarketPlace:addOffer(playerId, offerType, item, quantity, price, itemVa
 		local player, isOffline = DatabasePlayer.get(playerId)
 		itemValue = itemValue and tostring(itemValue) or ""
 		local itemName = InventoryManager:getSingleton():getItemNameFromId(item)
+		local canTrade = InventoryManager:getSingleton():getItemDataForItem(itemName)["Handel"]
 		if player and not isOffline then
-			if offerType == "sell" then
-				local itemAmount = player:getInventory():getItemAmount(itemName, nil, self:formatItemValue(itemValue)) 
-				if itemAmount >= quantity then
-					local check = false
-					for i = 1, quantity do
-						check = player:getInventory():removeItem(itemName, 1, self:formatItemValue(itemValue))
-						if check then 
-							self:add(item, itemValue)
-						else 
+			if not MARKETPLACE_ITEM_FILTER[self:getTypeName()] or not MARKETPLACE_ITEM_FILTER[self:getTypeName()][item] then
+				if canTrade and canTrade == 1 then
+					if offerType == "sell" then
+						local itemAmount = player:getInventory():getItemAmount(itemName, nil, self:formatItemValue(itemValue)) 
+						if itemAmount >= quantity then
+							local check = false
+							for i = 1, quantity do
+								check = player:getInventory():removeItem(itemName, 1, self:formatItemValue(itemValue))
+								if check then 
+									self:add(item, itemValue)
+								else 
+									return "Nicht genug Gegenstände!"
+								end
+							end 
+						else
 							return "Nicht genug Gegenstände!"
 						end
-					end 
-				else
-					return "Nicht genug Gegenstände!"
+					else 
+						if not self:giveMoney(player, price*quantity) then
+							return "Nicht genug Geld zum kaufen!"
+						end
+					end
+					MarketOffer:new(MARKETPLACE_EMTPY_ID, self:getId(), playerId, item, quantity, price, itemValue, offerType, category)
+				else 
+					return "Dieser Gegenstand ist nicht erlaubt auf diesem Marktplatz!"
 				end
 			else 
-				if not self:giveMoney(player, price*quantity) then
-					return "Nicht genug Geld zum kaufen!"
-				end
+				return "Dieser Gegenstand darf nicht gehandelt werden!"
 			end
-			MarketOffer:new(MARKETPLACE_EMTPY_ID, self:getId(), playerId, item, quantity, price, itemValue, offerType, category)
 		end
 	else 
 		return validOffer
@@ -248,7 +258,7 @@ function MarketPlace:formatItemValue(value)
 	return value ~= "" and value or nil
 end
 
---//Todo Automatic-Deal
+function MarketPlace:setType(type) self.m_Type = type end
 function MarketPlace:isValid() return self.m_Valid end
 function MarketPlace:isOpen() return self.m_Open end
 function MarketPlace:getId() return self.m_Id end
@@ -257,6 +267,8 @@ function MarketPlace:getName() return self.m_Name end
 function MarketPlace:getBankAmount() return self.m_ImaginaryBank end
 function MarketPlace:getBank() return self.m_Bank end
 function MarketPlace:getStorage() return self.m_Storage end
+function MarketPlace:getType() return self.m_Type end
+function MarketPlace:getTypeName() return MARKETPLACE_TYPE_NAME[self:getType()] end
 function MarketPlace:getStorageCount(item, value) 
 	if not self.m_Storage[item] then 
 		return 0
