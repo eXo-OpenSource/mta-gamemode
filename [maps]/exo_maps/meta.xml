@@ -25,10 +25,10 @@
 	<map src="fraktionen/army.map" />
 	<!--<map src="fraktionen/army_lsbase.map" />-->
 	<map src="fraktionen/army_shooting_town.map" />
-	<!-- <map src="fraktionen/ballas.map" /> -->
+	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
 	<map src="fraktionen/aztecas.map" />
-	<map src="fraktionen/cartell.map" />
+	<!--map src="fraktionen/cartell.map" />
 
 	<!--<map src="fraktionen/biker.map" />--> <!--Outlaws base-->
 	<!--map src="fraktionen/cosanostra.map" /-->
@@ -43,7 +43,7 @@
 	<map src="fraktionen/lostmc.map" />
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
-	<map src="fraktionen/yakuza.map"/>
+	<!-- <map src="fraktionen/yakuza.map"/> -->
 
 	<!-- <map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />

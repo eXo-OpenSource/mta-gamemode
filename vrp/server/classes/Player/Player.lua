@@ -287,6 +287,7 @@ function Player:initialiseBinds()
 	if self:getFaction() then
 		bindKey(self, "y", "down", "chatbox", "Fraktion")
 	end
+	bindKey(self, "horn", "both", PoliceAnnouncements:getSingleton().m_BindFunction)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -562,13 +563,13 @@ function Player:dropReviveWeapons()
 				end
 			end
 		end
-		nextframe( --Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
+		--[[nextframe( Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
 			function ()
 				local model = self:getModel()
 				self:setModel(0)
 				self:setModel(model)
 			end
-		)
+		)]]
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end

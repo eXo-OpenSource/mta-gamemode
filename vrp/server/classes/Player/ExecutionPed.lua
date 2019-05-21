@@ -25,7 +25,7 @@ function ExecutionPed:constructor( player, weapon, bodypart )
 	self.m_Player = player
 	setElementAlpha(player, 0)
 	nextframe(function() attachElements(self.m_Entity, player) self:setRandomAnimation() end)
-	setTimer(function() setElementHealth(self.m_Entity, 20) end, 1000, 1)
+	self.m_HealthTimer = setTimer(function() setElementHealth(self.m_Entity, 20) end, 1000, 1)
 	--setTimer(setElementCollisionsEnabled, 3000, 1, player, false)
 	toggleAllControls(player, false)
 	player:setWeaponSlot(0)
@@ -45,7 +45,8 @@ function ExecutionPed:putOnStretcher( stretcher )
 end
 
 function ExecutionPed:destructor() 
-	if isElement( self.m_Entity ) then destroyElement( self.m_Entity ) end 
+	if isElement( self.m_Entity ) then destroyElement( self.m_Entity ) end
+	if isTimer(self.m_HealthTimer) then killTimer(self.m_HealthTimer) end
 	setElementAlpha(self.m_Player, 255)
 	toggleAllControls(self.m_Player, true)
 	--setElementCollisionsEnabled( self.m_Player, true)

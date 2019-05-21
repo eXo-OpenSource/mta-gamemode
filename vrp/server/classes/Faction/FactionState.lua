@@ -92,6 +92,10 @@ function FactionState:constructor()
 		["DefuseKit"] = 1000,
 	}
 
+	self.m_AlertBind = bind(self.startAreaAlert, self)
+	self.m_LeaveBind = bind(self.stopAreaAlert, self)
+	addEventHandler("onPlayerQuit", root, function() self:onAreaColShapeLeave() end)
+
 	nextframe(
 		function ()
 			self:loadLSPD(1)
@@ -378,6 +382,36 @@ function FactionState:loadArmy(factionId)
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
 		areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local corners = {
+		112.889, 1799.158,
+		275.738, 1799.291,
+		276.803, 1783.479,
+		321.146, 1783.330,
+		356.127, 1806.452,
+		355.028, 1876.203,
+		389.539, 1890.022,
+		389.524, 2080.764,
+		237.930, 2080.900,
+		206.732, 2082.555,
+		204.228, 2092.311,
+		197.533, 2097.855,
+		188.231, 2099.769,
+		178.509, 2097.390,
+		171.304, 2091.416,
+		169.398, 2082.381,
+		171.998, 2072.544,
+		178.719, 2066.266,
+		188.813, 2063.285,
+		188.994, 1940.739,
+		98.153, 1941.039,
+		98.15, 1809.77
+	}
+	self.m_AreaColShape = createColPolygon(211.43, 1874.85, unpack(corners))
+	addEventHandler("onColShapeHit", self.m_AreaColShape, bind(self.onAreaColShapeHit, self))
+	addEventHandler("onColShapeLeave", self.m_AreaColShape, bind(self.onAreaColShapeLeave, self))
+
+	self.m_AreaAlert = false
 end
 
 function FactionState:createTakeItemsPickup(pos, int, dim)
@@ -712,10 +746,7 @@ end
 
 function FactionState:getFullReasonFromShortcut(reason)
 	local amount = false
-	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
-        reason = "Beschuss/Waffennutzung"
-        amount = 3
-    elseif string.lower(reason) == "db" then
+	if string.lower(reason) == "db" then
         reason = "Drogenbesitz (>= 10 Gramm)"
         amount = 1
     elseif string.lower(reason) == "db2" then
@@ -724,82 +755,106 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "db3" then
         reason = "Drogenbesitz (>= 150 Gramm)"
         amount = 3
-    elseif string.lower(reason) == "br" then
-        reason = "Banküberfall"
-        amount = 6
-	 elseif string.lower(reason) == "mord" then
-        reason = "Mord"
-        amount = 4
-    elseif string.lower(reason) == "wt" then
-        reason = "Waffen-Truck"
-        amount = 5
-	elseif string.lower(reason) == "gt" then
-        reason = "Geldtransport-Überfall"
-        amount = 5
-    elseif string.lower(reason) == "dt" then
-        reason = "Drogen-Truck"
-        amount = 5
-    elseif string.lower(reason) == "swt" then
-        reason = "Staatswaffentruck-Überfall"
-        amount = 6
-    elseif string.lower(reason) == "illad" then
-        reason = "Illegale Werbung"
-        amount = 1
-    elseif string.lower(reason) == "kpv" then
-        reason = "Körperverletzung"
-        amount = 2
-    elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
-        reason = "Einbruch-in-die-PD-Garage"
-        amount = 3
-    elseif string.lower(reason) == "wd" then
-        reason = "Waffen-Drohung"
-        amount = 2
-    elseif string.lower(reason) == "bh" then
-        reason = "Beihilfe einer Straftat"
-        amount = false
-    elseif string.lower(reason) == "vw" then
-        reason = "Verweigerung-zur-Durchsuchung"
-        amount = 2
     elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
-        reason = "Beamtenbeleidigung"
+        reason = "Beleidigung"
         amount = 1
-    elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
-        reason = "Flucht aus Kontrolle"
-        amount = 2
     elseif string.lower(reason) == "bv" then
         reason = "Befehlsverweigerung"
         amount = 1
     elseif string.lower(reason) == "sb" then
         reason = "Sachbeschädigung"
         amount = 1
+    elseif string.lower(reason) == "ff" or string.lower(reason) == "fahrer" then
+        reason = "Fahrerflucht"
+        amount = 1
+    elseif string.lower(reason) == "illad" or string.lower(reason) == "werbung" then
+        reason = "Illegale Werbung"
+        amount = 1
+    elseif string.lower(reason) == "eöä" then
+        reason = "Erregung öffentlichen Ärgernisses"
+        amount = 1
+    elseif string.lower(reason) == "ds" then
+        reason = "Diebstahl"
+        amount = 1
+    elseif string.lower(reason) == "vd" then
+        reason = "Versuchter Diebstahl"
+        amount = 1
+    elseif string.lower(reason) == "fof" then
+        reason = "Fahren ohne Führerschein"
+        amount = 1
+    elseif string.lower(reason) == "wd" then
+        reason = "Waffendrohung"
+        amount = 2
+    elseif string.lower(reason) == "vw" then
+        reason = "Verweigerung zur Durchsuchung"
+        amount = 2
+    elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
+        reason = "Flucht aus Kontrolle"
+        amount = 2
+    elseif string.lower(reason) == "kanal" then
+        reason = "Betreten der Kanalisation"
+        amount = 2
+    elseif string.lower(reason) == "kpv" then
+        reason = "Körperverletzung"
+        amount = 2
+    elseif string.lower(reason) == "sds" then
+        reason = "Diebstahl von Staatsfahrzeugen"
+        amount = 2
+    elseif string.lower(reason) == "bs" or string.lower(reason) == "wn" then
+        reason = "Beschuss/Waffennutzung"
+        amount = 3
+    elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
+        reason = "Einbruch in die PD-Garage"
+        amount = 3
     elseif string.lower(reason) == "rts" then
         reason = "Shop-Überfall"
         amount = 3
     elseif string.lower(reason) == "haus" then
         reason = "Hauseinbruch"
         amount = 3
-    elseif string.lower(reason) == "eöä" then
-        reason = "Erregung öffentlichen Ärgernisses"
-        amount = 1
-    elseif string.lower(reason) == "vd" then
-        reason = "versuchter Diebstahl"
-        amount = 1
-    elseif string.lower(reason) == "fof" then
-        reason = "Fahren ohne Führerschein"
-        amount = 1
+    elseif string.lower(reason) == "raub" then
+        reason = "Raubüberfall"
+        amount = 3
+    elseif string.lower(reason) == "bombe" then
+        reason = "Mitführen von Sprengstoff"
+        amount = 3
+    elseif string.lower(reason) == "mord" then
+        reason = "Mord"
+        amount = 4
+    elseif string.lower(reason) == "wt" then
+        reason = "Waffentruck"
+        amount = 5
+    elseif string.lower(reason) == "gt" then
+        reason = "Überfall auf Geldtransport"
+        amount = 5
+    elseif string.lower(reason) == "dt" then
+        reason = "Drogentruck"
+        amount = 5
+    elseif string.lower(reason) == "swt" then
+        reason = "Angriff auf den Staatswaffentruck"
+        amount = 6
+    elseif string.lower(reason) == "br" then
+        reason = "Überfall auf Bank/Casino"
+        amount = 6
     elseif string.lower(reason) == "gn" then
         reason = "Geiselnahme"
         amount = 6
+    elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
+        reason = "Airdrop"
+        amount = 6
+    elseif string.lower(reason) == "ex" or string.lower(reason) == "rpg" then
+        reason = "Besitz von Explosivwaffen"
+        amount = 6
     elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
-		amount = 12
-	elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
-		reason = "Gefängis-Ausbruch"
-		amount = 12
-	elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
-		reason = "Airdrop"
-		amount = 6
-	end
+        amount = 12
+    elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
+        reason = "Gefängisausbruch"
+        amount = 12
+    elseif string.lower(reason) == "bh" then
+        reason = "Beihilfe einer Straftat"
+        amount = false
+    end
 	return reason, amount
 end
 
@@ -914,6 +969,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
+						PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
 						target.m_LastWantedsByReason[reason] = getTickCount()
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -1549,6 +1605,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
+			PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
@@ -1743,9 +1800,9 @@ function FactionState:Event_takeWeapons(target)
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
 			for i = 0, 8 do 
-				local w = getPedWeapon(me,i)
+				local w = getPedWeapon(target,i)
 				if w ~= 0 then 
-					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(me, i))
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(target, i))
 				end 
 			end
 			takeAllWeapons(target)
@@ -1964,4 +2021,56 @@ function FactionState:sendMoveRequest(targetChannel, text)
 	for k, faction in pairs(self:getFactions()) do
 		faction:sendMoveRequest(targetChannel, text)
 	end
+end
+
+function FactionState:onAreaColShapeHit(hitElement, match)
+	if hitElement:getType() == "player" then
+		if (hitElement:getFaction() and not hitElement:getFaction():isStateFaction()) or not hitElement:getFaction() then
+			if not isTimer(self.m_AlertTimer) then
+				if not self.m_AreaAlert then
+					self.m_AlertTimer = setTimer(self.m_AlertBind, 10000, 1)
+					triggerClientEvent("playAreaAlertMessage", root, "blue")
+				end
+			end
+			if isTimer(self.m_LeaveTimer) then
+				killTimer(self.m_LeaveTimer)
+			end
+		end
+	end
+end
+
+function FactionState:onAreaColShapeLeave(leaveElement, match)
+	local counter = 0
+	for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+		if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+			counter = counter + 1
+		end
+	end
+	if counter == 0 then
+		if self.m_AreaAlert and not isTimer(self.m_LeaveTimer) then
+			self.m_LeaveTimer = setTimer(self.m_LeaveBind, 30000, 1)
+		end
+	end
+end
+
+function FactionState:startAreaAlert()
+	local counter = 0
+	for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+		if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+			counter = counter + 1
+		end
+	end
+	if counter > 0 then
+		for key, player in ipairs(getElementsByType("player")) do
+			triggerClientEvent("startAreaAlert", player)
+		end
+		self.m_AreaAlert = true
+	else
+		triggerClientEvent("playAreaAlertMessage", root, "normalized")
+	end
+end
+
+function FactionState:stopAreaAlert()
+	triggerClientEvent("stopAreaAlert", root)
+	self.m_AreaAlert = false
 end

@@ -68,9 +68,19 @@ end
 function Guns:Event_onTaser(target)
 	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
 	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
-	if client.vehicle or target.vehicle then return end
+	if client.vehicle then return end
 
 	client:giveAchievement(65)
+
+	if target.vehicle then
+		if target.vehicle:getSpeed() < 10 then
+			local seat = target:getOccupiedVehicleSeat()
+			target.vehicle:setDoorOpenRatio(seat+2, 1)
+			target:removeFromVehicle()
+		else
+			return
+		end
+	end
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
 	toggleAllControls(target,false, true, false)
@@ -169,7 +179,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 
-	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
+	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
 		local inv = source:getInventory()
 		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
 			source:setHeadless(true)
@@ -177,7 +187,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 			source:dropReviveWeapons()
 			source:clearReviveWeapons()
 		else
-			ExecutionPed:new( source, weapon, bodypart)
+			ExecutionPed:new(source, weapon, bodypart)
 		end
 		if inv then
 			if inv:getItemAmount("Diebesgut") > 0 then

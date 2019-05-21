@@ -73,22 +73,12 @@ VEHICLE_BIKES = {
 	
 CAR_COLORS_FROM_ID =
 {
-	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
-	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
-	"dunkel-grün","rot","pupurn", "grau", "blau", "pupurn", "violett",
-	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
-	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
-	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
-	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
-	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
-	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
-	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",
-	"grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau",
-	"hell-grau", "rot", "blau", "rosa", "grau", "rot", "grau", "braun", "lila", "grün",
-	"blau", "dunkel-rot", "grau", "hell-blau", "dunkel-blau", "grau", "blau", "dunkel-blau",
-	"dunke-blau", "hell-grau", "hell-blau", "grau", "braun", "blau", "dunkel-grau",
-	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
-	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
+	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau", "weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau", "dunkel-grün","rot","pupurn", "grau",
+	"blau", "pupurn", "violett", "weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun", "braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün", "hell-blau", "grau-blau", 
+	"dunke-grau", "grau", "rot", "dunkel-rot", "dunkel-grün", "dunkel-rot", "grau", "grau", "grau", "hell-grau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau", "braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", 
+	"grau", "braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau", "grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau", "hell-grau", "rot", "blau", 
+	"rosa", "grau", "rot", "grau", "braun", "lila", "grün", "blau", "dunkel-rot", "grau", "hell-grau", "dunkel-blau", "grau", "blau", "dunkel-blau", "dunke-blau", "hell-grau", "hell-grau", "grau", "braun", 
+	"blau", "dunkel-grau", "hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau", "blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
 	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
 }
 
@@ -152,7 +142,7 @@ FUEL_NAME = { --display name
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
 SERVICE_FUEL_PRICE_MULTIPLICATOR = 3
-SERVICE_REPAIR_PRICE_MULTIPLICATOR = 5
+SERVICE_REPAIR_PRICE_MULTIPLICATOR = 3
 
 VEHICLE_VARIANTS = {
 	[404]={0,1,2},

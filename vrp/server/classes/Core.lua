@@ -193,11 +193,15 @@ function Core:constructor()
 		Sewers:new()
 		ArmsDealer:new()
 		PlaneManager:new()
+<<<<<<< HEAD
 
 		
 		--//marketplace
 		MarketPlaceManager:new():initialize()
 		
+=======
+		PoliceAnnouncements:new()
+>>>>>>> release/production
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

@@ -21,6 +21,7 @@ function KeyBinds:constructor()
 	self.m_VehiclePickUp = bind(LocalPlayer.vehiclePickUp, localPlayer)
 	self.m_VehicleELS = bind(self.vehicleELS, self)
 	self.m_Entrance = bind(self.tryEnterEntrance, self)
+	self.m_PoliceMegaphone = bind(self.usePoliceMegaphone, self)
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
@@ -48,6 +49,7 @@ function KeyBinds:constructor()
 		["KeyToggleReddot"]			= {["defaultKey"] =  "N/A", ["name"] = "Reddot Umschalten", ["func"] = function() HUDUI:getSingleton().m_RedDot = not HUDUI:getSingleton().m_RedDot end, ["trigger"] = "up"};
 		["KeyEntranceUse"]			= {["defaultKey"] =  "f", ["name"] = "Betreten", ["func"] = self.m_Entrance, ["trigger"] = "up"};
 		["KeyToggleTaser"]			= {["defaultKey"] = "o", ["name"] = "Taser ziehen", ["func"] = function() if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then triggerServerEvent("onPlayerItemUseServer", localPlayer, false, false, "Taser") end end, ["trigger"] = "down"};
+		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
@@ -237,6 +239,22 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 				end
 			end
 			localPlayer.m_LastTryEntrance = getTickCount()
+		end
+	end
+end
+
+function KeyBinds:usePoliceMegaphone()
+	if not self.m_LastMegaphoneUsage then self.m_LastMegaphoneUsage = 0 end
+	if getTickCount() - self.m_LastMegaphoneUsage < 7000 then
+		return
+	end
+
+	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() then
+		if localPlayer:getPublicSync("Faction:Duty") then 
+			if localPlayer.vehicle and getElementData(localPlayer.vehicle, "StateVehicle") and localPlayer == localPlayer.vehicle.controller then
+				self.m_LastMegaphoneUsage = getTickCount()
+				triggerServerEvent("PoliceAnnouncements:triggerChaseSound", localPlayer, localPlayer.vehicle) 
+			end 
 		end
 	end
 end

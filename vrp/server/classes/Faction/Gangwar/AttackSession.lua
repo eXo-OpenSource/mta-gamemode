@@ -7,6 +7,7 @@
 -- ****************************************************************************
 AttackSession = inherit(Object)
 addRemoteEvents{"GangwarPick:submit"}
+GANGWAR_TEAMBLIPS = true
 
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
 function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPlayer )
@@ -29,6 +30,8 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self:createWeaponBox()
 	self.m_Active = true
 	self.m_DecisionEnded = false
+	self.m_Blips = {}
+	self:createTeamBlips()
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
@@ -223,10 +226,12 @@ function AttackSession:joinPlayer( player )
 			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
 		end
 	end
+	self:createTeamBlips()
 end
 
 function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
+	self:createTeamBlips()
 end
 
 function AttackSession:onPurposlyDisqualify( player, bAfk, bPick)
@@ -420,6 +425,7 @@ end
 
 function AttackSession:stopClients( bNoOutput )
 	local allGangwarPlayers = {}
+	self:destroyTeamBlips()
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
 		allGangwarPlayers[#allGangwarPlayers+1] = v
@@ -536,6 +542,7 @@ function AttackSession:onDecisionTimeEnd()
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
 		v:triggerEvent("GangwarPick:close")
 	end
+	self:createTeamBlips()
 	self.m_DecisionEnded = true
 end
 
@@ -682,5 +689,34 @@ function AttackSession:destroyWeaponBox()
 			self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:forceClose")
 		end
 		self.m_WeaponBoxAttendants = {}
+	end
+end
+
+function AttackSession:destroyTeamBlips()
+	for key, player in pairs(getElementsByType("player")) do
+		player:triggerEvent("Gangwar:destroyTeamBlips")
+	end
+end
+
+function AttackSession:createTeamBlips()
+	if GANGWAR_TEAMBLIPS == false then return end
+	local faction1 = {}
+	local faction2 = {}
+	for key, player in pairs(self.m_Participants) do
+		if not self:isPlayerDisqualified(player) then
+			if player:getFaction() == self.m_Faction1 then
+				faction1[#faction1+1] = player
+			elseif player:getFaction() == self.m_Faction2 then
+				faction2[#faction2+1] = player
+			end
+		end
+	end
+	for key, player in pairs(self.m_Participants) do
+		if player:getFaction() == self.m_Faction1 then
+			playertable = faction1
+		elseif player:getFaction() == self.m_Faction2 then
+			playertable = faction2
+		end
+		player:triggerEvent("Gangwar:createTeamBlips", playertable) 
 	end
 end
