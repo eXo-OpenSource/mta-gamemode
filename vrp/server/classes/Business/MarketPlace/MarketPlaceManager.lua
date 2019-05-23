@@ -7,7 +7,7 @@
 -- ****************************************************************************
 MarketPlaceManager = inherit(Singleton)
 
-addRemoteEvents{ "Marketplace:closeClient", "Marketplace:getMarkets", "Marketplace:getOffer", "Marketplace:getMarket"}
+addRemoteEvents{ "Marketplace:closeClient", "Marketplace:getMarkets", "Marketplace:getOffer", "Marketplace:getMarket", "Marketplace:getDeals"}
 
 MarketPlaceManager.Map = {}
 
@@ -15,6 +15,7 @@ function MarketPlaceManager:constructor()
 	addEventHandler("Marketplace:getMarkets", root, bind(self.Event_getMarkets, self))
 	addEventHandler("Marketplace:getMarket", root, bind(self.Event_getMarket, self))
 	addEventHandler("Marketplace:getOffer", root, bind(self.Event_getOffer, self))
+	addEventHandler("Marketplace:getDeals", root, bind(self.Event_getDeals, self))
 	addEventHandler("Marketplace:closeClient", root, bind(self.Event_closeClient, self))
 	self.m_UpdateTimer = setTimer(bind(self.upatePulse, self), MARKETPLACE_UPDATE_RATE, 0)
 	self.m_Clients = {}
@@ -82,6 +83,7 @@ function MarketPlaceManager:Event_getOffer(id)
 		if page and market and market.getId and market:getId() then
 			if MarketPlaceManager.Map[market:getId()] then
 				if MarketPlaceManager.Map[market:getId()]:getMap()[id] then
+					MarketPlaceManager.Map[market:getId()]:getMap()[id]:addVisitor(client)
 					self.m_Clients[client] = {3, market, MarketPlaceManager.Map[market:getId()]:getMap()[id]} -- page, market, offer
 					client:triggerEvent("onAppGetServercall", 3, MarketPlaceManager.Map[market:getId()]:getMap()[id])
 				end
@@ -89,6 +91,17 @@ function MarketPlaceManager:Event_getOffer(id)
 		end
 	end
 end
+
+function MarketPlaceManager:Event_getDeals()
+	local deals = {}
+	for id, market in pairs(MarketPlaceManager.Map) do 
+		if market:getDealManager():getPlayerMap()[client] then
+			deals[market:getName()] = {deal = market:getDealManager():getPlayerMap()[client].deal, type =  market:getDealManager():getPlayerMap()[client].type}
+		end
+	end
+	client:triggerEvent("onAppGetServercall", 4, deals)
+end
+
 
 function MarketPlaceManager:Event_closeClient()
 	self.m_Clients[client] = nil

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 MarketOffer = inherit(Object)
 
-function MarketOffer:constructor(id, market, playerId, item, quantity, price, value, offerType, category, dealt) 
+function MarketOffer:constructor(id, market, playerId, item, quantity, price, value, offerType, category, dealt, visitorCount) 
 	self.m_Market = MarketPlaceManager:getSingleton():getId(market)
 	self.m_Valid = false
 	if self:getMarket() and self:getMarket():isValid() and toMarketPlaceItem(item, category or 1) then
@@ -22,6 +22,8 @@ function MarketOffer:constructor(id, market, playerId, item, quantity, price, va
 		self.m_Price = price
 		self:setQuantity(quantity)
 		self.m_Player = playerId
+		self.m_VisitedBy = {} -- Stores each player element in order to not count multiple visits of the same player 
+		self.m_VisitorCount = visitorCount or 0
 		self.m_Dealt = dealt or false
 		if not self:getMarket():getOffer()[self:getItem()] then  self:getMarket():getOffer()[self:getItem()] = {} end
 		if not self:getMarket():getOffer()[self:getItem()][value] then self:getMarket():getOffer()[self:getItem()][value] = {} end
@@ -65,8 +67,8 @@ function MarketOffer:destructor(save)
 end
 
 function MarketOffer:save()
-	local query = "INSERT INTO ??_marketplace_offers (Id, MarketId, PlayerId, Item, Value, Type, Price, Quantity, Category, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE Quantity = ?, Dealt=?"
-	sql:queryExec(query, sql:getPrefix(), self:getId(), self.m_Market:getId(), self:getPlayer(), fromMarketPlaceItem(self:getItem()), self:getValue(), self:getType(), self:getPrice(), self:getQuantity(), self:getCategory(), self:getQuantity(), fromboolean(self:isDealt()))
+	local query = "INSERT INTO ??_marketplace_offers (Id, MarketId, PlayerId, Item, Value, Type, Price, Quantity, Category, VisitorCount, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE Quantity = ?, Dealt=?, VisitorCount=?"
+	sql:queryExec(query, sql:getPrefix(), self:getId(), self.m_Market:getId(), self:getPlayer(), fromMarketPlaceItem(self:getItem()), self:getValue(), self:getType(), self:getPrice(), self:getQuantity(), self:getCategory(), self:getVisitorCount(), self:getQuantity(), fromboolean(self:isDealt()), self:getVisitorCount())
 	if self.m_Id == MARKETPLACE_EMTPY_ID then
 		self.m_Id = sql:lastInsertId()
 	end
@@ -137,6 +139,13 @@ function MarketOffer:giveItemBack( )
 	end
 end
 
+function MarketOffer:addVisitor(player)
+	if not self.m_VisitedBy[player:getName()] then 
+		self.m_VisitedBy[player:getName()] = true 
+		self.m_VisitorCount = self.m_VisitorCount + 1
+	end
+end
+
 function MarketOffer:isValid() return self.m_Valid end
 function MarketOffer:getId() return self.m_Id end
 function MarketOffer:getItem() return self.m_Item end
@@ -148,3 +157,4 @@ function MarketOffer:getPlayer() return self.m_Player end
 function MarketOffer:getCategory() return self.m_Category end
 function MarketOffer:isDealt() return self.m_Dealt end
 function MarketOffer:getMarket() return self.m_Market end
+function MarketOffer:getVisitorCount() return self.m_VisitorCount end

@@ -113,23 +113,25 @@ function AppMarketPlace:showOffer(offer)
 	self:clear()
 	self.m_Page = 3
 	local elements = {}
-	elements.bg = GUIRectangle:new(10,55+50, self.m_Form.m_Width-20, 170, Color.Background, self.m_Tabs.m_Browser)
-	elements.header = GUILabel:new(10, 10+50, self.m_Form.m_Width-20, 50, ("Angebot #%s"):format(offer.m_Id), self.m_Tabs.m_Browser)
-	elements.type = GUILabel:new(15, 60+50, self.m_Form.m_Width-20, 50, ("%s"):format(MARKET_OFFERTYPE_TO_STRING[offer.m_Type]), self.m_Tabs.m_Browser):setFontSize(0.8)
-	elements.line = GUIRectangle:new(10,100+50, self.m_Form.m_Width-20, 1, Color.White, self.m_Tabs.m_Browser)
-	elements.offerItem = GUILabel:new(15, 110+50, self.m_Form.m_Width-20, 30, (MARKETPLACE_ITEM_DISPLAY[offer.m_Item] and (MARKETPLACE_ITEM_DISPLAY[offer.m_Item]):format(offer.m_Value)) or offer.m_ItemName, self.m_Tabs.m_Browser):setFontSize(0.8)
-	elements.offerPrice = GUILabel:new(15, 140+50, self.m_Form.m_Width-20, 30, ("$%s Pro Stück"):format(offer.m_Price), self.m_Tabs.m_Browser):setFontSize(0.8)
-	elements.offerQuantity = GUILabel:new(15, 170+50, self.m_Form.m_Width-20, 30, ("Stückzahl: %s"):format(offer.m_Quantity), self.m_Tabs.m_Browser):setFontSize(0.8)
-	elements.date = GUILabel:new(15, 200+50, self.m_Form.m_Width-20, 30, ("Eingestellt am: %s"):format(getOpticalTimestamp(offer.m_Date)), self.m_Tabs.m_Browser):setFontSize(0.8)
+	elements.bg = GUIRectangle:new(10,55+20, self.m_Form.m_Width-20, 170, Color.Background, self.m_Tabs.m_Browser)
+	elements.header = GUILabel:new(10, 10, self.m_Form.m_Width-20, 50, ("Angebot - %s"):format(offer.m_Id), self.m_Tabs.m_Browser)
+	elements.type = GUILabel:new(15, 60+20, self.m_Form.m_Width-20, 50, ("%s"):format(MARKET_OFFERTYPE_TO_STRING[offer.m_Type]), self.m_Tabs.m_Browser):setFontSize(0.8)
+	elements.line = GUIRectangle:new(10,100+20, self.m_Form.m_Width-20, 1, Color.White, self.m_Tabs.m_Browser)
+	elements.offerItem = GUILabel:new(15, 110+20, self.m_Form.m_Width-20, 30, (MARKETPLACE_ITEM_DISPLAY[offer.m_Item] and (MARKETPLACE_ITEM_DISPLAY[offer.m_Item]):format(offer.m_Value)) or offer.m_ItemName, self.m_Tabs.m_Browser):setFontSize(0.8)
+	elements.offerPrice = GUILabel:new(15, 140+20, self.m_Form.m_Width-20, 30, ("$%s Pro Stück"):format(offer.m_Price), self.m_Tabs.m_Browser):setFontSize(0.8)
+	elements.offerQuantity = GUILabel:new(15, 170+20, self.m_Form.m_Width-20, 30, ("Stückzahl: %s"):format(offer.m_Quantity), self.m_Tabs.m_Browser):setFontSize(0.8)
+	elements.date = GUILabel:new(15, 200+20, self.m_Form.m_Width-20, 30, ("Eingestellt am: %s"):format(getOpticalTimestamp(offer.m_Date)), self.m_Tabs.m_Browser):setFontSize(0.8)
 	local previewPath, isWeb = self:getPreview(offer.m_Item, offer.m_ItemName, offer.m_Value)
 	if previewPath then
 		if isWeb then 
-			elements.preview = GUIWebView:new(self.m_Form.m_Width-74, 102+50, 64, 95, previewPath, true, self.m_Tabs.m_Browser)
+			elements.preview = GUIWebView:new(self.m_Form.m_Width-74, 102+20, 64, 95, previewPath, true, self.m_Tabs.m_Browser)
 			elements.preview:setRenderingEnabled(false)
 		else 
-			elements.preview = GUIImage:new(self.m_Form.m_Width-74, 120+50, 32, 32, previewPath, self.m_Tabs.m_Browser)
+			elements.preview = GUIImage:new(self.m_Form.m_Width-74, 120+20, 32, 32, previewPath, self.m_Tabs.m_Browser)
 		end
 	end
+	elements.bg2 = GUIRectangle:new(10, 55+20+175, self.m_Form.m_Width-20, 30, Color.Background, self.m_Tabs.m_Browser)
+	elements.visitorcount = GUILabel:new(15, 55+20+175, self.m_Form.m_Width-20, 30, ("Angebot wurde %s-Mal besucht!"):format(offer.m_VisitorCount), self.m_Tabs.m_Browser):setFontSize(0.8):setAlignY("center")
 	elements.back = GUIButton:new(self.m_Form.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self.m_Tabs.m_Browser):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	if self.m_SelectedMarket then
 		elements.back.onLeftClick = function() triggerServerEvent("Marketplace:getMarket", localPlayer, self.m_SelectedMarket) end
@@ -149,14 +151,41 @@ function AppMarketPlace:getPreview(item, itemName, itemValue)
 	end
 end
 
+function AppMarketPlace:createDealTab()
+	self.m_Form.m_DealTab = {}
+	self.m_Form.m_DealTab.m_DealBackground = GUIRectangle:new(10,55+20, self.m_Form.m_Width-20, 170, Color.Background, self.m_Tabs.m_Deal)
+	self.m_Form.m_DealTab.m_DealHeader = GUILabel:new(10, 10, self.m_Form.m_Width-20, 50, ("Abgeschlossene Aufträge"), self.m_Tabs.m_Deal)
+	self.m_Form.m_DealTab.m_DealGrid = GUIGridList:new(10, 60, self.m_Form.m_Width-20, self.m_Form.m_Height-160, self.m_Tabs.m_Deal)
+	self.m_Form.m_DealTab.m_DealGrid:addColumn(_"Markt", .3)
+	self.m_Form.m_DealTab.m_DealGrid:addColumn(_"Geschäft", .7)
+end
+
+function AppMarketPlace:getDeals(data)
+	if self.m_Form.m_DealTab.m_DealGrid then
+		self.m_Form.m_DealTab.m_DealGrid:clear()
+		for market, data in pairs(data) do
+			local item = data.m_Sell.m_ItemName
+			local price = deal.m_Sell.m_Price
+			local quantity = deal.m_Sell.m_Quantity
+			if data.type == "buy" then 
+				self.m_Form.m_DealTab.m_DealGrid:addItem(market, ("[Gegenstand] %sx%s für $%s"):format(item, quantity, price*quantity))
+			else 
+				self.m_Form.m_DealTab.m_DealGrid:addItem(market, ("[Geld] $%s für %sx%s"):format(price*quantity, quantity, item))
+			end
+		end
+	end
+end
+
 function AppMarketPlace:onOpen(form)
 	self.m_Form = form
 	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, form.m_Width, form.m_Height, form)
 	self.m_Tabs = {}
 	self.m_Tabs.m_Browser = self.m_TabPanel:addTab(_"Marktplätze", FontAwesomeSymbols.Info)
-	self.m_Tabs.m_Offer = self.m_TabPanel:addTab(_"Angebot erstellen", FontAwesomeSymbols.Info)
+	self.m_Tabs.m_Deal = self.m_TabPanel:addTab(_"Angebot erstellen", FontAwesomeSymbols.Info)
 	self.m_Tabs.m_Info = self.m_TabPanel:addTab(_"Informationen", FontAwesomeSymbols.Info)
+	self:createDealTab()
 	triggerServerEvent("Marketplace:getMarkets", localPlayer)
+	triggerServerEvent("Marketplace:getDeals", localPlayer)
 end
 
 function AppMarketPlace:onClose() 
@@ -171,13 +200,15 @@ function AppMarketPlace:onOfferClick(id)
 	triggerServerEvent("Marketplace:getOffer", localPlayer, id)
 end
 
-function AppMarketPlace:Event_onServerResponse(page, data) -- notifyMarketDelete/notifyOfferDelete is only set when a marketplace/offer got deleted
+function AppMarketPlace:Event_onServerResponse(page, data)
 	if page == 1 then 
 		self:showMarkets(data)
 	elseif page == 2 then 
 		self:showMarket(data)
-	else 
+	elseif page == 3 then
 		self:showOffer(data)
+	else 
+		self:getDeals(data)
 	end
 end
 

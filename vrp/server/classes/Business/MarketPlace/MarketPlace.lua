@@ -63,7 +63,7 @@ function MarketPlace:map()
 		local loadCount = 0
 		if result then
 			for index, row in pairs(result) do
-				local instance = self:loadOffer(row.Id, row.MarketId, row.PlayerId, row.Type, row.Item, row.Quantity, row.Price, row.Value, row.Category, fromboolean(row.Dealt))
+				local instance = self:loadOffer(row.Id, row.MarketId, row.PlayerId, row.Type, row.Item, row.Quantity, row.Price, row.Value, row.Category, fromboolean(row.Dealt), row.VisitorCount)
 				if instance and instance:isValid() then
 					loadCount = loadCount + 1
 				else
@@ -148,11 +148,11 @@ function MarketPlace:kickAll()
 	end
 end
 
-function MarketPlace:loadOffer(id, marketid, playerId, offerType, item, quantity, price, itemValue, category, done)
+function MarketPlace:loadOffer(id, marketid, playerId, offerType, item, quantity, price, itemValue, category, done, VisitorCount)
 	local validOffer = self:validateOffer(playerId, offerType, item, quantity, price)
 	if validOffer then
 		itemValue = itemValue and tostring(itemValue) or ""
-		return MarketOffer:new(id, marketid, playerId, item, quantity, price, itemValue, offerType, category, done)
+		return MarketOffer:new(id, marketid, playerId, item, quantity, price, itemValue, offerType, category, done, VisitorCount)
 	end
 end
 
@@ -186,7 +186,7 @@ function MarketPlace:addOffer(playerId, offerType, item, quantity, price, itemVa
 							return "Nicht genug Geld zum kaufen!"
 						end
 					end
-					MarketOffer:new(MARKETPLACE_EMTPY_ID, self:getId(), playerId, item, quantity, price, itemValue, offerType, category)
+					MarketOffer:new(MARKETPLACE_EMTPY_ID, self:getId(), playerId, item, quantity, price, itemValue, offerType, category, 0)
 				else 
 					return "Dieser Gegenstand ist nicht erlaubt auf diesem Marktplatz!"
 				end

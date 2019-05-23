@@ -28,8 +28,8 @@ function MarketDeal:constructor(manager, id, market, selloffer, buyoffer, amount
 				self:save()
 			end
 			self:getManager():getMap()[self:getId()] = self
-			self:getManager():addToPlayerMap(self:getSell():getPlayer(), self)
-			self:getManager():addToPlayerMap(self:getBuy():getPlayer(), self)
+			self:getManager():addToPlayerMap(self:getSell():getPlayer(), self, "sell")
+			self:getManager():addToPlayerMap(self:getBuy():getPlayer(), self, "buy")
 			self:getManager():addBuyerToMap(self:getBuy(), self)
 			self:getManager():addSellerToMap(self:getSell(), self)
 			self:notify()
