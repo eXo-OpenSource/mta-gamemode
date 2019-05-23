@@ -21,6 +21,12 @@ MARKET_ITEM_CATEGORIES_INT_TO_CONSTANT =
 	WEAPON = 3,
 }
 
+MARKET_OFFERTYPE_TO_STRING = 
+{
+	["buy"] = "Ich kaufe!", 
+	["sell"] = "Ich verkaufe!"
+}
+
 MARKET_MESSAGE_TITLE = "Marktplatz"
 
 function toMarketPlaceItem(item, category)
@@ -48,4 +54,9 @@ MARKETPLACE_TYPE_NAME =
 {
 	[0] = "Legal",
 	[1] = "Illegal",
+}
+
+MARKETPLACE_ITEM_DISPLAY = 
+{
+	[toMarketPlaceItem(79, 1)] = "Kleidung (%s)",
 }

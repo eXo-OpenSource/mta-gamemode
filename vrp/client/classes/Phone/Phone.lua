@@ -34,6 +34,7 @@ function Phone:constructor()
 	self:registerApp(AppSanNews)
 	self:registerApp(AppNotes)
 	self:registerApp(AppSkribble)
+	self:registerApp(AppMarketPlace)
 	--self:registerApp(AppNametag)
 
 	-- Add GUI elements

@@ -7,14 +7,17 @@
 -- ****************************************************************************
 MarketPlaceManager = inherit(Singleton)
 
-addRemoteEvents{"Marketplace:showMarket", "Marketplace:closeMarket"}
+addRemoteEvents{ "Marketplace:closeClient", "Marketplace:getMarkets", "Marketplace:getOffer", "Marketplace:getMarket"}
 
 MarketPlaceManager.Map = {}
 
 function MarketPlaceManager:constructor()
-	addEventHandler("Marketplace:showMarket", root, bind(self.Event_showMarket, self))
-	addEventHandler("Marketplace:closeMarket", root, bind(self.Event_showMarket, self))
+	addEventHandler("Marketplace:getMarkets", root, bind(self.Event_getMarkets, self))
+	addEventHandler("Marketplace:getMarket", root, bind(self.Event_getMarket, self))
+	addEventHandler("Marketplace:getOffer", root, bind(self.Event_getOffer, self))
+	addEventHandler("Marketplace:closeClient", root, bind(self.Event_closeClient, self))
 	self.m_UpdateTimer = setTimer(bind(self.upatePulse, self), MARKETPLACE_UPDATE_RATE, 0)
+	self.m_Clients = {}
 end
 
 function MarketPlaceManager:destructor() 
@@ -55,17 +58,42 @@ function MarketPlaceManager:getId(id)
 	return MarketPlaceManager.Map[id]
 end
 
-function MarketPlaceManager:Event_showMarket(marketId)
-	if client and marketId and MarketPlaceManager.Map[marketId] then 
-		MarketPlaceManager.Map[marketId]:show(client)
-	end
-end
-
 function MarketPlaceManager:Event_closeMarket(marketId)
 	if client and marketId and MarketPlaceManager.Map[marketId] then 
 		MarketPlaceManager.Map[marketId]:hide(client)
 	end
 end
+
+function MarketPlaceManager:Event_getMarkets()
+	self.m_Clients[client] = {1} --page
+	client:triggerEvent("onAppGetServercall", 1, self:getCompactMap())
+end
+
+function MarketPlaceManager:Event_getMarket(id)
+	if MarketPlaceManager.Map[id] then
+		self.m_Clients[client] = {2, MarketPlaceManager.Map[id]} -- page, market
+		client:triggerEvent("onAppGetServercall", 2, MarketPlaceManager.Map[id])
+	end
+end
+
+function MarketPlaceManager:Event_getOffer(id)
+	if self.m_Clients[client] then
+		local page, market = unpack(self.m_Clients[client])
+		if page and market and market.getId and market:getId() then
+			if MarketPlaceManager.Map[market:getId()] then
+				if MarketPlaceManager.Map[market:getId()]:getMap()[id] then
+					self.m_Clients[client] = {3, market, MarketPlaceManager.Map[market:getId()]:getMap()[id]} -- page, market, offer
+					client:triggerEvent("onAppGetServercall", 3, MarketPlaceManager.Map[market:getId()]:getMap()[id])
+				end
+			end
+		end
+	end
+end
+
+function MarketPlaceManager:Event_closeClient()
+	self.m_Clients[client] = nil
+end
+
 
 function MarketPlaceManager:upatePulse()
 	for id, market in pairs(MarketPlaceManager.Map) do 
@@ -73,5 +101,13 @@ function MarketPlaceManager:upatePulse()
 			market:pulse()
 		end
 	end
+end
+
+function MarketPlaceManager:getCompactMap() -- this compacts the table to not send more data then necessary
+	local compact = {}
+	for id, instance in pairs(MarketPlaceManager.Map) do 
+		compact[id] = {m_Name = instance:getName(), m_Size = instance:getActiveOfferCount()}
+	end
+	return compact
 end
 

@@ -20,6 +20,7 @@ function MarketPlace:constructor(id, name, storage, bank, marketType, open)
 		self.m_Storage = (storage and type(storage) == "string" and fromJSON(storage)) or {}
 		self.m_ImaginaryBank = bank or 0
 		self.m_Bank = BankServer.get("gameplay.marketplace")
+		self.m_OfferCount = 0 -- used to determine active offer count (ie. offers with quantity > 0)
 		self:setOpenState(open)
 		self:save()
 		self:map() -- load and store offers in a sorted table with indexes
@@ -117,6 +118,15 @@ function MarketPlace:pulse()
 		self:update(client)
 	end
 end
+
+function MarketPlace:increaseOfferCount() 
+	self.m_OfferCount = self.m_OfferCount + 1
+end
+
+function MarketPlace:decreaseOfferCount() 
+	self.m_OfferCount = self.m_OfferCount - 1
+end
+
 
 function MarketPlace:setOpenState(state) 
 	self.m_Open = state
@@ -294,4 +304,6 @@ function MarketPlace:getOffers(player, item, value, offerType, price)
 	end
 	return false
 end
+function MarketPlace:getActiveOfferCount() return self.m_OfferCount end
 function MarketPlace:getDealManager() return self.m_MarketDealManager end
+function MarketPlace:getDeals() return self:getDealManager():getMap() end

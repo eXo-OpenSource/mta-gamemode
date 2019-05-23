@@ -11,14 +11,16 @@ function MarketOffer:constructor(id, market, playerId, item, quantity, price, va
 	self.m_Market = MarketPlaceManager:getSingleton():getId(market)
 	self.m_Valid = false
 	if self:getMarket() and self:getMarket():isValid() and toMarketPlaceItem(item, category or 1) then
+		self:getMarket():increaseOfferCount()
 		self.m_Valid = true
 		self.m_Id = id
 		self.m_Category = category or 1
 		self.m_Item = toMarketPlaceItem(item, self.m_Category) 
+		self.m_ItemName = InventoryManager:getSingleton():getItemNameFromId(item)
 		self.m_Value = value 
 		self.m_Type = offerType
 		self.m_Price = price
-		self.m_Quantity = quantity
+		self:setQuantity(quantity)
 		self.m_Player = playerId
 		self.m_Dealt = dealt or false
 		if not self:getMarket():getOffer()[self:getItem()] then  self:getMarket():getOffer()[self:getItem()] = {} end
@@ -35,7 +37,10 @@ function MarketOffer:constructor(id, market, playerId, item, quantity, price, va
 		if id == 0 then
 			self:save()
 		end
+		local dateResult = sql:queryFetchSingle("SELECT UNIX_TIMESTAMP(Date) FROM ??_marketplace_offers WHERE Id=?", sql:getPrefix(), self:getId())
+		self.m_Date = dateResult.Date
 		self:getMarket():getMap()[self:getId()] = self
+
 	end
 end
 
@@ -74,6 +79,9 @@ end
 
 function MarketOffer:setQuantity(quantity) 
 	self.m_Quantity = quantity
+	if quantity == 0 then 
+		self:getMarket():decreaseOfferCount()
+	end
 end
 
 function MarketOffer:setDealt(bool) 
