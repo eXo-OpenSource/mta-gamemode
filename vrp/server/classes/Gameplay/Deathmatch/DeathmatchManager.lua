@@ -222,7 +222,7 @@ function DeathmatchManager:createPlayerLobby(map, weapon, password)
 end
 
 function DeathmatchManager:joinLobby(id)
-	if client:isFactionDuty() then
+	if client:isFactionDuty() and client:getFaction():isStateFaction() then
 		client:sendError(_("Du darfst nicht im Dienst in eine DM-Lobby! (Fraktion)", client))
 		return
 	end

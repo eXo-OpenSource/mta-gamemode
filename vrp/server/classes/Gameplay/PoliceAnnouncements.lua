@@ -78,6 +78,8 @@ function PoliceAnnouncements:syncSirens(singlePlayer)
 end
 
 function PoliceAnnouncements:setSirenState(vehicle, sirenType)
+    if not self.m_SirenVehicles[vehicle] and sirenType == "inactive" then return end
+
     if self:isValidVehicle(vehicle) then 
         self.m_SirenVehicles[vehicle] = sirenType
         for key, player in ipairs(getElementsByType("player")) do

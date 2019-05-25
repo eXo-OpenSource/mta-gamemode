@@ -24,7 +24,12 @@ function FactionState:constructor()
 
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	self.m_InstantTeleportGarage = InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
-	self.m_InstantTeleportGarage:addEnterEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", false) end end)
+	self.m_InstantTeleportGarage:addEnterEvent(
+		function(element) 
+			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end 
+			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end 
+		end
+	)
 	self.m_InstantTeleportGarage:addExitEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", true) end end)
 
 	--self.m_InstantTeleportCol:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
