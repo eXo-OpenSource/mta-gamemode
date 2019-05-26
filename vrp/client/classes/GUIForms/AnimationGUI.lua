@@ -41,6 +41,7 @@ function AnimationGUI:startAnimation()
 	if localPlayer:getData("isInDeathMatch") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
+	if isPedAiming(localPlayer) then return end
 
 	if ANIMATIONS[self.m_AnimationList:getSelectedItem().Name] then
 		if not self.m_InfoMessage then
