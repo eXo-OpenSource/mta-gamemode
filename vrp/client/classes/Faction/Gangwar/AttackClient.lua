@@ -254,7 +254,7 @@ function AttackClient:createTeamBlips(playertable)
 			AttackClient.Blips[player:getName()][1]:attach(player)
 			AttackClient.Blips[player:getName()][1]:setDisplayText(player:getName(), "Anderes")
 
-			AttackClient.Blips[player:getName()][2] = createBlipAttachedTo(player, 0, 2, 50, 200, 50, 255, 0, 700)
+			AttackClient.Blips[player:getName()][2] = createBlipAttachedTo(player, 0, 1, 50, 200, 50, 255, 0, 700)
 			AttackClient.Blips[player:getName()][2]:setData("isGangwarBlip", true)
 		end
 	end
