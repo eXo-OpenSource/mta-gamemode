@@ -1,9 +1,14 @@
 RouletteManager = inherit(Singleton)
 RouletteManager.Map = {}
-RouletteManager.Bets = {}
+RouletteManager.Limits = {}
 
 function RouletteManager:constructor()
 	self.m_Stats = StatisticsLogger:getSingleton():getGameStats("Roulette")
+
+	local result = sql:queryFetch("SELECT * FROM ??_roulette_limits", sql:getPrefix())
+	for _, row in ipairs(result) do
+		RouletteManager.Limits[row["UserId"]] = {Limit=row["Limit"], Bets=0}
+	end
 
 	addRemoteEvents{"rouletteCreateNew", "rouletteSpin", "rouletteOnSpinDone", "rouletteCheatSpin", "rouletteDelete"}
 
@@ -32,7 +37,7 @@ end
 
 function RouletteManager:Event_spinRoulette(bets)
 	if not RouletteManager.Map[client] then return end
-	if not Sewers:getSingleton().m_CasinoMembers[client] and RouletteManager.Bets[client:getId()] >= ROULETTE_MAX_BETS_PER_DAY then
+	if not Sewers:getSingleton().m_CasinoMembers[client] and RouletteManager.Limits[client:getId()].Bets >= RouletteManager.Limits[client:getId()].Limit then
 		client:sendError("Du hast heute genug Roulette gespielt, Du solltest eine Pause einlegen!")
 		client:triggerEvent("rouletteRemoveTableLock")
 		return 
