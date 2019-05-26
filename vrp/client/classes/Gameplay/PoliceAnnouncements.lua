@@ -196,6 +196,8 @@ function PoliceAnnouncements:playSiren(vehicle, sirenType)
     local x, y, z = getElementPosition(vehicle)
     if vehicle.controller then vehicle.controller:setControlState("horn", false) end
     vehicle:setSirensOn(false)
+    if sirenType == "active" and vehicle:getDimension() ~= 0 then return end
+    setTimer(setVehicleSirensOn, 100, 1, vehicle, false)
 
     if sirenType == "active" then
         if vehicle.sirenSound and vehicle.sirenSound:getData("sirenType") == "secondary" then
@@ -232,7 +234,6 @@ function PoliceAnnouncements:playSiren(vehicle, sirenType)
         addEventHandler("onClientColShapeLeave", vehicle.sirenShape, self.m_SirenColLeave)
         setTimer(function() self:colShapeCheck(vehicle) end, 1000, 1)
     end
-    setTimer(setVehicleSirensOn, 100, 1, vehicle, false)
 end
 
 function PoliceAnnouncements:startSiren(vehicle, sirenType)

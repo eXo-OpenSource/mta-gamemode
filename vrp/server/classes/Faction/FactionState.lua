@@ -24,7 +24,12 @@ function FactionState:constructor()
 
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	self.m_InstantTeleportGarage = InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
-	self.m_InstantTeleportGarage:addEnterEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", false) end end)
+	self.m_InstantTeleportGarage:addEnterEvent(
+		function(element) 
+			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end 
+			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end 
+		end
+	)
 	self.m_InstantTeleportGarage:addExitEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", true) end end)
 
 	--self.m_InstantTeleportCol:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
@@ -38,33 +43,7 @@ function FactionState:constructor()
 
 	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut", "Sprengstoff"}
 
-	self.m_ArmySpecialVehicleBorder = {
-		x = -179.915,
-		y = 1614.156,
-		sizeX = 616.486,
-		sizeY = 610.996
-	}
-
-	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
 	self.m_BankAccountServer = BankServer.get("faction.state")
-
-	addEventHandler("onColShapeLeave", self.m_ArmySepcialVehicleCol, function(element)
-		if element and isElement(element) and element:getType() == "player" and element.vehicle then
-			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
-				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
-					local veh = element.vehicle
-					element:removeFromVehicle()
-					veh:respawn(true)
-					FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
-					for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
-						if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
-							v:sendMessage(element:getName() .. " hat das Fahrzeug " .. veh:getName() .. " entwendet!", 193, 44, 44)
-						end
-					end
-				end
-			end
-		end
-	end)
 
 	self.m_Bugs = {}
 
@@ -360,24 +339,24 @@ function FactionState:loadArmy(factionId)
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
-	local areaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
+	self.m_AreaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
 	--areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
-	areaGate.m_Gates[1]:setDoubleSided(true)
-	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
+	self.m_AreaGate.m_Gates[1]:setDoubleSided(true)
+	self.m_AreaGate.onGateHit = bind(self.onAreaBarrierGateHit, self)
 
 
-	local areaGateBack = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
-	areaGateBack.m_Gates[1]:setDoubleSided(true)
-	areaGateBack.onGateHit = bind(self.onBarrierGateHit, self)
+	self.m_AreaGateBack = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
+	self.m_AreaGateBack.m_Gates[1]:setDoubleSided(true)
+	self.m_AreaGateBack.onGateHit = bind(self.onAreaBarrierGateHit, self)
 
-	local areaGatesSmall = Gate:new(983, Vector3(97.55, 1920.5, 19.200), Vector3(0, 0, 0), Vector3(97.55, 1923.520, 19.200))
+	self.m_AreaGateSmall = Gate:new(983, Vector3(97.55, 1920.5, 19.200), Vector3(0, 0, 0), Vector3(97.55, 1924, 19.200))
 	local collision = createObject(3049, 96.699996948242, 1921.0999755859, 17, 0, 90, 90)
 	collision:setScale(0)
-	areaGatesSmall.m_Gates[1]:setDoubleSided(true)
-	areaGatesSmall.m_Gates[1]:setScale(1, 0.4749, 3)
-	collision:attach(areaGatesSmall.m_Gates[1], 0, 0.5, -2, 0, 90, 90)
-	areaGatesSmall.m_Gates[1]:setCollisionsEnabled(false)
-	areaGatesSmall.onGateHit = bind(self.onBarrierGateHit, self)
+	self.m_AreaGateSmall.m_Gates[1]:setDoubleSided(true)
+	self.m_AreaGateSmall.m_Gates[1]:setScale(1, 0.4749, 3)
+	collision:attach(self.m_AreaGateSmall.m_Gates[1], 0, 0.5, -2, 0, 90, 90)
+	self.m_AreaGateSmall.m_Gates[1]:setCollisionsEnabled(false)
+	self.m_AreaGateSmall.onGateHit = bind(self.onAreaBarrierGateHit, self)
 
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
@@ -665,6 +644,14 @@ end
 
 function FactionState:onBarrierGateHit(player)
     if player:getFaction() and player:getFaction():isStateFaction() then
+		return true
+	else
+		return false
+	end
+end
+
+function FactionState:onAreaBarrierGateHit(player)
+    if player:getFaction() and player:getFaction():isStateFaction() and ActionsCheck:getSingleton():isCurrentAction() ~= "Geldtransport" then
 		return true
 	else
 		return false
@@ -2073,4 +2060,16 @@ end
 function FactionState:stopAreaAlert()
 	triggerClientEvent("stopAreaAlert", root)
 	self.m_AreaAlert = false
+end
+
+function FactionState:forceOpenAreaGates()
+	if self.m_AreaGate.m_Closed == true then
+		self.m_AreaGate:triggerMovement(false, true)
+	end
+	if self.m_AreaGateBack.m_Closed == true then
+		self.m_AreaGateBack:triggerMovement(false, true)
+	end
+	if self.m_AreaGateSmall.m_Closed == true then
+		self.m_AreaGateSmall:triggerMovement(false, true)
+	end
 end

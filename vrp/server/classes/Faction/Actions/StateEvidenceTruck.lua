@@ -62,6 +62,7 @@ function StateEvidenceTruck:constructor(driver, money)
 	self:addDestinationMarker(1, "state") -- State
 	self:spawnMoneyBags()
 	TollStation.openAll()
+	FactionState:getSingleton():forceOpenAreaGates()
 end
 
 function StateEvidenceTruck:destructor()
