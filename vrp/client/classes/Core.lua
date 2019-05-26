@@ -297,7 +297,7 @@ setTimer(
 	function()
 		local attachedBlips = {}
 		for _, v in pairs(getElementsByType("blip")) do
-			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" then
+			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" and not v:getData("isGangwarBlip") then
 				table.insert(attachedBlips, v)
 			end
 		end

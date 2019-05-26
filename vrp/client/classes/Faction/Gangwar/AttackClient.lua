@@ -249,17 +249,21 @@ function AttackClient:createTeamBlips(playertable)
 	self:destroyTeamBlips()
 	for key, player in ipairs(playertable) do
 		if player ~= localPlayer then
-			AttackClient.Blips[player:getName()] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
-			AttackClient.Blips[player:getName()]:attach(player)
-			AttackClient.Blips[player:getName()]:setDisplayText(player:getName(), "Anderes")
+			AttackClient.Blips[player:getName()][1] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
+			AttackClient.Blips[player:getName()][1]:attach(player)
+			AttackClient.Blips[player:getName()][1]:setDisplayText(player:getName(), "Anderes")
+
+			AttackClient.Blips[player:getName()][2] = createBlipAttachedTo(player, 0, 2, 50, 200, 50, 255, 0, 700)
+			AttackClient.Blips[player:getName()][2]:setData("isGangwarBlip", true)
 		end
 	end
 end
 
 addEvent("Gangwar:destroyTeamBlips",true)
 function AttackClient:destroyTeamBlips()
-	for player, blip in pairs(AttackClient.Blips) do
-		delete(blip)
+	for player, table in pairs(AttackClient.Blips) do
+		delete(table[1])
+		table[2]:destroy()
 	end
 	AttackClient.Blips = {}
 end
