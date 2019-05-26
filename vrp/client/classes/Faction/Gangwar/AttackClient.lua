@@ -249,6 +249,7 @@ function AttackClient:createTeamBlips(playertable)
 	self:destroyTeamBlips()
 	for key, player in ipairs(playertable) do
 		if player ~= localPlayer then
+			AttackClient.Blips[player:getName()] = {}
 			AttackClient.Blips[player:getName()][1] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
 			AttackClient.Blips[player:getName()][1]:attach(player)
 			AttackClient.Blips[player:getName()][1]:setDisplayText(player:getName(), "Anderes")
