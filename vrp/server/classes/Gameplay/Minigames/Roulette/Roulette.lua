@@ -34,8 +34,10 @@ function Roulette:spin(bets)
 		self.m_Player:sendError(_("Du hast nicht genug Geld für deinen Einsatz dabei!", self.m_Player))
 		self.m_Bets = nil
 		return false
-	end
-    RouletteManager.Limits[self.m_Player:getId()].Bets = RouletteManager.Limits[self.m_Player:getId()].Bets + bet
+    end
+    if RouletteManager.Limits[self.m_Player:getId()] then
+        RouletteManager.Limits[self.m_Player:getId()].Bets = RouletteManager.Limits[self.m_Player:getId()].Bets + bet
+    end
     self.m_Player:transferMoney(self.m_BankAccountServer, bet, "Roulette-Einsatz", "Gameplay", "Roulett")
 	RouletteManager:getSingleton():setStats(-bet, true)
 	self.m_Random = math.random(0, 36)

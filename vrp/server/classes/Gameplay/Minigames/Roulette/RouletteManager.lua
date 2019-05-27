@@ -37,7 +37,7 @@ end
 
 function RouletteManager:Event_spinRoulette(bets)
 	if not RouletteManager.Map[client] then return end
-	if not Sewers:getSingleton().m_CasinoMembers[client] and RouletteManager.Limits[client:getId()].Bets >= RouletteManager.Limits[client:getId()].Limit then
+	if not Sewers:getSingleton().m_CasinoMembers[client] and RouletteManager.Limits[client:getId()] and RouletteManager.Limits[client:getId()].Bets >= RouletteManager.Limits[client:getId()].Limit then
 		client:sendError("Du hast heute genug Roulette gespielt, Du solltest eine Pause einlegen!")
 		client:triggerEvent("rouletteRemoveTableLock")
 		return 
