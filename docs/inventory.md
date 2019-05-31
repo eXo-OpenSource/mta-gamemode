@@ -141,10 +141,12 @@ TODO by MegaThorx
 -   Id int PK
 -   TechincalName varchar(128) NOT NULL
 -   CategoryId int NOT NULL FK
+-   Class varchar(128) NOT NULL
 -   Name varchar(128) NOT NULL
 -   Description text NOT NULL DEFAULT ''
 -   Consumable bool NOT NULL DEFAULT 0
 -   Icon varchar(128) NOT NULL
+-   Size int NOT NULL
 -   ModelId int NOT NULL DEFAULT 0
 -   MaxDurability int NOT NULL DEFAULT 0
 -   Tradeable bool NOT NULL DEFAULT 0
@@ -182,9 +184,11 @@ CREATE TABLE `vrp_items`  (
   `Id` int(0) NOT NULL AUTO_INCREMENT,
   `TechnicalName` varchar(128) NOT NULL,
   `CategoryId` int(0) NOT NULL,
+  `Class` varchar(128) NOT NULL,
   `Name` varchar(128) NOT NULL,
   `Description` text NOT NULL DEFAULT '',
   `Icon` varchar(128) NOT NULL,
+  `Size` int(0) NOT NULL,
   `ModelId` int(0) NOT NULL DEFAULT 0,
   `MaxDurability` int(0) NOT NULL DEFAULT 0,
   `Consumable` tinyint(1) NOT NULL DEFAULT 0,
@@ -238,7 +242,7 @@ CREATE TABLE `vrp_inventory_items`  (
 INSERT INTO vrp_item_categories VALUES (1, 'food', 'Essen'), (2, 'weapons', 'Waffen');
 INSERT INTO vrp_inventory_types VALUES (1, 'player_inventory', 'Spielerinventar', ''), (2, 'weaponbox', 'Waffenbox', '[["faction": [1, 2, 3]]]');
 INSERT INTO vrp_inventory_type_categories VALUES (1, 1), (1, 2), (2, 2);
-INSERT INTO vrp_items VALUES (1, 'burger', 1, 'Burger', 'Burgershot Burger', 'myAwesomeBurger.png', 0, 0, 1, 1, 1, 0);
+INSERT INTO vrp_items VALUES (1, 'burger', 1, 'Burger', 'Burgershot Burger', 'myAwesomeBurger.png', 1, 0, 0, 1, 1, 1, 0);
 INSERT INTO vrp_inventories VALUES (1, 4123, 1, 32, 1), (2, 2, 1, 32, 2);
 INSERT INTO vrp_inventory_items VALUES (1, 1, 1, 1, 1, 0, '');
 ```

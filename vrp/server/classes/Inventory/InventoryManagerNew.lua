@@ -35,7 +35,13 @@ InventoryTemplates = {
 function InventoryManagerNew:constructor()
 	self.m_Items = {}
 	self.m_ItemIdToName = {}
+	self.m_Categories = {}
+	self.m_CategoryIdToName = {}
+	self.m_InventoryTypes = {}
+	self.m_InventoryTypesIdToName = {}
 	self:loadItems()
+	self:loadCategories()
+	self:loadInventoryTypes()
 
 	addRemoteEvents{"syncInventory"}
 
@@ -52,7 +58,7 @@ function InventoryManagerNew:Event_syncInventory()
 end
 
 function InventoryManagerNew:loadItems()
-	local result = sql:queryFetch("SELECT i.*, c.Name AS Category FROM ??_items i INNER JOIN ??_item_categories c ON c.Id = i.CategoryId", sql:getPrefix(), sql:getPrefix())
+	local result = sql:queryFetch("SELECT i.*,c.TechnicalName AS Category, c.Name AS CategoryName FROM ??_items i INNER JOIN ??_item_categories c ON c.Id = i.CategoryId", sql:getPrefix(), sql:getPrefix())
 	self.m_Items = {}
 	self.m_ItemIdToName = {}
 
@@ -62,9 +68,11 @@ function InventoryManagerNew:loadItems()
 			TechnicalName = row.TechnicalName;
 			CategoryId = row.CategoryId;
 			Category = row.Category;
+			CategoryName = row.CategoryName;
 			Name = row.Name;
 			Description = row.Description;
 			Icon = row.Icon;
+			Size = row.Size;
 			ModelId = row.ModelId;
 			MaxDurability = row.MaxDurability;
 			Consumable = row.Consumable == 1;
@@ -74,6 +82,56 @@ function InventoryManagerNew:loadItems()
 		}
 
 		self.m_ItemIdToName[row.TechnicalName] = row.Id
+	end
+end
+
+function InventoryManagerNew:loadCategories()
+	local result = sql:queryFetch("SELECT * FROM ??_item_categories", sql:getPrefix())
+	self.m_Categories = {}
+	self.m_CategoryIdToName = {}
+
+	for _, row in ipairs(result) do
+		self.m_Categories[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			Name = row.Name;
+		}
+
+		self.m_CategoryIdToName[row.TechnicalName] = row.Id
+	end
+end
+
+function InventoryManagerNew:loadInventoryTypes()
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_types", sql:getPrefix())
+	self.m_InventoryTypes = {}
+
+	for _, row in ipairs(result) do
+		self.m_InventoryTypes[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			Name = row.Name;
+			Permissions = {};
+			Categories = {};
+			CategoryIds = {};
+		}
+
+		if row.Permissions ~= nil and row.Permissions ~= "" and fromJSON(row.Permissions) then
+			self.m_InventoryTypes[row.Id].Permissions = fromJSON(row.Permissions)
+		end
+
+		local categories = sql:queryFetch("SELECT ic.* FROM ??_inventory_type_categories tc INNER JOIN ??_item_categories ic ON ic.Id = tc.CategoryId WHERE TypeId = ?", sql:getPrefix(), sql:getPrefix(), row.Id)
+
+		for _, category in ipairs(categories) do
+			self.m_InventoryTypes[row.Id].Categories[category.Id] = {
+				Id = category.Id;
+				TechnicalName = category.TechnicalName;
+				Name = category.Name;
+			}
+
+			table.insert(self.m_InventoryTypes[row.Id].CategoryIds, category.Id)
+		end
+
+		self.m_InventoryTypesIdToName[row.TechnicalName] = row.Id
 	end
 end
 
