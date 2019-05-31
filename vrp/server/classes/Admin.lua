@@ -78,7 +78,8 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", 
+	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -106,6 +107,7 @@ function Admin:constructor()
 	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
 	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	addEventHandler("adminLoginFix", root, bind(self.Event_OnAdminLoginFix, self))
+	addEventHandler("adminTriggerTransaction", root, bind(self.Event_forceTransaction, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -445,10 +447,15 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			for i=0, 2100 do
 				player:sendMessage(" ")
 			end
-			player:triggerEvent("closeAd")
 		end
 		StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
 		outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+	elseif func == "clearAd" then
+		self:sendShortMessage(_("%s die aktuelle Werbung gelöscht!", admin, admin:getName()))
+		for index, player in pairs(Element.getAllByType("player")) do
+			player:triggerEvent("closeAd")
+		end
+		StatisticsLogger:getSingleton():addAdminAction( admin, "clearAd", false)
 	elseif func == "resetAction" then
 		self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
 		ActionsCheck:getSingleton():reset()
@@ -1526,4 +1533,86 @@ function Admin:Event_ObjectPlaced(x, y, z, rotation)
 	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
 	client.m_PlacingInfo = nil
 	return
+end
+
+function Admin:Event_forceTransaction(amount, from, fromType, to, toType)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	local id = false
+	if fromType == "player" then
+		local id = Account.getIdFromName(from)
+		if not id or id == 0 then
+			client:sendError(_("Der Spieler, der Geld abgezogen bekommen soll, existiert nicht!", client))
+			return
+		end
+		fromBankAccount = BankAccount.loadByOwner(id, 1)
+
+	elseif fromType == "faction" then
+		local id = FactionManager:getSingleton():getFromName(from) and FactionManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Die Fraktion, von der Geld abgezogen werden soll, existiert nicht!") return end
+		if id == 1 or id == 2 or id == 3 then
+			fromBankAccount = FactionState:getSingleton().m_BankAccountServer
+		else
+			fromBankAccount = BankAccount.loadByOwner(id, 2)
+		end
+		fromBankAccount = BankAccount.loadByOwner(id, 2)
+
+	elseif fromType == "company" then
+		local id = CompanyManager:getSingleton():getFromName(from) and CompanyManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Das Unternehmen, von dem Geld abgezogen werden soll, existiert nicht!") return end
+		fromBankAccount = BankAccount.loadByOwner(id, 3)
+
+	elseif fromType == "group" then
+		local id = GroupManager:getSingleton():getFromName(from) and GroupManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Die Gruppe, von der Geld abgezogen werden soll, existiert nicht!") return end
+		fromBankAccount = BankAccount.loadByOwner(id, 8)
+
+	elseif fromType == "admin" then
+		from = "Adminkasse"
+		fromBankAccount = self.m_BankAccount
+		
+	end
+
+	local id = false
+	if toType == "player" then
+		local id = Account.getIdFromName(to)
+		if not id or id == 0 then
+			client:sendError(_("Der Spieler, dem Geld überwiesen werden soll, existiert nicht!", client))
+			return
+		end
+		toBankAccount = BankAccount.loadByOwner(id, 1)
+
+	elseif toType == "faction" then
+		local id = FactionManager:getSingleton():getFromName(to) and FactionManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Die Fraktion, der Geld überwiesen werden soll, existiert nicht!") return end
+		if id == 1 or id == 2 or id == 3 then
+			toBankAccount = FactionState:getSingleton().m_BankAccountServer
+		else
+			toBankAccount = BankAccount.loadByOwner(id, 2)
+		end
+
+	elseif toType == "company" then
+		local id = CompanyManager:getSingleton():getFromName(to) and CompanyManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Das Unternehmen, dem Geld überwiesen werden soll, existiert nicht!") return end
+		toBankAccount = BankAccount.loadByOwner(id, 3)
+
+	elseif toType == "group" then
+		local id = GroupManager:getSingleton():getFromName(to) and GroupManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Der Gruppe, der Geld überwiesen werden soll, existiert nicht!") return end
+		toBankAccount = BankAccount.loadByOwner(id, 8)
+
+	elseif toType == "admin" then
+		to = "Adminkasse"
+		toBankAccount = self.m_BankAccount
+
+	end
+
+	if fromBankAccount and toBankAccount then
+		fromBankAccount:transferMoney(toBankAccount, amount, ("Erzwungene Transaktion von %s"):format(client:getName()), "Admin", "TransactionForce")
+		fromBankAccount:save()
+		toBankAccount:save()
+		client:sendShortMessage(("Transaktion über %s$ von %s zu %s erfolgreich!"):format(addComas(tostring(amount)), from, to))
+	end
 end

@@ -736,3 +736,12 @@ end
 function GroupManager:removeActiveGroup(group)
 	GroupManager.ActiveMap[group:getId()] = nil
 end
+
+function GroupManager:getFromName(name)
+	for k, group in pairs(GroupManager.Map) do
+		if group:getName() == name then
+			return group
+		end
+	end
+	return false
+end

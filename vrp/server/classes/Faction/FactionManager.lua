@@ -672,3 +672,12 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
 	end
 end
+
+function FactionManager:getFromName(name)
+	for k, faction in pairs(FactionManager.Map) do
+		if faction:getName() == name then
+			return faction
+		end
+	end
+	return false
+end
