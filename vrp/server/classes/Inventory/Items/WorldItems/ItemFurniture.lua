@@ -27,13 +27,13 @@ function ItemFurniture:destructor()
 end
 
 function ItemFurniture:use(player, itemId, bag, place, itemName)
-	local inventory = player:getInventory()
-	local value = inventory:getItemValueByBag( bag, place)
+	local inventory = player:getInventoryOld()
+	local value = InventoryOld:getItemValueByBag( bag, place)
 	local model = tonumber(value) or self.m_Model
 	local result = self:startObjectPlacing(player,
 	function(item, position, rotation)
 		if item ~= self or not position then return end
-		player:getInventory():removeItem(self:getName(), 1)
+		player:getInventoryOld():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Einrichtung"))
 		local int = player:getInterior() 
 		local dim = player:getDimension()

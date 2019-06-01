@@ -271,12 +271,12 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		StatisticsLogger:addCasino(player, name, rnd)
 	elseif name == "Ostereier5" then
 		player:sendInfo("Du hast 5 Ostereier gewonnen!")
-		player:getInventory():giveItem("Osterei", 5)
+		player:getInventoryOld():giveItem("Osterei", 5)
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 	elseif name == "Ostereier20" then
 		player:sendInfo("Du hast 20 Ostereier gewonnen!")
-		player:getInventory():giveItem("Osterei", 20)
+		player:getInventoryOld():giveItem("Osterei", 20)
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 		StatisticsLogger:addCasino(player, name, 20)
@@ -287,7 +287,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_jackpot")
 		StatisticsLogger:addCasino(player, name, 1)
 	elseif name == "HasenOhren" then
-		player:getInventory():giveItem("Hasenohren", 1)
+		player:getInventoryOld():giveItem("Hasenohren", 1)
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 		StatisticsLogger:addCasino(player, name, 1)
@@ -351,7 +351,7 @@ end
 function EasterSlotmachine:startPlayer(player)
 	if not self.canSpin then return end
 
-	if player:getInventory():removeItem("Osterei", 2) then
+	if player:getInventoryOld():removeItem("Osterei", 2) then
 		self:start(player)
 	else
 		player:sendWarning(_("Du brauchst mind. 2 Ostereier, um spielen zu können", player))

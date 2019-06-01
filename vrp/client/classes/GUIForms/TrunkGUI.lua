@@ -82,8 +82,8 @@ end
 
 function TrunkGUI:loadItems()
     self.m_MyItemsGrid:clear()
-    self.m_ItemData = Inventory:getSingleton():getItemData()
-    self.m_Items = Inventory:getSingleton():getItems()
+    self.m_ItemData = InventoryOld:getSingleton():getItemData()
+    self.m_Items = InventoryOld:getSingleton():getItems()
     self.m_MyItemsGrid:addItemNoClick(_"Items", _"Anzahl")
     local item
     for index, itemInv in pairs(self.m_Items) do

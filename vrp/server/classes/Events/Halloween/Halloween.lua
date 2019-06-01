@@ -255,7 +255,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 								elseif pl:getModel() == 310 then --zombie skin bonus
 									rnd = rnd + (chance(15) and 1 or 0)
 								end
-								pl:getInventory():giveItem("Suessigkeiten", rnd)
+								pl:getInventoryOld():giveItem("Suessigkeiten", rnd)
 								pl:sendSuccess(_("Du hast %d %s bekommen!", pl, rnd, rnd > 1 and "Süßigkeiten" or "Süßigkeit"))
 								pl:sendMessage(("Bewohner sagt: %s"):format(rndPhrase), 200, 200, 200)
 							else
@@ -281,8 +281,8 @@ function Halloween:Event_requestBonusData()
 end
 
 function Halloween:Event_buyBonus(bonusId)
-	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten", true)
-	local playerPumpinks = client:getInventory():getItemAmount("Kürbis", true)
+	local playerSweets = client:getInventoryOld():getItemAmount("Suessigkeiten", true)
+	local playerPumpinks = client:getInventoryOld():getItemAmount("Kürbis", true)
 	local bonus = Halloween.ms_Bonus[bonusId]
 	if not bonus then return end
 
@@ -299,8 +299,8 @@ function Halloween:Event_buyBonus(bonusId)
 	if bonus["Type"] == "Weapon" then
 		client:giveWeapon(bonus["WeaponId"], bonus["Ammo"])
 	elseif bonus["Type"] == "Item" then
-		if client:getInventory():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
-			client:getInventory():giveItem(bonus["ItemName"], bonus["ItemAmount"])
+		if client:getInventoryOld():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
+			client:getInventoryOld():giveItem(bonus["ItemName"], bonus["ItemAmount"])
 		else
 			client:sendError(_("Du hast nicht genug Platz in deinem Inventar!", client))
 			return
@@ -334,15 +334,15 @@ function Halloween:Event_buyBonus(bonusId)
 			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
 			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)
 		elseif bonus["Text"] == "Zombie Skin" then
-			client:getInventory():giveItem("Kleidung", 1, 310)
+			client:getInventoryOld():giveItem("Kleidung", 1, 310)
 			client:sendShortMessage("Der Zombie-Skin wurde in dein Inventar gelegt!")
 		elseif bonus["Text"] == "30 Tage VIP" then
 			client.m_Premium:giveEventMonth()
 		end
 	end
 
-	client:getInventory():removeItem("Suessigkeiten", bonus["Sweets"])
-	client:getInventory():removeItem("Kürbis", bonus["Pumpkin"])
+	client:getInventoryOld():removeItem("Suessigkeiten", bonus["Sweets"])
+	client:getInventoryOld():removeItem("Kürbis", bonus["Pumpkin"])
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Kürbisse und %d Süßigkeiten gekauft!", client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"]))
 	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"])
 

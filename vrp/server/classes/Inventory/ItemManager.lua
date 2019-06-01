@@ -27,7 +27,7 @@ function ItemManager:constructor()
 		["Heroin"] = DrugsHeroin,
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
-		["Burger"] = ItemFood,
+--[[		["Burger"] = ItemFood,
 		["Lebkuchen"] = ItemFood,
 		["Wuerstchen"] = ItemFood,
 
@@ -41,7 +41,7 @@ function ItemManager:constructor()
 		["Donut"] = ItemFood,
 		["Keks"] = ItemFood,
 		["Apfel"] = ItemFood,
-		["KöderDummy"] = ItemFood,
+		["KöderDummy"] = ItemFood,]]
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;

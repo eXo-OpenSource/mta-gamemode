@@ -328,14 +328,14 @@ end
 
 
 function ItemEntrance:use(player, itemId, bag, place, itemName)
-	local inventory = player:getInventory()
-	local value = inventory:getItemValueByBag( bag, place)
+	local inventory = player:getInventoryOld()
+	local value = InventoryOld:getItemValueByBag( bag, place)
 	local model = tonumber(gettok(value, 2, ":")) or self.m_Model
 	local result = self:startObjectPlacing(player,
 	function(item, position, rotation)
 		if item ~= self or not position then return end
 		local valueString = (value or "#:"..self.m_Model)
-		player:getInventory():removeItem(self:getName(), 1)
+		player:getInventoryOld():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Eingang Modell ("..model..")"))
 		local dim = getElementDimension(player) 
 		local int = getElementInterior(player)

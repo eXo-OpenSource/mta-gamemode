@@ -193,7 +193,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 	if FACTION_TRUNK_MAX_ITEMS[itemName] then
 		if FACTION_TRUNK_MAX_ITEMS[itemName] >= self.m_FactionTrunk[itemName]+amount then
 			if inventory then
-				if not player:getInventory():removeItem(itemName, amount) then
+				if not player:getInventoryOld():removeItem(itemName, amount) then
 					player:sendError(_("Du hast keine %d Stk. von diesem Item dabei! (%s)", player, amount, itemName))
 					return
 				end 
@@ -234,7 +234,7 @@ end
 function FactionVehicle:takeFactionItem(player, itemName)
 	if self.m_FactionTrunk and self.m_FactionTrunk[itemName] then
 		if self.m_FactionTrunk[itemName] >= 1 then
-			if player:getInventory():giveItem(itemName, 1) then
+			if player:getInventoryOld():giveItem(itemName, 1) then
 				self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]-1
 				player:sendShortMessage(_("Du hast 1 %s aus dem Fahrzeug in dein Inventar gepackt!", player, itemName))
 				player:getFaction():addLog(player, "Item", ("hat %s in den %s (%s) gelegt!"):format(itemName, self:getName(), self:getPlateText()))

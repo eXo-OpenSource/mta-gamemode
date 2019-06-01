@@ -48,7 +48,7 @@ function BombArea:fire(player)
 		return
 	end
 
-	if not player:getInventory():removeItem("Sprengstoff", 1) then
+	if not player:getInventoryOld():removeItem("Sprengstoff", 1) then
 		player:sendError("Du hast keine Bombe im Inventar!")
 		return
 	end

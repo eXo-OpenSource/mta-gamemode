@@ -1,15 +1,15 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/Inventory/Inventory.lua
+-- *  FILE:        client/classes/Inventory/InventoryOld.lua
 -- *  PURPOSE:     Inventory class
 -- *
 -- ****************************************************************************
 
-Inventory = inherit(GUIForm)
-inherit(Singleton, Inventory)
+InventoryOld = inherit(GUIForm)
+inherit(Singleton, InventoryOld)
 addRemoteEvents{"loadPlayerInventarClient", "syncInventoryFromServer","forceInventoryRefresh", "closeInventory", "flushInventory"}
-Inventory.Color = {
+InventoryOld.Color = {
 	TabHover  = rgb(50, 200, 255);
 	TabNormal = rgb(50, 50, 50);
 	ItemsBackground = rgb(50, 50, 50);
@@ -18,14 +18,14 @@ Inventory.Color = {
 	ItemBackgroundHoverDelete = rgb(200, 0, 0);
 }
 
-Inventory.Tabs = {
+InventoryOld.Tabs = {
 	[1] = "Items",
 	[2] = "Objekte",
 	[3] = "Essen",
 	[4] = "Drogen"
 }
 
-function Inventory:constructor()
+function InventoryOld:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+80)/2, 330, (80+106+80))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
 	self.m_CurrentTab = 1
@@ -33,7 +33,7 @@ function Inventory:constructor()
 	-- Upper Area (Tabs)
 	local tabArea = GUIElement:new(0, 30, self.m_Width, self.m_Height*(50/self.m_Height), self)
 	local tabX, tabY = tabArea:getSize()
-	self.m_Rect = GUIRectangle:new(0, 0, tabX, tabY, Inventory.Color.TabHover, tabArea)
+	self.m_Rect = GUIRectangle:new(0, 0, tabX, tabY, InventoryOld.Color.TabHover, tabArea)
 
 	-- Tabs
 	self.m_Tabs = {}
@@ -64,13 +64,13 @@ function Inventory:constructor()
 	self:hide()
 end
 
-function Inventory:Event_OnRender()
+function InventoryOld:Event_OnRender()
 	self.m_IsDeleteKeyDown = getKeyState("lctrl")
 end
 
-function Inventory:Event_syncInventoryFromServer(bag, items)
+function InventoryOld:Event_syncInventoryFromServer(bag, items)
 	if self.m_Debug then
-		outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+		outputDebugString("InventoryOld: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	end
 
 	self.m_Bag = bag
@@ -78,7 +78,7 @@ function Inventory:Event_syncInventoryFromServer(bag, items)
 	self:loadItems()
 end
 
-function Inventory:Event_loadPlayerInventarClient(slots, itemData)
+function InventoryOld:Event_loadPlayerInventarClient(slots, itemData)
 	if self.m_Debug then
 		outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
 	end
@@ -87,12 +87,12 @@ function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	self.m_ItemData = itemData
 end
 
-function Inventory:Event_forceInventoryRefresh(slots, itemData)
+function InventoryOld:Event_forceInventoryRefresh(slots, itemData)
 	self:hide()
 	self:show()
 end
 
-function Inventory:toggle()
+function InventoryOld:toggle()
 	if self.Show then
 		self:hide()
 	else
@@ -100,19 +100,19 @@ function Inventory:toggle()
 	end
 end
 
-function Inventory:getItemData()
+function InventoryOld:getItemData()
 	return self.m_ItemData
 end
 
-function Inventory:getItems()
+function InventoryOld:getItems()
 	return self.m_Items
 end
 
-function Inventory:getBagData()
+function InventoryOld:getBagData()
 	return self.m_Bag
 end
 
-function Inventory:addItem(place, item)
+function InventoryOld:addItem(place, item)
 	if self.m_ItemData then
 		local tab = self.m_Tabs[self.m_CurrentTab]
 		local itemData = self.m_ItemData[item["Objekt"]]
@@ -150,12 +150,12 @@ function Inventory:addItem(place, item)
 
 			slot.ItemLabel = GUILabel:new(0, slot.m_Height - 12, slot.m_Width, 12, amountText, slot):setAlign("right", "center"):setFont(VRPFont(20)):setFontSize(1):setColor(Color.Orange)
 		else
-			outputDebugString(("Inventory: Failed to load item-data for Item %s"):format(item["Objekt"] or  "Unknown"))
+			outputDebugString(("InventoryOld: Failed to load item-data for Item %s"):format(item["Objekt"] or  "Unknown"))
 		end
 	end
 end
 
-function Inventory:loadItems()
+function InventoryOld:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
 		if slot.ItemImage then delete(slot.ItemImage) end
 		if slot.LabelBackground then delete(slot.LabelBackground) end
@@ -170,7 +170,7 @@ function Inventory:loadItems()
 		slot.Amount = nil
 	end
 	if self.m_Bag then
-		for place, id in pairs(self.m_Bag[Inventory.Tabs[self.m_CurrentTab]]) do
+		for place, id in pairs(self.m_Bag[InventoryOld.Tabs[self.m_CurrentTab]]) do
 			self:addItem(place, self.m_Items[id])
 		end
 	else
@@ -180,11 +180,11 @@ function Inventory:loadItems()
 	end
 end
 
-function Inventory:addTab(img, parent)
+function InventoryOld:addTab(img, parent)
 	local Id = #self.m_Tabs + 1
 	local tabX, tabY = parent:getSize()
 	local tabButton = GUIElement:new(0 + math.floor(self.m_Width/4)*(Id-1), 0, math.floor(self.m_Width/4), tabY, parent)
-	local tabBackground = GUIRectangle:new(0, 0, tabButton.m_Width, tabButton.m_Height, Inventory.Color.TabNormal, tabButton)
+	local tabBackground = GUIRectangle:new(0, 0, tabButton.m_Width, tabButton.m_Height, InventoryOld.Color.TabNormal, tabButton)
 	GUIImage:new(tabButton.m_Width*0.225, tabButton.m_Height*0.025, tabButton.m_Width*0.55, tabButton.m_Height*0.95, img, tabButton)
 	GUIEmptyRectangle:new(0, 0, tabButton.m_Width+2, tabButton.m_Height+2, 2, Color.White, tabButton)
 
@@ -192,12 +192,12 @@ function Inventory:addTab(img, parent)
 	tabButton.m_Background = tabBackground
 	tabButton.onHover = function ()
 		if self.m_CurrentTab ~= Id then
-			tabBackground:setColor(Inventory.Color.TabHover)
+			tabBackground:setColor(InventoryOld.Color.TabHover)
 		end
 	end
 	tabButton.onUnhover = function ()
 		if self.m_CurrentTab ~= Id then
-			tabBackground:setColor(Inventory.Color.TabNormal)
+			tabBackground:setColor(InventoryOld.Color.TabNormal)
 		end
 	end
 	tabButton.onLeftClick = function()
@@ -205,11 +205,11 @@ function Inventory:addTab(img, parent)
 
 		for k, v in ipairs(parent.m_Children) do
 			if v.isTab == true then
-				v.m_Background:setColor(Inventory.Color.TabNormal)
+				v.m_Background:setColor(InventoryOld.Color.TabNormal)
 			end
 		end
 
-		tabButton.m_Background:setColor(Inventory.Color.TabHover)
+		tabButton.m_Background:setColor(InventoryOld.Color.TabHover)
 	end
 
 	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height)+30, self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height)-30, self)
@@ -218,14 +218,14 @@ function Inventory:addTab(img, parent)
 		itemArea:setVisible(false)
 	else
 		self.m_CurrentTab = 1
-		tabBackground:setColor(Inventory.Color.TabHover)
+		tabBackground:setColor(InventoryOld.Color.TabHover)
 	end
 
 	self.m_Tabs[Id] = itemArea
 	return itemArea
 end
 
-function Inventory:setTab(Id)
+function InventoryOld:setTab(Id)
 	if self.m_CurrentTab then
 		self.m_Tabs[self.m_CurrentTab]:setVisible(false)
 	end
@@ -237,11 +237,11 @@ function Inventory:setTab(Id)
 	end
 end
 
-function Inventory:onTabChanged()
+function InventoryOld:onTabChanged()
 	self:loadItems()
 end
 
-function Inventory:addItemSlots(count, parent)
+function InventoryOld:addItemSlots(count, parent)
 	parent.m_ItemSlots = {}
 	local x, y = parent:getSize()
 	local row = 0
@@ -249,7 +249,7 @@ function Inventory:addItemSlots(count, parent)
 	for i = 1, count, 1 do
 		local i = i - 7*row
 		id = #parent.m_ItemSlots+1                               -- y
-		parent.m_ItemSlots[id] = GUIRectangle:new(x*0.025 + math.floor(x*0.125)*(i-1) + (x*0.014)*(i-1), x*0.03 + math.floor(x*0.125)*(row) + (x*0.014)*(row), x*0.125, x*0.125, Inventory.Color.ItemBackground, parent)
+		parent.m_ItemSlots[id] = GUIRectangle:new(x*0.025 + math.floor(x*0.125)*(i-1) + (x*0.014)*(i-1), x*0.03 + math.floor(x*0.125)*(row) + (x*0.014)*(row), x*0.125, x*0.125, InventoryOld.Color.ItemBackground, parent)
 		self:addItemEvents(parent.m_ItemSlots[id])
 
 		if i == count then break; end
@@ -263,10 +263,10 @@ function Inventory:addItemSlots(count, parent)
 	--parent.m_BackgroundRound:setSize(x, y + (y*0.455)*(row-1))
 end
 
-function Inventory:addItemEvents(item)
+function InventoryOld:addItemEvents(item)
 	item.onHover = function()
 		if not self.m_IsDeleteKeyDown then
-			item:setColor(Inventory.Color.ItemBackgroundHover)
+			item:setColor(InventoryOld.Color.ItemBackgroundHover)
 			if item.Item then
 				local itemName = item.ItemName
 				self.m_InfoText1:setText(_("%s - Menge: %s", itemName, tostring(item.Amount)))
@@ -277,12 +277,12 @@ function Inventory:addItemEvents(item)
 				end
 			end
 		else
-			item:setColor(Inventory.Color.ItemBackgroundHoverDelete)
+			item:setColor(InventoryOld.Color.ItemBackgroundHoverDelete)
 		end
 	end
 
 	item.onUnhover = function()
-		item:setColor(Inventory.Color.ItemBackground)
+		item:setColor(InventoryOld.Color.ItemBackground)
 		self.m_InfoText1:setText(_"Info: Zum Löschen von Items Control und Linksklick!")
 		self.m_InfoText2:setText("")
 	end
@@ -293,7 +293,7 @@ function Inventory:addItemEvents(item)
 			local itemDelete = false
 			if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
 			if not self.m_IsDeleteKeyDown then
-				triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
+				triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, InventoryOld.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
 			else
 				if self.m_InventoryActionPrompt then
 					self.m_InventoryActionPrompt:close()
@@ -312,18 +312,18 @@ function Inventory:addItemEvents(item)
 	item.onRightClick = function()
 		if item.Item then
 			local itemName = item.ItemName
-			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place)
+			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, InventoryOld.Tabs[self.m_CurrentTab], itemName, item.Place)
 		end
 	end
 end
 
-function Inventory:acceptPrompt( bObj )
+function InventoryOld:acceptPrompt( bObj )
 	if self.m_InventoryActionPrompt then
 		if self.m_InventoryActionPrompt == bObj then
 			if self.m_ItemPromptReference then
 				local item = self.m_ItemPromptReference
 				if item then
-					local name, id, place, bag = item.ItemName, item.Id, item.Place, Inventory.Tabs[self.m_CurrentTab]
+					local name, id, place, bag = item.ItemName, item.Id, item.Place, InventoryOld.Tabs[self.m_CurrentTab]
 					local bThrowAway = self.m_ItemData[name]["Wegwerf"] == 1
 					if bObj then
 						bObj:close()
@@ -339,26 +339,26 @@ function Inventory:acceptPrompt( bObj )
 	end
 end
 
-function Inventory:addItemToSlot(tabId, item)
+function InventoryOld:addItemToSlot(tabId, item)
 	if not self.m_Tabs[tabId] then return false end
 	local tab = self.m_Tabs[tabId]
 	if not tab.m_ItemSlots then return false end
 	local slot = tab.m_ItemSlots
 end
 
-function Inventory:onShow()
+function InventoryOld:onShow()
 	showCursor(true)
 	triggerServerEvent("refreshInventory", localPlayer)
 	self:loadItems()
 	self.Show = true
 end
 
-function Inventory:onHide()
+function InventoryOld:onHide()
 	showCursor(false)
 	self.Show = false
 end
 
-function Inventory:getItemAmount(item)
+function InventoryOld:getItemAmount(item)
 	triggerServerEvent("refreshInventory", localPlayer)
 	for index, itemInv in pairs(self.m_Items) do
 		if self.m_ItemData then

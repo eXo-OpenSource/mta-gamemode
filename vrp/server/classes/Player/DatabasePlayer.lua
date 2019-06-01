@@ -33,6 +33,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_Account = false
 	self.m_Locale = "de"
 	self.m_Id = -1
+	self.m_InventoryOld = false
 	self.m_Inventory = false
 	self.m_Skills = {}
 	self.m_Health = 100
@@ -251,7 +252,7 @@ function DatabasePlayer:getSpawnerVehicle() return self.m_SpawnerVehicle end
 function DatabasePlayer:getGroup()		return self.m_Group		end
 function DatabasePlayer:getFaction()	return self.m_Faction	end
 function DatabasePlayer:getJailTime() return self.m_JailTime end
---function DatabasePlayer:getInventory()	return self.m_Inventory	end
+--function DatabasePlayer:getInventoryOld()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: Only Databseside implemented

@@ -5,11 +5,20 @@
 -- *  PURPOSE:     Item Super Class
 -- *
 -- ****************************************************************************
-Item = inherit(Object)
+ItemNew = inherit(Object)
 
-function Item:constructor()
+ItemNew.constructor = pure_virtual
+
+function ItemNew:virtual_constructor(inventory, itemData, item)
+    self.m_Inventory = inventory
+    self.m_ItemData = itemData
+    self.m_Item = item
 end
 
+function ItemNew:getTechnicalName()
+    return self.m_ItemData.TechnicalName
+end
+--[[
 function Item:setName(name)
 	self.m_ItemName = name
 end
@@ -78,3 +87,4 @@ addEventHandler("itemPlaced", root,
 		end
 	end
 )
+]]

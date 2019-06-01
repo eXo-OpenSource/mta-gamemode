@@ -23,7 +23,7 @@ function ItemRadio:use(player)
 
 			local worldItem = PlayerWorldItem:new(self, player, position, rotation, false, player)
 			StatisticsLogger:getSingleton():itemPlaceLogs( player, "Radio", position.x..","..position.y..","..position.z) 
-			player:getInventory():removeItem(self:getName(), 1)
+			player:getInventoryOld():removeItem(self:getName(), 1)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 				function(url)
 					if worldItem:hasPlayerPermissionTo(client, WorldItem.Action.Move) then

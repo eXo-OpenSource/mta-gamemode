@@ -866,9 +866,9 @@ function Faction:takeEquipment(player)
 			for product, subdata in pairs(data) do
 				amount, price, id = unpack(subdata)
 				if not id then
-					amount = player:getInventory():getItemAmount(product)
+					amount = player:getInventoryOld():getItemAmount(product)
 					if amount and amount > 0 then
-						player:getInventory():removeAllItem(product)
+						player:getInventoryOld():removeAllItem(product)
 						self:getDepot():addEquipment(player, product, amount, true)
 						count = count + amount
 					end

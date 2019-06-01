@@ -39,6 +39,6 @@ function ItemTaser:use(player)
 		end
 	else
 		player:sendError(_("Du bist nicht berechtigt! Das Item wurde abgenommen!", player))
-		player:getInventory():removeAllItem(self:getName())
+		player:getInventoryOld():removeAllItem(self:getName())
 	end
 end

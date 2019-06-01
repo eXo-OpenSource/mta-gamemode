@@ -21,7 +21,7 @@ end
 
 function InventoryActionGUI:itemCallback(type)
 	if type == 1 then
-		Inventory:getSingleton():acceptPrompt(self)
+		InventoryOld:getSingleton():acceptPrompt(self)
 	elseif type == 2 then
 		self:close()
 	end

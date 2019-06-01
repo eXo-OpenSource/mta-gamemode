@@ -318,8 +318,8 @@ function FishingRodGUI:constructor(fishingRodName, equipments)
 		local slot = GUIGridRectangle:new((i-1)*2+1, 1, 2, 2, Inventory.Color.ItemBackground, window)
 
 		if equipment then
-			local itemIcon = Inventory:getSingleton():getItemData()[equipment].Icon
-			local itemAmount = Inventory:getSingleton():getItemAmount(equipment)
+			local itemIcon = InventoryOld:getSingleton():getItemData()[equipment].Icon
+			local itemAmount = InventoryOld:getSingleton():getItemAmount(equipment)
 			local amountText = itemAmount > 1 and itemAmount or ""
 			local textWidth = VRPTextWidth(amountText, 22) + 10
 

@@ -75,7 +75,7 @@ end
 function GroupHouseRob:Event_OnSellAccept()
 	if client then
 		if client.m_ClickPed then
-			local inv = client:getInventory()
+			local inv = client:getInventoryOld()
 			if inv then
 				local amount = inv:getItemAmount("Diebesgut")
 				local randomPrice = math.random( 500,1000)
@@ -107,7 +107,7 @@ end
 function GroupHouseRob:Event_onClickPed(  m, s, player)
 	if m == "left" then
 		if s == "up" then
-			local inv = player:getInventory()
+			local inv = player:getInventoryOld()
 			if inv then
 				local thiefItems = inv:getItemAmount("Diebesgut")
 				if thiefItems > 0 then

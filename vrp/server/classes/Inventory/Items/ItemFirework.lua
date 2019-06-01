@@ -54,7 +54,7 @@ function ItemFirework:use(player, itemId, bag, place, itemName)
 		player:meChat(true, _("zündet eine/n %s!", player, itemName))
 
 		triggerClientEvent(root, "onClientFireworkStart", player, itemName, serialiseVector(player:getPosition()), rnd)
-		player:getInventory():removeItem(itemName, 1)
+		player:getInventoryOld():removeItem(itemName, 1)
 	else
 		player:sendError("Du kannst kein Feuerwerk in einem Interior zünden!")
 	end

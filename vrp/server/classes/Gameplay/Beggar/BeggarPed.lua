@@ -177,7 +177,7 @@ function BeggarPed:createLootPickup()
 					self:giveLoot(hitPlayer)
 				else
 					local amount = math.random(1,2)
-					hitPlayer:getInventory():giveItem("Diebesgut", amount)
+					hitPlayer:getInventoryOld():giveItem("Diebesgut", amount)
 					hitPlayer:sendInfo(_("Du hast %s Diebesgut von %s erhalten.", hitPlayer, amount, self.m_Name))
 				end
 

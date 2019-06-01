@@ -59,7 +59,7 @@ function ItemKeyPad:use(player)
 	local result = self:startObjectPlacing(player,
 	function(item, position, rotation)
 		if item ~= self or not position then return end
-		player:getInventory():removeItem(self:getName(), 1)
+		player:getInventoryOld():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Keypad"))
 		local int = player:getInterior() 
 		local dim = player:getDimension()

@@ -132,16 +132,17 @@
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/CompanyWorldItem.lua" type="server"/>
-	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
-	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryOld.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryManagerOld.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/StaticWorldItems.lua" type="server"/>
-	<script src="server/classes/Inventory/InventoryNew.lua" type="server"/>
-	<script src="server/classes/Inventory/InventoryManagerNew.lua" type="server"/>
+	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemNew.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSlam.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSmokeGrenade.lua" type="server"/>
@@ -643,7 +644,7 @@
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Game.lua" type="client" />
 
 	<!-- Inventory -->
-	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
+	<script src="client/classes/Inventory/InventoryOld.lua" type="client"/>
 	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>

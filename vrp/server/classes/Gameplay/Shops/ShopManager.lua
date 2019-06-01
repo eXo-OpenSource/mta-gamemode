@@ -154,11 +154,11 @@ function ShopManager:buyItem(shopId, item, amount)
 				value = getRealTime().timestamp + 7*24*60*60
 			end
 
-			if client:getInventory():giveItem(item, amount, value) then
+			if client:getInventoryOld():giveItem(item, amount, value) then
 				client:transferMoney(shop.m_BankAccount, shop.m_Items[item]*amount, "Item-Einkauf", "Gameplay", "Item")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 			else
-				--client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
+				--client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventoryOld():getMaxItemAmount(item)))
 				return
 			end
 		else

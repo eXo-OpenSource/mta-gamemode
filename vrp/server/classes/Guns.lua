@@ -103,13 +103,13 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 			if hasHelmet then
 				local isProtectingHeadShot = hasHelmet:getData("isProtectingHeadshot")
 				if isProtectingHeadShot then
-					local inventory = target:getInventory()
+					local inventory = target:getInventoryOld()
 					if inventory then
-						local itemCount = inventory:getItemAmount("Einsatzhelm")
+						local itemCount = InventoryOld:getItemAmount("Einsatzhelm")
 						if itemCount > 0 then
 							local isProtect = math.random(1,8)
 							if isProtect == 1 then
-								inventory:removeItem("Einsatzhelm", 1)
+								InventoryOld:removeItem("Einsatzhelm", 1)
 								destroyElement(hasHelmet)
 								target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
 								target.m_IsWearingHelmet = false
@@ -170,7 +170,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 
 	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
-		local inv = source:getInventory()
+		local inv = source:getInventoryOld()
 		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
 			source:setHeadless(true)
 			source:setReviveWeapons(source:getFaction() and not source:getFaction():isEvilFaction() and source:isFactionDuty())

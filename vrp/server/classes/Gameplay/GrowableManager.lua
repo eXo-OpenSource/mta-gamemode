@@ -149,7 +149,7 @@ function GrowableManager:getClientCheck(seed, bool, z_pos, isUnderWater)
 					if plantName then
 						local pos = client:getPosition()
 						client:giveAchievement(61)
-						client:getInventory():removeItem(seed, 1)
+						client:getInventoryOld():removeItem(seed, 1)
 						GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
 					else
 						client:sendError(_("Internal Error: Invalid Plant", client))

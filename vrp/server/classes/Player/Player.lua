@@ -49,8 +49,8 @@ function Player:destructor()
 
 	WorldItem.collectAllFromOwner(self)
 
-	if self.m_Inventory then
-		delete(self.m_Inventory)
+	if self.m_InventoryOld then
+		delete(self.m_InventoryOld)
 	end
 
 	-- Call the quit hook (to clean up various things before saving)
@@ -178,8 +178,8 @@ function Player:loadCharacter()
 
 	-- Add Payday
 	self:setNextPayday()
-	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
-	self.m_InventoryNew = InventoryManagerNew:getSingleton():getInventory(self)
+	self.m_InventoryOld = InventoryManagerOld:getSingleton():loadInventory(self)
+	self.m_Inventory = InventoryManager:getSingleton():getInventory(self)
 
 	-- Add binds
 	self:initialiseBinds()
@@ -264,8 +264,8 @@ function Player:loadCharacterInfo()
 		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id, self:getGroup():getType())
 	end
 	--if self.m_Inventory then
-	--	self.m_Inventory:setInteractingPlayer(self)
-	--	self.m_Inventory:sendFullSync()
+	--	self.m_InventoryOld:setInteractingPlayer(self)
+	--	self.m_InventoryOld:sendFullSync()
 	--else
 	--	outputDebugString("Inventory has not been instantiated successfully!")
 	--end
@@ -582,9 +582,9 @@ function Player:takeEquipment(noOutput)
 			for product, subdata in pairs(data) do
 				amount, price, id = unpack(subdata)
 				if not id then
-					amount = self:getInventory():getItemAmount(product)
+					amount = self:getInventoryOld():getItemAmount(product)
 					if amount and amount > 0 then
-						self:getInventory():removeAllItem(product)
+						self:getInventoryOld():removeAllItem(product)
 						count = count + amount
 					end
 				end
@@ -652,12 +652,12 @@ function Player:isPremium() return self.m_Premium:isPremium() end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function DatabasePlayer:setSessionId(hash) self.m_SessionId = hash if self:isActive() then self:setPrivateSync("SessionID", self.m_SessionId) end end
 
-function Player:getInventory()
-	return self.m_Inventory
+function Player:getInventoryOld()
+	return self.m_InventoryOld
 end
 
-function Player:getInventoryNew()
-	return self.m_InventoryNew
+function Player:getInventory()
+	return self.m_Inventory
 end
 
 function Player.staticGroupChatHandler(self, command, ...)
@@ -995,12 +995,12 @@ function Player:payDay()
 
 	if EVENT_EASTER then
 		self:addPaydayText("info", _("Du hast 5 Ostereier bekommen!", self))
-		self:getInventory():giveItem("Osterei", 5)
+		self:getInventoryOld():giveItem("Osterei", 5)
 	end
 
 	if EVENT_CHRISTMAS then
 		self:addPaydayText("info", _("Du hast 3 Zuckerstangen bekommen!", self))
-		self:getInventory():giveItem("Zuckerstange", 3)
+		self:getInventoryOld():giveItem("Zuckerstange", 3)
 	end
 
 
@@ -1113,8 +1113,8 @@ function Player:startTrading(tradingPartner)
 	tradingPartner.m_TradeItems = {}
 	tradingPartner.m_TradingStatus = false
 
-	--self:triggerEvent("tradingStart", self:getInventory():getId())
-	--tradingPartner:triggerEvent("tradingStart", tradingPartner:getInventory():getId())
+	--self:triggerEvent("tradingStart", self:getInventoryOld():getId())
+	--tradingPartner:triggerEvent("tradingStart", tradingPartner:getInventoryOld():getId())
 end
 
 function Player:getTradingPartner()

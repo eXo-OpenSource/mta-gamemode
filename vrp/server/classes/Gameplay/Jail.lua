@@ -85,7 +85,7 @@ function Jail:onKeypadClick(button, state, player)
 				player:getFaction()
 				and (
 					player:getFaction():isStateFaction() and player:isFactionDuty()
-					or PrisonBreakManager:getSingleton():getCurrent() and player:getInventory():getItemAmount("Keycard") > 0
+					or PrisonBreakManager:getSingleton():getCurrent() and player:getInventoryOld():getItemAmount("Keycard") > 0
 				)
 			then
 				self:moveGate(self.m_Gates[source.Id])

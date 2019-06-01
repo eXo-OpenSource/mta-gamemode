@@ -7,8 +7,8 @@ function BuyItemBeggar:giveItem(player, item)
 	if self.m_Despawning then return end
 	if not player.vehicle then
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getInventory():getItemAmount(item) >= 1 then
-			player:getInventory():removeItem(item, 1)
+		if player:getInventoryOld():getItemAmount(item) >= 1 then
+			player:getInventoryOld():removeItem(item, 1)
 			player:giveCombinedReward("Bettler-Handel", {
 				karma = 5,
 				points = 5,

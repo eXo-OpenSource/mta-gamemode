@@ -23,7 +23,7 @@ function ItemNails:use(player)
 
 					local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
 					worldItem:setFactionSuperOwner(true)
-					player:getInventory():removeItem(self:getName(), 1)
+					player:getInventoryOld():removeItem(self:getName(), 1)
 
 					local object = worldItem:getObject()
 					ItemNails.Map[#ItemNails.Map+1] = object
@@ -45,7 +45,7 @@ function ItemNails:use(player)
 		end
 	else
 		player:sendError(_("Du bist nicht berechtigt! Das Item wurde abgenommen!", player))
-		player:getInventory():removeAllItem(self:getName())
+		player:getInventoryOld():removeAllItem(self:getName())
 	end
 end
 

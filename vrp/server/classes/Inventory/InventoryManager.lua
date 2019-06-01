@@ -7,264 +7,301 @@
 -- ****************************************************************************
 InventoryManager = inherit(Singleton)
 
+InventoryTypes = {
+	Player = 1;
+	Faction = 2;
+	Company = 3;
+	GroupProperty = 4;
+	VehicleTrunk = 5;
+
+	player = 1;
+	faction = 2;
+	company = 3;
+	group_property = 4;
+	vehicle_trunk = 5;
+}
+
+InventoryTemplates = {
+	Player = {
+		"consumables",
+		"weapons..."
+	};
+	Faction = 2;
+	Company = 3;
+	GroupProperty = 4;
+	VehicleTrunk = 5;
+}
+
 function InventoryManager:constructor()
+	self.m_Items = {}
+	self.m_ItemIdToName = {}
+	self.m_Categories = {}
+	self.m_CategoryIdToName = {}
+	self.m_InventoryTypes = {}
+	self.m_InventoryTypesIdToName = {}
+	self:loadItems()
+	self:loadCategories()
+	self:loadInventoryTypes()
 
-	self.m_Slots={
-		["Items"] = 21,
-		["Objekte"] = 5,
-		["Essen"] = 6,
-		["Drogen"] = 7,
-	}
+	addRemoteEvents{"syncInventory"}
 
-	self.m_ItemData = {}
-	self.m_ItemData = self:loadItems()
-	self.Map = {}
+	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
 
-	addRemoteEvents{"onPlayerItemUseServer", "onPlayerSecondaryItemUseServer", "throwItem", "refreshInventory",
-	"requestTrade", "acceptItemTrade", "acceptWeaponTrade", "declineTrade"}
-
-	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
-	addEventHandler("onPlayerSecondaryItemUseServer", root, bind(self.Event_onItemSecondaryUse, self))
-	addEventHandler("throwItem", root, bind(self.Event_throwItem, self))
-	addEventHandler("refreshInventory", root, bind(self.Event_refreshInventory, self))
-	addEventHandler("requestTrade", root, bind(self.Event_requestTrade, self))
-	addEventHandler("acceptItemTrade", root, bind(self.Event_acceptItemTrade, self))
-	addEventHandler("acceptWeaponTrade", root, bind(self.Event_acceptWeaponTrade, self))
-	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
-
-	WearableManager:new()
+	self.m_Inventories = {}
 end
 
-function InventoryManager:destructor()
-
-end
-
-function InventoryManager:getItemDataForItem(itemName)
-	return self.m_ItemData[itemName]
+function InventoryManager:Event_syncInventory()
+	if not client.m_Disconnecting then
+		local inventory = client:getInventory()
+		client:triggerEvent("syncInventory", inventory.m_Items)
+	end
 end
 
 function InventoryManager:loadItems()
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_items", sql:getPrefix())
-	local itemData = {}
-	local itemName
-	for i, row in ipairs(result) do
-		itemName = row["Objektname"]
-		itemData[itemName] = {}
-		itemData[itemName]["Name"] = itemName
-		itemData[itemName]["Info"] = utf8.escape(row["Info"])
-		itemData[itemName]["Tasche"] = row["Tasche"]
-		itemData[itemName]["Icon"] = row["Icon"]
-		itemData[itemName]["Item_Max"] = tonumber(row["max_items"])
-		itemData[itemName]["Wegwerf"] = tonumber(row["wegwerfen"])
-		itemData[itemName]["Handel"] = tonumber(row["Handel"])
-		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
-		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
-		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
-		itemData[itemName]["MaxWear"] = tonumber(row["MaxWear"]) or nil
-	end
+	local result = sql:queryFetch("SELECT i.*,c.TechnicalName AS Category, c.Name AS CategoryName FROM ??_items i INNER JOIN ??_item_categories c ON c.Id = i.CategoryId", sql:getPrefix(), sql:getPrefix())
+	self.m_Items = {}
+	self.m_ItemIdToName = {}
 
-	return itemData
-end
+	for _, row in ipairs(result) do
+		self.m_Items[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			CategoryId = row.CategoryId;
+			Category = row.Category;
+			CategoryName = row.CategoryName;
+			Class = row.Class;
+			Name = row.Name;
+			Description = row.Description;
+			Icon = row.Icon;
+			Size = row.Size;
+			ModelId = row.ModelId;
+			MaxDurability = row.MaxDurability;
+			Consumable = row.Consumable == 1;
+			Tradeable = row.Tradeable == 1;
+			Expireable = row.Expireable == 1;
+			IsUnique = row.IsUnique == 1;
+		}
 
-function InventoryManager:loadInventory(player)
-	if not self.Map[player] then
-		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData, ItemManager:getSingleton():getClassItems())
-		self.Map[player] = instance
-		return instance
+		self.m_ItemIdToName[row.TechnicalName] = row.Id
 	end
 end
 
-function InventoryManager:deleteInventory(player)
-	self.Map[player] = nil
-end
+function InventoryManager:loadCategories()
+	local result = sql:queryFetch("SELECT * FROM ??_item_categories", sql:getPrefix())
+	self.m_Categories = {}
+	self.m_CategoryIdToName = {}
 
-function InventoryManager:Event_onItemUse(itemid, bag, itemName, place, delete)
-	client:getInventory():useItem(itemid, bag, itemName, place, delete)
-end
+	for _, row in ipairs(result) do
+		self.m_Categories[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			Name = row.Name;
+		}
 
-function InventoryManager:Event_onItemSecondaryUse(itemid, bag, itemName, place)
-	client:getInventory():useItemSecondary(itemid, bag, itemName, place)
-end
-
-function InventoryManager:Event_throwItem(item, bag, id, place, name)
-	client:getInventory():throwItem(item, bag, id, place, name)
-end
-
-function InventoryManager:Event_refreshInventory()
-	client:getInventory():syncClient()
-end
-
-function InventoryManager:Event_requestTrade(type, target, item, amount, money, value)
-	if (client:getPosition() - target:getPosition()).length > 10 then
-		client:sendError(_("Du bist zu weit von %s entfernt!", client, target.name))
-		return false
+		self.m_CategoryIdToName[row.TechnicalName] = row.Id
 	end
+end
 
-	if not money then money = 0 end
-	local amount = math.abs(amount)
-	local money = math.abs(money)
+function InventoryManager:loadInventoryTypes()
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_types", sql:getPrefix())
+	self.m_InventoryTypes = {}
 
-	if type == "Item" then
-		client.sendRequest = {target = target, item = item, amount = amount, money = money, itemValue = value}
-		target.receiveRequest = {target = client, item = item, amount = amount, money = money, itemValue = value}
+	for _, row in ipairs(result) do
+		self.m_InventoryTypes[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			Name = row.Name;
+			Permissions = {};
+			Categories = {};
+			CategoryIds = {};
+		}
 
-		if client:getInventory():getItemAmount(item) >= amount then
-			local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
-			if money and money > 0 then
-				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
+		if row.Permissions ~= nil and row.Permissions ~= "" and fromJSON(row.Permissions) then
+			self.m_InventoryTypes[row.Id].Permissions = fromJSON(row.Permissions)
+		end
+
+		local categories = sql:queryFetch("SELECT ic.* FROM ??_inventory_type_categories tc INNER JOIN ??_item_categories ic ON ic.Id = tc.CategoryId WHERE TypeId = ?", sql:getPrefix(), sql:getPrefix(), row.Id)
+
+		for _, category in ipairs(categories) do
+			self.m_InventoryTypes[row.Id].Categories[category.Id] = {
+				Id = category.Id;
+				TechnicalName = category.TechnicalName;
+				Name = category.Name;
+			}
+
+			table.insert(self.m_InventoryTypes[row.Id].CategoryIds, category.Id)
+		end
+
+		self.m_InventoryTypesIdToName[row.TechnicalName] = row.Id
+	end
+end
+
+function InventoryManager:createInventory(elementId, elementType, size, allowedCategories)
+	local inventory = Inventory.create(elementId, elementType, size, allowedCategories)
+
+	self.m_Inventories[inventory.Id] = inventory
+
+    return inventory
+end
+
+function InventoryManager:getInventory(inventoryIdOrElementType, elementId)
+	local inventoryId = inventoryIdOrElementType
+	local elementType = inventoryId
+
+	--[[if elementId then
+		-- get the damn id :P
+		-- is inventory already loaded?
+		for id, inventory in pairs(self.m_Inventories) do
+			if inventory.m_ElementId == elementId and inventory.m_ElementType == elementType then
+				return inventory
 			end
-			ShortMessageQuestion:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
-		else
-			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
-		end
-	elseif type == "Weapon" then
-		if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen handeln!", client)) return end
-		if target:hasTemporaryStorage() then client:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", client)) return end
-
-		if client:getFaction() and (not client:getFaction():isEvilFaction()) and client:isFactionDuty() then
-			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
-			return
 		end
 
-		if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-			client:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
-			return
+		local result = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+
+		if not result then
+			return false
 		end
 
-		if target:getWeaponLevel() < MIN_WEAPON_LEVELS[item] then
-			client:sendError(_("Das Waffenlevel von %s ist zu niedrig! (Benötigt: %i)", client, target.name, MIN_WEAPON_LEVELS[item]))
-			target:sendError(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", target, MIN_WEAPON_LEVELS[item]))
-			return
-		end
+		inventoryId = result.Id
+	end]]
 
-		client.sendRequest = {target = target, item = item, amount = amount, money = money}
-		target.receiveRequest = {target = client, item = item, amount = amount, money = money}
+	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId)
 
-		local text = _("%s möchte dir eine/n %s mit %d Schuss schenken! Geschenk annehmen?", target, client.name, WEAPON_NAMES[item], amount)
-		if money and money > 0 then
-			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
-		end
-		ShortMessageQuestion:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId)
+	
+	if player then
+		inventory.m_Player = player
 	end
+
+    return inventory
 end
 
-function InventoryManager:validateTrading(player, target, playerClient)
-	--if playerClient ~= target then return false end
-	if not player.sendRequest or not target.receiveRequest then return false end
-	if player.sendRequest.target ~= target or target.receiveRequest.target ~= player then return false end
+function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
+	local inventoryId = inventoryIdOrElementType
+	local elementType = inventoryId
+	local player = nil
 
-	return true
-end
+	if elementId then
+		-- get the damn id :P
+		-- is inventory already loaded?
+		for id, inventory in pairs(self.m_Inventories) do
+			if inventory.m_ElementId == elementId and inventory.m_ElementType == elementType then
+				return inventory
+			end
+		end
 
-function InventoryManager:Event_declineTrade(player, target)
-	if not self:validateTrading(player, target, client) then return end -- Todo: Report possible cheat attempt
+		local result = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
 
-	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
-	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+		if not result then
+			return false
+		end
 
-	player.sendRequest = nil
-	target.receiveRequest = nil
-end
-
-function InventoryManager:Event_acceptItemTrade(player, target)
-	if not self:validateTrading(player, target, client) then return end -- Todo: Report possible cheat attempt
-
-	local item = player.sendRequest.item
-	local amount = player.sendRequest.amount
-	local money = player.sendRequest.money
-	local value = player.sendRequest.itemValue
-
-	if (player:getPosition() - target:getPosition()).length > 10 then
-		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
-		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
-		return false
+		return result.Id, nil
 	end
-	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
-		if (not player:getFaction():isStateFaction()) or (not player:getFaction():isFactionDuty()) then
-			if ArmsDealer:getSingleton():getItemData(item) then 
-				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
+
+	if type(inventoryId) ~= "number" then
+		local elementId = 0
+		local elementType = 0
+
+		if type(inventoryId) == "table" then
+			if not InventoryTypes[inventoryId[1]] or table.size(inventoryId) ~= 2 then
 				return false
 			end
+			elementId = inventoryId[2]
+			elementType = InventoryTypes[inventoryId[1]]
+		elseif instanceof(inventoryId, Player) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Player
+			player = inventoryId
+		elseif instanceof(inventoryId, Faction) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Faction
+		elseif instanceof(inventoryId, Company) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Company
+		elseif instanceof(inventoryId, Group) then
+			elementId = inventoryId.m_Id
+			elementType = InventoryTypes.Group
 		end
-	end
-	if player:getInventory():getItemAmount(item) >= amount then 
-		if target:getMoney() >= money then
-			if target:getInventory():giveItem(item, amount, value) then
-				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
-				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
-				if amount <= 10 then
-					player:meChat(true, _("übergibt %s eine Tüte!", player, target:getName()))
-				elseif amount <= 25 then
-					player:meChat(true, _("übergibt %s ein Päckchen!", player, target:getName()))
-				else
-				player:meChat(true, _("übergibt %s ein Paket!", player, target:getName()))
-				end
-				player:getInventory():removeItem(item, amount, value)
-				WearableManager:getSingleton():removeWearable( player, item, value )
-				target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
-				StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
-				if item == "Osterei" and money == 0 then
-					target:giveAchievement(91) -- Verschenke ein Osterei
-				end
-			else
-				target:sendError(_("Du hast nicht genug Platz für dieses Item!", player))
-				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player, target:getName()))
-			end
-		else
-			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
-			target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
+		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ?", sql:getPrefix(), elementId, elementType)
+		
+		if not row then
+			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
+			return false
 		end
+		return row.Id, player
+	end
+	return inventoryId
+end
+
+function InventoryManager:loadInventory(inventoryId)
+	local player = nil
+	if type(inventoryId) ~= "number" then
+		inventoryId, player = self:getInventoryId(inventoryId)
+	end
+
+	local inventory = Inventory.load(inventoryId, player)
+
+	if inventory then
+		self.m_Inventories[inventoryId] = inventory
+		return inventory
+	end
+
+	return false
+end
+
+function InventoryManager:unloadInventory(inventoryId)
+	if self.m_Inventories[inventoryId] then
+		delete(self.m_Inventories[inventoryId])
+		return true
 	else
-		target:sendError(_("%s hat nicht mehr ausreichend %s!", target, player:getName(), item))
-		player:sendError(_("Du hast nicht mehr ausreichend %s!", player, item))
+		return false
 	end
 end
 
-function InventoryManager:Event_acceptWeaponTrade(player, target)
-	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
-
-	local weaponId = player.sendRequest.item
-	local amount = player.sendRequest.amount
-	local money = player.sendRequest.money
-
-	if (player:getPosition() - target:getPosition()).length > 10 then
-		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
-		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+function InventoryManager:deleteInventory(inventoryId)
+	if self.m_Inventories[inventoryId] then
+		self.m_Inventories[inventoryId]:delete()
+		return true
+	else
 		return false
 	end
+end
 
-	if player:getFaction() and (not player:getFaction():isEvilFaction()) and player:isFactionDuty() then
-		player:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", player))
-		return
-	end
-	if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-		player:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
-		return
-	end
+function InventoryManager:isItemGivable(inventoryId, itemId, amount)
+    checkIfCategoryAllowed()
+    checkIfSpace()
+end
 
-	if player:hasTemporaryStorage() then player:sendError(_("Du kannst aktuell keine Waffen handeln!", player)) return end
-	if target:hasTemporaryStorage() then player:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", player)) return end
+function InventoryManager:isItemRemovable(inventoryId, itemId, amount)
+    checkIfCategoryAllowed()
+    checkIfSpace()
+end
 
-	local weaponSlot = getSlotFromWeapon(weaponId)
-	if player:getWeapon(weaponSlot) > 0 then
-		if player:getTotalAmmo(weaponSlot) >= amount then
-			if target:getMoney() >= money then
-				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
-				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
-				takeWeapon(player, weaponId)
-				giveWeapon(target, weaponId, amount)
-				target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
-			else
-				player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
-				target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
-			end
-		else
-			target:sendError(_("%s hat nicht mehr ausreichend Munition!", target, player:getName()))
-			player:sendError(_("Du hast nicht mehr ausreichend Munition!", player))
-		end
-	else
-		target:sendError(_("%s hat die Waffe nicht mehr!", target, player:getName()))
-		player:sendError(_("Du hast die Waffe nicht mehr!", player))
-	end
+function InventoryManager:removeItem()
+    if self:isItemRemovable() then
+        remove()
+        return true
+    end
+    return false
+end
+
+function InventoryManager:giveItem()
+    if self:isItemGivable() then
+        give()
+        return true
+    end
+    return false
+end
+
+function InventoryManager:transactItem(fromInventoryId, toInventoryId, itemId, amount, value)
+    if self:isItemRemovable() and self:isItemGivable() then
+        self:removeItem()
+        self:giveItem()
+        return true
+    else
+        return self:isItemRemovable(), self:isItemGivable()
+    end
 end

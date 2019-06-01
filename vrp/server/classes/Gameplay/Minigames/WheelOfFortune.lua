@@ -39,7 +39,7 @@ function WheelOfFortune:onClicked()
     --actual functions
     if not self.m_InUse then
         if not client.m_IsUsingWheel then
-            if not client:getInventory():removeItem("Zuckerstange", 1) then
+            if not client:getInventoryOld():removeItem("Zuckerstange", 1) then
                 return client:sendError(_("Du benötigst eine Zuckerstange um am Glücksrad zu drehen!", client))
             end
 
@@ -76,10 +76,10 @@ end
 
 function WheelOfFortune:givePrice(player, type)
     if type == "Zuckerstange" then
-        player:getInventory():giveItem("Zuckerstange", 2)
+        player:getInventoryOld():giveItem("Zuckerstange", 2)
         player:sendSuccess(_("Du hast 2 Zuckerstangen gewonnen!", player))
     elseif type == "Gluehwein" then
-        player:getInventory():giveItem("Gluehwein", 2)
+        player:getInventoryOld():giveItem("Gluehwein", 2)
         player:sendSuccess(_("Du hast 2 Tassen Glühwein gewonnen!", player))
     elseif type == "500$" then
         self.m_BankAccountServer:transferMoney(player, 500, "Glücksrad-Gewinn", "Gameplay", "WheelOfFortune")
@@ -88,7 +88,7 @@ function WheelOfFortune:givePrice(player, type)
     elseif type == "10000$" then
         self.m_BankAccountServer:transferMoney(player, 10000, "Glücksrad-Gewinn", "Gameplay", "WheelOfFortune")
     elseif type == "Muetze" then
-        player:getInventory():giveItem("Weihnachtsmütze", 1)
+        player:getInventoryOld():giveItem("Weihnachtsmütze", 1)
         player:sendSuccess(_("Du hast eine Weihnachtsmütze gewonnen! Ho ho ho!", player))
     end
 end

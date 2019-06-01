@@ -109,9 +109,9 @@ function Growable:harvest(player)
 			StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
 			delete(self)
 		elseif amount > 0 then
-			if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
+			if player:getInventoryOld():getFreePlacesForItem(self.ms_Item) >= amount then
 				player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
-				player:getInventory():giveItem(self.ms_Item, amount)
+				player:getInventoryOld():giveItem(self.ms_Item, amount)
 				player:triggerEvent("hidePlantGUI")
 				self.m_Size = 0
 				self.m_TimesEarned = self.m_TimesEarned + 1

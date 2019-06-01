@@ -70,7 +70,7 @@ function PrisonBreak:PedTargetRefresh(count, startingPlayer)
 		for attacker in pairs(attackers) do
 			if isElement(attacker) then
 				attacker:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
-				attacker:getInventory():giveItem("Keycard", 1)
+				attacker:getInventoryOld():giveItem("Keycard", 1)
 				attacker:sendSuccess("Du hast eine Keycard erhalten!")
 				table.insert(self.m_KeycardPlayers, attacker)
 			end
@@ -109,7 +109,7 @@ function PrisonBreak:placeBomb(player)
 		return
 	end
 
-	if not player:getInventory():removeItem("Sprengstoff", 1) then
+	if not player:getInventoryOld():removeItem("Sprengstoff", 1) then
 		player:sendError("Du hast keine Bombe im Inventar!")
 
 		delete(self)
@@ -177,9 +177,9 @@ function PrisonBreak:finish()
 end
 
 function PrisonBreak.RemoveKeycard(player)
-	if player and isElement(player) and player:getInventory() then
-		if player:getInventory():getItemAmount("Keycard") and player:getInventory():getItemAmount("Keycard") > 0 then
-			player:getInventory():removeAllItem("Keycard")
+	if player and isElement(player) and player:getInventoryOld() then
+		if player:getInventoryOld():getItemAmount("Keycard") and player:getInventoryOld():getItemAmount("Keycard") > 0 then
+			player:getInventoryOld():removeAllItem("Keycard")
 			player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
 		end
 	end

@@ -32,7 +32,7 @@ function ItemSpeedCam:use(player)
 						worldItem:setFactionSuperOwner(true)
 						worldItem:setMinRank(MIN_RANK)
 
-						player:getInventory():removeItem(self:getName(), 1)
+						player:getInventoryOld():removeItem(self:getName(), 1)
 
 						local object = worldItem:getObject()
 						setElementData(object, "earning", 0)
@@ -56,7 +56,7 @@ function ItemSpeedCam:use(player)
 		end
 	else
 		player:sendError(_("Du bist nicht berechtigt! Das Item wurde abgenommen!", player))
-		player:getInventory():removeAllItem(self:getName())
+		player:getInventoryOld():removeAllItem(self:getName())
 	end
 end
 

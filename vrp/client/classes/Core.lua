@@ -101,7 +101,7 @@ function Core:ready() --onClientResourceStart
 	--JailBreak:new()
 	RadioStationManager:new()
 	DimensionManager:new()
-	Inventory:new()
+	InventoryOld:new()
 	InventoryGUI:new()
 	Guns:new()
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))

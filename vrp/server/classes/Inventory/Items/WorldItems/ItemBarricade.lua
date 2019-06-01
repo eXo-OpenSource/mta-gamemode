@@ -24,12 +24,12 @@ function ItemBarricade:use(player)
 						self:toggleBlinkingLight(source, client)
 					end)
 				end
-				player:getInventory():removeItem(self:getName(), 1)
+				player:getInventoryOld():removeItem(self:getName(), 1)
 			end
 		)
 	else
 		player:sendError(_("Du bist nicht im Dienst!", player))
-		player:getInventory():removeAllItem(self:getName())
+		player:getInventoryOld():removeAllItem(self:getName())
 	end
 end
 

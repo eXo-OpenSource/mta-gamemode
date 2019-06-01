@@ -123,7 +123,7 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		return false
 	end
 
-	if player:getInventory():giveItem(self.m_ItemName, 1) then
+	if player:getInventoryOld():giveItem(self.m_ItemName, 1) then
 		if self.m_Item.removeFromWorld then
 			self.m_Item:removeFromWorld(player, self, self.m_Object)
 		end

@@ -65,7 +65,7 @@ function ItemTransmitter:use(player)
 	local result = self:startObjectPlacing(player,
 	function(item, position, rotation)
 		if item ~= self or not position then return end
-		player:getInventory():removeItem(self:getName(), 1)
+		player:getInventoryOld():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Transmitter"))
 		local int = getElementInterior(player) 
 		local dim = getElementDimension(player)

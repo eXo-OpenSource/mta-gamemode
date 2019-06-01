@@ -16,8 +16,8 @@ function WearableClothes:destructor()
 end
 
 function WearableClothes:use(player, itemId, bag, place, itemName)
-	local inventory = player:getInventory()
-	local value = inventory:getItemValueByBag( bag, place)
+	local inventory = player:getInventoryOld()
+	local value = InventoryOld:getItemValueByBag( bag, place)
 	if value then
 		local skinID = tonumber(value)
 		if skinID then

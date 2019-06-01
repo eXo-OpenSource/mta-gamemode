@@ -36,7 +36,7 @@ end
 
 function ItemShopGUI:refreshItemShopGUI(shopId, items, sortedItems, weaponItems)
 	self.m_Shop = shopId or 0
-	local itemData = Inventory:getSingleton():getItemData()
+	local itemData = InventoryOld:getSingleton():getItemData()
 	if itemData then
 		self.m_Grid:clear()
 		for key, value in pairs(sortedItems and sortedItems or items) do

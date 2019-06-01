@@ -1160,7 +1160,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					player:clearCrimes()
 
 					local DrugItems = self.ms_IllegalItems
-					local inv = player:getInventory()
+					local inv = player:getInventoryOld()
 					for index, item in pairs(DrugItems) do
 						if inv:getItemAmount(item) > 0 then
 							inv:removeAllItem(item)
@@ -1392,7 +1392,7 @@ function FactionState:Event_FactionRearm()
 				Guns:getSingleton():setWeaponInStorage(client, wStorage, false)
 			end
 		end
-		local inv = client:getInventory()
+		local inv = client:getInventoryOld()
 		if inv then
 			inv:removeAllItem("Einsatzhelm")
 			inv:giveItem("Einsatzhelm",1)
@@ -1428,12 +1428,12 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				client:setCorrectSkin()
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
-				client:getInventory():removeAllItem("Taser")
-				client:getInventory():removeAllItem("Warnkegel")
-				client:getInventory():removeAllItem("Barrikade")
-				client:getInventory():removeAllItem("Nagel-Band")
-				client:getInventory():removeAllItem("Blitzer")
-				client:getInventory():removeAllItem("Einsatzhelm")
+				client:getInventoryOld():removeAllItem("Taser")
+				client:getInventoryOld():removeAllItem("Warnkegel")
+				client:getInventoryOld():removeAllItem("Barrikade")
+				client:getInventoryOld():removeAllItem("Nagel-Band")
+				client:getInventoryOld():removeAllItem("Blitzer")
+				client:getInventoryOld():removeAllItem("Einsatzhelm")
 				client:takeEquipment(true)
 				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
@@ -1449,12 +1449,12 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
-				client:getInventory():removeAllItem("Warnkegel")
-				client:getInventory():giveItem("Warnkegel", 5)
-				client:getInventory():removeAllItem("Einsatzhelm")
-				client:getInventory():giveItem("Einsatzhelm", 1)
-				client:getInventory():removeAllItem("Taser")
-				client:getInventory():giveItem("Taser", 1)
+				client:getInventoryOld():removeAllItem("Warnkegel")
+				client:getInventoryOld():giveItem("Warnkegel", 5)
+				client:getInventoryOld():removeAllItem("Einsatzhelm")
+				client:getInventoryOld():giveItem("Einsatzhelm", 1)
+				client:getInventoryOld():removeAllItem("Taser")
+				client:getInventoryOld():giveItem("Taser", 1)
 				if not wasted then faction:updateDutyGUI(client) end
 			end
 		else
@@ -1605,7 +1605,7 @@ function FactionState:Event_friskPlayer(target)
 			target:sendInfo(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()))
 
 			local DrugItems = self.ms_IllegalItems
-			local inv = target:getInventory()
+			local inv = target:getInventoryOld()
 			local targetDrugs = {}
 			for index, item in pairs(DrugItems) do
 				if inv:getItemAmount(item) > 0 then
@@ -1712,7 +1712,7 @@ function FactionState:Event_takeDrugs(target)
 			target:sendMessage(_("%s hat dir folgende illegale Items abgenommen:", target, client:getName()), 255, 255, 0)
 			local drugsTaken = false
 			local amount = 0
-			local inv = target:getInventory()
+			local inv = target:getInventoryOld()
 			for index, item in pairs(DrugItems) do
 				if inv:getItemAmount(item) > 0 then
 					amount = inv:getItemAmount(item)

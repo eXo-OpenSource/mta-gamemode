@@ -72,8 +72,8 @@ function TradeGUI:loadItems()
    self.m_LabelAmountText:setVisible(true)
    self.m_Amount:setVisible(true)
    	triggerServerEvent("refreshInventory", localPlayer)
-    self.m_ItemData = Inventory:getSingleton():getItemData()
-    self.m_Items = Inventory:getSingleton():getItems()
+    self.m_ItemData = InventoryOld:getSingleton():getItemData()
+    self.m_Items = InventoryOld:getSingleton():getItems()
 
     local item
 	if self.m_Items then

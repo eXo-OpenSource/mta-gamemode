@@ -125,8 +125,8 @@ function Christmas:Event_requestBonusData()
 end
 
 function Christmas:Event_buyBonus(bonusId)
-	local playerPackages = client:getInventory():getItemAmount("Päckchen", true)
-	local playerCandyCane = client:getInventory():getItemAmount("Zuckerstange", true)
+	local playerPackages = client:getInventoryOld():getItemAmount("Päckchen", true)
+	local playerCandyCane = client:getInventoryOld():getItemAmount("Zuckerstange", true)
 
 	local bonus = Christmas.ms_Bonus[bonusId]
 	if not bonus then return end
@@ -144,8 +144,8 @@ function Christmas:Event_buyBonus(bonusId)
 	if bonus["Type"] == "Weapon" then
 		client:giveWeapon(bonus["WeaponId"], bonus["Ammo"])
 	elseif bonus["Type"] == "Item" then
-		if client:getInventory():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
-			client:getInventory():giveItem(bonus["ItemName"], bonus["ItemAmount"])
+		if client:getInventoryOld():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
+			client:getInventoryOld():giveItem(bonus["ItemName"], bonus["ItemAmount"])
 		else
 			client:sendError(_("Du hast nicht genug Platz in deinem Inventar!", client))
 			return
@@ -167,7 +167,7 @@ function Christmas:Event_buyBonus(bonusId)
 		client:givePoints(bonus["PointsAmount"])
 		client:sendShortMessage(_("%d Punkte erhalten!", client, bonus["PointsAmount"]))
 	elseif bonus["Type"] == "Skin" then
-		client:getInventory():giveItem("Kleidung", 1, bonus["SkinId"])
+		client:getInventoryOld():giveItem("Kleidung", 1, bonus["SkinId"])
 		client:sendShortMessage("Der Skin wurde in dein Inventar gelegt!")
 	elseif bonus["Type"] == "Special" then
 		if bonus["Text"] == "Schutzweste" then
@@ -186,8 +186,8 @@ function Christmas:Event_buyBonus(bonusId)
 		end
 	end
 
-	client:getInventory():removeItem("Zuckerstange", bonus["CandyCane"])
-	client:getInventory():removeItem("Päckchen", bonus["Packages"])
+	client:getInventoryOld():removeItem("Zuckerstange", bonus["CandyCane"])
+	client:getInventoryOld():removeItem("Päckchen", bonus["Packages"])
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Päckchen und %d Zuckerstange/n gekauft!", client, bonus["Text"], bonus["Packages"], bonus["CandyCane"]))
 	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Packages"], bonus["CandyCane"])
 

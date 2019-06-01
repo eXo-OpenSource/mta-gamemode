@@ -104,7 +104,7 @@ end
 function Trunk:addItem(player, item, amount, value)
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
-			if player:getInventory():removeItem(item, amount, value) then
+			if player:getInventoryOld():removeItem(item, amount, value) then
 				slot["Item"] = item
 				slot["Amount"] = amount
 				slot["Value"] = value
@@ -136,7 +136,7 @@ function Trunk:takeItem(player, slot)
 					player:sendError(_("Dieses Item ist nicht illegal!", player))
 				end
 			else
-				success = player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
+				success = player:getInventoryOld():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
 				if success then player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot)) end
 			end
 			if success then

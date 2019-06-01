@@ -161,7 +161,7 @@ end
 addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
 	function(model, callbackEvent, hideObject, doNotShowInventory)
-		Inventory:getSingleton():hide()
+		InventoryOld:getSingleton():hide()
 		nextframe(
 			function(model,callbackEvent)
 				local objectPlacer = ObjectPlacer:new(model,
@@ -174,7 +174,7 @@ addEventHandler("objectPlacerStart", root,
 						nextframe(
 							function()
 								if not hideObject and not doNotShowInventory then --if no object was moved
-									Inventory:getSingleton():show()
+									InventoryOld:getSingleton():show()
 								end
 							end
 						)

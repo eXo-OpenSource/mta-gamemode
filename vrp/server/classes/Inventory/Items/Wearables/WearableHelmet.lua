@@ -29,8 +29,8 @@ function WearableHelmet:destructor()
 end
 
 function WearableHelmet:use(player, itemId, bag, place, itemName)
-	local inventory = player:getInventory()
-	local value = inventory:getItemValueByBag( bag, place)
+	local inventory = player:getInventoryOld()
+	local value = InventoryOld:getItemValueByBag( bag, place)
 	if player.m_PrisonTime > 0 then player:sendError("Im Prison nicht erlaubt!") return end
 	if player.m_JailTime > 0 then player:sendError("Im Gefängnis nicht erlaubt!") return end
 	if value then --// for texture usage later
@@ -39,7 +39,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 	if not player.m_IsWearingHelmet and not player.m_Helmet then --// if the player clicks onto the helmet without currently wearing one
 		if itemName == "Einsatzhelm" and not (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
-			player:getInventory():removeAllItem(self:getName())
+			player:getInventoryOld():removeAllItem(self:getName())
 			return
 		end
 		if isElement(player.m_Helmet) then
@@ -84,7 +84,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
 		if itemName == "Einsatzhelm" and (not player:getFaction() or not player:getFaction():isStateFaction() or not player:isFactionDuty()) then
 			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
-			player:getInventory():removeAllItem(self:getName())
+			player:getInventoryOld():removeAllItem(self:getName())
 			return
 		end
 		if isElement(player.m_Helmet) then

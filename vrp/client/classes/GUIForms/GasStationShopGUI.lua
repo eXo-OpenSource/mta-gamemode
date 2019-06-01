@@ -79,7 +79,7 @@ end
 function GasStationShopGUI:refreshItemShopGUI(shopId, items)
 	self.m_Shop = shopId or 0
 	local item
-	local itemData = Inventory:getSingleton():getItemData()
+	local itemData = InventoryOld:getSingleton():getItemData()
 	if itemData then
 		self.m_Grid:clear()
 		for name, price in pairs(items) do

@@ -7,536 +7,234 @@
 -- ****************************************************************************
 Inventory = inherit(Object)
 
-function Inventory:constructor(owner, inventorySlots, itemData, classItems)
-	self.m_InventorySlots = inventorySlots
-	self.m_ItemData = itemData
-	self.m_Owner = owner
-	self.m_Bag = {}
-	self.m_Items = {}
-	self.m_ClassItems = classItems
+function Inventory.create()
 
-	self.m_Debug = false
+end
 
-	for k, v in pairs(inventorySlots) do
-		self.m_Bag[k] = {}
+function Inventory.load(inventoryId, player)
+	local inventory = sql:asyncQueryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
+
+	if not inventory then
+		return false
 	end
+	-- TODO: Rename _inventory_items2 TO _inventory_items
+	local items = sql:asyncQueryFetch("SELECT ii.*, i.TechnicalName, i.CategoryId, i.Name, i.Description, i.Icon, i.Size, i.ModelId, i.MaxDurability, i.Consumable, i.Tradeable, i.Expireable, i.IsUnique FROM ??_inventory_items2 ii INNER JOIN ??_items i ON i.Id = ii.ItemId WHERE InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
 
-	local id, place
+	return Inventory:new(inventory, items, true, player)
+end
 
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE PlayerId = ?", sql:getPrefix(), self.m_Owner:getId())
-	for i, row in ipairs(result) do
-		if tonumber(row["Menge"]) > 0 then
-			id = tonumber(row["id"])
-			place = tonumber(row["Platz"])
-			self.m_Items[id] = {}
-			self.m_Items[id]["Objekt"] = row["Objekt"]
-			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
-			self.m_Items[id]["Platz"] = place
-			self.m_Items[id]["Value"] = row["Value"] or ""
-			self.m_Items[id]["WearLevel"] = tonumber(row["WearLevel"]) or nil
-			self.m_Bag[row["Tasche"]][place] = id
+function Inventory:constructor(inventory, items, persistent, player)
+	self.m_Id = inventory.Id
+	self.m_ElementId = inventory.ElementId
+	self.m_ElementType = inventory.ElementType
+	self.m_Size = inventory.Size
+	self.m_TypeId = inventory.TypeId
+	self.m_Type = InventoryManager:getSingleton().m_InventoryTypes[inventory.TypeId].TechnicalName
+	self.m_Persistent = persistent
+	self.m_Player = player
 
-			if row["Objekt"] == "Mautpass" then
-				if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
-					self:removeAllItem("Mautpass")
-					if isElement(self.m_Owner) then
-						self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
-					end
-				end
-			end
-		else
-			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
-		end
+	self.m_IsDirty = false
+	self.m_DirtySince = 0
+	self.m_NextItemId = 1
+
+	self.m_Items = items
+	for _, item in pairs(items) do
+		item.InternalId = self.m_NextItemId
+		self.m_NextItemId = self.m_NextItemId + 1
 	end
-
-	triggerClientEvent(self.m_Owner, "loadPlayerInventarClient", self.m_Owner, self.m_InventorySlots, self.m_ItemData)
-	self:syncClient()
 end
 
 function Inventory:destructor()
-	self.m_Items = nil
-	self.m_Bag = nil
-	InventoryManager:getSingleton():deleteInventory(self.m_Owner)
+	self:save()
 end
 
-function Inventory:syncClient()
-	if not self.m_Owner.m_Disconnecting then
-		self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
+function Inventory:save(force)
+	if self.m_IsDirty then
+
 	end
 end
 
-function Inventory:loadItem(id)
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?", sql:getPrefix(), id)
-	for i, row in ipairs(result) do
-		if tonumber(row["Menge"]) > 0 then
-			id = tonumber(row["id"])
-			local place = tonumber(row["Platz"])
-			self.m_Items[id] = {}
-			self.m_Items[id]["Objekt"] = row["Objekt"]
-			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
-			self.m_Items[id]["Platz"] = place
-			self.m_Items[id]["Value"] = row["Value"]
-			self.m_Items[id]["WearLevel"] = tonumber(row["WearLevel"]) or nil
-			self.m_Bag[row["Tasche"]][place] = id
-		else
-			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
-		end
+function Inventory:getPlayer()
+	if self.m_Player and isElement(self.m_Player)then
+		return self.m_Player
 	end
-	self:syncClient()
+	return false
 end
-
-function Inventory:useItem(itemId, bag, itemName, place)
-	if self:getItemAmount(itemName) <= 0 then
-		client:sendError(_("Inventar Fehler: Kein Item", client))
-		return
+--[[
+	Checks to do:
+		* Does the item exists?
+		* Is the item compatible with the inventory?
+		* Has the inventory still enough space?
+		* Is the item unique and is it already in the inventory?
+]]
+function Inventory:giveItem(item, value, durability, metadata)
+	-- Does the item exist?
+	if type(item) == "string" then
+		item = InventoryManager:getSingleton().m_ItemIdToName[item]
 	end
 
-	if self.m_ClassItems[itemName] then
-		local instance = ItemManager.Map[itemName]
-		if instance.use then
-			if instance:use(client, itemId, bag, place, itemName ) == false then
-				return false
+	if not InventoryManager:getSingleton().m_Items[item] then
+		return false, "item"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item]
+
+	local cSize = self:getCurrentSize()
+	
+	if value < 1 then
+		return false, "value"
+	end
+
+	if self.m_Size < cSize + itemData.Size * value then
+		return false, "size"
+	end
+	
+	if not self:isCompatibleWithCategory(itemData.Category) then
+		return false, "category"
+	end
+
+	if itemData.m_IsUnique then
+		if v.ItemId == item then
+			return false, "unique"
+		end 
+	end
+
+	self.m_IsDirty = true
+
+	if self.m_DirtySince == 0 then
+		self.m_DirtySince = getTickCount()
+	end
+	-- metadata
+
+	for k, v in pairs(self.m_Items) do
+		if v.ItemId == item then
+			if (v.Metadata and #v.Metadata > 0) or metadata or itemData.MaxDurability > 0 then
+				iprint({v.Metadata, metadata, itemData.MaxDurability})
+			else
+				v.Value = v.Value + value
+				return true
 			end
+		end 
+	end
+
+	local internalId = self.m_NextItemId
+	self.m_NextItemId = self.m_NextItemId + 1
+
+	local data = {
+		Id = -1,
+		InternalId = internalId,
+		ItemId = item,
+		Value = value,
+		Durability = durability,
+		Metadata = metadata
+	}
+
+	for k, v in pairs(itemData) do
+		if k ~= "Id" then
+			data[k] = v
 		end
 	end
 
-	if self.m_ItemData[itemName]["Verbraucht"] == 1 then
-		self:removeItemFromPlace(bag, place, 1)
+	table.insert(self.m_Items, data)
+end
+
+function Inventory:takeItem(id, value)
+	
+	if value < 1 then
+		return false, "value"
 	end
 
-	if itemName == "Mautpass" then
-		local id = self:getItemID(bag, place)
-		if self.m_Items[id] and self.m_Items[id]["Value"] then
-			client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(tonumber(self.m_Items[id]["Value"]))), "San Andreas Government")
-		else
-			client:sendShortMessage(_("Dein Mautpass ist abgelaufen!", client), "San Andreas Government")
-			self:removeItemFromPlace(bag, place, 1)
+	local item = self:getItem(id)
+
+	if not item then
+		return false, "invalid"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+
+	if not itemData then
+		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ Inventory@takeItem", 1)
+		return false, "invalid"
+	end
+
+	if item.Value < value then
+		return false, "value"
+	end
+	
+	self.m_IsDirty = true
+
+	if self.m_DirtySince == 0 then
+		self.m_DirtySince = getTickCount()
+	end
+
+	item.Value = item.Value - value
+
+	if item.Value == 0 then
+		table.remove(self.m_Items, k)
+		return true, true
+	end
+
+	return true, false
+end
+
+function Inventory:useItem(id)
+	local item = self:getItem(id)
+
+	if not item then
+		return false, "invalid"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+
+	if not itemData then
+		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ Inventory@takeItem", 1)
+		return false, "invalid"
+	end
+
+	if itemData.Class == "ItemFood" then
+		local food = ItemFood:new(self, itemData, item)
+		local success, remove = food:use()
+
+		if remove then
+			self:takeItem(id, 1)
 		end
 	end
-
-	self:syncClient()-- Probably we dont need that anymore (removeItemFromPlace call this too
 end
 
-function Inventory:useItemSecondary(itemId, bag, itemName, place)
-	if self:getItemAmount(itemName) <= 0 then
-		client:sendError(_("Inventar Fehler: Kein Item", client))
-		return
+function Inventory:getItem(id)
+	for k, v in pairs(self.m_Items) do
+		if v.InternalId == id then
+			return v
+		end 
 	end
-
-	if self.m_ClassItems[itemName] then
-		local instance = ItemManager.Map[itemName]
-		if instance.useSecondary then
-			return instance:useSecondary(client, itemId, bag, place, itemName)
-		end
-	end
+	return false
 end
 
-function Inventory:saveItemAmount(id, amount)
-	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ?", sql:getPrefix(), amount, id )
-	self:syncClient()
+function Inventory:hasPlayerAccessTo(player)
+	-- Typbasierte Checks, bspw.:
+	--  Fraktion: ist der Spieler OnDuty in der Besitzerfraktion
+	--  Kofferrraum: hat Spieler einen Schlüssel für das Fahrzeug / ist CopDuty
+	--  Haus: ist der Spieler Mieter / Besitzer des Hauses
 end
 
-function Inventory:saveItemPlace(id, place)
-	sql:queryExec("UPDATE ??_inventory_slots SET Platz = ?? WHERE id = ?", sql:getPrefix(), place, id )
-	self:syncClient()
-end
+function Inventory:isCompatibleWithCategory(category)
+	local iType = InventoryManager:getSingleton().m_InventoryTypes[self.m_TypeId]
 
-function Inventory:saveItemValue(id, value)
-	sql:queryExec("UPDATE ??_inventory_slots SET Value = ? WHERE id = ?", sql:getPrefix(), value, id)
-	self:syncClient()
-end
-
-function Inventory:saveItemWearLevel(id, wearLevel)
-	sql:queryExec("UPDATE ??_inventory_slots SET WearLevel = ? WHERE id = ?", sql:getPrefix(), wearLevel, id)
-	self:syncClient()
-end
-
-function Inventory:deleteItem(id)
-	sql:queryExec("DELETE FROM ??_inventory_slots WHERE id = ?", sql:getPrefix(), id)
-	self:syncClient()
-end
-
-function Inventory:insertItem(amount, item, place, bag, value, wearLevel)
-	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche, Value, WearLevel) VALUES (?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag, value, wearLevel)
-	return sql:lastInsertId()
-end
-
-function Inventory:getItemID(bag, place)
-	if self.m_Bag then
-		return self.m_Bag[bag][place]
-	end
-end
-
-function Inventory:getMaxItemAmount(item)
-	return self.m_ItemData[item]["Item_Max"]
-end
-
-function Inventory:getLowEmptyPlace(bag)
-	for i = 0, self:getPlaces(bag) do
-		if self:isPlaceEmpty(bag, i) then
-			return i
+	for _, c in pairs(iType.Categories) do
+		if c.TechnicalName == category then
+			return true
 		end
 	end
 
 	return false
 end
 
-function Inventory:getPlaces(bag)
-	if bag and self.m_InventorySlots[bag] then
-		return self.m_InventorySlots[bag] - 1
+function Inventory:getCurrentSize()
+	local size = 0
+
+	for k, v in pairs(self.m_Items) do
+		size = size + v.Size * v.Value
 	end
 
-	return 0
-end
-
-function Inventory:getItemValueByBag(bag, place)
-	if bag and place then
-		local id = self:getItemID(bag, place)
-		if id then
-			return self.m_Items[id]["Value"]
-		end
-	end
-end
-
-function Inventory:isPlaceEmpty(bag, place)
-	local id = self:getItemID(bag, place)
-	if self.m_Items[id] and self.m_Items[id]["Objekt"] then
-		return false
-	else
-		return true
-	end
-end
-
-function Inventory:setItemValueByBag(bag, place, value)
-	if bag and place then
-		local id = self:getItemID(bag, place)
-		if id then
-			self.m_Items[self:getItemID(bag, place)]["Value"] = value
-			self:saveItemValue(id, value)
-		end
-	end
-end
-
-function Inventory:getItemPlacesByName(item)
-	local placeTable = {}
-
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local places = self:getPlaces(bag)
-		for place = 0, places do
-			local id = self:getItemID(bag, place)
-			if id then
-				if self.m_Items[id]["Objekt"] == item then
-					placeTable[#placeTable+1] = {place, bag}
-				end
-			end
-		end
-	else
-		outputDebugString("[INV] Unglültiges Item: "..item)
-	end
-
-	return placeTable
-end
-
-function Inventory:removeItemFromPlace(bag, place, amount, value)
-	local id = self:getItemID(bag, place)
-	if not id then return false end
-
-	local ItemAmount = self.m_Items[id]["Menge"]
-	local itemValue = value or ""
-
-	if not amount then
-		amount = ItemAmount
-	elseif amount < 0 then
-		error("removeItem > You cant remove less then 0 items!", 2)
-		return false
-	end
-
-	if self.m_Debug then
-		outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.."!",0,200,0,200)
-	end
-
-	if ItemAmount - amount < 0 then
-		return false
-	elseif ItemAmount - amount > 0 then
-		self.m_Items[id]["Menge"] = ItemAmount - amount
-		self:saveItemAmount(id, self.m_Items[id]["Menge"])
-		return true
-	else
-		self.m_Items[id] = nil
-		self.m_Bag[bag][place] = nil
-		self:deleteItem(id)
-		return true
-	end
-end
-
-function Inventory:getFreePlacesForItem(item)
-	if self.m_Debug then
-		outputDebugString("INV-DEBUG-getFreePlacesForItem: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
-	end
-
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local invplaetze = self:getPlaces(bag)
-		local stackMax = self.m_ItemData[item]["Stack_max"]
-		local itemMax = self.m_ItemData[item]["Item_Max"]
-		local placesplus = 0
-		local amount = 0
-		local places = 0
-
-		if self:getItemAmount(item) >= itemMax then
-			return 0
-		end
-
-		for i = 0, invplaetze do
-			local place = i
-			local id = self:getItemID(bag, place)
-			local itemName = self.m_ItemData[item]["Name"]
-			amount = 0
-			placesplus = 0
-			if itemName and id then
-				if itemName == item then
-					amount = self.m_Items[id]["Menge"]
-					if amount <= stackMax then
-						placesplus = stackMax-amount
-						places = places + placesplus
-					end
-				end
-			else
-				places = places+stackMax
-			end
-		end
-
-		if places > itemMax then places = itemMax	end
-		return places
-	else
-		outputDebugString("[INV] Unglültiges Item: "..item)
-	end
-
-	return 0
-end
-
-function Inventory:removeItem(item, amount, value)
-	if self.m_Debug then
-		outputDebugString("INV-DEBUG-removeItem: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item.." | Anzahl: "..amount)
-	end
-
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local places = self:getPlaces(bag)
-		local itemValue
-		for place = 0, places do
-			local id = self:getItemID(bag, place)
-			if self.m_Items[id] and self.m_Items[id]["Objekt"] and self.m_Items[id]["Objekt"] == item then
-				if self.m_Items[id]["Menge"] >= amount then
-					if not value then
-						if self:removeItemFromPlace(bag, place, amount) then
-							return true
-						end
-					else
-						itemValue = self:getItemValueByBag(bag, place)
-						if itemValue == value then
-							return self:removeItemFromPlace(bag, place, amount, value)
-						end
-					end
-				end
-			end
-		end
-	end
-
-	return false
-end
-
-function Inventory:removeAllItem(item, value)
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local places = self:getPlaces(bag)
-		local id,itemName
-		local itemValue
-
-		for place = 0, places do
-			id = self:getItemID(bag, place)
-			if id then
-				itemName = self.m_Items[id]["Objekt"]
-				if itemName == item then
-					if not value then
-						self:removeItemFromPlace(bag, place)
-						return true
-					else
-						itemValue = self:getItemValueByBag(bag, place)
-						if itemValue == value then
-							self:removeItemFromPlace(bag, place)
-							return true
-						end
-					end
-				end
-			end
-		end
-	end
-end
-
-function Inventory:getPlaceForItem(item, itemAmount)
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local id
-
-		for place = 0, self:getPlaces(bag) do
-			id = self:getItemID(bag, place)
-			if id then
-				if self.m_Items[id]["Objekt"] == item then
-					if self.m_Items[id]["Menge"]+itemAmount <= self.m_ItemData[item]["Stack_max"] then
-						return place
-					end
-				end
-			end
-		end
-
-		return false
-	else
-		outputDebugString("[INV] Unglültiges Item: "..item)
-	end
-end
-
-function Inventory:getItemAmount(item, inStack)
-	if self.m_Debug then
-		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
-	end
-
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local amount = 0
-		local places = self:getPlaces(bag)
-
-		if not inStack then
-			for place = 0, places do
-				local id = self:getItemID(bag, place)
-				if id then
-					if self.m_Items[id]["Objekt"] == item then
-						amount = amount+self.m_Items[id]["Menge"]
-					end
-				end
-			end
-		else
-			for place = 0, places do
-				local id = self:getItemID(bag, place)
-				if id then
-					if self.m_Items[id]["Objekt"] == item then
-						local stackAmount = self.m_Items[id]["Menge"]
-						if stackAmount > amount then
-							amount = stackAmount
-						end
-					end
-				end
-			end
-		end
-
-		return amount
-	else
-		outputDebugString("[INV] Unglültiges Item: "..item)
-	end
-end
-
-function Inventory:throwItem(item, bag, id, place, name)
-	self.m_Owner:sendInfo(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
-	self.m_Owner:meChat(true, "zerstört "..name.."!")
-	local value = self:getItemValueByBag(bag,place)
-	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )
-	self:removeItemFromPlace(bag, place)
-end
-
-function Inventory:giveItem(item, amount, value)
-	if self.m_Debug then
-		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
-	end
-
-	if value == "" then value = false end
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local itemMax = self.m_ItemData[item]["Item_Max"]
-
-		if self:getItemAmount(item) + amount > itemMax  then
-			self.m_Owner:sendError(_("Du kannst maximal %d %s in dein Inventar legen!", self.m_Owner,itemMax, item))
-			return
-		end
-
-		local placeType, place
-		if self:getPlaceForItem(item, amount) and not value then --Stack
-			placeType = "stack"
-			place = self:getPlaceForItem(item, amount)
-		else -- New
-			placeType = "new"
-			place = self:getLowEmptyPlace(bag)
-		end
-
-		if place then
-			local id = self:getItemID(bag, place)
-			if placeType == "stack" then
-				local itemAmount = self.m_Items[id]["Menge"]
-				self.m_Items[id]["Menge"] = itemAmount + amount
-				self:saveItemAmount(id, self.m_Items[id]["Menge"])
-				return true
-			elseif placeType == "new" then
-				if amount > 0 then
-					local lastId = self:insertItem(amount, item, place, bag, value or "", self.m_ItemData[item]["MaxWear"])
-					self:loadItem(lastId)
-					self:setItemValueByBag(bag,place, value or "")
-					return true
-				end
-			end
-		elseif not self.m_Owner.m_Disconnecting then
-			self.m_Owner:sendError(_("Nicht genug Platz für %d %s in deinem Inventar!", self.m_Owner,amount,item))
-		end
-	elseif not self.m_Owner.m_Disconnecting then
-		self.m_Owner:sendError(_("Ungültiges Item! (%s)", self.m_Owner,item))
-	end
-end
-
-function Inventory:getItemWearLevelByBag(bag, place)
-	if bag and place then
-		local id = self:getItemID(bag, place)
-		if id then
-			return self.m_Items[id]["WearLevel"]
-		end
-	end
-end
-
-function Inventory:setItemWearLevelByBag(bag, place, wearLevel)
-	if bag and place then
-		local id = self:getItemID(bag, place)
-		if id then
-			self.m_Items[id]["WearLevel"] = wearLevel
-			self:saveItemWearLevel(id, wearLevel)
-		end
-	end
-end
-
-function Inventory:decreaseItemWearLevelByBag(bag, place)
-	if bag and place then
-		local id = self:getItemID(bag, place)
-		if id then
-			local wearLevel =  self.m_Items[id]["WearLevel"] - 1
-			if wearLevel <= 0 then
-				self:removeItemFromPlace(bag, place)
-				return true
-			else
-				self:setItemWearLevelByBag(bag, place, wearLevel)
-				return false
-			end
-		end
-	end
-end
-
-function Inventory:decreaseItemWearLevel(itemName)
-	if self.m_ItemData[itemName] and self.m_ItemData[itemName]["MaxWear"] then
-		if self:getItemAmount(itemName) ~= 1 then return end
-
-		local place, bag = unpack(self:getItemPlacesByName(itemName)[1])
-
-		local id = self:getItemID(bag, place)
-		if not self.m_Items[id]["WearLevel"] then
-			self.m_Items[id]["WearLevel"] = self.m_ItemData[itemName]["MaxWear"]
-		end
-
-		return self:decreaseItemWearLevelByBag(bag, place)
-	end
+	return size
 end

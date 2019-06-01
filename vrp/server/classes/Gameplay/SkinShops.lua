@@ -40,7 +40,7 @@ function SkinShops:Event_skinBuy(skinId)
 end
 
 function SkinShops:giveClothItem( player, skinID )
-	local inv = player:getInventory()
+	local inv = player:getInventoryOld()
 	local pAllSkins = inv:getItemPlacesByName("Kleidung")
 	local place, bag, value
 	for i = 1, #pAllSkins do

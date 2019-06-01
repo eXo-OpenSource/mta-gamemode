@@ -58,20 +58,20 @@ function DrugsShroom:onMushroomClick(button, state, player)
 
 	if button == "left" and state == "down" then
         if source:getModel() == self.m_MagicModel then
-            if player:getInventory():getFreePlacesForItem("Shrooms") >= 1 then
+            if player:getInventoryOld():getFreePlacesForItem("Shrooms") >= 1 then
                 source:destroy()
-                player:getInventory():giveItem("Shrooms", 1)
+                player:getInventoryOld():giveItem("Shrooms", 1)
                 player:sendInfo(_("Du hast einen seltenen Magic-Mushroom gesammelt!", player))
             else
-                player:sendError(_("Du kannst nicht soviele Shrooms tragen! Maximal %d Stk.!", player, player:getInventory():getMaxItemAmount("Shrooms")))
+                player:sendError(_("Du kannst nicht soviele Shrooms tragen! Maximal %d Stk.!", player, player:getInventoryOld():getMaxItemAmount("Shrooms")))
             end
         elseif source:getModel() == self.m_NormalModel then
-            if player:getInventory():getFreePlacesForItem("Pilz") >= 1 then
+            if player:getInventoryOld():getFreePlacesForItem("Pilz") >= 1 then
                 source:destroy()
-                player:getInventory():giveItem("Pilz", 1)
+                player:getInventoryOld():giveItem("Pilz", 1)
                 player:sendInfo(_("Du hast einen Pilz gesammelt!", player))
             else
-                player:sendError(_("Du kannst nicht soviele Pilze tragen! Maximal %d Stk.!", player, player:getInventory():getMaxItemAmount("Pilz")))
+                player:sendError(_("Du kannst nicht soviele Pilze tragen! Maximal %d Stk.!", player, player:getInventoryOld():getMaxItemAmount("Pilz")))
             end
         end
     end

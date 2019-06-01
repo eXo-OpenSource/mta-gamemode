@@ -18,12 +18,12 @@ function ItemSkyBeam:use(player)
                 
                 self.m_WorldItem:attach(createObject(2887, position), false, Vector3(0, 90, 0))
 
-				player:getInventory():removeItem(self:getName(), 1)
+				player:getInventoryOld():removeItem(self:getName(), 1)
 			end
 		)
 	else
 		player:sendError(_("Du bist nicht im News-Dienst!", player))
-		player:getInventory():removeAllItem(self:getName())
+		player:getInventoryOld():removeAllItem(self:getName())
 	end
 end
 

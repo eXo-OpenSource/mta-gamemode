@@ -94,8 +94,8 @@ end
 
 function ItemEquipmentGUI:loadInventoryItems()
     self.m_GridInventar:clear()
-    self.m_ItemData = Inventory:getSingleton():getItemData()
-    self.m_Items = Inventory:getSingleton():getItems()
+    self.m_ItemData = InventoryOld:getSingleton():getItemData()
+    self.m_Items = InventoryOld:getSingleton():getItems()
     self.m_SelectedItemInventar = nil
     local item
     for index, itemInv in pairs(self.m_Items) do
@@ -152,7 +152,7 @@ end
 
 function ItemEquipmentGUI:loadDepotItems()
     self.m_GridDepot:clear()
-    self.m_ItemData = Inventory:getSingleton():getItemData()
+    self.m_ItemData = InventoryOld:getSingleton():getItemData()
     self.m_SelectedItemDepot = nil
     local item, weaponName, weaponData
     for itemName, amount in pairs(self.m_Depot) do

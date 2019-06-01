@@ -155,7 +155,7 @@ function Depot:showItemDepot(player)
 end
 
 function Depot:showEquipmentDepot(player)
-	player:getInventory():syncClient()
+	player:getInventoryOld():syncClient()
 	player:triggerEvent("ItemEquipmentOpen")
 	player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data, true)
 end
@@ -267,7 +267,7 @@ function Depot:addItem(player, item, amount, giveItemFromServer)
 		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
 		if self.m_Items[i]["Item"] == 0 then
 			if item ~= "Kleidung" then --wtf we cant check if the item has a value wtf wtf wtf - MasterM 2017
-				if giveItemFromServer or player:getInventory():removeItem(item, amount) then
+				if giveItemFromServer or player:getInventoryOld():removeItem(item, amount) then
 					self.m_Items[i]["Item"] = item
 					self.m_Items[i]["Amount"] = amount
 					player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
@@ -294,10 +294,10 @@ function Depot:takeItem(player, slotId)
 			--if self.m_Items[slotId]["Amount"] > 0 then
 				local item = self.m_Items[slotId]["Item"]
 				local amount = self.m_Items[slotId]["Amount"]
-				if player:getInventory():getFreePlacesForItem(item) >= amount then
+				if player:getInventoryOld():getFreePlacesForItem(item) >= amount then
 					self.m_Items[slotId]["Item"] = 0
 					self.m_Items[slotId]["Amount"] = 0
-					player:getInventory():giveItem(item, amount)
+					player:getInventoryOld():giveItem(item, amount)
 					player:sendInfo(_("Du hast %d %s aus dem Depot (Slot %d) genommen!", player, amount, item, slotId))
 					player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
 					StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
@@ -321,14 +321,14 @@ function Depot:addEquipment(player, item, amount, forceSpawn)
 		local armsData = ArmsDealer:getSingleton():getItemData(item)
 		local allAmount
 		if not armsData[3] then 
-			allAmount = amount == -1 and player:getInventory():getItemAmount(item)
+			allAmount = amount == -1 and player:getInventoryOld():getItemAmount(item)
 		else 
 			allAmount = amount == -1 and getPedTotalAmmo(player, getSlotFromWeapon ( armsData[3]))
 		end
 
 		if forceSpawn
 		or (armsData[3] and (getPedWeapon(player, getSlotFromWeapon ( armsData[3])) == armsData[3]) and ((amount > 0 and getPedTotalAmmo(player, getSlotFromWeapon ( armsData[3])) >= amount) or amount==-1))
-		or (amount > 0 and player:getInventory():removeItem(item, amount)) 
+		or (amount > 0 and player:getInventoryOld():removeItem(item, amount)) 
 		or (amount==-1 and self:removeAllEquipment(player, item, allAmount)) then
 			if not self.m_Equipments[item] then 
 				self.m_Equipments[item] = 0
@@ -362,7 +362,7 @@ end
 
 function Depot:removeAllEquipment(player, item, amount) -- this executes removeItem x amount since removeAllItem occasionally misses an item in the inventory 
 	for i = 1, amount do 
-		if not player:getInventory():removeItem(item, 1) then 
+		if not player:getInventoryOld():removeItem(item, 1) then 
 			return false
 		end
 	end
@@ -386,11 +386,11 @@ function Depot:takeEquipment(player, item, amount)
 	end
 	if self.m_Equipments[item] then
  		local armsData = ArmsDealer:getSingleton():getItemData(item)
-		if armsData[3] or (amount > 0 and self.m_Equipments[item] >= amount) or (amount==-1 and player:getInventory():getFreePlacesForItem(item) >= self.m_Equipments[item] ) then
+		if armsData[3] or (amount > 0 and self.m_Equipments[item] >= amount) or (amount==-1 and player:getInventoryOld():getFreePlacesForItem(item) >= self.m_Equipments[item] ) then
 			if amount > 0 then 
 				self.m_Equipments[item] = self.m_Equipments[item] - amount
 				if not armsData[3] then 
-					if not player:getInventory():giveItem(item, amount) then 
+					if not player:getInventoryOld():giveItem(item, amount) then 
 						self.m_Equipments[item] = self.m_Equipments[item] + amount
 						player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
 						return
@@ -402,7 +402,7 @@ function Depot:takeEquipment(player, item, amount)
 				amount = self.m_Equipments[item]
 				self.m_Equipments[item] = 0
 				if not armsData[3] then
-					if not player:getInventory():giveItem(item, amount) then 
+					if not player:getInventoryOld():giveItem(item, amount) then 
 						self.m_Equipments[item] = amount
 						player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data)
 						return

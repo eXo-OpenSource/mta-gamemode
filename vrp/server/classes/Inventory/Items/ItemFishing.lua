@@ -58,7 +58,7 @@ function ItemFishing:isAccessorie(itemName)
 end
 
 function ItemFishing:use(player, itemId, bag, place, itemName)
-	local playerInventory = player:getInventory()
+	local playerInventory = player:getInventoryOld()
 
 	if self:isFishingRod(itemName) then
 		Fishing:getSingleton():inventoryUse(player, itemName, bag, place)
@@ -66,7 +66,7 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 	end
 
 	if self:isCoolingBag(itemName) then
-		local value = fromJSON(playerInventory:getItemValueByBag(bag, place))
+		local value = fromJSON(playerInventoryOld:getItemValueByBag(bag, place))
 
 		if value then
 			for _, v in pairs(value) do
@@ -80,11 +80,11 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 	end
 
 	if self:isBait(itemName) then
-		local baitAmount = playerInventory:getItemAmount(itemName)
+		local baitAmount = playerInventoryOld:getItemAmount(itemName)
 		local fishingRods = {}
 
 		for fishingRod, fishingRodData in pairs(FISHING_RODS) do
-			if fishingRodData.baitSlots > 0 and playerInventory:getItemAmount(fishingRod) > 0 then
+			if fishingRodData.baitSlots > 0 and playerInventoryOld:getItemAmount(fishingRod) > 0 then
 				table.insert(fishingRods, fishingRod)
 			end
 		end
@@ -95,11 +95,11 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 	end
 
 	if self:isAccessorie(itemName) then
-		local accessorieAmount = playerInventory:getItemAmount(itemName)
+		local accessorieAmount = playerInventoryOld:getItemAmount(itemName)
 		local fishingRods = {}
 
 		for fishingRod, fishingRodData in pairs(FISHING_RODS) do
-			if fishingRodData.accessorieSlots > 0 and playerInventory:getItemAmount(fishingRod) > 0 then
+			if fishingRodData.accessorieSlots > 0 and playerInventoryOld:getItemAmount(fishingRod) > 0 then
 				table.insert(fishingRods, fishingRod)
 			end
 		end
@@ -135,13 +135,13 @@ function ItemFishing:useSecondary(player, itemId, bag, place, itemName)
 	if itemName == "Köder" then
 		if self.Random:get(1, 100) <= 2 then
 			player:giveAchievement(105) --Proteine?!
-			player:getInventory():removeItem(itemName, 1)
+			player:getInventoryOld():removeItem(itemName, 1)
 			player:kill()
 			return
 		end
 
 		if ItemManager.Map["KöderDummy"]:use(player) then
-			player:getInventory():removeItem(itemName, 1)
+			player:getInventoryOld():removeItem(itemName, 1)
 		end
 	end
 end

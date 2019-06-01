@@ -1273,7 +1273,7 @@ function VehicleManager:Event_vehicleUpgradeHangar()
 end
 
 function VehicleManager:Event_vehicleHotwire()
-	if client:getInventory():hasItem(ITEM_HOTWIREKIT) then
+	if client:getInventoryOld():hasItem(ITEM_HOTWIREKIT) then
 		if source:isBroken() then
 			client:sendError(_("Dieses Fahrzeug ist kaputt und kann nicht kurzgeschlossen werden!", client))
 			return

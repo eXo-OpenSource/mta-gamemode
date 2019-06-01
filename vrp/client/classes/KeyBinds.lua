@@ -106,7 +106,7 @@ function KeyBinds:getBindsList()
 end
 
 function KeyBinds:inventory()
-	Inventory:getSingleton():toggle()
+	InventoryOld:getSingleton():toggle()
 end
 
 function KeyBinds:togglePhone()
