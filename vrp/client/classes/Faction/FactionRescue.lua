@@ -1,19 +1,5 @@
-local DeathBlips = {}
 
-addRemoteEvents{"rescueCreateDeathBlip", "rescueRemoveDeathBlip", "rescueLadderUpdateCollision", "rescueLadderFixCamera"}
-addEventHandler("rescueCreateDeathBlip", root, function(player)
-
-	if DeathBlips[player] then delete(DeathBlips[player]) end
-
-	local pos = player:getPosition()
-	DeathBlips[player] = Blip:new("Rescue.png", pos.x, pos.y)
-	DeathBlips[player]:setStreamDistance(2000)
-	DeathBlips[player]:setColor(getElementType(player) == "player" and {200, 50, 0} or {150, 50, 0})
-end)
-
-addEventHandler("rescueRemoveDeathBlip", root, function(player)
-	if DeathBlips[player] then delete(DeathBlips[player]) end
-end)
+addRemoteEvents{"rescueLadderUpdateCollision", "rescueLadderFixCamera"}
 
 addEventHandler("rescueLadderUpdateCollision", root, function(enable)
 	if source:getType() == "vehicle" and source:getModel() == 544 then

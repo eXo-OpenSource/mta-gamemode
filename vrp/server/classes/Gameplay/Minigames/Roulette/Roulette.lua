@@ -1,10 +1,14 @@
 Roulette = inherit(Object)
 
-function Roulette:constructor(player)
+function Roulette:constructor(player, custombank)
     self.m_Player = player
     self.m_Player:triggerEvent("rouletteOpen")
     self.m_Player:setFrozen(true)
-    self.m_BankAccountServer = BankServer.get("gameplay.roulett")    
+    if custombank then 
+        self.m_BankAccountServer = BankServer.get(custombank)
+    else
+        self.m_BankAccountServer = BankServer.get("gameplay.roulett") 
+    end
 end
 
 function Roulette:destructor()
@@ -16,7 +20,7 @@ function Roulette:spin(bets)
     self.m_Bets = bets
 	local bet = self:calcBet()
 
-	if bet > ROULETTE_MAX_BET then
+	if (bet > ROULETTE_MAX_BET) and not (Sewers:getSingleton().m_CasinoMembers[self.m_Player] and SlotGame.HighStake) then
         self.m_Player:sendError(_("Maximal-Einsatz überschritten! (%s)", self.m_Player, toMoneyString(ROULETTE_MAX_BET)))
         self.m_Bets = nil
         return
@@ -30,8 +34,10 @@ function Roulette:spin(bets)
 		self.m_Player:sendError(_("Du hast nicht genug Geld für deinen Einsatz dabei!", self.m_Player))
 		self.m_Bets = nil
 		return false
-	end
-
+    end
+    if RouletteManager.Limits[self.m_Player:getId()] then
+        RouletteManager.Limits[self.m_Player:getId()].Bets = RouletteManager.Limits[self.m_Player:getId()].Bets + bet
+    end
     self.m_Player:transferMoney(self.m_BankAccountServer, bet, "Roulette-Einsatz", "Gameplay", "Roulett")
 	RouletteManager:getSingleton():setStats(-bet, true)
 	self.m_Random = math.random(0, 36)

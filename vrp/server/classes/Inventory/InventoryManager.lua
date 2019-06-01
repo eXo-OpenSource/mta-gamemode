@@ -60,6 +60,7 @@ function InventoryManager:loadItems()
 		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
 		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
 		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
+		itemData[itemName]["MaxWear"] = tonumber(row["MaxWear"]) or nil
 	end
 
 	return itemData
@@ -67,7 +68,7 @@ end
 
 function InventoryManager:loadInventory(player)
 	if not self.Map[player] then
-		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
+		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData, ItemManager:getSingleton():getClassItems())
 		self.Map[player] = instance
 		return instance
 	end
@@ -95,9 +96,10 @@ end
 
 function InventoryManager:Event_requestTrade(type, target, item, amount, money, value)
 	if (client:getPosition() - target:getPosition()).length > 10 then
-		client:sendError(_("Du bist zuweit von %s entfernt!", client, target.name))
+		client:sendError(_("Du bist zu weit von %s entfernt!", client, target.name))
 		return false
 	end
+
 	if not money then money = 0 end
 	local amount = math.abs(amount)
 	local money = math.abs(money)
@@ -111,7 +113,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			if money and money > 0 then
 				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 			end
-			QuestionBox:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
+			ShortMessageQuestion:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
 		else
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
@@ -142,7 +144,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
 		end
-		QuestionBox:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+		ShortMessageQuestion:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
 	end
 end
 
@@ -177,26 +179,37 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-
-	if player:getInventory():getItemAmount(item) >= amount then
-		if target:getMoney() >= money then
-			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
-			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
-			if amount <= 10 then
-				player:meChat(true, _("übergibt %s eine Tüte!", player, target:getName()))
-			elseif amount <= 25 then
-				player:meChat(true, _("übergibt %s ein Päckchen!", player, target:getName()))
-			else
-				player:meChat(true, _("übergibt %s ein Paket!", player, target:getName()))
+	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
+		if (not player:getFaction():isStateFaction()) or (not player:isFactionDuty()) then
+			if ArmsDealer:getSingleton():getItemData(item) then 
+				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
+				return false
 			end
-			player:getInventory():removeItem(item, amount, value)
-			WearableManager:getSingleton():removeWearable( player, item, value )
-			target:getInventory():giveItem(item, amount, value)
-			target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
-			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
+		end
+	end
+	if player:getInventory():getItemAmount(item) >= amount then 
+		if target:getMoney() >= money then
+			if target:getInventory():giveItem(item, amount, value) then
+				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
+				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
+				if amount <= 10 then
+					player:meChat(true, _("übergibt %s eine Tüte!", player, target:getName()))
+				elseif amount <= 25 then
+					player:meChat(true, _("übergibt %s ein Päckchen!", player, target:getName()))
+				else
+				player:meChat(true, _("übergibt %s ein Paket!", player, target:getName()))
+				end
+				player:getInventory():removeItem(item, amount, value)
+				WearableManager:getSingleton():removeWearable( player, item, value )
+				target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
+				StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
-			if item == "Osterei" and money == 0 then
-				target:giveAchievement(91) -- Verschenke ein Osterei
+				if item == "Osterei" and money == 0 then
+					target:giveAchievement(91) -- Verschenke ein Osterei
+				end
+			else
+				target:sendError(_("Du hast nicht genug Platz für dieses Item!", player))
+				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player, target:getName()))
 			end
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))

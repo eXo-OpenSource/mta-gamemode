@@ -10,9 +10,8 @@ inherit(GUIColorable, DxRectangle)
 
 function DxRectangle:constructor(posX, posY, width, height, color, parent, isRelative)
 	DxElement.constructor(self, posX, posY, width, height, parent, isRelative)
-	GUIColorable.constructor(self, color or Color.White)
+	GUIColorable.constructor(self, color)
 end
-
 
 function DxRectangle:drawThis()
 	if not self.m_Draw then return end

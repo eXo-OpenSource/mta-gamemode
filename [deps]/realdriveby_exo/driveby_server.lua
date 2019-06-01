@@ -88,7 +88,7 @@ addEventHandler ( "createPedForDrivebyFix", root, function ( )
 			attachElements ( playerpeds[client], veh, 100, -0.8, 0.5 )
 			setTimer(function()
 				if isElement(client) and isElement(playerpeds[client]) and isElement(veh) then
-					attachElements(playerpeds[client], veh, -0.8, 0.5)
+					attachElements(playerpeds[client], veh, 0, -0.5, 0.5)
 				end
 			end, 100, 1)
 		end

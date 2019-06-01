@@ -14,8 +14,9 @@ function CompanyManager:constructor()
 	MechanicTow:new()
 
 	triggerServerEvent("getCompanies", localPlayer)
-	addRemoteEvents{"loadClientCompany"}
+	addRemoteEvents{"loadClientCompany", "companyForceOffduty"}
 	addEventHandler("loadClientCompany", root, bind(self.loadCompany, self))
+	addEventHandler("companyForceOffduty", root, bind(self.companyForceOffduty, self))
 end
 
 function CompanyManager:loadCompany(Id, name, name_short, rankNames)
@@ -24,6 +25,12 @@ end
 
 function CompanyManager:getFromId(id)
 	return CompanyManager.Map[id]
+end
+
+function CompanyManager:companyForceOffduty()
+	if localPlayer:getPublicSync("Company:Duty") then
+		triggerServerEvent("companyToggleDuty", localPlayer, true, false, true)
+	end
 end
 
 Company = inherit(Object)

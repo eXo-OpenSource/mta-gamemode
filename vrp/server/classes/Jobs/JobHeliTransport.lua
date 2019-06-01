@@ -114,6 +114,7 @@ function JobHeliTransport:onDelivery()
 		client:setData("JobHeliTransport:Money", math.floor(distance/(3.489/2))) --// Default distance/8
 		client:sendInfo(_("Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!", client))
 		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
+		vehicle:setFuel(100)
 	else
 		client:sendInfo(_("Falsches Fahrzeug!", client))
 	end

@@ -37,7 +37,7 @@ end
 
 function TattooSelectionGUI:addItems()
 	for id, name in pairs(TattooSelectionGUI.Values) do
-		self:addItem(name, Color.LightBlue, bind(self.itemCallback, self, id))
+		self:addItem(name, Color.Accent, bind(self.itemCallback, self, id))
 	end
 end
 
@@ -61,4 +61,3 @@ addEventHandler("showTattooSelectionGUI", root,
 			TattooSelectionGUI:new(shopId)
 		end
 	)
-

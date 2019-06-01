@@ -58,7 +58,12 @@ end
 
 function FireManager:checkFire()
 	if FactionRescue:getSingleton():countPlayers(true, false) >= 3 and not self.m_CurrentFire then
-		self:startRandomFire()
+		local random = math.random(1, 4)
+		if random == 4 then
+			PlaneManager:getSingleton():createRoute(true)
+		else
+			self:startRandomFire()
+		end
 	else
 		if isTimer(self.m_FireTimer) then killTimer(self.m_FireTimer) end
 		self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire

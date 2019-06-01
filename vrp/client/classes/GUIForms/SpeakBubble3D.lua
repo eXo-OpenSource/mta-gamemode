@@ -2,11 +2,11 @@ SpeakBubble3D = inherit(GUIForm3D)
 SpeakBubble3D.Map = {}
 
 function SpeakBubble3D:constructor(element, text, description, rotPlus, zOffset)
-	addEventHandler("onElementDestroy", element, function () delete(self) end, false)
+	addEventHandler("onClientElementDestroy", element, function () delete(self) end, false)
 
 	local pos = element:getPosition()
 	if getElementType(element) == "vehicle" then -- calculate it with the bounding box
-		local __,__,__,__,__,bbz2 = element:getBoundingBox()
+		local __,__,__,__,__,bbz2 = getElementBoundingBox(element)
 		pos = pos + element.matrix.up*(bbz2 + 0.5)
 	else
 		pos.z = pos.z + (zOffset or 1.5)
@@ -15,9 +15,9 @@ function SpeakBubble3D:constructor(element, text, description, rotPlus, zOffset)
 	self.m_Text = text
 	self.m_Description = description
 
-	self.m_TextColor = Color.LightBlue
+	self.m_TextColor = Color.Accent
 	self.m_BackgroundColor = Color.Black
-	self.m_BorderColor = Color.LightBlue
+	self.m_BorderColor = Color.Accent
 	self.m_DescriptionColor = Color.White
 
 	rotPlus = rotPlus or 0

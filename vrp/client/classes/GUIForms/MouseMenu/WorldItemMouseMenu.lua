@@ -12,10 +12,10 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1)
 	if not element:getData("WorldItem:anonymousInfo") then
 		self:addItem(_("Besitzer: %s", tostring(element:getData("Owner")))):setTextColor(Color.Red)
-	elseif localPlayer:getRank() > 4 and localPlayer:getPublicSync("supportMode") then 
+	elseif localPlayer:getRank() > 4 and localPlayer:getPublicSync("supportMode") then
 		self:addItem(_("Besitzer: %s", tostring(element:getData("Owner")))):setTextColor(Color.Red)
 	end
-	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.LightBlue)
+	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.Accent)
 
 	self:addModelSpecificItems(element)
 
@@ -60,7 +60,7 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 			):setIcon(FontAwesomeSymbols.Bomb)
 		end
 	end
-	
+
 	if self:hasPermissionTo("showWorldItemInformation", element) then
         self:addItem(_"Informationen >>>",
 			function()
@@ -86,6 +86,19 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 				end
 			):setIcon(FontAwesomeSymbols.Music)
 		end
+		self:addItem(_"Sound an/aus",
+			function()
+				if element then
+					if element.Sound and isElement(element.Sound) then
+						if element.Sound:getVolume() == 0 then
+							element.Sound:setVolume(1)
+						else
+							element.Sound:setVolume(0)
+						end
+					end
+				end
+			end
+		):setIcon(FontAwesomeSymbols.SoundOn)
 	elseif model == 1238 then -- Warnkegel
 		if self:hasPermissionTo("", element, true) then
 			self:addItem(_"Warnleuchte",
@@ -98,7 +111,7 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 		end
 	elseif model == 3902 then -- Blitzer
 		if self:hasPermissionTo("", element, true) then
-			self:addItem(_("Einnahmen: %d$", element:getData("earning"))):setTextColor(Color.LightBlue)
+			self:addItem(_("Einnahmen: %d$", element:getData("earning"))):setTextColor(Color.Accent)
 		end
 	end
 end
@@ -106,13 +119,13 @@ end
 
 function WorldItemMouseMenu:hasPermissionTo(action, element, ownerPriority)
 	local superUserName = element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer")
-	local lpSuperUser = (localPlayer:getName() == superUserName 
+	local lpSuperUser = (localPlayer:getName() == superUserName
 		or (localPlayer:getFaction() and localPlayer:getFaction():getShortName() == superUserName)
 		or (localPlayer:getCompany() and localPlayer:getCompany():getName() == superUserName)
 	)
 	if ADMIN_RANK_PERMISSION[action] then --specified action
 		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] and localPlayer:getPublicSync("supportMode") then --if allowed
-			return true 
+			return true
 		end
 
 		return ownerPriority and lpSuperUser --just return it if owner can peform admin funcs (e.g. move)
@@ -125,10 +138,10 @@ function WorldItemMouseMenu:hasPermissionTo(action, element, ownerPriority)
 		end
 	else
 		if ADMIN_RANK_PERMISSION[action] then
-			if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then 
-				return true 
-			else 
-				return false 
+			if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then
+				return true
+			else
+				return false
 			end
 		end
 	end
@@ -140,7 +153,7 @@ function WorldItemInformationMouseMenu:constructor(posX, posY, element)
     GUIMouseMenu.constructor(self, posX, posY, 300, 1)
 	if not element:getData("WorldItem:anonymousInfo") then
 		self:addItem(_("Ersteller: %s", element:getData("Placer"))):setTextColor(Color.White)
-	elseif localPlayer:getRank() > 4 and localPlayer:getPublicSync("supportMode") then 
+	elseif localPlayer:getRank() > 4 and localPlayer:getPublicSync("supportMode") then
 		self:addItem(_("Ersteller: %s", element:getData("Placer"))):setTextColor(Color.White)
     end
 	self:addItem(_("Zeit: %s", getOpticalTimestamp(element:getData("PlacedTimestamp")))):setTextColor(Color.White)

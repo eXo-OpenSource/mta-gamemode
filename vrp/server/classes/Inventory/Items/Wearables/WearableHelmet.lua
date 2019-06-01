@@ -31,6 +31,8 @@ end
 function WearableHelmet:use(player, itemId, bag, place, itemName)
 	local inventory = player:getInventory()
 	local value = inventory:getItemValueByBag( bag, place)
+	if player.m_PrisonTime > 0 then player:sendError("Im Prison nicht erlaubt!") return end
+	if player.m_JailTime > 0 then player:sendError("Im Gefängnis nicht erlaubt!") return end
 	if value then --// for texture usage later
 
 	end
@@ -68,6 +70,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 			player:giveAchievement(90) -- Trage die tollen Hasenohren
 		end
 		player:triggerEvent("onClientToggleHelmet", true, itemName)
+		player:setPublicSync("HelmetItem", itemName)
 	elseif player.m_IsWearingHelmet == itemName and player.m_Helmet then --// if the player clicks onto the same helmet once more remove it
 		destroyElement(player.m_Helmet)
 		self.m_Helmets[player] = nil
@@ -77,6 +80,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		if player.m_HelmetPutOnTimer then if isTimer(player.m_HelmetPutOnTimer) then killTimer(player.m_HelmetPutOnTimer) end end
 		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
 		player:triggerEvent("onClientToggleHelmet", false, itemName)
+		player:setPublicSync("HelmetItem", false)
 	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
 		if itemName == "Einsatzhelm" and (not player:getFaction() or not player:getFaction():isStateFaction() or not player:isFactionDuty()) then
 			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
@@ -109,9 +113,6 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 			obj:setData("isProtectingHeadshot", true)
 		end
 		player:triggerEvent("onClientToggleHelmet", true, itemName)
+		player:setPublicSync("HelmetItem", itemName)
 	end
-end
-
-function WearableHelmet:Event_onGasMask( player, state ) 
-	
 end

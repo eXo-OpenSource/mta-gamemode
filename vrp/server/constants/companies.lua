@@ -35,7 +35,7 @@ companyRankNames[1] = {
 [1] = "Auszubildender",
 [2] = "Fahrlehrer",
 [3] = "Ausbilder",
-[4] = "Geschäftsführer Stellv.",
+[4] = "Stellv. Geschäftsführer",
 [5] = "Geschäftsführer"
 }
 companyColors[1] = {["r"] = 255,["g"] = 255,["b"] = 255}
@@ -55,8 +55,8 @@ companyRankNames[2] = {
 }
 companyColors[2] = {["r"] = 0,["g"] = 150,["b"] = 140}
 companySkins[2] = {[36]=true, [44]=true, [50]=true,[192]=true,[268]=true}
-companyDutyMarker[2] = Vector3(857.006, -1183.823, 17.269)
-companySpawnpoint[2] = {Vector3(854.230, -1186.297, 17.269), 0, 0}
+companyDutyMarker[2] = Vector3(2455.18, -2103.97, 13.55)
+companySpawnpoint[2] = {Vector3(2453.93, -2107.24, 13.55), 0, 0}
 
 -- ID 3 = SAN News:
 companyRankNames[3] = {

@@ -77,8 +77,9 @@ function Admin:constructor()
 	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
-    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", 
+	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -88,6 +89,7 @@ function Admin:constructor()
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
+    addEventHandler("adminEditVehicle", root, bind(self.Event_EditVehicle, self))
     addEventHandler("adminSeachPlayer", root, bind(self.Event_seachPlayer, self))
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
@@ -105,6 +107,7 @@ function Admin:constructor()
 	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
 	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	addEventHandler("adminLoginFix", root, bind(self.Event_OnAdminLoginFix, self))
+	addEventHandler("adminTriggerTransaction", root, bind(self.Event_forceTransaction, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -163,11 +166,11 @@ end
 
 function Admin:Event_OnAdminLoginFix( id  )
 	if client and client:getRank() >= ADMIN_RANK_PERMISSION["loginFix"] then
-		if tonumber(id) then 
-			if DatabasePlayer.Map[tonumber(id)] then 
-				DatabasePlayer.Map[tonumber(id)] = nil 
+		if tonumber(id) then
+			if DatabasePlayer.Map[tonumber(id)] then
+				DatabasePlayer.Map[tonumber(id)] = nil
 				client:sendInfo(_("Die Aktion war erfolgreich (ID: %s)", client, id))
-			else 
+			else
 				client:sendInfo(_("Der Account (ID %s) ist nicht in Benutzung!", client, id))
 			end
 		end
@@ -444,10 +447,15 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			for i=0, 2100 do
 				player:sendMessage(" ")
 			end
-			player:triggerEvent("closeAd")
 		end
 		StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
 		outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+	elseif func == "clearAd" then
+		self:sendShortMessage(_("%s die aktuelle Werbung gelöscht!", admin, admin:getName()))
+		for index, player in pairs(Element.getAllByType("player")) do
+			player:triggerEvent("closeAd")
+		end
+		StatisticsLogger:getSingleton():addAdminAction( admin, "clearAd", false)
 	elseif func == "resetAction" then
 		self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
 		ActionsCheck:getSingleton():reset()
@@ -622,9 +630,11 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin.m_SpectDimensionFunc = function(dim) _setElementDimension(admin, dim) end -- using overloaded methods to prevent that onElementDimensionChange will triggered
 		admin.m_SpectStop =
 			function()
-				for i, v in pairs(target.spectBy) do
-					if v == admin then
-						table.remove(target.spectBy, i)
+				if target.spectBy then
+					for i, v in pairs(target.spectBy) do
+						if v == admin then
+							table.remove(target.spectBy, i)
+						end
 					end
 				end
 				if admin and isElement(admin) then
@@ -645,7 +655,8 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				
+				removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) --trig
+
 			end
 
 		if not target.spectBy then target.spectBy = {} end
@@ -664,6 +675,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+		addEventHandler("onPlayerQuit", admin, admin.m_SpectStop)
 		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
 		bindKey(admin, "space", "down", admin.m_SpectStop)
 
@@ -675,9 +687,12 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			if isElement(target) and func == "nickchange" then
 				local oldName = target:getName()
 				changeTarget = target
-				if changeTarget:setNewNick(admin, reason) then
-					self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
-				end
+
+				Async.create(function(ac, changeTarget, admin, reason, oldName)
+					if changeTarget:setNewNick(admin, reason) then
+						ac:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
+					end
+				end)(self, changeTarget, admin, reason, oldName)
 			end
 		else
 			admin:sendError(_("Ungültiges Ziel!", admin))
@@ -853,7 +868,7 @@ function Admin:chat(player,cmd,...)
 end
 
 function Admin:toggleJetPack(player)
-	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
+	if player:getRank() >= RANK.Supporter and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
 		givePedJetPack(player)
 	else
 		if doesPedHaveJetPack(player) then
@@ -941,17 +956,15 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-	local count = 0
-	for key, value in pairs(self.m_OnlineAdmins) do
-		count = count+1
-	end
-	if count > 0 then
-		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
-		for key, value in pairs(self.m_OnlineAdmins) do
-			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
+	table.sort(self.m_OnlineAdmins, function(a, b) return a > b end)
+
+	if table.size(self.m_OnlineAdmins) > 0 then
+		outputChatBox("Folgende Teammitglieder sind derzeit online:", player, 50, 200, 255)
+		for onlineAdmin, rank in pairs(self.m_OnlineAdmins) do
+			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
 		end
 	else
-		outputChatBox("Derzeit sind keine Teammitglieder online!",player,255,0,0)
+		outputChatBox("Derzeit sind keine Teammitglieder online!", player, 255, 0, 0)
 	end
 end
 
@@ -1022,7 +1035,8 @@ local tpTable = {
 		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
         ["afk"] =           {["pos"] = Vector3(1567.72, -1886.07, 13.24),  	["typ"] = "Orte"},
         ["drogentruck"] =   {["pos"] = Vector3(-1079.60, -1620.10, 76.19),  ["typ"] = "Orte"},
-        ["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
+		["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
+		["kanal"] = 		{["pos"] = Vector3(1483.34, -1760.16, -37.31),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
         --["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
         --["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
@@ -1061,7 +1075,7 @@ local tpTable = {
         ["cjkleidung"] =    {["pos"] = Vector3(1128.82, -1452.29, 15.48),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
-        ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
+        ["mechaniker"] =    {["pos"] = Vector3(2406.46, -2089.79, 13.55),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
 		["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
@@ -1071,16 +1085,14 @@ local tpTable = {
         ["pdgarage"] =      {["pos"] = Vector3(1584.75, -1688.79, 6.22),  	["typ"] = "Fraktionen", ["interior"] = 0, ["dimension"]  = 5},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
-		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
-		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),["typ"] = "Fraktionen"},
-		--["yakuza"] =        {["pos"] = Vector3(924.773, -1711.789, 13.547), ["typ"] = "Fraktionen"},
-		["triaden"] =        {["pos"] = Vector3( 1907.526, 940.785, 10.776), ["typ"] = "Fraktionen"},
-		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
+		["vatos"] =         {["pos"] = Vector3(1882.53, -2029.32, 13.39),	["typ"] = "Fraktionen"},
+		["yakuza"] =        {["pos"] = Vector3(1406.541, -1426.492, 8.643),	["typ"] = "Fraktionen"},
+		["kartell"] =       {["pos"] = Vector3(2529.555, -1465.829, 23.94), ["typ"] = "Fraktionen"},
+		["biker"] =         {["pos"] = Vector3(752.73, 326.17, 19.88),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
 		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-		
 	}
 
 	local x,y,z = 0,0,0
@@ -1149,6 +1161,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
 			faction:removePlayer(targetPlayer)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
 		end
 
         if Id == 0 then
@@ -1161,7 +1174,8 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
 				end
 
-    			faction:addPlayer(targetPlayer, tonumber(rank))
+				faction:addPlayer(targetPlayer, tonumber(rank))
+				Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -1180,6 +1194,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
 			end
 			company:removePlayer(targetPlayer)
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
 		end
 
         if Id == 0 then
@@ -1192,6 +1207,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
 				end
     			company:addPlayer(targetPlayer, tonumber(rank))
+				Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(targetPlayer.m_Id)
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))
@@ -1242,6 +1258,25 @@ function Admin:Event_portToVehicle(veh)
     end
 end
 
+function Admin:Event_EditVehicle(veh, changes)
+    if client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleGeneral"] then
+
+		if veh and isElement(veh) then
+			if changes.Model and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleModel"] then
+
+			end
+			if changes.OwnerType and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleOwnerType"] then --change type before id!
+
+			end
+			if changes.OwnerID and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleOwnerID"] then
+
+			end
+		else
+			client:sendError("Das Fahrzeug wurde nicht gefunden.")
+		end
+    end
+end
+
 function Admin:addFactionVehicle(player, cmd, factionID)
 	if player:getRank() >= RANK.Supporter then
 		if isPedInVehicle(player) then
@@ -1253,7 +1288,10 @@ function Admin:addFactionVehicle(player, cmd, factionID)
 					local model = getElementModel(veh)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
+					local veh = VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
+					local fc = factionCarColors[factionID]
+					veh:setColor(fc.r, fc.g, fc.b, fc.r1, fc.g1, fc.b1)
+					veh:getTunings():saveColors()
 				else
 					player:sendError(_("Fraktion nicht gefunden!", player))
 				end
@@ -1276,7 +1314,10 @@ function Admin:addCompanyVehicle(player, cmd, companyID)
 					local veh = getPedOccupiedVehicle(player)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
+					local veh = VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
+					local fc = companyColors[companyID]
+					veh:setColor(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b)
+					veh:getTunings():saveColors()
 				else
 					player:sendError(_("Unternehmen nicht gefunden!", player))
 				end
@@ -1327,7 +1368,7 @@ function Admin:Event_vehicleDespawn(reason)
 	VehicleManager:getSingleton():checkVehicle(source)
 
 	if source:isPermanent() then
-		StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Despawn", ("Besitzer: %s, Grund: %s"):format(getElementData(source, "OwnerName") or "", reason))
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "despawn", source, reason)
 		self:sendShortMessage(_("%s hat das Fahrzeug %s von %s despawnt (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "", reason))
 
 		if getElementData(source, "OwnerName") then
@@ -1380,7 +1421,7 @@ function Admin:Command_MarkPos(player, add)
 end
 
 function Admin:reloadHelpText(player)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Moderator then
 		Help:getSingleton():loadHelpTexts()
 		player:sendInfo(_("Die F1 Hilfe wurde neu geladen!", player))
 	end
@@ -1492,4 +1533,86 @@ function Admin:Event_ObjectPlaced(x, y, z, rotation)
 	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
 	client.m_PlacingInfo = nil
 	return
+end
+
+function Admin:Event_forceTransaction(amount, from, fromType, to, toType)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	local id = false
+	if fromType == "player" then
+		local id = Account.getIdFromName(from)
+		if not id or id == 0 then
+			client:sendError(_("Der Spieler, der Geld abgezogen bekommen soll, existiert nicht!", client))
+			return
+		end
+		fromBankAccount = BankAccount.loadByOwner(id, 1)
+
+	elseif fromType == "faction" then
+		local id = FactionManager:getSingleton():getFromName(from) and FactionManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Die Fraktion, von der Geld abgezogen werden soll, existiert nicht!") return end
+		if id == 1 or id == 2 or id == 3 then
+			fromBankAccount = FactionState:getSingleton().m_BankAccountServer
+		else
+			fromBankAccount = BankAccount.loadByOwner(id, 2)
+		end
+		fromBankAccount = BankAccount.loadByOwner(id, 2)
+
+	elseif fromType == "company" then
+		local id = CompanyManager:getSingleton():getFromName(from) and CompanyManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Das Unternehmen, von dem Geld abgezogen werden soll, existiert nicht!") return end
+		fromBankAccount = BankAccount.loadByOwner(id, 3)
+
+	elseif fromType == "group" then
+		local id = GroupManager:getSingleton():getFromName(from) and GroupManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Die Gruppe, von der Geld abgezogen werden soll, existiert nicht!") return end
+		fromBankAccount = BankAccount.loadByOwner(id, 8)
+
+	elseif fromType == "admin" then
+		from = "Adminkasse"
+		fromBankAccount = self.m_BankAccount
+		
+	end
+
+	local id = false
+	if toType == "player" then
+		local id = Account.getIdFromName(to)
+		if not id or id == 0 then
+			client:sendError(_("Der Spieler, dem Geld überwiesen werden soll, existiert nicht!", client))
+			return
+		end
+		toBankAccount = BankAccount.loadByOwner(id, 1)
+
+	elseif toType == "faction" then
+		local id = FactionManager:getSingleton():getFromName(to) and FactionManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Die Fraktion, der Geld überwiesen werden soll, existiert nicht!") return end
+		if id == 1 or id == 2 or id == 3 then
+			toBankAccount = FactionState:getSingleton().m_BankAccountServer
+		else
+			toBankAccount = BankAccount.loadByOwner(id, 2)
+		end
+
+	elseif toType == "company" then
+		local id = CompanyManager:getSingleton():getFromName(to) and CompanyManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Das Unternehmen, dem Geld überwiesen werden soll, existiert nicht!") return end
+		toBankAccount = BankAccount.loadByOwner(id, 3)
+
+	elseif toType == "group" then
+		local id = GroupManager:getSingleton():getFromName(to) and GroupManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Der Gruppe, der Geld überwiesen werden soll, existiert nicht!") return end
+		toBankAccount = BankAccount.loadByOwner(id, 8)
+
+	elseif toType == "admin" then
+		to = "Adminkasse"
+		toBankAccount = self.m_BankAccount
+
+	end
+
+	if fromBankAccount and toBankAccount then
+		fromBankAccount:transferMoney(toBankAccount, amount, ("Erzwungene Transaktion von %s"):format(client:getName()), "Admin", "TransactionForce")
+		fromBankAccount:save()
+		toBankAccount:save()
+		client:sendShortMessage(("Transaktion über %s$ von %s zu %s erfolgreich!"):format(addComas(tostring(amount)), from, to))
+	end
 end

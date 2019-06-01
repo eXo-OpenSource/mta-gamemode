@@ -41,19 +41,30 @@ function ItemManager:constructor()
 		["Donut"] = ItemFood,
 		["Keks"] = ItemFood,
 		["Apfel"] = ItemFood,
+		["KöderDummy"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;
 		["Taser"] = ItemTaser;
 		["SLAM"] = ItemSlam;
 		["Rauchgranate"] = ItemSmokeGrenade;
+		["DefuseKit"] = ItemDefuseKit;
 
-		["Wuerfel"] = ItemDice,
+		["Bambusstange"] = ItemFishing,
 		["Angelrute"] = ItemFishing,
+		["Profi Angelrute"] = ItemFishing,
+		["Legendäre Angelrute"] = ItemFishing,
 		["Kleine Kühltasche"] = ItemFishing,
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
 		["Köder"] = ItemFishing,
+		["Leuchtköder"] = ItemFishing,
+		["Pilkerköder"] = ItemFishing,
+		["Schwimmer"] = ItemFishing,
+		["Spinner"] = ItemFishing,
+		["Fischlexikon"] = ItemFishing,
+
+		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = Plant,
 		["Apfelbaum-Samen"] = Plant,
 		["Blumen-Samen"] = Plant,

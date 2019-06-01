@@ -28,13 +28,13 @@ function TextureReplacer:constructor(element, textureName, options, force)
 	self.m_Element     = element
 	self.m_TextureName = textureName
 	self.m_Force = force
-	
+
 	if self.m_Force then
 		self.m_LoadingMode = TEXTURE_LOADING_MODE.PERMANENT
-	else 
+	else
 		self.m_LoadingMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
 	end
-	
+
 	self.m_Active      = true
 	self.m_OnElementDestroy   = bind(delete, self)
 	self.m_OnElementStreamIn  = bind(self.onStreamIn, self)
@@ -74,6 +74,7 @@ function TextureReplacer:destructor()
 			removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 		end
 	end
+	self.m_Element = nil -- do this to prevent re-instantiating if the texture object is in the loading queue
 end
 
 function TextureReplacer:onStreamIn()
@@ -132,7 +133,7 @@ function TextureReplacer:setLoadingMode(loadingMode)
 				removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 				removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 			end
-	
+
 			if loadingMode == TEXTURE_LOADING_MODE.STREAM then
 				addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 				addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)

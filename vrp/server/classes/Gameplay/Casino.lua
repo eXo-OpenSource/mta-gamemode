@@ -62,16 +62,13 @@ function Casino:constructor()
     Slotmachine:new(1957.1981, 987.87317, 993.01453, 0, 0, 213.529, 10)
     Slotmachine:new(1957.6958, 986.97644, 993.01453, 0, 0, 33.243, 10)
 
-	if EVENT_EASTER_SLOTMACHINES_ACTIVE then
-		EasterSlotmachine:new(1484.71, -1779.22, 14, 0, 0, 0, 0, 0)
-		EasterSlotmachine:new(1496.80, -1779.20, 14, 0, 0, 0, 0, 0)
-		EasterSlotmachine:new(1496.69, -1796.03, 14, 0, 0, 180, 0, 0)
-		EasterSlotmachine:new(1485.75, -1795.99, 14, 0, 0, 180, 0, 0)
-		EasterSlotmachine:new(1474.80, -1796.03, 14, 0, 0, 180, 0, 0)
-		EasterSlotmachine:new(1464.18, -1796.03, 14, 0, 0, 180, 0, 0)
-		EasterSlotmachine:new(1452.44, -1789.24, 14, 0, 0, 90, 0, 0)
-		EasterSlotmachine:new(1464.05, -1779.20, 14, 0, 0, 0, 0, 0)
-		EasterSlotmachine:new(1475.17, -1779.20, 14, 0, 0, 0, 0, 0)
+	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --x, y, z, rx, ry, rz, int, dim
+		EasterSlotmachine:new(1495.6, -1750, 16, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1466.86, -1749.9,16, 0, 0, 179.995, 0, 0)
+		EasterSlotmachine:new(1492.7, -1772.4, 19.3, 0, 0, 179.995, 0, 0)
+		EasterSlotmachine:new(1469.4819, -1772.4, 19.3, 0, 0, 179.995, 0, 0)
+		EasterSlotmachine:new(1499.53, -1749.9, 16, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1462.7, -1749.8, 16, 0, 0, 179.995, 0, 0)
 	end
 end
 

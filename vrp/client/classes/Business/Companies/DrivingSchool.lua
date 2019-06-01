@@ -3,7 +3,7 @@ addRemoteEvents{"DrivingLesson:setMarker", "DrivingLesson:endLesson"}
 
 function DrivingSchool:constructor()
 	self:createPed()
-	self.m_NonCollidingArea = NonCollidingArea:new(1367.10-15, -1624.27, 15, 5)
+	NonCollisionArea:new("Cuboid", {Vector3(1352, -1624, 12.5), 15, 5, 5})
 
 	addEventHandler("DrivingLesson:setMarker", localPlayer, bind(self.Event_onNextMarker, self))
 	addEventHandler("DrivingLesson:endLesson", localPlayer, bind(self.Event_endLesson, self))
@@ -48,10 +48,6 @@ function DrivingSchool:Event_endLesson()
 	end
 	self.m_CurrentVehicle = nil
 	setPedCanBeKnockedOffBike(localPlayer,true)
-end
-
-function DrivingSchool:destructor()
-	delete(self.m_NonCollidingArea)
 end
 
 function DrivingSchool:createPed()

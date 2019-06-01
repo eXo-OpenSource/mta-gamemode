@@ -4,20 +4,19 @@ function Scene:constructor(data, cut)
 	self.m_Actions = {}
 	self.m_ActiveAction = {}
 	self.m_Cutscene = cut
-	
+
 	self.m_Uid = data.uid or false
 	self.m_Letterbox = data.letterbox == true
-	
+
 	for k, v in ipairs(data) do
 		self.m_Actions[k] = Action.create(v, self)
 	end
-	
+
 	-- Not exactly 21/9, but looks better this way
-	local sw, sh = guiGetScreenSize()
-	Scene.LetterboxHeight = ( 9 / 21 * (sh/sw) * sh ) / 3 * 2
-	
-	Scene.LetterboxWidth = sw
-	Scene.LetterboxY = sh - Scene.LetterboxHeight
+	Scene.LetterboxHeight = ( 9 / 21 * (screenHeight/screenWidth) * screenHeight ) / 3 * 2
+
+	Scene.LetterboxWidth = screenWidth
+	Scene.LetterboxY = screenHeight - Scene.LetterboxHeight
 end
 
 function Scene:destructor()
@@ -30,7 +29,7 @@ end
 
 function Scene:stop()
 	for k, v in pairs(self.m_ActiveAction) do
-		if v.stop then 
+		if v.stop then
 			v:stop(true)
 		end
 	end
@@ -52,11 +51,11 @@ function Scene:preRender()
 				v.wasTriggered = true
 			end
 		else
-	
+
 			if self.m_ActiveAction[v.index] then
 				if v.stoptick < now then
-					if self.m_ActiveAction[v.index].preRender then 
-						self.m_ActiveAction[v.index]:preRender() 
+					if self.m_ActiveAction[v.index].preRender then
+						self.m_ActiveAction[v.index]:preRender()
 					end
 					if self.m_ActiveAction[v.index].stop then
 						self.m_ActiveAction[v.index]:stop()
@@ -76,7 +75,7 @@ function Scene:preRender()
 			end
 		end
 	end
-	
+
 	for k, v in pairs(self.m_ActiveAction) do
 		if v.preRender then v:preRender() end
 	end
@@ -91,11 +90,10 @@ function Scene:render()
 	for k, v in pairs(self.m_ActiveAction) do
 		if v.render then v:render() end
 	end
-	
+
 	if self.m_Cutscene.m_Debug then
 		local now = getTickCount() - self.m_Begin
-		local sw, sh = guiGetScreenSize()
-		dxDrawText(tostring(now), sw - 100, 50, sw, sh)
+		dxDrawText(tostring(now), screenWidth - 100, 50, screenWidth, screenHeight)
 	end
-	
+
 end

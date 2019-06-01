@@ -33,7 +33,7 @@ function AppEPT:onOpen(form)
 	self.m_CallEPT.onLeftClick = bind(self.CallEPT, self)
 
 
-	self.m_Tabs["Bus"] = self.m_TabPanel:addTab(_"Fahrplan", FontAwesomeSymbols.Document)
+	self.m_Tabs["Bus"] = self.m_TabPanel:addTab(_"Fahrplan", FontAwesomeSymbols.Table)
 	self.m_HeaderBus = GUILabel:new(10, 10, form.m_Width-20, 50, _"Busfahrplan", self.m_Tabs["Bus"])
 	self.m_BusRoute = BusRoutePlan:new(10, 100, form.m_Width-20, form.m_Height-160, 100, self.m_Tabs["Bus"])
 	self.m_BusRoute:setBackgroundDisabled(true)

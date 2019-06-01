@@ -17,7 +17,7 @@ function BonusGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"X-Mas Bonus Shop", true, true, self)
 	GUIGridLabel:new(1, 1, 15, 1, "Herzlich Willkommen beim X-Mas-Premium Shop!\nHier kannst du deine Päckchen und Zuckerstangen in wertvolle Prämien umwandeln!", self.m_Window)
-	self.m_ScrollArea =	GUIGridScrollableArea:new(1, 3, 15, 9, 10, 31, true, false, self.m_Window, 3)
+	self.m_ScrollArea =	GUIGridScrollableArea:new(1, 3, 15, 9, 10, 24, true, false, self.m_Window, 3)
 	self.m_ScrollArea:updateGrid()
 	self.m_BonusAmount = 0
 

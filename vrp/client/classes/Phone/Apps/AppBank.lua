@@ -27,20 +27,24 @@ function AppBank:onOpen(form)
 	GUILabel:new(10, 10, 240, 50, _"eXo-Bank", self.m_Tabs["Transfer"])
 	GUILabel:new(10, 70, 240, 30, _"Überweisen:", self.m_Tabs["Transfer"])
 
-	GUILabel:new(10, 100, 240, 20, _"Betrag:", self.m_Tabs["Transfer"])
-	self.m_TransferAmountEdit = GUIEdit:new(10, 120, 240, 30, self.m_Tabs["Transfer"])
+	GUILabel:new(10, 100, 240, 20, _"Empfänger:", self.m_Tabs["Transfer"])
+	self.m_TransferToEdit = GUIEdit:new(10, 120, 240, 30, self.m_Tabs["Transfer"])
+
+	GUILabel:new(10, 155, 240, 20, _"Grund:", self.m_Tabs["Transfer"])
+	self.m_TransferPurposeEdit = GUIEdit:new(10, 175, 240, 30, self.m_Tabs["Transfer"])
+	self.m_TransferPurposeEdit:setMaxLength(20)
+
+	GUILabel:new(10, 210, 240, 20, _"Betrag:", self.m_Tabs["Transfer"])
+	self.m_TransferAmountEdit = GUIEdit:new(10, 230, 240, 30, self.m_Tabs["Transfer"])
 	self.m_TransferAmountEdit:setNumeric(true, true)
 
-	GUILabel:new(10, 155, 240, 20, _"An:", self.m_Tabs["Transfer"])
-	self.m_TransferToEdit = GUIEdit:new(10, 175, 240, 30, self.m_Tabs["Transfer"])
-
-	self.m_TransferButton = GUIButton:new(10, 210, 240, 30, _"Überweisen", self.m_Tabs["Transfer"]):setBarEnabled(false)
+	self.m_TransferButton = GUIButton:new(10, 265, 240, 30, _"Überweisen", self.m_Tabs["Transfer"]):setBarEnabled(false)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 
-	GUILabel:new(10, 270, 120, 30, _"Spenden:", self.m_Tabs["Transfer"])
+	GUILabel:new(10, 320, 120, 30, _"Spenden:", self.m_Tabs["Transfer"])
 	local donate = {}
-	donate["San News"] = GUIButton:new(10, 300, 117, 30, _"San News", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Green):setBarEnabled(true):setFontSize(.9)
-	donate["eXo Event-Team"] = GUIButton:new(135, 300, 117, 30, _"eXo Event-Team", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Yellow):setBarEnabled(true):setFontSize(.9)
+	donate["San News"] = GUIButton:new(10, 350, 117, 30, _"San News", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Orange):setFontSize(.9)
+	donate["eXo Event-Team"] = GUIButton:new(135, 350, 117, 30, _"eXo Event-Team", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Green):setFontSize(.9)
 
 	for index, btn in pairs(donate) do
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
@@ -61,9 +65,10 @@ end
 function AppBank:TransferButton_Click()
 	local amount = tonumber(self.m_TransferAmountEdit:getText())
 	local toCharName = self.m_TransferToEdit:getText()
+	local purpose = self.m_TransferPurposeEdit:getText()
 	if amount and amount > 0 then
 		self.m_TransferAmountEdit:setText("0")
-		triggerServerEvent("bankTransfer", root, toCharName, amount)
+		triggerServerEvent("bankTransfer", root, toCharName, amount, purpose)
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
 	end

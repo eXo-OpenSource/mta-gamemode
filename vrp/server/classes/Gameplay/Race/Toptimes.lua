@@ -8,7 +8,6 @@
 Toptimes = inherit(Object)
 
 function Toptimes:constructor(sMapname)
-    assert(type(sMapname == "string"))
     local result = sql:queryFetchSingle("SELECT * FROM ??_toptimes WHERE Name = ?", sql:getPrefix(), sMapname)
     self.m_Mapname = sMapname
 
@@ -25,8 +24,10 @@ function Toptimes:constructor(sMapname)
     end
 end
 
-function Toptimes:destructor()
-	sql:queryExec("UPDATE ??_toptimes SET Times = ? WHERE ID = ?", sql:getPrefix(), toJSON(self.m_Toptimes), self.m_MapID)
+function Toptimes:destructor(skipSaving)
+	if not skipSaving then
+		sql:queryExec("UPDATE ??_toptimes SET Times = ? WHERE ID = ?", sql:getPrefix(), toJSON(self.m_Toptimes), self.m_MapID)
+	end
 end
 
 function Toptimes:save()

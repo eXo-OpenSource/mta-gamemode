@@ -63,6 +63,12 @@ function table.find(tab, value)
 	return nil
 end
 
+function table.insertUnique(tab, value)
+	if not table.find(tab, value) then
+		table.insert(tab, value)
+	end
+end
+
 function table.findAll(tab, value)
 	local result = {}
 	for k, v in pairs(tab) do
@@ -121,6 +127,7 @@ function table.removevalue(tab, value)
 	local idx = table.find(tab, value)
 	if idx then
 		table.remove(tab, idx)
+		return true
 	end
 end
 
@@ -625,7 +632,7 @@ function getWeekNumber()	--Maybe needs optimization
 	return math.floor((realtime.yearday + firstYearDayTime.weekday) / 7)
 end
 
-function getOpticalTimestamp(ts)
+function getOpticalTimestamp(ts, seconds)
 	local time = ts and getRealTime(ts) or getRealTime()
 	time.month = time.month+1
 	time.year = time.year-100
@@ -633,7 +640,7 @@ function getOpticalTimestamp(ts)
 		value = tostring(value)
 		if #value == 1 then time[index] = "0"..value end
 	end
-	return ("%s.%s.%s-%s:%s"):format(time.monthday, time.month, time.year, time.hour, time.minute)
+	return ("%s.%s.%s-%s:%s%s"):format(time.monthday, time.month, time.year, time.hour, time.minute, (seconds and (":%s"):format(time.second) or ""))
 end
 
 function timespanArray(seconds)
@@ -733,6 +740,10 @@ function normaliseVector(serialisedVector)
 	end
 end
 
+function normaliseRange( min, max, value)
+	return ( value-min ) / ( max-min )
+end
+
 function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
@@ -777,7 +788,10 @@ function attachRotationAdjusted ( from, to )
     local frPosX, frPosY, frPosZ = getElementPosition( from )
     local frRotX, frRotY, frRotZ = getElementRotation( from )
     local toPosX, toPosY, toPosZ = getElementPosition( to )
-    local toRotX, toRotY, toRotZ = getElementRotation( to )
+	local toRotX, toRotY, toRotZ = getElementRotation( to )
+	frRotX = frRotX or 0
+	frRotY = frRotY or 0
+	frRotZ = frRotZ or 0
     local offsetPosX = frPosX - toPosX
     local offsetPosY = frPosY - toPosY
     local offsetPosZ = frPosZ - toPosZ
@@ -789,7 +803,6 @@ function attachRotationAdjusted ( from, to )
 
     attachElements( from, to, offsetPosX, offsetPosY, offsetPosZ, offsetRotX, offsetRotY, offsetRotZ )
 end
-
 
 function applyInverseRotation ( x,y,z, rx,ry,rz )
     -- Degress to radians
@@ -844,4 +857,79 @@ function tableMerge(t1, t2)
         end
     end
     return t1
+end
+
+local seasons = {
+	{season = 4, seasonStart = getRealTime(946684800).yearday, seasonEnd = getRealTime(953510400).yearday}, -- Winter
+	{season = 1, seasonStart = getRealTime(953596800).yearday, seasonEnd = getRealTime(961459200).yearday}, -- Frühling
+	{season = 2, seasonStart = getRealTime(961545600).yearday, seasonEnd = getRealTime(969580800).yearday}, -- Sommer
+	{season = 3, seasonStart = getRealTime(969667200).yearday, seasonEnd = getRealTime(977270400).yearday}, -- Herbst
+	{season = 4, seasonStart = getRealTime(977356800).yearday, seasonEnd = getRealTime(978220800).yearday}, -- Winter
+}
+function getCurrentSeason()
+	local currentYearday = getRealTime().yearday
+
+	for _, season in pairs(seasons) do
+		if currentYearday >= season.seasonStart and currentYearday <= season.seasonEnd then
+			return season.season
+		end
+	end
+end
+
+function checkRaySphere(origin, ray, sphere, radius)
+	local offset = origin - sphere
+	local b = offset:dot(ray)
+	local c = offset:dot(offset) - radius * radius
+	if c > 0 and b > 0 then
+		return false
+	end
+	local discr = b * b - c
+	if discr < 0 then
+		return false
+	end
+	local t = -b - math.sqrt(discr)
+	t = t < 0 and 0 or t
+	return origin + ray * t, t
+end
+
+function getVectorByAngleDistance(vec, dist, angle)
+    local a = math.rad(90 - angle);
+    local dx = math.cos(a) * dist;
+    local dy = math.sin(a) * dist;
+    return Vector3(vec.x+dx, vec.y+dy, vec.z);
+end
+
+function angle(vec1, vec2)
+    return math.acos(vec1:dot(vec2)/(vec1.length*vec2.length))
+end
+
+function getPedWeapons(ped)
+	local playerWeapons = {}
+	if ped and isElement(ped) and getElementType(ped) == "ped" or getElementType(ped) == "player" then
+		for i=1,11 do
+			local wep = getPedWeapon(ped,i)
+			if wep and wep ~= 0 then
+				table.insert(playerWeapons,wep)
+			end
+		end
+	else
+		return false
+	end
+	return playerWeapons
+end
+
+function isValidElement(data, type)
+    return isElement(data) and (not type or (getElementType(data) == type))
+end
+
+function normalize(x, y, z)
+	local len = (x^2+y^2+z^2)^0.5
+	x = x / len
+	y = y / len
+	z = z / len
+	return x,y,z
+end
+
+function addComas(str)
+	return #str % 3 == 0 and str:reverse():gsub("(%d%d%d)", "%1."):reverse():sub(2) or str:reverse():gsub("(%d%d%d)", "%1."):reverse()
 end

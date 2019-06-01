@@ -6,11 +6,11 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
+addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -38,6 +38,7 @@ function PlayerManager:constructor()
 	addEventHandler("setPhoneStatus", root, bind(self.Event_setPhoneStatus, self))
 	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
 	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
+	addEventHandler("changeWalkingstyle", root, bind(self.Event_changeWalkingstyle, self))
 	addEventHandler("passwordChange", root, bind(self.Event_passwordChange, self))
 	addEventHandler("requestGunBoxData", root, bind(self.Event_requestGunBoxData, self))
 	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
@@ -57,12 +58,11 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
 	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
 	addEventHandler("onPlayerFinishArcadeEasterEgg", root, bind(self.Event_onPlayerFinishArcadeEasterEgg, self))
-	addEventHandler("onPlayerPrivateMessage", root, function()
-		cancelEvent()
-	end)
-
 	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
+	addEventHandler("unfreezePlayer", root, bind(self.Event_onUnfreezePlayer, self))
+	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
+
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
@@ -85,6 +85,17 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+end
+
+function PlayerManager:destructor()
+	for k, v in pairs(getElementsByType("player")) do
+		delete(v)
+		v:setName(getRandomUniqueNick())
+	end
+end
+
+function PlayerManager:Event_onUnfreezePlayer()
+	client:setFrozen(false)
 end
 
 function PlayerManager:Event_onRequestGateOpen()
@@ -191,12 +202,6 @@ function PlayerManager:Event_switchSpawnWithFaction( state )
 	client.m_SpawnWithFactionSkin = state
 end
 
-function PlayerManager:destructor()
-	for k, v in pairs(getElementsByType("player")) do
-		delete(v)
-	end
-end
-
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
 		if v and isElement(v) and v.updateSync then
@@ -301,7 +306,6 @@ end
 function PlayerManager:playerJoin()
 	-- Set a random nick to prevent blocking nicknames
 	source:setName(getRandomUniqueNick())
-
 	source:join()
 end
 
@@ -318,7 +322,6 @@ function PlayerManager:playerCommand(cmd)
 			cancelEvent()
 		end
 	end
-
 end
 
 function PlayerManager:playerQuit()
@@ -545,6 +548,10 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 		local success = FactionState:getSingleton():outputMegaphone(source, ...)
 		if success then return true end -- cancel screaming if megaphone succeeds
 	end
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle():getFaction() and source:getOccupiedVehicle():getFaction():isRescueFaction() then
+		local success = FactionRescue:getSingleton():outputMegaphone(source, ...)
+		if success then return true end -- cancel screaming if megaphone succeeds
+	end
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then
@@ -621,6 +628,10 @@ end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
+	if FactionEvil:getSingleton().m_Raids[client:getName()] and not timestampCoolDown(FactionEvil:getSingleton().m_Raids[client:getName()], 15) then
+		client:sendError(_("Du kannst während eines Überfalls niemandem dein Geld geben!", client))
+		return
+	end
 	amount = math.floor(amount)
 	if amount <= 0 then return end
 	if client:getMoney() >= amount then
@@ -754,6 +765,7 @@ function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
 	if client:isOnFire() then return end
+	if client:getData("isInDeathMatch") then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
@@ -782,6 +794,18 @@ function PlayerManager:stopAnimation(player)
 	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
+end
+
+function PlayerManager:Event_changeWalkingstyle(walkingstyle)
+	if client:getPrivateSync("AlcoholLevel") == 0 then
+		if not client:isStateCuffed() then
+			if WALKINGSTYLES[walkingstyle] then
+				client:changeWalkingstyle(WALKINGSTYLES[walkingstyle].id)
+			else
+				client:sendError("Internal Error! Laufstil nicht gefunden!")
+			end
+		end
+	end
 end
 
 function PlayerManager:Event_passwordChange(old, new1, new2)

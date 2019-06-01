@@ -66,23 +66,28 @@ function textHeight(text, lineWidth, font, size)
 	return height
 end
 
+CUSTOM_GUI = 1
 local offset = 0
 local outMargin = 0
-function grid(type, pos)
+function grid(typ, pos, ignorecustom)
+	if not ignorecustom then 
+		local erg = grid(typ, pos, true) 
+		return type(erg) == "number" and erg*CUSTOM_GUI or erg 
+	end
 	if not pos then pos = 1 end
-	if type == "offset" then
+	if typ == "offset" then
 		offset = pos
 		return true
-	elseif type == "outMargin" then
+	elseif typ == "outMargin" then
 		outMargin = pos
 		return true
-	elseif type == "reset" then -- reset all previous settings
+	elseif typ == "reset" then -- reset all previous settings
 		offset = 0
 		outMargin = 0
 		return true
-	elseif type == "x" then
+	elseif typ == "x" then
 		return 30*(pos - 1) + 10*pos + outMargin
-	elseif type == "y" then
+	elseif typ == "y" then
 		return offset + 30*(pos - 1) + 10*pos + outMargin
 	end
 	return 30*pos + 10*(pos - 1)
@@ -134,12 +139,11 @@ function dxDrawText3D(text, x, y, z)
 	local scx,scy = getScreenFromWorldPosition(x, y, z)
 	if scx and scy then
 		dxDrawText("[Debug] "..text, scx, scy, nil, nil, Color.White, 1, "default-bold", "center", "center")
-	end		
+	end
 end
 
-
 function dxDrawToolTip(x, y, text)
-	local f = VRPFont(30)
+	local f = getVRPFont(VRPFont(30))
 	local h = fontHeight(f, 1)/2
 	local w = fontWidth(text, f, 1)+30
 	dxDrawRectangle(x-w/2, y-h, w, h, tocolor(0, 0, 0, 150))
@@ -297,15 +301,15 @@ function isPedAiming ( thePedToCheck )
 	return false
 end
 
-function dxDrawBoxShape( x, y, w, h , ...) 
-	dxDrawLine( x, y, x+w,y,...) 
+function dxDrawBoxShape( x, y, w, h , ...)
+	dxDrawLine( x, y, x+w,y,...)
 	dxDrawLine( x, y+h , x +w , y+h,...)
 	dxDrawLine( x , y ,x , y+h , ... )
 	dxDrawLine( x+w , y ,x+w , y+h , ...)
 end
 
-function dxDrawBoxText( text , x, y , w , h , ... ) 
-	dxDrawText( text , x , y , x + w , y + h , ... ) 
+function dxDrawBoxText( text , x, y , w , h , ... )
+	dxDrawText( text , x , y , x + w , y + h , ... )
 end
 
 function getLineAngle( cx, cy, r, t)

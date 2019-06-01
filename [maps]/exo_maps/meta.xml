@@ -10,10 +10,10 @@
 	<script src="mapEditorScriptingExtension_c.lua" type="client"></script>
 
 	<map src="atm.map" />
-	
+
 	<map src="tiefgarage.map" />
 	<map src="cityhall.map" />
-	
+
 	<map src="knast_interior.map" />
 	<map src="knast.map" />
 	<!--<map src="medic_fix.map" />-->
@@ -27,8 +27,11 @@
 	<map src="fraktionen/army_shooting_town.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
-	<map src="fraktionen/biker.map" />
-	<map src="fraktionen/cosanostra.map" />
+	<map src="fraktionen/aztecas.map" />
+	<!--map src="fraktionen/cartell.map" />
+
+	<!--<map src="fraktionen/biker.map" />--> <!--Outlaws base-->
+	<!--map src="fraktionen/cosanostra.map" /-->
 	<map src="fraktionen/lspd.map" />
 	<!--<map src="fraktionen/lspd-gate-access.map" />-->
 	<!--map src="fraktionen/PD-exit.map" /-->
@@ -36,23 +39,30 @@
 	<map src="fraktionen/FBI.map" />
 	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
+	<map src="fraktionen/rescue_int.map" />
+	<map src="fraktionen/lostmc.map" />
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
-	<!--map src="fraktionen/yakuza.map"/>
-	
-	<map src="fraktionen/insurgent_storage.map" />
+	<!-- <map src="fraktionen/yakuza.map"/> -->
+
+	<!-- <map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
-	<map src="fraktionen/terroristtown.map" />
-	<map src="fraktionen/terrorist_int.map" />-->
+	<map src="fraktionen/terroristtown.map" /> -->
+	<map src="fraktionen/terrorist_int.map" />
 
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
+	<!-- <map src="unternehmen/mechanic_miami.map" /> -->
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 
-	
-	<map src="events/halloween.map" />
-	<map src="events/auction.map" />
+	<map src="fishing/location_desert.map" />
+	<map src="fishing/location_cave.map" />
+
+	<!--<map src="events/battleroyale.map" />-->
+	<map src="events/easter.map" />
+	<!--<map src="events/halloween.map" />-->
+	<map src="events/auction.map" /><!--auction in interior-->
 
 	<!--fixes-->
 	<map src="mapfixes/CrackPalace.map" />
@@ -72,16 +82,17 @@
 	<map src="gangwar/KLM-GW.map" />
 	<map src="gangwar/Raffi-GW.map" />
 	<map src="gangwar/gangwar.map" />
+	<map src="gangwar/drogenlabor-lv.map" />
 
 	<map src="jobs/gabelstapler.map" />
 	<map src="jobs/logistican.map" />
 	<map src="jobs/helitransport.map" />
 	<map src="jobs/dumper.map" />
 
-	<!--<map src="noobspawn_christmas.map" />-->
+	<!-- <map src="noobspawn_christmas.map" /> -->
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
-	
+
 	<map src="shop/ammunation.map" />
 	<map src="shop/ammunation2.map" />
 	<map src="shop/atrium.map" />
@@ -89,6 +100,7 @@
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
 	<map src="airport.map" />
+	<map src="airport-v2.map" />
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />
 	<map src="pier_ls.map" />
@@ -101,13 +113,13 @@
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 	<map src="gasstation.map" />
+	<map src="atrium_outside.map" />
 	
-
 	<map src="stuntfix.map"/>
 
 	<map src="shop/fishshop.map"/>
-	<!--<map src="sewer.map"/>-->
+	<map src="sewer-ext.map"/>
 	<map src="minigamescafe.map" dimension="2" />
 
-	<map src="admin-auction.map" />
+	<!--<map src="admin-auction.map" />--> <!-- Auction Event map at Veriona Beach, ugly -->
 </meta>

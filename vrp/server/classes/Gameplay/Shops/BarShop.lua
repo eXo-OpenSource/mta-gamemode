@@ -48,15 +48,10 @@ end
 
 function BarShop:onBarMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if self.m_Marker then
-			if not self.m_Marker.m_Disable then
-				hitElement:triggerEvent("showBarGUI")
-				triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
-			end
-		else
-			hitElement:triggerEvent("showBarGUI")
-			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
-		end
+		if self.m_Robable and self.m_Robable.m_RobActive then return end
+
+		hitElement:triggerEvent("showBarGUI")
+		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
 	end
 end
 

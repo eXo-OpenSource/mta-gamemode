@@ -110,7 +110,7 @@ end
 
 function GUIWindow:addBackButton(callback)
 	local x = self.m_TitlebarButton and self.m_Width-90 or self.m_Width-60
-	self.m_BackButton = GUIButton:new(x, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(x, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function()
 		self:close()
 		if type(callback) == "function" then
@@ -124,7 +124,7 @@ end
 
 function GUIWindow:addTitlebarButton(faIcon, callback)
 	if type(callback) == "function" then
-		self.m_TitlebarButton = GUIButton:new(self.m_Width-60, 0, 30, 30, faIcon, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+		self.m_TitlebarButton = GUIButton:new(self.m_Width-60, 0, 30, 30, faIcon, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 		self.m_TitlebarButton.onLeftClick = function()
 			if type(callback) == "function" then
 				callback()

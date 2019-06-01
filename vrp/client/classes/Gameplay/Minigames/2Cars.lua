@@ -11,9 +11,9 @@ function TCars:constructor()
 	localPlayer:setFrozen(true)
 	--toggleAllControls(false)
 
-	self.font_JosefinSans13 = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 13)
-	self.font_Vanadine36 = dxCreateFont("files/fonts/vanadine-bold.ttf", 36)
-	self.font_Gobold16 = dxCreateFont("files/fonts/gobold-light.ttf", 16)
+	self.font_JosefinSans13 = VRPFont(21, Fonts.JosefinSansThin) -- dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 13)
+	self.font_Vanadine36 = VRPFont(58, Fonts.VanadineBold) --dxCreateFont("files/fonts/vanadine-bold.ttf", 36)
+	self.font_Gobold16 = VRPFont(26, Fonts.Gobold) -- dxCreateFont("files/fonts/gobold-light.ttf", 16)
 
 	self.m_Width, self.m_Height = 400, 600
 	self.m_RenderTarget = DxRenderTarget(self.m_Width, self.m_Height, false)
@@ -495,7 +495,7 @@ function TCars:updateRenderTarget()
 	dxDrawImage(self.m_BlueCarPosition - self.m_CarSize.x/2, self.m_Height - 150, self.m_CarSize, self.car_blue, self.m_BlueCarRotation)
 
 	-- Draw points
-	dxDrawText(self.m_Points, 0, 5, self.m_Width - 5, self.m_Height, Color.White, 1, self.font_Gobold16, "right", "top")
+	dxDrawText(self.m_Points, 0, 5, self.m_Width - 5, self.m_Height, Color.White, 1, getVRPFont(self.font_Gobold16), "right", "top")
 
 	-- Draw Car moving drops
 	if self.m_State == "Play" then
@@ -553,12 +553,12 @@ function TCars:updateRenderTarget()
 		dxDrawRectangle(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, self.m_FailedAlpha))
 
 		local whiteColorFaded = tocolor(255, 255, 255, 255/230*self.m_FailedAlpha)
-		dxDrawText("GAME OVER", 0, 0, self.m_Width, self.m_Height/3, whiteColorFaded, 1, self.font_Vanadine36, "center", "center")
-		dxDrawText("SCORE", self.m_Width/2-75, self.m_Height/3 - 50, self.m_Width, self.m_Height, whiteColorFaded, 1, self.font_Gobold16)
-		dxDrawText("BEST", self.m_Width/2-75, self.m_Height/3 - 20, self.m_Width, self.m_Height, whiteColorFaded, 1, self.font_Gobold16)
+		dxDrawText("GAME OVER", 0, 0, self.m_Width, self.m_Height/3, whiteColorFaded, 1, getVRPFont(self.font_Vanadine36), "center", "center")
+		dxDrawText("SCORE", self.m_Width/2-75, self.m_Height/3 - 50, self.m_Width, self.m_Height, whiteColorFaded, 1, getVRPFont(self.font_Gobold16))
+		dxDrawText("BEST", self.m_Width/2-75, self.m_Height/3 - 20, self.m_Width, self.m_Height, whiteColorFaded, 1, getVRPFont(self.font_Gobold16))
 
-		dxDrawText(self.m_Points, self.m_Width/2-75, self.m_Height/3 - 50, self.m_Width/2+75, self.m_Height, whiteColorFaded, 1, self.font_Gobold16, "right")
-		dxDrawText(self.m_Highscore, self.m_Width/2-75, self.m_Height/3 - 20, self.m_Width/2+75, self.m_Height, whiteColorFaded, 1, self.font_Gobold16, "right")
+		dxDrawText(self.m_Points, self.m_Width/2-75, self.m_Height/3 - 50, self.m_Width/2+75, self.m_Height, whiteColorFaded, 1, getVRPFont(self.font_Gobold16), "right")
+		dxDrawText(self.m_Highscore, self.m_Width/2-75, self.m_Height/3 - 20, self.m_Width/2+75, self.m_Height, whiteColorFaded, 1, getVRPFont(self.font_Gobold16), "right")
 
 		dxDrawImage(self.m_Width/2 - 48/2 - 50, self.m_Height*.7, 48, 48, self.m_Music and self.circle_music or self.circle_music_off, 0, 0, 0, whiteColorFaded)
 		dxDrawImage(self.m_Width/2 - 48/2 + 50, self.m_Height*.7, 48, 48, self.m_Sounds and self.circle_sound or self.circle_sound_off, 0, 0, 0, whiteColorFaded)
@@ -566,10 +566,10 @@ function TCars:updateRenderTarget()
 		dxDrawImage(self.m_Width/2 - 48/2 - 50 + (48/2-18/2), self.m_Height*.7 + 48, 18, 18, self.arrow_down, 0, 0, 0, whiteColorFaded)
 		dxDrawImage(self.m_Width/2 - 48/2 + 50 + (48/2-18/2), self.m_Height*.7 + 48, 18, 18, self.arrow_down, 0, 0, 0, whiteColorFaded)
 
-		dxDrawText("m", self.m_Width/2 - 48/2 - 50, self.m_Height*.7 + 48 + 8, self.m_Width/2 - 48/2 - 50 + 48, 0, whiteColorFaded, 1, self.font_JosefinSans13, "center")
-		dxDrawText("s", self.m_Width/2 - 48/2 + 50, self.m_Height*.7 + 48 + 8, self.m_Width/2 - 48/2 + 50 + 48, 0, whiteColorFaded, 1, self.font_JosefinSans13, "center")
+		dxDrawText("m", self.m_Width/2 - 48/2 - 50, self.m_Height*.7 + 48 + 8, self.m_Width/2 - 48/2 - 50 + 48, 0, whiteColorFaded, 1, getVRPFont(self.font_JosefinSans13), "center")
+		dxDrawText("s", self.m_Width/2 - 48/2 + 50, self.m_Height*.7 + 48 + 8, self.m_Width/2 - 48/2 + 50 + 48, 0, whiteColorFaded, 1, getVRPFont(self.font_JosefinSans13), "center")
 
-		dxDrawText("Press a movement key to play again", 0, self.m_Height - 50, self.m_Width, self.m_Height, whiteColorFaded, 1, self.font_Gobold16, "center")
+		dxDrawText("Press a movement key to play again", 0, self.m_Height - 50, self.m_Width, self.m_Height, whiteColorFaded, 1, getVRPFont(self.font_Gobold16), "center")
 	end
 
 	if self.m_State == "Home" then
@@ -583,8 +583,8 @@ function TCars:updateRenderTarget()
 		dxDrawImage(self.m_Width/2 - 48/2 - 120 + (48/2-18/2), self.m_Height/2 - 48/2 + 48, 18, 18, self.arrow_down)
 		dxDrawImage(self.m_Width/2 - 48/2 + 120 + (48/2-18/2), self.m_Height/2 - 48/2 + 48, 18, 18, self.arrow_down)
 
-		dxDrawText("m", self.m_Width/2 - 48/2 - 120, self.m_Height/2 - 48/2 + 48 + 5, self.m_Width/2 - 48/2 - 120 + 48, 0, Color.White, 1, self.font_JosefinSans13, "center")
-		dxDrawText("s", self.m_Width/2 - 48/2 + 120, self.m_Height/2 - 48/2 + 48 + 5, self.m_Width/2 - 48/2 + 120 + 48, 0, Color.White, 1, self.font_JosefinSans13, "center")
+		dxDrawText("m", self.m_Width/2 - 48/2 - 120, self.m_Height/2 - 48/2 + 48 + 5, self.m_Width/2 - 48/2 - 120 + 48, 0, Color.White, 1, getVRPFont(self.font_JosefinSans13), "center")
+		dxDrawText("s", self.m_Width/2 - 48/2 + 120, self.m_Height/2 - 48/2 + 48 + 5, self.m_Width/2 - 48/2 + 120 + 48, 0, Color.White, 1, getVRPFont(self.font_JosefinSans13), "center")
 	end
 
 	dxSetRenderTarget()

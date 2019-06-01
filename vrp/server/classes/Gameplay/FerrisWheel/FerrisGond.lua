@@ -55,6 +55,7 @@ function FerrisGond:clientGond()
     client.m_FerrisGond = self
     client:attach(self.m_Object, 0, table.size(self.m_Occupants) == 1 and 0.4 or -0.4, -1.4)
     client:triggerEvent("startCenteredFreecam", self.m_Object, 20)
+    self.m_Wheel:startMoving()
 end
 
 function FerrisGond:removePlayer(player)
@@ -67,6 +68,9 @@ function FerrisGond:removePlayer(player)
             self.m_Wheel:setPlayerToExitPosition(player, self.m_Id)
             triggerEvent("onFerrisWheelRide", player) -- For Quest
             player:sendShortMessage(_("Vielen Dank für die Mitfahrt, auf wiedersehen!", player), _("Riesenrad", player), {0, 50, 100})
+        end
+        if not self.m_Wheel:isWheelInUse() then
+            self.m_Wheel:abortMovingStart()
         end
     else
         outputDebugString("gond for player "..inspect(player).." not found!")

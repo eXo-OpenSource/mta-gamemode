@@ -8,14 +8,15 @@ NoDm.Zones = {
 	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
 	--[8] = {Vector3(2713.39, -1880.29, 8), Vector3(104, 80, 50)}, -- Auction Event	
 	[9] = {Vector3(1503.79, -1387.92,  23234), Vector3(151, 101, 30), 1}, -- Auction Event Interior
-	[10] = {Vector3(2730.97, -2423.91, 810.44), Vector3(100, 200, 30), 5 }
+	[10] = {Vector3(2730.97, -2423.91, 810.44), Vector3(100, 200, 30), 5 },
+	[11] = {Vector3(456.71, -1742.53, 784.67), Vector3(100, 55, 55)} --pershing square
 }
 
 if EVENT_HALLOWEEN then
-	NoDm.Zones[8] = {Vector3(807.48, -1130.5, 20), Vector3(145, 75, 40)} --grave yard
+	NoDm.Zones[#NoDm.Zones+1] = {Vector3(807.48, -1130.5, 20), Vector3(145, 75, 40)} --grave yard
 end
 if EVENT_CHRISTMAS then
-	--NoDm.Zones[9] = {Vector3(1441.15, -1720.72, 12), Vector3(76.71, 116.84, 40)} --pershing square
+	NoDm.Zones[#NoDm.Zones+1] = {Vector3(1441.15, -1720.72, 12), Vector3(76.71, 116.84, 40)} --pershing square
 end
 
 function NoDm:constructor()
@@ -46,7 +47,7 @@ function NoDm:onNoDmZoneHit(hitElement, dim)
 end
 
 function NoDm:onNoDmZoneLeave(hitElement, dim)
-	if hitElement== localPlayer and dim then
+	if hitElement== localPlayer and (dim or hitElement:getDimension() > 0) then
 		self:setPlayerNoDm(false)
 	end
 end

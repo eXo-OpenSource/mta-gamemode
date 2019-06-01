@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/JailBreakGUI.lua
+-- *  PURPOSE:     JailBreakGUI
+-- *
+-- ****************************************************************************
 JailBreakGUI = inherit(GUIForm)
 inherit(Singleton, JailBreakGUI)
 addEvent("jailQuestionsRetrieve", true)

@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Cocaine class client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
 DrugsCocaine = inherit( Object )
 
 DrugsCocaine.m_MoveState = {
@@ -17,8 +16,11 @@ DrugsCocaine.m_MoveState = {
   ["crawl"] = 0.4,
   ["sprint"] = 2,
 }
-function DrugsCocaine:constructor( )
 
+function DrugsCocaine:constructor( )
+end
+
+function DrugsCocaine:destructor( )
 end
 
 function DrugsCocaine:onUse(  )
@@ -31,7 +33,7 @@ function DrugsCocaine:onUse(  )
   if self.m_RenderBindFunc then
     removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   end
-  self.m_ScreenSource = dxCreateScreenSource( w, h)
+  self.m_ScreenSource = dxCreateScreenSource(screenWidth, screenHeight)
   self.m_StartTick = getTickCount()
   self.m_EndTick = self.m_StartTick + 1000
   self.m_Shader = dxCreateShader( "files/shader/drug-cocaineshader.fx" )
@@ -52,7 +54,6 @@ end
 
 
 function DrugsCocaine:onRender()
-
   local now = getTickCount()
   local elap = now - self.m_StartTick
   local dur = self.m_EndTick - self.m_StartTick
@@ -70,7 +71,7 @@ function DrugsCocaine:onRender()
   dxSetShaderValue( self.m_Shader, "magnification", magrate)
   dxSetShaderValue( self.m_Shader, "inner_radius", innerradius)
   dxSetShaderValue( self.m_Shader, "outer_radius", oradius)
-  dxDrawImage( 0, 0, w, h , self.m_Shader)
+  dxDrawImage( 0, 0, screenWidth, screenHeight , self.m_Shader)
 
   local x,y,z,mstate,multiplier
   for key, pl in ipairs( players ) do
@@ -110,10 +111,6 @@ function DrugsCocaine:onExpire()
   if isElement( self.m_TextureCircle ) then
     destroyElement( self.m_TextureCircle )
   end
-end
-
-function DrugsCocaine:destructor( )
-
 end
 
 function DrugsCocaine:dx3D(x,y,z,w,h,m,c,r,...)

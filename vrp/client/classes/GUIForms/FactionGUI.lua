@@ -19,7 +19,7 @@ function FactionGUI:constructor()
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_Leader = false
@@ -57,20 +57,29 @@ function FactionGUI:constructor()
 		self.m_BindManageGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 	end
 
+	self.m_EquipmentPermButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"Equipment-Rechte", tabAllgemein):setBarEnabled(true)
+	self.m_EquipmentPermButton.onLeftClick = function()
+		if self.m_EquipmentPermGUI then delete(self.m_EquipmentPermGUI) end
+		self:close()
+		self.m_EquipmentPermGUI = EquipmentOptionGUI:new()
+		self.m_EquipmentPermGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
+	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
-	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
+	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)
 	self.m_FactionPlayersGrid:addColumn(_"", 0.06)
-	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.49)
+	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_FactionPlayersGrid:addColumn(_"Aktivität", 0.27)
+	self.m_FactionPlayersGrid:setSortable{"Spieler", "Rang", "Aktivität"}
+	self.m_FactionPlayersGrid:setSortColumn(_"Rang", "down")
 
-	self.m_FactionAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
-	self.m_FactionRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
-	self.m_FactionRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
-	self.m_FactionRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
-	self.m_FactionToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+	self.m_FactionAddPlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_FactionRemovePlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_FactionRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
+	self.m_FactionRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_FactionToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -126,9 +135,9 @@ function FactionGUI:addLeaderTab()
 		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
 		self.m_FactionRangGrid:addColumn(_"Name", 0.8)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", self.m_TabLeader)
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, self.m_TabLeader)
 		self.m_LeaderLoan:setNumeric(true, true)
 
@@ -136,12 +145,16 @@ function FactionGUI:addLeaderTab()
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 
 		self:refreshLeaderTab()
 
-		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
+		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 		self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
+
+		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_FactionForumSyncButton.onLeftClick = bind(self.FactionForumSyncButton_Click, self)
+
 		self.m_Leader = true
 	else
 		self:refreshLeaderTab()
@@ -164,7 +177,7 @@ function FactionGUI:refreshLeaderTab()
 		if v == true then
 			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, weaponID == 0 and "Spezial Waffen" or WEAPON_NAMES[weaponID], self.m_TabLeader)
 			self.m_WeaponsName[weaponID]:setAlignX("center")
-			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, weaponID == 0 and WeaponIcons[22] or WeaponIcons[weaponID], self.m_TabLeader)
+			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, weaponID == 0 and FileModdingHelper:getSingleton():getWeaponImage(22) or FileModdingHelper:getSingleton():getWeaponImage(weaponID), self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID]:setFontSize(1)
 			self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
@@ -263,9 +276,9 @@ function FactionGUI:loadDiplomacyTab()
 			["weapons"] = GUILabel:new(self.m_Width*0.75, self.m_Height*0.44, self.m_Width*0.23, self.m_Height*0.05, "", self.m_TabDiplomacy)
 		}
 		for index, label in pairs(self.m_DiplomacyPermissionChangeLabels) do
-			label:setColor(Color.LightBlue)
+			label:setColor(Color.Accent)
 			label.onHover = function () label:setColor(Color.White) end
-			label.onUnhover = function () label:setColor(Color.LightBlue) end
+			label.onUnhover = function () label:setColor(Color.Accent) end
 			label.onLeftClick = function()
 				if self.m_DiplomacySelected == localPlayer:getFaction():getId() then
 					triggerServerEvent("factionChangePermission", root, index)
@@ -280,7 +293,7 @@ function FactionGUI:loadDiplomacyTab()
 				item.Id = faction:getId()
 				item.onLeftClick = function() triggerServerEvent("factionRequestDiplomacy", root, faction:getId()) end
 				if faction == localPlayer:getFaction() then
-					self.m_DiplomacyRequestGrid:onInternalSelectItem(item)
+					self.m_DiplomacyGrid:onInternalSelectItem(item)
 				end
 			end
 		end
@@ -452,12 +465,12 @@ function FactionGUI:onGangwarItemSelect(item)
 		self.m_GangAttackLogGrid:addColumn(_"Start", 0.3)
 		self.m_GangAttackLogGrid:addColumn(_"Besitzer", 0.2)
 		self.m_GangAttackLogGrid:addColumn(_"Angreif.", 0.2)
-		if self.m_GangwarAttackLog then 
-			for i = 1, #self.m_GangwarAttackLog do 
+		if self.m_GangwarAttackLog then
+			for i = 1, #self.m_GangwarAttackLog do
 				self.m_GangAttackLogGrid:addItem(self.m_GangwarAttackLog[i][1]:sub(1, 15), getOpticalTimestamp(self.m_GangwarAttackLog[i][4]), self.m_GangwarAttackLog[i][3]:sub(1,5)..".", self.m_GangwarAttackLog[i][2]:sub(1,5)..".")
 			end
 		end
-	elseif item == self.m_GangAttackBestLog then 
+	elseif item == self.m_GangAttackBestLog then
 		self.m_GangAttackTab = GUITabPanel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.62, self.m_Height*0.85, self.m_tabGangwar)
 		local tabWidth, tabHeight = self.m_GangAttackTab:getSize()
 		self.m_GangAttackDamageTab = self.m_GangAttackTab:addTab(_("Schaden"))
@@ -465,14 +478,14 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_GangAttackDamageGrid:addColumn(_"", 0.1)
 			self.m_GangAttackDamageGrid:addColumn(_"Name", 0.6)
 			self.m_GangAttackDamageGrid:addColumn(_"Damage", 0.3)
-			if self.m_GangwarTopDamageTable then 
-				if self.m_GangwarLocalTopTable then 
+			if self.m_GangwarTopDamageTable then
+				if self.m_GangwarLocalTopTable then
 					if self.m_GangwarLocalTopTable[5] and self.m_GangwarLocalTopTable[2] then
-						self.m_GangAttackDamageGrid:addItem( "#"..self.m_GangwarLocalTopTable[5], "- Du -", self.m_GangwarLocalTopTable[2] ):setColor(Color.LightBlue)
+						self.m_GangAttackDamageGrid:addItem( "#"..self.m_GangwarLocalTopTable[5], "- Du -", self.m_GangwarLocalTopTable[2] ):setColor(Color.Accent)
 					end
 				end
-				for i = 1, #self.m_GangwarTopDamageTable do 
-					self.m_GangAttackDamageGrid:addItem( "#"..i,self.m_GangwarTopDamageTable[i][1], self.m_GangwarTopDamageTable[i][2] ) 
+				for i = 1, #self.m_GangwarTopDamageTable do
+					self.m_GangAttackDamageGrid:addItem( "#"..i,self.m_GangwarTopDamageTable[i][1], self.m_GangwarTopDamageTable[i][2] )
 				end
 			end
 		self.m_GangAttackKillTab = self.m_GangAttackTab:addTab(_("Tötungen"))
@@ -480,14 +493,14 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_GangAttackKillGrid:addColumn(_"", 0.1)
 			self.m_GangAttackKillGrid:addColumn(_"Name", 0.6)
 			self.m_GangAttackKillGrid:addColumn(_"Kills", 0.3)
-			if self.m_GangwarTopKillTable then 
-				if self.m_GangwarLocalTopTable then 
+			if self.m_GangwarTopKillTable then
+				if self.m_GangwarLocalTopTable then
 					if self.m_GangwarLocalTopTable[6] and self.m_GangwarLocalTopTable[3] then
-						self.m_GangAttackKillGrid:addItem( "#"..self.m_GangwarLocalTopTable[6], "- Du -", self.m_GangwarLocalTopTable[3] ):setColor(Color.LightBlue)
+						self.m_GangAttackKillGrid:addItem( "#"..self.m_GangwarLocalTopTable[6], "- Du -", self.m_GangwarLocalTopTable[3] ):setColor(Color.Accent)
 					end
 				end
-				for i = 1, #self.m_GangwarTopKillTable do 
-					self.m_GangAttackKillGrid:addItem( "#"..i, self.m_GangwarTopKillTable[i][1], self.m_GangwarTopKillTable[i][2] ) 
+				for i = 1, #self.m_GangwarTopKillTable do
+					self.m_GangAttackKillGrid:addItem( "#"..i, self.m_GangwarTopKillTable[i][1], self.m_GangwarTopKillTable[i][2] )
 				end
 			end
 		self.m_GangAttackMVPTab = self.m_GangAttackTab:addTab(_("MVP"))
@@ -495,14 +508,14 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_GangAttackMVPGrid:addColumn(_"", 0.1)
 			self.m_GangAttackMVPGrid:addColumn(_"Name", 0.6)
 			self.m_GangAttackMVPGrid:addColumn(_"Sterne", 0.3)
-			if self.m_GangwarTopMVPTable then 
-				if self.m_GangwarLocalTopTable then 
+			if self.m_GangwarTopMVPTable then
+				if self.m_GangwarLocalTopTable then
 					if self.m_GangwarLocalTopTable[7] and self.m_GangwarLocalTopTable[4] then
-						self.m_GangAttackMVPGrid:addItem( "#"..self.m_GangwarLocalTopTable[7], "- Du -", self.m_GangwarLocalTopTable[4] ):setColor(Color.LightBlue)
+						self.m_GangAttackMVPGrid:addItem( "#"..self.m_GangwarLocalTopTable[7], "- Du -", self.m_GangwarLocalTopTable[4] ):setColor(Color.Accent)
 					end
 				end
-				for i = 1, #self.m_GangwarTopKillTable do 
-					self.m_GangAttackMVPGrid:addItem( "#"..i, self.m_GangwarTopMVPTable[i][1], self.m_GangwarTopMVPTable[i][2] ) 
+				for i = 1, #self.m_GangwarTopKillTable do
+					self.m_GangAttackMVPGrid:addItem( "#"..i, self.m_GangwarTopMVPTable[i][1], self.m_GangwarTopMVPTable[i][2] )
 				end
 			end
 	else
@@ -513,7 +526,7 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06,_("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
 			self.m_NextAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.4, self.m_Height*0.06,_("Nächster Angriff: %s", getOpticalTimestamp(item.lastAttack+(GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS))), self.m_tabGangwar)
 			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.35, self.m_Width*0.62, self.m_Height*0.55, self.m_tabGangwar)
-			self.m_Map:setPosition(item.posX, item.posY)
+			self.m_Map:setMapPosition(item.posX, item.posY)
 			self.m_Map:addBlip("Marker.png", item.posX, item.posY)
 		end
 	end
@@ -523,9 +536,9 @@ function FactionGUI:Event_gangwarLoadArea(name, position, owner, lastAttack, isA
 	self.m_GangwarAreas[name] = {["name"] = name, ["posX"] = position[1], ["posY"] = position[2], ["posZ"] = posZ, ["owner"] = owner, ["lastAttack"] = lastAttack}
 
 	local item = self.m_GangAreasGrid:addItem(name)
-	if isAttackable then 
+	if isAttackable then
 		item:setColor(Color.Green)
-	else 
+	else
 		item:setColor(Color.Red)
 	end
 	item.onLeftClick = function() self:onGangwarItemSelect(self.m_GangwarAreas[name]) end
@@ -536,8 +549,8 @@ function FactionGUI:Event_gangwarLoadAttackLog( aTable )
 end
 
 function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp, localToplist)
-	self.m_GangwarTopDamageTable = damage 
-	self.m_GangwarTopKillTable = kills 
+	self.m_GangwarTopDamageTable = damage
+	self.m_GangwarTopKillTable = kills
 	self.m_GangwarTopMVPTable = mvp
 	self.m_GangwarLocalTopTable = localToplist
 	ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
@@ -568,14 +581,13 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 				self.m_FactionNextActionLabel:setColor(Color.Red)
 			end
 
-			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
-
 			self.m_FactionPlayersGrid:clear()
-			for _, info in ipairs(players) do
+			for playerId, info in pairs(players) do
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
-				item.Id = info.playerId
+				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
+				item.Id = playerId
 
 				item.onLeftClick =
 					function()
@@ -631,6 +643,12 @@ function FactionGUI:FactionAddPlayerButton_Click()
 			triggerServerEvent("factionAddPlayer", root, player)
 		end,"faction"
 	)
+end
+
+function FactionGUI:FactionForumSyncButton_Click()
+	-- triggerServerEvent("factionForumSync", root)
+	self:close()
+	ForumPermissionsGUI:new("faction", localPlayer:getFaction().m_Id)
 end
 
 function FactionGUI:FactionRemovePlayerButton_Click()

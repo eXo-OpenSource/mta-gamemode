@@ -105,6 +105,7 @@ function Core:constructor()
 		ActorManager:new()
 		InteriorManager:new()
 		FactionManager:new()
+		StateEvidence:new()
 		CompanyManager:new()
 		Guns:new()
 		InventoryManager:new()
@@ -136,25 +137,28 @@ function Core:constructor()
 		Fishing:new()
 		InactivityManager:new()
 		HistoryPlayer:new()
+		ForumPermissions:new()
 		VehicleCategory:new()
 		ClientStatistics:new()
 		SkribbleManager:new()
 		TSConnect:new()
-		BotManager:new()
 		PickupWeaponManager:new()
 		FactoryManager:new()
 
+		InteriorEnterExitManager:new()
+		ElevatorManager:new()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end
 
 		if EVENT_CHRISTMAS then
 			Christmas:new()
+			BotManager:new()
 		end
 
 		GPS:new()
 		Chair:new()
-		--Atrium:new()
+		Atrium:new()
 
 		Help:new()
 
@@ -166,6 +170,7 @@ function Core:constructor()
 		TollStation.initializeAll()
 		Depot.initalize()
 		QuestionBox.initalize()
+		ShortMessageQuestion.initalize()
 
 		ChessSessionManager:new()
 		-- Generate Missions
@@ -184,24 +189,32 @@ function Core:constructor()
 
 		BindManager:new()
 		Forum:new()
-
+		ServiceSync:new()
 		Discord:new()
+		TeleportManager:new()
+		Sewers:new()
+		ArmsDealer:new()
+		PlaneManager:new()
+		PoliceAnnouncements:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
 		setWaveHeight(1)
 		setWaterColor(0, 65, 75, 250)
-
+		resetSkyGradient()
+		resetFogDistance()
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")
 			local files = {}
+			local st = getTickCount()
 			for k, v in pairs(xmlNodeGetChildren(xml)) do
 				if xmlNodeGetName(v) == "vrpfile" then
 					files[#files+1] = xmlNodeGetAttribute(v, "src")
 					Provider:getSingleton():offerFile(xmlNodeGetAttribute(v, "src"))
 				end
 			end
+			outputDebug("offered files in ", getTickCount()-st, "ms")
 			Package.save("vrp.list", files, true)
 			Provider:getSingleton():offerFile("vrp.list")
 		end

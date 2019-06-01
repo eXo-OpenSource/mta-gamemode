@@ -12,55 +12,8 @@ ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 HTTP_DOWNLOAD = not DEBUG
 FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/release/production/vrp_assets/" -- Todo: move to config
 FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/release/production/vrp_assets/" -- Todo: see above
-TEXTURE_HTTP_URL = "http://picupload.pewx.de/textures"
+TEXTURE_HTTP_URL = "https://picupload.pewx.de/textures"
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
-
-WeaponIcons = {
-	[0] = "Fist.png",
-	[1] = "BrassKnuckles.png",
-	[2] = "Golf.png",
-	[3] = "Nightstick.png",
-	[4] = "Knife.png",
-	[5] = "BaseballBat.png",
-	[6] = "Shovel.png",
-	[7] = "Cue.png",
-	[8] = "Katana.png",
-	[9] = "Chainsaw.png",
-	[10] = "Dildo.png",
-	[11] = "DildoSmall.png",
-	[12] = "Vibrator.png",
-	[14] = "Flowers.png",
-	[15] = "Cane.png",
-	[16] = "Grenade.png",
-	[17] = "Teargas.png",
-	[18] = "Molotov.png",
-	[22] = "Pistol.png",
-	[23] = "Taser.png",
-	[24] = "Deagle.png",
-	[25] = "Shotgun.png",
-	[26] = "SawnOffShotgun.png",
-	[27] = "SPAZ-12.png",
-	[28] = "Uzi.png",
-	[29] = "MP5.png",
-	[30] = "AK-47.png",
-	[31] = "M4.png",
-	[32] = "TEC-9.png",
-	[33] = "CountryRifle.png",
-	[34] = "Sniper.png",
-	[35] = "RPG.png",
-	[36] = "RocketHS.png",
-	[37] = "FlameThrower.png",
-	[38] = "Minigun.png",
-	[39] = "Satchel.png",
-	[40] = "SatchelDetonator.png",
-	[41] = "Spraycan.png",
-	[42] = "FireExtinguisher.png",
-	[43] = "Camera.png",
-	[44] = "Nightvision.png",
-	[45] = "Nightvision.png",
-	[46] = "Parachute.png",
-}
-for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v end
 
 RadarDesign = {Monochrome = 1, GTA = 2}
 for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
@@ -157,6 +110,7 @@ HelpTextTitles = {
 		Minigames = "Minispiele";
 	};
 	Jobs = {
+		Boxer = "Job: Boxer";
 		BusDriver = "Job: Busfahrer";
 		Farmer = "Job: Bauer";
 		Logistician = "Job: Logistik";
@@ -318,6 +272,11 @@ HelpTexts = {
 		]];
 	};
 	Jobs = {
+		Boxer = [[
+			Als Boxer musst du gegen andere Boxer antreten und diese im Kampf besiegen.
+			Gewinnst du den Kampf, gewinnst du ein Preisgeld.
+			Verlierst du jedoch, gehst du leer aus.
+		]];
 		BusDriver = [[
 			Als Busfahrer musst du die Bürger von Los Santos von A nach B transportieren.
 			Im Grunde musst du nur dem roten Marker mit dem grauen Dreieck folgen und
@@ -606,12 +565,6 @@ SHADERS = {
 	["DoF"] = {["event"] = "switchDoF"},
 }
 
-if SNOW_SHADERS_ENABLED then
-	SHADERS["Schneedecke"] = {["event"] = "switchSnowGround", ["enabled"] = EVENT_CHRISTMAS} --only force enable them during christmas
-	SHADERS["Schneeflocken"] = {["event"] = "switchSnowFlakes", ["enabled"] = EVENT_CHRISTMAS} 
-end
-
-
 GUNBOX_CRATES = {
 	createObject(2977, 1366.06, -1286.34, 12.4),
 	createObject(2977, 2397.80, -1980.82, 12.4),
@@ -646,11 +599,19 @@ TEXTURE_SYSTEM_HELP =
 }
 
 TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3, [1] = "STREAM", [2] = "PERMANENT", [3] = "NONE"}
-TEXTURE_LOADING_MODE.DEFAULT = dxGetStatus()["VideoCardRAM"] >= 256 and TEXTURE_LOADING_MODE.PERMANENT or TEXTURE_LOADING_MODE.NONE 
-FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256 
-HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512 
+TEXTURE_LOADING_MODE.DEFAULT = dxGetStatus()["VideoCardRAM"] >= 256 and TEXTURE_LOADING_MODE.PERMANENT or TEXTURE_LOADING_MODE.NONE
+FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256
+HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512
 
 CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
+
+PHONE_MODELS = {
+	{Name = "Nexus 5", Image = "Nexus_5.png", IconPreset = "Android"},
+	{Name = "iPhone schwarz", Image = "iPhone_schwarz.png", IconPreset = "iPhone"},
+	{Name = "iPhone weiß", Image = "iPhone_weiss.png", IconPreset = "iPhone"},
+}
+for k, v in pairs(PHONE_MODELS) do if type(v) == "table" then PHONE_MODELS[v.Name] = k end end
+
 
 --[[ EASTEREGG-ARCADE ]]
 EASTEREGG_IMAGE_PATH = ":"..getResourceName(getThisResource()).."/files/images/arcade-game/"
@@ -658,12 +619,12 @@ EASTEREGG_FILE_PATH = ":"..getResourceName(getThisResource()).."/files/fonts/"
 EASTEREGG_SFX_PATH = ":"..getResourceName(getThisResource()).."/files/audio/arcade-sfx/"
 EASTEREGG_TICK_CAP = 1000/ 59.99
 EASTEREGG_NATIVE_RATIO = {x=1024;y=512}
-EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = guiGetScreenSize()
+EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = screenWidth, screenHeight
 EASTEREGG_FONT_SCALE = 1
-EASTEREGG_JUMP_RATIO = 16 
+EASTEREGG_JUMP_RATIO = 16
 EASTEREGG_PROJECTILE_SPEED = 3
 EASTEREGG_ARENA_IMAGE = "arena"
-local w, h = guiGetScreenSize()
+local w, h = screenWidth, screenHeight
 if EASTEREGG_WINDOW_WIDTH >= 1600 then
 	EASTEREGG_FONT_SCALE = 1
 	EASTEREGG_WINDOW = {{x=(w*0.5)-512;y=(h*0.5)-256}, {x=1024, y=512}}
@@ -674,23 +635,65 @@ elseif EASTEREGG_WINDOW_WIDTH >= 1024 then
 	EASTEREGG_WINDOW = {{x=(w*0.5)-256;y=(h*0.5)-128}, {x=512, y=256}}
 	EASTEREGG_JUMP_RATIO = 8
 	EASTEREGG_PROJECTILE_SPEED = 0.4
-else 
+else
 	EASTEREGG_FONT_SCALE = 0.75
 	EASTEREGG_WINDOW = {{x=(w*0.5)-256;y=(h*0.5)-128}, {x=512, y=256}}
 	EASTEREGG_JUMP_RATIO = 8
 	EASTEREGG_PROJECTILE_SPEED = 0.25
 end
-EASTEREGG_RESOLUTION_RATIO = (EASTEREGG_WINDOW[2].x * EASTEREGG_WINDOW[2].y )  /  (EASTEREGG_NATIVE_RATIO.x*EASTEREGG_NATIVE_RATIO.y) 
-EASTEREGG_KEY_MOVES = 
+EASTEREGG_RESOLUTION_RATIO = (EASTEREGG_WINDOW[2].x * EASTEREGG_WINDOW[2].y )  /  (EASTEREGG_NATIVE_RATIO.x*EASTEREGG_NATIVE_RATIO.y)
+EASTEREGG_KEY_MOVES =
 {
-	["a"] = "left", 
-	["d"] = "right", 
-	["s"] = "crouch", 
+	["a"] = "left",
+	["d"] = "right",
+	["s"] = "crouch",
 	["w"] = "jump",
-	["space"] = "punch", 
+	["space"] = "punch",
 	["<"] = "strafe_left",
-	[">"] = "strafe_right", 
+	[">"] = "strafe_right",
 }
 EASTEREGG_MAX_UPDATE_RATE = 80
-EASTEREGG_SLEEP_UPDATETICK = 1000/ EASTEREGG_MAX_UPDATE_RATE 
+EASTEREGG_SLEEP_UPDATETICK = 1000/ EASTEREGG_MAX_UPDATE_RATE
 EASTEREGG_DISPLAY_SIZE = {x=512, y=256}
+
+JobBoxerFights = { --Gewicht, Leben, erforderliches Boxerlevel
+	{"Fliegengewicht", 50, 0},
+	{"Leichtgewicht", 75, 10},
+	{"Mittelgewicht", 100, 25},
+	{"Cruisergewicht", 150, 50},
+	{"Schwergewicht", 200, 100}
+}
+
+JobBoxerFightRandoms = { --maxRandom, punch, block, left, right
+	{15, 6, 9, 11, 13},
+	{15, 7, 10, 11, 13},
+	{14, 8, 11, 12, 13},
+	{16, 8, 13, 14, 15},
+	{17, 10, 17, 17, 17}
+}
+
+
+METER_TO_FEET = 3.28084
+KMH_TO_KNOTS = 0.539957
+
+
+ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM = {
+	PFD = {
+		INDEX = 1,
+		--//PRIMARY FLIGHT DISPLAY
+		GROUNDSPEED_DISPLAY = 1;
+		ARTIFICIAL_HORIZON = 2;
+		ALTIMETER = 3;
+	};
+	SFD = {
+		INDEX = 2;
+		--//SECONDARY FLIGHT DISPLAY
+		CAUTION_WARNING_DISPLAY = 1;
+		HEADING_INDICATOR = 2;
+	};
+	ECAS = {
+		INDEX = 3;
+		--//ENGINE INDICATION AND CREW ALERTING SYSTEM
+		ENGINE_PANEL = 1;
+	};
+}

@@ -28,8 +28,8 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	for i, v in pairs(self.m_Skins) do if tonumber(self:getSetting("Skin", i, 0)) == -1 then self.m_SpecialSkin = i end end
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
-	self.m_Blips = {}
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
+	self.m_Countdowns = {}
 
 	self.m_Vehicles = {}
 
@@ -54,6 +54,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	if not DEBUG then
 		self:getActivity()
 	end
+	self:checkEquipmentPermissions()
 end
 
 function Faction:destructor()
@@ -62,6 +63,69 @@ function Faction:destructor()
 	end
 	self.m_Depot:save()
 	self:save()
+end
+
+function Faction:getRequiredForumPermissionsChanges(playerId)
+	local forumId = Account.getBoardIdFromId(playerId)
+
+	Forum:getSingleton():userGet(forumId, Async.waitFor(self))
+	local result = Async.wait()
+	local data = fromJSON(result)
+
+	if data["status"] == 200 then
+		local groups = data["data"]["groups"]
+		local currentGroups = {}
+
+		for _, v in pairs(groups) do
+			if not table.find(currentGroups, v["groupID"]) then
+				table.insert(currentGroups, v["groupID"])
+			end
+		end
+
+		local rank = self:getPlayerRank(playerId)
+		local modifications = {
+			add = {},
+			remove = {}
+		}
+
+		if rank and self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
+			local newGroups = self.m_Permissions["forum"]["ranks"][tostring(rank)]
+
+			if type(newGroups) == "table" then
+				newGroups = table.copy(newGroups)
+			else
+				newGroups = {newGroups}
+			end
+
+			for _, groupId in pairs(currentGroups) do
+				local isFactionGroup = table.find(self.m_ForumGroups, groupId) and true or false
+				local isNewGroup = table.find(newGroups, groupId) and true or false
+
+				if isFactionGroup and not isNewGroup then
+					table.insert(modifications.remove, groupId)
+				elseif isNewGroup then
+					table.removevalue(newGroups, groupId)
+				end
+			end
+
+			for _, groupId in pairs(newGroups) do
+				table.insert(modifications.add, groupId)
+			end
+		else
+			for _, groupId in pairs(currentGroups) do
+				local isFactionGroup = table.find(self.m_ForumGroups, groupId) and true or false
+
+				if isFactionGroup then
+					table.insert(modifications.remove, groupId)
+				end
+			end
+		end
+
+		return modifications
+	else
+		outputDebugString("[Faction@getRequiredForumPermissionsChanges]Can't determinant changes for the user " .. tostring(playerId))
+	end
+	return false
 end
 
 function Faction:save()
@@ -106,9 +170,9 @@ end
 function Faction:setSetting(category, key, value, responsiblePlayer)
 	local allowed = true
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
-		if not responsiblePlayer:getFaction() then allowed = false end 
-		if responsiblePlayer:getFaction() ~= self then allowed = false end 
-		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end 
+		if not responsiblePlayer:getFaction() then allowed = false end
+		if responsiblePlayer:getFaction() ~= self then allowed = false end
+		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
@@ -201,19 +265,23 @@ function Faction:changeSkin(player, skinId)
 	if not player or not isElement(player) or getElementType(player) ~= "player" then return false end
 	local playerRank = self:getPlayerRank(player)
 	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
-	if self.m_Skins[skinId] then
-		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
-		if minRank <= playerRank then
-			player:setModel(skinId)
-			player.m_tblClientSettings["LastFactionSkin"] = skinId
+	if player:isFactionDuty() then
+		if self.m_Skins[skinId] then
+			local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+			if minRank <= playerRank then
+				player:setModel(skinId)
+				player.m_tblClientSettings["LastFactionSkin"] = skinId
+			else
+				player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+				player:setModel(self:getSkinsForRank(playerRank)[1])
+			end
 		else
-			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			-- ^useless if player switches faction
 			player:setModel(self:getSkinsForRank(playerRank)[1])
 		end
 	else
-		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
-		-- ^useless if player switches faction
-		player:setModel(self:getSkinsForRank(playerRank)[1])
+		player:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", player))
 	end
 end
 
@@ -313,7 +381,7 @@ function Faction:setPlayerRank(playerId, rank)
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		if player then
+		if player and player.isFactionDuty and player:isFactionDuty() then
 			self:changeSkin(player)
 		end
 	end
@@ -499,7 +567,7 @@ function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
 	local playerId = sourcePlayer:getId()
 	local receivedPlayers = {}
 	local r,g,b = 20, 140, 0
-	local text = ("BND %s %s: %s"):format(alliance:getShortName(), getPlayerName(sourcePlayer), message)
+	local text = ("[Bündnis] %s: %s"):format(getPlayerName(sourcePlayer), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b)
 		if player ~= sourcePlayer then
@@ -526,7 +594,7 @@ function Faction:respawnVehicles( isAdmin )
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn(true) then
+			if not vehicle:respawn(true, isAdmin and true or false) then
 				fails = fails + 1
 			else
 				vehicle:setInterior(vehicle.m_SpawnInt or 0)
@@ -569,6 +637,7 @@ function Faction:phoneTakeOff(player, caller, voiceCall)
 			end
 			caller:triggerEvent("callAnswer", player, voiceCall)
 			player:triggerEvent("callAnswer", caller, voiceCall)
+			self:addLog(player, "Anrufe", ("hat ein Telefonat mit %s geführt!"):format(caller:getName()))
 			caller:setPhonePartner(player)
 			player:setPhonePartner(caller)
 			for k, factionPlayer in ipairs(self:getOnlinePlayers()) do
@@ -599,14 +668,12 @@ function Faction:setSafe(obj)
 			end
 		end
 	end)
+	ElementInfo:new(obj, "Fraktionskasse")
 end
+
 
 function Faction:refreshBankAccountGUI(player)
 	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
-end
-
-function Faction:createBlip(img, posX, posY, streamDistance)
-	self.m_Blips[#self.m_Blips+1] = Blip:new(img, posX, posY, self:getOnlinePlayers(), streamDistance)
 end
 
 function Faction:loadDiplomacy()
@@ -716,4 +783,169 @@ function Faction:sendMoveRequest(targetChannel, text)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		TSConnect:getSingleton():sendMoveRequest(player, targetChannel, text)
 	end
+end
+
+function Faction:onPlayerJoin(player) -- join means comming online (onPlayerJoin-Event)
+	for text, data in pairs(self.m_Countdowns) do
+		local time, origin = unpack(data)
+		local now = getRealTime().timestamp
+		local current = time - (now - origin)
+		if current > 0 and current < time then
+			player:triggerEvent("Countdown", current, text)
+		end
+	end
+end
+
+function Faction:setCountDown(time, text) -- this can be used to set a countdown for a faction (players that join after this have the right time displayed)
+	local players = self:getOnlinePlayers()
+	if self.m_Countdowns[text] then
+		for index, player in pairs(players) do
+			player:triggerEvent("CountdownStop", text)
+		end
+	end
+	self.m_Countdowns[text] = {time, getRealTime().timestamp}
+	for index, player in pairs(players) do
+		player:triggerEvent("Countdown", time, text)
+	end
+end
+
+function Faction:stopCountDown(text)
+	if self.m_Countdowns[text] then
+		local players = self:getOnlinePlayers()
+		for index, player in pairs(players) do
+			player:triggerEvent("CountdownStop", text)
+		end
+	end
+end
+
+function Faction:getEquipmentPermissions()
+	local perms = {}
+	for cat, data in pairs(ArmsDealer.Data) do
+		if cat ~= "Waffen" then
+			for product, subdata in pairs(data) do
+				if not subdata[3] then
+					perms[product] =  tonumber(self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
+				end
+			end
+		end
+		perms["metadata"] = {self:getSetting("Equipment", "metadata_author", "-"), self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))}
+	end
+	return perms
+end
+
+function Faction:checkEquipmentPermissions()
+	local perms = {}
+	for cat, data in pairs(ArmsDealer.Data) do
+		if cat ~= "Waffen" then
+			for product, subdata in pairs(data) do
+				if not subdata[3] then
+					self:setSetting("Equipment", product, self:getSetting("Equipment", product, ArmsDealer.ProhibitedRank[product] or 0))
+				end
+			end
+		end
+		self:setSetting("Equipment", "metadata_author", self:getSetting("Equipment", "metadata_author", "-"))
+		self:setSetting("Equipment", "metadata_time", self:getSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp)))
+	end
+end
+
+function Faction:updateEquipmentPermissions(player, update)
+	for item, rank in pairs(update) do
+		self:setSetting("Equipment", item, rank-1, player)
+	end
+	self:setSetting("Equipment", "metadata_author", player:getName())
+	self:setSetting("Equipment", "metadata_time", getOpticalTimestamp(getRealTime().timestamp))
+	self:sendShortMessage(("Die Equipment-Ränge wurden von %s aktualisiert!"):format(player:getName()))
+	self:addLog(player, "Equipment", "hat die Zugriffe aktualisiert!")
+end
+
+function Faction:takeEquipment(player)
+	local item, amount, price, id
+	local count = 0
+	for category, data in pairs(ArmsDealer.Data) do
+		if category ~= "Waffen" then
+			for product, subdata in pairs(data) do
+				amount, price, id = unpack(subdata)
+				if not id then
+					amount = player:getInventory():getItemAmount(product)
+					if amount and amount > 0 then
+						player:getInventory():removeAllItem(product)
+						self:getDepot():addEquipment(player, product, amount, true)
+						count = count + amount
+					end
+				end
+			end
+		end
+	end
+end
+
+
+function Faction:storageWeapons(player)
+	local depot = self:getDepot()
+	local logData = {}
+	for i= 1, 12 do
+		if player:getWeapon(i) > 0 then
+			local weaponId = player:getWeapon(i)
+			local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
+			if WEAPON_CLIPS[weaponId] then
+				clipAmmo = WEAPON_CLIPS[weaponId]
+			end
+
+			local magazines = clipAmmo > 0 and math.floor(player:getTotalAmmo(i)/clipAmmo) or 0
+			if THROWABLE_WEAPONS[weaponId] then -- don't divide by magazine size
+				magazines = player:getTotalAmmo(i)
+			end
+
+			local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
+			local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
+			
+			if THROWABLE_WEAPONS[weaponId] then -- grenade etc
+				if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
+					depot:addWeaponD(weaponId, magazines)
+					takeWeapon(player, weaponId)
+					logData[WEAPON_NAMES[weaponId]] = magazines
+				elseif magazines > 0 then
+					local weaponsToMax = depotMaxWeapons - depotWeapons
+					depot:addWeaponD(weaponId, weaponsToMax)
+					setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - weaponsToMax)
+					if magsToMax > 0 then
+						logData[WEAPON_NAMES[weaponId]] = weaponsToMax
+						player:sendError(_("Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert.", player, magazines, WEAPON_NAMES[weaponId], weaponsToMax))
+					end
+				end
+			else
+				if depotWeapons+1 <= depotMaxWeapons then
+					if depotMagazines + magazines <= depotMaxMagazines then
+						depot:addWeaponD(weaponId, 1)
+						depot:addMagazineD(weaponId, magazines)
+						takeWeapon(player, weaponId)
+						logData[WEAPON_NAMES[weaponId]] = magazines
+					elseif magazines > 0 then
+						local magsToMax = depotMaxMagazines - depotMagazines
+						depot:addMagazineD(weaponId, magsToMax)
+						setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - magsToMax*clipAmmo)
+						if magsToMax > 0 then
+							logData[WEAPON_NAMES[weaponId]] = magsToMax
+							player:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", player, magazines, WEAPON_NAMES[weaponId], magsToMax))
+						end
+					end
+
+				else
+					player:sendError(_("Im Depot ist nicht Platz für eine/n %s!", player, WEAPON_NAMES[weaponId]))
+				end
+			end
+		end
+	end
+	local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
+	local wepaponsPut = false
+	for i,v in pairs(logData) do
+		wepaponsPut = true
+		textForPlayer = textForPlayer.."\n"..i
+		if v > 0 then
+			textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
+			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
+		else
+			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
+		end
+	end
+	if wepaponsPut then player:sendInfo(textForPlayer) end
 end

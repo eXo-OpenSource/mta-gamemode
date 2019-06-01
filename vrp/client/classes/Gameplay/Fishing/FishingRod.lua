@@ -7,13 +7,13 @@
 -- ****************************************************************************
 FishingRod = inherit(Singleton)
 
-function FishingRod:constructor(fishingRod)
+function FishingRod:constructor(fishingRod, fishingRodName, baitName, accessorieName)
 	self.FishingMap = FishingLocation:new()
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
 	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 30000
+	self.m_maxFishingBiteTime = 30000 - FISHING_RODS[fishingRodName].biteTimeReduction - FISHING_BAITS[baitName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -21,11 +21,12 @@ function FishingRod:constructor(fishingRod)
 	self.m_isNibbling = false
 	self.m_Hit = false
 	self.m_MouseDown = false
+	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
 
 	self:initAnimations()
 
-	self.m_FishingRod = fishingRod--createObject(1826, localPlayer.position)
-	--exports.bone_attach:attachElementToBone(self.m_FishingRod, localPlayer, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+	self.m_FishingRod = fishingRod
+	self.m_FishingRodName = fishingRodName
 
 	self.m_fishBite = bind(FishingRod.fishBite, self)
 	self.m_HandleClick = bind(FishingRod.handleClick, self)
@@ -79,6 +80,11 @@ function FishingRod:reset()
 	self.m_PowerProgress = 0
 end
 
+function FishingRod:updateEquipments(baitName, accessorieName)
+	self.m_maxFishingBiteTime = 30000 - FISHING_RODS[self.m_FishingRodName].biteTimeReduction - FISHING_BAITS[baitName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
+	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
+end
+
 function FishingRod:handleClick(_, state)
 	if isCursorShowing() then return end
 	setPedControlState("fire", false)
@@ -126,9 +132,8 @@ function FishingRod:fishBite()
 	self.m_nibblingTime = getTickCount()
 	self.Sound:play("bit")
 
-	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, -1))
-	targetPosition.z = 0
-	createEffect("water_swim", targetPosition)
+	local fishingHookPosition = self:getFishingHookPosition()
+	createEffect("water_swim", fishingHookPosition)
 
 	self.m_fishBiteMissedTimer = setTimer(
 		function()
@@ -147,21 +152,21 @@ function FishingRod:cast()
 		return
 	end
 
-	local distance = 10*self.m_PowerProgress
-
-	if self:checkWater(distance) then
+	if self:checkWater() then
 		toggleAllControls(false, true, false)
 
-		local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
-		targetPosition.z = 0
-		self.m_Location = self.FishingMap:getLocation(targetPosition)
+		local fishingHookPosition = self:getFishingHookPosition()
+
+		self.m_Location = self.FishingMap:getLocation(fishingHookPosition)
 		self.m_isFishing = true
 		self.m_timeUntilFishingBite = self.Random:get(self.m_minFishingBiteTime, self.m_maxFishingBiteTime)
 		self.m_nibblingTimer = setTimer(self.m_fishBite, self.m_timeUntilFishingBite, 1)
 
-		createEffect("water_swim", targetPosition)
+		createEffect("water_swim", fishingHookPosition)
 		self.Sound:play("cast")
 		self.Sound:play("waterplop")
+
+		triggerServerEvent("clientFishingRodCast", localPlayer)
 	else
 		self.m_isCasting = true
 		self.Sound:play("dwop")
@@ -170,33 +175,57 @@ function FishingRod:cast()
 	end
 end
 
-function FishingRod:checkWater(distance)
+function FishingRod:checkWater()
+	local location = self.FishingMap:getLocation(localPlayer.position)
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
-	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
-	targetPosition.z = -0.2
+	local targetPosition = self:getFishingHookPosition()
+
+	local waterPosition = Vector3(targetPosition.x, targetPosition.y, targetPosition.z)
+	waterPosition.z = -500
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
-	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, targetPosition) or getGroundPosition(targetPosition) == 0) then
+	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, waterPosition) or getGroundPosition(targetPosition) == 0 or (localPlayer:getData("inSewer") and location == "sewer")) then
 		return true
 	end
 	return false
 end
 
+function FishingRod:getFishingHookPosition()
+	local waterHeight = self.FishingMap:getWaterHeight(localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress/3, 0)))
+	local multiplier = 10 + (self.m_FishingRod.position.z - waterHeight)*2
+
+	local targetPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05+multiplier*self.m_PowerProgress/3, 0, -1.3))
+	targetPosition.z = self.FishingMap:getWaterHeight(targetPosition)
+
+	return targetPosition
+end
+
 function FishingRod:render()
-	if not self.m_FishingRod then return end
+	if not isElement(self.m_FishingRod) then return end
 
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
-	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, 0))
+	local fishingHookPosition = self:getFishingHookPosition()
+
+	if self.m_Hit or self.m_isNibbling then
+		fishingHookPosition = Vector3(fishingHookPosition.x + self.Random:get(-3, 3)/100, fishingHookPosition.y + self.Random:get(-4, 4)/100, fishingHookPosition.z + self.Random:get(-5, 5)/100)
+	end
+
+	if self.m_RenderBobber and not self.m_isCasting then
+		local drawn = self.m_isNibbling or self.m_Hit
+		if not drawn then
+			dxDrawLine3D(fishingHookPosition, Vector3(fishingHookPosition.x, fishingHookPosition.y, fishingHookPosition.z - 0.2), Color.White, 5)
+		end
+
+		dxDrawLine3D(Vector3(fishingHookPosition.x, fishingHookPosition.y, fishingHookPosition.z - (drawn and 0.1 or 0)), Vector3(fishingHookPosition.x, fishingHookPosition.y, fishingHookPosition.z - 0.1 - (drawn and 0.1 or 0)), Color.Red, 5)
+	end
 
 	if self.m_isCasting and not self.m_MouseDown then
-		targetPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
-		targetPosition.z = targetPosition.z - .7
-	else
-		targetPosition.z = 0
+		fishingHookPosition = Vector3(startPosition.x, startPosition.y, startPosition.z)
+		fishingHookPosition.z = fishingHookPosition.z - .7
 	end
 
 	exports.bone_attach:setElementBoneRotationOffset(self.m_FishingRod, 180, 120 + 60*self.m_PowerProgress, 0)
-	dxDrawLine3D(startPosition, targetPosition, tocolor(255, 230, 190, 100), .3)
+	dxDrawLine3D(startPosition, fishingHookPosition, tocolor(255, 230, 190, 100), .3)
 
 	local left = screenWidth-300
 	local top = screenHeight/2

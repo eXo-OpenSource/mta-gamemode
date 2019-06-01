@@ -7,32 +7,83 @@
 -- ****************************************************************************
 InteriorEnterExit = inherit(Object)
 
-function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, enterInterior)
-	self.m_EnterMarker = createMarker(entryPosition, "corona", 1.5, 255, 255, 255, 200)
+function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, enterInterior, enterDimension)
+	self.m_Locked = 0 -- || 0 = unlocked, 1 = entry-locked; 2 = exit-locked; -1 any locked
+	InteriorEnterExitManager.Map[#InteriorEnterExitManager.Map+1] = self
+	self.m_Id = #InteriorEnterExitManager.Map
+	
+	self.m_EnterMarker = createMarker(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)
 	self.m_EnterMarker:setInterior(enterInterior or 0)
-  self.m_ExitMarker = createMarker(interiorPosition, "corona", 1.5, 255, 255, 255, 200)
+	ElementInfo:new(self.m_EnterMarker, "Eingang", 1.2, "Walking", true)
+	local colEnter = createColSphere(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-0.8), 2)
+	colEnter:setInterior(enterInterior or 0)
+	colEnter:setDimension(enterDimension or 0)
+
+	self.m_EnterMarker:setDimension(enterDimension or 0)
+	self.m_ExitMarker = createMarker(Vector3(interiorPosition.x, interiorPosition.y, interiorPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)
+	local colExit = createColSphere(Vector3(interiorPosition.x, interiorPosition.y, interiorPosition.z-0.8), 2)
+
+	ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
 
   interiorId = interiorId or 0
   dimension = dimension or 0
   self.m_ExitMarker:setInterior(interiorId)
   self.m_ExitMarker:setDimension(dimension)
+	colExit:setInterior(interiorId)
+	colExit:setDimension(dimension)
 
-  addEventHandler("onMarkerHit", self.m_EnterMarker,
-    function(hitElement, matchingDimension)
-      if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
-    	self:teleport(hitElement, "enter", interiorPosition, enterRotation, interiorId, dimension)
-      end
-    end
-  )
+	self.m_EntranceData =  {interiorPosition, enterRotation, interiorId, dimension}
+	self.m_ExitData = {entryPosition, exitRotation, enterInterior or 0, enterDimension or 0}
 
-   addEventHandler("onMarkerHit", self.m_ExitMarker,
-    function(hitElement, matchingDimension)
-      if getElementType(hitElement) == "player" and matchingDimension then
-	  	self:teleport(hitElement, "exit", entryPosition, exitRotation, enterInterior or 0, 0)
-      end
-    end
-  )
+	addEventHandler("onColShapeHit", colEnter,
+	function(hitElement, matchingDimension)
+		if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() and not isPedInVehicle(hitElement) then
+			if hitElement:getInterior() == source:getInterior() then
+				hitElement.m_LastEnterExit = {self.m_Id, "enter"}
+				hitElement:triggerEvent("onTryEnterExit", self.m_EnterMarker, "Eingang")
+			end
+		end
+	end
+)
 
+	addEventHandler("onColShapeHit", colExit,
+	function(hitElement, matchingDimension)
+		if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() then
+			if hitElement:getInterior() == source:getInterior() then
+				hitElement.m_LastEnterExit = {self.m_Id, "exit"}
+				hitElement:triggerEvent("onTryEnterExit", self.m_ExitMarker, "Ausgang")
+			end
+		end
+	end
+)	
+	
+
+	
+end
+
+function InteriorEnterExit:enter(player)
+	if self.m_Locked == 0 or self.m_Locked == 2 then
+		self:teleport(player, "enter", unpack(self.m_EntranceData))
+	else 
+		player:sendInfo(_("Der Eingang ist verschlossen!", client))
+	end
+end
+
+function InteriorEnterExit:exit(player)
+	if self.m_Locked == 0  or self.m_Locked == 1 then
+		self:teleport(player, "exit", unpack(self.m_ExitData))
+	else 
+		player:sendInfo(_("Der Ausgang ist verschlossen!", client))
+	end
+end
+
+function InteriorEnterExit:setEntryLocked() self.m_Locked = 1 end
+function InteriorEnterExit:setExitLocked() self.m_Locked = 2 end
+function InteriorEnterExit:setLocked(bool) self.m_Locked = bool and -1 or 0 end
+
+function InteriorEnterExit:setMarkerType(type)
+	self.m_ExitMarker:setType(type)
+	self.m_EnterMarker:setType(type)
 end
 
 function InteriorEnterExit:destructor()
@@ -52,10 +103,10 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 	setTimer(
 		function()
 			if not isElement(player) then return end
+			setElementDimension(player,dimension)
 			setElementInterior(player,interior, pos)
 			player:setRotation(0, 0, rotation)
 			player:setPosition(pos)
-			setElementDimension(player,dimension)
 			player:setCameraTarget(player)
 			fadeCamera(player, true)
 			

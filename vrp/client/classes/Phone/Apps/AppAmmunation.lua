@@ -51,7 +51,7 @@ function AppAmmunation:onOpen(form)
 	self.m_MagazineBuyBtn = GUIButton:new(10, 270, 240, 25, "Magazin (0$)", self.m_Tabs["Order"])
 	self.m_MagazineBuyBtn.onLeftClick = bind(self.addItemToCart,self,"munition")
 
-	GUIRectangle:new(10, 308, 240, 2, Color.LightBlue, self.m_Tabs["Order"])
+	GUIRectangle:new(10, 308, 240, 2, Color.Accent, self.m_Tabs["Order"])
 	GUILabel:new(10, 310, 240, 30, _"Im Warenkorb:", self.m_Tabs["Order"])
 	self.m_SumLabel = GUILabel:new(10, 340, 240, 20, _"Gesamtsumme:", self.m_Tabs["Order"])
 	GUILabel:new(190, 310, 50, 50, FontAwesomeSymbols.Cart, self.m_Tabs["Order"]):setFont(FontAwesome(50))
@@ -82,7 +82,7 @@ function AppAmmunation:onOpen(form)
 	self.m_OrderBtnCart.onLeftClick = bind(self.order,self)
 	self:getPlayerWeapons()
 	ShortMessage:new(_("Links-Shift halten um 10-fache Muniton zu bestellen."), _"Ammunation App", {0, 102, 102})
-	
+
 end
 
 function AppAmmunation:addItemToCart(typ)
@@ -92,10 +92,10 @@ function AppAmmunation:addItemToCart(typ)
 		return
 	end
 	if typ == "weapon" then self.m_Cart[weaponID]["Waffe"] = self.m_Cart[weaponID]["Waffe"]+1 end
-	if typ == "munition" then 
+	if typ == "munition" then
 		if not getKeyState("lshift") then
-			self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 
-		else 
+			self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1
+		else
 			self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+10
 		end
 	end
@@ -180,7 +180,7 @@ function AppAmmunation:onWeaponChange(name)
 
 		if name == "Schutzweste" then
 			self.m_SelectedWeaponId = 0
-			self.m_WeaponImage:setImage("files/images/Weapons/Vest.png")
+			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(-1)) 
 			self.m_WeaponName:setText(name)
 			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon))
 			self.m_MagazineBuyBtn:setVisible(false)
@@ -189,7 +189,7 @@ function AppAmmunation:onWeaponChange(name)
 			local weaponID = WEAPON_IDS[name]
 			self.m_SelectedWeaponId = weaponID
 
-			self.m_WeaponImage:setImage(WeaponIcons[weaponID])
+			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(weaponID))
 			self.m_WeaponName:setText(_("Waffe: %s (Level: %i)", name, MIN_WEAPON_LEVELS[weaponID]))
 			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
 			if AmmuNationInfo[weaponID].Magazine then

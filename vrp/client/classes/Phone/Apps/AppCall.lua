@@ -14,15 +14,15 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
-	self.m_EasterEggFont = dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
-	self.m_EasterEggRenderFunction = function() 
-		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, self.m_EasterEggFont, "center", "center") 
-		dxDrawText("SUPER SMASH STROBE", 0,0, screenWidth, screenHeight, tocolor(201, 29, 0, 255), 1, self.m_EasterEggFont, "center", "center")
+	self.m_EasterEggFont = VRPFont(35, Fonts.BitBold) --dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
+	self.m_EasterEggRenderFunction = function()
+		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, getVRPFont(self.m_EasterEggFont), "center", "center")
+		dxDrawText("SUPER SMASH STROBE", 0,0, screenWidth, screenHeight, tocolor(201, 29, 0, 255), 1, getVRPFont(self.m_EasterEggFont), "center", "center")
 	end
 
 	self.m_IncomingCallSMs = {}
 
-	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy", "callIncomingSM", "callRemoveSM"}
+	addRemoteEvents{"receivePhoneNumbers", "callIncoming", "callReplace", "callAnswer", "callBusy", "callIncomingSM", "callRemoveSM"}
 
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
 	addEventHandler("callIncomingSM", root, bind(self.Event_callIncomingSM, self))
@@ -30,6 +30,7 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
+	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 end
 
 function AppCall:onOpen(form)
@@ -84,7 +85,7 @@ function AppCall:openMain()
 	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
-	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue):setBarEnabled(false)
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.Accent):setBarEnabled(false)
 	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
 
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green):setBarEnabled(false)
@@ -92,7 +93,7 @@ function AppCall:openMain()
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 
 	self.m_TabPanel.onTabChanged = function(tabId)
-		if tabId == self.m_Tabs["Players"].TabIndex then
+		if tabId ~= self.m_Tabs["Keyboard"].TabIndex then
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
 		end
 	end
@@ -110,11 +111,6 @@ function AppCall:openMain()
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallGroup.onLeftClick = function() self:startSpecialCall(self.m_GroupListGrid) end
-
-	triggerServerEvent("requestPhoneNumbers", localPlayer)
-
-	addRemoteEvents{"receivePhoneNumbers"}
-	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 
 	self.m_InCall = false
 end
@@ -141,7 +137,7 @@ function AppCall:ButtonCallNumpad_Click()
 			return
 		end
 	end
-	
+
 	local number = tonumber(self.m_Edit:getText())
 	if not number or string.len(number) < 3 then
 		ErrorBox:new(_"Ungültige Telefonnummer eingegeben!")
@@ -241,7 +237,7 @@ function AppCall:openIncoming(caller, voiceEnabled)
 
 	self.m_CallLabel = GUILabel:new(8, 10, width, 30, _("Eingehender Anruf von \n%s", caller:getName()), parent):setMultiline(true):setAlignX("center")
 	self.m_CallLabel:setColor(Color.Black)
-	self.m_WebView = GUIWebView:new(width/2-70, 70, 140, 200, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, parent)
+	self.m_WebView = GUIWebView:new(width/2-80, 70, 160, 250, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewHead.php?skin="..caller:getModel(), true, parent)
 	self.m_ButtonAnswer = GUIButton:new(10, height-50, 110, 30, _"Annehmen", parent)
 	self.m_ButtonAnswer:setBackgroundColor(Color.Green)
 	self.m_ButtonAnswer.onLeftClick = bind(self.ButtonAnswer_Click, self)
@@ -360,7 +356,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 		if voiceCall then
 			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", parent):setColor(Color.Black):setAlignX("center")
 		end
-		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, parent)
+		GUIWebView:new(self.m_Width/2-80, 80, 160, 250, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewHead.php?skin="..callee:getModel(), true, parent)
 		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", parent)
 		self.m_ButtonSendLocation:setBackgroundColor(Color.Green)
 		self.m_ButtonSendLocation.onLeftClick = function()
@@ -446,7 +442,7 @@ end
 function AppCall:Event_callIncomingSM(caller, voiceEnabled, message, title, tblColor)
 	outputDebug(caller, voiceEnabled, message, title, tblColor)
 	if not caller then return end
-	
+
 	self:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
 end
 

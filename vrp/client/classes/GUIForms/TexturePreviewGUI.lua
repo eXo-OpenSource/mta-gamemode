@@ -1,12 +1,12 @@
-
 TexturePreviewGUI = inherit(GUIForm)
 inherit(Singleton, TexturePreviewGUI)
+
 addRemoteEvents{"texturePreviewLoadTextures", "texturePreviewForceClose"}
 
 function TexturePreviewGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight/1.5)
 
-	self.m_Path = "http://picupload.pewx.de/textures/"
+	self.m_Path = "https://picupload.pewx.de/textures/"
 	self.m_Admin = false
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Textur Vorschau", false, true, self)
@@ -32,12 +32,11 @@ function TexturePreviewGUI:constructor()
 	addEventHandler("onClientPreRender", root, self.m_RotateBind)
 end
 
-function TexturePreviewGUI:destructor()
+function TexturePreviewGUI:virtual_destructor()
 	setCameraTarget(localPlayer)
 	removeEventHandler("onClientPreRender", root, self.m_RotateBind)
 	showChat(true)
 	triggerServerEvent("texturePreviewClose", localPlayer)
-	GUIForm.destructor(self)
 end
 
 function TexturePreviewGUI:openAdmin()

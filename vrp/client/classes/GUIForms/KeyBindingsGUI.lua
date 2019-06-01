@@ -23,7 +23,7 @@ function KeyBindings:constructor()
   GUILabel:new(self.m_Width*0.45, self.m_Height*0.07, self.m_Width*0.55, self.m_Height*0.08, _"Tastenzuordnungen", self.m_Window)
   GUILabel:new(self.m_Width*0.45, self.m_Height*0.15, self.m_Width*0.55, self.m_Height*0.05, _"Hier kannst du deine Tastenzuordnungen ändern. Klicke einfach die gewünschte Funktion links an.\nMit Klick auf den blauen Button kannst du die Zuordnung ändern.", self.m_Window):setMultiline(true)
   self.m_SelectedLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setVisible(false)
-  self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1):setVisible(false)
+  self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.Accent):setFontSize(1):setVisible(false)
   self.m_SelectedButton.onLeftClick = function () self:waitForKey() end
   self.m_DefaultButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.5, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.Red):setFontSize(1):setVisible(false)
   self.m_DefaultButton.onLeftClick = function ()
@@ -52,7 +52,7 @@ function KeyBindings:loadGridList()
     local currKey
     for index, key in pairs(self.ms_Keys) do
         local currKey = core:get("KeyBindings", index) or key["defaultKey"]
-        item = self.m_KeyGridList:addItem(key.name, currKey:upper())
+        local item = self.m_KeyGridList:addItem(key.name, currKey:upper())
         item.index = index
         item.onLeftClick = function() self:onKeySelect(index) end
     end

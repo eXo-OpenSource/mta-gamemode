@@ -86,11 +86,9 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 	self.m_GUIWeapons[weaponID] = true
 	self.m_WeaponsName[weaponID] = GUILabel:new(self.m_WaffenRow*120, self.m_WaffenColumn*200, 100, 25, WEAPON_NAMES[weaponID], self.m_WeaponArea)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
-	self.m_WeaponsImage[weaponID] = GUIImage:new(20+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_WeaponArea)
+	self.m_WeaponsImage[weaponID] = GUIImage:new(20+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 60, 60, FileModdingHelper:getSingleton():getWeaponImage(weaponID), self.m_WeaponArea)
 	self.m_WeaponsMenge[weaponID] = GUILabel:new(self.m_WaffenRow*120, 100+self.m_WaffenColumn*200, 100, 20, "Waffenlager: "..Waffen, self.m_WeaponArea)
 	self.m_WeaponsMenge[weaponID]:setAlignX("center")
-	self.m_WeaponsMunition[weaponID] = GUILabel:new(self.m_WaffenRow*120, 115+self.m_WaffenColumn*200, 100, 20, "Magazine: "..Munition, self.m_WeaponArea)
-	self.m_WeaponsMunition[weaponID]:setAlignX("center")
 	self.m_WeaponsBuyGun[weaponID] = GUIButton:new(self.m_WaffenRow*120, 135+self.m_WaffenColumn*200, 100, 20,"+ Waffe", self.m_WeaponArea)
 	self.m_WeaponsBuyGun[weaponID]:setBackgroundColor(Color.Red):setFontSize(1)
 	self.m_WeaponsBuyGun[weaponID].onLeftClick = bind(self.addItemToCart,self,"weapon",weaponID)
@@ -102,6 +100,8 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 		if not self.m_playerWeapons[weaponID] then
 			self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 		end
+		self.m_WeaponsMunition[weaponID] = GUILabel:new(self.m_WaffenRow*120, 115+self.m_WaffenColumn*200, 100, 20, "Magazine: "..Munition, self.m_WeaponArea)
+		self.m_WeaponsMunition[weaponID]:setAlignX("center")
 	end
 
 	if not(self.m_Cart[weaponID]) then
@@ -112,7 +112,7 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 
-	if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 or self.m_WaffenAnzahl == 12 then
+	if self.m_WaffenAnzahl % 4 == 0 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else
@@ -140,7 +140,7 @@ function FactionWeaponShopGUI:updateButtons()
 				skip = true
 			end
 			if not skip then
-				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 and not WEAPON_PROJECTILE[weaponID] then
+				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 and not THROWABLE_WEAPONS[weaponID] then
 					if self.m_WeaponsBuyMunition[weaponID] then
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 					end

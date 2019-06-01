@@ -29,5 +29,5 @@
     <script src="runthis.lua" type="client" />
 
 	<file src="Logo.png"/>
-	<file src="tour_bobberbar_info.png"/>
+	<!--file src="tour_bobberbar_info.png"/-->
 </meta>

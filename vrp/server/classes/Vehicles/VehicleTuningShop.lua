@@ -83,17 +83,31 @@ function VehicleTuningShop:constructor()
     )
 end
 
-function VehicleTuningShop:openFor(player, vehicle, garageId, specialType)
-    player:triggerEvent("vehicleTuningShopEnter", vehicle or player:getPedOccupiedVehicle(), specialType)
-
+function VehicleTuningShop:openFor(player, vehicle, garageId, specialType, adminSession)
+    player:triggerEvent("vehicleTuningShopEnter", vehicle or player:getPedOccupiedVehicle(), specialType, adminSession)
+    if adminSession then --save position so that the admin can return to it later
+        player.m_VehicleTuningLastPosition = vehicle.position
+        player.m_VehicleTuningLastRotation = vehicle.rotation
+    end
     vehicle:setFrozen(true)
     player:setFrozen(true)
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position + vehicle:getBaseHeight(true))
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
-
+    player.m_VehicleTuningAdminMode = adminSession
 	player.m_WasBuckeled = getElementData(player, "isBuckeled")
+end
+
+function VehicleTuningShop:openForAdmin(admin, vehicle)
+    local type
+    if admin.vehicle == vehicle then
+    if vehicle:isAirVehicle() then type = "AirportPainter" end
+    if vehicle:isWaterVehicle() then type = "BoatsPainter" end
+    self:openFor(admin, vehicle, 1, type, true)
+    else
+        admin:sendError(_("Du musst im Fahrzeug sitzen bleiben!", admin))
+    end
 end
 
 function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
@@ -106,8 +120,13 @@ function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
         local position, rotation = unpack(self.m_GarageInfo[garageId][2])
         if vehicle then
             vehicle:setFrozen(false)
-            vehicle:setPosition(position + vehicle:getBaseHeight(true))
-            vehicle:setRotation(0, 0, rotation)
+            if player.m_VehicleTuningAdminMode then
+                vehicle:setPosition(player.m_VehicleTuningLastPosition)
+                vehicle:setRotation(player.m_VehicleTuningLastRotation)
+            else
+                vehicle:setPosition(position + vehicle:getBaseHeight(true))
+                vehicle:setRotation(0, 0, rotation)
+            end
         end
 
         player:setPosition(position) -- Set player position also as it will not be updated automatically before quit
@@ -144,7 +163,11 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
-            if not vehicle:canBeModified() then
+            if not vehicle:getGroup() == hitElement:getGroup() then
+                hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+                return
+            end
+            if not vehicle:canBeModified()  then
                 hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
                 return
             end
@@ -214,13 +237,16 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
         end
     end
 
-    if client:getMoney() < overallPrice then
+    if client:getBankMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
         client:sendError(_("Du hast nicht genügend Geld!", client))
         return
     end
 
-    client:transferMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
-
+    if not client.m_VehicleTuningAdminMode then
+        client:transferBankMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
+    else
+        StatisticsLogger:getSingleton():addAdminVehicleAction(client, "tuningShop", vehicle, toJSON(cartContent))
+    end
     for slot, upgradeId in pairs(cartContent) do
         if type(slot) == "number" and slot >= 0 then
             if upgradeId ~= 0 then
@@ -242,7 +268,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
 
     client:sendSuccess(_("Upgrades gekauft!", client))
 
-	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+	if instanceof(vehicle, PermanentVehicle) then
 		vehicle:save()
 	end
 

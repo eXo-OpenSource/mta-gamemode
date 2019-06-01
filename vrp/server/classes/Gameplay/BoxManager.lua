@@ -22,8 +22,10 @@ BoxManager.Data = {
 }
 
 function BoxManager:constructor()
-	InteriorEnterExit:new(Vector3(2229.85, -1721.20, 13.56), Vector3(772.45, -5.16, 1000.73), 130, 0, 5)
-	self.m_Marker = createMarker(761.66, 5.27, 999.8, "cylinder", 1, 255, 0, 0, 200)
+	self.m_Teleporter = InteriorEnterExit:new(Vector3(2229.85, -1721.20, 13.56), Vector3(772.45, -5.16, 1000.73), 130, 0, 5)
+	self.m_Teleporter:addExitEvent(function(player) JobBoxer:getSingleton():leaveJobBuilding(player) end)
+
+	self.m_Marker = createMarker(765.49, 1.57, 999.8, "cylinder", 1, 255, 0, 0, 200)
 	self.m_Marker:setInterior(5)
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onMarkerHit, self))
 
@@ -73,22 +75,26 @@ function BoxManager:onMarkerHit(hitElement, dim)
 end
 
 function BoxManager:requestFight(target, moneyId)
-	if not self.m_BoxFight["active"] then
-		local money = BOXING_MONEY[moneyId]
-		if client:getMoney() >= money then
-			if target:getMoney() >= money then
-				if target:isFactionDuty() or target:isCompanyDuty() then client:sendError("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!") return end
+	if not JobBoxer:getSingleton():isPlayerBoxing(target) then
+		if not self.m_BoxFight["active"] then
+			local money = BOXING_MONEY[moneyId]
+			if client:getMoney() >= money then
+				if target:getMoney() >= money then
+					if target:isFactionDuty() or target:isCompanyDuty() then client:sendError("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!") return end
 
-				QuestionBox:new(client, target, _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", client, target, money)
-				client:sendShortMessage(_("Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$", client, target:getName(), money))
+					QuestionBox:new(client, target, _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", client, target, money)
+					client:sendShortMessage(_("Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$", client, target:getName(), money))
+				else
+					client:sendError(_("%s hat nicht genug Geld dabei!", client, target:getName()))
+				end
 			else
-				client:sendError(_("%s hat nicht genug Geld dabei!", client, target:getName()))
+				client:sendError(_("Du hast nicht genug Geld dabei!", client))
 			end
 		else
-			client:sendError(_("Du hast nicht genug Geld dabei!", client))
+			client:sendError(_("Der Boxring ist derzeit belegt!", client))
 		end
 	else
-		client:sendError(_("Der Boxring ist derzeit belegt!", client))
+		client:sendError(_("Der Spieler ist bereits am Boxen!", client))
 	end
 end
 

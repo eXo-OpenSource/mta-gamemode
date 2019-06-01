@@ -21,7 +21,7 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList", "vehicleAdminReceiveTextureList"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -87,9 +87,13 @@ function Vehicle:getVehicleType()
 	return getVehicleType(self)
 end
 
+function Vehicle:isTurboVehicle()
+	return getElementData(self, "Turbo")
+end
+
 function Vehicle:magnetVehicleCheck()
 	local vehicle = self:getData("MagnetGrabbedVehicle")
-	local groundPosition = vehicle and getGroundPosition(vehicle.position)
+	local groundPosition = vehicle and getGroundPosition(getElementPosition(vehicle))
 
 	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
 end
@@ -335,6 +339,11 @@ function (vehicle, tuning, specialTuning)
 	VehicleTuningShowGUI:new(tuning, specialTuning)
 end)
 
+addEventHandler("vehicleAdminReceiveTextureList", localPlayer,
+function (vehicle, texture)
+	AdminVehicleTextureEditGUI:new(vehicle, texture)
+end)
+
 
 local renderLeviathanRope = {}
 
@@ -396,7 +405,9 @@ addEventHandler("onClientRender", root,
 			local magnet = getElementData(vehicle, "Magnet")
 			if magnet then
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
-				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+				local x, y, z = getElementPosition(vehicle)
+				local mx, my, mz = getElementPosition(magnet)
+				dxDrawLine3D(x, y, z, mx, my, mz, tocolor(100, 100, 100, 255), 10)
 			end
 		end
 		for engine, magnet in pairs(JobTreasureSeeker.Rope) do
@@ -425,6 +436,11 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
+	if localPlayer.m_Entrance then 
+		if localPlayer.m_Entrance:check() then 
+			cancelEvent()
+		end
+	end
 	if seat == 0 and player == localPlayer then
 		if VehiclesToDisableShooting[source:getModel()] then
 			if not isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then

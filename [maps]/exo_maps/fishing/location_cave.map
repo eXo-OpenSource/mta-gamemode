@@ -1,0 +1,6 @@
+<map edf:definitions="editor_main">
+	<object id="object (des_rockgp2_) (1)" breakable="true" interior="0" alpha="255" model="16114" doublesided="false" scale="1" dimension="0" posX="-393" posY="1350" posZ="-5.1" rotX="19.5" rotY="0" rotZ="320"></object>
+	<object id="object (des_rockgp2_) (2)" breakable="true" interior="0" alpha="255" model="16114" doublesided="false" scale="1" dimension="0" posX="-417.89999" posY="1381" posZ="-18" rotX="300.19" rotY="13.517" rotZ="179.737"></object>
+	<object id="object (des_rockgp2_) (3)" breakable="true" interior="0" alpha="255" model="16114" doublesided="false" scale="1" dimension="0" posX="-423.70001" posY="1379.6" posZ="-17.3" rotX="300.185" rotY="13.513" rotZ="179.736"></object>
+	<object id="object (des_rockgp2_) (4)" breakable="true" interior="0" alpha="255" model="16114" doublesided="false" scale="1" dimension="0" posX="-418.39999" posY="1342.8" posZ="-8.6" rotX="39.498" rotY="0" rotZ="257.999"></object>
+</map>

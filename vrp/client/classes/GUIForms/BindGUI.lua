@@ -28,17 +28,19 @@ BindGUI.Functions = {
 	["g"] = "Beamten (/g)",
 }
 
+MAX_PARAMETER_LENGTH = 37
+
 addRemoteEvents{"bindReceive"}
 
 function BindGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 500)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Binds", true, true, self)
 	self.m_Window:deleteOnClose(true)
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.595, self)
-	self.m_Grid:addColumn("Funktion", 0.2)
-	self.m_Grid:addColumn("Text", 0.6)
-	self.m_Grid:addColumn("Tasten", 0.2)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.50, self)
+	self.m_Grid:addColumn("Funktion", 0.15)
+	self.m_Grid:addColumn("Text", 0.52)
+	self.m_Grid:addColumn("Tasten", 0.28)
 
 	self.m_Footer = {}
 
@@ -51,6 +53,8 @@ function BindGUI:constructor()
 		self.m_DeleteBindButton:setVisible(false)
 	end
 
+	self.m_SelectedBindLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.96, self.m_Height*0.055, "", self.m_Window):setColor(Color.Accent)
+
 	--default Bind
 	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 
@@ -59,12 +63,12 @@ function BindGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Taste 1:", self.m_Footer["local"])
 	GUILabel:new(self.m_Width*0.30, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.06, "Taste 2:", self.m_Footer["local"])
-	self.m_HelpChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.25, self.m_Height*0.07, self.m_Footer["local"]):setBackgroundColor(Color.LightBlue)
+	self.m_HelpChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.25, self.m_Height*0.07, self.m_Footer["local"]):setBackgroundColor(Color.Accent)
 	for index, name in pairs(BindGUI.Modifiers) do
 		self.m_HelpChanger:addItem(name)
 	end
 	GUILabel:new(self.m_Width*0.27, self.m_Height*0.07, self.m_Width*0.07, self.m_Height*0.07, " + ", self.m_Footer["local"])
-	self.m_SelectedButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.07, self.m_Width*0.18, self.m_Height*0.07, " ", self.m_Footer["local"]):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_SelectedButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.07, self.m_Width*0.18, self.m_Height*0.07, " ", self.m_Footer["local"]):setBackgroundColor(Color.Accent):setFontSize(1.2)
   	self.m_SelectedButton.onLeftClick = function () self:waitForKey() end
 	self.m_SaveBindButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.07, self.m_Width*0.2, self.m_Height*0.07, "Speichern", self.m_Footer["local"]):setBackgroundColor(Color.Green)
   	self.m_SaveBindButton.onLeftClick = function () self:saveBind() end
@@ -82,7 +86,7 @@ function BindGUI:constructor()
 	--New Bind
 	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Funktion:", self.m_Footer["new"])
-	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
+	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.Accent)
 	for index, name in pairs(BindGUI.Functions) do
 		self.m_FunctionChanger:addItem(name)
 	end
@@ -126,13 +130,13 @@ function BindGUI:loadLocalBinds()
 
 	for index, data in pairs(binds) do
 		if not data.keys or #data.keys == 0 then
-			keys = "-keine-"
+			keys = "-"
 		elseif #data.keys == 1 then
 			keys = BindGUI.Modifiers[data.keys[1]] and BindGUI.Modifiers[data.keys[1]] or data.keys[1]:upper()
 		else
 			keys = table.concat({BindGUI.Modifiers[data.keys[1]] and BindGUI.Modifiers[data.keys[1]] or data.keys[1]:upper(), BindGUI.Modifiers[data.keys[2]] and BindGUI.Modifiers[data.keys[2]] or data.keys[2]:upper()}, " + ")
 		end
-		item = self.m_Grid:addItem(data.action.name, data.action.parameters, keys)
+		item = self.m_Grid:addItem(data.action.name, string.short(data.action.parameters, MAX_PARAMETER_LENGTH), keys)
 		item.index = index
 		item.type = "local"
 		item.action =  data.action.name
@@ -166,7 +170,7 @@ function BindGUI:Event_onReceive(type, id, binds)
 	local item
 	self.m_Grid:addItemNoClick(BindGUI.Headers[type], "", "")
 	for id, data in pairs(binds) do
-		item = self.m_Grid:addItem(data["Func"], data["Message"], "-keine-")
+		item = self.m_Grid:addItem(data["Func"], string.short(data["Message"], MAX_PARAMETER_LENGTH), "-")
 		item.type = "server"
 		item.action =  data["Func"]
 		item.parameter =  data["Message"]
@@ -186,6 +190,7 @@ end
 
 function BindGUI:onBindSelect(item, index)
     self.m_SelectedBind = item
+	self.m_SelectedBindLabel:setText(("Text: %s"):format(item.parameter))
 	if item.type == "local" then
 		self:changeFooter("local")
 		if BindManager:getSingleton().m_Binds[index] and BindManager:getSingleton().m_Binds[index].keys then
@@ -321,7 +326,7 @@ function BindManageGUI:constructor(ownerType)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.07, "Nachricht:", self.m_Footer["new"])
 	self.m_NewText = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.96, self.m_Height*0.07, self.m_Footer["new"])
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Funktion:", self.m_Footer["new"])
-	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
+	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.Accent)
 	for index, name in pairs(BindGUI.Functions) do
 		self.m_FunctionChanger:addItem(name)
 	end
@@ -362,7 +367,7 @@ function BindManageGUI:Event_onReceive(type, id, binds)
 	self.m_Grid:clear()
 	self.m_Grid:addItemNoClick(BindGUI.Headers[type], "")
 	for id, data in pairs(binds) do
-		item = self.m_Grid:addItem(data["Func"], data["Message"])
+		local item = self.m_Grid:addItem(data["Func"], data["Message"])
 		item.action =  data["Func"]
 		item.parameter =  data["Message"]
 		item.id = id

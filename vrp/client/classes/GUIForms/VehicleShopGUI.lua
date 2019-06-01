@@ -27,12 +27,11 @@ function VehicleShopGUI:constructor()
 	showChat(false)
 end
 
-function VehicleShopGUI:destructor()
+function VehicleShopGUI:virtual_destructor()
 	removeEventHandler("vehicleBought", root, self.m_VehicleBought)
 
 	showChat(true)
 	if self.m_InfoInstance then delete(self.m_InfoInstance) end
-	GUIForm.destructor(self)
 
 	if self.m_CameraInstance then
 		delete(self.m_CameraInstance)
@@ -42,7 +41,7 @@ end
 
 function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
-		triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId)
+		triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
 	end
 end
 
@@ -62,16 +61,21 @@ function VehicleShopGUI:setVehicleList(list)
 	-- Clear old data
 	self.m_VehicleList:clear()
 
+	local vehicleCount = 0
 	for k, v in pairs(list) do
-		local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[3], "$"..tostring(v[2])):setColumnAlignX(3, "right")
-		item.VehicleId = k
-		item.onLeftClick = function()
-			self.m_CurrentVehicle = v[1]
-			if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end
-			self.m_InfoInstance:updateVehicle(v[1])
-			self:updateMatrix()
+		for i = 1, #v do
+			vehicleCount = vehicleCount + 1
+			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..tostring(v[i][2])):setColumnAlignX(3, "right")
+			item.VehicleId = k
+			item.VehicleIndex = i
+			item.onLeftClick = function()
+				self.m_CurrentVehicle = v[i][1]
+				if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end
+				self.m_InfoInstance:updateVehicle(v[i][1])
+				self:updateMatrix()
+			end
+			item.onLeftDoubleClick = bind(self.buyVehicle, self)
 		end
-		item.onLeftDoubleClick = bind(self.buyVehicle, self)
 	end
 end
 
@@ -130,14 +134,14 @@ VehicleShopInfoGUI = inherit(GUIForm)
 inherit(Singleton, VehicleShopInfoGUI)
 
 function VehicleShopInfoGUI:constructor()
-	GUIWindow.updateGrid()			
-	self.m_Width = grid("x", 7) 	
-	self.m_Height = grid("y", 7) 	
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 7)
+	self.m_Height = grid("y", 7)
 
 	GUIForm.constructor(self, screenWidth-self.m_Width*1.5, screenHeight-self.m_Height*1.5, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Buffalo", true, false, self)
 	self.m_Label = GUIGridLabel:new(1, 1, 6, 5, "Muscle-Car\n1200kg Leergewicht\nrund 230 km/h Spitze\n5-Gang-Getriebe\nHeck-Antrieb", self.m_Window)
-	
+
 	self.m_LightButton = GUIGridIconButton:new(1, 6, FontAwesomeSymbols.Lightbulb, self.m_Window):setTooltip("Licht an/aus", "bottom")
 	self.m_EngineButton = GUIGridIconButton:new(2, 6, FontAwesomeSymbols.Cogs, self.m_Window):setTooltip("Motor an/aus", "bottom")
 	self.m_DoorButton = GUIGridIconButton:new(3, 6, FontAwesomeSymbols.Key, self.m_Window):setTooltip("Türen auf/zu", "bottom")
@@ -163,7 +167,7 @@ end
 
 function VehicleShopInfoGUI:updateVehicle(veh)
 	self:resetOldVehicle()
-	
+
 	local handling = veh:getHandling()
 	local driveType = {["fwd"] = _"Front-Antrieb", ["rwd"] = _"Heck-Antrieb", ["awd"] = _"Allrad-Antrieb"}
 	self.m_Veh = veh

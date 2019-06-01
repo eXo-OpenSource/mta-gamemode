@@ -9,7 +9,7 @@ GangAreaManager = inherit(Singleton)
 
 function GangAreaManager:constructor()
 	self.m_Map = {}
-	self.m_Font = dxCreateFont("files/fonts/Ghetto.ttf", 20, false)
+	self.m_Font = VRPFont(32, Fonts.Ghetto) --dxCreateFont("files/fonts/Ghetto.ttf", 20, false)
 
 	for i, info in ipairs(GangAreaData) do
 		self.m_Map[i] = GangArea:new(i, info.wallPosition, info.wallRotation, info.areaPosition, info.width, info.height)
@@ -23,7 +23,7 @@ function GangAreaManager:constructor()
 end
 
 function GangAreaManager:getFont()
-	return self.m_Font
+	return getVRPFont(self.m_Font)
 end
 
 function GangAreaManager:Event_gangAreaTurfStart(Id, gangName, progress)

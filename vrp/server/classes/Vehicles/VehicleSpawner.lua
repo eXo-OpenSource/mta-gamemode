@@ -8,6 +8,21 @@
 VehicleSpawner = inherit(Object)
 VehicleSpawner.Map = {}
 
+addEvent("onTryVehicleSpawner", true)
+addEventHandler("onTryVehicleSpawner", root, function() 
+
+	if client.m_LastVehicleSpawner then 
+		local index = table.find(VehicleSpawner.Map, client.m_LastVehicleSpawner)
+		if index then
+			local mx, my, mz = getElementPosition(client.m_LastVehicleSpawner.m_Marker)
+			local px, py, pz = getElementPosition(client)
+			if getDistanceBetweenPoints3D(mx, my, mz, px, py, pz) < 3 then
+				client.m_LastVehicleSpawner:markerHit(client, client.m_LastVehicleSpawner.m_Marker:getDimension() == client:getDimension())	
+			end
+		end
+	end
+end)
+
 function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionFunc, postSpawnFunc)
 	VehicleSpawner.Map[#VehicleSpawner.Map + 1] = self
 	self.m_Id = #VehicleSpawner.Map
@@ -27,7 +42,15 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 	self.m_PostSpawnFunc = postSpawnFunc
 
 	self.m_Marker = createMarker(x, y, z, "cylinder", 1.2, 255, 0, 0)
-	addEventHandler("onMarkerHit", self.m_Marker, bind(self.markerHit, self))
+	ElementInfo:new(self.m_Marker, "Ausgang", 1.2, "Car", true)
+	--bind(self.markerHit, self)
+	
+	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement)
+		if hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() and hitElement:getType() == "player" and not hitElement.vehicle then 
+			hitElement.m_LastVehicleSpawner = self
+			hitElement:triggerEvent("onTryEnterExit", self.m_Marker, "Fahrzeuge", "files/images/Other/info.png") 
+		end
+	end)
 end
 
 function VehicleSpawner:markerHit(hitElement, matchingDimension)

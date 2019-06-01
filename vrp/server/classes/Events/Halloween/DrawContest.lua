@@ -1,20 +1,20 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
-	["Male einen Kürbis"] = {
-		["Draw"] = {["Start"] = 1509317599, ["Duration"] = 86400},
-		["Vote"] = {["Start"] = 1509404400, ["Duration"] = 86400}
+	["Zeichne einen Kürbis"] = {
+		["Draw"] = {["Start"] = 1540857600, ["Duration"] = 86400},
+		["Vote"] = {["Start"] = 1540944000, ["Duration"] = 86400}
 	},
-	["Male Süßigkeiten"]= {
-		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
-		["Vote"] = {["Start"] = 1509577200, ["Duration"] = 86400} 	--28.10 - 29.10
+	["Zeichne einen Zombie"]= {
+		["Draw"] = {["Start"] = 1541030400, ["Duration"] = 86400}, 	--27.10 - 28.10
+		["Vote"] = {["Start"] = 1541116800, ["Duration"] = 86400} 	--28.10 - 29.10
 	},
-	["Male ein Geisterhaus"]= {
-		["Draw"] = {["Start"] = 1509663600, ["Duration"] = 86400}, 	--29.10 - 30.10
-		["Vote"] = {["Start"] = 1509750000, ["Duration"] = 86400}	--30.10 - 31.10
+	["Zeichne ein Geisterhaus"]= {
+		["Draw"] = {["Start"] = 1541203200, ["Duration"] = 86400}, 	--29.10 - 30.10
+		["Vote"] = {["Start"] = 1541289600, ["Duration"] = 86400}	--30.10 - 31.10
 	},
-	["Male Halloween auf eXo"]= {
-		["Draw"] = {["Start"] = 1509836400, ["Duration"] = 86400},	--31.10 - 01.11
-		["Vote"] = {["Start"] = 1509922800, ["Duration"] = 86400}	--01.11 - 02.11
+	["Zeichne Halloween auf eXo"]= {
+		["Draw"] = {["Start"] = 1541376000, ["Duration"] = 86400},	--31.10 - 01.11
+		["Vote"] = {["Start"] = 1541462400, ["Duration"] = 86400}	--01.11 - 02.11
 	},
 }
 

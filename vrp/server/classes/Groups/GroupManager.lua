@@ -19,9 +19,10 @@ function GroupManager:constructor()
 	self.m_BankAccountServer = BankServer.get("group")
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
+	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
+	addEventHandler("groupRequestMoney", root, bind(self.Event_RequestMoney, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
 	addEventHandler("groupQuit", root, bind(self.Event_Quit, self))
 	addEventHandler("groupDelete", root, bind(self.Event_Delete, self))
@@ -37,7 +38,6 @@ function GroupManager:constructor()
 	addEventHandler("groupSaveRank", root, bind(self.Event_SaveRank, self))
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_ConvertVehicle, self))
 	addEventHandler("groupRemoveVehicle", root, bind(self.Event_RemoveVehicle, self))
-	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
@@ -130,8 +130,19 @@ function GroupManager:sendInfosToClient(player)
 	end
 end
 
+function GroupManager:sendMoneyToClient(player)
+	local group = player:getGroup()
+	if group then
+		player:triggerEvent("groupMoneyBalanceRetrieve", group:getMoney())
+	end
+end
+
 function GroupManager:Event_RequestInfo()
 	self:sendInfosToClient(client)
+end
+
+function GroupManager:Event_RequestMoney()
+	self:sendMoneyToClient(client)
 end
 
 function GroupManager:Event_Create(name, type)
@@ -270,7 +281,7 @@ function GroupManager:Event_Deposit(amount)
 	client:transferMoney(group, amount, "Firmen/Gang Einzahlung", "Group", "Deposit")
 	group:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
-	group:refreshBankGui(client)
+	self:sendMoneyToClient(client)
 end
 
 function GroupManager:Event_Withdraw(amount)
@@ -293,7 +304,7 @@ function GroupManager:Event_Withdraw(amount)
 	group:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 
 	self:sendInfosToClient(client)
-	group:refreshBankGui(client)
+	self:sendMoneyToClient(client)
 end
 
 function GroupManager:Event_AddPlayer(player)
@@ -596,13 +607,6 @@ function GroupManager:Event_RemoveVehicle(veh)
 	end
 end
 
-function GroupManager:Event_OpenBankGui()
-	local group = client:getGroup()
-	if group then
-		group:openBankGui(client)
-	end
-end
-
 function GroupManager:Event_GetShopInfo()
 	local group = client:getGroup()
 	if group then
@@ -731,4 +735,13 @@ end
 
 function GroupManager:removeActiveGroup(group)
 	GroupManager.ActiveMap[group:getId()] = nil
+end
+
+function GroupManager:getFromName(name)
+	for k, group in pairs(GroupManager.Map) do
+		if group:getName() == name then
+			return group
+		end
+	end
+	return false
 end

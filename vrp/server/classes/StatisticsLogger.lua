@@ -78,22 +78,22 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
     return result
 end
 
-function StatisticsLogger:getGangwarAttackLog( rows ) 
+function StatisticsLogger:getGangwarAttackLog( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_Gangwar ORDER BY Id DESC LIMIT ?", sqlLogs:getPrefix(), rows)
     return result
 end
 
-function StatisticsLogger:getGangwarTopDamage( rows ) 
+function StatisticsLogger:getGangwarTopDamage( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY Damage DESC LIMIT ?", sqlLogs:getPrefix(), rows)
 	return result
 end
 
-function StatisticsLogger:getGangwarTopKill( rows ) 
+function StatisticsLogger:getGangwarTopKill( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY Kills DESC LIMIT ?", sqlLogs:getPrefix(), rows)
 	return result
 end
 
-function StatisticsLogger:getGangwarTopMVP( rows ) 
+function StatisticsLogger:getGangwarTopMVP( rows )
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY MVP DESC LIMIT ?", sqlLogs:getPrefix(), rows)
 	return result
 end
@@ -224,19 +224,6 @@ function StatisticsLogger:addVehicleDeleteLog(userId, admin, model, reason)
         sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin), reason)
 end
 
-function StatisticsLogger:addTextLog(logname, text)
-	local filePath = self.m_TextLogPath..logname..".log"
-
-	if not fileExists(filePath) then
-		fileClose(fileCreate(filePath))
-	end
-
-	local file = fileOpen(filePath, false)
-	fileSetPos(file, fileGetSize(file))
-	fileWrite(file, getOpticalTimestamp()..": "..text.."\n" )
-	fileClose(file)
-end
-
 function StatisticsLogger:addPlantLog(player, type)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	sqlLogs:queryExec("INSERT INTO ??_DrugPlants (UserId, Type, Date ) VALUES(?, ?,  NOW())",
@@ -327,6 +314,27 @@ function StatisticsLogger:addAdminAction( player, action, target)
 	end
 end
 
+function StatisticsLogger:addAdminVehicleAction(player, type, vehicle, arg)
+	local userId = 0
+	local vehicle = vehicle
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	if vehicle then
+		if isElement(vehicle) and getElementType(vehicle) == "vehicle" then
+			if not vehicle.m_Id then
+				error("bad vehicle specified ("..inspect(vehicle)..")")	
+			end
+			vehicle = vehicle.m_Id
+		elseif tonumber(vehicle) then
+			vehicle = tonumber(vehicle)
+		else
+			error("bad vehicle specified ("..inspect(vehicle)..")")
+		end
+	end
+
+	sqlLogs:queryExec("INSERT INTO ??_AdminActionVehicle (UserId, VehicleId, Type, Arg, Date ) VALUES(?, ?, ?, ?, NOW())",
+	sqlLogs:getPrefix(), userId, vehicle, type, arg)
+end
+
 function StatisticsLogger:onDebugMessageLog(message, level, file, line)
 sqlLogs:queryExec("INSERT INTO ??_Errors (Message, Level, File, Line, Date) VALUES(?, ?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), message, level, file, line)
@@ -379,8 +387,8 @@ end
 function StatisticsLogger:worldItemLog( action, typ, userId, ownerId, itemId, zone1, zone2)
 	if isElement(ownerId) then ownerId= ownerId:getId() else ownerId = tonumber(ownerId) or 0 end
 	if isElement(userId) then userId = userId:getId() else userId = userId or 0 end
-	if type(ownerId) ~= "number" then 
-		if type(ownerId) == "table" then 
+	if type(ownerId) ~= "number" then
+		if type(ownerId) == "table" then
 			ownerId = ownerId:getId()
 		end
 	end
@@ -421,10 +429,10 @@ function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
 	end
 end
 
-function StatisticsLogger:addfishCaughtLogs(player, FishName, FishSize, Location)
+function StatisticsLogger:addfishCaughtLogs(player, FishName, FishSize, Location, FishId)
 	if player and FishName and FishSize and Location then
-		sqlLogs:queryExec("INSERT INTO ??_fishCaught (PlayerId, FishName, FishSize, Location, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
-			player:getId(), FishName, FishSize, ("%s - %s"):format(Location, self:getZone(player)))
+		sqlLogs:queryExec("INSERT INTO ??_fishCaught (PlayerId, FishName, FishSize, Location, FishId, Date) VALUES (?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			player:getId(), FishName, FishSize, ("%s - %s"):format(Location, self:getZone(player)), FishId)
 	end
 end
 
@@ -493,4 +501,3 @@ function StatisticsLogger:addGangwarDebugLog( warning, areaObj, attackSession)
 		warning, areaID )
 	end
 end
-

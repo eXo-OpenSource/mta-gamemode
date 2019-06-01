@@ -7,7 +7,6 @@
 -- ****************************************************************************
 HUDSpeedo = inherit(Singleton)
 
-
 function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
@@ -15,6 +14,8 @@ function HUDSpeedo:constructor()
 	self:setLightOption()
 	self.m_Draw = bind(self.draw, self)
 	self.m_Indicator = {["left"] = 0, ["right"] = 0}
+	self.m_DigitalFont = VRPFont(30, Fonts.Digital)
+	self.m_MileageFont = VRPFont(20)
 
 	-- Add event handlers
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
@@ -102,7 +103,7 @@ function HUDSpeedo:draw()
 	if vehicleType ~= VehicleType.Plane or vehicle:getModel() == 539 then
 		if getVehicleOverrideLights(vehicle) ~= 2 then
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
-		else 
+		else
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 			if self.m_LightOption then
 				dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_light.png", 0, 0, 0, tocolor(255, 255, 255, lightAlpha))
@@ -125,14 +126,14 @@ function HUDSpeedo:draw()
 		else
 			local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
 			if cruiseSpeed then
-				dxDrawText(("%i"):format(math.floor(cruiseSpeed)), drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Yellow, self.m_Alpha), 1, VRPFont(30, Fonts.Digital), "center")
+				dxDrawText(("%i"):format(math.floor(cruiseSpeed)), drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Yellow, self.m_Alpha), 1, getVRPFont(self.m_DigitalFont), "center")
 			else
 				local speedLimit = SpeedLimit:getSingleton():getSpeed()
-				dxDrawText(speedLimit and math.floor(speedLimit) or "-", drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Orange, self.m_Alpha), 1, VRPFont(30, Fonts.Digital), "center")
+				dxDrawText(speedLimit and math.floor(speedLimit) or "-", drawX+128, drawY+60, nil, nil, Color.changeAlpha(Color.Orange, self.m_Alpha), 1, getVRPFont(self.m_DigitalFont), "center")
 			end
 		end
 
-		dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, self.m_Alpha), 1, VRPFont(20), "center")
+		dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, self.m_Alpha), 1, getVRPFont(self.m_MileageFont), "center")
 		if vehicle:getVehicleType() == VehicleType.Automobile then
 			if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
 				if getTickCount()%1000 > 500 then
@@ -169,7 +170,7 @@ function HUDSpeedo:draw()
 		if localPlayer.vehicle.towedByVehicle then
 			self.m_TrailerFuel = localPlayer.vehicle.towedByVehicle:getFuel()
 			if self.m_TrailerFuel then
-				dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100, 0, 0, 0, tocolor(255, 255, 255, needleAlpha))
+				dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100, 0, 0, tocolor(255, 255, 255, needleAlpha))
 			end
 		end
 		--dxSetBlendMode("blend")
@@ -190,7 +191,7 @@ function HUDSpeedo:allOccupantsBuckeled()
 end
 
 function HUDSpeedo:setAlpha(alpha)
-	if not alpha then 
+	if not alpha then
 		self.m_Alpha = core:get("HUD","SpeedoAlpha", 150/255)*255 or 150
 		return
 	end
@@ -198,7 +199,7 @@ function HUDSpeedo:setAlpha(alpha)
 end
 
 function HUDSpeedo:setLightOption( bool )
-	if bool == nil then 
+	if bool == nil then
 		self.m_LightOption = core:get("HUD", "SpeedoLightOverlay", true)
 		return
 	end
@@ -320,7 +321,7 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 end
 
 function HUDSpeedo.Bind_CruiseControlChange(key, state, change)
-	-- Don't do anything if we're in a vehicle
+	-- Don't do anything if we're not in a vehicle
 	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
 		return
 	end
@@ -336,5 +337,5 @@ function HUDSpeedo.Bind_CruiseControlChange(key, state, change)
 	end
 
 	-- Mark the cruise speed being changed
-	HUDSpeedo:getSingleton().m_CruiseSpeedChanged = true
+	HUDSpeedo:getSingleton().m_CruiseControlChanged = true
 end

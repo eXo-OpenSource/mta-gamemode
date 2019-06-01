@@ -22,6 +22,7 @@ local function pedGotHit ( attacker, weapon, bodypart, loss )
 		triggerEvent ( "onClientPlayerDamage", pedowner[source], attacker, weapon, bodypart, loss )
 		--triggerServerEvent ( "onPlayerDamage", localPlayer, attacker, weapon, bodypart, loss )
 	end
+	cancelEvent()
 end
 
 functions.removeKeyToggles = function ( vehicle )

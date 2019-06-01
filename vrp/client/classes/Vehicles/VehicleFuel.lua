@@ -100,7 +100,7 @@ function VehicleFuel:handleShift(__, state)
 		ele = self.m_GasStation
 	end
 	local pos = ele:getPosition()
-	local __,__,__,__,__,bbz2 = ele:getBoundingBox()
+	local __,__,__,__,__,bbz2 = getElementBoundingBox(ele)
 	self:setPosition(pos + ele.matrix.up*(bbz2 + 0.5))
 end
 

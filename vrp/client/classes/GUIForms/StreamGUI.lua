@@ -45,5 +45,4 @@ function StreamGUI:constructor(title, playCallback, stopCallback, stream)
 			self.m_Streams[name] = url
 		end
 	end
-
 end

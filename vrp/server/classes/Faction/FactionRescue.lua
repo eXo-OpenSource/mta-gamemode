@@ -19,6 +19,7 @@ function FactionRescue:constructor()
 	self.m_VehicleFires = {}
 
 	self.m_LastStrecher = {}
+	self.m_DeathBlips = {}
 	self.m_BankAccountServer = BankServer.get("faction.rescue")
 	self.m_BankAccountServerCorpse = BankServer.get("player.corpse")
 
@@ -26,7 +27,7 @@ function FactionRescue:constructor()
 	-- Barriers
 	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
 	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
-	
+
 	--Garage doors
 	self.m_Gates = {
 		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1125.7, -1381.9, 17), Vector3(0, 88, 90)), --one
@@ -41,14 +42,18 @@ function FactionRescue:constructor()
 		Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1090.3, -1381.9, 17), Vector3(0, 88, 90)), --four
 		Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1090.3, -1374.2, 17), Vector3(0, 88, 270)), --four back
 	}
-	
+
 	for i,v in pairs(self.m_Gates) do
 		v.onGateHit = self.m_GateHitBind
 	end
-	local elevator = Elevator:new()
+	--[[local elevator = Elevator:new()
 	elevator:addStation("Heliport", Vector3(1161.74, -1329.84, 31.49))
 	elevator:addStation("Vordereingang", Vector3(1172.45, -1325.44, 15.41), 270)
-	elevator:addStation("Hintereingang", Vector3(1144.70, -1322.30, 13.57), 90)
+	elevator:addStation("Hintereingang", Vector3(1144.70, -1322.30, 13.57), 90)]]
+
+	InteriorEnterExit:new(Vector3(1172.45, -1325.44, 15.41), Vector3(145.1000, 119.400, 1186), 0, 270, 3, 0) -- front
+	InteriorEnterExit:new(Vector3(1144.70, -1322.30, 13.57), Vector3(170.699, 167.3999, 1191.1999), 90, 90, 3, 0) -- back
+	InteriorEnterExit:new(Vector3(1161.74, -1329.84, 31.49), Vector3(176.6999, 171.5, 1191.1999), 90, 0, 3, 0) -- heliport
 
 
 	self.m_Faction = FactionManager.Map[4]
@@ -88,8 +93,9 @@ function FactionRescue:constructor()
 			if player.m_DeathPickup then
 				player.m_DeathPickup:destroy()
 				player.m_DeathPickup = nil
-				for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-					rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+				if self.m_DeathBlips[player] then
+					self.m_DeathBlips[player]:delete()
+					self.m_DeathBlips[player] = nil
 				end
 			end
 		end
@@ -162,12 +168,14 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
+function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
-				client:setCorrectSkin()
+				if not dontChangeSkin then
+					client:setCorrectSkin()
+				end
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Rescue:Type",false)
@@ -177,8 +185,9 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 			else
 				if wasted then return end
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					--return false
+					client:triggerEvent("companyForceOffduty")
 				end
 				takeAllWeapons(client)
 				if type == "fire" then
@@ -213,7 +222,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 						self:getStretcher(client, vehicle)
 						setElementAlpha(client,255)
 						if client:getExecutionPed() then
-							destroyElement( client:getExecutionPed() ) 
+							destroyElement( client:getExecutionPed() )
 						end
 					end
 				else
@@ -264,13 +273,14 @@ function FactionRescue:getStretcher(player, vehicle)
 	if player:getExecutionPed() then delete(player:getExecutionPed()) end
 	-- Move the Stretcher to the Player
 	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
+	PickupWeaponManager:getSingleton():detachWeapons(player)
 	player:setFrozen(true)
 
 	setTimer(
 		function (player)
-			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5)) 
 			if player:getExecutionPed() then
-				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher ) 
+				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
 			end
 			player:toggleControlsWhileObjectAttached(false, true, true, false, true)
 			player:setFrozen(false)
@@ -299,7 +309,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 
 			if player.m_RescueStretcher.player then
 				local deadPlayer = player.m_RescueStretcher.player
-				if getElementType(deadPlayer) == "ped" then
+				if isElement(deadPlayer) and getElementType(deadPlayer) == "ped" then
 					deadPlayer:setPosition(vehicle.position - vehicle.matrix.forward*4)
 					deadPlayer:setAnimation()
 					if deadPlayer.despawn then
@@ -311,7 +321,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 					self.m_BankAccountServer:transferMoney(self.m_Faction, 100, "Rescue Team Wiederbelebung", "Faction", "Revive")
 					self.m_BankAccountServer:transferMoney(player, 50, "Rescue Team Wiederbelebung", "Faction", "Revive")
 					self.m_Faction:addLog(player, "Wiederbel.", "hat einen Bürger wiederbelebt!")
-				else
+				elseif isElement(deadPlayer) then
 					if deadPlayer:isDead() then
 						deadPlayer:triggerEvent("abortDeathGUI")
 						local pos = vehicle.position - vehicle.matrix.forward*4
@@ -326,6 +336,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 						if deadPlayer:giveReviveWeapons() then
 							deadPlayer:sendSuccess(_("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer))
 						end
+						deadPlayer:clearReviveWeapons()
 					else
 						player:sendShortMessage(_("Der Spieler ist nicht tot!", player))
 					end
@@ -407,8 +418,6 @@ end
 
 function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()
-	local gw = ""
-	if player:isInGangwar() then gw = "(Gangwar)" end
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
 	local money = math.floor(player:getMoney()*0.25)
@@ -417,9 +426,19 @@ function FactionRescue:createDeathPickup(player, ...)
 
 	if not player:isInGangwar() then
 		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-			rescuePlayer:sendShortMessage(_("%s ist gestorben. %s \nPosition: %s - %s", rescuePlayer, player:getName(), gw, getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
-			rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
+			local text = _("%s benötigt ärztliche Hilfe.\nPosition: %s - %s", rescuePlayer, player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true))
+			if rescuePlayer:isFactionDuty() and rescuePlayer:getPublicSync("Rescue:Type") == "medic" then
+				rescuePlayer:sendWarning(text, 10000, "Arzt benötigt")
+			else
+				rescuePlayer:sendShortMessage(text)
+			end
 		end
+		if self.m_DeathBlips[player] then
+			self.m_DeathBlips[player]:delete()
+			self.m_DeathBlips[player] = nil
+		end
+		self.m_DeathBlips[player] = Blip:new("Rescue.png", player.position.x, player.position.y, {faction = 4, duty = true}, 2000, {200, 50, 0})
+		self.m_DeathBlips[player]:setDisplayText("verwundeter Spieler")
 	end
 
 	nextframe(function () if player.m_DeathPickup then player:setPosition(player.m_DeathPickup:getPosition()) end end)
@@ -446,11 +465,12 @@ function FactionRescue:createDeathPickup(player, ...)
 
 								source:destroy()
 								player.m_DeathPickup = nil
-								for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-									rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+								if self.m_DeathBlips[player] then
+									self.m_DeathBlips[player]:delete()
+									self.m_DeathBlips[player] = nil
 								end
 							else
-								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
+								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage! (%s)", hitPlayer, inspect(hitPlayer.m_RescueStretcher.player)))
 							end
 						elseif hitPlayer.m_RescueDefibrillator then
 							self:useDefibrillator(hitPlayer, player)
@@ -476,8 +496,9 @@ function FactionRescue:destroyDeathBlip()
 	if client.m_DeathPickup then
 		client.m_DeathPickup:destroy()
 		client.m_DeathPickup = nil
-		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", client)
+		if self.m_DeathBlips[client] then
+			self.m_DeathBlips[client]:delete()
+			self.m_DeathBlips[client] = nil
 		end
 	end
 end
@@ -504,9 +525,14 @@ function FactionRescue:createPedDeathPickup(ped, pedname)
 	ped.m_DeathPickup = Pickup(pos, 3, 1254, 0)
 
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-		rescuePlayer:sendShortMessage(_("%s ist gestorben.\nPosition: %s - %s", rescuePlayer, pedname, getZoneName(pos), getZoneName(pos, true)))
-		rescuePlayer:triggerEvent("rescueCreateDeathBlip", ped)
+		rescuePlayer:sendShortMessage(_("%s benötigt ärztliche Hilfe.\nPosition: %s - %s", rescuePlayer, pedname, getZoneName(pos), getZoneName(pos, true)))
 	end
+	if self.m_DeathBlips[ped] then
+		self.m_DeathBlips[ped]:delete()
+		self.m_DeathBlips[ped] = nil
+	end
+	self.m_DeathBlips[ped] = Blip:new("Rescue.png", ped.position.x, ped.position.y, {faction = 4, duty = true}, 2000, {150, 50, 0})
+	self.m_DeathBlips[ped]:setDisplayText("verwundeter Bürger")
 
 	nextframe(function () if ped.m_DeathPickup then ped:setPosition(ped.m_DeathPickup:getPosition()) end end)
 
@@ -517,12 +543,16 @@ function FactionRescue:createPedDeathPickup(ped, pedname)
 					if hitPlayer:isFactionDuty() and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
-								ped:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								if ped and isElement(ped) then
+									ped:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 
-								hitPlayer.m_RescueStretcher.player = ped
-								self:removePedDeathPickup(ped)
+									hitPlayer.m_RescueStretcher.player = ped
+									self:removePedDeathPickup(ped)
+								else
+									hitPlayer:sendError(_("Der Bürger konnte nicht auf die Trage gelegt werden (%s)!", hitPlayer, ped))
+								end
 							else
-								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
+								hitPlayer:sendError(_("Es liegt bereits ein Bürger auf der Trage! (%s)", hitPlayer, inspect(hitPlayer.m_RescueStretcher.player)))
 							end
 						else
 							hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
@@ -534,15 +564,15 @@ function FactionRescue:createPedDeathPickup(ped, pedname)
 			end
 		end
 	)
-
 end
 
 function FactionRescue:removePedDeathPickup(ped)
 	if ped.m_DeathPickup and isElement(ped.m_DeathPickup) then
 		ped.m_DeathPickup:destroy()
 		ped.m_DeathPickup = nil
-		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", ped)
+		if self.m_DeathBlips[ped] then
+			self.m_DeathBlips[ped]:delete()
+			self.m_DeathBlips[ped] = nil
 		end
 	end
 end
@@ -550,6 +580,16 @@ end
 function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
+
+	if source:getFaction() and source.m_WasOnDuty and not source.m_DeathInJail then
+		source.m_WasOnDuty = false
+		local position = factionSpawnpoint[source:getFaction():getId()]
+		source:respawn(position[1])
+		source:setInterior(position[2])
+		source:setDimension(position[3])
+		return
+	end
+
 	source:respawn()
 end
 
@@ -578,7 +618,7 @@ function FactionRescue:Event_healPlayer(medic, target)
 			local costs = math.floor(100-target:getHealth())
 			if target:getMoney() >= costs then
 				medic:sendInfo(_("Du hast den Spieler %s für %d$ geheilt!", medic, target.name, costs ))
-				target:sendInfo(_("Du wurdest von medic %s für %d$ geheilt!", target, medic.name, costs ))
+				target:sendInfo(_("Du wurdest vom Medic %s für %d$ geheilt!", target, medic.name, costs ))
 				target:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
 
@@ -884,7 +924,36 @@ function FactionRescue:addVehicleFire(veh)
 		end
 		FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 		StatisticsLogger:getSingleton():addFireLog(-1, math.floor(self.m_VehicleFires[veh]:getTimeSinceStart()/1000), toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction)
-	
+
 		self.m_VehicleFires[veh] = nil
 	end, zone)
+end
+
+function FactionRescue:outputMegaphone(player, ...)
+	local faction = player:getFaction()
+	if faction and faction:isRescueFaction() == true then
+		if player:isFactionDuty() then
+			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():getFaction():isRescueFaction() then
+				local playerId = player:getId()
+				local playersToSend = player:getPlayersInChatRange(3)
+				local receivedPlayers = {}
+				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
+				for index = 1,#playersToSend do
+					playersToSend[index]:sendMessage(text, 255, 255, 0)
+					if playersToSend[index] ~= player then
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
+					end
+				end
+
+				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, receivedPlayers)
+				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
+				return true
+			else
+				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
+	end
+	return false
 end

@@ -5,12 +5,8 @@
 -- *  PURPOSE:     Class for CenteredFreecam
 -- *
 -- ****************************************************************************
-
 CenteredFreecam = inherit(Singleton)
-
-
 addRemoteEvents{"startCenteredFreecam", "stopCenteredFreecam"}
-
 
 function CenteredFreecam:constructor(element, maxZoom, noClip)
     local element = isElement(element) and element or localPlayer
@@ -31,6 +27,14 @@ function CenteredFreecam:constructor(element, maxZoom, noClip)
     RadioGUI:getSingleton():setControlEnabled(false)
 end
 
+function CenteredFreecam:destructor()
+	setCameraTarget(localPlayer)
+	removeEventHandler("onClientRender", root, self.m_RenderEvent)
+	removeEventHandler("onClientCursorMove", root, self.m_MouseEvent)
+	removeEventHandler("onClientKey", root, self.m_ScrollEvent)
+	RadioGUI:getSingleton():setControlEnabled(true)
+end
+
 function CenteredFreecam:handleScroll(btn)
     if btn == "mouse_wheel_up" or btn == "mouse_wheel_down" then
         local z = self.m_ZoomData[1]
@@ -42,16 +46,14 @@ end
 
 function CenteredFreecam:handleMouse(rx, ry, x, y)
     if isCursorShowing() then return end
-    local sx, sy = guiGetScreenSize ()
-    self.m_AngleZ = (self.m_AngleZ + ( x - sx / 2 ) / 10 ) % 360
-    self.m_AngleX = (self.m_AngleX + ( y - sy / 2 ) / 10 ) % 360
+    self.m_AngleZ = (self.m_AngleZ + ( x - screenWidth / 2 ) / 10 ) % 360
+    self.m_AngleX = (self.m_AngleX + ( y - screenHeight / 2 ) / 10 ) % 360
     if ( self.m_AngleX > 180 ) then
         if ( self.m_AngleX < 315 ) then self.m_AngleX = 315 end
     else
         if ( self.m_AngleX > 45 ) then self.m_AngleX = 45 end
     end
 end
-
 
 function CenteredFreecam:render()
     local desiredZoom = self.m_ZoomData[2] < self.m_ZoomData[1] and self.m_ZoomData[2] or self.m_ZoomData[1]
@@ -69,18 +71,10 @@ function CenteredFreecam:render()
         local hit, x, y, z = processLineOfSight(self.m_Element.position, ox, oy, oz, true, true, false, self.m_CheckObjectsOnClip, false, false, true, false, self.m_Element)
         if hit and getDistanceBetweenPoints3D(x, y, z, self.m_Element.position) < getDistanceBetweenPoints3D(ox, oy, oz, self.m_Element.position) then
             self.m_ZoomData[2] = getDistanceBetweenPoints3D(x, y, z, self.m_Element.position)
-        else 
+        else
             self.m_ZoomData[2] = self.m_MaxZoom
         end
     end
-end
-
-function CenteredFreecam:destructor()
-    setCameraTarget(localPlayer)
-    removeEventHandler("onClientRender", root, self.m_RenderEvent)
-    removeEventHandler("onClientCursorMove", root, self.m_MouseEvent)
-    removeEventHandler("onClientKey", root, self.m_ScrollEvent)
-    RadioGUI:getSingleton():setControlEnabled(true)
 end
 
 function CenteredFreecam.isEnabled()
@@ -99,6 +93,5 @@ CenteredFreecam.stop = function()
     if CenteredFreecam:isInstantiated() then
         delete(CenteredFreecam:getSingleton())
     end
-    
 end
 addEventHandler("stopCenteredFreecam", root, CenteredFreecam.stop)

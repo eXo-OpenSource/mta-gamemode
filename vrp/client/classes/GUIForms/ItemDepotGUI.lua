@@ -14,7 +14,7 @@ function ItemDepotGUI:constructor()
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
 
     self.ms_SlotsSettings = {
-        ["item"] = {["color"] = Color.LightBlue, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"}
+        ["item"] = {["color"] = Color.Accent, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"}
     }
 
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Item Depot", true, true, self)
@@ -43,7 +43,7 @@ function ItemDepotGUI:constructor()
     self:addSlot(5, 320, 250)
     self:addSlot(6, 470, 250)
 
-    self.m_ToDepot = GUIButton:new(275, 70, 30, 250, ">>", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1)
+    self.m_ToDepot = GUIButton:new(275, 70, 30, 250, ">>", self.m_Window):setBackgroundColor(Color.Accent):setFontSize(1)
     self.m_ToDepot:setEnabled(false)
 
     self.m_ToDepot.onLeftClick = function() self:toDepot() end

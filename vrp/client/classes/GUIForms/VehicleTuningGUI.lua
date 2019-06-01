@@ -8,7 +8,6 @@
 VehicleTuningGUI = inherit(GUIForm)
 addRemoteEvents{"vehicleTuningShopEnter", "vehicleTuningShopExit"}
 
-
 function VehicleTuningGUI:constructor(vehicle, specialType)
     GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 
@@ -32,7 +31,7 @@ function VehicleTuningGUI:constructor(vehicle, specialType)
 
 		GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
         GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
-        GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.LightBlue, self.m_Window)
+        GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.Accent, self.m_Window)
     end
 
     -- Upgrade selection rect
@@ -80,7 +79,7 @@ function VehicleTuningGUI:constructor(vehicle, specialType)
     self.m_Vehicle:setOverrideLights(2)
 end
 
-function VehicleTuningGUI:destructor(closedByServer)
+function VehicleTuningGUI:virtual_destructor(closedByServer)
     if not closedByServer then
         self:emptyCart()
         self:resetUpgrades(true)-- Tell the server that we do not want to upgrade anything
@@ -98,8 +97,6 @@ function VehicleTuningGUI:destructor(closedByServer)
     self.m_Vehicle:setOverrideLights(0)
     showChat(true)
 	RadioGUI:getSingleton():setVolume(self.m_CarRadioVolume)
-
-    GUIForm.destructor(self)
 end
 
 function VehicleTuningGUI:closeAllWindows()

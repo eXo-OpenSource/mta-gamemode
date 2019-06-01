@@ -21,6 +21,7 @@ function KeyBinds:constructor()
 	self.m_VehiclePickUp = bind(LocalPlayer.vehiclePickUp, localPlayer)
 	self.m_VehicleELS = bind(self.vehicleELS, self)
 	self.m_Entrance = bind(self.tryEnterEntrance, self)
+	self.m_PoliceMegaphone = bind(self.usePoliceMegaphone, self)
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
@@ -47,6 +48,8 @@ function KeyBinds:constructor()
 		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Rundumleuchten", ["func"] = self.m_VehicleELS, ["trigger"] = "down"};
 		["KeyToggleReddot"]			= {["defaultKey"] =  "N/A", ["name"] = "Reddot Umschalten", ["func"] = function() HUDUI:getSingleton().m_RedDot = not HUDUI:getSingleton().m_RedDot end, ["trigger"] = "up"};
 		["KeyEntranceUse"]			= {["defaultKey"] =  "f", ["name"] = "Betreten", ["func"] = self.m_Entrance, ["trigger"] = "up"};
+		["KeyToggleTaser"]			= {["defaultKey"] = "o", ["name"] = "Taser ziehen", ["func"] = function() if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then triggerServerEvent("onPlayerItemUseServer", localPlayer, false, false, "Taser") end end, ["trigger"] = "down"};
+		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
@@ -157,25 +160,27 @@ end
 
 function KeyBinds:animationMenu()
 	if not localPlayer:isInVehicle() then
-		if not AnimationGUI:isInstantiated() then
-			AnimationGUI:new()
+		if not WalkingstyleGUI:isInstantiated() then
+			if not AnimationGUI:isInstantiated() then
+				AnimationGUI:new()
+			else
+				delete(AnimationGUI:getSingleton())
+			end
 		else
-			delete(AnimationGUI:getSingleton())
+			delete(WalkingstyleGUI:getSingleton())
 		end
 	end
 end
 
 function KeyBinds:policePanel()
-	if not PolicePanel:isInstantiated() then
-		if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 then
-			if localPlayer:getPublicSync("Faction:Duty") == true then
-				PolicePanel:new()
-			else
-				ErrorBox:new(_"Du bist nicht im Dienst!")
-			end
-		end
-	else
-		delete(PolicePanel:getSingleton())
+	local isValidCop = (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) and localPlayer:getPublicSync("Faction:Duty")
+	if not PolicePanel:isInstantiated() and isValidCop then --create new only if player is cop
+		PolicePanel:new()
+		return true
+	end
+	if PolicePanel:getSingleton():isVisible() or isValidCop then -- hide it anytime, show it only if player is cop
+		PolicePanel:getSingleton():toggle()	
+		PolicePanel:getSingleton():updateCurrentView()
 	end
 end
 
@@ -199,7 +204,10 @@ function KeyBinds:vehicleELS(__, keyState)
 	if localPlayer.vehicle and localPlayer.vehicle.m_ELSPreset then 
 		if localPlayer.vehicleSeat == 0 then
 			if VehicleELS:getSingleton():isEnabled() then
-			triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+				triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+				if localPlayer.vehicle.towedByVehicle and localPlayer.vehicle.towedByVehicle.m_ELSPreset and localPlayer.vehicle.towedByVehicle:getCategory() == 2 then -- trailer
+					triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle.towedByVehicle, not localPlayer.vehicle.towedByVehicle.m_ELSActive) 
+				end
 			else
 				WarningBox:new(_"Um die Rundumleuchten zu sehen musst du diese in den Einstellungen (F2) aktivieren.")
 			end
@@ -207,8 +215,48 @@ function KeyBinds:vehicleELS(__, keyState)
 	end
 end
 
-function KeyBinds:tryEnterEntrance( __, keystate) 
-	triggerEvent("onTryEnterance", localPlayer)
+function KeyBinds:tryEnterEntrance( __, keystate)
+	if keystate == "up" then
+		if not localPlayer.m_LastTryEntrance or localPlayer.m_LastTryEntrance+500 <= getTickCount() then
+			if localPlayer:getPublicSync("TeleporterPickup") and isElement(localPlayer:getPublicSync("TeleporterPickup")) then 
+				if Vector3(localPlayer:getPosition() - localPlayer:getPublicSync("TeleporterPickup"):getPosition()):getLength() < 3 then
+					triggerServerEvent("onTryEnterTeleporter", localPlayer)
+				end
+			end
+			if localPlayer:getPrivateSync("EntranceId") then
+				triggerEvent("onTryEnterance", localPlayer)
+			end
+			if localPlayer.m_Entrance then
+				if localPlayer.m_Entrance.m_Text == "AUFZUG" then
+					triggerServerEvent("onTryElevator", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "HAUS" then
+					triggerServerEvent("houseRequestGUI", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "FAHRZEUGE" then 
+					triggerServerEvent("onTryVehicleSpawner", localPlayer)
+				else
+					triggerServerEvent("GroupPropertyClientInput", localPlayer) 
+					triggerServerEvent("clientTryEnterEntrance", localPlayer)
+				end
+			end
+			localPlayer.m_LastTryEntrance = getTickCount()
+		end
+	end
+end
+
+function KeyBinds:usePoliceMegaphone()
+	if not self.m_LastMegaphoneUsage then self.m_LastMegaphoneUsage = 0 end
+	if getTickCount() - self.m_LastMegaphoneUsage < 7000 then
+		return
+	end
+
+	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() then
+		if localPlayer:getPublicSync("Faction:Duty") then 
+			if localPlayer.vehicle and getElementData(localPlayer.vehicle, "StateVehicle") and localPlayer == localPlayer.vehicle.controller then
+				self.m_LastMegaphoneUsage = getTickCount()
+				triggerServerEvent("PoliceAnnouncements:triggerChaseSound", localPlayer, localPlayer.vehicle) 
+			end 
+		end
+	end
 end
 
 --[[

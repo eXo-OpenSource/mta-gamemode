@@ -22,8 +22,8 @@ addEventHandler("bloodFx", root, function(item)
 	if isElement(source) then
 		setTimer(
 			function(player)
-				local pos = player.position
-				fxAddBlood(pos.x, pos.y, pos.z+0.6, 0, 0, 0, 150, 1)
+				local x, y, z = getElementPosition(player)
+				fxAddBlood(x, y, z+0.6, 0, 0, 0, 150, 1)
 			end, 100, 40, source
 		)
 

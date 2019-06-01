@@ -188,7 +188,7 @@ function Vehicle:onPlayerExit(player, seat)
 			setControlState( player, "handbrake", false)
 		end
 
-		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+		if VEHICLE_SPECIAL_SMOKE[source:getModel()] then
 			self:toggleInternalSmoke()
 			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
@@ -337,7 +337,7 @@ function Vehicle:toggleEngine(player)
 		return true
 	end
 
-	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
+	if self:hasKey(player) or player:getRank() >= ADMIN_RANK_PERMISSION["toggleVehicleHandbrake"] or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
 		if state == true then
 			if not VEHICLE_BIKES[self:getModel()] then
 				if self.m_Fuel <= 0 then
@@ -368,6 +368,7 @@ function Vehicle:toggleEngine(player)
 						end
 						setTimer(
 							function()
+								if not isElement(self) then return end
 								self:setEngineState(true)
 								local occs = self:getOccupants()
 								if occs then
@@ -452,7 +453,7 @@ function Vehicle:setEngineState(state)
 	self.m_StartingEnginePhase = false
 
 	if instanceof(self, PermanentVehicle, true) then return end
-	if self.controller then
+	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
 	end
 end
@@ -678,7 +679,7 @@ function Vehicle:setCurrentPositionAsSpawn(type)
   self.m_SpawnInt = self:getInterior()
 end
 
-function Vehicle:respawnOnSpawnPosition()
+function Vehicle:respawnOnSpawnPosition()  
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
@@ -695,6 +696,7 @@ function Vehicle:respawnOnSpawnPosition()
 		self:toggleELS(false)
 		self:toggleDI(false)
 		self:resetIndicator()
+		self.m_HasBeenUsed = 0
 
 		if self.despawned then
 			self.despawned = false
@@ -871,6 +873,20 @@ end
 
 function Vehicle:getFaction() end
 
+function Vehicle:updateTemplate()
+	if self.m_Template then
+		self.m_TemplateName = TuningTemplateManager:getSingleton():getNameFromId( self.m_Template ) or ""
+		setElementData(self, "TemplateName", self.m_TemplateName)
+	end
+end
+
+function Vehicle:setTemplate(template)
+	self.m_Template = template
+end
+
+function Vehicle:getTemplateName()
+	return self.m_TemplateName
+end
 
 Vehicle.isPermanent = pure_virtual
 Vehicle.respawn = pure_virtual

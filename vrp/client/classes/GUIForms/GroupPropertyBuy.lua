@@ -7,7 +7,8 @@
 -- ****************************************************************************
 GroupPropertyBuy = inherit(GUIForm)
 inherit(Singleton, GroupPropertyBuy)
-addRemoteEvents{"GetImmoForSale","ForceClose"}
+addRemoteEvents{"GetImmoForSale","ForceClose" }
+
 function GroupPropertyBuy:constructor()
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.3/2, screenWidth*0.4, screenHeight*0.3)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Erwerbliche Immobilien", true, true, self)
@@ -22,6 +23,17 @@ function GroupPropertyBuy:constructor()
 	addEventHandler("GetImmoForSale", localPlayer, self.m_GetImmoFunc)
 	self.m_ForceCloseFunc = bind( GroupPropertyBuy.forceClose, self)
 	addEventHandler("ForceClose", localPlayer, self.m_ForceCloseFunc)
+end
+
+function GroupPropertyBuy:virtual_destructor()
+	removeEventHandler("GetImmoForSale", localPlayer, self.m_GetImmoFunc)
+	removeEventHandler("ForceClose", localPlayer, self.m_ForceCloseFunc)
+	setElementInterior(localPlayer, 5)
+	setElementDimension( localPlayer, 0)
+	setElementPosition( localPlayer, self.m_StartPos[1],self.m_StartPos[2],self.m_StartPos[3])
+	setCameraInterior(5)
+	setCameraTarget(localPlayer)
+	setTimer(setElementFrozen, 3000,1,localPlayer,false)
 end
 
 function GroupPropertyBuy:forceClose()
@@ -48,27 +60,14 @@ function GroupPropertyBuy:PreviewButton_Click()
 			local interior = self.m_ImmoTable[selected.Id].m_Interior
 			local dimension = self.m_ImmoTable[selected.Id].m_Dimension
 			self:setVisible(false)
-			setTimer(function() self:setVisible(true) end, 5000, 1)
-			--setElementInterior(localPlayer,interior)
-			--setElementDimension( localPlayer, dimension)
-			--setCameraInterior(interior)
+			setTimer(function() self:setVisible(true) end, 7500, 1)
+			setElementInterior(localPlayer, 0)
+			setElementDimension(localPlayer, 0)
+			setCameraInterior(0)
 			setCameraMatrix(matrix[1], matrix[2], matrix[3],matrix[4], matrix[5], matrix[6])
 		end
 	end
 end
-
-function GroupPropertyBuy:destructor()
-	GUIForm.destructor(self)
-	removeEventHandler("GetImmoForSale", localPlayer, self.m_GetImmoFunc)
-	removeEventHandler("ForceClose", localPlayer, self.m_ForceCloseFunc)
-	setElementInterior(localPlayer, 5)
-	setElementDimension( localPlayer, 0)
-	setElementPosition( localPlayer, self.m_StartPos[1],self.m_StartPos[2],self.m_StartPos[3])
-	setCameraInterior(5)
-	setCameraTarget(localPlayer)
-	setTimer(setElementFrozen, 3000,1,localPlayer,false)
-end
-
 
 function GroupPropertyBuy:updateList( _table )
 	self.m_ImmoTable = _table

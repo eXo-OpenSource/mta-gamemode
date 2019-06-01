@@ -17,8 +17,8 @@ function CustomModelManager:constructor()
 	self:createObjectsForMods()
 
 	--world objects
-	self:loadImportCOL("files/models/buildings/mech.col", 7520)
-	self:loadImportDFF("files/models/buildings/mech.dff", 7520)
+	--self:loadImportCOL("files/models/buildings/mech.col", 7520)
+	--self:loadImportDFF("files/models/buildings/mech.dff", 7520)
 
 	--Kart-Track
 	self:loadImportCOL("files/models/buildings/kart.col", 13083)
@@ -39,7 +39,7 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/hedge01_law.col", 6046)
 	self:loadImportDFF("files/models/objects/hedge01_law.dff", 6046)
 	self:setLODDistance(6046, 500)
-	
+
 	--bank
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)
 	self:loadImportCOL("files/models/buildings/casino_heist/bank_fence.col", 8481)
@@ -69,7 +69,7 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/fence.col", 1866)
 	self:loadImportTXD("files/models/objects/fence.txd", 1866)
 	self:loadImportDFF("files/models/objects/fence.dff", 1866)
-	
+
 	-- fuel nozzle
 	self:loadImportCOL("files/models/wearables/fuelnozzle.col", 1909)
 	self:loadImportTXD("files/models/wearables/fuelnozzle.txd", 1909)
@@ -78,6 +78,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/objects/gasstation.dff", 1676)
 
 	--other objects
+	self:loadImportTXD("files/models/objects/Singleweed.txd", 1870)
+	self:loadImportDFF("files/models/objects/Singleweed.dff", 1870)
+	self:setLODDistance(1870, 50)
 	-- Blitzer
 	self:loadImportCOL("files/models/objects/blitzer.col", 3902)
 	self:loadImportTXD("files/models/objects/blitzer.txd", 3902)
@@ -157,6 +160,8 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/vehicles/extensions/fire_main.col", 1932)
 	self:loadImportTXD("files/models/vehicles/extensions/fire_main.txd", 1932)
 	self:loadImportDFF("files/models/vehicles/extensions/fire_main.dff", 1932)
+	self:loadImportTXD("files/models/vehicles/extensions/taxi_sign.txd", 1853)
+	self:loadImportDFF("files/models/vehicles/extensions/taxi_sign.dff", 1853)
 
 	self:loadImportDFF("files/models/vehicles/dozer.dff", 486)
 	self:loadImportDFF("files/models/vehicles/dumper.dff", 406)
@@ -190,12 +195,20 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/objects/XmasTree1.col", 6972)
 		self:loadImportTXD("files/models/objects/XmasTree1.txd", 6972)
 		self:loadImportDFF("files/models/objects/XmasTree1.dff", 6972)
+
 		self:loadImportCOL("files/models/objects/XmasBox.col", 3878)
 		self:loadImportTXD("files/models/objects/XmasBox.txd", 3878)
 		self:loadImportDFF("files/models/objects/XmasBox.dff", 3878)
+
 		self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
+
+		self:loadImportTXD("files/models/skins/snowman.txd", 260)
+		self:loadImportDFF("files/models/skins/snowman.dff", 260)
+
+		self:loadImportTXD("files/models/vehicles/reindeerSledge.txd", 609)
+		self:loadImportDFF("files/models/vehicles/reindeerSledge.dff", 609)
 	end
 
 	--Easter Event:

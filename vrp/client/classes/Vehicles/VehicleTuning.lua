@@ -65,7 +65,6 @@ function VehicleTuning:getTuning(type)
 		return self.m_Tuning[type]
 	else
 		return false
-		--outputDebugString("Invalid Tuning Type "..type)
 	end
 end
 

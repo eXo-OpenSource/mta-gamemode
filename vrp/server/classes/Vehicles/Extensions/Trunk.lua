@@ -121,21 +121,29 @@ function Trunk:addItem(player, item, amount, value)
 end
 
 function Trunk:takeItem(player, slot)
-	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() --TODO: add the item to state-evidence
+	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() 
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
 			local item = self.m_ItemSlot[slot]["Item"]
 			local amount = self.m_ItemSlot[slot]["Amount"]
 
-			if player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"]) then
-				if isCopSeizing then
-					self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName()))
+			local success = false
+			if isCopSeizing then
+				if FactionState:getSingleton():isItemIllegal(item) then 
+					success = StateEvidence:getSingleton():addItemToEvidence(player, item, amount)
+					if success then self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName())) end
+				else
+					player:sendError(_("Dieses Item ist nicht illegal!", player))
 				end
+			else
+				success = player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
+				if success then player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot)) end
+			end
+			if success then
 				self.m_ItemSlot[slot]["Item"] = "none"
 				self.m_ItemSlot[slot]["Amount"] = 0
 
 				self.m_ItemSlot[slot]["Value"] = ""
-				player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
 				self:refreshClient(player)
 				StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
 				return
@@ -161,7 +169,7 @@ function Trunk:takeWeapon(player, slot)
 						self.m_WeaponSlot[slot]["WeaponId"] = 0
 						self.m_WeaponSlot[slot]["Amount"] = 0
 						if isCopSeizing then
-							FactionState:getSingleton():addWeaponToEvidence(player, weaponId, amount, player:getFaction():getId())
+							StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(player, weaponId, amount)
 							self.m_Vehicle:sendOwnerMessage(_("%s hat eine/n %s mit %d Schuss aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), WEAPON_NAMES[weaponId], amount, self.m_Vehicle:getName()))
 						else
 							player:giveWeapon(weaponId, amount)

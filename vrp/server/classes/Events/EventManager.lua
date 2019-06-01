@@ -56,6 +56,11 @@ function EventManager:constructor()
 	end
 end
 
+function EventManager:isEvent(event)
+	if not (event and event.getId) then return false end
+	return self.m_RunningEvents[event:getId()]
+end
+
 function EventManager:unlinkEvent(event)
 	self.m_RunningEvents[event:getId()] = nil
 end
@@ -63,8 +68,7 @@ end
 function EventManager:openRandomEvent()
 	-- Get a random event
 	local eventClass = self.m_RegisteredEvents[math.random(1, #self.m_RegisteredEvents)]
-
-	self:openEvent(eventClass)
+	return self:openEvent(eventClass)
 end
 
 function EventManager:openEvent(eventClass)
@@ -81,6 +85,7 @@ function EventManager:openEvent(eventClass)
 	local startTime = getRealTime().timestamp + 5*60
 	event:setStartTime(startTime)
 	setTimer(bind(event.start, event), 5*60*1000, 1)
+	return event
 end
 
 function EventManager:isPlayerInEvent(player, eventClass)

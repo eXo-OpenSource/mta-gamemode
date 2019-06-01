@@ -15,7 +15,7 @@ function CompanyGUI:constructor()
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_LeaderTab = false
@@ -46,6 +46,26 @@ function CompanyGUI:constructor()
 
 		self.m_SanNewsStartStreetrace = GUIButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", tabAllgemein):setBarEnabled(true)
 		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
+
+		self.m_SanNewsAddBlip = GUIButton:new(self.m_Width*0.02, self.m_Height*0.84, self.m_Width*0.3, self.m_Height*0.07, _"Blip hinzufügen", tabAllgemein):setBarEnabled(true)
+		self.m_SanNewsAddBlip.onLeftClick =
+		function()
+			self:hide()
+			CustomF11Map:getSingleton():setCustomClickCallback(
+				function(posX, posY)
+					InputBox:new(_"Blip Beschreibung", _"Gib einen Namen für den Blip ein, der auf der F11 Karte angezeigt wird:",
+						function(text)
+							triggerServerEvent("sanNewsAddBlip", localPlayer, posX, posY, text)
+						end
+					)
+					return true
+				end
+			)
+		end
+
+		self.m_SanNewsDeleteBlips = GUIButton:new(self.m_Width*0.33, self.m_Height*0.84, self.m_Height*0.07, self.m_Height*0.07, FontAwesomeSymbols.Trash, tabAllgemein):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Red)
+		self.m_SanNewsDeleteBlips.onLeftClick = function() triggerServerEvent("sanNewsDeleteBlips", localPlayer) end
+		self.m_SanNewsDeleteBlips:setTooltip("Alle Blips löschen")
 	end
 
 	self.m_BindButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabAllgemein):setBarEnabled(true)
@@ -58,17 +78,20 @@ function CompanyGUI:constructor()
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
-	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
+
+	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)
 	self.m_CompanyPlayersGrid:addColumn(_"", 0.06)
 	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_CompanyPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_CompanyPlayersGrid:addColumn(_"Aktivität", 0.27)
-	self.m_CompanyAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
-	self.m_CompanyRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
-	self.m_CompanyRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
-	self.m_CompanyRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
-	self.m_CompanyToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyPlayersGrid:setSortable{"Spieler", "Rang", "Aktivität"}
+	self.m_CompanyPlayersGrid:setSortColumn(_"Rang", "down")
 
+	self.m_CompanyAddPlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_CompanyRemovePlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_CompanyRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 --	self.m_CompanyQuitButton.onLeftClick = bind(self.CompanyQuitButton_Click, self)
@@ -119,11 +142,11 @@ function CompanyGUI:addLeaderTab()
 		self.m_CompanyRangGrid:addColumn(_"Rang", 0.2)
 		self.m_CompanyRangGrid:addColumn(_"Name", 0.8)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric(true, true)
-	
+
 		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
@@ -142,8 +165,12 @@ function CompanyGUI:addLeaderTab()
 			end
 		end
 
-		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
+
+		self.m_CompanyForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_CompanyForumSyncButton.onLeftClick = bind(self.CompanyForumSyncButton_Click, self)
+
 		self.m_LeaderTab = true
 	end
 end
@@ -161,7 +188,6 @@ function CompanyGUI:onSelectRank(name,rank)
 end
 
 function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins)
-	--self:adjustCompanyTab(rank or false)
 	if id then
 		if id > 0 then
 			self.m_Id = id
@@ -171,14 +197,13 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 			self.m_CompanyRankLabel:setText(tostring(rank).." - "..rankNames[rank])
 			self.m_CompanyMoneyLabel:setText(tostring(money).."$")
 
-			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
-
 			self.m_CompanyPlayersGrid:clear()
-			for _, info in ipairs(players) do
+			for playerId, info in pairs(players) do
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local item = self.m_CompanyPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
-				item.Id = info.playerId
+				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
+				item.Id = playerId
 
 				item.onLeftClick =
 					function()
@@ -254,6 +279,11 @@ function CompanyGUI:CompanyPlayerFileButton_Click()
 	HistoryPlayerGUI:new(CompanyGUI)
 end
 
+function CompanyGUI:CompanyForumSyncButton_Click()
+	-- triggerServerEvent("companyForumSync", root)
+	self:close()
+	ForumPermissionsGUI:new("company", localPlayer:getCompany().m_Id)
+end
 
 function CompanyGUI:CompanyRemovePlayerButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()

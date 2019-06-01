@@ -31,7 +31,7 @@ SHOP_TYPES = {
 		["Name"] = "24/7",
 		["Interior"] = {18, Vector3(-30.98, -91.9, 1003.5)},
 		["Ped"] = {202, Vector3(-28.15, -91.64, 1003.55), 0},
-		["Marker"] = Vector3(-28, -89.9, 1002.7),
+		--["Marker"] = Vector3(-28, -89.9, 1002.7),
 		["Class"] = ItemShop
 	},
 	[6] = {
@@ -83,7 +83,7 @@ SHOP_TYPES = {
 	},
 	[13] = {
 		["Name"] = "Tankstelle",
-		["Marker"] = Vector3(-23.37, -55.63, 1002.6),
+		--["Marker"] = Vector3(-23.37, -55.63, 1002.6),
 		["Ped"] = {160, Vector3(-23.46, -57.32, 1003.55), 0},
 		["Interior"] = {6, Vector3(-27.48, -58.27, 1003.55)},
 		["Class"] = GasStationShop
@@ -174,17 +174,16 @@ SHOP_TYPES = {
 		["Ped"] = {205, Vector3(1472.5, -1675, 14.75), 200},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
-		["disabled"] = true--not EVENT_CHRISTMAS
+		["disabled"] = not (EVENT_CHRISTMAS and EVENT_CHRISTMAS_MARKET)
 	},
 	[25] = {
 		["Name"] = "Feuerwerks-Shop",
-		["Marker"] = Vector3(1485.77, -1792.85, 12.7),
-		["Ped"] = {32, Vector3(1485.78, -1794.96, 13.55), 0},
+		["Marker"] = Vector3(1455.08, -1744.07, 12.6),
+		["Ped"] = {32, Vector3(1452.87, -1745.18, 13.55), 300},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
 		["disabled"] = not FIREWORK_SHOP_ACTIVE
 	}
-
 }
 
 SHOP_ITEMS = {
@@ -232,13 +231,21 @@ SHOP_ITEMS = {
 		["Cuba-Libre"] = 12
 	};
 	["Angel- / Outdoor-Shop"] = {
-		["Angelrute"] = 150,
+		["Fischlexikon"] = 12500,
+		["Bambusstange"] = 150,
+		["Angelrute"] = 15000,
+		["Profi Angelrute"] = 40000,
+		["Legendäre Angelrute"] = 120000,
 		["Kleine Kühltasche"] = 50,
 		["Kühltasche"] = 100,
 		["Kühlbox"] = 250,
 		["Motorcross-Helm"] = 2000,
 		["Radio"] = 1700,
-		--["Köder"] = 5,
+		["Köder"] = 5,
+		["Leuchtköder"] = 40,
+		["Pilkerköder"] = 40,
+		["Schwimmer"] = 2500,
+		["Spinner"] = 5000,
 	};
 	["Halloween Shop"] = {
 		["Kuheuter mit Pommes"] = 25,
@@ -270,6 +277,31 @@ SHOP_ITEM_WEAPONS = {
 	["24/7"] = {
 		[43] = 250, -- Kamera mit einem Film
 	};
+}
+
+SHOP_ITEM_SORT = {
+	["Angel- / Outdoor-Shop"] = {
+		{"Fischlexikon"},
+		{true, "Angelruten"}, --GridListItemNoClick
+		{"Bambusstange"},
+		{"Angelrute"},
+		{"Profi Angelrute"},
+		{"Legendäre Angelrute"},
+		{true, "Kühltaschen"}, --GridListItemNoClick
+		{"Kleine Kühltasche"},
+		{"Kühltasche"},
+		{"Kühlbox"},
+		{true, "Köder"},--GridListItemNoClick
+		{"Köder"},
+		{"Leuchtköder"},
+		{"Pilkerköder"},
+		{true, "Zubehör"}, --GridListItemNoClick
+		{"Schwimmer"},
+		{"Spinner"},
+		{true, "Outdoor"}, --GridListItemNoClick
+		{"Motorcross-Helm"},
+		{"Radio"},
+	}
 }
 
 SHOP_OWNER_TYPES = {

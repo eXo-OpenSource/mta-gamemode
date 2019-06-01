@@ -11,7 +11,7 @@ inherit(Singleton, Phone)
 function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-310, screenHeight-620, 295, 600)
 
-	self.m_Phone = core:get("Phone", "Phone", "iPhone")
+	self.m_Phone = core:get("Phone", "PhoneModel", 1)
 	self.m_Background = core:get("Phone", "Background", "iOS_7")
 	self.m_PhoneOn = core:get("Phone", "On", true)
 
@@ -23,7 +23,6 @@ function Phone:constructor()
 	self:registerApp(AppSettings)
 	self:registerApp(AppContacts)
 	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", (INGAME_WEB_PATH .. "/ingame/vRPphone/apps/messages/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
-	--self:registerApp(AppNametag)
 	self.m_AppDashboard = self:registerApp(AppDashboard)
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(AppOnOff)
@@ -35,10 +34,10 @@ function Phone:constructor()
 	self:registerApp(AppSanNews)
 	self:registerApp(AppNotes)
 	self:registerApp(AppSkribble)
-
+	--self:registerApp(AppNametag)
 
 	-- Add GUI elements
-	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)
+	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, ("files/images/Phone/%s"):format(PHONE_MODELS[self.m_Phone].Image), self)
 	self.m_BackgroundImage = GUIImage:new(17, 71, 260, 460, ("files/images/Phone/Backgrounds/%s.png"):format(self.m_Background), self)
 
 	-- Create app icons
@@ -82,7 +81,7 @@ function Phone:isOn()
 end
 
 function Phone:loadHomeScreen()
-	local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
+	local iconPath = self:getAppPath()
 
 	self.m_AppIcons = {}
 	self.m_AppLabels = {}
@@ -100,23 +99,25 @@ function Phone:loadHomeScreen()
 	end
 end
 
+function Phone:getAppPath()
+	return ("files/images/Phone/Apps_%s/"):format(PHONE_MODELS[self.m_Phone].IconPreset)
+end
+
 function Phone:refreshAppIcons()
-	local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
+	local iconPath = self:getAppPath()
 	for k, app in ipairs(self.m_Apps) do
 		self.m_AppIcons[k]:setImage(iconPath..app:getIcon())
 	end
 end
 
-function Phone:setPhone(phone)
-	self.m_PhoneImage:setImage("files/images/Phone/"..phone:gsub("-", "")..".png")
-	self.m_Phone = phone
+function Phone:setPhone(modelId)
+	self.m_PhoneImage:setImage(("files/images/Phone/%s"):format(PHONE_MODELS[modelId].Image))
+	self.m_Phone = modelId
 	self:refreshAppIcons()
 end
 
 function Phone:setBackground(background)
 	self.m_BackgroundImage:setImage(("files/images/Phone/Backgrounds/%s.png"):format(background))
-	--self.m_Background = background
-	--self:refreshAppIcons()
 end
 
 function Phone:registerApp(appClasst)
@@ -180,6 +181,7 @@ function Phone:openApp(app)
 	-- Show phone if not shown already
 	if not self:isVisible() then
 		self:open()
+		showCursor(false)
 	end
 	self.m_CurrentApp = app
 

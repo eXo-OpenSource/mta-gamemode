@@ -14,7 +14,8 @@ function ShopManager:constructor()
 	self:loadVehicleShops()
 	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyWeapon", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
-	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder"
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder", 
+	"requestVehicleShops", "editVehicleShop"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -39,7 +40,8 @@ function ShopManager:constructor()
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
 	addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
 	addEventHandler("barShopStopStripper", root, bind(self.barStopStripper, self))
-
+	addEventHandler("requestVehicleShops", root, bind(self.onRequestVehicleShops, self))
+	addEventHandler("editVehicleShop", root, bind(self.editShopVehicle, self))
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
 			ShopManager.Map[id]:onItemMarkerHit(client, true)
@@ -91,7 +93,7 @@ function ShopManager:loadVehicleShops()
 	local result = sql:queryFetch("SELECT * FROM ??_vehicle_shop_veh", sql:getPrefix())
     for k, row in ipairs(result) do
 		local shop = self:getFromId(row.ShopId, true)
-		shop:addVehicle(row.Id, row.Model, row.Name, row.Category, row.Price, row.Level, Vector3(row.X, row.Y, row.Z), Vector3(row.RX, row.RY, row.RZ))
+		shop:addVehicle(row.Id, row.Model, row.Name, row.Category, row.Price, row.Level, Vector3(row.X, row.Y, row.Z), Vector3(row.RX, row.RY, row.RZ), row.TemplateId)
 	end
 end
 
@@ -103,11 +105,14 @@ function ShopManager:getFromId(id, vehicle)
 	end
 end
 
+function ShopManager:onRequestVehicleShops()
+	client:triggerEvent("onReceiveVehicleShops", ShopManager.VehicleShopsMap)
+end
 
-function ShopManager:vehicleBuy(shopId, vehicleModel)
+function ShopManager:vehicleBuy(shopId, vehicleModel, vehicleIndex)
 	if client:isDead() then return false end
 	if not self:getFromId(shopId, true) then return end
-	self:getFromId(shopId, true):buyVehicle(client, vehicleModel)
+	self:getFromId(shopId, true):buyVehicle(client, vehicleModel, vehicleIndex)
 end
 
 function ShopManager:foodShopBuyMenu(shopId, menu)
@@ -213,7 +218,7 @@ function ShopManager:buyWeaponFromItemShop(shopId, weaponId)
 				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
 					client:giveWeapon(weaponId, ammo)
 					reloadPedWeapon(client)
-				
+
 					StatisticsLogger:addAmmunationLog(client, "Shop", toJSON({[weaponId] = ammo}), price)
 					client:transferMoney(shop.m_BankAccount, price, "Shop-Einkauf", "Gameplay", "Weapon")
 					client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
@@ -460,7 +465,7 @@ function ShopManager:onAmmunationAppOrder(weaponTable)
 	if canBuyWeapons then
 		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
-				
+
 				client:transferBankMoney(BankServer.get("shop.ammunation"), totalAmount, "AmmuNation Bestellung", "Shop", "Ammunation")
 				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
@@ -481,6 +486,7 @@ function ShopManager:createOrder(player, weaponTable)
 	y = y - 2
 	x = x - 2
 	local dropObject = createObject ( 2903, x, y, z+6.3+15 )
+	setElementCollisionsEnabled(dropObject, false)
 	moveObject(dropObject, 9000, x, y, z+6.3 )
 	setTimer(destroyElement, 10000, 1, dropObject )
 	setTimer(function(x, y, z, weaponTable)
@@ -524,5 +530,14 @@ function ShopManager:giveWeaponsFromOrder(player, weaponTable)
 				end
 			end
 		end
+	end
+end
+
+function ShopManager:editShopVehicle( shop, model, index, property, value) 
+	if ShopManager.VehicleShopsMap[shop] and ShopManager.VehicleShopsMap[shop].m_VehicleList[model] and ShopManager.VehicleShopsMap[shop].m_VehicleList[model][index] then
+		ShopManager.VehicleShopsMap[shop]:setProperty(model, index, property, value, client)
+		client:triggerEvent("onReceiveVehicleShops", ShopManager.VehicleShopsMap)
+	else 
+		client:sendError(_("Ein Fehler ist aufgetreten, Fahrzeug nicht gefunden!", client))
 	end
 end

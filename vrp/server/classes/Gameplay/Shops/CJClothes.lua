@@ -10,9 +10,9 @@ CJClothes = inherit(Shop)
 function CJClothes:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 
-	if self.m_Marker then
-		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onTattooMarkerHit, self))
-	end
+	--if self.m_Marker then
+		--addEventHandler("onMarkerHit", self.m_Marker, bind(self.onTattooMarkerHit, self))
+	--end
 
 	if typeData["ClothesMarker"] then
 		self.m_ClothesMarker = {}

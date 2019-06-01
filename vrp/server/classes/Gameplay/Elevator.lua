@@ -28,56 +28,67 @@ function Elevator:constructor(checkFunction)
 	Elevator.Map[self.m_Id] = self
 end
 
-function Elevator:addStation(name, position, rot, int, dim)
+function Elevator:addStation(name, position, rot, int, dim) 
 	local stationID = #self.m_Stations+1
+	ElevatorManager.Map[self] = stationID
 	self.m_Stations[stationID] = {}
 	self.m_Stations[stationID].name = name
 	self.m_Stations[stationID].position = position
 	self.m_Stations[stationID].interior = int or 0
 	self.m_Stations[stationID].dimension = dim or 0
 	self.m_Stations[stationID].rotation = rot or 0
-	self.m_Stations[stationID].marker = createMarker(position, "corona", 1, 255, 255, 0, 125)
+	self.m_Stations[stationID].marker = createMarker(Vector3(position.x, position.y, position.z-1), "cylinder", 1, 255, 255, 255, 125)
+	local markerColShape = createColSphere(Vector3(position.x, position.y, position.z-0.4), 2)
+	markerColShape.m_Marker = self.m_Stations[stationID].marker
 	self.m_Stations[stationID].marker.id = stationID
 	if int then
 		self.m_Stations[stationID].marker:setInterior(int)
+		markerColShape:setInterior(int)
 	end
 	if dim then
 		self.m_Stations[stationID].marker:setDimension(dim)
+		markerColShape:setDimension(dim)
 	end
-	addEventHandler("onMarkerHit", self.m_Stations[stationID].marker, bind(self.onStationMarkerHit, self) )
-	addEventHandler("onMarkerLeave", self.m_Stations[stationID].marker, bind(self.onStationMarkerLeave, self) )
+	ElementInfo:new(self.m_Stations[stationID].marker, "Aufzug", 1.2, "ArrowsAlt", true)
+	addEventHandler("onColShapeHit", markerColShape, bind(self.onStationMarkerHit, self) )
+	addEventHandler("onColShapeLeave", markerColShape, bind(self.onStationMarkerLeave, self) )
 end
 
-function Elevator:onStationMarkerHit(hitElement, dim)
-	if hitElement:getType() == "player" and dim then
-		if not hitElement.vehicle then
-			if not hitElement.elevatorUsed then
+function Elevator:showElevator(player, marker)
+	if marker and isElement(marker) and player:getType() == "player" and (player:getDimension() == marker:getDimension()) and (player:getInterior() == marker:getInterior()) then
+		if not player.vehicle then
+			if not player.elevatorUsed then
 				if self.Check then
-					if self.Check(hitElement) then 
-						hitElement.curEl = self
-						local pVec = self.m_Stations[source.id].position
+					if self.Check(player) then 
+						local pVec = self.m_Stations[marker.id].position
 						hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
 					end
 				else
-					hitElement.curEl = self
-					local pVec = self.m_Stations[source.id].position
-					hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
+					local pVec = self.m_Stations[marker.id].position
+					player:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[marker.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[marker.id].interior)
 				end
 			end
 		end
 	end
 end
 
+function Elevator:onStationMarkerHit(hitElement, dim)
+	if source.m_Marker and hitElement:getType() == "player" and hitElement:getDimension() == source:getDimension() then
+		hitElement.m_ElevatorData = {self, source.m_Marker}
+		hitElement:triggerEvent("onTryEnterExit", source.m_Marker, "Aufzug")
+	end
+end
+
 function Elevator:onStationMarkerLeave(hitElement, dim)
-	if hitElement:getType() == "player" and dim then
+	if hitElement:getType() == "player" and hitElement:getDimension() == source:getDimension() then
+		hitElement.m_ElevatorData = nil
 		hitElement.elevatorUsed = false
-		hitElement.curEl = false
 	end
 end
 
 function Elevator:driveToStation(player, stationID)
 	player.elevatorUsed = true
-	player.curEl = false
+	player.m_ElevatorData = nil
 	player.elevator = false
 	player.elevatorStationId = false
 

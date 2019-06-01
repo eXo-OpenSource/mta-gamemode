@@ -13,6 +13,11 @@ function HUDKart:constructor(showPersonalTrackStats)
 	self.m_PosX, self.m_PosY = screenWidth/2-self.m_Width/2, 0
 	self.m_RenderTarget = DxRenderTarget(self.m_Width, self.m_Height, true)
 
+	self.m_FontMain =  VRPFont(self.m_Height*0.6)
+	self.m_FontRespawn = VRPFont(25)
+	self.m_FontStats = VRPFont(29)
+	self.m_FontLaps = VRPFont(39)
+
 	if showPersonalTrackStats then
 		self.m_TS_Size = Vector2(300, 100)
 		self.m_TrackStats = DxRenderTarget(self.m_TS_Size, true)
@@ -82,29 +87,29 @@ end
 function HUDKart:updateRenderTarget()
 	self.m_RenderTarget:setAsTarget(true)
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 200))
-	dxDrawRectangle(0, 0, self.m_Width, 5, Color.LightBlue)
+	dxDrawRectangle(0, 0, self.m_Width, 5, Color.Accent)
 
-	dxDrawText("Aktuell", 0, 5, self.m_Width/2, self.m_Height/2 + 5, Color.White, 1, VRPFont(self.m_Height*0.6), "center", "center")
-	dxDrawText("Beste", self.m_Width/2, 5, self.m_Width, self.m_Height/2 + 5, Color.White, 1, VRPFont(self.m_Height*0.6), "center", "center")
+	dxDrawText("Aktuell", 0, 5, self.m_Width/2, self.m_Height/2 + 5, Color.White, 1, getVRPFont(self.m_FontMain), "center", "center")
+	dxDrawText("Beste", self.m_Width/2, 5, self.m_Width, self.m_Height/2 + 5, Color.White, 1, getVRPFont(self.m_FontMain), "center", "center")
 
-	dxDrawText(self.m_Time and timeMsToTimeText(self.m_Time) or "--.---", 0, self.m_Height/2, self.m_Width/2, self.m_Height, Color.White, 1, VRPFont(self.m_Height*0.6), "center", "center")
-	dxDrawText(self.m_BestTime and timeMsToTimeText(self.m_BestTime.time) or "--.---", self.m_Width/2, self.m_Height/2, self.m_Width, self.m_Height, Color.White, 1, VRPFont(self.m_Height*0.6), "center", "center")
+	dxDrawText(self.m_Time and timeMsToTimeText(self.m_Time) or "--.---", 0, self.m_Height/2, self.m_Width/2, self.m_Height, Color.White, 1, getVRPFont(self.m_FontMain), "center", "center")
+	dxDrawText(self.m_BestTime and timeMsToTimeText(self.m_BestTime.time) or "--.---", self.m_Width/2, self.m_Height/2, self.m_Width, self.m_Height, Color.White, 1, getVRPFont(self.m_FontMain), "center", "center")
 
 	dxSetRenderTarget()
 
 	if not self.m_TrackStats then return end
 	self.m_TrackStats:setAsTarget(true)
 	dxDrawRectangle(0, self.m_TS_Size.y-28*2-5, self.m_TS_Size.x, 28, tocolor(0, 0, 0, 200))
-	dxDrawText("Deine Bestzeit", 0, self.m_TS_Size.y-28*2-5, self.m_TS_Size.x - 5, 28, Color.White, 1, VRPFont(28), "right")
-	dxDrawText(self.m_PersonalBestTime and timeMsToTimeText(self.m_PersonalBestTime) or "--.---", 5, self.m_TS_Size.y-28*2-5, self.m_TS_Size.x - 5, 28, Color.White, 1, VRPFont(28))
+	dxDrawText("Deine Bestzeit", 0, self.m_TS_Size.y-28*2-5, self.m_TS_Size.x - 5, 28, Color.White, 1, getVRPFont(self.m_FontStats), "right")
+	dxDrawText(self.m_PersonalBestTime and timeMsToTimeText(self.m_PersonalBestTime) or "--.---", 5, self.m_TS_Size.y-28*2-5, self.m_TS_Size.x - 5, 28, Color.White, 1, getVRPFont(self.m_FontStats))
 
 	if self.m_DeltaTime then
 		dxDrawRectangle(0, self.m_TS_Size.y-28, self.m_TS_Size.x, 28, self.m_DeltaColor)
-		dxDrawText("Delta", 0, self.m_TS_Size.y-28, self.m_TS_Size.x - 5, 28, Color.White, 1, VRPFont(28), "right")
-		dxDrawText(self.m_DeltaTime and self.m_DeltaTime or "--.---", 5, self.m_TS_Size.y-28, self.m_TS_Size.x - 5, 28, Color.White, 1, VRPFont(28))
+		dxDrawText("Delta", 0, self.m_TS_Size.y-28, self.m_TS_Size.x - 5, 28, Color.White, 1, getVRPFont(self.m_FontStats), "right")
+		dxDrawText(self.m_DeltaTime and self.m_DeltaTime or "--.---", 5, self.m_TS_Size.y-28, self.m_TS_Size.x - 5, 28, Color.White, 1, getVRPFont(self.m_FontStats))
 	end
 
-	dxDrawText(self.m_Laps and ("R %d | %d"):format(self.m_Laps, self.m_SelectedLaps) or "--", 0, 0, self.m_TS_Size.x, self.m_TS_Size.y, Color.White, 1, VRPFont(39), "right")
+	dxDrawText(self.m_Laps and ("R %d | %d"):format(self.m_Laps, self.m_SelectedLaps) or "--", 0, 0, self.m_TS_Size.x, self.m_TS_Size.y, Color.White, 1, getVRPFont(self.m_FontLaps), "right")
 
 	dxSetRenderTarget()
 end
@@ -123,7 +128,7 @@ function HUDKart:render()
 	end
 
 	if self.m_ShowRespawnLabel then
-		dxDrawText("Drücke 'x' zum respawnen!", 0, screenHeight - 25, screenWidth, 0, Color.White, 1, VRPFont(25), "center")
+		dxDrawText("Drücke 'x' zum respawnen!", 0, screenHeight - 25, screenWidth, 0, Color.White, 1, getVRPFont(self.m_FontRespawn), "center")
 	end
 
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Kart", 1, 1) end

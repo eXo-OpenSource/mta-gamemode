@@ -31,7 +31,7 @@ function CruiseControl:setEnabled(enabled)
 		self.m_CruiseTimer = false
 
 		self.m_Speed = false
-		setPedControlState(localPlayer, "accelerate", false)	
+		setPedControlState(localPlayer, "accelerate", false)
 	end
 end
 
@@ -58,12 +58,16 @@ function CruiseControl:Tick_CruiseTimer()
 		self:setEnabled(false)
 		return
 	end
-	if getPedControlState(localPlayer, "brake_reverse") then 
+	if getPedControlState(localPlayer, "brake_reverse") then
 		-- Disable cruise control
 		self:setEnabled(false)
 		return
 	end
-	if getPedControlState(localPlayer, "handbrake") then 
+	if not vehicle:getEngineState() then
+		setPedControlState(localPlayer, "accelerate", false)
+		return
+	end
+	if getPedControlState(localPlayer, "handbrake") then
 		-- Disable cruise control
 		self:setEnabled(false)
 		return
@@ -73,7 +77,7 @@ function CruiseControl:Tick_CruiseTimer()
 	local speed = vehicle:getVelocity():getLength()
 	if speed > self.m_Speed then
 		setPedControlState(localPlayer, "accelerate", false)
-	else 
-		setPedControlState(localPlayer, "accelerate", true)	
+	else
+		setPedControlState(localPlayer, "accelerate", true)
 	end
 end

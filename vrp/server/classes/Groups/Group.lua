@@ -75,12 +75,9 @@ end
 
 function Group:purge()
 	if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+		--remove active props
+		GroupPropertyManager:getSingleton():takePropsFromGroup(self)
 		-- Remove all players
-		for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
-			if v.m_OwnerID == self.m_Id then
-				v.m_Owner = false
-			end
-		end
 		for playerId in pairs(self.m_Players) do
 			self:removePlayer(playerId)
 		end
@@ -392,9 +389,9 @@ end
 function Group:setSetting(category, key, value, responsiblePlayer)
 	local allowed = true
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
-		if not responsiblePlayer:getGroup() then allowed = false end 
-		if responsiblePlayer:getGroup() ~= self then allowed = false end 
-		if self:getPlayerRank(responsiblePlayer) ~= GroupRank.Leader then allowed = false end 
+		if not responsiblePlayer:getGroup() then allowed = false end
+		if responsiblePlayer:getGroup() ~= self then allowed = false end
+		if self:getPlayerRank(responsiblePlayer) ~= GroupRank.Leader then allowed = false end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
@@ -609,6 +606,7 @@ function Group:phoneTakeOff(player, caller, voiceCall)
 			end
 			caller:triggerEvent("callAnswer", player, voiceCall)
 			player:triggerEvent("callAnswer", caller, voiceCall)
+			self:addLog(player, "Anrufe", ("hat ein Telefonat mit %s geführt!"):format(caller:getName()))
 			caller:setPhonePartner(player)
 			player:setPhonePartner(caller)
 			for k, groupPlayer in ipairs(self:getOnlinePlayers()) do
@@ -628,16 +626,6 @@ function Group:initalizePlayers()
 		self:getActivity()
 	end
 	self:updateRankNameSync()
-end
-
-
-function Group:openBankGui(player)
-	player:triggerEvent("bankAccountGUIShow", self:getName(), "groupDeposit", "groupWithdraw")
-	self:refreshBankGui(player)
-end
-
-function Group:refreshBankGui(player)
-	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end
 
 function Group:addLog(player, category, text)

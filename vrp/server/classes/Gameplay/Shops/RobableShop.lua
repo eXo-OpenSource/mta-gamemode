@@ -88,8 +88,12 @@ function RobableShop:Ped_Targetted(ped, attacker)
 end
 
 function RobableShop:startRob(shop, attacker, ped)
-	shop.m_Marker.m_Disable = true
-	setElementAlpha(shop.m_Marker,0)
+	if shop.m_Marker then
+		shop.m_Marker:setAlpha(0)
+	end
+
+	self.m_RobActive = true
+
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	Discord:getSingleton():outputBreakingNews(string.format("%s meldet einen Überfall durch eine Straßengang!", shop:getName()))
 
@@ -183,8 +187,12 @@ function RobableShop:startRob(shop, attacker, ped)
 end
 
 function RobableShop:m_onExpire()
-	self.m_Shop.m_Marker.m_Disable = false
-	setElementAlpha(self.m_Shop.m_Marker,255)
+	if self.m_Shop.m_Marker then
+		self.m_Shop.m_Marker:setAlpha(255)
+	end
+
+	self.m_RobActive = false
+
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
 	for key, player in ipairs(getElementsByType("player")) do
@@ -234,8 +242,12 @@ function RobableShop:stopRob(player)
 		killTimer(self.m_ExpireTimer)
 	end
 
-	self.m_Shop.m_Marker.m_Disable = false
-	setElementAlpha(self.m_Shop.m_Marker,255)
+	if self.m_Shop.m_Marker then
+		self.m_Shop.m_Marker:setAlpha(255)
+	end
+
+	self.m_RobActive = false
+
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
 

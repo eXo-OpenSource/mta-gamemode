@@ -14,7 +14,7 @@ function TrunkGUI:constructor()
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
 
     self.ms_SlotsSettings = {
-        ["item"] = {["color"] = Color.LightBlue, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"},
+        ["item"] = {["color"] = Color.Accent, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"},
         ["weapon"] = {["color"] = Color.Orange, ["btnColor"] = Color.Red, ["emptyText"] = _"Keine Waffe"}
     }
 
@@ -27,6 +27,7 @@ function TrunkGUI:constructor()
     self.m_MyItemsGrid:setVisible(false)
     self.m_AmountLabel = GUILabel:new(10, 325, 250, 30, _"Item-Anzahl:", self.m_Window)
     self.m_Amount = GUIEdit:new(10, 355, 250, 30, self.m_Window)
+    self.m_Amount:setNumeric(true, true)
     self.m_AmountLabel:setVisible(false)
     self.m_Amount:setVisible(false)
     self.m_Amount.onChange = function()
@@ -142,7 +143,7 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
             local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
             self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
             self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
-            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+            self.m_WeaponSlots[index].Image:setImage(FileModdingHelper:getSingleton():getWeaponImage(weapon.WeaponId))
             self.m_WeaponSlots[index].TakeButton:setEnabled(true)
         else
             self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)
@@ -158,8 +159,6 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
         self.m_LoadingLabel:setVisible(false)
     end, 250, 1)
 end
-
-
 
 function TrunkGUI:checkAmount(text)
 	if not self.m_SelectedItemType then
@@ -245,8 +244,6 @@ function TrunkGUI:fromTrunk(type, id)
         ErrorBox:new(_"In diesem Slot ist kein Item!")
     end
 end
-
-
 
 addEventHandler("openTrunk", root, function()
     if TrunkGUI:getSingleton():isInstantiated() then

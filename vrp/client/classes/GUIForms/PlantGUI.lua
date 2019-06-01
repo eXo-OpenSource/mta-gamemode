@@ -5,25 +5,10 @@
 -- *  PURPOSE:     PlantGUI class
 -- *
 -- ****************************************************************************
-
 PlantGUI = inherit(GUIForm)
 inherit(Singleton, PlantGUI)
 
-function PlantGUI.load()
-	addRemoteEvents{"showPlantGUI", "hidePlantGUI"}
-
-	addEventHandler("showPlantGUI", root,
-		function(id, type, lastGrow, size, maxSize, item, itemsPerSize, owner, lastWatered, wateredTime)
-			PlantGUI:new(id, type, lastGrow, size, maxSize, item, itemsPerSize, owner, lastWatered, wateredTime)
-		end
-	)
-
-	addEventHandler("hidePlantGUI", root,
-		function()
-			delete(PlantGUI:getSingleton())
-		end
-	)
-end
+addRemoteEvents{"showPlantGUI", "hidePlantGUI"}
 
 function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerSize, owner, lastWatered, wateredTime)
 	GUIForm.constructor(self, screenWidth-270, screenHeight/2-160/2, 250, 160, false)
@@ -52,14 +37,13 @@ function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerS
 	else
 		GUILabel:new(10, 110, self.m_Width-20, 20, _"nicht bewässert", self):setColor(Color.Red):setAlignX("center")
 	end
-	GUILabel:new(10, 130, self.m_Width-20, 20, _"Drücke [E] zum ernten!", self):setColor(Color.LightBlue):setAlignX("center")
+	GUILabel:new(10, 130, self.m_Width-20, 20, _"Drücke [E] zum ernten!", self):setColor(Color.Accent):setAlignX("center")
 	self.m_HarvestBind = bind(self.harvest, self)
 	bindKey("e", "down", self.m_HarvestBind)
 end
 
-function PlantGUI:destructor()
+function PlantGUI:virtual_destructor()
 	unbindKey("e", "down", self.m_HarvestBind)
-	GUIForm.destructor(self)
 end
 
 function PlantGUI:harvest(key, state)
@@ -69,3 +53,15 @@ function PlantGUI:harvest(key, state)
 		end
 	end
 end
+
+addEventHandler("showPlantGUI", root,
+	function(id, type, lastGrow, size, maxSize, item, itemsPerSize, owner, lastWatered, wateredTime)
+		PlantGUI:new(id, type, lastGrow, size, maxSize, item, itemsPerSize, owner, lastWatered, wateredTime)
+	end
+)
+
+addEventHandler("hidePlantGUI", root,
+	function()
+		delete(PlantGUI:getSingleton())
+	end
+)

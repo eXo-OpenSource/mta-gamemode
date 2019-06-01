@@ -20,8 +20,10 @@ function ItemEasteregg:use( player )
 
 end
 
-function ItemEasteregg:addObject(Id, pos)
-	self.m_Eastereggs[Id] = createObject(self.m_Model, pos)
+function ItemEasteregg:addObject(Id, pos, rot, interior, dimension)
+    self.m_Eastereggs[Id] = createObject(self.m_Model, pos, rot)
+    self.m_Eastereggs[Id]:setInterior(interior)
+    self.m_Eastereggs[Id]:setDimension(dimension)
 	self.m_Eastereggs[Id].Id = Id
 	self.m_Eastereggs[Id].Type = "Easteregg"
     self.m_Eastereggs[Id]:setData("clickable", true, true)

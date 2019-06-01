@@ -34,10 +34,6 @@ function TownhallInfoGUI:constructor()
 	GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, Version:getSingleton():getVersion(), tabInfo)
 end
 
-function TownhallInfoGUI:onShow()
-
-end
-
 function TownhallInfoGUI:openTab(tab)
 	if not self:isVisible() then
 		self:show()

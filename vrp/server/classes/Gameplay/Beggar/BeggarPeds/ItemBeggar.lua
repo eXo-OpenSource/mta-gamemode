@@ -70,6 +70,10 @@ function ItemBeggar:buyItem(player, item)
 end
 
 function ItemBeggar:giveLoot(player)
+	if not #BeggarItemBuyTypes[self.m_Type] or #BeggarItemBuyTypes[self.m_Type] == 0 then
+		return
+	end
+
 	local item = BeggarItemBuyTypes[self.m_Type][math.random(1, #BeggarItemBuyTypes[self.m_Type])]
 	local amount = math.floor(BeggarItemBuy[item]["amount"]/2)
 	player:getInventory():giveItem(item, math.floor(BeggarItemBuy[item]["amount"]/2))

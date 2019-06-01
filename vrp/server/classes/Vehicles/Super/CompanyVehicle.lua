@@ -47,6 +47,10 @@ function CompanyVehicle:constructor(data)
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
 
+	if self:getModel() == 560 and self:getCompany():getId() == 4 then
+		PublicTransport:createTaxiSign(self)
+	end
+
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(
 			function(veh)
@@ -78,7 +82,7 @@ end
 
 function CompanyVehicle:onStartEnter(player,seat)
 	if seat == 0 then
-		if (player:getCompany() == self.m_Company) or (self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
+		--[[if (player:getCompany() == self.m_Company) or (self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
 			if not player:isCompanyDuty() and not player:getPublicSync("inDrivingLession") then
 				cancelEvent()
 				player:sendError(_("Du bist nicht im Dienst!", player))
@@ -86,7 +90,7 @@ function CompanyVehicle:onStartEnter(player,seat)
 		else
 			cancelEvent()
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
-		end
+		end]]
 	else
 		if self:getCompany():getId() == 4 then
 			self:getCompany():onVehicleStartEnter(source, player, seat)
@@ -169,11 +173,22 @@ function CompanyVehicle:canBeModified()
   return self:getCompany():canVehiclesBeModified()
 end
 
-function CompanyVehicle:respawn(force)
+function CompanyVehicle:respawn(force, ignoreCooldown)
     local vehicleType = self:getVehicleType()
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getCompany():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
+	end
+
+	if not ignoreCooldown then
+		if self.m_LastDrivers[#self.m_LastDrivers] then
+			local lastDriver = getPlayerFromName(self.m_LastDrivers[#self.m_LastDrivers])
+			if lastDriver and (not lastDriver:getCompany() or lastDriver:getCompany() and lastDriver:getCompany() ~= self:getCompany()) then
+				if self.m_LastUseTime and getTickCount() - self.m_LastUseTime < 300000 then
+					return false
+				end
+			end
+		end
 	end
 
 	-- Teleport to Spawnlocation

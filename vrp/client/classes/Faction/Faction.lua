@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Faction Client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
@@ -14,7 +13,7 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder"}
+	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder", "factionForceOffduty", "startAreaAlert", "stopAreaAlert", "playAreaAlertMessage"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
@@ -22,13 +21,17 @@ function FactionManager:constructor()
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
 	addEventHandler("SpeedCam:showSpeeder", localPlayer, bind(self.Event_OnSpeederCatch,self))
+	addEventHandler("factionForceOffduty", localPlayer, bind(self.factionForceOffduty, self))
+	addEventHandler("startAreaAlert", localPlayer, bind(self.startAreaAlert, self))
+	addEventHandler("stopAreaAlert", localPlayer, bind(self.stopAreaAlert, self))
+	addEventHandler("playAreaAlertMessage", localPlayer, bind(self.playAreaAlertMessage, self))
 
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
 
-function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)
-	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color)
+function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color, navigationPosition)
+	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color, navigationPosition)
 end
 
 function FactionManager:stateFactionStartCuff( target )
@@ -77,7 +80,7 @@ function FactionManager:Event_onPlayerCuff( bool )
 end
 
 function FactionManager:drawCuff()
-	dxDrawImage(w*0.88, h - w*0.1, w*0.08,w*0.0436,"files/images/Other/cuff.png")
+	dxDrawImage(screenWidth*0.88, screenHeight - screenWidth*0.1, screenWidth*0.08,screenWidth*0.0436,"files/images/Other/cuff.png")
 end
 
 function FactionManager:Event_selfArrestMarker( client )
@@ -123,9 +126,9 @@ function FactionManager:OnRenderSpeed()
 					local text = ("Radar: %s fährt %s km/h in %sem %s!"):format(occ and occ:getName() or "-", speed, colName, vName)
 
 					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/SpeedCamText", true) end
-					dxDrawText(text, 0, 1, w, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
-					dxDrawText(text, 1, 1, w+1, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
-					dxDrawText(text, 0, 0, w, h*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
+					dxDrawText(text, 0, 1, screenWidth, screenHeight*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 1, 1, screenWidth+1, screenHeight*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 0, 0, screenWidth, screenHeight*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
 
 					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
 					if speeder then
@@ -148,7 +151,7 @@ function FactionManager:OnRenderSpeed()
 						if speeder then
 							local x,y,z = getElementPosition(localVeh)
 							local px,py,pz = getPedBonePosition(speeder,8)
-							local bLineCheck = isLineOfSightClear (Vector3(x, y, z), Vector3(px, py, pz), true, false, false, true)
+							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 							if bLineCheck then
 								self.m_bLineChecked = self.m_SpeedCamVehicle
 								self.m_RemoveDraw = self.m_DrawStart + 10000
@@ -165,7 +168,7 @@ function FactionManager:OnRenderSpeed()
 					if speeder then
 						local x,y,z = getElementPosition(localVeh)
 						local px,py,pz = getPedBonePosition(speeder,8)
-						local bLineCheck = isLineOfSightClear (Vector3(x, y, z), Vector3(px, py, pz), true, false, false, true)
+						local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 						if bLineCheck then
 							self.m_bLineChecked = self.m_SpeedCamVehicle
 							self.m_RemoveDraw = self.m_DrawStart + 10000
@@ -202,6 +205,14 @@ function FactionManager:getFromId(id)
 	return FactionManager.Map[id]
 end
 
+function FactionManager:getFromName(name)
+	for i, faction in pairs(self.Map) do
+		if faction.m_NameShort == name then
+			return faction
+		end
+	end
+end
+
 function FactionManager:getFactionNames()
 	local table = {}
 	for id, faction in pairs(FactionManager.Map) do
@@ -210,15 +221,89 @@ function FactionManager:getFactionNames()
 	return table
 end
 
+function FactionManager:factionForceOffduty()
+	if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+		if localPlayer:getFaction():isStateFaction() then
+			triggerServerEvent("factionStateToggleDuty", localPlayer, true, false, true)
+		elseif localPlayer:getFaction():isRescueFaction() then
+			triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true, false, true)
+		elseif localPlayer:getFaction():isEvilFaction() then
+			triggerServerEvent("factionEvilToggleDuty", localPlayer, true, false, true)
+		end
+	end
+end
+
+function FactionManager:startAreaAlert()
+	self.m_AreaAlertTimer = setTimer(
+		function()
+			local sound = playSFX3D("script", 20, 1, 211.55, 1810.88, 25.12)
+			if sound then 
+				sound:setVolume(5)
+				sound:setMaxDistance(300)
+			end
+		end, 1800, 0)
+	self:playAreaAlertMessage("red", 12)
+	self.m_AreaMessageTimer = setTimer(
+		function()
+			local rndm = math.random(1, 3)
+			if rndm == 1 then
+				self:playAreaAlertMessage("red")
+			else
+				self:playAreaAlertMessage("towercommands")
+			end
+		end, 10000, 0)
+end
+
+function FactionManager:playAreaAlertMessage(type, forceId)
+	if type == "blue" then
+		SoundId = math.random(1, 4)
+	end
+	if type == "normalized" then
+		SoundId = math.random(5, 8)
+	end
+	if type == "red" then
+		SoundId = math.random(9, 12)
+	end
+	if type == "lockdown" then
+		SoundId = math.random(13, 16)
+	end
+	if type == "towercommands" then
+		SoundId = math.random(17, 18)
+	end
+	if forceId then
+		SoundId = forceId
+	end
+	local sound = PoliceAnnouncements:getSingleton():playSound("script", 58, SoundId, 211.55, 1810.88, 25.12)
+	if sound then 
+		sound:setVolume(5)
+		sound:setMaxDistance(300)
+	end
+end
+
+function FactionManager:stopAreaAlert()
+	if isTimer(self.m_AreaAlertTimer) then
+		killTimer(self.m_AreaAlertTimer)
+	end
+	if isTimer(self.m_AreaMessageTimer) then
+		killTimer(self.m_AreaMessageTimer)
+	end
+	setTimer(
+		function()
+			self:playAreaAlertMessage("normalized", 6)
+		end
+	, 7500, 1)
+end
+
 Faction = inherit(Object)
 
-function Faction:constructor(Id, name, name_short, rankNames, factionType, color)
+function Faction:constructor(Id, name, name_short, rankNames, factionType, color, navigationPosition)
 	self.m_Id = Id
 	self.m_Name = name
 	self.m_NameShort = name_short
 	self.m_RankNames = rankNames
 	self.m_Type = factionType
 	self.m_Color = color
+	self.m_NavigationPosition = normaliseVector(navigationPosition)
 end
 
 function Faction:getId()
@@ -247,4 +332,8 @@ end
 
 function Faction:getColor()
 	return self.m_Color
+end
+
+function Faction:getNavigationPosition()
+	return self.m_NavigationPosition
 end

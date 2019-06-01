@@ -9,6 +9,7 @@ VehicleTuning = inherit(Object)
 VehicleTuning.Map = {}
 
 function VehicleTuning:constructor(vehicle, tuningJSON)
+	self.m_TuningKits = { }
 	self.m_Vehicle = vehicle
 	if tuningJSON then
 		self.m_Tuning = fromJSON(tuningJSON)
@@ -100,6 +101,7 @@ function VehicleTuning:applyTuning(disableTextureForce)
 		local texture = self.m_Tuning["Texture"]
 		self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
 	end]]
+	self.m_Vehicle:removeTexture()
 	if self.m_Tuning["Texture"] then
 		for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
 			if #texturePath > 3 then
@@ -109,6 +111,23 @@ function VehicleTuning:applyTuning(disableTextureForce)
 			end
 		end
 	end
+
+	if self.m_TuningKits then
+		for tuning, class in pairs(self.m_TuningKits) do
+			class:delete()
+		end
+	end
+
+	self.m_TuningKits = { }
+	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do 
+		if self.m_Tuning[tuning] then 
+			if self.m_Tuning[tuning][1] == 1 then 
+				self.m_TuningKits[tuning] = class:new( self.m_Vehicle, unpack(self.m_Tuning[tuning],2) ) 
+			end
+		end
+	end
+	
+	self:saveTuningKits()
 end
 
 function VehicleTuning:createNew()
@@ -124,6 +143,10 @@ function VehicleTuning:createNew()
 	self.m_Tuning["Texture"] = {}
 	self.m_Tuning["Variant1"] = 255
 	self.m_Tuning["Variant2"] = 255
+
+	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do
+		self.m_Tuning[tuning] = {0} -- the first index in every tuning-kit field will be indicating wether the kit is installed or not
+	end
 end
 
 function VehicleTuning:saveTuning(type, data)
@@ -147,9 +170,48 @@ function VehicleTuning:saveColors()
 	self.m_Tuning["ColorLight"] = {headR, headG, headB}
 end
 
+function VehicleTuning:saveTuningKits()
+
+	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do -- Reset every Tuning-Kit in case some got destructed
+		self.m_Tuning[tuning] = {0}
+	end
+
+	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
+		self.m_Tuning[tuning] = class:save() or {0}
+	end
+
+end
+
+function VehicleTuning:addTuningKit( name )
+	if VehicleManager:getSingleton().m_TuningClasses[name] then 
+		self.m_TuningKits[name] = VehicleManager:getSingleton().m_TuningClasses[name]:new( self.m_Vehicle )
+	end
+	self:saveTuningKits()
+end
+
+function VehicleTuning:removeTuningKit( kit )
+	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
+		if class == kit then 
+			class:delete()
+			self.m_TuningKits[tuning] = nil
+		end
+	end
+	self:saveTuningKits()
+end
+
+function VehicleTuning:removeAllTuningKits()
+	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
+		class:delete()
+	end
+	self.m_TuningKits = {}
+	self:saveTuningKits()
+end
+
+
 function VehicleTuning:loadTuningFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
+	self:saveTuningKits()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon") and 1 or 0
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
 	local variant1, variant2 = self.m_Vehicle:getVariant()
@@ -238,6 +300,10 @@ function VehicleTuning:setSpecial(special)
 	end
 end
 
+function VehicleTuning:overrideTextures(newTextures)
+	self.m_Tuning["Texture"] = newTextures
+end
+
 function VehicleTuning:addTexture(texturePath, textureName)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	self.m_Tuning["Texture"][textureName] = texturePath
@@ -265,4 +331,140 @@ function VehicleTuning:getList()
 	if table.size(specialTuning) == 0 then specialTuning["(keine)"] = "" end
 
 	return tuning, specialTuning
+end
+
+--[[
+	** EngineKit **
+    	setAcceleration(acceleration)
+]]--
+function VehicleTuning:getEngine()
+	return self.m_TuningKits["EngineKit"]
+end
+
+--[[
+	** BrakeKit **
+    	setBrake(strength)
+    	setBias(bias)
+]]--
+function VehicleTuning:getBrake()
+	return self.m_TuningKits["BrakeKit"]
+end
+
+--[[
+	** SuspensionKit **
+    	setSuspension( suspensionStretch)
+    	setSuspensionBias(suspensionBias)
+    	setDamping(damping)
+    	setSteer(steer)
+    	setSuspensionHeight(suspensionHeight)
+]]--
+function VehicleTuning:getSuspension()
+	return self.m_TuningKits["SuspensionKit"]
+end
+
+--[[
+	** WheelKit **
+    	setTraction( traction)
+		setTractionBias( tractionBias)
+]]--
+function VehicleTuning:getWheel()
+	return self.m_TuningKits["WheelKit"]
+end
+
+function VehicleTuning:setPerformanceTuningTable( table, player, reset )
+	local range, desc, min, max
+	for property, value in pairs(table) do 
+		range, desc, unit = unpack(VEHICLE_TUNINGKIT_DESCRIPTION[property])
+		if not unit then
+			if tonumber(value) and property ~= "driveType" then
+				min, max = self:transformRange(range)
+				value = max*(value/100) - min
+				self:setTuningProperty(property, value)
+			elseif property == "driveType" then
+				self:setTuningProperty(property, value)
+			end
+		else 
+			self:setTuningProperty(property, value)
+		end
+	end
+	self:saveTuningKits()
+	triggerClientEvent("vehiclePerformanceUpdateGUI", player, self.m_Vehicle, self.m_Vehicle:getHandling(), reset)
+end
+
+function VehicleTuning:transformRange(range)
+	return math.abs(range[1]), math.abs(range[1])+range[2]
+end
+
+function VehicleTuning:setTuningProperty(property, value)
+	if WheelTuning.Properties[property] then 
+		if not self.m_TuningKits["WheelKit"] then 
+			self:addTuningKit("WheelKit")
+		end
+	end
+	if EngineTuning.Properties[property] then 
+		if not self.m_TuningKits["EngineKit"] then 
+			self:addTuningKit("EngineKit")
+		end
+	end
+	if BrakeTuning.Properties[property] then 
+		if not self.m_TuningKits["BrakeKit"] then 
+			self:addTuningKit("BrakeKit")
+		end
+	end
+	if SuspensionTuning.Properties[property] then 
+		if not self.m_TuningKits["SuspensionKit"] then 
+			self:addTuningKit("SuspensionKit")
+		end
+	end
+
+	--//Wheel
+	if property == "tractionMultiplier" then 
+		self.m_TuningKits["WheelKit"]:setTraction(value)
+	end
+	if property == "tractionBias" then 
+		self.m_TuningKits["WheelKit"]:setTractionBias(value)
+	end
+	if property == "tractionLoss" then 
+		self.m_TuningKits["WheelKit"]:setTractionLoss(value)
+	end
+
+	--//Engine
+	if property == "engineAcceleration" then 
+		self.m_TuningKits["EngineKit"]:setAcceleration(value)
+	end
+	if property == "maxVelocity" then 
+		self.m_TuningKits["EngineKit"]:setTopSpeed(value)
+	end
+	if property == "driveType" then 
+		self.m_TuningKits["EngineKit"]:setType(value)
+	end
+	if property == "engineInertia" then 
+		self.m_TuningKits["EngineKit"]:setInertia(value)
+	end
+
+	--//Suspension
+	if property == "suspensionForceLevel" then 
+		self.m_TuningKits["SuspensionKit"]:setSuspension(value)
+	end
+	if property == "steeringLock" then 
+		self.m_TuningKits["SuspensionKit"]:setSteer(value)
+	end
+	if property == "suspensionDamping" then 
+		self.m_TuningKits["SuspensionKit"]:setDamping(value)
+	end
+	if property == "suspensionLowerLimit" then 
+		self.m_TuningKits["SuspensionKit"]:setSuspensionHeight(value)
+	end
+	if property == "suspensionFrontRearBias" then 
+		self.m_TuningKits["SuspensionKit"]:setSuspensionBias(value)
+	end
+
+	--//Brake
+	if property == "brakeDeceleration" then 
+		self.m_TuningKits["BrakeKit"]:setBrake(value)
+	end
+	if property == "brakeBias" then 
+		self.m_TuningKits["BrakeKit"]:setBias(value)
+	end
+
 end

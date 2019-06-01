@@ -8,10 +8,10 @@
 GoJump = inherit(Object)
 
 function GoJump:constructor()
-    self.font_JosefinSans50 = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 50)
-    self.font_JosefinSans20 = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 20)
-    self.font_JosefinSans20B = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 20, true)
-    self.font_JosefinSans13 = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 13)
+    self.font_JosefinSans50 = VRPFont(80, Fonts.JosefinSansThin) --dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 50)
+    self.font_JosefinSans20 = VRPFont(32, Fonts.JosefinSansThin) --dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 20)
+    self.font_JosefinSans20B = VRPFont(32, Fonts.JosefinSansThin, true) --dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 20, true)
+    self.font_JosefinSans13 = VRPFont(21, Fonts.JosefinSansThin) --dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 13)
 
     self.state = "Home"
     self.width, self.height = 400, 600
@@ -401,11 +401,11 @@ function GoJump:updateRenderTarget()
         dxDrawImage(0, 0, 400, 600, self.titlescreen)
 
         if self.lastScore then
-            dxDrawText(self.lastScore, 0, 120, self.width, 0, self.white, 1, self.font_JosefinSans50, "center")
+            dxDrawText(self.lastScore, 0, 120, self.width, 0, self.white, 1, getVRPFont(self.font_JosefinSans50), "center")
         end
 
         if self.highscore then
-            dxDrawText("Best: " .. self.highscore, 0, 200, self.width, 0, self.white, 1, self.font_JosefinSans20, "center")
+            dxDrawText("Best: " .. self.highscore, 0, 200, self.width, 0, self.white, 1, getVRPFont(self.font_JosefinSans20), "center")
         end
 
         dxDrawImage(self.width/2 - 96/2, self.height/2 - 96/2, 96, 96, self.circle_play)
@@ -416,31 +416,31 @@ function GoJump:updateRenderTarget()
         dxDrawImage(self.width/2 - 48/2 - 120 + (48/2-18/2), self.height/2 - 48/2 + 48, 18, 18, self.arrow_down)
         dxDrawImage(self.width/2 - 48/2 + 120 + (48/2-18/2), self.height/2 - 48/2 + 48, 18, 18, self.arrow_down)
 
-        dxDrawText("space", self.width/2 - 48 , self.height/2 + 96/2 + 5, self.width/2 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
-        dxDrawText("c", self.width/2 - 48/2 - 120, self.height/2 - 48/2 + 48 + 5, self.width/2 - 48/2 - 120 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
-        dxDrawText("m", self.width/2 - 48/2 + 120, self.height/2 - 48/2 + 48 + 5, self.width/2 - 48/2 + 120 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
+        dxDrawText("space", self.width/2 - 48 , self.height/2 + 96/2 + 5, self.width/2 + 48, 0, self.white, 1, getVRPFont(self.font_JosefinSans13), "center")
+        dxDrawText("c", self.width/2 - 48/2 - 120, self.height/2 - 48/2 + 48 + 5, self.width/2 - 48/2 - 120 + 48, 0, self.white, 1, getVRPFont(self.font_JosefinSans13), "center")
+        dxDrawText("m", self.width/2 - 48/2 + 120, self.height/2 - 48/2 + 48 + 5, self.width/2 - 48/2 + 120 + 48, 0, self.white, 1, getVRPFont(self.font_JosefinSans13), "center")
     end
 
     if self.state == "Stats" then
         dxDrawImageSection(0, 0, 400, 400, 0, 0, 400, 400, self.titlescreen)
-        dxDrawText("Pos.", 10, 165, x, y, self.white, 1, self.font_JosefinSans20B)
-        dxDrawText("Name", 70, 165, x, y, self.white, 1, self.font_JosefinSans20B)
-        dxDrawText("Score", 320, 165, x, y, self.white, 1, self.font_JosefinSans20B)
+        dxDrawText("Pos.", 10, 165, x, y, self.white, 1, getVRPFont(self.font_JosefinSans20B))
+        dxDrawText("Name", 70, 165, x, y, self.white, 1, getVRPFont(self.font_JosefinSans20B))
+        dxDrawText("Score", 320, 165, x, y, self.white, 1, getVRPFont(self.font_JosefinSans20B))
 
         for i, score in ipairs(self.Scores) do
             if i <= 10 then
                 --First row
-                dxDrawText(i, 10, 200 + (i-1)*30, x, y, self.white, 1, self.font_JosefinSans20)
+                dxDrawText(i, 10, 200 + (i-1)*30, x, y, self.white, 1, getVRPFont(self.font_JosefinSans20))
 
                 --Secconds row
-                dxDrawText(clearText(score.name), 70, 200 + (i-1)*30, x, y, self.white, 1, self.font_JosefinSans20)
+                dxDrawText(clearText(score.name), 70, 200 + (i-1)*30, x, y, self.white, 1, getVRPFont(self.font_JosefinSans20))
 
                 --Third row
-                dxDrawText(score.score, 320, 200 + (i-1)*30, x, y, self.white, 1, self.font_JosefinSans20)
+                dxDrawText(score.score, 320, 200 + (i-1)*30, x, y, self.white, 1, getVRPFont(self.font_JosefinSans20))
             end
         end
 
-        dxDrawText("Press 's' again to go back", 0, 550, 400, 600, self.white, 1, self.font_JosefinSans20B, "center")
+        dxDrawText("Press 's' again to go back", 0, 550, 400, 600, self.white, 1, getVRPFont(self.font_JosefinSans20B), "center")
     end
 
     if self.state == "Play" then
@@ -450,14 +450,14 @@ function GoJump:updateRenderTarget()
 				if self.currentID == 0 and not (i == 0 or i == 1) then lineColor = self.bg_white end
 
 				dxDrawLine(0, self.Lines[i] + self.heightOffset, self.width, self.Lines[i] + self.heightOffset, lineColor, 3)
-                dxDrawText(i, 0, self.Lines[i] + self.heightOffset, self.width, 0, lineColor, 1, self.font_JosefinSans20, "right")
+                dxDrawText(i, 0, self.Lines[i] + self.heightOffset, self.width, 0, lineColor, 1, getVRPFont(self.font_JosefinSans20), "right")
 
                 if i == self.average then
-                    dxDrawText("average score", 5, self.Lines[i] + self.heightOffset - 5, self.width, 0, self.currentID ~= 0 and self.white or self.bg_white, 1, self.font_JosefinSans20, self.average == self.highscore and "center" or "left", "top", false, false, false, true)
+                    dxDrawText("average score", 5, self.Lines[i] + self.heightOffset - 5, self.width, 0, self.currentID ~= 0 and self.white or self.bg_white, 1, getVRPFont(self.font_JosefinSans20), self.average == self.highscore and "center" or "left", "top", false, false, false, true)
                 end
 
                 if i == self.highscore then
-                    dxDrawText("highscore", 5, self.Lines[i] + self.heightOffset - 5, self.width, 0, self.currentID ~= 0 and self.white or self.bg_white, 1, self.font_JosefinSans20, "left", "top", false, false, false, true)
+                    dxDrawText("highscore", 5, self.Lines[i] + self.heightOffset - 5, self.width, 0, self.currentID ~= 0 and self.white or self.bg_white, 1, getVRPFont(self.font_JosefinSans20), "left", "top", false, false, false, true)
                 end
             end
         end
@@ -480,7 +480,7 @@ function GoJump:updateRenderTarget()
             end
         end
 
-		dxDrawText(self.currentID, 0, 0, self.width, 100, self.currentID ~= 0 and self.white or self.bg_white, 1, self.font_JosefinSans50, "center", "center")
+		dxDrawText(self.currentID, 0, 0, self.width, 100, self.currentID ~= 0 and self.white or self.bg_white, 1, getVRPFont(self.font_JosefinSans50), "center", "center")
 		if self.currentID == 0 then	dxDrawImage(self.width/2 - 535/4, 50, 535/2, 463/2, self.howto) end
 
         dxDrawImage(self.playerX, self.playerHeight + self.heightOffset, 32, 32, self[("player_%s"):format(self.moveState == "r" and "l" or "r")])

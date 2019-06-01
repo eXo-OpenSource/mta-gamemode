@@ -23,6 +23,14 @@ function GUIRenderer.destructor()
 	removeEventHandler("onClientRender", root, GUIRenderer.drawAll)
 end
 
+function GUIRenderer.reattachEvents()
+	removeEventHandler("onClientPreRender", root, GUIRenderer.updateAll)
+	removeEventHandler("onClientRender", root, GUIRenderer.drawAll)
+	addEventHandler("onClientPreRender", root, GUIRenderer.updateAll)
+	addEventHandler("onClientRender", root, GUIRenderer.drawAll)
+end
+
+
 function GUIRenderer.updateAll(elapsedTime)
 	GUIElement.ms_ClickProcessed = false
 	GUIElement.ms_ClickDownProcessed = false
@@ -31,13 +39,17 @@ function GUIRenderer.updateAll(elapsedTime)
 
 	for k = #GUIRenderer.cache, 1, -1 do
 		local v = GUIRenderer.cache[k]
-		if v.m_Visible and v.update then
-			v:update(elapsedTime)
-		end
-		if v.m_ContainsGUIElements and v.m_Visible then
-			v:performChecks()
+		if v then
+			if v.m_Visible and v.update then
+				v:update(elapsedTime)
+			end
+			if v.m_ContainsGUIElements and v.m_Visible then
+				v:performChecks()
+			end
 		end
 	end
+
+	GUITooltip.checkTooltip()
 
 	if not GUIElement.ms_ClickProcessed then
 		GUIRenderer.process3DMouse()
@@ -57,9 +69,8 @@ function GUIRenderer.process3DMouse()
 	end
 
 	-- Convert relative to absolute coordinates
-	local sw, sh = guiGetScreenSize()
-	cx = cx*sw
-	cy = cy*sh
+	cx = cx*screenWidth
+	cy = cy*screenHeight
 
 	-- Retrieve mouse states
 	local mouse1, mouse2 = getKeyState("mouse1"), getKeyState("mouse2")

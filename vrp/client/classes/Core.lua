@@ -73,12 +73,9 @@ function Core:onDownloadComplete()
 	local username = core:get("Login", "username", "")
 	lgi = LoginGUI:new(username, pwhash)
 
-
-
 	-- other
 	setAmbientSoundEnabled( "gunfire", false )
 	showChat(true)
-
 end
 
 function Core:ready() --onClientResourceStart
@@ -108,6 +105,7 @@ function Core:ready() --onClientResourceStart
 	Guns:new()
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
+	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
@@ -124,19 +122,21 @@ function Core:ready() --onClientResourceStart
 
 	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
 	if core:get("Other", "Movehead", true) then
-		localPlayer:startLookAt() 
+		localPlayer:startLookAt()
 	end
-	if core:get("Other","RenderDistance", false) then 
+	if core:get("Other","RenderDistance", false) then
 		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-	else 
+	else
 		setFarClipDistance(992)
 	end
+
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	Sewers:new()
 	PremiumArea:new()
 
 	Plant.initalize()
@@ -144,11 +144,8 @@ function Core:ready() --onClientResourceStart
 	Neon.initalize()
 	CoronaEffect.initalize()
 	GroupSaleVehicles.initalize()
-	AccessoireClothes:new()
-	AccessoireClothes:triggerMode()
 	EasterEgg:new()
 	EasterEggArcade.Game:new()
-	EasterEggArcade.Game:getSingleton():setLevel(1)
 	Shaders.load()
 
 	GroupProperty:new()
@@ -165,24 +162,27 @@ function Core:ready() --onClientResourceStart
 	ClientStatistics:new()
 	Nametag:new()
 	PickupWeaponManager:new()
+
 	if EVENT_HALLOWEEN then
 		Halloween:new()
 	end
-
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
 	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --these are only slot machine textures
 		Easter.updateTextures()
 	end
-	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 
+	ItemSmokeGrenade:new() -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 	ExplosiveTruckManager:new()
+	VehicleTurbo:new()
+	PlaneManager:new()
+	FileModdingHelper:new()
+	PoliceAnnouncements:new()
 end
 
 function Core:afterLogin()
 	RadioGUI:new()
-	KarmaBar:new()
 	HUDSpeedo:new()
 	HUDAviation:new()
 	HUDRadar:getSingleton():setEnabled(core:get("HUD", "showRadar", true))
@@ -196,8 +196,12 @@ function Core:afterLogin()
 	Achievement:new()
 	BindManager:new()
 	WheelOfFortune:new()
-	--Atrium:new()
+	Atrium:new()
+	ElementInfoManager:new()
 
+	for i = 1,#GUNBOX_CRATES do
+		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)
+	end
 	if DEBUG then
 		Debugging:new()
 		DebugGUI.initalize()
@@ -214,18 +218,19 @@ function Core:afterLogin()
 	end
 
 	localPlayer:setPlayTime()
+	localPlayer:deactivateBlur(core:get("Shaders", "BlurLevel", false))
 
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
-	PlantGUI.load()
 	Fishing.load()
 	TurtleRace.load()
 	GUIForm3D.load()
-	NonCollidingSphere.load()
+	NonCollisionArea.load()
 	TextureReplacer.loadBacklog()
 
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
-	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
+	addCommandHandler("fraktion", function() if localPlayer:getFaction() then FactionGUI:getSingleton():open() end end)
+	addCommandHandler("unternehmen", function() if localPlayer:getCompany() then CompanyGUI:getSingleton():open() end end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
@@ -238,6 +243,16 @@ function Core:afterLogin()
 		end
 	end
 
+	setElementData(localPlayer, "isEquipmentGUIOpen", false, true)
+
+	setTimer(
+		function()
+			if localPlayer:isWorldLoaded() then
+				triggerServerEvent("unfreezePlayer", localPlayer) -- do not unfreeze player on client cause of sync issues
+				if isTimer(sourceTimer) then killTimer(sourceTimer) end
+			end
+		end, 1000, 0
+	)
 end
 
 function Core:onWebSessionCreated() -- this gets called from LocalPlayer when the client recieves it's web session ID
@@ -249,6 +264,9 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 end
 
 function Core:destructor()
+	if HUDAviation:isInstantiated() then
+		delete(HUDAviation:getSingleton())
+	end
 	delete(Cursor)
 	delete(self.m_Config)
 	delete(BindManager:getSingleton())
@@ -279,7 +297,7 @@ setTimer(
 	function()
 		local attachedBlips = {}
 		for _, v in pairs(getElementsByType("blip")) do
-			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" then
+			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" and not v:getData("isGangwarBlip") then
 				table.insert(attachedBlips, v)
 			end
 		end
