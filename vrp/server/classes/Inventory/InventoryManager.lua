@@ -32,6 +32,62 @@ InventoryTemplates = {
 	VehicleTrunk = 5;
 }
 
+InventoryItemClasses = {
+	ItemFood = ItemFood;
+	ItemKeyPad = ItemKeyPad;
+	ItemDoor = ItemDoor;
+	ItemFurniture = ItemFurniture;
+	ItemEntrance = ItemEntrance;
+	ItemTransmitter = ItemTransmitter;
+	ItemBarricade = ItemBarricade;
+	ItemSkyBeam = ItemSkyBeam;
+	ItemSpeedCam = ItemSpeedCam;
+	ItemNails = ItemNails;
+	ItemRadio = ItemRadio;
+	ItemBomb = ItemBomb;
+	DrugsWeed = DrugsWeed;
+	DrugsHeroin = DrugsHeroin;
+	DrugsShroom = DrugsShroom;
+	DrugsCocaine = DrugsCocaine;
+	ItemDonutBox = ItemDonutBox;
+	ItemEasteregg = ItemEasteregg;
+	ItemPumpkin = ItemPumpkin;
+	ItemTaser = ItemTaser;
+	ItemSlam = ItemSlam;
+	ItemSmokeGrenade = ItemSmokeGrenade;
+	ItemDefuseKit = ItemDefuseKit;
+	ItemFishing = ItemFishing;
+	ItemDice = ItemDice;
+	Plant = Plant;
+	ItemCan = ItemCan;
+	ItemSellContract = ItemSellContract;
+	ItemIDCard = ItemIDCard;
+	ItemFuelcan = ItemFuelcan;
+	ItemRepairKit = ItemRepairKit;
+	ItemHealpack = ItemHealpack;
+	ItemAlcohol = ItemAlcohol;
+	ItemFirework = ItemFirework;
+	WearableHelmet = WearableHelmet;
+	WearableShirt = WearableShirt;
+	WearablePortables = WearablePortables;
+	WearableClothes = WearableClothes;
+}
+
+--[[
+	Missing stuff:
+	[ ] Rewrite all ItemClasses for new Inventory
+	[ ] Implement inventory interactions (player inventory -> vehicle inventory)
+	[ ] Reimplement trading
+	[ ] Replace all old giveItem & takeItem
+	[ ] Look for hardcoded item ids
+	[ ] Write testing list 
+	[ ] Implement inventory change events
+	[ ] Write inventory migration
+	[ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
+	[ ] Implement new weapon handling with inventory
+	[ ] Create new GUI for inventory, inventory interaction and trading
+]]
+
 function InventoryManager:constructor()
 	self.m_Items = {}
 	self.m_ItemIdToName = {}
@@ -444,16 +500,30 @@ function InventoryManager:useItem(inventory, id)
 		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useItem", 1)
 		return false, "invalid"
 	end
+	
+	local class = InventoryItemClasses[itemData.Class]
 
-	if itemData.Class == "ItemFood" then
-		local food = ItemFood:new(inventory, itemData, item)
-		local success, remove = food:use()
-
-		if remove then
-			inventory:takeItem(id, 1)
-		end
-	elseif itemData.Class == "" then
+	if not class then
+		return false
 	end
+
+	local instance = class:new(inventory, itemData, item)
+
+	if not instance.use then
+		return false
+	end
+
+	local success, remove = instance:use()
+
+	if remove then
+		inventory:takeItem(id, 1)
+	end
+
+	if not success then
+		return false
+	end
+	
+	return true
 end
 
 function InventoryManager:useItemSecondary(inventory, id)
@@ -466,17 +536,31 @@ function InventoryManager:useItemSecondary(inventory, id)
 	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
 
 	if not itemData then
-		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useSecondaryItem", 1)
+		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useItem", 1)
 		return false, "invalid"
 	end
+	
+	local class = InventoryItemClasses[itemData.Class]
 
-	if itemData.Class == "ItemFood" then
-		local food = ItemFood:new(inventory, itemData, item)
-		local success, remove = food:useSecondary()
-
-		if remove then
-			inventory:takeItem(id, 1)
-		end
-	elseif itemData.Class == "" then
+	if not class then
+		return false
 	end
+
+	local instance = class:new(inventory, itemData, item)
+
+	if not instance.useSecondary then
+		return false
+	end
+
+	local success, remove = instance:useSecondary()
+
+	if remove then
+		inventory:takeItem(id, 1)
+	end
+
+	if not success then
+		return false
+	end
+	
+	return true
 end
