@@ -61,7 +61,7 @@ function Item:startObjectPlacing(player, callback, hideObject, customModel)
 	player.m_PlacingInfo = {item = self, callback = callback}
 	return true
 end
-
+--[[
 addEvent("itemPlaced", true)
 addEventHandler("itemPlaced", root,
 	function(x, y, z, rotation, moved)
@@ -78,3 +78,4 @@ addEventHandler("itemPlaced", root,
 		end
 	end
 )
+]]

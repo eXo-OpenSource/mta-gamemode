@@ -33,49 +33,13 @@ InventoryTemplates = {
 }
 
 InventoryItemClasses = {
-	ItemFood = ItemFood;
-	ItemKeyPad = ItemKeyPad;
-	ItemDoor = ItemDoor;
-	ItemFurniture = ItemFurniture;
-	ItemEntrance = ItemEntrance;
-	ItemTransmitter = ItemTransmitter;
-	ItemBarricade = ItemBarricade;
-	ItemSkyBeam = ItemSkyBeam;
-	ItemSpeedCam = ItemSpeedCam;
-	ItemNails = ItemNails;
-	ItemRadio = ItemRadio;
-	ItemBomb = ItemBomb;
-	DrugsWeed = DrugsWeed;
-	DrugsHeroin = DrugsHeroin;
-	DrugsShroom = DrugsShroom;
-	DrugsCocaine = DrugsCocaine;
-	ItemDonutBox = ItemDonutBox;
-	ItemEasteregg = ItemEasteregg;
-	ItemPumpkin = ItemPumpkin;
-	ItemTaser = ItemTaser;
-	ItemSlam = ItemSlam;
-	ItemSmokeGrenade = ItemSmokeGrenade;
-	ItemDefuseKit = ItemDefuseKit;
-	ItemFishing = ItemFishing;
-	ItemDice = ItemDice;
-	Plant = Plant;
-	ItemCan = ItemCan;
-	ItemSellContract = ItemSellContract;
-	ItemIDCard = ItemIDCard;
-	ItemFuelcan = ItemFuelcan;
-	ItemRepairKit = ItemRepairKit;
-	ItemHealpack = ItemHealpack;
-	ItemAlcohol = ItemAlcohol;
-	ItemFirework = ItemFirework;
-	WearableHelmet = WearableHelmet;
-	WearableShirt = WearableShirt;
-	WearablePortables = WearablePortables;
-	WearableClothes = WearableClothes;
 }
 
 --[[
 	Missing stuff:
+	[ ] Rework WorldItems
 	[ ] Rewrite all ItemClasses for new Inventory
+	[ ] Implement invetory storing & and auto cleanup
 	[ ] Implement inventory interactions (player inventory -> vehicle inventory)
 	[ ] Reimplement trading
 	[ ] Replace all old giveItem & takeItem
@@ -89,6 +53,46 @@ InventoryItemClasses = {
 ]]
 
 function InventoryManager:constructor()
+	InventoryItemClasses = {
+		ItemFood = ItemFood;
+		ItemKeyPad = ItemKeyPad;
+		ItemDoor = ItemDoor;
+		ItemFurniture = ItemFurniture;
+		ItemEntrance = ItemEntrance;
+		ItemTransmitter = ItemTransmitter;
+		ItemBarricade = ItemBarricade;
+		ItemSkyBeam = ItemSkyBeam;
+		ItemSpeedCam = ItemSpeedCam;
+		ItemNails = ItemNails;
+		ItemRadio = ItemRadio;
+		ItemBomb = ItemBomb;
+		DrugsWeed = DrugsWeed;
+		DrugsHeroin = DrugsHeroin;
+		DrugsShroom = DrugsShroom;
+		DrugsCocaine = DrugsCocaine;
+		ItemDonutBox = ItemDonutBox;
+		ItemEasteregg = ItemEasteregg;
+		ItemPumpkin = ItemPumpkin;
+		ItemTaser = ItemTaser;
+		ItemSlam = ItemSlam;
+		ItemSmokeGrenade = ItemSmokeGrenade;
+		ItemDefuseKit = ItemDefuseKit;
+		ItemFishing = ItemFishing;
+		ItemDice = ItemDice;
+		Plant = Plant;
+		ItemCan = ItemCan;
+		ItemSellContract = ItemSellContract;
+		ItemIDCard = ItemIDCard;
+		ItemFuelcan = ItemFuelcan;
+		ItemRepairKit = ItemRepairKit;
+		ItemHealpack = ItemHealpack;
+		ItemAlcohol = ItemAlcohol;
+		ItemFirework = ItemFirework;
+		WearableHelmet = WearableHelmet;
+		WearableShirt = WearableShirt;
+		WearablePortables = WearablePortables;
+		WearableClothes = WearableClothes;
+	}
 	self.m_Items = {}
 	self.m_ItemIdToName = {}
 	self.m_Categories = {}
@@ -196,6 +200,16 @@ function InventoryManager:loadInventoryTypes()
 
 		self.m_InventoryTypesIdToName[row.TechnicalName] = row.Id
 	end
+end
+
+function InventoryManager:getItemData(item)
+	local item = item
+	
+	if type(item) ~= "number" then
+		item = self.m_ItemIdToName[item]
+	end
+
+	return self.m_Items[item]
 end
 
 function InventoryManager:createInventory(elementId, elementType, size, allowedCategories)
@@ -504,21 +518,22 @@ function InventoryManager:useItem(inventory, id)
 	local class = InventoryItemClasses[itemData.Class]
 
 	if not class then
-		return false
+		return false, "class"
 	end
 
 	local instance = class:new(inventory, itemData, item)
 
 	if not instance.use then
-		return false
+		return false, "classUse"
 	end
 
 	local success, remove = instance:use()
+	delete(instance)
 
 	if remove then
 		inventory:takeItem(id, 1)
 	end
-
+	
 	if not success then
 		return false
 	end
@@ -547,6 +562,7 @@ function InventoryManager:useItemSecondary(inventory, id)
 	end
 
 	local instance = class:new(inventory, itemData, item)
+	delete(instance)
 
 	if not instance.useSecondary then
 		return false

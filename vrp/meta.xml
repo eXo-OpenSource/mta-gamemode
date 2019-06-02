@@ -127,6 +127,8 @@
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
+	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/WorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>

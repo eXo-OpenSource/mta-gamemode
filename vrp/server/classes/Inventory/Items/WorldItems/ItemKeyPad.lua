@@ -5,11 +5,12 @@
 -- *  PURPOSE:     Key Pad item class
 -- *
 -- ****************************************************************************
-ItemKeyPad = inherit(Item)
+ItemKeyPad = inherit(ItemNew)
 ItemKeyPad.Map = {}
 
 
 function ItemKeyPad:constructor()
+	--[[
 	self.m_Model = 2886
 	self.m_Keypads = {}
 	addCommandHandler("nearbykeypads", bind(self.Event_onNearbyCommand, self))
@@ -17,15 +18,19 @@ function ItemKeyPad:constructor()
 	addRemoteEvents{"confirmKeypadDelete", "onKeyPadSubmit"}
 	addEventHandler("confirmKeypadDelete", root, bind(self.Event_onConfirmKeyPadDelete, self))
 	addEventHandler("onKeyPadSubmit", root, bind(self.Event_onAskForAccess, self))
+	]]
+	self.m_WorldItemValue = "#####"
+	self.m_WorldItemIsPermanent = true
+	self.m_WorldItemLocked = false
 end
 
 function ItemKeyPad:destructor()
-	for id , obj in pairs(self.m_Keypads) do 
+	--[[for id , obj in pairs(self.m_Keypads) do 
 		if obj.getObject and isElement(obj:getObject()) and obj:getObject().UpdatePin then 
 			obj:setValue(obj:getObject().Pin)
 			obj:onChanged()
 		end
-	end
+	end]]
 end
 
 function ItemKeyPad:addWorldObjectCallback(Id, worldObject)
@@ -55,27 +60,97 @@ function ItemKeyPad:addWorldObjectCallback(Id, worldObject)
 	return false
 end
 
-function ItemKeyPad:use(player)
+function ItemKeyPad:use()
+	local player = self.m_Inventory:getPlayer()
+
+	if player.m_PlacingInfo then
+		player:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", player))
+		return false
+	end
+	if player:getData("inJail") or player:getData("inAdminPrison") then
+		player:sendError(_("Du kannst hier keine Objekte platzieren.", player)) 
+		return false
+	end
+
+	-- Start the object placer on the client
+	player:triggerEvent("objectPlacerStart", self.m_ItemData.ModelId, "itemPlaced")
+	player.m_PlacingInfo = {
+		itemData = self.m_ItemData, 
+		inventory = self.m_Inventory, 
+		item = self.m_Item,
+		worldItemValue = self.m_WorldItemValue,
+		worldItemIsPermanent = self.m_WorldItemIsPermanent,
+		worldItemLocked = self.m_WorldItemLocked
+	}
+
+	--[[
 	local result = self:startObjectPlacing(player,
 	function(item, position, rotation)
 		if item ~= self or not position then return end
-		player:getInventoryOld():removeItem(self:getName(), 1)
-		player:sendInfo(_("%s hinzugefügt!", player, "Keypad"))
+		player:getInventory():takeItem(self.m_Item.m_InternalId, 1)
+		player:sendInfo(_("%s hinzugefügt!", player, self.m_ItemData.Name))
 		local int = player:getInterior() 
 		local dim = player:getDimension()
-		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Keypad", position.x..","..position.y..","..position.z)
-		local worldObject = PlayerWorldItem:new(ItemManager:getSingleton():getInstance("Keypad"), player:getId(), position, rotation, false, player:getId(), true, false, "#####")
-		worldObject:setInterior(int) 
-		worldObject:setDimension(dim)
-		local id = worldObject:forceSave() 
-		if id then 
-			if not self:addWorldObjectCallback(id, worldObject) then
-				player:sendInfo(_("Ein Fehler trat auf beim Platzieren!", player))
-			end
-		end
-	end)
+		StatisticsLogger:getSingleton():itemPlaceLogs(player, self.m_ItemData.Name, position.x..","..position.y..","..position.z)
+		PlayerWorldItem:new(self.m_ItemData, player:getId(), position, rotation, false, player:getId(), true, false, "#####", int, dim)
+	end)]]
 end
 
+function ItemKeyPad:place(owner, pos, rotation, amount)
+	local worldItem = WorldItem:new(self, owner, pos, rotation)
+	return worldItem
+end
+
+function ItemKeyPad:startObjectPlacing(player, callback, hideObject, customModel)
+	if player.m_PlacingInfo then
+		player:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", player))
+		return false
+	end
+	if player:getData("inJail") or player:getData("inAdminPrison") then
+		player:sendError(_("Du kannst hier keine Objekte platzieren.", player)) 
+		return false
+	end
+
+	-- Start the object placer on the client
+	player:triggerEvent("objectPlacerStart", customModel or self.m_ItemData.ModelId, "itemPlaced", hideObject)
+	player.m_PlacingInfo = {item = self, callback = callback}
+	return true
+end
+
+--[[
+	TODO: This should be in WorldItem or WorldItemManager
+]]
+addEvent("itemPlaced", true)
+addEventHandler("itemPlaced", root,
+	function(x, y, z, rotation, moved)
+		local placingInfo = client.m_PlacingInfo
+		if placingInfo then
+			if x then
+				
+				if placingInfo.callback then
+					client:sendShortMessage(_("%s %s.", client, placingInfo.item.m_Item.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
+					placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
+				else
+					client:sendShortMessage(_("%s %s.", client, placingInfo.itemData.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
+					client:getInventory():takeItem(placingInfo.item.InternalId, 1)
+					client:sendInfo(_("%s hinzugefügt!", client, placingInfo.itemData.Name))
+					local int = client:getInterior() 
+					local dim = client:getDimension()
+					StatisticsLogger:getSingleton():itemPlaceLogs(client, placingInfo.itemData.Name, x..","..y..","..z)
+					PlayerWorldItem:new(placingInfo.itemData, client:getId(), Vector3(x, y, z), rotation, false, client:getId(), placingInfo.worldItemIsPermanent, placingInfo.worldItemLocked, placingInfo.worldItemValue, int, dim)
+				end
+			else
+				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
+				if placingInfo.callback then
+					placingInfo.callback(placingInfo.item, false)
+				end
+			end
+			client.m_PlacingInfo = nil
+		end
+	end
+)
+
+--[[
 function ItemKeyPad:onKeyPadClick(button, state, player)
     if source.Type ~= "Keypad" then return end
 	if button == "right" and state == "up" then
@@ -172,3 +247,4 @@ function ItemKeyPad:Event_onDeleteCommand( source, cmd, id)
 	end
 end
 
+]]

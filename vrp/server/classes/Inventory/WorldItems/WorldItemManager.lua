@@ -8,27 +8,32 @@
 WorldItemManager = inherit(Singleton) 
 WorldItemManager.Map = {}
 
+WorldItemManager.ItemClasses = {
+	keypad = KeyPadWorldItem;
+--	door = DoorWorldItem;
+--	entrance = EntranceWorldItem;
+--	furniture = FurnitureWorldItem;
+}
+
 function WorldItemManager:constructor() 
-	self.m_CallbackMap = -- functions that are called once a specific world-item is created for an item
+	--[[self.m_CallbackMap = -- functions that are called once a specific world-item is created for an item
 	{
 		["Tor"] =  ItemManager:getSingleton():getInstance("Tor").addWorldObjectCallback, 
 		["Keypad"] =  ItemManager:getSingleton():getInstance("Keypad").addWorldObjectCallback,
 		["Eingang"] =  ItemManager:getSingleton():getInstance("Eingang").addWorldObjectCallback,
 		["Einrichtung"] = ItemManager:getSingleton():getInstance("Einrichtung").addWorldObjectCallback,
-	}
+	}]]
 	local result = sql:queryFetch("SELECT * FROM ??_WorldItems", sql:getPrefix())
 	local model, item, obj, value, interior, dimension, posX, posY, posZ, owner, id, worldItemInstance
 	for k, row in pairs(result) do 
 		id, model, item, value, interior, dimension, breakable, owner, locked = row.Id, row.Model, row.Item, row.Value, row.Interior, row.Dimension, row.Breakable, row.Owner, row.Locked
 		posX, posY, posZ, rot = row.PosX, row.PosY, row.PosZ, row.Rotation
-		worldItemInstance = PlayerWorldItem:new(ItemManager.Map[item], owner, Vector3(posX, posY, posZ), rot, breakable, owner, true, locked)
-		worldItemInstance:setDataBaseId(id)
+		local itemData = InventoryManager:getSingleton():getItemData(item)
+		worldItemInstance = PlayerWorldItem:new(itemData, owner, Vector3(posX, posY, posZ), rot, breakable, owner, true, locked, value, interior, dimension, id)
+		--[[worldItemInstance:setDataBaseId(id)
 		worldItemInstance:setValue(value)
 		worldItemInstance:setInterior(interior) 
-		worldItemInstance:setDimension(dimension)
-		if self.m_CallbackMap[item] then 
-			self.m_CallbackMap[item](ItemManager:getSingleton():getInstance(item), id, worldItemInstance)
-		end
+		worldItemInstance:setDimension(dimension)]]
 	end
 end
 
@@ -45,7 +50,7 @@ function WorldItemManager:destructor()
 					end
 				else 
 					sql:queryExec("INSERT INTO ??_WorldItems (Item, Model, Owner, PosX, posY, posZ, Rotation, Value, Interior, Dimension, Breakable, Locked, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", sql:getPrefix(),
-					obj:getItem():getName() or "Generic", obj:getModel(), obj:getOwner(), pos.x, pos.y, pos.z, rot.z, obj:getValue(), obj:getInterior(), obj:getDimension(), obj:isBreakable(), obj:isLocked())
+					obj:getItem().TechnicalName or "Generic", obj:getModel(), obj:getOwner(), pos.x, pos.y, pos.z, rot.z, obj:getValue(), obj:getInterior(), obj:getDimension(), obj:isBreakable(), obj:isLocked())
 				end
 			end
 		else

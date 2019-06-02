@@ -21,7 +21,8 @@ function InventoryGUI:constructor()
 
 	self.m_InventoryList = GUIGridGridList:new(1, 1, 7, 9, self.m_Window)
 	self.m_InventoryList:addColumn(_"Name", 0.5)
-	self.m_InventoryList:addColumn(_"Anzahl", 0.5)
+	self.m_InventoryList:addColumn(_"Anzahl", 0.25)
+	self.m_InventoryList:addColumn(_"IID", 0.25)
 
 	self:hide()
 
@@ -39,7 +40,7 @@ end
 function InventoryGUI:Event_syncInventory(data)
 	self.m_InventoryList:clear()
 	for k, v in pairs(data) do
-		self.m_InventoryList:addItem(v.Name, v.Amount)
+		self.m_InventoryList:addItem(v.Name, v.Amount, v.InternalId)
 	end
 end
 

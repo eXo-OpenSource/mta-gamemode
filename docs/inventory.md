@@ -283,3 +283,8 @@ DROP TABLE vrp_item_categories;
     -   Kategorieauswahl in der Mitte zwischen den Inventaren
     -   umlagern von Items zwischen Inventaren möglich, aber keine Interaktion
     -   bspw. Kofferraum
+
+
+
+# Testing list
+* All WorldItems (KeyPads, ...)

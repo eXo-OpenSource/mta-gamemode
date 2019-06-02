@@ -11,7 +11,7 @@ ItemManager.Map = {}
 function ItemManager:constructor()
 	addRemoteEvents{"onClientBreakItem"}
 	self.m_ClassItems = {
-		["Keypad"] = ItemKeyPad,
+--		["Keypad"] = ItemKeyPad,
 		["Tor"] = ItemDoor,
 		["Einrichtung"] = ItemFurniture,
 		["Eingang"] = ItemEntrance,

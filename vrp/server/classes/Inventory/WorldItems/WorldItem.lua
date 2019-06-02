@@ -16,10 +16,10 @@ addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemMassCollect", "wo
 
 WorldItem.constructor = pure_virtual
 
-function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player, isPermanent, locked, value)
+function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player, isPermanent, locked, value, interior, dimension, databaseId)
 	self.m_Item = item
-	self.m_ItemName = item:getName()
-	self.m_ModelId = item:getModelId()
+	self.m_ItemName = item.Name
+	self.m_ModelId = item.ModelId
 	self.m_Owner = owner
 	self.m_Placer = player
 	
@@ -80,7 +80,28 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	end
 	
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
-	WorldItemManager.Map[self] = 0 -- this is for keeping track of database-related stuff 	
+	WorldItemManager.Map[self] = 0 -- this is for keeping track of database-related stuff
+
+	if interior then
+		self:setInterior(interior)
+	end
+
+	if dimension then
+		self:setDimension(dimension)
+	end
+
+	if databaseId then
+		self:setDataBaseId(databaseId)
+	end
+
+	if WorldItemManager.ItemClasses[item.TechnicalName] then
+		if not databaseId then
+			self:forceSave()
+		end
+		local class = WorldItemManager.ItemClasses[item.TechnicalName]:new(self, self.m_DatabaseId, item)
+		self.m_Class = class
+		class:onCreate()
+	end
 end
 
 function WorldItem:attach(ele, offsetPos, offsetRot)
@@ -147,7 +168,7 @@ function WorldItem:forceSave()
 		local pos = self:getObject():getPosition()
 		local rot = self:getObject():getRotation()
 		sql:queryExec("INSERT INTO ??_WorldItems (Item, Model, Owner, PosX, posY, posZ, Rotation, Value, Interior, Dimension, Breakable, Locked, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", sql:getPrefix(),
-		self:getItem():getName() or "Generic", self:getModel(), self:getOwner(), pos.x, pos.y, pos.z, rot.z, self:getValue(), self:getInterior(), self:getDimension(), self:isBreakable(), self:isLocked())
+		self:getItem().TechnicalName or "Generic", self:getModel(), self:getOwner(), pos.x, pos.y, pos.z, rot.z, self:getValue(), self:getInterior(), self:getDimension(), self:isBreakable(), self:isLocked())
 		self.m_HasChanged = false
 		local rowId = sql:lastInsertId()
 		self:setDataBaseId(rowId)
@@ -207,6 +228,32 @@ function WorldItem:onMove(player)
 	end
 	self.m_CurrentMovingPlayer = player
 	addEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
+	
+	player.m_PlacingInfo = {
+		item = self, 
+		callback = function(item, position, rotation)
+			if not isElement(self:getObject()) then 
+				player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
+				return false 
+			end
+			if position then -- item moved
+				self.m_Object:setCollisionsEnabled(false)
+				nextframe(function()
+					self.m_Object:setPosition(position)
+					self.m_Object:setRotation(0, 0, rotation)
+					self.m_Object:setInterior(player:getInterior())
+					self.m_Object:setDimension(player:getDimension())
+					self.m_Object:setCollisionsEnabled(true)
+					self:onChanged()
+				end)
+			end
+			self.m_CurrentMovingPlayer = nil
+			removeEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
+		end
+	}
+	player:triggerEvent("objectPlacerStart", self.m_Item.ModelId, "itemPlaced", self.m_Object)
+	
+--[[
 	self.m_Item:startObjectPlacing(player,
 		function(item, position, rotation)
 			if not isElement(self:getObject()) then 
@@ -227,7 +274,7 @@ function WorldItem:onMove(player)
 			self.m_CurrentMovingPlayer = nil
 			removeEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
 		end, self.m_Object
-	)
+	)]]
 end
 
 function WorldItem:getMovingPlayer()
