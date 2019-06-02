@@ -152,6 +152,8 @@ TODO by MegaThorx
 -   Tradeable bool NOT NULL DEFAULT 0
 -   Expireable bool NOT NULL DEFAULT 0
 -   IsUnique bool NOT NULL DEFAULT 0
+-   Throwable bool NOT NULL DEFAULT 0
+-   Breakable bool NOT NULL DEFAULT 0
 
 ## vrp_inventory
 
@@ -168,7 +170,7 @@ TODO by MegaThorx
 -   InventoryId int NOT NULL FK
 -   ItemId int NOT NULL FK
 -   Slot int NOT NULL
--   Value int NOT NULL DEFAULT 0
+-   Amount int NOT NULL DEFAULT 0
 -   Durability int NOT NULL DEFAULT 0
 -   Metadata text NULL
 
@@ -195,6 +197,8 @@ CREATE TABLE `vrp_items`  (
   `Tradeable` tinyint(1) NOT NULL DEFAULT 0,
   `Expireable` tinyint(1) NOT NULL DEFAULT 0,
   `IsUnique` tinyint(1) NOT NULL DEFAULT 0,
+  `Throwable` tinyint(1) NOT NULL DEFAULT 0,
+  `Breakable` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`),
   FOREIGN KEY (`CategoryId`) REFERENCES `vrp_item_categories` (`Id`)
 );
@@ -231,7 +235,7 @@ CREATE TABLE `vrp_inventory_items`  (
   `InventoryId` int(0) NOT NULL,
   `ItemId` int(0) NOT NULL,
   `Slot` int(0) NOT NULL,
-  `Value` int(0) NOT NULL,
+  `Amount` int(0) NOT NULL,
   `Durability` int(0) NOT NULL,
   `Metadata` text NULL DEFAULT NULL,
   PRIMARY KEY (`Id`),

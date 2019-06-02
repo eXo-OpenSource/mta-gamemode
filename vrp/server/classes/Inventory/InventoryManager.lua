@@ -50,11 +50,15 @@ function InventoryManager:constructor()
 	self.m_Inventories = {}
 end
 
-function InventoryManager:Event_syncInventory()
-	if not client.m_Disconnecting then
-		local inventory = client:getInventory()
-		client:triggerEvent("syncInventory", inventory.m_Items)
+function InventoryManager:syncInventory(player)
+	if not player.m_Disconnecting then
+		local inventory = player:getInventory()
+		player:triggerEvent("syncInventory", inventory.m_Items)
 	end
+end
+
+function InventoryManager:Event_syncInventory()
+	self:syncInventory(client)
 end
 
 function InventoryManager:loadItems()
@@ -80,6 +84,8 @@ function InventoryManager:loadItems()
 			Tradeable = row.Tradeable == 1;
 			Expireable = row.Expireable == 1;
 			IsUnique = row.IsUnique == 1;
+			Throwable = row.Throwable == 1;
+			Breakable = row.Breakable == 1;
 		}
 
 		self.m_ItemIdToName[row.TechnicalName] = row.Id
@@ -147,24 +153,6 @@ end
 function InventoryManager:getInventory(inventoryIdOrElementType, elementId)
 	local inventoryId = inventoryIdOrElementType
 	local elementType = inventoryId
-
-	--[[if elementId then
-		-- get the damn id :P
-		-- is inventory already loaded?
-		for id, inventory in pairs(self.m_Inventories) do
-			if inventory.m_ElementId == elementId and inventory.m_ElementType == elementType then
-				return inventory
-			end
-		end
-
-		local result = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
-
-		if not result then
-			return false
-		end
-
-		inventoryId = result.Id
-	end]]
 
 	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId)
 
@@ -270,33 +258,170 @@ function InventoryManager:deleteInventory(inventoryId)
 	end
 end
 
-function InventoryManager:isItemGivable(inventoryId, itemId, amount)
-    checkIfCategoryAllowed()
-    checkIfSpace()
+function InventoryManager:isItemGivable(inventory, item, amount)
+	local inventory = inventory
+	local item = item
+
+	if type(inventory) == "number" then
+		inventory = self:getInventory(inventory)
+	end
+
+	if type(item) == "string" then
+		item = InventoryManager:getSingleton().m_ItemIdToName[item]
+	end
+
+	if not InventoryManager:getSingleton().m_Items[item] then
+		return false, "item"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item]
+
+	local cSize = inventory:getCurrentSize()
+	
+	if amount < 1 then
+		return false, "amount"
+	end
+
+	if inventory.m_Size < cSize + itemData.Size * amount then
+		return false, "size"
+	end
+	
+	if not inventory:isCompatibleWithCategory(itemData.Category) then
+		return false, "category"
+	end
+	
+	if itemData.m_IsUnique then
+		if v.ItemId == item then
+			return false, "unique"
+		end 
+	end
+
+	return true
 end
 
-function InventoryManager:isItemRemovable(inventoryId, itemId, amount)
-    checkIfCategoryAllowed()
-    checkIfSpace()
+function InventoryManager:isItemTakeable(inventory, itemInternalId, amount)
+	local inventory = inventory
+
+	if type(inventory) == "number" then
+		inventory = self:getInventory(inventory)
+	end
+
+	if amount < 1 then
+		return false, "amount"
+	end
+
+	local item = inventory:getItem(itemInternalId)
+
+	if not item then
+		return false, "invalid"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+
+	if not itemData then
+		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@isItemTakeable", 1)
+		return false, "invalid"
+	end
+
+	if item.Amount < amount then
+		return false, "amount"
+	end
+	return true
 end
 
-function InventoryManager:removeItem()
-    if self:isItemRemovable() then
-        remove()
+function InventoryManager:giveItem(inventory, item, amount, durability, metadata)
+	local inventory = inventory
+	local item = item
+
+	if type(inventory) == "number" then
+		inventory = self:getInventory(inventory)
+	end
+
+	if not inventory then
+		return false
+	end
+	
+	if type(item) == "string" then
+		item = InventoryManager:getSingleton().m_ItemIdToName[item]
+	end
+
+	local isGivable, reason = self:isItemGivable(inventory, item, amount)
+	if isGivable then
+		local itemData = InventoryManager:getSingleton().m_Items[item]
+		
+		
+
+		for k, v in pairs(inventory.m_Items) do
+			if v.ItemId == item then
+				if (v.Metadata and #v.Metadata > 0) or metadata or itemData.MaxDurability > 0 then
+					iprint({v.Metadata, metadata, itemData.MaxDurability}) -- TODO: Implement Metadata comparision
+				else
+					v.Amount = v.Amount + amount
+					inventory:onInventoryChanged()
+					return true
+				end
+			end 
+		end
+
+		local internalId = inventory.m_NextItemId
+		inventory.m_NextItemId = inventory.m_NextItemId + 1
+
+		local data = table.copy(itemData)
+
+		data.Id = -1
+		data.InternalId = internalId
+		data.ItemId = item
+		data.Amount = amount
+		data.Durability = durability
+		data.Metadata = metadata
+
+		for k, v in pairs(itemData) do
+			if k ~= "Id" then
+				data[k] = v
+			end
+		end
+
+		table.insert(inventory.m_Items, data)
+		self:onInventoryChanged(inventory)
         return true
     end
-    return false
+    return false, reason
 end
 
-function InventoryManager:giveItem()
-    if self:isItemGivable() then
-        give()
-        return true
+function InventoryManager:takeItem(inventory, itemInternalId, amount)
+	local inventory = inventory
+
+	if type(inventory) == "number" then
+		inventory = self:getInventory(inventory)
+	end
+
+	if not inventory then
+		return false
+	end
+
+	local isTakeable, reason = self:isItemTakeable(inventory, itemInternalId, amount)
+	
+	if isTakeable then
+		local item = inventory:getItem(itemInternalId)
+		item.Amount = item.Amount - amount
+
+		if item.Amount <= 0 then
+			for k, v in pairs(inventory.m_Items) do
+				if v == item then
+					table.remove(inventory.m_Items, k)
+					break
+				end
+			end
+			inventory:onInventoryChanged()
+			return true, true
+		end
+		inventory:onInventoryChanged()
+		return true, false
     end
-    return false
+    return false, reason
 end
 
-function InventoryManager:transactItem(fromInventoryId, toInventoryId, itemId, amount, value)
+function InventoryManager:transactItem(fromInventoryId, toInventoryId, itemId, amount)
     if self:isItemRemovable() and self:isItemGivable() then
         self:removeItem()
         self:giveItem()
@@ -304,4 +429,54 @@ function InventoryManager:transactItem(fromInventoryId, toInventoryId, itemId, a
     else
         return self:isItemRemovable(), self:isItemGivable()
     end
+end
+
+function InventoryManager:useItem(inventory, id)
+	local item = inventory:getItem(id)
+
+	if not item then
+		return false, "invalid"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+
+	if not itemData then
+		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useItem", 1)
+		return false, "invalid"
+	end
+
+	if itemData.Class == "ItemFood" then
+		local food = ItemFood:new(inventory, itemData, item)
+		local success, remove = food:use()
+
+		if remove then
+			inventory:takeItem(id, 1)
+		end
+	elseif itemData.Class == "" then
+	end
+end
+
+function InventoryManager:useItemSecondary(inventory, id)
+	local item = inventory:getItem(id)
+
+	if not item then
+		return false, "invalid"
+	end
+
+	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+
+	if not itemData then
+		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useSecondaryItem", 1)
+		return false, "invalid"
+	end
+
+	if itemData.Class == "ItemFood" then
+		local food = ItemFood:new(inventory, itemData, item)
+		local success, remove = food:useSecondary()
+
+		if remove then
+			inventory:takeItem(id, 1)
+		end
+	elseif itemData.Class == "" then
+	end
 end

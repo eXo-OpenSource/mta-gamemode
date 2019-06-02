@@ -139,7 +139,7 @@ function ItemFishing:useSecondary(player, itemId, bag, place, itemName)
 			player:kill()
 			return
 		end
-
+		-- Call ItemFood:use() with bait as item!
 		if ItemManager.Map["KöderDummy"]:use(player) then
 			player:getInventoryOld():removeItem(itemName, 1)
 		end

@@ -39,7 +39,7 @@ end
 function InventoryGUI:Event_syncInventory(data)
 	self.m_InventoryList:clear()
 	for k, v in pairs(data) do
-		self.m_InventoryList:addItem(v.Name, v.Value)
+		self.m_InventoryList:addItem(v.Name, v.Amount)
 	end
 end
 
