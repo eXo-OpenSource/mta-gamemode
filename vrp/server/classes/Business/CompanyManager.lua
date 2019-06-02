@@ -469,3 +469,12 @@ function CompanyManager:Event_UpdateSkinPermissions(skinTable)
 	local r = c:getPlayerRank(client)
 	triggerClientEvent(client, "openSkinSelectGUI", client, c:getSkinsForRank(r), c:getId(), "company", r >= CompanyRank.Manager, c:getAllSkins())
 end
+
+function CompanyManager:getFromName(name)
+	for k, company in pairs(CompanyManager.Map) do
+		if company:getName() == name then
+			return company
+		end
+	end
+	return false
+end

@@ -290,6 +290,7 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 		local cWeapon = getPedWeapon(localPlayer, cw)
 		if cWeapon ~= 34 then
 			toggleControl("fire",true)
+			toggleControl("action",true)
 			if localPlayer.m_FireToggleOff then
 				if localPlayer.m_LastSniperShot+4000 <= getTickCount() then
 					localPlayer.m_FireToggleOff = false
@@ -300,13 +301,16 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 			if localPlayer.m_FireToggleOff then
 				if localPlayer.m_LastSniperShot+4000 >= getTickCount() then
 					toggleControl("fire",false)
+					toggleControl("action",false)
 				else
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
+					toggleControl("action",true)
 				end
 			else
 				if not NoDm:getSingleton().m_NoDm then
 					toggleControl("fire",true)
+					toggleControl("action",true)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
@@ -350,9 +354,11 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				localPlayer.m_LastSniperShot = getTickCount()
 				localPlayer.m_FireToggleOff = true
 				toggleControl("fire",false)
+				toggleControl("action",false)
 				setTimer(function()
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
+					toggleControl("action",true)
 				end, 4000,1)
 			end
 		end

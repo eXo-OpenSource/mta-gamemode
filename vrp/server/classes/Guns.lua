@@ -19,6 +19,7 @@ function Guns:constructor()
 		setWeaponProperty(23, skill, "weapon_range", 10 )
 		setWeaponProperty(23, skill, "maximum_clip_ammo", 9999 )
 		setWeaponProperty(23, skill, "anim_loop_stop", 0 )
+		setWeaponProperty(23, skill, "damage", 1)
 		-- Deagle:
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
