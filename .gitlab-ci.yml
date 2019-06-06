@@ -54,6 +54,7 @@ build_docker_job:
     - master
     - release/pre-production
     - release/production
+    - release/redirection
 
 # Deploy jobs
 deploy_job_bugfixes:

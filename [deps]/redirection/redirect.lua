@@ -1,5 +1,5 @@
-local serverIP = ""
-local serverPort = 0
+local serverIP = "144.76.87.216"
+local serverPort = 22003
 
 function onPlayerJoin_handler()
     if serverIP and serverPort then
