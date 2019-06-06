@@ -24,6 +24,7 @@
       <object name="resource.webadmin"/>
       <object name="resource.acpanel"/>
       <object name="resource.vrp_build"/>
+      <object name="resource.redirection"/>
    </group>
    <group name="Console">
       <acl name="Moderator"/>
