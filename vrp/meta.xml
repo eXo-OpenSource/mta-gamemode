@@ -507,6 +507,7 @@
 	<script src="client/classes/ExecTimeRecorder.lua" type="client"/>
 	<script src="client/classes/NetworkMonitor.lua" type="client"/>
 	<script src="client/classes/HelpTextManager.lua" type="client"/>
+	<script src="client/classes/ColshapeStreamer.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>

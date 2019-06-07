@@ -31,9 +31,9 @@ function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, l
 	self.ms_Illegal = typeData["Illegal"]
 	self.m_BankAccountServer = BankServer.get("faction.state")
 
-	self.m_Colshape = createColSphere(pos.x, pos.y, pos.z+1, 1)
-	addEventHandler("onColShapeHit", self.m_Colshape, bind(self.onColShapeHit, self))
-	addEventHandler("onColShapeLeave", self.m_Colshape, bind(self.onColShapeLeave, self))
+	--self.m_Colshape = createColSphere(pos.x, pos.y, pos.z+1, 1)
+	--addEventHandler("onColShapeHit", self.m_Colshape, bind(self.onColShapeHit, self))
+	--addEventHandler("onColShapeLeave", self.m_Colshape, bind(self.onColShapeLeave, self))
 
 	self:refreshObjectSize()
 end
@@ -89,6 +89,7 @@ function Growable:harvest(player)
 					player:sendInfo(_("Du hast einen Blumenstrauß geerntet!", player))
 					giveWeapon(player, 14, 1, true)
 					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+					triggerClientEvent("ColshapeStreamer:deleteColshape", player, "growable", self.m_Id)
 					delete(self)
 				else
 					player:sendError(_("Du hast bereits einen Blumenstrauß dabei!", player))
@@ -106,6 +107,7 @@ function Growable:harvest(player)
 			player:triggerEvent("hidePlantGUI")
 			self.m_Size = 0
 			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+			triggerClientEvent("ColshapeStreamer:deleteColshape", player, "growable", self.m_Id)
 			StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
 			delete(self)
 		elseif amount > 0 then
@@ -119,6 +121,7 @@ function Growable:harvest(player)
 				StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 0)
 				if self.m_TimesEarned >= self.ms_TimesEarnedForDestroy  then
 					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+					triggerClientEvent("ColshapeStreamer:deleteColshape", player, "growable", self.m_Id)
 					delete(self)
 				end
 				player:setData("Plant:Current", false)

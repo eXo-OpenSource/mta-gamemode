@@ -139,6 +139,7 @@ function Core:ready() --onClientResourceStart
 	Sewers:new()
 	PremiumArea:new()
 
+	ColshapeStreamer:new()
 	Plant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
