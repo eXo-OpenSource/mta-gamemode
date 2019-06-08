@@ -201,6 +201,9 @@ function Player:loadCharacter()
 		self:getFaction():takeEquipment(self)
 	end
 	FactionState:getSingleton():checkInsideGarage(self)
+	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
+	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
+	GrowableManager:getSingleton():sendGrowablesToClient(self)
 end
 
 function Player:createCharacter()

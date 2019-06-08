@@ -40,7 +40,7 @@ end
 
 function Growable:destructor()
 	GrowableManager:getSingleton():removePlant(self.m_Id)
-	if isElement(self.m_Colshape) then self.m_Colshape:destroy() end
+	--if isElement(self.m_Colshape) then self.m_Colshape:destroy() end
 	if isElement(self.m_Object) then self.m_Object:destroy() end
 end
 

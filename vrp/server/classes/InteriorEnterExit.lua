@@ -57,8 +57,12 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	end
 )	]]
 	
-
-	
+	for key, player in ipairs(getElementsByType("player")) do
+		if player:isLoggedIn() then
+			player:triggerEvent("ColshapeStreamer:registerColshape", {entryPosition.x, entryPosition.y, entryPosition.z+0.2}, self.m_EnterMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit")
+			player:triggerEvent("ColshapeStreamer:registerColshape", {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit")
+		end
+	end
 end
 
 function InteriorEnterExit:enter(player)
@@ -89,6 +93,7 @@ end
 function InteriorEnterExit:destructor()
 	if isElement(self.m_EnterMarker) then self.m_EnterMarker:destroy() end
 	if isElement(self.m_ExitMarker) then self.m_ExitMarker:destroy() end
+	triggerClientEvent("ColshapeStreamer:deleteColshape", root, "enterexit", self.m_Id)
 end
 
 function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimension)

@@ -119,6 +119,11 @@ function GrowableManager:addNewPlant(type, position, owner)
 	StatisticsLogger:getSingleton():addPlantLog(owner, type)
 	local id = sql:lastInsertId()
 	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getId(), 0, ts, ts, 0, 0)
+	for key, player in ipairs(getElementsByType("player")) do
+		if player:isLoggedIn() then
+			player:triggerEvent("ColshapeStreamer:registerColshape", {position.x, position.y, position.z+1}, GrowableManager.Map[id].m_Object, "growable", GrowableManager.Map[id].m_Id, 1, "plant:onClientColShapeHit", "plant:onClientColShapeLeave")
+		end
+	end
 	GrowableManager.Map[id]:onColShapeHit(owner, true)
 end
 

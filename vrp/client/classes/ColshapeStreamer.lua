@@ -44,6 +44,10 @@ function ColshapeStreamer:registerColshape(pos, element, type, elementId, size, 
     end
     addEventHandler("onClientElementStreamIn", ColshapeStreamer.Map[index], self.m_StreamInBind)
     addEventHandler("onClientElementStreamOut", ColshapeStreamer.Map[index], self.m_StreamOutBind)
+
+    if isElementStreamedIn(element) then
+        triggerEvent("onClientElementStreamIn", ColshapeStreamer.Map[index])
+    end
 end
 
 function ColshapeStreamer:deleteColshape(type, elementId)
@@ -60,14 +64,18 @@ function ColshapeStreamer:onStreamIn()
     local element = source
     element.colshape = createColSphere(element.colshapePosition[1], element.colshapePosition[2], element.colshapePosition[3], element.colshapeSize)
     element.colshape:setDimension(element:getDimension())
+    if element.type == "beggarped" then
+        element.colshape:attach(element)
+    end
+    
     addEventHandler("onClientColShapeHit", element.colshape, function(hit, dim)
-        if hit == localPlayer and hit then
+        if hit == localPlayer and dim then
             triggerServerEvent(element.colshapeHitEvent, localPlayer, element.elementId)
         end
     end)
     if element.colshapeLeaveEvent then
         addEventHandler("onClientColShapeLeave", element.colshape, function(hit, dim)
-            if hit == localPlayer and hit then
+            if hit == localPlayer and dim then
                 triggerServerEvent(element.colshapeLeaveEvent, localPlayer, element.elementId)
             end
         end)

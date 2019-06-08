@@ -1,7 +1,8 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
 addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "buyBeggarItem",
-"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn", "adminPedDelete"}
+"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn", "adminPedDelete", 
+"beggarped:onClientColShapeHit", "beggarped:onClientColShapeLeave"}
 
 BeggarPedManager.Classes  = {
 	[1] = {["Class"] = MoneyBeggar, ["Name"] = "Money"},
@@ -32,6 +33,8 @@ function BeggarPedManager:constructor()
 	addEventHandler("adminPedSpawn", root, bind(self.Event_adminPedSpawn, self))
 	addEventHandler("adminPedDelete", root, bind(self.Event_adminPedDelete, self))
 	addEventHandler("buyBeggarItem", root, bind(self.Event_buyBeggarItem, self))
+	addEventHandler("beggarped:onClientColShapeHit", root, bind(self.onClientColShapeHit, self))
+	addEventHandler("beggarped:onClientColShapeLeave", root, bind(self.onClientColShapeLeave, self))
 
 
 end
@@ -76,6 +79,11 @@ function BeggarPedManager:spawnPeds()
 			local classId = #v.Roles > 0 and Randomizer:getRandomTableValue(v.Roles) or math.random(1, #BeggarPedManager.Classes)
 			local ped = BeggarPed:new(i, classId, v.Pos, v.Rot)
 			if ped then self:addRef(ped) end
+			for key, player in ipairs(getElementsByType("player")) do
+				if player:isLoggedIn() then
+					player:triggerEvent("ColshapeStreamer:registerColshape", {v.Pos.x, v.Pos.y, v.Pos.z}, ped, "beggarped", ped.m_Id, 10, "beggarped:onClientColShapeHit", "beggarped:onClientColShapeLeave")
+				end
+			end
 		end
 	end
 end
@@ -248,4 +256,22 @@ function BeggarPedManager:Event_adminPedDelete(pedId)
 	self.m_Positions[pedId] = nil
 
 	self:adminSendData(client)
+end
+
+function BeggarPedManager:sendBeggarPedsToClient(player)
+	if not player then player = root end
+	for key, ped in pairs(BeggarPedManager.Map) do
+		local x, y, z = getElementPosition(ped)
+		triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z}, ped, "beggarped", ped.m_Id, 10, "beggarped:onClientColShapeHit", "beggarped:onClientColShapeLeave")
+	end
+end
+
+function BeggarPedManager:onClientColShapeHit(id)
+	BeggarPedManager.Map[id]:onClientColShapeHit(client, true)
+end
+
+function BeggarPedManager:onClientColShapeLeave(id)
+	if BeggarPedManager.Map[id] then
+		BeggarPedManager.Map[id]:onClientColShapeLeave(client, true)
+	end
 end
