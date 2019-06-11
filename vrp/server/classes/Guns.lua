@@ -141,19 +141,24 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 		if target and attacker and isElement(target) and isElement(attacker) then
 			if not target.m_SupMode and not attacker.m_SupMode then
 				target:triggerEvent("clientBloodScreen")
-				local basicDamage = WEAPON_DAMAGE[weapon]
-				if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
-					local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
-					local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
-					basicDamage = basicDamage*((maxDist-dist)/maxDist)
-				elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
-					basicDamage = math.random(2, 5)
-				end
-				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-				local realLoss = basicDamage*multiplier
+				local realLoss
+				if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
+					realLoss = loss * EXPLOSIVE_DAMAGE_MULTIPLIER[weapon]
+				else
+					local basicDamage = WEAPON_DAMAGE[weapon]
+					if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
+						local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
+						local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
+						basicDamage = basicDamage*((maxDist-dist)/maxDist)
+					elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
+						basicDamage = math.random(2, 5)
+					end
+					local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+					realLoss = basicDamage*multiplier
 
-				if realLoss < basicDamage then -- workaround for 5 hp damages
-					realLoss = basicDamage -- workaround
+					if realLoss < basicDamage then -- workaround for 5 hp damages
+						realLoss = basicDamage -- workaround
+					end
 				end
 
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
