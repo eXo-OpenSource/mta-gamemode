@@ -246,7 +246,7 @@ end
 
 function BeggarPedManager:Event_adminPedDelete(pedId)
 	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
-		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
 
@@ -267,7 +267,9 @@ function BeggarPedManager:sendBeggarPedsToClient(player)
 end
 
 function BeggarPedManager:onClientColShapeHit(id)
-	BeggarPedManager.Map[id]:onClientColShapeHit(client, true)
+	if BeggarPedManager.Map[id] then
+		BeggarPedManager.Map[id]:onClientColShapeHit(client, true)
+	end
 end
 
 function BeggarPedManager:onClientColShapeLeave(id)

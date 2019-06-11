@@ -625,3 +625,11 @@ function Guns:toggleFastShot(bool)
 		unbindKey ( "crouch", "both", crouch )
 	end
 end
+
+function throwProjectile(projectile, force, leftHanded)
+	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25) 
+	local bx, by = bx+localPlayer.matrix.forward.x, by+localPlayer.matrix.forward.y
+	local x, y, z, x2, y2, z2 = getCameraMatrix()
+	local x, y, z = normalize(x2-x, y2-y, z2-z) 
+	createProjectile(localPlayer, projectile, bx, by, bz, 1, false, 0, 0, 0, x*force, y*force, z*force)
+end
