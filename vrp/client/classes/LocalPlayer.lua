@@ -28,6 +28,7 @@ function LocalPlayer:constructor()
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	self.m_FadeOut = bind(self.fadeOutScope, self)
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
+	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -280,16 +281,16 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
-				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
+				triggerServerEvent("factionStateToggleDuty", localPlayer, true, false, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true, false, true)
 			elseif localPlayer:getFaction():isEvilFaction() then
-				triggerServerEvent("factionEvilToggleDuty", localPlayer, true)
+				triggerServerEvent("factionEvilToggleDuty", localPlayer, true, false, true)
 			end
 		end
 
 		if localPlayer:getPublicSync("Company:Duty") then
-			triggerServerEvent("companyToggleDuty", localPlayer, true)
+			triggerServerEvent("companyToggleDuty", localPlayer, true, false, true)
 		end
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
@@ -308,7 +309,7 @@ function LocalPlayer:onDeathTimerUp()
 	end
 
 	local soundLength = 20 -- Length of Halleluja in Seconds
-	if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
+	if core:get("Sounds", "Halleluja", true) and fileExists("files/audio/Halleluja.mp3") then
 		self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
 		soundLength = self.m_Halleluja:getLength()
 	end
@@ -316,6 +317,7 @@ function LocalPlayer:onDeathTimerUp()
 	ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
 
 	-- render camera drive
+	removeEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 	self.m_Add = 3
 	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 	fadeCamera(false, soundLength)
@@ -388,10 +390,13 @@ function LocalPlayer:Event_playerWasted()
 	setGameSpeed(0.1)
 	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
-	local x,y,z = getElementPosition(localPlayer)
 	setSkyGradient(10,10,10,30,30,30)
-	setTimer(Camera.setMatrix,5000,1, x, y, z+3, x, y, z)
-	setTimer(setGameSpeed,5000,1,1)
+	setTimer(
+		function()
+			setGameSpeed(1)
+			addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
+		end
+	, 5000, 1)
 	setTimer(resetSkyGradient,30000,1)
 	if localPlayer:getInterior() > 0 then
 		self.m_OnDeathTimerUp()
@@ -401,6 +406,17 @@ function LocalPlayer:Event_playerWasted()
 	self.m_CanBeRevived = true
 	self:createDeathShortMessage()
 	self:createWastedTimer()
+end
+
+function LocalPlayer:setCameraOnTop() 
+	local x,y,z = getElementPosition(localPlayer)
+	local xr, yr, zr = getElementRotation(localPlayer)
+	if zr <= 180 then
+		roll = zr
+	elseif zr >= 180 then
+		roll = -(360 - zr) 
+	end
+	Camera.setMatrix(x, y, z+3, x, y, z, roll)
 end
 
 function LocalPlayer:stopDeathBleeding()
@@ -424,7 +440,13 @@ end
 function LocalPlayer:deathRender(deltaTime)
 	local x, y, z = getElementPosition(localPlayer)
 	self.m_Add = self.m_Add+0.005*deltaTime
-	Camera.setMatrix(x, y, z + self.m_Add, x, y, z)
+	local xr, yr, zr = getElementRotation(localPlayer)
+	if zr <= 180 then
+		roll = zr
+	elseif zr >= 180 then
+		roll = -(360 - zr) 
+	end
+	Camera.setMatrix(x, y, z + self.m_Add, x, y, z, roll)
 end
 
 function LocalPlayer:abortDeathGUI(force)
