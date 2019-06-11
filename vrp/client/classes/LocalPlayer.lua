@@ -459,6 +459,7 @@ function LocalPlayer:abortDeathGUI(force)
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
 		showChat(true)
+		removeEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 	end
 end
