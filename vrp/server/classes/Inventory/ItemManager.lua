@@ -6,6 +6,25 @@
 -- *
 -- ****************************************************************************
 ItemManager = inherit(Singleton)
+addRemoteEvents{"onClientBreakItem"}
+
+function ItemManager:constructor()
+	addEventHandler("onClientBreakItem", root, bind(self.Event_onItemBreak,self))
+end
+
+function ItemManager:destructor()
+end
+
+function ItemManager:Event_onItemBreak()
+	if source and isElement(source) then
+		if source.m_Super and source.m_Super.m_Breakable then
+			delete(source.m_Super)
+		end
+	end
+end
+
+--[[
+ItemManager = inherit(Singleton)
 ItemManager.Map = {}
 
 function ItemManager:constructor()
@@ -27,21 +46,21 @@ function ItemManager:constructor()
 		["Heroin"] = DrugsHeroin,
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
---[[		["Burger"] = ItemFood,
-		["Lebkuchen"] = ItemFood,
-		["Wuerstchen"] = ItemFood,
+--		["Burger"] = ItemFood,
+--		["Lebkuchen"] = ItemFood,
+--		["Wuerstchen"] = ItemFood,
 
-		["Kuheuter mit Pommes"] = ItemFood,
-		["Zombie-Burger"] = ItemFood,
-		["Suessigkeiten"] = ItemFood,
-		["Zuckerstange"] = ItemFood,
-		["Pizza"] = ItemFood,
-		["Pilz"] = ItemFood,
-		["Zigarette"] = ItemFood,
-		["Donut"] = ItemFood,
-		["Keks"] = ItemFood,
-		["Apfel"] = ItemFood,
-		["KöderDummy"] = ItemFood,]]
+--		["Kuheuter mit Pommes"] = ItemFood,
+--		["Zombie-Burger"] = ItemFood,
+--		["Suessigkeiten"] = ItemFood,
+--		["Zuckerstange"] = ItemFood,
+--		["Pizza"] = ItemFood,
+--		["Pilz"] = ItemFood,
+--		["Zigarette"] = ItemFood,
+--		["Donut"] = ItemFood,
+--		["Keks"] = ItemFood,
+--		["Apfel"] = ItemFood,
+--		["KöderDummy"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;
@@ -148,3 +167,4 @@ end
 function ItemManager:getInstance(itemName)
 	return ItemManager.Map[itemName]
 end
+]]

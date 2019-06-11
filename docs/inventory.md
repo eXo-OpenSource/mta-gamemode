@@ -288,3 +288,4 @@ DROP TABLE vrp_item_categories;
 
 # Testing list
 * All WorldItems (KeyPads, ...)
+

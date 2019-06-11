@@ -5,6 +5,38 @@
 -- *  PURPOSE:     ItemManager client
 -- *
 -- ****************************************************************************
+ItemManager = inherit(Singleton)
+addRemoteEvents{"onClientItemUse", "onClientItemExpire"}
+
+function ItemManager:constructor()
+	self:loadItems()
+
+    addEventHandler("onClientItemUse", localPlayer, bind(ItemManager.onItemUse, self))
+    addEventHandler("onClientItemExpire", localPlayer, bind(ItemManager.onItemExpire, self))
+end
+
+function ItemManager:destructor()
+end
+
+function ItemManager:onItemUse(item, expireTime)
+end
+
+function ItemManager:onItemExpire(item)
+end
+
+function ItemManager:loadItems()
+	self.m_Items = {  }
+	self.m_Items["Weed"] = DrugsWeed:new()
+	self.m_Items["Heroin"] = DrugsHeroin:new()
+	self.m_Items["Shrooms"] = DrugsShroom:new()
+	self.m_Items["Kokain"] = DrugsCocaine:new()
+	self.m_Items["Weed-Samen"] = Plant:new()
+  
+	ItemDestructable:new()
+	ItemSlam:new()
+end
+
+--[[
 ItemManager = inherit( Singleton )
 addRemoteEvents{ "onClientItemUse", "onClientItemExpire" }
 
@@ -71,3 +103,4 @@ end
 function ItemManager:initWearables()
 	  WearableHelmet:new()
 end
+]]

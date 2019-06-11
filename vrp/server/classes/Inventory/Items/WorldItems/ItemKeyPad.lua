@@ -80,7 +80,15 @@ function ItemKeyPad:use()
 		item = self.m_Item,
 		worldItemValue = self.m_WorldItemValue,
 		worldItemIsPermanent = self.m_WorldItemIsPermanent,
-		worldItemLocked = self.m_WorldItemLocked
+		worldItemLocked = self.m_WorldItemLocked,
+		callback = function(placingInfo, position, rotation, client)
+			client:getInventory():takeItem(placingInfo.item.InternalId, 1)
+			client:sendInfo(_("%s hinzugefügt!", client, placingInfo.itemData.Name))
+			local int = client:getInterior() 
+			local dim = client:getDimension()
+			StatisticsLogger:getSingleton():itemPlaceLogs(client, placingInfo.itemData.Name, position.x..","..position.y..","..position.z)
+			PlayerWorldItem:new(placingInfo.itemData, client:getId(), position, rotation, false, client:getId(), placingInfo.worldItemIsPermanent, placingInfo.worldItemLocked, placingInfo.worldItemValue, int, dim)
+		end
 	}
 
 	--[[
@@ -117,38 +125,6 @@ function ItemKeyPad:startObjectPlacing(player, callback, hideObject, customModel
 	return true
 end
 
---[[
-	TODO: This should be in WorldItem or WorldItemManager
-]]
-addEvent("itemPlaced", true)
-addEventHandler("itemPlaced", root,
-	function(x, y, z, rotation, moved)
-		local placingInfo = client.m_PlacingInfo
-		if placingInfo then
-			if x then
-				
-				if placingInfo.callback then
-					client:sendShortMessage(_("%s %s.", client, placingInfo.item.m_Item.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
-					placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
-				else
-					client:sendShortMessage(_("%s %s.", client, placingInfo.itemData.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
-					client:getInventory():takeItem(placingInfo.item.InternalId, 1)
-					client:sendInfo(_("%s hinzugefügt!", client, placingInfo.itemData.Name))
-					local int = client:getInterior() 
-					local dim = client:getDimension()
-					StatisticsLogger:getSingleton():itemPlaceLogs(client, placingInfo.itemData.Name, x..","..y..","..z)
-					PlayerWorldItem:new(placingInfo.itemData, client:getId(), Vector3(x, y, z), rotation, false, client:getId(), placingInfo.worldItemIsPermanent, placingInfo.worldItemLocked, placingInfo.worldItemValue, int, dim)
-				end
-			else
-				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
-				if placingInfo.callback then
-					placingInfo.callback(placingInfo.item, false)
-				end
-			end
-			client.m_PlacingInfo = nil
-		end
-	end
-)
 
 --[[
 function ItemKeyPad:onKeyPadClick(button, state, player)

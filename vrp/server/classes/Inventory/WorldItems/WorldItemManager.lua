@@ -76,3 +76,30 @@ function WorldItemManager:onDestruction()
 	end
 end
 
+
+addEvent("itemPlaced", true)
+addEventHandler("itemPlaced", root,
+	function(x, y, z, rotation, moved)
+		local placingInfo = client.m_PlacingInfo
+		if placingInfo then
+			if x then
+				
+				client:sendShortMessage(_("%s %s.", client, placingInfo.item.m_Item.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
+				placingInfo.callback(placingInfo, Vector3(x, y, z), rotation, client)
+				--[[
+				if placingInfo.callback then
+					client:sendShortMessage(_("%s %s.", client, placingInfo.item.m_Item.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
+					placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
+				else
+					client:sendShortMessage(_("%s %s.", client, placingInfo.itemData.Name, moved and "verschoben" or "platziert"), nil, nil, 1000)
+				end]]
+			else
+				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
+				if placingInfo.callback then
+					placingInfo.callback(placingInfo.item, false)
+				end
+			end
+			client.m_PlacingInfo = nil
+		end
+	end
+)
