@@ -107,6 +107,8 @@
 	<script src="server/classes/ServerSettings.lua" type="server"/>
 	<script src="server/classes/Forum.lua" type="server"/>
 	<script src="server/classes/ServiceSync.lua" type="server"/>
+	<script src="server/classes/InfluxDB.lua" type="server"/>
+	<script src="server/classes/InfluxLogging.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
