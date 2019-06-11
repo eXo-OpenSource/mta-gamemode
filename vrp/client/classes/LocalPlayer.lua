@@ -582,7 +582,7 @@ function LocalPlayer:renderPedNameTags()
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
 								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
 								dxDrawText(nameTag, x+1, y+1, nil, nil, tocolor(200, 200, 200, 255), 5/dist, "default-bold", "center", "center")
-							elseif mortemTag then
+							elseif mortemTag and mortemTag ~= localPlayer:getName() then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
 								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
 								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 5/dist, "default-bold", "center", "center")
