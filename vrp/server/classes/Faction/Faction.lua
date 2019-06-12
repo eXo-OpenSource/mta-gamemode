@@ -474,6 +474,11 @@ function Faction:getActivity(force)
 
 	local rows = Async.wait()
 
+	self.m_PlayerActivity = {}
+	for playerId, rank in pairs(self.m_Players) do
+		self.m_PlayerActivity[playerId] = 0
+	end
+
 	for _, row in ipairs(rows) do
 		local activity = 0
 
