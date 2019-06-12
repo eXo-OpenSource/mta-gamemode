@@ -69,6 +69,7 @@ function BeggarPedManager:spawnPeds()
 	-- Delete current Peds
 	for i, v in pairs(self.Map) do
 		if not v.vehicle then
+			triggerClientEvent("ColshapeStreamer:deleteColshape", root, "beggarped", v.m_Id)
 			v:destroy()
 		end
 	end

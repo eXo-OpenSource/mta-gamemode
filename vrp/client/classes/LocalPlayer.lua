@@ -394,7 +394,9 @@ function LocalPlayer:Event_playerWasted()
 	setTimer(
 		function()
 			setGameSpeed(1)
-			addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
+			if localPlayer:getInterior() == 0 then
+				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
+			end
 		end
 	, 5000, 1)
 	setTimer(resetSkyGradient,30000,1)
