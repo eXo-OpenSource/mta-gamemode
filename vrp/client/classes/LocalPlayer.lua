@@ -317,6 +317,7 @@ function LocalPlayer:onDeathTimerUp()
 	ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
 
 	-- render camera drive
+	resetSkyGradient()
 	removeEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 	self.m_Add = 3
 	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
@@ -367,6 +368,9 @@ function LocalPlayer:createDeathShortMessage()
 			function()
 				if self.m_Death then
 					self.m_OnDeathTimerUp()
+					if isTimer(self.m_CameraTimer) then
+						killTimer(self.m_CameraTimer)
+					end
 				else
 					ErrorBox:new(_"Du bist nicht mehr tot!")
 					return
@@ -391,14 +395,14 @@ function LocalPlayer:Event_playerWasted()
 	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
 	setSkyGradient(10,10,10,30,30,30)
-	setTimer(
+	setTimer(setGameSpeed, 5000, 1, 1)
+	self.m_CameraTimer = setTimer(
 		function()
-			setGameSpeed(1)
 			if localPlayer:getInterior() == 0 then
 				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 			end
 		end
-	, 5000, 1)
+	, 4500, 1)
 	setTimer(resetSkyGradient,30000,1)
 	if localPlayer:getInterior() > 0 then
 		self.m_OnDeathTimerUp()
