@@ -84,12 +84,7 @@ end
 
 function ColshapeStreamer:onStreamOut()
     if source.colshape then 
-        if not source.colshape:destroy() then
-            if source.category and source.elementId then
-                outputDebugString("ColshapeStreamer Fehler: "..tostring(source.category)..", ID: "..tostring(source.elementId))
-            else
-                outputDebugString("ColshapeStreamer Fehler [ID nicht gefunden]")
-            end
-        end
+        source.colshape:destroy()
+        source.colshape = nil
     end
 end
