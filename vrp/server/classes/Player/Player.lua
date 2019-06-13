@@ -522,6 +522,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	self:setHeadless(false)
 	self:setOnFire(false)
+	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
 	FactionState:getSingleton():uncuffPlayer(self)
@@ -539,8 +540,6 @@ function Player:respawn(position, rotation, bJailSpawn)
 	triggerEvent("WeaponAttach:onInititate", self)
 
 	PrisonBreak.RemoveKeycard(self)
-	
-	setCameraTarget(self, self)
 end
 
 function Player:clearReviveWeapons()
