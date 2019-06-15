@@ -73,9 +73,13 @@ function Guns:constructor()
 	--addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
-	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash"}
+	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash", "prepareGrenadeThrow", "throwProjectile"}
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
 	addEventHandler("clientMonochromeFlash", root, bind(self.monochromeFlash, self))
+	addEventHandler("prepareGrenadeThrow", root, bind(self.prepareGrenadeThrow, self))
+	addEventHandler("throwProjectile", root, bind(self.throwProjectile, self))
+	self.m_GrenadeThrowBind = bind(self.renderThrowPreparation, self)
+	self.m_GrenadeHandleBind = bind(self.handleThrowBind, self)
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 
@@ -626,10 +630,48 @@ function Guns:toggleFastShot(bool)
 	end
 end
 
-function throwProjectile(projectile, force, leftHanded)
+function Guns:throwProjectile(projectile, force, leftHanded)
 	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25) 
-	local bx, by = bx+localPlayer.matrix.forward.x, by+localPlayer.matrix.forward.y
 	local x, y, z, x2, y2, z2 = getCameraMatrix()
 	local x, y, z = normalize(x2-x, y2-y, z2-z) 
 	createProjectile(localPlayer, projectile, bx, by, bz, 1, false, 0, 0, 0, x*force, y*force, z*force)
+end
+
+function Guns:renderThrowPreparation() 
+	localPlayer.m_GrenadeThrowProgress = localPlayer.m_GrenadeThrowProgress - 0.001
+	setPedAnimationProgress(localPlayer, "WEAPON_throw", localPlayer.m_GrenadeThrowProgress)
+	localPlayer.m_GrenadeThrowForce = localPlayer.m_GrenadeThrowForce + 0.02
+
+	if localPlayer.m_GrenadeThrowProgress < 0.12 then 
+		removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind) 
+	end
+end
+
+function Guns:handleThrowBind(key, keystate)
+	if keystate == "down" then
+		localPlayer.m_GrenadeThrowProgress = 0.15
+		localPlayer.m_GrenadeThrowForce = 0.2
+		localPlayer.m_HasThrownGrenade = false
+		triggerServerEvent("disableGrenadeAimLeave", localPlayer)
+		addEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+	elseif keystate == "up" then
+		if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+			removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+		end
+		if localPlayer.m_HasThrownGrenade == false then
+			triggerServerEvent("startGrenadeThrow", localPlayer, localPlayer.m_GrenadeThrowForce)
+			localPlayer.m_HasThrownGrenade = true
+		end
+	end
+end
+
+function Guns:prepareGrenadeThrow(state)
+	if state == true then
+		bindKey("fire", "both", self.m_GrenadeHandleBind)
+	else
+		unbindKey("fire", "both", self.m_GrenadeHandleBind)
+		if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+			removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+		end
+	end
 end

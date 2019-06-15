@@ -291,6 +291,7 @@ function Player:initialiseBinds()
 		bindKey(self, "y", "down", "chatbox", "Fraktion")
 	end
 	bindKey(self, "horn", "both", PoliceAnnouncements:getSingleton().m_BindFunction)
+	bindKey(self, "aim_weapon", "both", Guns:getSingleton().m_GrenadeBind)
 end
 
 function Player:buckleSeatBelt(vehicle)

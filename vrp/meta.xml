@@ -557,6 +557,7 @@
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
 	<script src="client/classes/Utils/FileModdingHelper.lua" type="client"/>
+	<script src="client/classes/Utils/CenteredBonecam.lua" type="client"/>
 	<script src="client/classes/Utils/RadioStationManager.lua" type="client"/>
 
 	<!-- GUI system -->
