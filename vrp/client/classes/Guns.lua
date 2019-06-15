@@ -367,15 +367,17 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 			end
 		end
 		if self.m_TracerEnabled then
-			local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
-			local x, y, z = normalize(hitX-wx, hitY-wy, hitZ-wz)
-			local x, y, z = x*10, y*10, z*10
-			if (x^2+y^2+z^2)^0.5 > getDistanceBetweenPoints3D(wx, wy, wz, hitX, hitY, hitZ) then
-				x, y, z = hitX-wx, hitY-wy, hitZ-wz
+			if not THROWABLE_WEAPONS[weapon] then
+				local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
+				local x, y, z = normalize(hitX-wx, hitY-wy, hitZ-wz)
+				local x, y, z = x*10, y*10, z*10
+				if (x^2+y^2+z^2)^0.5 > getDistanceBetweenPoints3D(wx, wy, wz, hitX, hitY, hitZ) then
+					x, y, z = hitX-wx, hitY-wy, hitZ-wz
+				end
+				local length = getDistanceBetweenPoints3D(hitX, hitY, hitZ, wx, wy, wz)
+				local steps = length / (x^2+y^2+z^2)^0.5
+				self.m_TracerTable[getTickCount()] = {wx-x, wy-y, wz-z, hitX, hitY, hitZ, steps, x, y, z, 0}
 			end
-			local length = getDistanceBetweenPoints3D(hitX, hitY, hitZ, wx, wy, wz)
-			local steps = length / (x^2+y^2+z^2)^0.5
-			self.m_TracerTable[getTickCount()] = {wx-x, wy-y, wz-z, hitX, hitY, hitZ, steps, x, y, z, 0}
 		end
 	end
 
@@ -635,6 +637,7 @@ function Guns:throwProjectile(projectile, force, leftHanded)
 	local x, y, z, x2, y2, z2 = getCameraMatrix()
 	local x, y, z = normalize(x2-x, y2-y, z2-z) 
 	createProjectile(localPlayer, projectile, bx, by, bz, 1, false, 0, 0, 0, x*force, y*force, z*force)
+	localPlayer.m_HasThrownGrenade = false
 end
 
 function Guns:renderThrowPreparation() 
@@ -648,17 +651,18 @@ function Guns:renderThrowPreparation()
 end
 
 function Guns:handleThrowBind(key, keystate)
-	if keystate == "down" then
-		localPlayer.m_GrenadeThrowProgress = 0.15
-		localPlayer.m_GrenadeThrowForce = 0.2
-		localPlayer.m_HasThrownGrenade = false
-		triggerServerEvent("disableGrenadeAimLeave", localPlayer)
-		addEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
-	elseif keystate == "up" then
-		if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
-			removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
-		end
-		if localPlayer.m_HasThrownGrenade == false then
+	if localPlayer.m_HasThrownGrenade == false then
+		if keystate == "down" then
+			localPlayer.m_GrenadeThrowProgress = 0.15
+			localPlayer.m_GrenadeThrowForce = 0.2
+			triggerServerEvent("disableGrenadeAimLeave", localPlayer)
+			if not isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+				addEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+			end
+		elseif keystate == "up" then
+			if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+				removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+			end
 			triggerServerEvent("startGrenadeThrow", localPlayer, localPlayer.m_GrenadeThrowForce)
 			localPlayer.m_HasThrownGrenade = true
 		end
@@ -668,6 +672,7 @@ end
 function Guns:prepareGrenadeThrow(state)
 	if state == true then
 		bindKey("fire", "both", self.m_GrenadeHandleBind)
+		localPlayer.m_HasThrownGrenade = false
 	else
 		unbindKey("fire", "both", self.m_GrenadeHandleBind)
 		if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then

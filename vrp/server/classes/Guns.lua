@@ -431,24 +431,27 @@ end
 function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 	if keystate == "down" then
 		if THROWABLE_WEAPONS[player:getWeapon()] then
-			toggleControl(player, "next_weapon", false)
-			toggleControl(player, "previous_weapon", false)
-			toggleControl(player, "forwards", false)
-			toggleControl(player, "backwards", false)
-			toggleControl(player, "left", false)
-			toggleControl(player, "right", false)
-			toggleControl(player, "sprint", false)
-			toggleControl(player, "fire", false)
-			setPedAnimation(player, "GRENADE", "WEAPON_throw", -1, false, false, false, false)
-			player.m_Thrown = false
-			nextframe(
-				function()
-					setPedAnimationSpeed(player, "WEAPON_throw", 0.0)
-					setPedAnimationProgress(player, "WEAPON_throw", 0.15)
-					player:triggerEvent("startCenteredBonecam", 2, false, 25)
-				end
-			)
-			player:triggerEvent("prepareGrenadeThrow", true)
+			local x, y, z = getElementVelocity(player)
+			if z == 0 then
+				toggleControl(player, "next_weapon", false)
+				toggleControl(player, "previous_weapon", false)
+				toggleControl(player, "forwards", false)
+				toggleControl(player, "backwards", false)
+				toggleControl(player, "left", false)
+				toggleControl(player, "right", false)
+				toggleControl(player, "sprint", false)
+				toggleControl(player, "fire", false)
+				setPedAnimation(player, "GRENADE", "WEAPON_throw", -1, false, false, false, false)
+				player.m_Thrown = false
+				nextframe(
+					function()
+						setPedAnimationSpeed(player, "WEAPON_throw", 0.0)
+						setPedAnimationProgress(player, "WEAPON_throw", 0.15)
+						player:triggerEvent("startCenteredBonecam", 2, false, 25)
+					end
+				)
+				player:triggerEvent("prepareGrenadeThrow", true)
+			end
 		end
 	elseif keystate == "up" then
 		if not player.m_Thrown then
@@ -470,13 +473,18 @@ function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 end
 
 function Guns:startGrenadeThrow(throwForce)
+	if not client.m_LastGrenadeThrow then
+		client.m_LastGrenadeThrow = 0
+	end
 	if client.m_Thrown then
-		local player = client
-		local projectile = player:getWeapon()
-		player.m_LastGrenadeThrow = getTickCount()
-		setPedAnimationSpeed(player, "WEAPON_throw", 1)
-		setTimer(function() player:triggerEvent("throwProjectile", projectile, throwForce) takeWeapon(player, projectile, 1) end, 200, 1)
-		setTimer(function() player.m_Thrown = false self:activeGrenadeThrowMode(player, false, "up", true) end, 400, 1)
+		if getTickCount() - client.m_LastGrenadeThrow > 1000 then
+			local player = client
+			local projectile = player:getWeapon()
+			player.m_LastGrenadeThrow = getTickCount()
+			setPedAnimationSpeed(player, "WEAPON_throw", 1)
+			setTimer(function() player:triggerEvent("throwProjectile", projectile, throwForce) takeWeapon(player, projectile, 1) end, 200, 1)
+			setTimer(function() player.m_Thrown = false self:activeGrenadeThrowMode(player, false, "up", true) end, 400, 1)
+		end
 	end
 end
 
