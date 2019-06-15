@@ -196,6 +196,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 						bPlaySound = true
 						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss)
 					end
+					if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then cancelEvent() end
 				else
 					if weapon ~= 17 or ( not WearableHelmet:getSingleton().m_GasMask ) then
 						bPlaySound = false
