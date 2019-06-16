@@ -457,6 +457,9 @@ function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 		if not player.m_Thrown then
 			nextframe(function() player:triggerEvent("stopCenteredBonecam") end)
 			player:triggerEvent("prepareGrenadeThrow", false)
+			if player:getWeapon() == 39 then
+				giveWeapon(player, 40, 1)
+			end
 			toggleControl(player, "next_weapon", true)
 			toggleControl(player, "previous_weapon", true)
 			toggleControl(player, "forwards", true)

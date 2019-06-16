@@ -1387,6 +1387,15 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Sounds", "Navi", state)
 		end
 
+		self.m_InteriorSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.9, self.m_Height*0.04, _"Interior Sounds", self.m_SettingBG)
+		self.m_InteriorSound:setFont(VRPFont(25))
+		self.m_InteriorSound:setFontSize(1)
+		self.m_InteriorSound:setChecked(core:get("Sounds", "Interiors", true))
+		self.m_InteriorSound.onChange = function (state)
+			core:set("Sounds", "Interiors", state)
+			setInteriorSoundsEnabled(state)
+		end
+
 		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)
 		self.m_PoliceSoundsButton.onLeftClick = bind(self.PoliceSoundsButton_Click, self)
 
