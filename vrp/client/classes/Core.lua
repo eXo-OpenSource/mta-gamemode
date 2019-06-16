@@ -129,6 +129,9 @@ function Core:ready() --onClientResourceStart
 	else
 		setFarClipDistance(992)
 	end
+	if not core:get("Sounds", "Interiors", true) then 
+		setInteriorSoundsEnabled(false)
+	end
 
 	NoDm:new()
 	FactionManager:new()

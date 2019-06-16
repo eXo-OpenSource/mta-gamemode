@@ -559,6 +559,7 @@
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
 	<script src="client/classes/Utils/FileModdingHelper.lua" type="client"/>
+	<script src="client/classes/Utils/CenteredBonecam.lua" type="client"/>
 	<script src="client/classes/Utils/RadioStationManager.lua" type="client"/>
 
 	<!-- GUI system -->
@@ -2333,6 +2334,8 @@
 	<vrpfile src="files/models/objects/a51fensin.dff"/>
 	<vrpfile src="files/models/objects/hedge01_law.col" />
 	<vrpfile src="files/models/objects/hedge01_law.dff" />
+	<vrpfile src="files/models/objects/lawroads_law21.col" />
+	<vrpfile src="files/models/objects/lawroads_law21.dff" />
 	<vrpfile src="files/models/objects/blitzer.col"/>
 	<vrpfile src="files/models/objects/blitzer.dff"/>
 	<vrpfile src="files/models/objects/blitzer.txd"/>

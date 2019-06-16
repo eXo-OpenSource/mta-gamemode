@@ -41,7 +41,7 @@ function Guns:constructor()
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage", "startGrenadeThrow", "disableGrenadeAimLeave"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
@@ -50,6 +50,10 @@ function Guns:constructor()
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 	self.m_DamageLogCache = { }
 	setTimer(bind(self.Event_onGunLogCacheTick, self), 5000, 0)
+
+	self.m_GrenadeBind = bind(self.activeGrenadeThrowMode, self)
+	addEventHandler("startGrenadeThrow", root, bind(self.startGrenadeThrow, self))
+	addEventHandler("disableGrenadeAimLeave", root, bind(self.disableGrenadeAimLeave, self))
 end
 
 
@@ -422,4 +426,71 @@ function takeAllWeapons( player )
 	end
 	local result = _takeAllWeapons( player )
 	return result
+end
+
+function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
+	if keystate == "down" then
+		if THROWABLE_WEAPONS[player:getWeapon()] then
+			local x, y, z = getElementVelocity(player)
+			if z == 0 then
+				toggleControl(player, "next_weapon", false)
+				toggleControl(player, "previous_weapon", false)
+				toggleControl(player, "forwards", false)
+				toggleControl(player, "backwards", false)
+				toggleControl(player, "left", false)
+				toggleControl(player, "right", false)
+				toggleControl(player, "sprint", false)
+				toggleControl(player, "fire", false)
+				setPedAnimation(player, "GRENADE", "WEAPON_throw", -1, false, false, false, false)
+				player.m_Thrown = false
+				nextframe(
+					function()
+						setPedAnimationSpeed(player, "WEAPON_throw", 0.0)
+						setPedAnimationProgress(player, "WEAPON_throw", 0.15)
+						player:triggerEvent("startCenteredBonecam", 2, false, 25)
+					end
+				)
+				player:triggerEvent("prepareGrenadeThrow", true)
+			end
+		end
+	elseif keystate == "up" then
+		if not player.m_Thrown then
+			nextframe(function() player:triggerEvent("stopCenteredBonecam") end)
+			player:triggerEvent("prepareGrenadeThrow", false)
+			if player:getWeapon() == 39 then
+				giveWeapon(player, 40, 1)
+			end
+			toggleControl(player, "next_weapon", true)
+			toggleControl(player, "previous_weapon", true)
+			toggleControl(player, "forwards", true)
+			toggleControl(player, "backwards", true)
+			toggleControl(player, "left", true)
+			toggleControl(player, "right", true)
+			toggleControl(player, "sprint", true)
+			toggleControl(player, "fire", true)
+			if not cancelAnimation then
+				setPedAnimation(player)
+			end
+		end
+	end
+end
+
+function Guns:startGrenadeThrow(throwForce)
+	if not client.m_LastGrenadeThrow then
+		client.m_LastGrenadeThrow = 0
+	end
+	if client.m_Thrown then
+		if getTickCount() - client.m_LastGrenadeThrow > 1000 then
+			local player = client
+			local projectile = player:getWeapon()
+			player.m_LastGrenadeThrow = getTickCount()
+			setPedAnimationSpeed(player, "WEAPON_throw", 1)
+			setTimer(function() player:triggerEvent("throwProjectile", projectile, throwForce) takeWeapon(player, projectile, 1) end, 200, 1)
+			setTimer(function() player.m_Thrown = false self:activeGrenadeThrowMode(player, false, "up", true) end, 400, 1)
+		end
+	end
+end
+
+function Guns:disableGrenadeAimLeave()
+	client.m_Thrown = true
 end
