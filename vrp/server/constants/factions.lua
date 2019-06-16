@@ -176,6 +176,7 @@ evilFactionInteriorEnter[7] = Vector3(2522.5205078125, -1679.2890625, 15.4969997
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 factionSpawnpoint[7] = {Vector3(2501.12, -1666.82, 13.36), 0, 0}
 factionNavigationpoint[7] = evilFactionInteriorEnter[7]
+factionAirDropPoint[7] = Vector3(2476.883, -1667.080, 13.326)
 
 -- ID 8 = Ballas
 factionRankNames[8] = {
