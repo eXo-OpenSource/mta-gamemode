@@ -430,7 +430,7 @@ end
 
 function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 	if keystate == "down" then
-		if THROWABLE_WEAPONS[player:getWeapon()] then
+		if THROWABLE_WEAPONS[player:getWeapon()] and not player.isTasered then
 			local x, y, z = getElementVelocity(player)
 			if z == 0 then
 				toggleControl(player, "next_weapon", false)
@@ -460,16 +460,18 @@ function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 			if player:getWeapon() == 39 then
 				giveWeapon(player, 40, 1)
 			end
-			toggleControl(player, "next_weapon", true)
-			toggleControl(player, "previous_weapon", true)
-			toggleControl(player, "forwards", true)
-			toggleControl(player, "backwards", true)
-			toggleControl(player, "left", true)
-			toggleControl(player, "right", true)
-			toggleControl(player, "sprint", true)
-			toggleControl(player, "fire", true)
-			if not cancelAnimation then
-				setPedAnimation(player)
+			if not player.isTasered then
+				toggleControl(player, "next_weapon", true)
+				toggleControl(player, "previous_weapon", true)
+				toggleControl(player, "forwards", true)
+				toggleControl(player, "backwards", true)
+				toggleControl(player, "left", true)
+				toggleControl(player, "right", true)
+				toggleControl(player, "sprint", true)
+				toggleControl(player, "fire", true)
+				if not cancelAnimation then
+					setPedAnimation(player)
+				end
 			end
 		end
 	end
