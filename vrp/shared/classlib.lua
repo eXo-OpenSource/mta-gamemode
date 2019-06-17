@@ -308,30 +308,44 @@ function bind(func, ...)
 			for i = 1, select("#", ...) do
 				params[boundParamSize + i] = funcParams[i]
 			end
-			--[[local hookInfo = ""
+			local hookInfo = {}
 			local dHook = function(sourceResource, functionName, isAllowedByACL, luaFilename, luaLineNumber, ...)
-				if hookInfo ~= "" then hookInfo = hookInfo .. " - " end
-				hookInfo = hookInfo .. inspect({sourceResource = sourceResource, functionName = functionName, isAllowedByACL = isAllowedByACL, luaFilename = luaFilename, luaLineNumber = luaLineNumber, args = {...}}, {newline=' ', indent=""})
+				table.insert(hookInfo, {sourceResource = sourceResource, functionName = functionName, isAllowedByACL = isAllowedByACL, luaFilename = luaFilename, luaLineNumber = luaLineNumber, args = {...}})
 			end
 
 			if not triggerServerEvent then
 				addDebugHook("preFunction", dHook)
-			end]]
+			end
 
 			local retValue = func(unpack(params))
 
-			--[[if not triggerServerEvent then
+			if not triggerServerEvent then
 				removeDebugHook("preFunction", dHook)
-			end]]
+			end
 
-			--[[if not triggerServerEvent then
+			if not triggerServerEvent then
 				local time = getTickCount() - perfTest
-				if time >= 50 then -- log everthing over 50ms ;)
-					local data = inspect({...}, {newline=' ', indent=""}) .. " - " .. inspect({source = source, this = this, client = client, eventName = eventName}, {newline=' ', indent=""})
-					data = data .. " -  " .. hookInfo .. " "
-					FileLogger:getSingleton():addPerfLog(time, "classlib@bind", data)
+				if time >= 250 then -- log everthing over 50ms ;)
+					local name = "UNKNOWN"
+					if hookInfo and hookInfo[1] and hookInfo[1].functionName then
+						name = hookInfo[1].functionName
+					end
+
+					local data =  {
+						["client"] = client and client:getName() or "-",
+						["eventName"] = eventName
+					}
+
+					for k, v in pairs(hookInfo) do
+						data["functionName"] = v.functionName
+						data["luaFilename"] = v.luaFilename
+						data["luaLineNumber"] = v.luaLineNumber
+						break
+					end
+
+					InfluxDB:getSingleton():write("classlib", time, data)
 				end
-			end]]
+			end
 			return retValue
 		end
 end
