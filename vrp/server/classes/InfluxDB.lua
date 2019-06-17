@@ -15,21 +15,25 @@ function InfluxDB:constructor()
 end
 
 function InfluxDB:write(measurement, value, tags)
+	outputChatBox(measurement)
     if not DEBUG then
         local timestamp = getRealTime().timestamp.."000000000"
         local tagsData = ""
-        
+
         if tags then
-            for k, v in pairs(tags) do
-                tagsData = tagsData .. "," .. tostring(k) .. "=" .. tostring(v)
+			for k, v in pairs(tags) do
+				local v = v or "-"
+                tagsData = tagsData .. "," .. tostring(k) .. "=" .. tostring(v):gsub(",", ";")
             end
         end
 
         fetchRemote(self.m_Host .. "/write?db=" .. self.m_Database, {
-            ["method"] = "POST", 
-            ["username"] = self.m_Username, 
-            ["password"] = self.m_Password, 
+            ["method"] = "POST",
+            ["username"] = self.m_Username,
+			["password"] = self.m_Password,
             ["postData"] = measurement .. ",host=merx.dev,region=eu1" .. tagsData .. " value=" .. value .. " " .. timestamp
-        }, function() end)
+		}, function(result)
+			outputServerLog(tostring(result))
+		end)
     end
 end

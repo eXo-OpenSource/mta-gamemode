@@ -29,6 +29,7 @@ function Core:constructor()
 
 	-- Create file logger for sql performance
 	FileLogger:new()
+	InfluxDB:new()
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
@@ -66,6 +67,7 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
+		InfluxLogging:new()
 		ServerSettings:new()
 		AntiCheat:new()
 		ModdingCheck:new()
@@ -194,8 +196,6 @@ function Core:constructor()
 		ArmsDealer:new()
 		PlaneManager:new()
 		PoliceAnnouncements:new()
-		InfluxDB:new()
-		InfluxLogging:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

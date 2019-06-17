@@ -933,3 +933,24 @@ end
 function addComas(str)
 	return #str % 3 == 0 and str:reverse():gsub("(%d%d%d)", "%1."):reverse():sub(2) or str:reverse():gsub("(%d%d%d)", "%1."):reverse()
 end
+
+URLEncoder = {
+    encode = function(str)
+            if (not str) then
+                return str
+            end
+
+            str = string.gsub (str, "\n", "\r\n")
+            str = string.gsub (str, "[^%w.%-_~]",
+                function (c) return string.format ("%%%02X", string.byte(c)) end)
+
+            return str
+        end,
+    decode = function(str)
+            str = string.gsub(str, "%%([0-9a-fA-F][0-9a-fA-F])",
+                function (c) return string.char(tonumber("0x" .. c)) end)
+            str = string.gsub (str, "\n", "\r\n")
+            return str
+        end,
+}
+
