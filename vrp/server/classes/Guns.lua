@@ -443,6 +443,7 @@ function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 				toggleControl(player, "fire", false)
 				setPedAnimation(player, "GRENADE", "WEAPON_throw", -1, false, false, false, false)
 				player.m_Thrown = false
+				player.m_isInThrowAnim = true
 				nextframe(
 					function()
 						setPedAnimationSpeed(player, "WEAPON_throw", 0.0)
@@ -455,22 +456,25 @@ function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
 		end
 	elseif keystate == "up" then
 		if not player.m_Thrown then
-			nextframe(function() player:triggerEvent("stopCenteredBonecam") end)
-			player:triggerEvent("prepareGrenadeThrow", false)
-			if player:getWeapon() == 39 then
-				giveWeapon(player, 40, 1)
-			end
-			if not player.isTasered then
-				toggleControl(player, "next_weapon", true)
-				toggleControl(player, "previous_weapon", true)
-				toggleControl(player, "forwards", true)
-				toggleControl(player, "backwards", true)
-				toggleControl(player, "left", true)
-				toggleControl(player, "right", true)
-				toggleControl(player, "sprint", true)
-				toggleControl(player, "fire", true)
-				if not cancelAnimation then
-					setPedAnimation(player)
+			if player.m_isInThrowAnim then
+				player.m_isInThrowAnim = false 
+				nextframe(function() player:triggerEvent("stopCenteredBonecam") end)
+				player:triggerEvent("prepareGrenadeThrow", false)
+				if player:getWeapon() == 39 then
+					giveWeapon(player, 40, 1)
+				end
+				if not player.isTasered then
+					toggleControl(player, "next_weapon", true)
+					toggleControl(player, "previous_weapon", true)
+					toggleControl(player, "forwards", true)
+					toggleControl(player, "backwards", true)
+					toggleControl(player, "left", true)
+					toggleControl(player, "right", true)
+					toggleControl(player, "sprint", true)
+					toggleControl(player, "fire", true)
+					if not dontCancelAnimation then
+						setPedAnimation(player)
+					end
 				end
 			end
 		end
