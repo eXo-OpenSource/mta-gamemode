@@ -12,28 +12,28 @@ function StaticWorldItems:constructor()
 
 	self.m_Items = {
 		["Mushroom"]= {
-			["class"] = ItemManager:getSingleton():getInstance("Shrooms"),
+			["class"] = nil,-- ItemManager:getSingleton():getInstance("Shrooms"),
 			["offsetZ"] = -1,
 			["chance"] = 33,
 			["enabled"] = true
 					  },
 		["Osterei"] = {
-			["class"] = ItemManager:getSingleton():getInstance("Osterei"),
+			["class"] = nil,-- ItemManager:getSingleton():getInstance("Osterei"),
 			["offsetZ"] = -0.85,
 			["chance"] = 33,
 			["enabled"] = EVENT_EASTER
 					  },
 		["Kürbis"] = {
-			["class"] = ItemManager:getSingleton():getInstance("Kürbis"),
+			["class"] = nil,-- ItemManager:getSingleton():getInstance("Kürbis"),
 			["offsetZ"] = -0.85,
 			["chance"] = 33,
 			["enabled"] = EVENT_HALLOWEEN
 		},
 	}
 
-	self.m_TimedPulse = TimedPulse:new(1000*60*60)
-	self.m_TimedPulse:registerHandler(bind(self.reload, self))
-    self:reload(true)
+	-- self.m_TimedPulse = TimedPulse:new(1000*60*60)
+	-- self.m_TimedPulse:registerHandler(bind(self.reload, self))
+    -- self:reload(true)
 
 	addCommandHandler("addWorldObject", bind(self.addPosition, self))
 	addCommandHandler("remWorldObject", bind(self.removePosition, self))
@@ -104,7 +104,7 @@ function StaticWorldItems:removePosition(player)
 end
 
 function StaticWorldItems:reload(firstLoad)
-	for id, object in pairs(self.m_Objects) do	
+	for id, object in pairs(self.m_Objects) do
 		if isElement(object) then
 			if not object.m_NotReload then
 				object:destroy()

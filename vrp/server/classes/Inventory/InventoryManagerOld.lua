@@ -44,7 +44,7 @@ function InventoryManagerOld:getItemDataForItem(itemName)
 end
 
 function InventoryManagerOld:loadItems()
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_items", sql:getPrefix())
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_items_old", sql:getPrefix())
 	local itemData = {}
 	local itemName
 	for i, row in ipairs(result) do
@@ -68,7 +68,7 @@ end
 
 function InventoryManagerOld:loadInventory(player)
 	if not self.Map[player] then
-		local instance = InventoryOld:new(player, self.m_Slots, self.m_ItemData, ItemManager:getSingleton():getClassItems())
+		local instance = InventoryOld:new(player, self.m_Slots, self.m_ItemData, nil--[[ItemManager:getSingleton():getClassItems()]])
 		self.Map[player] = instance
 		return instance
 	end
@@ -179,15 +179,15 @@ function InventoryManagerOld:Event_acceptItemTrade(player, target)
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
+	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 		if (not player:getFaction():isStateFaction()) or (not player:getFaction():isFactionDuty()) then
-			if ArmsDealer:getSingleton():getItemData(item) then 
+			if ArmsDealer:getSingleton():getItemData(item) then
 				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
 				return false
 			end
 		end
 	end
-	if player:getInventoryOld():getItemAmount(item) >= amount then 
+	if player:getInventoryOld():getItemAmount(item) >= amount then
 		if target:getMoney() >= money then
 			if target:getInventoryOld():giveItem(item, amount, value) then
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))

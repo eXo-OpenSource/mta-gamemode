@@ -38,13 +38,14 @@ InventoryItemClasses = {
 --[[
 	Missing stuff:
 	[ ] Rework WorldItems
+	[ ] Fix StaticWorldItems
 	[ ] Rewrite all ItemClasses for new Inventory
 	[ ] Implement invetory storing & and auto cleanup
 	[ ] Implement inventory interactions (player inventory -> vehicle inventory)
 	[ ] Reimplement trading
 	[ ] Replace all old giveItem & takeItem
 	[ ] Look for hardcoded item ids
-	[ ] Write testing list 
+	[ ] Write testing list
 	[ ] Implement inventory change events
 	[ ] Write inventory migration
 	[ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
@@ -93,79 +94,43 @@ function InventoryManager:constructor()
 		WearablePortables = WearablePortables;
 		WearableClothes = WearableClothes;
 	}
-	self.m_Items = {}
-	self.m_ItemIdToName = {}
-	self.m_Categories = {}
-	self.m_CategoryIdToName = {}
+
 	self.m_InventoryTypes = {}
 	self.m_InventoryTypesIdToName = {}
-	self:loadItems()
-	self:loadCategories()
 	self:loadInventoryTypes()
 
-	addRemoteEvents{"syncInventory"}
+	addRemoteEvents{"syncInventory", "onItemUse", "onItemUseSecondary"}
 
 	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
+	addEventHandler("onItemUse", root, bind(self.Event_onItemUse, self))
+	addEventHandler("onItemUseSecondary", root, bind(self.Event_onItemUseSecondary, self))
 
 	self.m_Inventories = {}
+end
+
+function InventoryManager:Event_onItemUse(inventoryId, internalId)
+	if client ~= source then return end
+	if client:getInventory() and client:getInventory().m_Id == inventoryId then
+		client:getInventory():useItem(internalId)
+	end
+end
+
+function InventoryManager:Event_onItemUseSecondary(inventoryId, internalId)
+	if client ~= source then return end
+	if client:getInventory() and client:getInventory().m_Id == inventoryId then
+		client:getInventory():useItemSecondary(internalId)
+	end
 end
 
 function InventoryManager:syncInventory(player)
 	if not player.m_Disconnecting then
 		local inventory = player:getInventory()
-		player:triggerEvent("syncInventory", inventory.m_Items)
+		player:triggerEvent("syncInventory", inventory.m_Items, inventory.m_Id)
 	end
 end
 
 function InventoryManager:Event_syncInventory()
 	self:syncInventory(client)
-end
-
-function InventoryManager:loadItems()
-	local result = sql:queryFetch("SELECT i.*,c.TechnicalName AS Category, c.Name AS CategoryName FROM ??_items i INNER JOIN ??_item_categories c ON c.Id = i.CategoryId", sql:getPrefix(), sql:getPrefix())
-	self.m_Items = {}
-	self.m_ItemIdToName = {}
-
-	for _, row in ipairs(result) do
-		self.m_Items[row.Id] = {
-			Id = row.Id;
-			TechnicalName = row.TechnicalName;
-			CategoryId = row.CategoryId;
-			Category = row.Category;
-			CategoryName = row.CategoryName;
-			Class = row.Class;
-			Name = row.Name;
-			Description = row.Description;
-			Icon = row.Icon;
-			Size = row.Size;
-			ModelId = row.ModelId;
-			MaxDurability = row.MaxDurability;
-			Consumable = row.Consumable == 1;
-			Tradeable = row.Tradeable == 1;
-			Expireable = row.Expireable == 1;
-			IsUnique = row.IsUnique == 1;
-			Throwable = row.Throwable == 1;
-			Breakable = row.Breakable == 1;
-		}
-
-		self.m_ItemIdToName[row.TechnicalName] = row.Id
-	end
-end
-
-function InventoryManager:loadCategories()
-	local result = sql:queryFetch("SELECT * FROM ??_item_categories", sql:getPrefix())
-	self.m_Categories = {}
-	self.m_CategoryIdToName = {}
-
-	for _, row in ipairs(result) do
-		self.m_Categories[row.Id] = {
-			Id = row.Id;
-			TechnicalName = row.TechnicalName;
-			Name = row.Name;
-		}
-
-		self.m_CategoryIdToName[row.TechnicalName] = row.Id
-	end
 end
 
 function InventoryManager:loadInventoryTypes()
@@ -202,16 +167,6 @@ function InventoryManager:loadInventoryTypes()
 	end
 end
 
-function InventoryManager:getItemData(item)
-	local item = item
-	
-	if type(item) ~= "number" then
-		item = self.m_ItemIdToName[item]
-	end
-
-	return self.m_Items[item]
-end
-
 function InventoryManager:createInventory(elementId, elementType, size, allowedCategories)
 	local inventory = Inventory.create(elementId, elementType, size, allowedCategories)
 
@@ -227,7 +182,7 @@ function InventoryManager:getInventory(inventoryIdOrElementType, elementId)
 	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId)
 
 	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId)
-	
+
 	if player then
 		inventory.m_Player = player
 	end
@@ -284,7 +239,7 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
 		end
 
 		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ?", sql:getPrefix(), elementId, elementType)
-		
+
 		if not row then
 			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
 			return false
@@ -340,14 +295,14 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 		item = InventoryManager:getSingleton().m_ItemIdToName[item]
 	end
 
-	if not InventoryManager:getSingleton().m_Items[item] then
+	if not ItemManager.get(item) then
 		return false, "item"
 	end
 
-	local itemData = InventoryManager:getSingleton().m_Items[item]
+	local itemData = ItemManager.get(item)
 
 	local cSize = inventory:getCurrentSize()
-	
+
 	if amount < 1 then
 		return false, "amount"
 	end
@@ -355,15 +310,15 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 	if inventory.m_Size < cSize + itemData.Size * amount then
 		return false, "size"
 	end
-	
+
 	if not inventory:isCompatibleWithCategory(itemData.Category) then
 		return false, "category"
 	end
-	
+
 	if itemData.m_IsUnique then
 		if v.ItemId == item then
 			return false, "unique"
-		end 
+		end
 	end
 
 	return true
@@ -386,7 +341,7 @@ function InventoryManager:isItemTakeable(inventory, itemInternalId, amount)
 		return false, "invalid"
 	end
 
-	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+	local itemData = ItemManager.get(item.ItemId)
 
 	if not itemData then
 		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@isItemTakeable", 1)
@@ -410,16 +365,14 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 	if not inventory then
 		return false
 	end
-	
+
 	if type(item) == "string" then
-		item = InventoryManager:getSingleton().m_ItemIdToName[item]
+		item = ItemManager.getId(item)
 	end
 
 	local isGivable, reason = self:isItemGivable(inventory, item, amount)
 	if isGivable then
-		local itemData = InventoryManager:getSingleton().m_Items[item]
-		
-		
+		local itemData = ItemManager.get(item)
 
 		for k, v in pairs(inventory.m_Items) do
 			if v.ItemId == item then
@@ -430,7 +383,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 					inventory:onInventoryChanged()
 					return true
 				end
-			end 
+			end
 		end
 
 		local internalId = inventory.m_NextItemId
@@ -441,8 +394,9 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		data.Id = -1
 		data.InternalId = internalId
 		data.ItemId = item
+		data.Slot = 0
 		data.Amount = amount
-		data.Durability = durability
+		data.Durability = durability or 0
 		data.Metadata = metadata
 
 		for k, v in pairs(itemData) do
@@ -452,7 +406,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		end
 
 		table.insert(inventory.m_Items, data)
-		self:onInventoryChanged(inventory)
+		inventory:onInventoryChanged(inventory)
         return true
     end
     return false, reason
@@ -470,7 +424,7 @@ function InventoryManager:takeItem(inventory, itemInternalId, amount)
 	end
 
 	local isTakeable, reason = self:isItemTakeable(inventory, itemInternalId, amount)
-	
+
 	if isTakeable then
 		local item = inventory:getItem(itemInternalId)
 		item.Amount = item.Amount - amount
@@ -508,13 +462,13 @@ function InventoryManager:useItem(inventory, id)
 		return false, "invalid"
 	end
 
-	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+	local itemData = ItemManager.get(item.ItemId)
 
 	if not itemData then
 		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useItem", 1)
 		return false, "invalid"
 	end
-	
+
 	local class = InventoryItemClasses[itemData.Class]
 
 	if not class then
@@ -533,11 +487,11 @@ function InventoryManager:useItem(inventory, id)
 	if remove then
 		inventory:takeItem(id, 1)
 	end
-	
+
 	if not success then
 		return false
 	end
-	
+
 	return true
 end
 
@@ -548,13 +502,13 @@ function InventoryManager:useItemSecondary(inventory, id)
 		return false, "invalid"
 	end
 
-	local itemData = InventoryManager:getSingleton().m_Items[item.ItemId]
+	local itemData = ItemManager.get(item.ItemId)
 
 	if not itemData then
 		outputDebugString("[INVENTORY]: Invalid itemId " .. tostring(item.ItemId) .. " @ InventoryManager@useItem", 1)
 		return false, "invalid"
 	end
-	
+
 	local class = InventoryItemClasses[itemData.Class]
 
 	if not class then
@@ -577,6 +531,6 @@ function InventoryManager:useItemSecondary(inventory, id)
 	if not success then
 		return false
 	end
-	
+
 	return true
 end

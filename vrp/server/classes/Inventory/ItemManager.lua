@@ -8,11 +8,82 @@
 ItemManager = inherit(Singleton)
 addRemoteEvents{"onClientBreakItem"}
 
+function ItemManager.get(name)
+	local id = ItemManager.getId(name)
+	return ItemManager:getSingleton().m_Items[id]
+end
+
+function ItemManager.getId(name)
+	if type(name) == "string" then
+		return ItemManager:getSingleton().m_ItemIdToName[name]
+	end
+	return name
+end
+
+function ItemManager.getById(id)
+	return ItemManager:getSingleton().m_Items[id]
+end
+
 function ItemManager:constructor()
+	self.m_Items = {}
+	self.m_ItemIdToName = {}
+	self.m_Categories = {}
+	self.m_CategoryIdToName = {}
+
+	self:loadItems()
+	self:loadCategories()
+
 	addEventHandler("onClientBreakItem", root, bind(self.Event_onItemBreak,self))
 end
 
 function ItemManager:destructor()
+end
+
+function ItemManager:loadItems()
+	local result = sql:queryFetch("SELECT i.*,c.TechnicalName AS Category, c.Name AS CategoryName FROM ??_items i INNER JOIN ??_item_categories c ON c.Id = i.CategoryId", sql:getPrefix(), sql:getPrefix())
+	self.m_Items = {}
+	self.m_ItemIdToName = {}
+
+	for _, row in ipairs(result) do
+		self.m_Items[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			CategoryId = row.CategoryId;
+			Category = row.Category;
+			CategoryName = row.CategoryName;
+			Class = row.Class;
+			Name = row.Name;
+			Description = row.Description;
+			Icon = row.Icon;
+			Size = row.Size;
+			ModelId = row.ModelId;
+			MaxDurability = row.MaxDurability;
+			Consumable = row.Consumable == 1;
+			Tradeable = row.Tradeable == 1;
+			Expireable = row.Expireable == 1;
+			IsUnique = row.IsUnique == 1;
+			Throwable = row.Throwable == 1;
+			Breakable = row.Breakable == 1;
+		}
+
+		self.m_ItemIdToName[row.TechnicalName] = row.Id
+	end
+end
+
+function ItemManager:loadCategories()
+	local result = sql:queryFetch("SELECT * FROM ??_item_categories", sql:getPrefix())
+	self.m_Categories = {}
+	self.m_CategoryIdToName = {}
+
+	for _, row in ipairs(result) do
+		self.m_Categories[row.Id] = {
+			Id = row.Id;
+			TechnicalName = row.TechnicalName;
+			Name = row.Name;
+		}
+
+		self.m_CategoryIdToName[row.TechnicalName] = row.Id
+	end
 end
 
 function ItemManager:Event_onItemBreak()
