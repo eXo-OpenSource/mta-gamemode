@@ -15,7 +15,6 @@ function InfluxDB:constructor()
 end
 
 function InfluxDB:write(measurement, value, tags)
-	outputChatBox(measurement)
     if not DEBUG then
         local timestamp = getRealTime().timestamp.."000000000"
         local tagsData = ""
@@ -32,8 +31,6 @@ function InfluxDB:write(measurement, value, tags)
             ["username"] = self.m_Username,
 			["password"] = self.m_Password,
             ["postData"] = measurement .. ",host=merx.dev,region=eu1" .. tagsData .. " value=" .. value .. " " .. timestamp
-		}, function(result)
-			outputServerLog(tostring(result))
-		end)
+		}, function() end)
     end
 end
