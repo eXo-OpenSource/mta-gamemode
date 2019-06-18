@@ -340,10 +340,8 @@ function bind(func, ...)
 						data["functionName"] = v.functionName
 						data["luaFilename"] = v.luaFilename
 						data["luaLineNumber"] = v.luaLineNumber
-						break
+						InfluxDB:getSingleton():write("classlib", time, data)
 					end
-
-					InfluxDB:getSingleton():write("classlib", time, data)
 				end
 			end
 			return retValue
