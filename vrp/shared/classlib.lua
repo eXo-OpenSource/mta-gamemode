@@ -313,17 +313,15 @@ function bind(func, ...)
 				table.insert(hookInfo, {sourceResource = sourceResource, functionName = functionName, isAllowedByACL = isAllowedByACL, luaFilename = luaFilename, luaLineNumber = luaLineNumber, args = {...}})
 			end
 
-			if not triggerServerEvent then
+			if DEBUG_MONITOR_CLASSLIB and not triggerServerEvent then
 				addDebugHook("preFunction", dHook)
 			end
 
 			local retValue = func(unpack(params))
 
-			if not triggerServerEvent then
+			if DEBUG_MONITOR_CLASSLIB and not triggerServerEvent then
 				removeDebugHook("preFunction", dHook)
-			end
 
-			if not triggerServerEvent then
 				local time = getTickCount() - perfTest
 				if time >= 250 then -- log everthing over 50ms ;)
 					local name = "UNKNOWN"
