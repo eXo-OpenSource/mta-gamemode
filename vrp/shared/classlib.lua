@@ -297,7 +297,7 @@ function bind(func, ...)
 	local boundParams = {...}
 	return
 		function(...)
-			local perfTest = getTickCount()
+			--local perfTest = getTickCount() -- call takes ~500ms - 1.31s
 			local params = {}
 			local boundParamSize = select("#", unpack(boundParams))
 			for i = 1, boundParamSize do
