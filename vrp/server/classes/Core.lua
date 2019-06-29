@@ -29,7 +29,8 @@ function Core:constructor()
 
 	-- Create file logger for sql performance
 	FileLogger:new()
-	InfluxDB:new()
+	influx = InfluxDB:new("exo_mta_server", "BtuV2*mkZN4bkXcp*qFqGfCvKFM6kuaU", "exo_mta_sperf")
+	influxPlayer = InfluxDB:new("exo_mta_server", "BtuV2*mkZN4bkXcp*qFqGfCvKFM6kuaU", "exo_mta")
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])

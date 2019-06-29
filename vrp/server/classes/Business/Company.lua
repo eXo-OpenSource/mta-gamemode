@@ -225,12 +225,14 @@ function Company:removePlayer(playerId)
 	end
 end
 
-function Company:getOnlinePlayers()
+function Company:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			players[#players + 1] = player
+			if (not afkCheck or not player.m_isAFK) and (not dutyCheck or player:isCompanyDuty()) then
+				players[#players + 1] = player
+			end
 		end
 	end
 	return players
