@@ -51,6 +51,7 @@
 	<script src="shared/classes/Thread.lua" type="shared"/>
 	<script src="shared/classes/Promise.lua" type="shared"/>
 	<script src="shared/classes/MusicAPI.lua" type="shared"/>
+	<script src="shared/classes/InfluxDB.lua" type="shared"/>
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
@@ -107,7 +108,6 @@
 	<script src="server/classes/ServerSettings.lua" type="server"/>
 	<script src="server/classes/Forum.lua" type="server"/>
 	<script src="server/classes/ServiceSync.lua" type="server"/>
-	<script src="server/classes/InfluxDB.lua" type="server"/>
 	<script src="server/classes/InfluxLogging.lua" type="server"/>
 
 	<!-- Super -->
@@ -554,6 +554,7 @@
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
 	<script src="client/classes/WeaponRecorder.lua" type="client"/>
+	<script src="client/classes/InfluxLogging.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
@@ -1431,7 +1432,7 @@
 	<vrpfile src="files/images/Weapons/44.png"/>
 	<vrpfile src="files/images/Weapons/45.png"/>
 	<vrpfile src="files/images/Weapons/46.png"/>
-	
+
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Other/info.png"/>

@@ -12,6 +12,8 @@ if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
 
+DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "influxdb.merx.dev"}
+
 -- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
