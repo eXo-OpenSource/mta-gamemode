@@ -52,7 +52,11 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_DiplomacyJSON = diplomacy
 
 	if not DEBUG then
-		self:getActivity()
+		Async.create(
+			function(self)
+				self:getActivity()
+			end
+		)(self)
 	end
 	self:checkEquipmentPermissions()
 end
@@ -311,7 +315,11 @@ function Faction:addPlayer(playerId, rank)
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
-  	self:getActivity(true)
+	Async.create(
+		function(self)
+			self:getActivity(true)
+		end
+	)(self)
 end
 
 function Faction:removePlayer(playerId)
@@ -452,18 +460,33 @@ function Faction:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
 	end
+
 	self.m_LastActivityUpdate = getRealTime().timestamp
+	local playerIds = {}
 
 	for playerId, rank in pairs(self.m_Players) do
-		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
+		table.insert(playerIds, playerId)
+	end
 
+	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+
+	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
+
+	local rows = Async.wait()
+
+	self.m_PlayerActivity = {}
+	for playerId, rank in pairs(self.m_Players) do
+		self.m_PlayerActivity[playerId] = 0
+	end
+
+	for _, row in ipairs(rows) do
 		local activity = 0
 
 		if row and row.Activity then
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[playerId] = activity
+		self.m_PlayerActivity[row.UserID] = activity
 	end
 end
 
@@ -471,10 +494,13 @@ function Faction:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
 	end
-
 	local temp = {}
 
-	self:getActivity()
+	Async.create(
+		function(self)
+			self:getActivity()
+		end
+	)(self)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local loanEnabled = self.m_PlayerLoans[playerId]
@@ -897,7 +923,7 @@ function Faction:storageWeapons(player)
 
 			local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
 			local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
-			
+
 			if THROWABLE_WEAPONS[weaponId] then -- grenade etc
 				if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
 					depot:addWeaponD(weaponId, magazines)

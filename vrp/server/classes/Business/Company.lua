@@ -49,7 +49,11 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
 	if not DEBUG then
-		self:getActivity()
+		Async.create(
+			function(self)
+				self:getActivity()
+			end
+		)(self)
 	end
 end
 
@@ -192,7 +196,11 @@ function Company:addPlayer(playerId, rank)
     self:onPlayerJoin(playerId, rank)
   end
 
-  self:getActivity(true)
+  Async.create(
+	function(self)
+		self:getActivity(true)
+	end
+)(self)
 end
 
 function Company:removePlayer(playerId)
@@ -217,12 +225,14 @@ function Company:removePlayer(playerId)
 	end
 end
 
-function Company:getOnlinePlayers()
+function Company:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			players[#players + 1] = player
+			if (not afkCheck or not player.m_isAFK) and (not dutyCheck or player:isCompanyDuty()) then
+				players[#players + 1] = player
+			end
 		end
 	end
 	return players
@@ -313,18 +323,33 @@ function Company:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
 	end
+
 	self.m_LastActivityUpdate = getRealTime().timestamp
+	local playerIds = {}
 
 	for playerId, rank in pairs(self.m_Players) do
-		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
+		table.insert(playerIds, playerId)
+	end
 
+	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+
+	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
+
+	local rows = Async.wait()
+
+	self.m_PlayerActivity = {}
+	for playerId, rank in pairs(self.m_Players) do
+		self.m_PlayerActivity[playerId] = 0
+	end
+
+	for _, row in ipairs(rows) do
 		local activity = 0
 
 		if row and row.Activity then
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[playerId] = activity
+		self.m_PlayerActivity[row.UserID] = activity
 	end
 end
 
@@ -333,7 +358,11 @@ function Company:getPlayers(getIDsOnly)
 		return self.m_Players
 	end
 
-	self:getActivity()
+	Async.create(
+		function(self)
+			self:getActivity()
+		end
+	)(self)
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do

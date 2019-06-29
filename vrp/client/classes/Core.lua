@@ -11,8 +11,11 @@ function Core:constructor()
 	Version:new()
 	TinyInfoLabel:new()
 	Provider:new()
+	influx = InfluxDB:new("exo_mta_client", "uMZNF3ot6hGvsP_NTggytFveYfUJfWaz", "exo_mta_cperf")
+	InfluxLogging:new()
 
 	Cursor = GUICursor:new()
+	self.m_WhitelistChecker = setTimer(bind(self.checkDomainsWhitelist, self), 1000, 0)
 
 	if HTTP_DOWNLOAD then -- In debug mode use old Provider
 		showChat(false)
@@ -86,7 +89,7 @@ function Core:ready() --onClientResourceStart
 	})
 
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), "i.imgur.com"}
+	Browser.requestDomains(DOMAINS, false, self.m_BrowserWhitelistResponse)
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
@@ -265,6 +268,16 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 	Phone:new()
 	Phone:getSingleton():close()
 	showChat(true)
+end
+
+function Core:checkDomainsWhitelist()
+	for k, v in pairs(DOMAINS) do
+		if Browser.isDomainBlocked(v) then
+			Browser.requestDomains(DOMAINS, false, checkRequest)
+			return
+		end
+	end
+	killTimer(self.m_WhitelistChecker)
 end
 
 function Core:destructor()
