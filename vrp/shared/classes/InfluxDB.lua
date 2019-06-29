@@ -13,17 +13,14 @@ function InfluxDB:constructor(username, password, database)
     self.m_Database = database
 	self.m_Host = "https://influxdb.merx.dev"
 	self.m_DomainNotBlocked = not isBrowserDomainBlocked or not isBrowserDomainBlocked(self.m_Host, true)
-	self.m_Enabled = not not GIT_BRANCH
 
 	self.m_Branch = GIT_BRANCH or "dev"
 
 	self.m_Data = {}
 
 
-	if self.m_Enabled then
-		self.m_TimedPulse = TimedPulse:new(20 * 1000) -- every 20 seconds
-		self.m_TimedPulse:registerHandler(bind(self.flush, self))
-	end
+	self.m_TimedPulse = TimedPulse:new(20 * 1000) -- every 20 seconds
+	self.m_TimedPulse:registerHandler(bind(self.flush, self))
 end
 
 function InfluxDB:destructor()
@@ -33,7 +30,6 @@ function InfluxDB:destructor()
 end
 
 function InfluxDB:write(measurement, tags, data, time)
-	if not self.m_Enabled then return end
 	local timestamp = nil
 
 	if time then
@@ -52,7 +48,13 @@ function InfluxDB:write(measurement, tags, data, time)
 	if tags then
 		for k, v in pairs(tags) do
 			local v = v or "-"
-			local value = tostring(v):gsub(",", ";")
+			local value = ""
+
+			if type(v) == "string" then
+				value = v:gsub(" ", "\\ ")
+			else
+				value = tostring(v):gsub(",", ";")
+			end
 
 			tagsStr = tagsStr .. "," .. tostring(k) .. "=" .. value
 		end
@@ -98,5 +100,5 @@ function InfluxDB:flush()
 		["username"] = self.m_Username,
 		["password"] = self.m_Password,
 		["postData"] = data
-	}, function(response) if triggerServerEvent then outputDebugString(response) end end)
+	}, function() end)
 end

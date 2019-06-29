@@ -23,7 +23,7 @@ function InfluxLogging:writePlayerCount()
 		local afk = total - #v:getOnlinePlayers(true, false)
 		local duty = #v:getOnlinePlayers(false, true)
 
-		influxPlayer:write("user_faction", nil, {["name"] = v.m_Name, ["total"] = total, ["afk"] = afk, ["duty"] = duty})
+		influxPlayer:write("user_faction", {["name"] = v.m_Name}, {["total"] = total, ["afk"] = afk, ["duty"] = duty})
 	end
 
 	for k, v in pairs(CompanyManager.Map) do
@@ -31,10 +31,22 @@ function InfluxLogging:writePlayerCount()
 		local afk = total - #v:getOnlinePlayers(true, false)
 		local duty = #v:getOnlinePlayers(false, true)
 
-		influxPlayer:write("user_company", nil, {["name"] = v.m_Name, ["total"] = total, ["afk"] = afk, ["duty"] = duty})
+		influxPlayer:write("user_company", {["name"] = v.m_Name}, {["total"] = total, ["afk"] = afk, ["duty"] = duty})
+	end
+	local players = getElementsByType("player")
+	local loggedIn = 0
+	local afk = 0
+
+	for k, v in pairs(players) do
+		if v and isElement(v) and v:isLoggedIn() then
+			loggedIn = loggedIn + 1
+			if v.m_isAFK then
+				afk = afk + 1
+			end
+		end
 	end
 
-    influxPlayer:write("user_total", nil, {["value"] = getPlayerCount()})
+    influxPlayer:write("user_total", nil, {["total"] = #players, ["loggedIn"] = loggedIn, ["afk"] = afk})
 end
 
 function InfluxLogging:writePerformance()
@@ -51,7 +63,7 @@ function InfluxLogging:writePerformance()
 					resource = name
 				else
 					if name ~= "unknown" then name = name:sub(#name * -1 + 1) end
-					influx:write("performance", nil, {["name"] = name, ["resource"] = resource, ["cpuTime"] = time, ["calls"] = calls, ["value"] = v[2]:sub(0, -2)})
+					influx:write("performance", {["name"] = name, ["resource"] = resource}, {["cpuTime"] = time, ["calls"] = calls, ["value"] = v[2]:sub(0, -2)})
 				end
             end
         end
