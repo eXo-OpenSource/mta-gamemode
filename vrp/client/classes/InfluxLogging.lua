@@ -51,5 +51,5 @@ function InfluxLogging:writePerformance()
 		data[v .. "Streamed"] = #getElementsByType(v, root, true)
 	end
 
-	influx:write("client", {["serial"] = localPlayer:getSerial()}, data)
+	influx:write("client", {["serial"] = localPlayer:getSerial(), ["name"] = localPlayer:getName()}, data)
 end

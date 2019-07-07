@@ -67,5 +67,63 @@ function InfluxLogging:writePerformance()
 				end
             end
         end
+	end
+
+
+	local _, rows = getPerformanceStats("Server info")
+	local fps = split(rows[1][4], " ")
+
+	local syncFps = tonumber(fps[1])
+	local serverFps = tonumber(fps[2]:sub(2, -2))
+	local packetsIn = tonumber(rows[5][4])
+	local packetsOut = tonumber(rows[6][4])
+	local packetLossOut = tonumber(rows[7][4]:sub(0, -3))
+
+	local cpuLogic = tonumber(rows[6][2]:sub(0, 4))
+	local cpuSync = tonumber(rows[7][2]:sub(0, 4))
+	local cpuRaknet = tonumber(rows[8][2]:sub(0, 4))
+
+	influx:write("server", nil, {
+		["cpuLogic"] = cpuLogic,
+		["cpuSync"] = cpuSync,
+		["cpuRaknet"] = cpuRaknet,
+
+		["syncFps"] = syncFps,
+		["serverFps"] = serverFps,
+		["packetsIn"] = packetsIn,
+		["packetsOut"] = packetsOut,
+		["packetLossOut"] = packetLossOut
+	})
+
+	local _, rows = getPerformanceStats("Server timing")
+	local parent = "unknown"
+    for _, v in pairs(rows) do
+        if v[1] then
+            if v[2] ~= "-" then
+				local name = v[1] or "unknown"
+
+
+				if name:sub(0, 1) ~= "." then
+					parent = name
+				else
+					if name ~= "unknown" then name = name:sub(#name * -1 + 1) end
+
+					local lastFrameCalls = tonumber(v[2])
+					local lastFrameCpu = tonumber(v[3]:sub(0, -4))
+					local lastFrameCpuPeak = tonumber(v[4]:sub(0, -4))
+
+					local lastTwoSecCalls = v[5]
+					local lastTwoSecCpu = tonumber(v[6]:sub(0, -4))
+
+					influx:write("server_timing", {["name"] = name, ["parent"] = parent}, {
+						["lastFrameCalls"] = lastFrameCalls,
+						["lastFrameCpu"] = lastFrameCpu,
+						["lastFrameCpuPeak"] = lastFrameCpuPeak,
+						["lastTwoSecCalls"] = lastTwoSecCalls,
+						["lastTwoSecCpu"] = lastTwoSecCpu
+					})
+				end
+            end
+        end
     end
 end
