@@ -79,7 +79,8 @@ function Admin:constructor()
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
 	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", 
-	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction"}
+	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction", "adminRequestMultiAccounts",
+	"adminDelteMultiAccount", "adminCreateMultiAccount"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -108,6 +109,9 @@ function Admin:constructor()
 	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	addEventHandler("adminLoginFix", root, bind(self.Event_OnAdminLoginFix, self))
 	addEventHandler("adminTriggerTransaction", root, bind(self.Event_forceTransaction, self))
+	addEventHandler("adminRequestMultiAccounts", root, bind(self.Event_adminRequestMultiAccounts, self))
+	addEventHandler("adminDelteMultiAccount", root, bind(self.Event_adminDelteMultiAccount, self))
+	addEventHandler("adminCreateMultiAccount", root, bind(self.Event_adminCreateMultiAccount, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -1614,5 +1618,86 @@ function Admin:Event_forceTransaction(amount, from, fromType, to, toType)
 		fromBankAccount:save()
 		toBankAccount:save()
 		client:sendShortMessage(("Transaktion über %s$ von %s zu %s erfolgreich!"):format(addComas(tostring(amount)), from, to))
+	end
+end
+
+function Admin:Event_adminRequestMultiAccounts()
+	if client:getRank() < RANK.Supporter then
+		return
+	end
+
+	local multiAccountTable = {}
+	local result = sql:queryFetch("SELECT * FROM ??_account_multiaccount", sql:getPrefix())
+	for i, row in pairs(result) do
+		local nameTable = {}
+		for key, accountId in pairs(fromJSON(row.LinkedTo) or {}) do
+			local nameResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), accountId)
+			nameTable[#nameTable+1] = nameResult.Name
+		end
+
+		local adminResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.Admin)
+		local adminName
+		if adminResult then
+			adminName = adminResult.Name
+		else
+			adminName = "-"
+		end
+
+        multiAccountTable[row.ID] = {serial=row.Serial, linkedTo=nameTable, allowCreate=row.allowCreate, admin=adminName}
+	end
+	
+	client:triggerEvent("adminSendMultiAccountsToClient", multiAccountTable)
+end
+
+function Admin:Event_adminDelteMultiAccount(id)
+	if client:getRank() < RANK.Administrator then
+		client:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	local result = sql:queryExec("DELETE FROM ??_account_multiaccount WHERE ID = ?", sql:getPrefix(), tonumber(id))
+	if result then 
+		client:sendInfo("Der Multi-Account wurde gelöscht!")
+		client:triggerEvent("adminRemoveMultiAccountFromList", id)
+	else
+		client:sendError("Der Multi-Account konnte nicht gelöscht werden!")
+	end
+end
+
+function Admin:Event_adminCreateMultiAccount(serial, name, multiAccountName, allowCreate)
+	if client:getRank() < RANK.Administrator then
+		client:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	local linkedToTable = {}
+	if name ~= "" then
+		local result = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name) 
+		if result then
+			linkedToTable[#linkedToTable+1] = result.Id
+		else
+			client:sendError(_("Es existiert kein Spieler mit dem Namen %s!", client, name))
+			return
+		end
+	end
+	if multiAccountName ~= "" then
+		local nameTable = split(multiAccountName, ",")
+		for key, name in pairs(nameTable) do
+			local result = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+			if result then
+				linkedToTable[#linkedToTable+1] = result.Id
+			else
+				client:sendError(_("Es existiert kein Spieler mit dem Namen %s!", client, multiAccountName))
+				return
+			end
+		end
+	end
+	
+	local allowCreate = (#linkedToTable < 2 and fromboolean(allowCreate)) or 0
+	local result, numrows, lastInsertID = sql:queryFetch("INSERT INTO ??_account_multiaccount (Serial, LinkedTo, allowCreate, Admin, Timestamp) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), serial, toJSON(linkedToTable), allowCreate, client:getId(), getRealTime().timestamp)
+	if result then 
+		client:sendInfo("Der Multi-Account wurde erstellt!")
+	else
+		client:sendError("Der Multi-Account konnte nicht erstellt werden!")
 	end
 end

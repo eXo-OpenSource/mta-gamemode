@@ -28,7 +28,7 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:addColumn(_"Karma", 0.08)
 	self.m_Grid:addColumn(_"Ping", 0.11)
 	self.m_Grid:setSortable{"VIP", "Name", "Fraktion", "Unternehmen", "Gang/Firma", "Spielzeit"} --We can't sort Ping and Karma (Ping can be a number and also a string; karma is a numeric string eg. "+123" which will be not sort properly)
-	self.m_Grid:setSortColumn(_"Fraktion")
+	--self.m_Grid:setSortColumn(_"Fraktion")
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)

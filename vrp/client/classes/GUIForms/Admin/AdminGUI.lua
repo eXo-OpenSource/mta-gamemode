@@ -93,6 +93,7 @@ function AdminGUI:constructor(money)
 
 	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 345, 200, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("transactionMenu", "Transaktions-Menü", self.onGeneralButtonClick, self.m_Width-225, 385, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("multiAccountMenu", "Multi-Accounts", self.onGeneralButtonClick, self.m_Width-225, 425, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -560,6 +561,9 @@ function AdminGUI:onGeneralButtonClick(func)
 	elseif func == "transactionMenu" then
 		self:close()
 		AdminTransactionGUI:new() 
+	elseif func == "multiAccountMenu" then
+		self:close()
+		MultiAccountWindow:new()
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()
 		if radius and tonumber(radius) and tonumber(radius) > 0 then
