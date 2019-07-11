@@ -181,7 +181,7 @@ function PoliceAnnouncements:playChaseSound(vehicle, type, id)
     if sound then
         sound:attach(vehicle)
         sound:setVolume(core:get("Sounds", "PoliceMegaphoneVolume", 1))
-        sound:setMaxDistance(175)
+        sound:setMaxDistance(150)
     end
 end
 
@@ -192,7 +192,15 @@ function PoliceAnnouncements:syncSirens(sirenTable)
 end
 
 function PoliceAnnouncements:playSiren(vehicle, sirenType)
-    if core:get("Sounds", "SirenhallEnabled", false) == false then return end
+    if core:get("Sounds", "SirenhallEnabled", false) == false then
+        if sirenType == "active" then
+            vehicle:setSirensOn(true)
+        elseif sirenType == "inactive" then
+            vehicle:setSirensOn(false)
+        end
+        return 
+    end
+    
     local x, y, z = getElementPosition(vehicle)
     if vehicle.controller then vehicle.controller:setControlState("horn", false) end
     vehicle:setSirensOn(false)
@@ -227,7 +235,7 @@ function PoliceAnnouncements:playSiren(vehicle, sirenType)
         vehicle.sirenSound:attach(vehicle)
         vehicle.sirenSound:setVolume(core:get("Sounds", "SirenhallVolume", 1))
         vehicle.sirenSound:setMaxDistance(300)
-        vehicle.sirenShape = createColSphere(x, y, z, 200)
+        vehicle.sirenShape = createColSphere(x, y, z, 150)
         vehicle.sirenShape:setData("owner", vehicle)
         vehicle.sirenShape:attach(vehicle)
         addEventHandler("onClientColShapeHit", vehicle.sirenShape, self.m_SirenColHit)
