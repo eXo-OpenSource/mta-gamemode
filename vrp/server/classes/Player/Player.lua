@@ -379,6 +379,10 @@ function Player:spawn()
 	local spawnSuccess = false
 	local SpawnLocationProperty = self:getSpawnLocationProperty()
 
+	--Increasing the max. oxygen (must be done before the player spawns)
+	self:setStat(22, 1000)
+	self:setStat(225, 1000)
+
 	if not quitTick or (getTickCount() - quitTick > 300000) then
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
 			spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
