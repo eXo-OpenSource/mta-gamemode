@@ -960,11 +960,9 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-	table.sort(self.m_OnlineAdmins, function(a, b) return a > b end)
-
 	if table.size(self.m_OnlineAdmins) > 0 then
 		outputChatBox("Folgende Teammitglieder sind derzeit online:", player, 50, 200, 255)
-		for onlineAdmin, rank in pairs(self.m_OnlineAdmins) do
+		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do 
 			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
 		end
 	else
@@ -1700,4 +1698,23 @@ function Admin:Event_adminCreateMultiAccount(serial, name, multiAccountName, all
 	else
 		client:sendError("Der Multi-Account konnte nicht erstellt werden!")
 	end
+end
+local callback_called = 0
+local start
+function callbackFunc()
+	callback_called = callback_called + 1
+	outputDebugString("Callback called "..callback_called.." times")
+	if callback_called == 100 then
+		outputChatBox(getTickCount()-start)
+	end
+end
+
+DBConnection = dbConnect( "mysql", "dbname=vrp_dev;host=127.0.0.1", "root", "0172" )
+function XD()
+	start = getTickCount()
+	for i = 1, 1000 do
+		local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
+	end
+	local ende = getTickCount()
+	outputDebugString("benötigte Zeit: "..ende-start.." ms!")
 end

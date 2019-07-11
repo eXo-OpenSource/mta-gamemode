@@ -783,7 +783,7 @@ function Group:payDay()
 		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
 	end
 
-	self:sendShortMessage(table.concat(output, "\n"), -1)
+	self:sendShortMessage(table.concat(output, "\n"), 10000)
 
 	self:save()
 

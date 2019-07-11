@@ -823,6 +823,7 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 		end
 	)
 
+	localPlayer:setOxygenLevel(4000)
 	--[[setTimer(
 		function()
 			outputChatBox("Collision enabled")
