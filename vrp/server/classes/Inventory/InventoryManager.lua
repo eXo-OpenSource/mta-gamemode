@@ -35,24 +35,6 @@ InventoryTemplates = {
 InventoryItemClasses = {
 }
 
---[[
-	Missing stuff:
-	[ ] Rework WorldItems
-	[ ] Fix StaticWorldItems
-	[ ] Rewrite all ItemClasses for new Inventory
-	[ ] Implement invetory storing & and auto cleanup
-	[ ] Implement inventory interactions (player inventory -> vehicle inventory)
-	[ ] Reimplement trading
-	[ ] Replace all old giveItem & takeItem
-	[ ] Look for hardcoded item ids
-	[ ] Write testing list
-	[ ] Implement inventory change events
-	[ ] Write inventory migration
-	[ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
-	[ ] Implement new weapon handling with inventory
-	[ ] Create new GUI for inventory, inventory interaction and trading
-]]
-
 function InventoryManager:constructor()
 	InventoryItemClasses = {
 		ItemFood = ItemFood;
@@ -108,17 +90,17 @@ function InventoryManager:constructor()
 	self.m_Inventories = {}
 end
 
-function InventoryManager:Event_onItemUse(inventoryId, internalId)
+function InventoryManager:Event_onItemUse(inventoryId, itemId)
 	if client ~= source then return end
 	if client:getInventory() and client:getInventory().m_Id == inventoryId then
-		client:getInventory():useItem(internalId)
+		client:getInventory():useItem(itemId)
 	end
 end
 
-function InventoryManager:Event_onItemUseSecondary(inventoryId, internalId)
+function InventoryManager:Event_onItemUseSecondary(inventoryId, itemId)
 	if client ~= source then return end
 	if client:getInventory() and client:getInventory().m_Id == inventoryId then
-		client:getInventory():useItemSecondary(internalId)
+		client:getInventory():useItemSecondary(itemId)
 	end
 end
 
@@ -324,7 +306,7 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 	return true
 end
 
-function InventoryManager:isItemTakeable(inventory, itemInternalId, amount)
+function InventoryManager:isItemTakeable(inventory, itemId, amount)
 	local inventory = inventory
 
 	if type(inventory) == "number" then
@@ -335,7 +317,7 @@ function InventoryManager:isItemTakeable(inventory, itemInternalId, amount)
 		return false, "amount"
 	end
 
-	local item = inventory:getItem(itemInternalId)
+	local item = inventory:getItem(itemId)
 
 	if not item then
 		return false, "invalid"
@@ -386,13 +368,13 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 			end
 		end
 
-		local internalId = inventory.m_NextItemId
+		local id = inventory.m_NextItemId
 		inventory.m_NextItemId = inventory.m_NextItemId + 1
 
 		local data = table.copy(itemData)
 
-		data.Id = -1
-		data.InternalId = internalId
+		data.DatabaseId = -1
+		data.Id = id
 		data.ItemId = item
 		data.Slot = 0
 		data.Amount = amount
@@ -412,7 +394,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
     return false, reason
 end
 
-function InventoryManager:takeItem(inventory, itemInternalId, amount)
+function InventoryManager:takeItem(inventory, itemId, amount)
 	local inventory = inventory
 
 	if type(inventory) == "number" then
@@ -423,10 +405,10 @@ function InventoryManager:takeItem(inventory, itemInternalId, amount)
 		return false
 	end
 
-	local isTakeable, reason = self:isItemTakeable(inventory, itemInternalId, amount)
+	local isTakeable, reason = self:isItemTakeable(inventory, itemId, amount)
 
 	if isTakeable then
-		local item = inventory:getItem(itemInternalId)
+		local item = inventory:getItem(itemId)
 		item.Amount = item.Amount - amount
 
 		if item.Amount <= 0 then

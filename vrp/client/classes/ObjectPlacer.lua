@@ -35,10 +35,10 @@ function ObjectPlacer:constructor(model, callback, hideObject)
 
 	self.m_Click = bind(self.Event_Click, self)
 	addEventHandler("onClientClick", root, self.m_Click)
-	
 
-	self.m_Key = bind(self.Event_OnKey, self) 
-	
+
+	self.m_Key = bind(self.Event_OnKey, self)
+
 	--do not indent as it will destroy the short message design
 	if localPlayer:getRank() > 2 then
 	addEventHandler("onClientKey", root, self.m_Key)
@@ -47,11 +47,11 @@ Weitere Funktionen:
   [Mausrad] - Objekt drehen (10°)
   [Shift] - Objekt schneller drehen (45°)
   [Alt] - Objekt langsamer drehen (5°)
-  [W/S] - Auf und Ab 
+  [W/S] - Auf und Ab
   [Hoch/Runter/Links/Rechts] - Nach vorne und hinten
 Linksklick zum Platzieren
 Rechtsklick zum Abbrechen]], "Objektplatzierung", Color.DarkBlue, 0)
-	else 
+	else
 		self.m_ShortMessage = ShortMessage:new(_[[Bewege das Objekt mit deiner Maus
 Weitere Funktionen:
   [Mausrad] - Objekt drehen (10°)
@@ -111,24 +111,24 @@ function ObjectPlacer:Event_MouseWheel(button, state)
 	end
 end
 
-function ObjectPlacer:Event_OnKey( key, state ) 
+function ObjectPlacer:Event_OnKey( key, state )
 	if state then
 		local offset = 10
 		local position = self.m_Object:getPosition()
 		if getKeyState("lshift") or getKeyState("rshift") then offset = 45 end
 		if getKeyState("lalt") then offset = 5 end
 		offset = offset/50
-		if key == "arrow_u" then 
+		if key == "arrow_u" then
 			self.m_Object:setPosition(position.x, position.y + offset, position.z)
-		elseif key == "arrow_d" then 
+		elseif key == "arrow_d" then
 			self.m_Object:setPosition(position.x, position.y - offset, position.z)
-		elseif key == "arrow_r" then 
+		elseif key == "arrow_r" then
 			self.m_Object:setPosition(position.x + offset, position.y, position.z)
-		elseif key == "arrow_l" then 
+		elseif key == "arrow_l" then
 			self.m_Object:setPosition(position.x - offset, position.y, position.z)
-		elseif key == "w" then 
+		elseif key == "w" then
 			self.m_Object:setPosition(position.x, position.y, position.z + offset)
-		elseif key == "s" then 
+		elseif key == "s" then
 			self.m_Object:setPosition(position.x, position.y, position.z - offset)
 		end
 	end
@@ -161,7 +161,7 @@ end
 addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
 	function(model, callbackEvent, hideObject, doNotShowInventory)
-		InventoryOld:getSingleton():hide()
+		InventoryGUI:getSingleton():hide()
 		nextframe(
 			function(model,callbackEvent)
 				local objectPlacer = ObjectPlacer:new(model,
@@ -174,7 +174,7 @@ addEventHandler("objectPlacerStart", root,
 						nextframe(
 							function()
 								if not hideObject and not doNotShowInventory then --if no object was moved
-									InventoryOld:getSingleton():show()
+									InventoryGUI:getSingleton():show()
 								end
 							end
 						)

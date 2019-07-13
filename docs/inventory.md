@@ -1,3 +1,22 @@
+# TODO
+[ ] Rework WorldItems
+[ ] Fix StaticWorldItems
+[ ] Rewrite all ItemClasses for new Inventory
+[ ] Implement invetory storing & and auto cleanup
+[ ] Implement inventory interactions (player inventory -> vehicle inventory)
+[ ] Reimplement trading
+[ ] Replace all old giveItem & takeItem
+[ ] Look for hardcoded item ids
+[ ] Write testing list
+[ ] Implement inventory change events
+[ ] Write inventory migration
+[ ] Write world items migration
+[ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
+[ ] Implement new weapon handling with inventory
+[ ] Create new GUI for inventory, inventory interaction and trading
+
+## Notes
+
 #### Inventar-Rework der Extraklasse
 
 # Klassen
@@ -289,3 +308,26 @@ DROP TABLE vrp_item_categories;
 # Testing list
 * All WorldItems (KeyPads, ...)
 
+# World Items rework
+
+```sql
+CREATE TABLE `vrp_world_items`  (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `Item` varchar(128) NOT NULL,
+  `Model` int NOT NULL,
+  `Owner` int NOT NULL,
+  `PosX` float NOT NULL,
+  `PosY` float NOT NULL,
+  `PosZ` float NOT NULL,
+  `Rotation` float NOT NULL,
+  `Interior` int NOT NULL,
+  `Dimension` int NOT NULL,
+  `Value` text NOT NULL,
+  `Breakable` tinyint(1) NOT NULL,
+  `Locked` tinyint(1) NOT NULL,
+  `Date` datetime NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+
+INSERT INTO vrp_world_items SELECT * FROM vrp_WorldItems;
+```

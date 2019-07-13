@@ -40,10 +40,10 @@ end
 function InventoryGUI:Event_syncInventory(data, inventoryId)
 	self.m_InventoryList:clear()
 	for k, v in pairs(data) do
-		local item = self.m_InventoryList:addItem(v.Name, v.Amount, v.InternalId)
+		local item = self.m_InventoryList:addItem(v.Name, v.Amount, v.Id)
 		item.m_Item = v
 		item.onLeftClick = function()
-			triggerServerEvent("onItemUse", localPlayer, inventoryId, v.InternalId)
+			triggerServerEvent("onItemUse", localPlayer, inventoryId, v.Id)
 		end
 
 		item.onRightClick = function()
@@ -53,7 +53,7 @@ function InventoryGUI:Event_syncInventory(data, inventoryId)
 					break
 				end
 			end
-			triggerServerEvent("onItemUseSecondary", localPlayer, inventoryId, v.InternalId)
+			triggerServerEvent("onItemUseSecondary", localPlayer, inventoryId, v.Id)
 		end
 	end
 end

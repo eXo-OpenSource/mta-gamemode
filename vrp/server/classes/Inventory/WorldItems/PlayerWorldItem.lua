@@ -11,7 +11,7 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
 	if not isElement(player) or player:getType() ~= "player" then return false end
 	if action == WorldItem.Action.Move then
         if WorldItem.hasPlayerPermissionTo(self, player, action) then -- does the player have superuser rights (admin)?
-            return true 
+            return true
         elseif self:getOwner() == player:getId() then
             return true
         else
@@ -22,12 +22,12 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
         if WorldItem.hasPlayerPermissionTo(self, player, action) then -- does the player have superuser rights (admin)?
 		    local x, y, z = getElementPosition(self:getObject())
             local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
-			StatisticsLogger:getSingleton():worldItemLog( "Collect", "Player", player:getId(), self:getOwner(), self:getDataBaseId() or 0, zone1, zone2)
-			return true 
+			StatisticsLogger:getSingleton():worldItemLog( "Collect", "Player", player:getId(), self:getOwner(), self:getDatabaseId() or 0, zone1, zone2)
+			return true
         elseif self:getOwner() == player:getId() then
 			local x, y, z = getElementPosition(self:getObject())
             local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
-			StatisticsLogger:getSingleton():worldItemLog( "Collect", "Player", player:getId(), self:getOwner(), self:getDataBaseId() or 0, zone1, zone2)
+			StatisticsLogger:getSingleton():worldItemLog( "Collect", "Player", player:getId(), self:getOwner(), self:getDatabaseId() or 0, zone1, zone2)
             return true
         else
             if self:getOwner() then player:sendError(_("Dieses Objekt gehört nicht dir!", player)) end
@@ -38,21 +38,21 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
             if player.isLoggedIn and player:isLoggedIn() and self:getObject() then
                 local x, y, z = getElementPosition(self:getObject())
                 local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
-				StatisticsLogger:getSingleton():worldItemLog( "Delete", "Player", player:getId(), self:getOwner(), self:getDataBaseId() or 0, zone1, zone2)
-				local placer = self:getPlacer() 
-				if type(placer) == "number" then 
+				StatisticsLogger:getSingleton():worldItemLog( "Delete", "Player", player:getId(), self:getOwner(), self:getDatabaseId() or 0, zone1, zone2)
+				local placer = self:getPlacer()
+				if type(placer) == "number" then
 					placer = DatabasePlayer.getFromId(placer)
-					if placer and isElement(placer) then 
+					if placer and isElement(placer) then
 						placer:sendWarning(_("%s %s hat dein Objekt %s in %s, %s gelöscht!", placer,
 						RANK[player:getRank()], player:getName(), self.m_ItemName, zone1, zone2), 10000)
 					end
 				end
             end
-            return true 
+            return true
         elseif self:getOwner() == player:getId() then
 			local x, y, z = getElementPosition(self:getObject())
             local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
-			StatisticsLogger:getSingleton():worldItemLog( "Collect", "Player", player:getId(), self:getOwner(), self:getDataBaseId() or 0, zone1, zone2)
+			StatisticsLogger:getSingleton():worldItemLog( "Collect", "Player", player:getId(), self:getOwner(), self:getDatabaseId() or 0, zone1, zone2)
             return true
         else
             if isElement(self:getOwner()) then player:sendError(_("Dieses Objekt gehört nicht dir!", player)) end

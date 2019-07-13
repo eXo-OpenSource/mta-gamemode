@@ -44,8 +44,8 @@ function Inventory:constructor(inventory, items, persistent, player)
 				item[k] = v
 			end
 		end
-
-		item.InternalId = self.m_NextItemId
+		item.DatabaseId = item.Id
+		item.Id = self.m_NextItemId
 		self.m_NextItemId = self.m_NextItemId + 1
 	end
 end
@@ -77,8 +77,8 @@ function Inventory:giveItem(item, amount, durability, metadata)
 	return InventoryManager:getSingleton():giveItem(self, item, amount, durability, metadata)
 end
 
-function Inventory:takeItem(itemInternalId, amount)
-	return InventoryManager:getSingleton():takeItem(self, itemInternalId, amount)
+function Inventory:takeItem(itemId, amount)
+	return InventoryManager:getSingleton():takeItem(self, itemId, amount)
 end
 
 function Inventory:useItem(id)
@@ -103,7 +103,7 @@ end
 
 function Inventory:getItem(id)
 	for k, v in pairs(self.m_Items) do
-		if v.InternalId == id then
+		if v.Id == id then
 			return v
 		end
 	end
@@ -152,16 +152,16 @@ function Inventory:save()
 
 	local dbItems = {}
 	for k, v in pairs(items) do
-		dbItems[v.Id] = v
+		dbItems[v.DatabaseId] = v
 	end
 
 	for k, v in pairs(self.m_Items) do
-		if v.Id and v.Id ~= -1 then
-			if dbItems[v.Id] then
-				local dbItem = dbItems[v.Id]
+		if v.DatabaseId and v.DatabaseId ~= -1 then
+			if dbItems[v.DatabaseId] then
+				local dbItem = dbItems[v.DatabaseId]
 				local needsUpdate = false
 				local update = {
-					Id = v.Id;
+					Id = v.DatabaseId;
 				}
 
 				-- Check amount
@@ -192,13 +192,13 @@ function Inventory:save()
 					table.insert(changes.update, update)
 				end
 
-				dbItems[v.Id] = nil
+				dbItems[v.DatabaseId] = nil
 			else
 				outputDebugString("[INVENTORY]: Item has been deleted from db but still exists ingame!")
 			end
 		else
 			table.insert(changes.insert, {
-				InternalId = v.InternalId;
+				Id = v.Id;
 				ItemId = v.ItemId;
 				Amount = v.Amount;
 				Durability = v.Durability;
@@ -211,7 +211,7 @@ function Inventory:save()
 	for k, v in pairs(dbItems) do
 		if v then
 			table.insert(changes.remove, {
-				Id = k;
+				DatabaseId = k;
 			})
 		end
 	end
@@ -263,7 +263,7 @@ function Inventory:save()
 		queries = queries .. "DELETE FROM ??_inventory_items WHERE Id IN (?" .. string.rep(", ?", #changes.remove - 1) .. ")"
 		table.insert(queriesParams, sql:getPrefix())
 		for k, v in pairs(changes.remove) do
-			table.insert(queriesParams, v.Id)
+			table.insert(queriesParams, v.DatabaseId)
 		end
 	end
 
@@ -274,8 +274,8 @@ function Inventory:save()
 			sql:getPrefix(), self.m_Id, v.ItemId, v.Slot, v.Amount, v.Durability, v.Metadata or nil)
 		local id = sql:lastInsertId()
 		for _, i in pairs(self.m_Items) do
-			if v.InternalId == i.InternalId then
-				i.Id = id
+			if v.Id == i.Id then
+				i.DatabaseId = id
 				break
 			end
 		end

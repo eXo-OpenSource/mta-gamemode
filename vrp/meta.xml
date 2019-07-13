@@ -127,13 +127,13 @@
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
-	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItem.lua" type="server"/>
-	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/WorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/CompanyWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryOld.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManagerOld.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
@@ -145,6 +145,7 @@
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemNew.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemWorld.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSlam.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSmokeGrenade.lua" type="server"/>
@@ -1433,7 +1434,7 @@
 	<vrpfile src="files/images/Weapons/44.png"/>
 	<vrpfile src="files/images/Weapons/45.png"/>
 	<vrpfile src="files/images/Weapons/46.png"/>
-	
+
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Other/info.png"/>
