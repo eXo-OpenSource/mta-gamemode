@@ -16,7 +16,7 @@ function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
 	for _, station in pairs(GAS_STATIONS) do
-		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.fuelTypes)
+		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.fuelTypes, station.blipPosition)
 
 		if station.name then
 			GasStationManager.Shops[station.name] = instance
@@ -378,20 +378,22 @@ GAS_STATIONS = {
 	{
 		name = "LV-Dock Tankstelle",
 		stations = {
-			{Vector3(1633.56, 532.25, 2.20), 270, 1}
+			{Vector3(2288.69, 522.70, 2.30), 180, 1}
 		},
 		accessible = {0, 0},
 		nonInterior = true,
 		fuelTypes = {"diesel"},
+		blipPosition = Vector2(2288.69, 522.70)
 	},
 	{
 		name = "LV-Airport Tankstelle",
 		stations = {
-			{Vector3(1551.45, 1719.63, 11.42), 270, 1}
+			{Vector3(1597.314, 1448.198, 11.42), 270, 1}
 		},
 		accessible = {0, 0},
 		nonInterior = true,
 		fuelTypes = {"petrol_plus", "jetfuel"},
+		blipPosition = Vector2(1597.314, 1448.198)
 	},
 	{
 		name = "Tankstelle Ocean Docks",
@@ -402,6 +404,16 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"diesel"},
 
+	},
+	{
+		name = "SF-Airport Tankstelle",
+		stations = {
+			{Vector3(-1131.73, -167.53, 14.650), 45, 1}
+		},
+		accessible = {0, 0},
+		nonInterior = true,
+		fuelTypes = {"petrol_plus", "jetfuel"},
+		blipPosition = Vector2(-1131.73, -167.53)
 	},
 	-- Company fuelstations
 	{
