@@ -123,7 +123,11 @@ function GroupManager:sendInfosToClient(player)
 		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
-		player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
+		if group:getPlayerRank(player) < GroupRank.Manager then
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames)
+		else
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames, group.m_RankLoans)
+		end
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")

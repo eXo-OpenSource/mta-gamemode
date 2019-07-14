@@ -152,7 +152,7 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, karma, type, rankNames, rankLoans, vehicles)
+function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, karma, type, vehicles, canVehiclesBeModified, rankNames, rankLoans)
 	if not id then
 		delete(self)
 		return
