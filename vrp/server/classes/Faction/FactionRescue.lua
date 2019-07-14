@@ -420,7 +420,8 @@ function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
-	local money = math.floor(player:getMoney()*0.25)
+	local money = player.m_SpawnedDead == 0 and math.floor(player:getMoney()*0.25) or 0
+	outputChatBox("player.m_SpawnedDead = "..player.m_SpawnedDead)
 	player:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
 	player.m_DeathPickup.money = money
 
