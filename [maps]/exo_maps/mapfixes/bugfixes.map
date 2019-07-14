@@ -1,0 +1,6 @@
+<map>
+    <object id="object (Esc_step8) (1)" breakable="true" interior="0" alpha="255" model="1698" doublesided="false" scale="1" dimension="0" posX="1329.2" posY="-1384.8" posZ="12.8" rotX="0" rotY="270" rotZ="90"></object>
+    <object id="object (Esc_step8) (2)" breakable="true" interior="0" alpha="255" model="1698" doublesided="false" scale="1" dimension="0" posX="1291.0996" posY="-1384.8" posZ="12.7" rotX="0" rotY="270" rotZ="90"></object>
+    <object id="object (Esc_step8) (3)" breakable="true" interior="0" alpha="255" model="1698" doublesided="false" scale="1" dimension="0" posX="1299" posY="-1384.8" posZ="12.6" rotX="0" rotY="270" rotZ="90"></object>
+    <object id="object (Esc_step8) (4)" breakable="true" interior="0" alpha="255" model="1698" doublesided="false" scale="1" dimension="0" posX="1321.4004" posY="-1384.8" posZ="12.8" rotX="0" rotY="270" rotZ="90"></object>
+</map>

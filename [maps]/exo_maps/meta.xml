@@ -28,7 +28,6 @@
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
 	<map src="fraktionen/aztecas.map" />
-	<!--map src="fraktionen/cartell.map" />
 
 	<!--<map src="fraktionen/biker.map" />--> <!--Outlaws base-->
 	<!--map src="fraktionen/cosanostra.map" /-->
@@ -65,6 +64,7 @@
 	<map src="events/auction.map" /><!--auction in interior-->
 
 	<!--fixes-->
+	<map src="mapfixes/bugfixes.map" />
 	<map src="mapfixes/CrackPalace.map" />
 	<map src="mapfixes/interior_fixes.map" />
 
