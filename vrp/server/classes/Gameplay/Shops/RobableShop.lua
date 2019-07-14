@@ -9,10 +9,10 @@ RobableShop = inherit(Object)
 
 addRemoteEvents{"robableShopGiveBagFromCrash"}
 
-local ROBSHOP_TIME = 15*60*1000
-local ROBSHOP_PAUSE = 30*60 --in Sec
-local ROBSHOP_PAUSE_SAME_SHOP = 6*60*60 -- 6h in Sec
-local ROBSHOP_MAX_MONEY = 15000
+ROBSHOP_TIME = 15*60*1000
+ROBSHOP_PAUSE = 30*60 --in Sec
+ROBSHOP_PAUSE_SAME_SHOP = 6*60*60 -- 6h in Sec
+ROBSHOP_MAX_MONEY = 15000
 ROBSHOP_LAST_ROB = 0
 
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
@@ -56,7 +56,7 @@ function RobableShop:Ped_Targetted(ped, attacker)
 					end
 
 					if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE_SAME_SHOP) then
-						attacker:sendError(_("Dieser Shop kann erst am/um überfallen werden: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
+						attacker:sendError(_("Dieser Shop kann erst am/um überfallen werden: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE_SAME_SHOP)))
 						return false
 					end
 
