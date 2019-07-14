@@ -455,7 +455,9 @@ function Player:spawn()
 
 	if self:isPremium() then
 		self:setArmor(100)
-		giveWeapon(self, 24, 35)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
 	end
 
 	if self.m_PrisonTime > 0 then
@@ -524,11 +526,6 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	self:setCorrectSkin()
 
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
-	end
-
 	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
@@ -545,6 +542,14 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	if self:isPremium() then
+		self:setArmor(100)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
 
