@@ -198,7 +198,7 @@ function Inventory:save()
 			end
 		else
 			table.insert(changes.insert, {
-				Id = v.Id;
+				InternalId = v.Id;
 				ItemId = v.ItemId;
 				Amount = v.Amount;
 				Durability = v.Durability;
@@ -211,7 +211,7 @@ function Inventory:save()
 	for k, v in pairs(dbItems) do
 		if v then
 			table.insert(changes.remove, {
-				DatabaseId = k;
+				Id = k;
 			})
 		end
 	end
@@ -263,18 +263,20 @@ function Inventory:save()
 		queries = queries .. "DELETE FROM ??_inventory_items WHERE Id IN (?" .. string.rep(", ?", #changes.remove - 1) .. ")"
 		table.insert(queriesParams, sql:getPrefix())
 		for k, v in pairs(changes.remove) do
-			table.insert(queriesParams, v.DatabaseId)
+			table.insert(queriesParams, v.Id)
 		end
 	end
 
-	sql:queryExec(queries, unpack(queriesParams))
+	if queries ~= "" then
+		sql:queryExec(queries, unpack(queriesParams))
+	end
 
 	for k, v in pairs(changes.insert) do
 		sql:queryExec("INSERT INTO ??_inventory_items (InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES (?, ?, ?, ?, ?, ?)",
 			sql:getPrefix(), self.m_Id, v.ItemId, v.Slot, v.Amount, v.Durability, v.Metadata or nil)
 		local id = sql:lastInsertId()
 		for _, i in pairs(self.m_Items) do
-			if v.Id == i.Id then
+			if v.InternalId == i.Id then
 				i.DatabaseId = id
 				break
 			end

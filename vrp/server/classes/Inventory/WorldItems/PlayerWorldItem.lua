@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerWorldItem = inherit(WorldItem)
-
+--[[
 function PlayerWorldItem:hasPlayerPermissionTo(player, action)
 	if not isElement(player) or player:getType() ~= "player" then return false end
 	if action == WorldItem.Action.Move then
@@ -60,3 +60,4 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
         end
     end
 end
+]]

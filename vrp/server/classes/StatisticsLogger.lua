@@ -321,7 +321,7 @@ function StatisticsLogger:addAdminVehicleAction(player, type, vehicle, arg)
 	if vehicle then
 		if isElement(vehicle) and getElementType(vehicle) == "vehicle" then
 			if not vehicle.m_Id then
-				error("bad vehicle specified ("..inspect(vehicle)..")")	
+				error("bad vehicle specified ("..inspect(vehicle)..")")
 			end
 			vehicle = vehicle.m_Id
 		elseif tonumber(vehicle) then
@@ -384,7 +384,7 @@ function StatisticsLogger:itemPlaceLogs( player, item, pos )
 	end
 end
 
-function StatisticsLogger:worldItemLog( action, typ, userId, ownerId, itemId, zone1, zone2)
+function StatisticsLogger:worldItemLog(action, typ, userId, ownerId, itemId, zone1, zone2)
 	if isElement(ownerId) then ownerId= ownerId:getId() else ownerId = tonumber(ownerId) or 0 end
 	if isElement(userId) then userId = userId:getId() else userId = userId or 0 end
 	if type(ownerId) ~= "number" then

@@ -6,7 +6,9 @@
 -- *
 -- ****************************************************************************
 WorldItem = inherit(Object)
+WorldItem.MapByOwner = {}
 WorldItem.Map = {}
+WorldItem.DirtyMap = {}
 WorldItem.Action = {
 	Move = "moveWorldItem",
 	Collect = "collectWorldItem",
@@ -16,55 +18,73 @@ WorldItem.m_NextId = 1
 addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemMassCollect", "worldItemDelete", "worldItemMassDelete", "requestWorldItemListOfOwner"}
 
 WorldItem.constructor = pure_virtual
+--[[
+	itemData,
+	placedBy,
+	elementId,
+	elementType,
+	position,
+	rotation,
+	dimension,
+	interior,
+	isPermanent,
+	value,
+	metadata,
+	breakable,
+	locked,
+	databaseId
 
-function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player, isPermanent, locked, value, interior, dimension, databaseId)
+	(item, owner, pos, rotation, breakable, player, isPermanent, locked, value, interior, dimension, databaseId)
+	(itemData, placedBy, elementId, elementType, position, rotation, dimension, interior, isPermanent, value, metadata, breakable, locked, databaseId)
+]]
+function WorldItem:virtual_constructor(itemData, placedBy, elementId, elementType, position, rotation, dimension, interior, isPermanent, value, metadata, breakable, locked, databaseId)
 	self.m_Id = WorldItem.m_NextId
 	WorldItem.m_NextId = WorldItem.m_NextId + 1
-	self.m_Item = item
-	self.m_ItemName = item.Name
-	self.m_ModelId = item.ModelId
-	self.m_Owner = owner
+	WorldItem.Map[self.m_Id] = self
+	self.m_Item = itemData
+	self.m_ItemName = itemData.Name
+	self.m_ModelId = itemData.ModelId
+
+	self.m_ElementId = elementId
+	self.m_ElementType = elementType
+	self.m_PlacedBy = placedBy
 	self.m_Placer = player
+
+	self.m_Dimension = dimension
+	self.m_Interior = interior
 
 	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
 
 	self.m_IsPermanent = isPermanent -- This indicates wether the item should be saved when the server shutsdown/restarts
-	self.m_HasChanged = true -- This boolean will indicate if a database update is really necessary or if the Item has not changed since the last db-update (should save performance when there are many items to save)
 	self.m_Locked = locked -- This indicates wether the Item was locked by an admin so no user can pick it up
 	self.m_DatabaseId = 0 -- This represents the database-id from teh vrp_WorldItems table
 	self.m_MaxAccessRange = 0 -- This is the range at which the object can be picked up via the placedObjects-GUI ( 0 stands for infinite )
 	self.m_AccessIntDim = false -- If set to true the player must be in the same dimension/interior as the item in order to pick it up
 	self.m_Value = value or "" -- This will be used to store meta-info about the world-item
 
-	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
+	self.m_Object = createObject(self.m_ModelId, position, rotation)
 	self.m_Object:setData("WorldItem:AccessRange", 0, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
 	self.m_Object:setData("WorldItem:IntDimCheck", false, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
 	self.m_Object:setData("WorldItem:anonymousInfo", false, true) -- this will be used to hide infomration from users if wished
 
-	if type(owner) == "userdata" and getElementType(owner) == "player" then
-		self.m_Object:setInterior(player:getInterior())
-		self.m_Object:setDimension(player:getDimension())
-		self.m_Object:setData("Owner", ((owner.getShortName and owner:getShortName()) or (owner.getName and owner:getName())) or "Unknown", true)
-		self.m_Object:setData("Placer", player:getName() or "Unknown", true)
-		self.m_Owner = owner:getId()
-		self.m_Placer = player:getId()
-	elseif type(owner) == "number" then
-		local ownerName = Account.getNameFromId(owner)
-		local placerName = Account.getNameFromId(player)
-		self.m_Object:setData("Owner", ownerName or owner, true)
-		self.m_Object:setData("Placer", placerName or player, true)
-		local placerObject = DatabasePlayer.getFromId(player)
-		if placerObject and isElement(placerObject) then
-			self.m_Object:setInterior(placerObject:getInterior())
-			self.m_Object:setDimension(placerObject:getDimension())
-		end
-	elseif type(owner) == "table" then
-		self.m_Object:setInterior(player:getInterior())
-		self.m_Object:setDimension(player:getDimension())
-		self.m_Object:setData("Owner", ((owner.getShortName and owner:getShortName()) or (owner.getName and owner:getName())) or "Unknown", true)
-		self.m_Object:setData("Placer", player:getName() or "Unknown", true)
-		self.m_Placer = player:getId()
+	local ownerName = "Unbekannt"
+
+	if self.m_ElementType == DbElementType.Player then
+		ownerName = Account.getNameFromId(self.m_ElementId)
+	elseif self.m_ElementType == DbElementType.Faction then
+		ownerName = FactionManager:getSingleton().Map[self.m_ElementId].m_Name
+	elseif self.m_ElementType == DbElementType.Company then
+		ownerName = CompanyManager:getSingleton().Map[self.m_ElementId].m_Name
+	elseif self.m_ElementType == DbElementType.Group then
+		ownerName = GroupManager:getSingleton().Map[self.m_ElementId].m_Name
 	end
+
+	local placerName = Account.getNameFromId(self.m_PlacedBy)
+	self.m_Object:setData("Owner", tostring(ownerName), true)
+	self.m_Object:setData("Placer", tostring(placerName), true)
+
+	self.m_Object:setDimension(self.m_Dimension)
+	self.m_Object:setInterior(self.m_Interior)
 
 	self.m_AttachedElements = {}
 	self.m_Object.m_Super = self
@@ -75,36 +95,25 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_Object:setData("PlacedTimestamp", getRealTime().timestamp, true)
 
 	-- Add an entry to the map
-	if not WorldItem.Map[self.m_Owner] then
-		WorldItem.Map[self.m_Owner] = {}
+	if not WorldItem.MapByOwner[self.m_ElementType] then
+		WorldItem.MapByOwner[self.m_ElementType] = {}
 	end
-	if not WorldItem.Map[self.m_Owner][self.m_ModelId] then
-		WorldItem.Map[self.m_Owner][self.m_ModelId] = {}
+	if not WorldItem.MapByOwner[self.m_ElementType][self.m_ElementId] then
+		WorldItem.MapByOwner[self.m_ElementType][self.m_ElementId] = {}
 	end
-
-	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
-	WorldItemManager.Map[self] = 0 -- this is for keeping track of database-related stuff
-
-	if interior then
-		self:setInterior(interior)
+	if not WorldItem.MapByOwner[self.m_ElementType][self.m_ElementId][self.m_ModelId] then
+		WorldItem.MapByOwner[self.m_ElementType][self.m_ElementId][self.m_ModelId] = {}
 	end
 
-	if dimension then
-		self:setDimension(dimension)
-	end
+	WorldItem.MapByOwner[self.m_ElementType][self.m_ElementId][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
 
 	if databaseId then
 		self:setDatabaseId(databaseId)
+	else
+		StatisticsLogger:getSingleton():itemPlaceLogs(self.m_PlacedBy, itemData.Name, position.x..","..position.y..","..position.z)
+		self.m_CreationDate = getRealTime().timestamp
+		self:onChanged()
 	end
-	--[[
-	if WorldItemManager.ItemClasses[item.TechnicalName] then
-		if not databaseId then
-			self:forceSave()
-		end
-		local class = WorldItemManager.ItemClasses[item.TechnicalName]:new(self, self.m_DatabaseId, item)
-		self.m_Class = class
-		class:onCreate()
-	end]]
 end
 
 function WorldItem:attach(ele, offsetPos, offsetRot)
@@ -131,7 +140,7 @@ function WorldItem:virtual_destructor()
 		end
 		self.m_Object:destroy()
 	end
-	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
+	WorldItem.MapByOwner[self.m_ElementType][self.m_ElementId][self.m_ModelId][self.m_Object] = nil
 end
 
 function WorldItem:onCollect(player, resendList, id, typ)
@@ -144,23 +153,27 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		return false
 	end
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Collect) then
+		player:sendError(_("Du bist nicht berechtigt dieses Objekt aufzuheben!", player))
 		return false
 	end
 
 	if player:getInventory():giveItem(self.m_Item.TechnicalName, 1) then
+
+		local x, y, z = getElementPosition(self:getObject())
+		local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
+		StatisticsLogger:getSingleton():worldItemLog("Collect", "Player", player:getId(), 0, self:getDatabaseId() or 0, zone1, zone2)
+
 		if self.m_Item.removeFromWorld then
 			self.m_Item:removeFromWorld(player, self, self.m_Object)
 		end
-		if type(self.m_Owner) ~= "number" then
-			if not self.m_Owner.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
-		else
-			local ownerObj = DatabasePlayer.getFromId(self.m_Owner)
-			if not ownerObj.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
+		if not player.m_Disconnecting then
+			player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000)
 		end
 		delete(self)
 		self.m_Delete = true
 		self:onChanged()
 		if resendList then WorldItem.sendItemListToPlayer(id, typ, player) end
+
 		return true
 	end
 	return false
@@ -206,15 +219,25 @@ function WorldItem:onDelete(player, resendList, id, type)
 		if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
 			return false
 		end
+		local x, y, z = getElementPosition(self:getObject())
+		local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
+		StatisticsLogger:getSingleton():worldItemLog( "Delete", "Player", player:getId(), 0, self:getDatabaseId() or 0, zone1, zone2)
+		local placer = self:getPlacer()
+		placer = DatabasePlayer.getFromId(placer)
+		if placer and isElement(placer) then
+			placer:sendWarning(_("%s %s hat dein Objekt %s in %s, %s gelöscht!", placer,
+			RANK[player:getRank()], player:getName(), self.m_ItemName, zone1, zone2), 10000)
+		end
 		player:sendShortMessage(_("%s gelöscht.", player, self.m_ItemName), nil, nil, 1000)
 	end
+
 	if self.m_Item.removeFromWorld then
 		self.m_Item:removeFromWorld(nil, self, self.m_Object)
 	end
 	if resendList then WorldItem.sendItemListToPlayer(id, type, player) end
 	delete(self)
+	self:onChanged()
 	self.m_Delete = true
-	self.m_HasChanged = true
 end
 
 function WorldItem:onMove(player)
@@ -294,12 +317,8 @@ function WorldItem:getObject()
 	return self.m_Object
 end
 
-function WorldItem:getOwner()
-	return self.m_Owner
-end
-
 function WorldItem:getPlacer()
-	return self.m_Placer
+	return self.m_PlacedBy
 end
 
 function WorldItem:getItem()
@@ -329,10 +348,6 @@ function WorldItem:isPermanent()
 	return self.m_IsPermanent
 end
 
-function WorldItem:setPermanent(state)
-	self.m_IsPermanent = state
-end
-
 function WorldItem:setAnonymous( state )
 	self.m_Anonymous = state
 	self.m_Object:setData("WorldItem:anonymousInfo", state, true)
@@ -343,7 +358,9 @@ function WorldItem:getAnonymous( )
 end
 
 function WorldItem:onChanged()
-	self.m_HasChanged = true
+	if self.m_IsPermanent then
+		WorldItem.DirtyMap[self.m_Id] = getRealTime().timestamp
+	end
 end
 
 function WorldItem:hasChanged()
@@ -373,7 +390,6 @@ function WorldItem:getAccessIntDimCheck()
 end
 
 function WorldItem:setDatabaseId(id)
-	WorldItemManager.Map[self] = id
 	self.m_DatabaseId = id
 	if id > 0 then
 		self.m_HasChanged = false
@@ -406,15 +422,37 @@ end
 
 function WorldItem:hasPlayerPermissionTo(player, action) --override this with group specific permissions, but always check for admin rights
 	if not isElement(player) or player:getType() ~= "player" then return false end
-	if not ADMIN_RANK_PERMISSION[action] or player:getRank() < ADMIN_RANK_PERMISSION[action] then
+
+	if ADMIN_RANK_PERMISSION[action] and player:getRank() >= ADMIN_RANK_PERMISSION[action] then -- admin rights
+		return true
+	end
+
+	if action == WorldItem.Action.Move then
+		if self.m_ElementType == DbElementType.Player then
+			if self.m_ElementId == player:getId() then
+				return true
+			else
+				return false
+			end
+		end
+	elseif action == WorldItem.Action.Collect then
+		if self.m_ElementType == DbElementType.Player then
+			if self.m_ElementId == player:getId() then
+				return true
+			else
+				return false
+			end
+		end
+	elseif action == WorldItem.Action.Delete then
 		return false
 	end
-	return true
+
+	return false
 end
 
 function WorldItem.collectAllFromOwner(owner)
-	if WorldItem.Map[owner] then
-		for modelid, objects in pairs(WorldItem.Map[owner]) do
+	if WorldItem.MapByOwner[owner] then
+		for modelid, objects in pairs(WorldItem.MapByOwner[owner]) do
 			for object, worlditem in pairs(objects) do
 				worlditem:onCollect(owner)
 			end
@@ -435,7 +473,7 @@ function WorldItem.sendItemListToPlayer(id, type, player)
 		name = owner:getName()
 	end
 	if owner then
-		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, WorldItem.Map[owner] or {}, id, type)
+		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, WorldItem.MapByOwner[owner] or {}, id, type)
 	end
 end
 
@@ -540,7 +578,7 @@ addEventHandler("requestWorldItemListOfOwner", root,
 
 addCommandHandler("objects", function(player) --DEBUG
 	if player:getRank() >= RANK.Developer then
-		for owner, objects in pairs(WorldItem.Map) do
+		for owner, objects in pairs(WorldItem.MapByOwner) do
 			outputConsole(owner:getName(), player)
 			for id, elements in pairs(objects) do
 				outputConsole(("%d Model %d"):format(table.size(elements), id), player)

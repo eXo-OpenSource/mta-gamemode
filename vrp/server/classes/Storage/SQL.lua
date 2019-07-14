@@ -22,7 +22,7 @@ function SQL:queryExec(query, ...)
 	end
 	local result = dbExec(self.m_DBHandle, query, ...)
 	self:writeSqlPerfomanceLog(query, getTickCount() - start, "sync")
-	
+
 	return result
 end
 
@@ -123,6 +123,31 @@ end
 function SQL:setAsyncEnabled(enabled)
 	self.m_Async = enabled
 end
+
+function SQL:asyncOrSyncQueryFetch(...)
+	local args = {...}
+	local async = args[1]
+	table.remove(args, 1)
+	if async then
+		self:queryFetch(Async.waitFor(), unpack(args))
+		return Async.wait()
+	else
+		return self:queryFetch(unpack(args))
+	end
+end
+
+function SQL:asyncOrSyncQueryFetchSingle(...)
+	local args = {...}
+	local async = args[1]
+	table.remove(args, 1)
+	if async then
+		self:queryFetchSingle(Async.waitFor(), unpack(args))
+		return Async.wait()
+	else
+		return self:queryFetchSingle(unpack(args))
+	end
+end
+
 
 function SQL:promiseQueryFetch(...)
 	if self.m_UsePromise then
