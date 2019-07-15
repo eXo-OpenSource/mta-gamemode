@@ -65,10 +65,10 @@ factionNavigationpoint[1] = Vector3(1552.278, -1675.725, 12.6)
 
 -- ID 2 = FBI:
 factionRankNames[2] = {
-[0] = "Probationary Agent",
+[0] = "Probat. Agent",
 [1] = "Special Agent",
 [2] = "Sen. Special Agent",
-[3] = "Supervisory Agent",
+[3] = "Sup. Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
 [6] = "FBI-Director"

@@ -126,11 +126,6 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			return
 		end
 
-		if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-			client:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
-			return
-		end
-
 		if target:getWeaponLevel() < MIN_WEAPON_LEVELS[item] then
 			client:sendError(_("Das Waffenlevel von %s ist zu niedrig! (Benötigt: %i)", client, target.name, MIN_WEAPON_LEVELS[item]))
 			target:sendError(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", target, MIN_WEAPON_LEVELS[item]))
@@ -234,12 +229,8 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 		return false
 	end
 
-	if player:getFaction() and (not player:getFaction():isEvilFaction()) and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 		player:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", player))
-		return
-	end
-	if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-		player:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
 		return
 	end
 
@@ -253,8 +244,12 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
 				takeWeapon(player, weaponId)
-				giveWeapon(target, weaponId, amount)
 				target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
+				if target:getFaction() and target:getFaction():isStateFaction() and target:isFactionDuty() then
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(target, weaponId, amount)
+					return
+				end
+				giveWeapon(target, weaponId, amount)
 			else
 				player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 				target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))

@@ -92,6 +92,14 @@ function NoDm:setPlayerNoDm(state)
 	end
 end
 
+function NoDm:setControls(state)
+	toggleControl ("fire", state)
+	toggleControl ("next_weapon", state)
+	toggleControl ("previous_weapon", state)
+	toggleControl ("aim_weapon", state)
+	toggleControl ("vehicle_fire", state)
+end
+
 function NoDm:toggleNoDmImage(state)
 	if state == true and self.m_NoDm == false then
 		self.m_currentImagePosition = 0
@@ -114,12 +122,20 @@ function NoDm:renderNoDmImage()
 	if not Phone:getSingleton():isOpen() then
 		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
 	end
-	if localPlayer:getFactionId() ~= 1 and localPlayer:getFactionId() ~= 2 and localPlayer:getFactionId() ~= 3 and getPedWeapon ( localPlayer, 9 ) ~= 43 and getPedWeapon ( localPlayer, 9 ) ~= 42 then
-		setPedWeaponSlot(localPlayer,0)
-	end
+	if localPlayer:getFactionId() == 1 and localPlayer:getPublicSync("Faction:Duty") then return end
+	if localPlayer:getFactionId() == 2 and localPlayer:getPublicSync("Faction:Duty") then return end
+	if localPlayer:getFactionId() == 3 and localPlayer:getPublicSync("Faction:Duty") then return end
+	if getPedWeapon ( localPlayer, 9 ) == 43 then return end
+	if getPedWeapon ( localPlayer, 9 ) == 42 then return end
+
+	setPedWeaponSlot(localPlayer,0)
+	self:setControls(false)
 end
 
 function NoDm:unrenderNoDmImage()
+	if not getElementData(localPlayer, "isTasered") then
+		self:setControls(true)
+	end
 	if self.m_currentImagePosition > 0 then self.m_currentImagePosition = self.m_currentImagePosition -20 end
 	if self.m_currentImagePosition <= 0 then
 		if not self.m_NoDm then

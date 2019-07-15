@@ -58,7 +58,7 @@ function FerrisWheel:update()
 end
 
 function FerrisWheel:setPlayerToExitPosition(player, gondId)
-    player:setPosition(self.m_BaseObj.position + self.m_BaseObj.matrix.right*(gondId % 2 == 0 and -3.5 or 3.5) + self.m_BaseObj.matrix.forward*(5) + self.m_BaseObj.matrix.up*(-13))
+    player:setPosition(self.m_BaseObj.position + self.m_BaseObj.matrix.right*(gondId % 2 == 0 and -3.5 or 3.5) + self.m_BaseObj.matrix.forward*(5) + self.m_BaseObj.matrix.up*(-12))
     player:setRotation(self.m_BaseObj.rotation)
 end
 

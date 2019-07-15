@@ -8,7 +8,7 @@
 GasStation = inherit(Object)
 GasStation.Map = {}
 
-function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, fuelTypes)
+function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, fuelTypes, blipPosition)
 	self.m_Stations = {}
 	self.m_Accessible = accessible
 	self.m_Name = name
@@ -32,6 +32,9 @@ function GasStation:constructor(stations, accessible, name, nonInterior, service
 			object:setData("isServiceStation", true, true)
 		end
 		object:setData("FuelTypes", self.m_FuelTypes, true, true)
+	end
+	if blipPosition then
+		self.m_Blip = Blip:new("Fuelstation.png", blipPosition.x, blipPosition.y, root, 300):setDisplayText("Tankstelle", BLIP_CATEGORY.VehicleMaintenance):setOptionalColor({0, 150, 136})
 	end
 end
 

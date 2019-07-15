@@ -82,7 +82,6 @@ function DatabasePlayer:load(sync)
 		return false
 	end
 	outputServerLog("[DATABASE-PLAYER] Loaded player with id " .. tostring(self.m_Id))
-	outputServerLog(inspect(row))
 
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
 		self:updateAchievements(table.setIndexToInteger(fromJSON(row.Achievements)))

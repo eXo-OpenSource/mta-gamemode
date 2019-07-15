@@ -256,6 +256,7 @@ function Player:loadCharacterInfo()
 	VehicleCategory:getSingleton():syncWithClient(self)
 
 	self.m_IsDead = row.IsDead or 0
+	self.m_SpawnedDead = self.m_IsDead
 
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
@@ -455,7 +456,9 @@ function Player:spawn()
 
 	if self:isPremium() then
 		self:setArmor(100)
-		giveWeapon(self, 24, 35)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
 	end
 
 	if self.m_PrisonTime > 0 then
@@ -475,12 +478,16 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	if self.m_IsDead == 1 then
-		if not self:getData("isInDeathMatch") then
-			self:setReviveWeapons()
+	nextframe(
+		function()
+			if self.m_IsDead == 1 then
+				if not self:getData("isInDeathMatch") then
+					self:setReviveWeapons()
+				end
+				killPed(self)
+			end
 		end
-		killPed(self)
-	end
+	)
 
 	WearableManager:getSingleton():removeAllWearables(self)
 
@@ -524,16 +531,12 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	self:setCorrectSkin()
 
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
-	end
-
 	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
+	self.m_SpawnedDead = 0
 	FactionState:getSingleton():uncuffPlayer(self)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
@@ -545,6 +548,14 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	if self:isPremium() then
+		self:setArmor(100)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
 

@@ -28,6 +28,7 @@ function FactionManager:constructor()
 
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
+	self.m_RaidBind = bind(self.endEvilFactionRaidOnDeath, self)
 end
 
 function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color, navigationPosition)
@@ -58,18 +59,26 @@ function FactionManager:factionEvilStartRaid(target)
 		end
 		localPlayer.m_evilRaidTarget = target
 		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 15000, 1)
+
+		addEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 	end
 end
 
 function FactionManager:endEvilFactionRaid()
 	local target = localPlayer.m_evilRaidTarget
 	if target then
-		if getDistanceBetweenPoints3D(target:getPosition(), localPlayer:getPosition()) <= 5 and not (target.vehicle and localPlayer:isSurfOnCar(target.vehicle)) then
+		if getDistanceBetweenPoints3D(target:getPosition(), localPlayer:getPosition()) <= 5 then
 			triggerServerEvent("factionEvilSuccessRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		else
 			triggerServerEvent("factionEvilFailedRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		end
+		removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 	end
+end
+
+function FactionManager:endEvilFactionRaidOnDeath()
+	triggerServerEvent("factionEvilFailedRaid", localPlayer, localPlayer.m_evilRaidTarget)
+	removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 end
 
 function FactionManager:Event_onPlayerCuff( bool )

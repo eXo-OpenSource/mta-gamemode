@@ -399,7 +399,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 				if killer:isFactionDuty() then
 					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
-						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
+						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)
 						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
