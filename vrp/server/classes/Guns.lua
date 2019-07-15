@@ -167,7 +167,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 
 				if Gangwar:isInstantiated() then
 					if Gangwar:getSingleton():getCurrentGangwar() then
-						if Gangwar:getSingleton():isParticipantInList(target) and Gangwar:getSingleton():isParticipantInList(attacker) then
+						if Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(target) and Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(attacker) then
 							if target:getFaction() ~= attacker:getFaction() then
 								attacker.g_damage = attacker.g_damage + realLoss
 								attacker:triggerEvent("onGangwarDamage", target, weapon, bodypart, realLoss)
