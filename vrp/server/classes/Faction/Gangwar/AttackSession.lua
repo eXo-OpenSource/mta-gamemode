@@ -58,7 +58,7 @@ function AttackSession:destructor()
 		killTimer( self.m_NotifiyAgainTimer )
 	end
 	self.m_Active = false
-	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
+	--removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
 function AttackSession:logSession(winner)
@@ -308,7 +308,7 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 					local loss = player.m_LossBeforeDead or 0
 					triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
 					self:onPlayerLeaveCenter( player ) 
-					killer.g_damage = killer.g_damage + math.floor(loss)
+					--killer.g_damage = killer.g_damage + math.floor(loss)
 					self:disqualifyPlayer( player )
 				end
 			end
