@@ -10,8 +10,9 @@ PoliceAnnouncements = inherit(Singleton)
 addRemoteEvents{"PoliceAnnouncement:wanted", "PoliceAnnouncement:chase", "PoliceAnnouncement:siren", "PoliceAnnouncement:syncSiren"}
 function PoliceAnnouncements:constructor()
     self.m_SirenSounds = {}
+    self.m_AnnouncementQueue = {}
 
-    self.m_WantedBind = bind(self.playWantedSound, self)
+    self.m_WantedBind = bind(self.addAnnouncementToQueue, self)
     self.m_ChaseBind = bind(self.playChaseSound, self)
     self.m_SirenBind = bind(self.startSiren, self)
     self.m_SirenSync = bind(self.syncSirens, self)
@@ -68,7 +69,7 @@ function PoliceAnnouncements:playNeedhelpSound(zone)
     end
 end
 
-function PoliceAnnouncements:playWantedSound(zone, wantedreason, modelId, color)
+function PoliceAnnouncements:playWantedSound(zone, wantedreason, modelId, color, index)
     if core:get("Sounds", "WantedRadioEnabled", true) == false then return end
     local volume = core:get("Sounds", "WantedRadioVolume", 1)
     local static = self:playSound("genrl", 52, 3, true)
@@ -98,7 +99,16 @@ function PoliceAnnouncements:playWantedSound(zone, wantedreason, modelId, color)
                                             if not modelId then 
                                                 sound5 = self:playSound("script", 3, POLICE_ANNOUNCEMENT_MOVEMENT_TYPES["foot"]-1) --on foot
                                                 sound5:setVolume(volume)
-                                                setTimer(stopSound, (getSoundLength(sound5)*1000)+50, 1, static)
+                                                local length = (getSoundLength(sound5)*1000)+50
+                                                setTimer(stopSound, length, 1, static)
+                                                setTimer(function()
+                                                    self.m_AnnouncementQueue[index] = nil
+                                                    if self:getNextQueueData() then
+                                                        self:playWantedSound(self:getNextQueueData())
+                                                    else
+                                                        self.m_isQueueRunning = false
+                                                    end
+                                                end, length+2000, 1)
                                             else
                                                 if self:isBike(modelId) then
                                                     sound5 = self:playSound("script", 3, POLICE_ANNOUNCEMENT_MOVEMENT_TYPES["bike"]-1) --on a
@@ -117,7 +127,16 @@ function PoliceAnnouncements:playWantedSound(zone, wantedreason, modelId, color)
                                                                 local soundId = self:getVehicleSound(modelId) --Vehicle
                                                                 sound7 = self:playSound("script", 5, soundId-1)
                                                                 sound7:setVolume(volume)
-                                                                setTimer(stopSound, (getSoundLength(sound7)*1000)+50, 1, static)
+                                                                local length = (getSoundLength(sound7)*1000)+50
+                                                                setTimer(stopSound, length, 1, static)
+                                                                setTimer(function()
+                                                                    self.m_AnnouncementQueue[index] = nil
+                                                                    if self:getNextQueueData() then
+                                                                        self:playWantedSound(self:getNextQueueData())
+                                                                    else
+                                                                        self.m_isQueueRunning = false
+                                                                    end
+                                                                end, length+2000, 1)
                                                             end
                                                         )
                                                     end
@@ -133,6 +152,25 @@ function PoliceAnnouncements:playWantedSound(zone, wantedreason, modelId, color)
             )
         end
     , 50, 1)
+end
+
+function PoliceAnnouncements:addAnnouncementToQueue(zone, wantedreason, modelId, color)
+    local index = #self.m_AnnouncementQueue+1
+    self.m_AnnouncementQueue[index] = {zone, wantedreason, modelId, color, index}
+    if not self.m_isQueueRunning then
+        self:startQueue(zone, wantedreason, modelId, color, index)
+    end
+end
+
+function PoliceAnnouncements:startQueue(zone, wantedreason, modelId, color, index)
+    self:playWantedSound(zone, wantedreason, modelId, color, index)
+    self.m_isQueueRunning = true
+end
+
+function PoliceAnnouncements:getNextQueueData()
+    for key, data in pairs(self.m_AnnouncementQueue) do
+        return unpack(data)
+    end
 end
 
 function PoliceAnnouncements:isBike(modelId)
