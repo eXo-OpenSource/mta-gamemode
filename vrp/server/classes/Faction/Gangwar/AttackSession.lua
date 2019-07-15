@@ -20,8 +20,10 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_PickList = { }
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_DamageFunc = bind(self.onGangwarDamage, self)
-	addEventHandler("onClientDamage", root, self.m_DamageFunc)
+
+	--self.m_DamageFunc = bind(self.onGangwarDamage, self)
+	--addEventHandler("onClientDamage", root, self.m_DamageFunc)
+
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
