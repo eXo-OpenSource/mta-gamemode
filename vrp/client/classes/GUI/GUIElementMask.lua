@@ -20,15 +20,7 @@ end
 
 function GUIElementMask:destructor()
 	if isElement(self.m_Shader) then
-		destroyElement(self.m_Shader)
-	end
-
-	if isElement(self.m_Texture) then
-		destroyElement(self.m_Texture)
-	end
-
-	if isElement(self.m_Mask) then
-		destroyElement(self.m_Mask)
+		self.m_Shader:destroy()
 	end
 end
 
