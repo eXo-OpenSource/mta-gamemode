@@ -18,12 +18,12 @@ function GUILabel:constructor(posX, posY, width, height, text, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(height))
 	GUIColorable.constructor(self)
+	GUIRotatable.constructor(self)
 
 	self.m_LineSpacing = 10
 	self.m_Multiline = false
 	self.m_AlignX = "left"
 	self.m_AlignY = "top"
-	self.m_Rotation = 0
 end
 
 function GUILabel:drawThis(incache)

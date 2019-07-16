@@ -14,6 +14,7 @@ function GUIImage:constructor(posX, posY, width, height, path, parent)
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self)
+	GUIRotatable.constructor(self)
 end
 
 function GUIImage:drawThis()

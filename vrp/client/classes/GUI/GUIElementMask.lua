@@ -15,6 +15,7 @@ function GUIElementMask:constructor(posX, posY, width, height, texture, maskText
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self)
+	GUIRotatable.constructor(self)
 end
 
 function GUIElementMask:destructor()
