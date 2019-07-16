@@ -289,7 +289,7 @@ function Guns:addGangwarDamage(target, attacker, damage)
 end
 
 function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
-	local armor = getPedArmor ( player )
+	local armor = math.ceil(getPedArmor ( player ))
 	local health = getElementHealth ( player )
 	if armor > 0 then
 		if armor >= loss then
