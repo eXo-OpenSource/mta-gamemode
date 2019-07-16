@@ -67,6 +67,6 @@ function GUIElementMask:setMask(path)
 	self.m_Mask = DxTexture(path)
 	self.m_Shader:setValue("MaskTexture", self.m_Mask)
 	self:anyChange()
-	
+
 	return self
 end
