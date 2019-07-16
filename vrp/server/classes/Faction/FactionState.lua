@@ -286,7 +286,8 @@ function FactionState:loadLSPD(factionId)
 
 
 
-	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
+	local safe = createObject(2332, 238.212, 82.235, 1004.539)
+	safe:setInterior(6)
 	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
