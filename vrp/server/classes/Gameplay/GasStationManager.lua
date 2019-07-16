@@ -9,8 +9,8 @@ GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
 addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle"}
 
-GAS_STATION_SHOP_PLAYER_PAYMENT = 20
-GAS_STATION_SHOP_FCT_CMP_PAYMENT = 10
+GAS_STATION_SHOP_PLAYER_PAYMENT = 40
+GAS_STATION_SHOP_FCT_CMP_PAYMENT = 30
 
 function GasStationManager:constructor()
 	self.m_PendingTransaction = {}

@@ -1,11 +1,11 @@
 PublicTransport = inherit(Company)
 PublicTransport.ms_BusLineData = { --this information can't be parsed out of the bus station map file
 	[1] = {
-		displayName = "Downtown - Blueberry",
+		displayName = "Ganton - Blueberry",
 		color = {50, 200, 255}, -- LightBlue
 	},
 	[2] = {
-		displayName = "East LS - Montgomery",
+		displayName = "Jefferson - Dillimore",
 		color = {180, 0, 170}, -- Pink
 	},
 }

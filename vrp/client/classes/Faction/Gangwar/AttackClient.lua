@@ -60,43 +60,12 @@ function AttackClient:onDamage( attacker )
 	end
 end
 
-function AttackClient:addDamage( target, weapon, bodypart, loss )
-	if target ~= localPlayer then
-		local facSource = source:getFactionId()
-		local facTarget = target:getFactionId()
-		if facSource ~= facTarget then
-			if facSource == self.m_Faction.m_Id or facSource == self.m_Faction2.m_Id then
-				if facTarget == self.m_Faction.m_Id or facTarget == self.m_Faction2.m_Id then
-					if source == localPlayer then
-						if not self.m_GangwarDamage then
-							self.m_GangwarDamage = 0
-						end
-						self.m_GangwarDamage = math.ceil( self.m_GangwarDamage + loss )
-					end
-				end
-			end
-		end
-	end
+function AttackClient:addDamage(loss)
+	self.m_GangwarDamage = math.ceil(self.m_GangwarDamage + loss)
 end
 
-function AttackClient:addKill( target, weapon, bodypart, loss)
-	if target ~= localPlayer then
-		local facSource = source:getFactionId()
-		local facTarget = target:getFactionId()
-		if facTarget ~= facSource then
-			if facSource == self.m_Faction.m_Id or facSource == self.m_Faction2.m_Id then
-				if facTarget == self.m_Faction.m_Id or facTarget == self.m_Faction2.m_Id then
-					if source == localPlayer then
-						self.m_GangwarKill = math.floor( self.m_GangwarKill + 1 )
-						if not self.m_GangwarDamage then
-							self.m_GangwarDamage = 0
-						end
-						self.m_GangwarDamage = math.ceil( self.m_GangwarDamage + loss )
-					end
-				end
-			end
-		end
-	end
+function AttackClient:addKill()
+	self.m_GangwarKill = math.floor(self.m_GangwarKill + 1)
 end
 
 function AttackClient:destructor()

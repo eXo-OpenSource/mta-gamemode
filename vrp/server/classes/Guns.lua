@@ -165,17 +165,6 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 					end
 				end
 
-				if Gangwar:isInstantiated() then
-					if Gangwar:getSingleton():getCurrentGangwar() then
-						if Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(target) and Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(attacker) then
-							if target:getFaction() ~= attacker:getFaction() then
-								attacker.g_damage = attacker.g_damage + realLoss
-								attacker:triggerEvent("onGangwarDamage", target, weapon, bodypart, realLoss)
-							end
-						end
-					end
-				end
-
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
 				target:dropPlayerAttachedObjectOnDamage()
 			end
@@ -286,31 +275,45 @@ function Guns:getWeaponInStorage( player, slot)
 	return false, false
 end
 
+function Guns:addGangwarDamage(target, attacker, damage)
+	if Gangwar:isInstantiated() then
+		if Gangwar:getSingleton():getCurrentGangwar() then
+			if Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(target) and Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(attacker) then
+				if target:getFaction() ~= attacker:getFaction() then
+					attacker.g_damage = attacker.g_damage + damage
+					attacker:triggerEvent("onGangwarDamage", damage)
+				end
+			end
+		end
+	end
+end
+
 function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
-	local armor = getPedArmor ( player )
+	local armor = math.ceil(getPedArmor ( player ))
 	local health = getElementHealth ( player )
 	if armor > 0 then
 		if armor >= loss then
 			player:setArmor(armor-loss)
 		else
-			loss = math.abs(armor-loss)
+			local afterArmorLoss = math.abs(armor-loss)
 			player:setArmor(0)
 
-			if health - loss <= 0 then
-				player.m_LossBeforeDead = loss
+			if health - afterArmorLoss <= 0 then
+				loss = loss - (loss - health - afterArmorLoss)
 				self:killPed(player, attacker, weapon, bodypart)
 			else
-				player:setHealth(health-loss)
+				player:setHealth(health-afterArmorLoss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
-			player.m_LossBeforeDead = loss
+			loss = loss - (loss - health)
 			self:killPed(player, attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)
 		end
 	end
+	self:addGangwarDamage(player, attacker, loss)
 	self:addDamageLog(player, loss, attacker, weapon, bodypart)
 end
 
