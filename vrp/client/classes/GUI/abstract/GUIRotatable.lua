@@ -14,9 +14,9 @@ function GUIRotatable:constructor(rotation, rotationCenterOffsetX, rotationCente
 end
 
 function GUIRotatable:setRotation(rotation, rotationCenterOffsetX, rotationCenterOffsetY)
-	assert(type(rotation) == "number", "Bad argument #1 @ GUIImage.setRotation")
+	assert(type(rotation) == "number", "Bad argument #1 @ GUIRotatable.setRotation")
 
-	self.m_Rotation = rotation or 0
+	self.m_Rotation = rotation
 	self.m_RotationCenterOffsetX = rotationCenterOffsetX or 0
 	self.m_RotationCenterOffsetY = rotationCenterOffsetY or 0
 
