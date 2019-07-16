@@ -944,11 +944,7 @@ function PlayerManager:Event_weaponLevelTraining()
 	local nextLevel = currentLevel+1
 	if WEAPON_LEVEL[nextLevel] then
 		if client:getMoney() >= WEAPON_LEVEL[nextLevel]["costs"] then
-			if math.floor(client:getPlayTime()/60) >= WEAPON_LEVEL[nextLevel]["hours"] then
-				ShootingRanch:getSingleton():startTraining(client, nextLevel)
-			else
-				client:sendError(_("Du hast nicht genug Spielstunden!", client))
-			end
+			ShootingRanch:getSingleton():startTraining(client, nextLevel)
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
 		end
