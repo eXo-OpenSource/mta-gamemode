@@ -22,6 +22,8 @@ function GUIElementMask:destructor()
 	if isElement(self.m_Shader) then
 		self.m_Shader:destroy()
 	end
+
+	GUIElement.destructor(self)
 end
 
 function GUIElementMask:drawThis()
