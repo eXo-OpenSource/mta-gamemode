@@ -1,5 +1,6 @@
 GUIElementMask = inherit(GUIElement)
 inherit(GUIColorable, GUIElementMask)
+inherit(GUIRotatable, GUIElementMask)
 
 function GUIElementMask:constructor(posX, posY, width, height, texture, maskTextrue, parent)
 	self.m_Texture = texture
@@ -39,10 +40,6 @@ function GUIElementMask:drawThis()
 		dxDrawImage(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY), self.m_Width, self.m_Height, self.m_Shader, self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0, self.m_RotationCenterOffsetY or 0, self:getColor() or 0)
 	end
 	dxSetBlendMode("blend")
-end
-
-function GUIElementMask:setRotation(rotation, rotationCenterOffsetX, rotationCenterOffsetY)
-	GUIImage.setRotation(self, rotation, rotationCenterOffsetX, rotationCenterOffsetY) -- hack to avoid duplicate implementation; TODO find better way
 end
 
 function GUIElementMask:setTexture(path)

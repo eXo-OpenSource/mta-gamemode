@@ -8,6 +8,7 @@
 GUILabel = inherit(GUIElement)
 inherit(GUIFontContainer, GUILabel)
 inherit(GUIColorable, GUILabel)
+inherit(GUIRotatable, GUILabel)
 
 function GUILabel:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUILabel:constructor", "number", "number", "number")
@@ -63,16 +64,6 @@ end
 
 function GUILabel:setBackgroundColor(color)
 	self.m_BackgroundColor = color
-	return self
-end
-
-function GUILabel:getRotation()
-	return self.m_Rotation
-end
-
-function GUILabel:setRotation(rot)
-	self.m_Rotation = rot
-	self:anyChange()
 	return self
 end
 
