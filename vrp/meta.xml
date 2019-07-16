@@ -620,6 +620,9 @@
 	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
 	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
+	<script src="client/classes/GUI/GUIElementMask.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMaskedImage.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMaskedRendertarget.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
