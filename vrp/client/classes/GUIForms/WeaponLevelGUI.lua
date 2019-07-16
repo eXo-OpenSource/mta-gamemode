@@ -27,7 +27,6 @@ function WeaponLevelGUI:constructor()
 	if nextLevel <= 10 then
 		GUILabel:new(10, 185, 280, 25, _("Nächstes Level:", nextLevel), self)
 		GUILabel:new(10, 210, 280, 20, _("Kosten: %d$", WEAPON_LEVEL[nextLevel]["costs"]), self)
-		GUILabel:new(10, 230, 280, 20, _("Benötigte Spielstunden: %d", WEAPON_LEVEL[nextLevel]["hours"]), self)
 		self.m_TrainButton = GUIButton:new(10, 260, 280, 30, "Trainieren", self):setBackgroundColor(Color.Accent)
 		self.m_TrainButton.onLeftClick = function()
 			triggerServerEvent("startWeaponLevelTraining", localPlayer)
