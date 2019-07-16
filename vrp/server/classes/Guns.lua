@@ -295,14 +295,14 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		if armor >= loss then
 			player:setArmor(armor-loss)
 		else
-			loss = math.abs(armor-loss)
+			local afterArmorLoss = math.abs(armor-loss)
 			player:setArmor(0)
 
-			if health - loss <= 0 then
-				loss = loss - (loss - health)
+			if health - afterArmorLoss <= 0 then
+				loss = loss - (loss - health - afterArmorLoss)
 				self:killPed(player, attacker, weapon, bodypart)
 			else
-				player:setHealth(health-loss)
+				player:setHealth(health-afterArmorLoss)
 			end
 		end
 	else
