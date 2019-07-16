@@ -258,7 +258,7 @@ function AppCall:showIncomingCallShortMessage(caller, voiceEnabled, message, tit
 			ErrorBox:new(_"Dein Handy ist ausgeschaltet!")
 			return "forceOpen"
 		end
-		if not localPlayer:isDead() then
+		if localPlayer:isDead() then
 			ErrorBox:new(_"Du bist nicht in der Lage den Anruf anzunehmen!")
 			return "forceOpen"
 		end

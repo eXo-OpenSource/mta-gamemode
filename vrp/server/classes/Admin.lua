@@ -1382,9 +1382,12 @@ function Admin:Event_vehicleDespawn(reason)
 						delTarget:addOfflineMessage(("Dein Fahrzeug (%s) wurde von %s despawnt (%s)!"):format(source:getName(), client:getName(), reason))
 						delete(delTarget)
 					else
-						delTarget:sendInfo(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason))
+						delTarget:sendShortMessage(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason), -1)
 					end
 				end
+			end
+			if instanceof(source, GroupVehicle) then
+				source:getGroup():sendShortMessage(_("Euer Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason), -1)
 			end
 		end
 
