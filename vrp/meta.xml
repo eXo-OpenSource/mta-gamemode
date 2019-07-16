@@ -570,6 +570,7 @@
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUITooltip.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIRotatable.lua" type="client"/>
 	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
 	<script src="client/classes/GUI/DxElement.lua" type="client"/>
 	<script src="client/classes/GUI/DxRectangle.lua" type="client"/>
