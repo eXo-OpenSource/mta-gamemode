@@ -37,14 +37,14 @@ function GUIElementMask:drawThis()
 	if GUI_DEBUG then
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 	end
-	if self.m_Texture then
+	if self.m_Shader then
 		dxDrawImage(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY), self.m_Width, self.m_Height, self.m_Shader, self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0, self.m_RotationCenterOffsetY or 0, self:getColor() or 0)
 	end
 	dxSetBlendMode("blend")
 end
 
 function GUIElementMask:setTexture(path)
-	assert(type(path) == "string", "Bad argument @ GUIElementMaskedImage.setImage")
+	assert(type(path) == "string", "Bad argument @ GUIElementMask.setImage")
 
 	if isElement(self.m_Texture) then
 		destroyElement(self.m_Texture)
@@ -58,7 +58,7 @@ function GUIElementMask:setTexture(path)
 end
 
 function GUIElementMask:setMask(path)
-	assert(type(path) == "string", "Bad argument @ GUIElementMaskedImage.setMask")
+	assert(type(path) == "string", "Bad argument @ GUIElementMask.setMask")
 
 	if isElement(self.m_Mask) then
 		destroyElement(self.m_Mask)
