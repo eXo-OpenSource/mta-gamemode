@@ -80,7 +80,7 @@ function Admin:constructor()
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
 	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", 
 	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction", "adminRequestMultiAccounts",
-	"adminDelteMultiAccount", "adminCreateMultiAccount"}
+	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -112,6 +112,8 @@ function Admin:constructor()
 	addEventHandler("adminRequestMultiAccounts", root, bind(self.Event_adminRequestMultiAccounts, self))
 	addEventHandler("adminDelteMultiAccount", root, bind(self.Event_adminDelteMultiAccount, self))
 	addEventHandler("adminCreateMultiAccount", root, bind(self.Event_adminCreateMultiAccount, self))
+	addEventHandler("adminRequestSerialAccounts", root, bind(self.Event_adminRequestSerialAccounts, self))
+	addEventHandler("adminDeleteAccountFromSerial", root, bind(self.Event_adminDeleteAccountFromSerial, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -1702,22 +1704,28 @@ function Admin:Event_adminCreateMultiAccount(serial, name, multiAccountName, all
 		client:sendError("Der Multi-Account konnte nicht erstellt werden!")
 	end
 end
-local callback_called = 0
-local start
-function callbackFunc()
-	callback_called = callback_called + 1
-	outputDebugString("Callback called "..callback_called.." times")
-	if callback_called == 100 then
-		outputChatBox(getTickCount()-start)
+
+function Admin:Event_adminRequestSerialAccounts(serial)
+	local result = sql:queryFetch("SELECT * FROM ??_account_to_serial WHERE Serial = ?", sql:getPrefix(), serial)
+	local accountTable = {}
+	for i, row in pairs(result) do
+		local singleResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.PlayerId)
+		accountTable[#accountTable+1] = {row.PlayerId, singleResult.Name}
 	end
+	client:triggerEvent("adminSendSerialAccountsToClient", serial, accountTable)
 end
 
-DBConnection = dbConnect( "mysql", "dbname=vrp_dev;host=127.0.0.1", "root", "0172" )
-function XD()
-	start = getTickCount()
-	for i = 1, 1000 do
-		local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
+function Admin:Event_adminDeleteAccountFromSerial(userId, serial)
+	if client:getRank() < RANK.Administrator then
+		client:sendError("Du bist nicht berechtigt!")
+		return
 	end
-	local ende = getTickCount()
-	outputDebugString("benötigte Zeit: "..ende-start.." ms!")
+
+	local result = sql:queryExec("DELETE FROM ??_account_to_serial WHERE PlayerId = ? AND Serial = ?", sql:getPrefix(), userId, serial)
+	if result then
+		client:sendInfo("Der Account wurde von der Serial getrennt!")
+		client:triggerEvent("adminDeleteAccountFromSerialList", userId)
+	else
+		client:sendError("Der Account konnte von der Serial nicht getrennt werden!")
+	end
 end

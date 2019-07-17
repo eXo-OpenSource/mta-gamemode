@@ -208,6 +208,7 @@ ADMIN_RANK_PERMISSION = {
 	["eventGangwarMenu"] = RANK.Administrator,
 	["transactionMenu"] = RANK.Administrator,
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
+	["serialAccountMenu"] = RANK.Supporter,
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
