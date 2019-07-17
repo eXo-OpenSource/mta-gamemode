@@ -89,11 +89,12 @@ function AdminGUI:constructor(money)
 
 	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
 	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("syncForum", "Foren-Gruppen", self.onGeneralButtonClick, self.m_Width-225, 305, 200, 30, Color.Orange, tabAllgemein)
 
-	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 345, 200, 30, Color.Accent, tabAllgemein)
-	self:addAdminButton("transactionMenu", "Transaktions-Menü", self.onGeneralButtonClick, self.m_Width-225, 385, 200, 30, Color.Accent, tabAllgemein)
-	self:addAdminButton("multiAccountMenu", "Multi-Accounts", self.onGeneralButtonClick, self.m_Width-225, 425, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("syncForum", "Foren-Gruppen", self.onGeneralButtonClick, self.m_Width-225, 310, 200, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 350, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("transactionMenu", "Transaktions-Menü", self.onGeneralButtonClick, self.m_Width-225, 390, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("multiAccountMenu", "Multi-Accounts", self.onGeneralButtonClick, self.m_Width-225, 430, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("serialAccountMenu", "Serial-Account-Verknüpfungen", self.onGeneralButtonClick, self.m_Width-225, 470, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -564,6 +565,9 @@ function AdminGUI:onGeneralButtonClick(func)
 	elseif func == "multiAccountMenu" then
 		self:close()
 		MultiAccountWindow:new()
+	elseif func == "serialAccountMenu" then
+		self:close()
+		SerialAccountsGUI:new()
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()
 		if radius and tonumber(radius) and tonumber(radius) > 0 then
