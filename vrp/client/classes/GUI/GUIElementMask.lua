@@ -37,28 +37,16 @@ function GUIElementMask:drawThis()
 	dxSetBlendMode("blend")
 end
 
-function GUIElementMask:setTexture(path)
-	assert(type(path) == "string", "Bad argument @ GUIElementMask.setImage")
-
-	if isElement(self.m_Texture) then
-		destroyElement(self.m_Texture)
-	end
-
-	self.m_Texture = DxTexture(path)
+function GUIElementMask:setTexture(texture)
+	self.m_Texture = texture
 	self.m_Shader:setValue("InputTexture", self.m_Texture)
 	self:anyChange()
 
 	return self
 end
 
-function GUIElementMask:setMask(path)
-	assert(type(path) == "string", "Bad argument @ GUIElementMask.setMask")
-
-	if isElement(self.m_Mask) then
-		destroyElement(self.m_Mask)
-	end
-
-	self.m_Mask = DxTexture(path)
+function GUIElementMask:setMask(mask)
+	self.m_Mask = mask
 	self.m_Shader:setValue("MaskTexture", self.m_Mask)
 	self:anyChange()
 
