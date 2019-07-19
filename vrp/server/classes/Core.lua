@@ -197,6 +197,8 @@ function Core:constructor()
 		ArmsDealer:new()
 		PlaneManager:new()
 		PoliceAnnouncements:new()
+		MapLoader:new()
+		MapEditor:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

@@ -337,6 +337,9 @@
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
 
+	<script src="server/classes/MapEditor/MapLoader.lua" type="server" />
+	<script src="server/classes/MapEditor/MapEditor.lua" type="server" />
+
 	<script src="server/constants/shops.lua" type="server"/>
 
 	<!-- Groups -->
@@ -911,6 +914,8 @@
 	<script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PoliceSoundsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MultiAccountWindow.lua" type="client"/>
+	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectCreateGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1134,6 +1139,9 @@
 
 	<!-- PoliceAnnouncements -->
 	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />
+
+	<script src="client/classes/MapEditor/MapEditor.lua" type="client" />
+	<file src="files/data/objects.xml" />
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />

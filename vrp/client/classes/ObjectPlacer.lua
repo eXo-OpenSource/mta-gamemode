@@ -118,14 +118,19 @@ function ObjectPlacer:Event_OnKey( key, state )
 		if getKeyState("lshift") or getKeyState("rshift") then offset = 45 end
 		if getKeyState("lalt") then offset = 5 end
 		offset = offset/50
+		local cameravec = getCamera().matrix
 		if key == "arrow_u" then 
-			self.m_Object:setPosition(position.x, position.y + offset, position.z)
+			--self.m_Object:setPosition(position.x, position.y + offset, position.z)
+			self.m_Object:setPosition(self.m_Object:getPosition() + Vector3(cameravec.forward.x*offset, cameravec.forward.y*offset, 0))
 		elseif key == "arrow_d" then 
-			self.m_Object:setPosition(position.x, position.y - offset, position.z)
+			--self.m_Object:setPosition(position.x, position.y - offset, position.z)
+			self.m_Object:setPosition(self.m_Object:getPosition() + Vector3(-cameravec.forward.x*offset, -cameravec.forward.y*offset, 0))
 		elseif key == "arrow_r" then 
-			self.m_Object:setPosition(position.x + offset, position.y, position.z)
+			--self.m_Object:setPosition(position.x + offset, position.y, position.z)
+			self.m_Object:setPosition(self.m_Object:getPosition() + Vector3(cameravec.right.x*offset, cameravec.right.y*offset, 0))
 		elseif key == "arrow_l" then 
-			self.m_Object:setPosition(position.x - offset, position.y, position.z)
+			--self.m_Object:setPosition(position.x - offset, position.y, position.z)
+			self.m_Object:setPosition(self.m_Object:getPosition() + Vector3(-cameravec.right.x*offset, -cameravec.right.y*offset, 0))
 		elseif key == "w" then 
 			self.m_Object:setPosition(position.x, position.y, position.z + offset)
 		elseif key == "s" then 
@@ -145,12 +150,16 @@ function ObjectPlacer:Event_Click(btn, state)
 			return ErrorBox:new(_"Du kannst Objekte nicht an Fahrzeugen platzieren.")
 		end
 		if self.m_Callback then
-			if (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
-				ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
-				return
+			if MapEditor:isInstantiated() then
+				self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation())
+			else
+				if (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
+					ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
+					return
+				end
+				self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
 			end
-			self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
-		end
+		end	
 	else
 		self.m_Callback(false)
 	end
