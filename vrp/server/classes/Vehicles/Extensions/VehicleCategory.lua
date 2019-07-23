@@ -37,7 +37,8 @@ function VehicleCategory:constructor()
 		self.m_ModelData[row.Model] = {
             name = row.Name,
 			category = row.Category,
-			baseHeight = row.BaseHeight,
+            baseHeight = row.BaseHeight,
+            vMaxShop = row.VmaxShopLabel,
 		}
 	end
 end
@@ -99,4 +100,9 @@ end
 function VehicleCategory:getModelBaseHeight(model)
     if not self.m_ModelData[model] then return false end
     return self.m_ModelData[model].baseHeight
+end
+
+function VehicleCategory:getMaxVelocityShopInfo(model)
+    if not self.m_ModelData[model] then return false end
+    return self.m_ModelData[model].vMaxShop
 end
