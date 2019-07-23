@@ -52,6 +52,12 @@ function InviteGUI:refreshOnlinePlayers()
 				end
 			end
 		end
+	else
+		for k, player in ipairs(getElementsByType("player")) do
+			if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(player:getName()), string.lower(self.m_PlayerSearch:getText())) then
+				self.m_PlayersGrid:addItem(getPlayerName(player))
+			end
+		end
 	end
 end
 

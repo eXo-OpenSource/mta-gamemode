@@ -916,6 +916,8 @@
 	<script src="client/classes/GUIForms/MultiAccountWindow.lua" type="client"/>
 	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectCreateGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorMapGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorMainGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>

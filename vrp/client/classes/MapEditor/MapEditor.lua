@@ -19,16 +19,23 @@ function MapEditor:constructor()
     self.m_ClickBind = bind(self.Event_onClientClick, self)
     self.m_DoubleClickBind = bind(self.Event_onClientDoubleClick, self)
     self.m_ObjectPlacedBind = bind(self.onObjectPlaced, self)
+    self.m_KeyBind = bind(self.Event_onClientKey, self)
 
 end
 
 function MapEditor:enableEditorMode(state)
     if state == true then
-        addEventHandler("onClientClick", root, self.m_ClickBind)
-        addEventHandler("onClientDoubleClick", root, self.m_DoubleClickBind)
+        if not isEventHandlerAdded("onClientClick", root, self.m_ClickBind) then
+            addEventHandler("onClientClick", root, self.m_ClickBind)
+            addEventHandler("onClientDoubleClick", root, self.m_DoubleClickBind)
+            addEventHandler("onClientKey", root, self.m_KeyBind)
+        end
+        MapEditorMainGUI:new()
     else
         removeEventHandler("onClientClick", root, self.m_ClickBind)
         removeEventHandler("onClientDoubleClick", root, self.m_DoubleClickBind)
+        removeEventHandler("onClientKey", root, self.m_KeyBind)
+        delete(MapEditorMainGUI:getSingleton())
     end
 end
 
@@ -56,6 +63,14 @@ function MapEditor:Event_onClientDoubleClick(button, absoluteX, absoluteY, world
                 MapEditorObjectGUI:new(element)
                 self.m_ControlledObject = element
             end
+        end
+    end
+end
+
+function MapEditor:Event_onClientKey(button, state)
+    if button == "delete" and state == "down" then
+        if self.m_ControlledObject then
+            triggerServerEvent("MapEditor:removeObject", self.m_ControlledObject)
         end
     end
 end
@@ -98,13 +113,15 @@ function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension
 end
 
 function MapEditor:receiveControlPermission(object, callbackType, permission)
-    if callbackType == "normal" then
-        self.m_SelectedObject = object
-    elseif callbackType == "ObjectPlacer" then
-        self.m_ControlledObject = object
-        self.m_ControlledObject:setAlpha(0)
-        self.m_ControlledObject:setCollisionsEnabled(false)
-        ObjectPlacer:new(self.m_ControlledObject:getModel(), self.m_ObjectPlacedBind, false)
-        self:setPlacingMode(true, object:getModel())
+    if permission == true then
+        if callbackType == "normal" then
+            self.m_SelectedObject = object
+        elseif callbackType == "ObjectPlacer" then
+            self.m_ControlledObject = object
+            self.m_ControlledObject:setAlpha(0)
+            self.m_ControlledObject:setCollisionsEnabled(false)
+            ObjectPlacer:new(self.m_ControlledObject:getModel(), self.m_ObjectPlacedBind, false)
+            self:setPlacingMode(true, object:getModel())
+        end
     end
 end
