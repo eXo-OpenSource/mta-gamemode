@@ -43,6 +43,7 @@ build_docker_job:
     #- wget -q --no-check-certificate -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
     - wget -q --no-check-certificate -O build/workerserver https://download.exo-reallife.de/build/workerserver # Built by deploy-workerunit project
     - wget -q --no-check-certificate -O build/ml_gps.so https://download.exo-reallife.de/build/ml_gps.so # Built by mta-module-gps project
+    - wget -q                        -O build/ml_jwt.so https://glare.now.sh/eXo-OpenSource/ml_jwt/ml_jwt.so # Built by eXo-OpenSource/ml_jwt project
     - docker info
     - docker build --squash -t exo-rl-mta .
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
