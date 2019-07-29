@@ -42,6 +42,7 @@ build_docker_job:
   script:
     #- wget -q --no-check-certificate -O build/workerserver https://do-not.press/exo/workerserver # Built by deploy-workerunit project
     #- wget -q --no-check-certificate -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
+    - apk add --update openssl
     - wget -q -O build/workerserver https://download.exo-reallife.de/build/workerserver # Built by deploy-workerunit project
     - wget -q -O build/ml_gps.so https://download.exo-reallife.de/build/ml_gps.so # Built by mta-module-gps project
     - wget -q -O build/ml_jwt.so https://glare.now.sh/eXo-OpenSource/ml_jwt/ml_jwt.so # Built by eXo-OpenSource/ml_jwt project
