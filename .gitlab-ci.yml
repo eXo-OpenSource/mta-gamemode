@@ -3,9 +3,9 @@ image: git.heisi.at:5005/exo/mta-gamemode-build:latest
 services:
   - docker:dind
 
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375
+#variables:
+#  DOCKER_DRIVER: overlay2
+#  DOCKER_HOST: tcp://docker:2375
 
 stages:
   - build
@@ -33,6 +33,7 @@ build_app_job:
       - assets.tar.gz
 
 build_docker_job:
+  image: docker:17.06.0-ce
   tags:
     - linux
     - dind
