@@ -34,6 +34,7 @@ build_app_job:
       - assets.tar.gz
 
 build_docker_job:
+  image: docker:17.06.0-ce
   tags:
     - linux
     - dind
