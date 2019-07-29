@@ -16,6 +16,47 @@
 [ ] Implement new weapon handling with inventory
 [ ] Create new GUI for inventory, inventory interaction and trading
 
+## Items
+
+		ItemFood = ItemFood; -- done
+		ItemKeyPad = ItemKeyPad; -- done
+		ItemDoor = ItemDoor;
+		ItemFurniture = ItemFurniture;
+		ItemEntrance = ItemEntrance;
+		ItemTransmitter = ItemTransmitter;
+		ItemBarricade = ItemBarricade;
+		ItemSkyBeam = ItemSkyBeam;
+		ItemSpeedCam = ItemSpeedCam;
+		ItemNails = ItemNails;
+		ItemRadio = ItemRadio;
+		ItemBomb = ItemBomb;
+		DrugsWeed = DrugsWeed;
+		DrugsHeroin = DrugsHeroin;
+		DrugsShroom = DrugsShroom;
+		DrugsCocaine = DrugsCocaine;
+		ItemDonutBox = ItemDonutBox;
+		ItemEasteregg = ItemEasteregg;
+		ItemPumpkin = ItemPumpkin;
+		ItemTaser = ItemTaser;
+		ItemSlam = ItemSlam;
+		ItemSmokeGrenade = ItemSmokeGrenade;
+		ItemDefuseKit = ItemDefuseKit;
+		ItemFishing = ItemFishing;
+		ItemDice = ItemDice;
+		Plant = Plant;
+		ItemCan = ItemCan;
+		ItemSellContract = ItemSellContract;
+		ItemIDCard = ItemIDCard;
+		ItemFuelcan = ItemFuelcan;
+		ItemRepairKit = ItemRepairKit;
+		ItemHealpack = ItemHealpack;
+		ItemAlcohol = ItemAlcohol;
+		ItemFirework = ItemFirework;
+		WearableHelmet = WearableHelmet;
+		WearableShirt = WearableShirt;
+		WearablePortables = WearablePortables;
+		WearableClothes = WearableClothes;
+
 ## Notes
 
 #### Inventar-Rework der Extraklasse

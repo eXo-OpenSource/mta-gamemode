@@ -53,7 +53,7 @@ function WorldItemManager:save()
 		local metadata = nil
 
 		if obj.m_Metadata then
-			metadata = toJSON(metadata, true)
+			metadata = toJSON(obj.m_Metadata, true)
 		end
 
 		if obj.m_DatabaseId and obj.m_DatabaseId ~= 0 then
@@ -113,8 +113,6 @@ function WorldItemManager:save()
 		WorldItem.DirtyMap[objId] = nil
 	end
 
-	outputServerLog(inspect(changes))
-
 	local queries = ""
 	local queriesParams = {}
 
@@ -155,8 +153,6 @@ function WorldItemManager:save()
 		end
 	end
 
-	outputServerLog(inspect(queries))
-	outputServerLog(inspect(queriesParams))
 	if queries ~= "" then
 		sql:queryExec(queries, unpack(queriesParams))
 	end

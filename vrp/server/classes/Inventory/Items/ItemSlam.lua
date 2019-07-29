@@ -5,6 +5,19 @@
 -- *  PURPOSE:     C4 bomb item class
 -- *
 -- ****************************************************************************
+ItemSlam = inherit(ItemWorld)
+ItemSlam.Map = {}
+
+function ItemSlam:constructor()
+	self.m_WorldItemClass = SlamWorldItem
+end
+
+function ItemSlam:destructor()
+end
+
+
+
+--[[
 ItemSlam = inherit(Item)
 ItemSlam.Map = { }
 ItemSlam.EntityMap = {}
@@ -15,9 +28,9 @@ function ItemSlam:constructor()
 	addEventHandler("onRequestSlams", root, bind(self.Event_onRequestSlams, self))
 end
 
-function ItemSlam:Event_onSlamToggleLaser( object ) 
-	if ItemSlam.Map[object] then 
-		local toggleLaser = not (getElementData(object, "Slam:laserEnabled")) 
+function ItemSlam:Event_onSlamToggleLaser( object )
+	if ItemSlam.Map[object] then
+		local toggleLaser = not (getElementData(object, "Slam:laserEnabled"))
 		setElementData(object, "Slam:laserEnabled", toggleLaser)
 		if toggleLaser then
 			triggerClientEvent("itemRadioChangeURLClient", object, "files/audio/Items/slam_arm.ogg")
@@ -25,8 +38,8 @@ function ItemSlam:Event_onSlamToggleLaser( object )
 	end
 end
 
-function ItemSlam:Event_onTouchLine( object ) 
-	if ItemSlam.Map[object] then 
+function ItemSlam:Event_onTouchLine( object )
+	if ItemSlam.Map[object] then
 		self:detonateSlam( ItemSlam.Map[object], client )
 	end
 end
@@ -35,33 +48,33 @@ function ItemSlam:destructor()
 
 end
 
-function ItemSlam:detonateSlam( instance, detonatedBy ) 
-	if instance then 
+function ItemSlam:detonateSlam( instance, detonatedBy )
+	if instance then
 		local x,y,z = getElementPosition( instance.m_Object )
 		createExplosion( x, y, z, 8)
 		createExplosion( x, y, z, 8)
-		local id = self:getSlamIDFromObj( instance.m_Object ) 
-		if id then 
+		local id = self:getSlamIDFromObj( instance.m_Object )
+		if id then
 			table.remove(self.EntityMap, id)
 		end
-		for key, player in ipairs(getElementsByType("player")) do 
+		for key, player in ipairs(getElementsByType("player")) do
 			player:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
 		end
 		delete(ItemSlam.Map[instance.m_Object])
 	end
 end
 
-function ItemSlam:getSlamIDFromObj( instance ) 
-	for i = 1, #ItemSlam.EntityMap do 
+function ItemSlam:getSlamIDFromObj( instance )
+	for i = 1, #ItemSlam.EntityMap do
 		if ItemSlam.EntityMap[i] == instance then
-			return i 
+			return i
 		end
 	end
 	return false
 end
 
-function ItemSlam:Event_onRequestSlams( ) 
-	if client then 
+function ItemSlam:Event_onRequestSlams( )
+	if client then
 		client:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
 	end
 end
@@ -77,12 +90,13 @@ function ItemSlam:use(player)
 		setElementData( worldItem.m_Object, "detonatorSlam", true)
 		ItemSlam.Map[worldItem.m_Object] = worldItem
 		ItemSlam.EntityMap[#ItemSlam.EntityMap+1] = worldItem.m_Object --// Table that is synced with the client containing the actual slam gtasa-objects
-		for key, player in ipairs(getElementsByType("player")) do 
+		for key, player in ipairs(getElementsByType("player")) do
 			player:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
 		end
 	end)
 end
 
-function ItemSlam:attachColShape() 
+function ItemSlam:attachColShape()
 
 end
+]]

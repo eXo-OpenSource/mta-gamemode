@@ -53,6 +53,16 @@ function WorldItem:virtual_constructor(itemData, placedBy, elementId, elementTyp
 	self.m_Dimension = dimension
 	self.m_Interior = interior
 
+	if metadata then
+		if type(metadata) == "string" then
+			self.m_Metadata = fromJSON(metadata)
+		else
+			self.m_Metadata = metadata
+		end
+	else
+		self.m_Metadata = false
+	end
+
 	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
 
 	self.m_IsPermanent = isPermanent -- This indicates wether the item should be saved when the server shutsdown/restarts
@@ -463,17 +473,23 @@ end
 function WorldItem.sendItemListToPlayer(id, type, player)
 	local owner = id
 	local name
+	local typ = 0
 	if type == "player" then
 		name = Account.getNameFromId(id)
+		typ = 1
 	elseif type == "faction" then
 		owner = FactionManager:getSingleton():getFromId(id)
 		name = owner:getName()
+		typ = 2
 	elseif type == "company" then
 		owner = FactionManager:getSingleton():getFromId(id)
 		name = owner:getName()
+		typ = 3
+	else
+		typ = 4
 	end
 	if owner then
-		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, WorldItem.MapByOwner[owner] or {}, id, type)
+		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, WorldItem.MapByOwner[typ][owner] or {}, id, type)
 	end
 end
 
