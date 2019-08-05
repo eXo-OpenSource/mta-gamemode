@@ -218,6 +218,8 @@ function MapLoader:createNewMap(name, creator)
     local result, numrows, insertId = sql:queryFetch("INSERT INTO ??_map_editor_maps (Name, Creator, SaveObjects, Activated) VALUES(?, ?, ?, ?)", sql:getPrefix(), name, creator:getId(), 1, 1)
     if result then
         self.m_MapInfos[insertId] = {name, creator:getName(), 1, 1}
+        self.m_Maps[insertId] = {}
+        self.m_MapRemovals[insertId] = {}
         return true
     end
 end

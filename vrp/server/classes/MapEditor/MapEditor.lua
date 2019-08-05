@@ -46,11 +46,11 @@ end
 
 function MapEditor:startEditing(player)
     if player:getRank() < ADMIN_RANK_PERMISSION["openMapEditor"] then
-        player:sendError("Du bist nicht berechtigt!")
+        player:sendError(_("Du bist nicht berechtigt!", client))
         return
     end
     self:setPlayerInEditorMode(player, 1)
-    Admin:getSingleton():sendShortMessage(("%s hat den Map Editor geöffnet!"):format(player:getName()))
+    Admin:getSingleton():sendShortMessage(_("%s hat den Map Editor geöffnet!", player, player:getName()))
 end
 
 function MapEditor:setPlayerInEditorMode(player, mapId, close)
@@ -92,15 +92,17 @@ function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimens
     if collision ~= nil then
         object:setCollisionsEnabled(collision)
     end
-    object:setDoubleSided(doublesided)
+    if doublesided ~= nil then
+        object:setDoubleSided(doublesided)
+    end
 
     
     if objectExisted then
         MapLoader:getSingleton():updateObject(object)
-        client:sendSuccess("Objekt gespeichert!")
+        client:sendSuccess(_("Objekt gespeichert!", client))
     else
         MapLoader:getSingleton():addObjectToMap(object, self:getPlayerEditingMap(client), client)
-        client:sendSuccess("Objekt erstellt!")
+        client:sendSuccess(_("Objekt erstellt!", client))
     end
 end
 
@@ -117,7 +119,7 @@ function MapEditor:removeObject()
                     client:sendError(_("Das Objekt wird gerade von %s kontrolliert!", client, object.m_ControlledBy:getName()))
                 end
             else
-                client:sendError(_("Das Objekt gehört zu Map #%s!"):format(object.m_MapId))
+                client:sendError(_("Das Objekt gehört zu Map #%s!", client, object.m_MapId))
             end
         end
     end
@@ -129,19 +131,19 @@ function MapEditor:removeWorldModel(worldModelId, wX, wY, wZ, wrX, wrY, wrZ, rad
     local creator = client:getId()
     local result = MapLoader:getSingleton():removeWorldModel(worldModelId, wX, wY, wZ, wrX, wrY, wrZ, radius, worldLODModelId, interior, mapId, creator)
     if result == 1 then
-        client:sendSuccess("Das World-Object wurde gelöscht!")
+        client:sendSuccess(_("Das World-Object wurde gelöscht!", client))
     elseif result == 2 then
-        client:sendSuccess("Das World-Object wurde mitsamt dem low LOD Object gelöscht!")
+        client:sendSuccess(_("Das World-Object wurde mitsamt dem low LOD Object gelöscht!", client))
     else
-        client:sendError("Das World-Object konnte nicht gelöscht werden!")
+        client:sendError(_("Das World-Object konnte nicht gelöscht werden!", client))
     end
 end
 
 function MapEditor:restoreWorldModel(mapId, index)
     if MapLoader:getSingleton():restoreWorldModel(mapId, index) then
-        client:sendSuccess("Das World-Object wurde wiederhergestellt!")
+        client:sendSuccess(_("Das World-Object wurde wiederhergestellt!", client))
     else
-        client:sendError("Das World-Object konnte nicht wiederhergestellt werden!")
+        client:sendError(_("Das World-Object konnte nicht wiederhergestellt werden!", client))
     end
 end 
 
@@ -170,7 +172,7 @@ function MapEditor:requestControlForObject(callbackType, currentObject)
             client:triggerEvent("MapEditor:giveControlPermission", object, callbackType, true)
             return
         else
-            client:sendError(("Dieses Objekt gehört zu Map #%s!"):format(object.m_MapId))
+            client:sendError(_("Dieses Objekt gehört zu Map #%s!", client, object.m_MapId))
         end
 
     end
@@ -201,7 +203,7 @@ end
 
 function MapEditor:createNewMap(name)
     if client:getRank() < ADMIN_RANK_PERMISSION["createNewMap"] then
-        client:sendError("Du bist nicht berechtigt!")
+        client:sendError(_("Du bist nicht berechtigt!", client))
         return
     end
     
@@ -219,9 +221,9 @@ end
 function MapEditor:startMapEditing(player, id)
     if client then
         self:setPlayerInEditorMode(player, id)
-        Admin:getSingleton():sendShortMessage(("%s editiert nun die Map #%s"):format(player:getName(), id))
+        Admin:getSingleton():sendShortMessage(_("%s editiert nun die Map #%s", player, player:getName(), id))
         if client ~= localPlayer then
-            player:sendShortMessage(("%s hat dich zum Mappen eingeladen!"):format(client:getName()), "Map Editor: Einladung")
+            player:sendShortMessage(_("%s hat dich zum Mappen eingeladen!", client, client:getName()), "Map Editor: Einladung")
         end
     end
 end
@@ -234,12 +236,12 @@ function MapEditor:setMapStatus(id)
 
     if MapLoader:getSingleton():getMapStatus(id) then
         if MapLoader:getSingleton():deactivateMap(id) then
-            Admin:getSingleton():sendShortMessage(("%s hat die Map #%s deaktiviert!"):format(client:getName(), id))
+            Admin:getSingleton():sendShortMessage(_("%s hat die Map #%s deaktiviert!", client, client:getName(), id))
         end
     else
         if MapLoader:getSingleton():loadFromDatabase(id) then
             local result = sql:queryExec("UPDATE ??_map_editor_maps SET Activated = 1 WHERE Id = ?", sql:getPrefix(), id)
-            Admin:getSingleton():sendShortMessage(("%s hat die Map #%s aktiviert!"):format(client:getName(), id))
+            Admin:getSingleton():sendShortMessage(_("%s hat die Map #%s aktiviert!", client, client:getName(), id))
         end
     end
     self:sendMapInfosToClient(client)
@@ -259,13 +261,13 @@ end
 function MapEditor:forceCloseEditor(name)
     if not name then
         self:setPlayerInEditorMode(client, false, true)
-        Admin:getSingleton():sendShortMessage(("%s hat den Map Editor geschlossen!"):format(client:getName()))
+        Admin:getSingleton():sendShortMessage(_("%s hat den Map Editor geschlossen!", client, client:getName()))
         return
     end
 
     local player = getPlayerFromName(name)
     if player then
         self:setPlayerInEditorMode(player, false, true)
-        Admin:getSingleton():sendShortMessage(("%s hat den Map Editor von %s geschlossen!"):format(client:getName(), name))
+        Admin:getSingleton():sendShortMessage(_("%s hat den Map Editor von %s geschlossen!", client, client:getName(), name))
     end
 end

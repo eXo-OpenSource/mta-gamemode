@@ -57,7 +57,7 @@ Denke lieber zweimal nach oder spreche mit anderen Teammitgliedern bevor du etwa
 
 	
 	GUIGridLabel:new(1, 31, 19, 1, "Weiteres", self.m_Scrollable):setHeader()
-	GUIGridLabel:new(1, 32, 19, 2, [[Durch einen Doppelklick auf ein neuplatziertes Objekt öffnet sich ein Fenster zur genaueren Bearbeitung des Objektes. 
+	GUIGridLabel:new(1, 32, 19, 2, [[Durch einen Doppelklick auf ein neuplatziertes Objekt öffnet sich ein Fenster zur genaueren Bearbeitung des Objektes. Ein ausgewähles Objekt kann mit der Entfernen Taste gelöscht werden.
 Mit einem Rechtsklick auf das entsprechende Objekt lässt sich dies erneut mit der Maus platzieren.]], self.m_Scrollable)
 
 	
