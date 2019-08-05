@@ -57,6 +57,9 @@ function MapEditor:enableEditorMode(state, mapId)
         removeEventHandler("onClientKey", root, self.m_KeyBind)
         removeEventHandler("MapEditor:giveControlPermission", root, self.m_PermissionBind)
         removeEventHandler("onClientRender", root, self.m_MeshRenderBind)
+        if self.m_ControlledObject then
+            triggerServerEvent("MapEditor:requestControlForObject", self.m_ControlledObject, "removeControl")
+        end
         self.m_ControlledObject = nil
         self.m_MapId = nil
         if self.m_ShortMessage then delete(self.m_ShortMessage) end
@@ -75,7 +78,7 @@ function MapEditor:getEditingMap()
 end
 
 function MapEditor:Event_onClientClick(button, state, absoluteX, absoluteY, worldX, worldY, worldZ, element)
-    if MapEditorMapGUI:isInstantiated() or MapEditorObjectGUI:isInstantiated() or self.m_PlacingMode then 
+    if MapEditorMapGUI:isInstantiated() or MapEditorObjectGUI:isInstantiated() or self.m_PlacingMode or GUIElement.getHoveredElement() then 
         return 
     end
 
@@ -171,11 +174,11 @@ function MapEditor:Event_onClientDoubleClick(button, absoluteX, absoluteY, world
 end
 
 function MapEditor:Event_onClientKey(button, state)
-    if button == "delete" and state == false then
-        if MapEditorObjectGUI:isInstantiated() then
-            return
-        end
+    if MapEditorObjectGUI:isInstantiated() then
+        return
+    end
 
+    if button == "delete" and state == false then
         if self.m_ControlledObject then
             if self.m_ObjectBlip then
                 delete(self.m_ObjectBlip)
@@ -184,6 +187,21 @@ function MapEditor:Event_onClientKey(button, state)
                 triggerServerEvent("MapEditor:removeObject", self.m_ControlledObject)
                 self.m_ControlledObject = nil
             end)
+        end
+    elseif button == "c" and state == false then
+        if self.m_ControlledObject then
+            local x, y, z = getElementPosition(self.m_ControlledObject)
+            local rx, ry, rz = getElementRotation(self.m_ControlledObject)
+            local sx, sy, sz = getObjectScale(self.m_ControlledObject)
+            local interior = getElementInterior(self.m_ControlledObject)
+            local dimension = getElementDimension(self.m_ControlledObject)
+            local model = getElementModel(self.m_ControlledObject)
+            local breakable = isObjectBreakable(self.m_ControlledObject)
+            local collision = getElementCollisionsEnabled(self.m_ControlledObject)
+            local doublesided = isElementDoubleSided(self.m_ControlledObject)
+            triggerServerEvent("MapEditor:requestControlForObject", self.m_ControlledObject, "removeControl")
+            triggerServerEvent("MapEditor:placeObject", localPlayer, x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided)
+            self.m_ControlledObject = nil
         end
     end
 end
@@ -234,6 +252,7 @@ end
 
 function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension, model, breakable, collision, doublesided)
     if position == false then 
+        self:setPlacingMode(false)
         return
     end
 
@@ -241,6 +260,9 @@ function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension
     local rx, ry, rz
     if type(rotation) == "number" then
         rx, ry, rz = 0, 0, rotation
+        if self.m_ControlledObject then
+            rx, ry = getElementRotation(self.m_ControlledObject)
+        end
     else
         rx, ry, rz = rotation.x, rotation.y, rotation.z
     end
@@ -253,13 +275,14 @@ function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension
     local interior = interior or localPlayer:getInterior()
     local dimension = dimension or localPlayer:getDimension()
     local model = model or self.m_PlacingModel
-    local breakable = breakable == nil and false or breakable
-    local collision = collision == nil and true or collision
-    local doublesided = doublesided == nil and false or doublesided
-
-    if isElement(self.m_ControlledObject) then
-        self.m_ControlledObject:setAlpha(255)
-        self.m_ControlledObject:setCollisionsEnabled(true)
+    if breakable == nil then
+        breakable = false
+    end
+    if collision == nil then
+        collision = true
+    end
+    if doublesided == nil then
+        doublesided = false
     end
 
     triggerServerEvent("MapEditor:placeObject", self.m_ControlledObject or localPlayer, x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided)
@@ -276,9 +299,7 @@ function MapEditor:receiveControlPermission(object, callbackType, permission)
             self.m_ControlledObject = object
         elseif callbackType == "ObjectPlacer" then
             self.m_ControlledObject = object
-            self.m_ControlledObject:setAlpha(0)
-            self.m_ControlledObject:setCollisionsEnabled(false)
-            ObjectPlacer:new(self.m_ControlledObject:getModel(), self.m_ObjectPlacedBind, false, true)
+            ObjectPlacer:new(self.m_ControlledObject:getModel(), self.m_ObjectPlacedBind, object, true)
             self:setPlacingMode(true, object:getModel())
         elseif callbackType == "ObjectSetter" then
             MapEditorObjectGUI:new(object)

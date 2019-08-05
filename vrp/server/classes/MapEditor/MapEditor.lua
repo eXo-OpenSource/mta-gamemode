@@ -85,7 +85,7 @@ function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimens
     object:setInterior(interior)
     object:setDimension(dimension)
     object:setModel(model)
-    object:setData("breakable", breakable, breakable)
+    object:setData("breakable", breakable, true)
     if breakable then
         triggerClientEvent("applyBreakableState", object)
     end
@@ -161,7 +161,7 @@ function MapEditor:requestControlForObject(callbackType, currentObject)
         end
 
         if object.m_ControlledBy then
-            if isElement(object.m_ControlledBy) and not object.m_ControlledBy == client then
+            if isElement(object.m_ControlledBy) and object.m_ControlledBy ~= client then
                 client:sendError(_("Das Objekt wird gerade von %s kontrolliert!", client, object.m_ControlledBy:getName()))
                 return
             end

@@ -44,6 +44,9 @@ end
 
 function MapEditorEditingPlayersGUI:destructor()
     GUIForm.destructor(self)
+    if MapEditorMapGUI:isInstantiated() then
+        MapEditorMapGUI:getSingleton():show()
+    end
     removeEventHandler("MapEditorEditingPlayersGUI:sendInfosToClient", root, self.m_FillBind)
 end
 
