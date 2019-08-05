@@ -210,6 +210,10 @@ ADMIN_RANK_PERMISSION = {
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
 	["serialAccountMenu"] = RANK.Supporter,
 
+	["openMapEditor"] = RANK.Administrator,
+	["createNewMap"] = RANK.Administrator,
+	["setMapStatus"] = RANK.Administrator,
+
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
 

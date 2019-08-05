@@ -16,6 +16,16 @@ addEvent("setLODsClient", true)
 addEventHandler("setLODsClient", resourceRoot, setLODsClient)
 
 function applyBreakableState()
+	if not source == resourceRoot then
+		if getElementType(source) == "object" then
+			local breakable = getElementData(source, "breakable")
+			if breakable then
+				setObjectBreakable(source, breakable)
+				return
+			end
+		end
+	end
+
 	for k, obj in pairs(getElementsByType("object", resourceRoot)) do
 		local breakable = getElementData(obj, "breakable")
 		if breakable then
@@ -24,3 +34,5 @@ function applyBreakableState()
 	end
 end
 addEventHandler("onClientResourceStart", resourceRoot, applyBreakableState)
+addEvent("applyBreakableState", true)
+addEventHandler("applyBreakableState", resourceRoot, applyBreakableState)
