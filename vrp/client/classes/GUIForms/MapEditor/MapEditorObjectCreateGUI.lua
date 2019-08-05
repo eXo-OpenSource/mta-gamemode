@@ -18,22 +18,31 @@ local blockedCategories = {
     ["Transport"] = true
 }
 
-function MapEditorObjectCreateGUI:constructor()
+function MapEditorObjectCreateGUI:constructor(onlyChangeExisting)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 12)
 	self.m_Height = grid("y", 27)
 
 	GUIForm.constructor(self, 0, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"MapEditor: erstelle Objekt", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, onlyChangeExisting and "Map Editor: Model ändern" or "Map Editor: Objekt erstellen", true, true, self)
     
-    self.m_ComboBox = GUIGridCombobox:new(1, 1, 11, 1, "Kategorie Auswahl", self.m_Window)
-    
-	self.m_GridList = GUIGridGridList:new(1, 2, 11, 24, self.m_Window)
+    self.m_SearchEdit = GUIGridEdit:new(1, 1, 11, 1, self.m_Window):setCaption("Suche")
+
+    self.m_ComboBox = GUIGridCombobox:new(1, 2, 11, 1, "Kategorie Auswahl", self.m_Window)
+
+	self.m_GridList = GUIGridGridList:new(1, 3, 11, 23, self.m_Window)
 	self.m_GridList:addColumn("ID", 0.2)
 	self.m_GridList:addColumn("Name", 0.8)
 	
-	self.m_CreateButton = GUIGridButton:new(1, 26, 5, 1, "Erstellen", self.m_Window):setBackgroundColor(Color.Green)
+	self.m_CreateButton = GUIGridButton:new(1, 26, 5, 1, onlyChangeExisting and "Ändern" or "Erstellen", self.m_Window):setBackgroundColor(Color.Green)
     self.m_AbortButton = GUIGridButton:new(7, 26, 5, 1, "Abbrechen", self.m_Window):setBackgroundColor(Color.Red)
+
+    self.m_SearchEdit.onChange = function()
+        if #self.m_SearchEdit:getText() >= 3 then
+            local tbl = MapEditor:getSingleton():findMatchingObjects(self.m_SearchEdit:getText())
+            self:fillGridListSearched(tbl)
+        end
+    end
 
     self.m_ComboBox.onLeftClick = function()
         self.m_GridList:clear()
@@ -52,9 +61,17 @@ function MapEditorObjectCreateGUI:constructor()
     end
 
     self.m_CreateButton.onLeftClick = function()
-        ObjectPlacer:new(tonumber(self.m_GridList:getSelectedItem():getColumnText(1)), MapEditor:getSingleton().m_ObjectPlacedBind, false)
-        MapEditor:getSingleton():setPlacingMode(true, tonumber(self.m_GridList:getSelectedItem():getColumnText(1)))
-        delete(self)
+        if onlyChangeExisting then
+            MapEditorObjectGUI:getSingleton():changeModel(tonumber(self.m_GridList:getSelectedItem():getColumnText(1)))
+            MapEditorObjectGUI:getSingleton():open()
+            self:setClosed()
+            delete(self)
+        else
+            ObjectPlacer:new(tonumber(self.m_GridList:getSelectedItem():getColumnText(1)), MapEditor:getSingleton().m_NewObjectPlacedBind, false, true)
+            MapEditor:getSingleton():setPlacingMode(true, tonumber(self.m_GridList:getSelectedItem():getColumnText(1)))
+            self:setClosed()
+            self:close()
+        end
     end
 
     self.m_AbortButton.onLeftClick = function()
@@ -68,11 +85,22 @@ end
 
 function MapEditorObjectCreateGUI:destructor()
     GUIForm.destructor(self)
+    self:setClosed()
+    delete(CenteredFreecam:getSingleton())
+    if MapEditorObjectGUI:isInstantiated() then
+        MapEditorObjectGUI:getSingleton():show()
+    end
+end
+
+function MapEditorObjectCreateGUI:setClosed()
     showChat(true)
     HUDRadar:getSingleton():show()
     if self.m_TempObject and isElement(self.m_TempObject) then self.m_TempObject:destroy() end
-    if self.m_Marker and isElement(self.m_Marker) then self.m_Marker:destroy() end
-    delete(CenteredFreecam:getSingleton())
+end
+
+function MapEditorObjectCreateGUI:setOpened()
+    showChat(false)
+    HUDRadar:getSingleton():hide()
 end
 
 function MapEditorObjectCreateGUI:fillComboBox()
@@ -94,7 +122,7 @@ function MapEditorObjectCreateGUI:fillComboBox()
 end
 
 function MapEditorObjectCreateGUI:fillGridList(searchCategory, searchSubCategory)
-    local objects = xmlLoadFile("files/data/objects.xml")
+    local objects = MapEditor:getSingleton():getObjectXML()
     for key, node in pairs(xmlNodeGetChildren(objects)) do
         if xmlNodeGetAttribute(node, "name") == searchCategory then
             for k, subnode in pairs(xmlNodeGetChildren(node)) do
@@ -120,19 +148,26 @@ function MapEditorObjectCreateGUI:fillGridList(searchCategory, searchSubCategory
             end
         end
     end
-    xmlUnloadFile(objects)
+end
+
+function MapEditorObjectCreateGUI:fillGridListSearched(objecttable)
+    self.m_GridList:clear()
+    for key, objects in pairs(objecttable) do
+        local model = objects[1]
+        local name = objects[2]
+        local item = self.m_GridList:addItem(model, name)
+        item.onLeftClick = function()
+            self:createTempObject(model)
+        end
+    end
 end
 
 function MapEditorObjectCreateGUI:createTempObject(model)
     if self.m_TempObject and isElement(self.m_TempObject) then self.m_TempObject:destroy() end
-    if self.m_Marker and isElement(self.m_Marker) then self.m_Marker:destroy() end
 
     self.m_TempObject = createObject(model, localPlayer:getPosition() + Vector3(localPlayer.matrix.forward.x*1.25, localPlayer.matrix.forward.y*1.25, 0.25))
     self.m_TempObject:setCollisionsEnabled(false)
     self.m_TempObject:setScale(5 / self.m_TempObject:getRadius())
-    
-    self.m_Marker = createMarker(self.m_TempObject:getPosition() + Vector3(0,0,1), "arrow", 0.1, 255, 255, 0)
-    self.m_Marker:attach(self.m_TempObject, 0, 0, 0.25)
 
-    CenteredFreecam:new(localPlayer, 50, true, true)
+    CenteredFreecam:new(localPlayer, 150, true, true)
 end

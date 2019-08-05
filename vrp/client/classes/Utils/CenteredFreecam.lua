@@ -21,7 +21,7 @@ function CenteredFreecam:constructor(element, maxZoom, noClip, dontScrollWithCur
     self.m_NoClip = noClip
     self.m_CheckObjectsOnClip = false
     self.m_DontScrollWithCursor = dontScrollWithCursor
-    self.m_ZoomData = {self.m_MaxZoom * 0.5, self.m_MaxZoom}
+    self.m_ZoomData = {(self.m_MaxZoom * 0.5) > 25 and 25 or self.m_MaxZoom * 0.5, self.m_MaxZoom}
     addEventHandler("onClientRender", root, self.m_RenderEvent)
     addEventHandler("onClientCursorMove", root, self.m_MouseEvent)
     addEventHandler("onClientKey", root, self.m_ScrollEvent)

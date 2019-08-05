@@ -7,7 +7,7 @@
 -- ****************************************************************************
 ObjectPlacer = inherit(Object)
 
-function ObjectPlacer:constructor(model, callback, hideObject)
+function ObjectPlacer:constructor(model, callback, hideObject, placeAnywhere)
 	showCursor(true)
 	localPlayer.m_ObjectPlacerActive = true
 	if model > 312 then
@@ -26,6 +26,9 @@ function ObjectPlacer:constructor(model, callback, hideObject)
 		self.m_Object:setRotation(0, 0, self.m_hideObject:getRotation().z)
 		hideObject:setDimension(PRIVATE_DIMENSION_CLIENT)
 	end
+
+	self.m_PlaceAnywhere = placeAnywhere
+	
 	self.m_CursorMove = bind(self.Event_CursorMove, self)
 	addEventHandler("onClientCursorMove", root, self.m_CursorMove)
 
@@ -101,6 +104,7 @@ function ObjectPlacer:Event_CursorMove(cursorX, cursorY, absX, absY, worldX, wor
 end
 
 function ObjectPlacer:Event_MouseWheel(button, state)
+	if isCursorShowing() == false then return end
 	local offset = 10
 	if getKeyState("lshift") or getKeyState("rshift") then offset = 45 end
 	if getKeyState("lalt") then offset = 5 end
@@ -150,15 +154,11 @@ function ObjectPlacer:Event_Click(btn, state)
 			return ErrorBox:new(_"Du kannst Objekte nicht an Fahrzeugen platzieren.")
 		end
 		if self.m_Callback then
-			if MapEditor:isInstantiated() then
-				self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation())
-			else
-				if (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
-					ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
-					return
-				end
-				self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
+			if not self.m_PlaceAnywhere and (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
+				ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
+				return
 			end
+			self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
 		end	
 	else
 		self.m_Callback(false)
