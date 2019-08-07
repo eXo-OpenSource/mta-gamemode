@@ -28,7 +28,7 @@ end
 function MapLoader:loadAllFromDatabase()
     local maps = sql:queryFetch("SELECT * FROM ??_map_editor_maps", sql:getPrefix())
     for key, mRow in pairs(maps) do
-        self.m_MapInfos[mRow.Id] = {mRow.Name, Account.getNameFromId(mRow.Creator), mRow.Activated, mRow.SaveObjects}
+        self.m_MapInfos[mRow.Id] = {mRow.Name, Account.getNameFromId(mRow.Creator), mRow.Activated, mRow.SaveObjects, mRow.Deactivatable}
         if mRow.Activated == 1 then
             self:loadFromDatabase(mRow.Id)
         end
@@ -77,7 +77,7 @@ function MapLoader:loadFromDatabase(id)
 end
 
 function MapLoader:addObjectToMap(object, mapId, creator)
-    if self.m_Maps[mapId] and self:isMapSavingEnabled(3) then
+    if self.m_Maps[mapId] then
         local model = object:getModel()
         local x, y, z = getElementPosition(object)
         local rx, ry, rz = getElementRotation(object)
@@ -215,7 +215,7 @@ function MapLoader:createNewMap(name, creator)
         end
     end
 
-    local result, numrows, insertId = sql:queryFetch("INSERT INTO ??_map_editor_maps (Name, Creator, SaveObjects, Activated) VALUES(?, ?, ?, ?)", sql:getPrefix(), name, creator:getId(), 1, 1)
+    local result, numrows, insertId = sql:queryFetch("INSERT INTO ??_map_editor_maps (Name, Creator, SaveObjects, Activated, Deactivatable) VALUES(?, ?, ?, ?, ?)", sql:getPrefix(), name, creator:getId(), 1, 1, 1)
     if result then
         self.m_MapInfos[insertId] = {name, creator:getName(), 1, 1}
         self.m_Maps[insertId] = {}
@@ -226,6 +226,9 @@ end
 
 function MapLoader:deactivateMap(id)
     if self.m_MapInfos[id] then
+        if self.m_MapInfos[id][5] ~= 1 then
+            return false
+        end
         local result = sql:queryExec("UPDATE ??_map_editor_maps SET Activated = 0 WHERE Id = ?", sql:getPrefix(), id)
         self.m_MapInfos[id][3] = 0
         if self.m_Maps[id] then
