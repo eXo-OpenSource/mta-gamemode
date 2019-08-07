@@ -98,11 +98,17 @@ function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimens
 
     
     if objectExisted then
-        MapLoader:getSingleton():updateObject(object)
-        client:sendSuccess(_("Objekt gespeichert!", client))
+        if MapLoader:getSingleton():updateObject(object) or not MapLoader:getSingleton():isMapSavingEnabled(object.m_MapId) then
+            client:sendSuccess(_("Objekt gespeichert!", client))
+        else
+            client:sendError(_("Fehler beim Speichern des Objektes!", client))
+        end
     else
-        MapLoader:getSingleton():addObjectToMap(object, self:getPlayerEditingMap(client), client)
-        client:sendSuccess(_("Objekt erstellt!", client))
+        if MapLoader:getSingleton():addObjectToMap(object, self:getPlayerEditingMap(client), client) then
+            client:sendSuccess(_("Objekt erstellt!", client))
+        else
+            client:sendError(_("Die Map #%s ist deaktiviert!", client, self:getPlayerEditingMap(client)))
+        end
     end
 end
 
@@ -149,7 +155,7 @@ end
 
 function MapEditor:requestControlForObject(callbackType, currentObject)
     local object = source
-    if object.m_ObjectId then
+    if object.m_MapId then
 
         if currentObject then
             currentObject.m_ControlledBy = nil
@@ -191,13 +197,15 @@ function MapEditor:sendObjectInfosToClient(id)
     local mapremovals = MapLoader:getSingleton():getMapRemovals()
     if maps[id] then
         local transportTableObjects = {}
+        local transportTableRemovals = {}
         for key, object in ipairs(maps[id]) do
             transportTableObjects[key] = {object, Account.getNameFromId(object.m_Creator)}
         end
         for key, removal in ipairs(mapremovals[id]) do
-            removal.creator = Account.getNameFromId(removal.creator)
+            transportTableRemovals[key] = {insertId=removal.insertId, worldModelId=removal.worldModelId, wX=removal.wX, wY=removal.wY, wZ=removal.wZ, wrX=removal.wrX, wrY=removal.wrY, wrZ=removal.wrZ, interior=removal.interior, radius=removal.radius, creator=removal.creator}
+            transportTableRemovals[key].creator = Account.getNameFromId(transportTableRemovals[key].creator)
         end
-        triggerLatentClientEvent(client, "MapEditorMapGUI:sendObjectsToClient", 50000, false, client, transportTableObjects, mapremovals[id])
+        triggerLatentClientEvent(client, "MapEditorMapGUI:sendObjectsToClient", 50000, false, client, transportTableObjects, transportTableRemovals)
     end
 end
 

@@ -51,13 +51,19 @@ function MapEditorMapGUI:constructor()
 
 	self.m_EditMap.onLeftClick = function()
 		if localPlayer:getRank() >= RANK.Administrator then
+			self:startMapEditing(localPlayer)
+		else
+			ErrorBox:new("Du bist nicht berechtigt!")
+		end
+	end
+
+	self.m_EditMap.onRightClick = function()
+		if localPlayer:getRank() >= RANK.Administrator then
 			InviteGUI:new(
 				function(player)
 					self:startMapEditing(player)
 				end, "mapeditor"
 			)
-		elseif localPlayer:getRank() >= RANK.Moderator then
-			self:startMapEditing(localPlayer)
 		else
 			ErrorBox:new("Du bist nicht berechtigt!")
 		end
@@ -160,25 +166,38 @@ end
 function MapEditorMapGUI:receiveObjectInfos(objectTable, removalsTable)
 	self.m_ObjectTable = objectTable
 	local objects = MapEditor:getSingleton():getObjectXML()
+	local timeToAdd = 0
     
 	for key, data in ipairs(objectTable) do
 		local objectModel = data[1]:getModel()
-		local objectName = MapEditor:getSingleton():getWorldModelName(objectModel) or "-none-"
 
-		local item = self.m_ObjectGrid:addItem(FontAwesomeSymbols.Plus, key, objectName, data[2])
+		local item = self.m_ObjectGrid:addItem(FontAwesomeSymbols.Plus, key, objectModel, data[2])
 		item:setColumnFont(1, FontAwesome(20), 1)
 		item.onLeftClick = function()
 			nextframe(function() MapEditor:getSingleton():selectObject(self.m_ObjectTable[self.m_ObjectGrid:getSelectedItem():getColumnText(2)][1], "normal") end)
 		end
+		setTimer(
+			function()
+				local objectName = MapEditor:getSingleton():getWorldModelName(objectModel) or "-none-"
+				item:setColumnText(3, objectName)
+			end
+		, 20+timeToAdd, 1)
+		timeToAdd = timeToAdd+20
 	end
 	for key, data in pairs(removalsTable) do
 		local objectModel = data.worldModelId
-		local objectName = MapEditor:getSingleton():getWorldModelName(objectModel) or "-none- [Low LOD]"
-		local item = self.m_ObjectGrid:addItem(FontAwesomeSymbols.Erase, key, objectName, data.creator)
+		local item = self.m_ObjectGrid:addItem(FontAwesomeSymbols.Erase, key, objectModel, data.creator)
 		item:setColumnFont(1, FontAwesome(20), 1)
 		item.onLeftClick = function()
 			nextframe(function() MapEditor:getSingleton():selectObject(data) end)
 		end
+		setTimer(
+			function()
+				local objectName = MapEditor:getSingleton():getWorldModelName(objectModel) or "-none- [Low LOD]"
+				item:setColumnText(3, objectName)
+			end
+		, 20+timeToAdd, 1)
+		timeToAdd = timeToAdd+20
 	end
 end
 

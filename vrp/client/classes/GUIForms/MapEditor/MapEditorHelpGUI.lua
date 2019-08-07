@@ -62,7 +62,7 @@ Mit einem Rechtsklick auf das entsprechende Objekt lässt sich dies erneut mit d
 
 	
 	GUIGridLabel:new(1, 35, 19, 1, "Aufrufen des Map Editors", self.m_Scrollable):setHeader()
-	GUIGridLabel:new(1, 36, 19, 4, [[Der Map Editor kann grundsätzlich nur von Administratoren oder höherrangigen Teammitgliedern aufgerufen werden. Diesen steht es aber Frei, weitere Teammitglieder zum Mappen einzuladen. Dies ist möglich in dem im Verwaltungs Fenster die Schaltfläche "Bearbeiten" aufgerufen wird. Es öffnet sich nun ein Einladungs Fenster. 
+	GUIGridLabel:new(1, 36, 19, 4, [[Der Map Editor kann grundsätzlich nur von Administratoren oder höherrangigen Teammitgliedern aufgerufen werden. Diesen steht es aber Frei, weitere Teammitglieder zum Mappen einzuladen. Dies ist möglich in dem im Verwaltungs Fenster die Schaltfläche "Bearbeiten" mit einem Rechtsklick aufgerufen wird. Es öffnet sich nun ein Einladungs Fenster. 
 Mit der Schaltfläche "Derzeit bearbeitende Spieler" ist es einem höherrangigen Teammitglied möglich, den Map Editor von anderen Teammitgliedern zu schließen.]], self.m_Scrollable)
 end
 
