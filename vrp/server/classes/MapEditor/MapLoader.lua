@@ -77,7 +77,7 @@ function MapLoader:loadFromDatabase(id)
 end
 
 function MapLoader:addObjectToMap(object, mapId, creator)
-    if self.m_Maps[mapId] then
+    if self.m_Maps[mapId] and self:isMapSavingEnabled(3) then
         local model = object:getModel()
         local x, y, z = getElementPosition(object)
         local rx, ry, rz = getElementRotation(object)
@@ -137,21 +137,21 @@ end
 
 function MapLoader:removeObject(object)
     if object.m_ObjectId then
-        local result = sql:queryExec("DELETE FROM ??_map_editor_objects WHERE Id = ?", sql:getPrefix(), object.m_ObjectId)
-        if self.m_Maps[object.m_MapId][object.m_Index] then
-            local mapId = object.m_MapId
-            local index = object.m_Index
-            
-            self:removeRef(self.m_Maps[mapId][index])
-
-            self.m_Maps[mapId][index]:destroy()
-            table.remove(self.m_Maps[mapId], index)
-            for key, obj in ipairs(self.m_Maps[mapId]) do
-                obj.m_Index = key
-            end
-
-            return true
+        sql:queryExec("DELETE FROM ??_map_editor_objects WHERE Id = ?", sql:getPrefix(), object.m_ObjectId)
+    end
+    if object.m_MapId then
+        local mapId = object.m_MapId
+        local index = object.m_Index
+        
+        self:removeRef(self.m_Maps[mapId][index])
+        
+        self.m_Maps[mapId][index]:destroy()
+        table.remove(self.m_Maps[mapId], index)
+        for key, obj in ipairs(self.m_Maps[mapId]) do
+            obj.m_Index = key
         end
+
+        return true
     end
 end
 

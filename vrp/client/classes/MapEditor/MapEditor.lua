@@ -87,10 +87,12 @@ function MapEditor:Event_onClientClick(button, state, absoluteX, absoluteY, worl
             if element:getType() == "object" then
                 if element:getData("MapEditor:object") then
                     if button == "left" then
-                        triggerServerEvent("MapEditor:requestControlForObject", element, "normal", self.m_ControlledObject)
+                        local object = isElement(self.m_ControlledObject) and self.m_ControlledObject or false
+                        triggerServerEvent("MapEditor:requestControlForObject", element, "normal", object)
                         return
                     elseif button == "right" then
-                        triggerServerEvent("MapEditor:requestControlForObject", element, "ObjectPlacer", self.m_ControlledObject)
+                        local object = isElement(self.m_ControlledObject) and self.m_ControlledObject or false
+                        triggerServerEvent("MapEditor:requestControlForObject", element, "ObjectPlacer", object)
                         return
                     end
                 else
@@ -245,6 +247,10 @@ function MapEditor:onNewObjectPlaced(position, rotation)
         MapEditorObjectCreateGUI:getSingleton():show()
         return
     end
+    if self.m_ControlledObject then
+        triggerServerEvent("MapEditor:requestControlForObject", self.m_ControlledObject, "removeControl")
+        self.m_ControlledObject = nil
+    end
 
     self:onObjectPlaced(position, rotation)
     delete(MapEditorObjectCreateGUI:getSingleton())
@@ -372,32 +378,37 @@ function MapEditor:renderMesh()
         if not isElementOnScreen(self.m_ControlledObject) then
             return
         end
+        
+        local objectMatrix = self.m_ControlledObject:getMatrix()
+        local minX, minY, minZ, maxX, maxY, maxZ = self.m_ControlledObject:getBoundingBox()
 
-        local x1, y1, z1, x2, y2, z2 = getElementBoundingBox(self.m_ControlledObject)
-        local x1 = x+x1
-        local y1 = y+y1
-        local z1 = z+z1
-        local x2 = x+x2
-        local y2 = y+y2
-        local z2 = z+z2
+        local a = objectMatrix:transformPosition(Vector3(minX, minY, maxZ))
+        local b = objectMatrix:transformPosition(Vector3(maxX, minY, maxZ))
+        local c = objectMatrix:transformPosition(Vector3(minX, maxY, maxZ))
+        local d = objectMatrix:transformPosition(Vector3(maxX, maxY, maxZ))
 
-        dxDrawLine3D(x1, y1, z1, x2, y1, z1, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(x1, y1, z2, x2, y1, z2, tocolor(255, 255, 255, 255), 2.0)
+        local e = objectMatrix:transformPosition(Vector3(minX, minY, minZ))
+        local f = objectMatrix:transformPosition(Vector3(maxX, minY, minZ))
+        local g = objectMatrix:transformPosition(Vector3(minX, maxY, minZ))
+        local h = objectMatrix:transformPosition(Vector3(maxX, maxY, minZ))
 
-        dxDrawLine3D(x1, y2, z1, x2, y2, z1, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(x1, y2, z2, x2, y2, z2, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(a, b, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(a, c, tocolor(255, 255, 255, 255), 2.0)
 
-        dxDrawLine3D(x1, y1, z1, x1, y2, z1, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(x1, y1, z2, x1, y2, z2, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(b, d, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(c, d, tocolor(255, 255, 255, 255), 2.0)
 
-        dxDrawLine3D(x2, y1, z1, x2, y2, z1, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(x2, y1, z2, x2, y2, z2, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(e, f, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(e, g, tocolor(255, 255, 255, 255), 2.0)
 
-        dxDrawLine3D(x1, y1, z1, x1, y1, z2, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(x1, y2, z1, x1, y2, z2, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(f, h, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(g, h, tocolor(255, 255, 255, 255), 2.0)
 
-        dxDrawLine3D(x2, y1, z1, x2, y1, z2, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(x2, y2, z1, x2, y2, z2, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(a, e, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(b, f, tocolor(255, 255, 255, 255), 2.0)
+
+        dxDrawLine3D(c, g, tocolor(255, 255, 255, 255), 2.0)
+        dxDrawLine3D(d, h, tocolor(255, 255, 255, 255), 2.0)
 
     end
 end

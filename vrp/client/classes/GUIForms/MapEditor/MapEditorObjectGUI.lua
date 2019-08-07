@@ -142,11 +142,20 @@ function MapEditorObjectGUI:insertObjectData(object)
     self.m_ScaleZEdit:setText(self.m_SZ)
 
     self.m_BreakableCheckbox:setChecked(self.m_Breakable)
-    object:setBreakable(true)
     if object:isBreakable() == false then
-        self.m_BreakableCheckbox:setChecked(false)
-        self.m_BreakableCheckbox:setEnabled(false)
-        self.m_BreakableCheckbox:setText("Zerbrechbar (Beeinflusst dieses Objekt nicht)")
+        object:setBreakable(true)
+        if object:isBreakable() == false then
+            self.m_BreakableCheckbox:setChecked(false)
+            self.m_BreakableCheckbox:setEnabled(false)
+            self.m_BreakableCheckbox:setText("Zerbrechbar (Beeinflusst dieses Objekt nicht)")
+        end
+    elseif object:isBreakable() == true then
+        object:setBreakable(false)
+        if object:isBreakable() == true then
+            self.m_BreakableCheckbox:setChecked(true)
+            self.m_BreakableCheckbox:setEnabled(false)
+            self.m_BreakableCheckbox:setText("Zerbrechbar (Beeinflusst dieses Objekt nicht)")
+        end
     end
     object:setBreakable(self.m_Breakable)
 
