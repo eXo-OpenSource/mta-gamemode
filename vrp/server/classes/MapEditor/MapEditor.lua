@@ -70,6 +70,11 @@ function MapEditor:getPlayerEditingMap(player)
 end
 
 function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided)
+    if not MapLoader:getSingleton():getMapStatus(self:getPlayerEditingMap(client)) then
+        client:sendError(_("Die Map #%s ist deaktiviert!", client, self:getPlayerEditingMap(client)))
+        return
+    end
+
     local object = source
     local objectExisted = false
     if getElementType(object) ~= "object" then
@@ -106,8 +111,6 @@ function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimens
     else
         if MapLoader:getSingleton():addObjectToMap(object, self:getPlayerEditingMap(client), client) then
             client:sendSuccess(_("Objekt erstellt!", client))
-        else
-            client:sendError(_("Die Map #%s ist deaktiviert!", client, self:getPlayerEditingMap(client)))
         end
     end
 end
@@ -245,6 +248,8 @@ function MapEditor:setMapStatus(id)
     if MapLoader:getSingleton():getMapStatus(id) then
         if MapLoader:getSingleton():deactivateMap(id) then
             Admin:getSingleton():sendShortMessage(_("%s hat die Map #%s deaktiviert!", client, client:getName(), id))
+        else
+            client:sendError(_("Du kannst diese Map nicht deaktivieren!", client))
         end
     else
         if MapLoader:getSingleton():loadFromDatabase(id) then
