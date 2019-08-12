@@ -61,7 +61,7 @@ function Elevator:showElevator(player, marker)
 				if self.Check then
 					if self.Check(player) then 
 						local pVec = self.m_Stations[marker.id].position
-						hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
+						player:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[marker.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[marker.id].interior)
 					end
 				else
 					local pVec = self.m_Stations[marker.id].position

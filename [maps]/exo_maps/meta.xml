@@ -39,7 +39,7 @@
 	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/rescue_int.map" />
-	<map src="fraktionen/lostmc.map" />
+	<!--map src="fraktionen/lostmc.map" /-->
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
 	<!-- <map src="fraktionen/yakuza.map"/> -->

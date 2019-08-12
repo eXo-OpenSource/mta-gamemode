@@ -639,7 +639,7 @@ FactionStaticId = {
 	BALLAS = 8,
 	OUTLAWS = 9,
 	VATOS = 10,
-	TRIAD = 11
+	TRIAD = 9,
 }
 
 SEASONS = {
