@@ -95,8 +95,14 @@ end
 function MarketPlaceManager:Event_getDeals()
 	local deals = {}
 	for id, market in pairs(MarketPlaceManager.Map) do 
-		if market:getDealManager():getPlayerMap()[client] then
-			deals[market:getName()] = {deal = market:getDealManager():getPlayerMap()[client].deal, type =  market:getDealManager():getPlayerMap()[client].type}
+		if market:getDealManager():getPlayerMap()[client:getId()] then
+			deals[market:getName()] = {}
+			for dealId, subdata in pairs(market:getDealManager():getPlayerMap()[client:getId()]) do
+				deals[market:getName()][dealId] = {}
+				for type, deal in pairs(subdata) do
+					deals[market:getName()][dealId][type] = deal
+				end
+			end
 		end
 	end
 	client:triggerEvent("onAppGetServercall", 4, deals)

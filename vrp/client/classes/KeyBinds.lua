@@ -112,7 +112,8 @@ function KeyBinds:inventory()
 end
 
 function KeyBinds:togglePhone()
-	Phone:getSingleton():toggle()
+	Phone:getSingleton():slidePhone()
+	--Phone:getSingleton():toggle()
 end
 
 function KeyBinds:customMap()

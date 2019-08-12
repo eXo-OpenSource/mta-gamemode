@@ -266,7 +266,8 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	Phone:new()
-	Phone:getSingleton():close()
+	Phone:getSingleton():forceAnimation(false)
+	Phone:getSingleton():slidePhone()
 	showChat(true)
 end
 

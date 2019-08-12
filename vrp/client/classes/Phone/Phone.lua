@@ -9,8 +9,8 @@ Phone = inherit(GUIForm)
 inherit(Singleton, Phone)
 
 function Phone:constructor()
-	GUIForm.constructor(self, screenWidth-310, screenHeight-620, 295, 600)
-
+	GUIForm.constructor(self, screenWidth-310, screenHeight-610, 295, 600)
+	self.m_ScreenY = screenHeight-610
 	self.m_Phone = core:get("Phone", "PhoneModel", 1)
 	self.m_Background = core:get("Phone", "Background", "iOS_7")
 	self.m_PhoneOn = core:get("Phone", "On", true)
@@ -57,6 +57,9 @@ function Phone:constructor()
 	end
 
 	triggerServerEvent("setPhoneStatus", root, self.m_PhoneOn)
+
+	self.m_RenderAnimationBind = bind(self.renderAnimation, self)
+	self.m_Direction = false
 end
 
 function Phone:switchOff()
@@ -121,6 +124,38 @@ function Phone:setBackground(background)
 	self.m_BackgroundImage:setImage(("files/images/Phone/Backgrounds/%s.png"):format(background))
 end
 
+function Phone:renderAnimation()
+	if self.m_AnimationDirection then 
+		local posX, posY = self:getPosition(true)
+		self:setAbsolutePosition(posX, posY-30)
+		if posY <= self.m_ScreenY then 
+			self:stopAnimation()
+		end
+	else 
+		local posX, posY = self:getPosition(true)
+		self:setAbsolutePosition(posX, posY+30)
+		if posY >= screenHeight then 
+			self:stopAnimation()
+		end
+	end
+end
+
+function Phone:slidePhone()
+	self.m_AnimationDirection = not self.m_AnimationDirection
+	if self.m_AnimationDirection and not self:isVisible() then 
+		self:open()
+	end
+	removeEventHandler("onClientPreRender", root, self.m_RenderAnimationBind)
+	addEventHandler("onClientPreRender", root, self.m_RenderAnimationBind)
+end
+
+function Phone:stopAnimation()
+	removeEventHandler("onClientPreRender", root, self.m_RenderAnimationBind)
+	if not self.m_AnimationDirection and self:isVisible() then 
+		self:close()
+	end
+end
+
 function Phone:registerApp(appClasst)
 	local app = appClasst:new()
 	table.insert(self.m_Apps, app)
@@ -153,6 +188,7 @@ function Phone:onHide()
 	if self.m_CurrentApp and self.m_CurrentApp:isDestroyOnCloseEnabled() then
 		self.m_CurrentApp = false
 	end
+	self.m_Direction  = false
 end
 
 function Phone:closeAllApps()
@@ -181,7 +217,8 @@ end
 function Phone:openApp(app)
 	-- Show phone if not shown already
 	if not self:isVisible() then
-		self:open()
+		Phone:getSingleton():forceAnimation(true)
+		self:slidePhone()
 		showCursor(false)
 	end
 	self.m_CurrentApp = app
@@ -209,4 +246,8 @@ end
 
 function Phone:getDashboard()
 	return self.m_AppDashboard
+end
+
+function Phone:forceAnimation(bool)
+	self.m_AnimationDirection = not bool
 end

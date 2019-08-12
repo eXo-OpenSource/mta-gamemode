@@ -352,7 +352,8 @@ addEventHandler("skribbleSyncLobbyInfos", root,
 		if not SkribbleGUI:isInstantiated() then
 			local instance = SkribbleGUI:new(...)
 			GUIForm.DoNotClose[instance] = true
-			Phone:getSingleton():close()
+			Phone:getSingleton():forceAnimation(false)
+			Phone:getSingleton():slidePhone()
 		end
 
 		SkribbleGUI:getSingleton():updateInfos(...)

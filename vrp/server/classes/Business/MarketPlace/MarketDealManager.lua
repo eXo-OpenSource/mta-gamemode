@@ -43,9 +43,10 @@ function MarketDealManager:map()
 	end
 end
 
-function MarketDealManager:addToPlayerMap(player, deal, type) -- type: wether it is a buy or a sell
+function MarketDealManager:addToPlayerMap(player, deal, type) -- type: whether it is a buy or a sell
 	if not self:getPlayerMap()[player] then self:getPlayerMap()[player] = {} end
-	self:getPlayerMap()[player][deal:getId()] = {deal = deal, type = type}
+	if not self:getPlayerMap()[player][deal:getId()] then self:getPlayerMap()[player][deal:getId()] = {} end
+	self:getPlayerMap()[player][deal:getId()][type] = deal
 end
 
 function MarketDealManager:addBuyerToMap(buyer, deal)

@@ -15,6 +15,7 @@ function MarketPlace:constructor(id, name, storage, bank, marketType, open)
 		self.m_Type = marketType or 0
 		self.m_Clients = {}
 		self.m_Map = {} -- used for quick access, stores offers unsorted in a general table for quick iteration
+		self.m_PlayerOfferMap = {} -- used for quick indexing of all offers belonging to a certain player
 		self.m_Open = open or true
 		self.m_Name = name
 		self.m_Storage = (storage and type(storage) == "string" and fromJSON(storage)) or {}
@@ -251,6 +252,11 @@ function MarketPlace:validateOffer(player, quantity, offerType, item, price)
 	if not item or not tonumber(item) then return "Kein Gegenstand" end
 	if not price and not tonumber(price) then return "Kein Preis" end
 	return true
+end
+
+function MarketPlace:addOfferToPlayerMap(player, offer)
+	if not self.m_PlayerOfferMap[player] then self.m_PlayerOfferMap[player] = {} end
+	self.m_PlayerOfferMap[player][offer:getId()] = offer
 end
 
 function MarketPlace:validateName(name)

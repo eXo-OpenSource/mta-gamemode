@@ -153,8 +153,7 @@ end
 
 function AppMarketPlace:createDealTab()
 	self.m_Form.m_DealTab = {}
-	self.m_Form.m_DealTab.m_DealBackground = GUIRectangle:new(10,55+20, self.m_Form.m_Width-20, 170, Color.Background, self.m_Tabs.m_Deal)
-	self.m_Form.m_DealTab.m_DealHeader = GUILabel:new(10, 10, self.m_Form.m_Width-20, 50, ("Abgeschlossene Aufträge"), self.m_Tabs.m_Deal)
+	self.m_Form.m_DealTab.m_DealHeader = GUILabel:new(10, 10, self.m_Form.m_Width-20, 50, ("Abholung"), self.m_Tabs.m_Deal):setFontSize(0.7)
 	self.m_Form.m_DealTab.m_DealGrid = GUIGridList:new(10, 60, self.m_Form.m_Width-20, self.m_Form.m_Height-160, self.m_Tabs.m_Deal)
 	self.m_Form.m_DealTab.m_DealGrid:addColumn(_"Markt", .3)
 	self.m_Form.m_DealTab.m_DealGrid:addColumn(_"Geschäft", .7)
@@ -163,14 +162,19 @@ end
 function AppMarketPlace:getDeals(data)
 	if self.m_Form.m_DealTab.m_DealGrid then
 		self.m_Form.m_DealTab.m_DealGrid:clear()
-		for market, data in pairs(data) do
-			local item = data.m_Sell.m_ItemName
-			local price = deal.m_Sell.m_Price
-			local quantity = deal.m_Sell.m_Quantity
-			if data.type == "buy" then 
-				self.m_Form.m_DealTab.m_DealGrid:addItem(market, ("[Gegenstand] %sx%s für $%s"):format(item, quantity, price*quantity))
-			else 
-				self.m_Form.m_DealTab.m_DealGrid:addItem(market, ("[Geld] $%s für %sx%s"):format(price*quantity, quantity, item))
+		for market, subdata in pairs(data) do
+
+			for dealId, subdata2 in pairs(subdata) do
+				for dealType, deal in pairs(subdata2) do
+					local item = deal.m_Sell.m_ItemName
+					local price = deal.m_Sell.m_Price
+					local quantity = deal.m_Amount
+					if dealType == "buy" then 
+						self.m_Form.m_DealTab.m_DealGrid:addItem(market, ("[Gegenstand] %s × %s für $%s"):format(quantity, item, price*quantity)):setColumnFont(2, VRPFont(16), 1)
+					else 
+						self.m_Form.m_DealTab.m_DealGrid:addItem(market, ("[Geld] $%s für %s × %s"):format(price*quantity, quantity, item)):setColumnFont(2, VRPFont(16), 1)
+					end
+				end
 			end
 		end
 	end

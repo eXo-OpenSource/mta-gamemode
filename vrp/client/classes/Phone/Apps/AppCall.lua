@@ -132,7 +132,8 @@ function AppCall:ButtonCallNumpad_Click()
 				EasterEggArcade.Game:getSingleton():restart()
 				removeEventHandler("onClientRender", root, self.m_EasterEggRenderFunction )
 			end, 3000, 1)
-			Phone:getSingleton():close()
+			Phone:getSingleton():forceAnimation(false)
+			Phone:getSingleton():slidePhone()
 			playSound(EASTEREGG_SFX_PATH.."gameboy_start.ogg", false)
 			return
 		end
@@ -326,7 +327,8 @@ end
 
 function AppCall:ButtonBusy_Click()
 	self:busy()
-	Phone:getSingleton():close()
+	Phone:getSingleton():forceAnimation(false)
+	Phone:getSingleton():slidePhone()
 end
 
 function AppCall:busy()

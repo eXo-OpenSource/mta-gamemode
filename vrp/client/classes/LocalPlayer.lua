@@ -386,7 +386,8 @@ function LocalPlayer:Event_playerWasted()
 	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
-	Phone:getSingleton():close()
+	Phone:getSingleton():forceAnimation(false)
+	Phone:getSingleton():slidePhone()
 	showChat(false)
 	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)

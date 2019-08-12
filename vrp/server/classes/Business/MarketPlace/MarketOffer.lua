@@ -42,7 +42,6 @@ function MarketOffer:constructor(id, market, playerId, item, quantity, price, va
 		local dateResult = sql:queryFetchSingle("SELECT UNIX_TIMESTAMP(Date) FROM ??_marketplace_offers WHERE Id=?", sql:getPrefix(), self:getId())
 		self.m_Date = dateResult.Date
 		self:getMarket():getMap()[self:getId()] = self
-
 	end
 end
 
@@ -63,6 +62,7 @@ function MarketOffer:destructor(save)
 		end
 		self:getMarket():getOffer()[self:getItem()][self:getValue()][self:getType()][self:getPrice()][self:getPlayer()] = nil
 		self:getMarket():getMap()[self:getId()] = nil
+		self:getMarket():getPlayerOfferMap()[self:getPlayer()][self:getId()] = nil
 	end
 end
 
