@@ -19,6 +19,7 @@ function Guns:constructor()
 		setWeaponProperty(23, skill, "weapon_range", 10 )
 		setWeaponProperty(23, skill, "maximum_clip_ammo", 9999 )
 		setWeaponProperty(23, skill, "anim_loop_stop", 0 )
+		setWeaponProperty(23, skill, "damage", 1)
 		-- Deagle:
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
@@ -40,7 +41,7 @@ function Guns:constructor()
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage", "startGrenadeThrow", "disableGrenadeAimLeave"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
@@ -49,6 +50,10 @@ function Guns:constructor()
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 	self.m_DamageLogCache = { }
 	setTimer(bind(self.Event_onGunLogCacheTick, self), 5000, 0)
+
+	self.m_GrenadeBind = bind(self.activeGrenadeThrowMode, self)
+	addEventHandler("startGrenadeThrow", root, bind(self.startGrenadeThrow, self))
+	addEventHandler("disableGrenadeAimLeave", root, bind(self.disableGrenadeAimLeave, self))
 end
 
 
@@ -140,19 +145,24 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 		if target and attacker and isElement(target) and isElement(attacker) then
 			if not target.m_SupMode and not attacker.m_SupMode then
 				target:triggerEvent("clientBloodScreen")
-				local basicDamage = WEAPON_DAMAGE[weapon]
-				if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
-					local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
-					local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
-					basicDamage = basicDamage*((maxDist-dist)/maxDist)
-				elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
-					basicDamage = math.random(2, 5)
-				end
-				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-				local realLoss = basicDamage*multiplier
+				local realLoss
+				if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
+					realLoss = loss * EXPLOSIVE_DAMAGE_MULTIPLIER[weapon]
+				else
+					local basicDamage = WEAPON_DAMAGE[weapon]
+					if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
+						local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
+						local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
+						basicDamage = basicDamage*((maxDist-dist)/maxDist)
+					elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
+						basicDamage = math.random(2, 5)
+					end
+					local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+					realLoss = basicDamage*multiplier
 
-				if realLoss < basicDamage then -- workaround for 5 hp damages
-					realLoss = basicDamage -- workaround
+					if realLoss < basicDamage then -- workaround for 5 hp damages
+						realLoss = basicDamage -- workaround
+					end
 				end
 
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
@@ -265,31 +275,45 @@ function Guns:getWeaponInStorage( player, slot)
 	return false, false
 end
 
+function Guns:addGangwarDamage(target, attacker, damage)
+	if Gangwar:isInstantiated() then
+		if Gangwar:getSingleton():getCurrentGangwar() then
+			if Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(target) and Gangwar:getSingleton():getCurrentGangwar().m_AttackSession:isParticipantInList(attacker) then
+				if target:getFaction() ~= attacker:getFaction() then
+					attacker.g_damage = attacker.g_damage + damage
+					attacker:triggerEvent("onGangwarDamage", damage)
+				end
+			end
+		end
+	end
+end
+
 function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
-	local armor = getPedArmor ( player )
+	local armor = math.ceil(getPedArmor ( player ))
 	local health = getElementHealth ( player )
 	if armor > 0 then
 		if armor >= loss then
 			player:setArmor(armor-loss)
 		else
-			loss = math.abs(armor-loss)
+			local afterArmorLoss = math.abs(armor-loss)
 			player:setArmor(0)
 
-			if health - loss <= 0 then
-				player.m_LossBeforeDead = loss
+			if health - afterArmorLoss <= 0 then
+				loss = loss - (loss - health - afterArmorLoss)
 				self:killPed(player, attacker, weapon, bodypart)
 			else
-				player:setHealth(health-loss)
+				player:setHealth(health-afterArmorLoss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
-			player.m_LossBeforeDead = loss
+			loss = loss - (loss - health)
 			self:killPed(player, attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)
 		end
 	end
+	self:addGangwarDamage(player, attacker, loss)
 	self:addDamageLog(player, loss, attacker, weapon, bodypart)
 end
 
@@ -416,4 +440,77 @@ function takeAllWeapons( player )
 	end
 	local result = _takeAllWeapons( player )
 	return result
+end
+
+function Guns:activeGrenadeThrowMode(player, key, keystate, dontCancelAnimation)
+	if keystate == "down" then
+		if THROWABLE_WEAPONS[player:getWeapon()] and not player.isTasered then
+			local x, y, z = getElementVelocity(player)
+			if z == 0 then
+				toggleControl(player, "next_weapon", false)
+				toggleControl(player, "previous_weapon", false)
+				toggleControl(player, "forwards", false)
+				toggleControl(player, "backwards", false)
+				toggleControl(player, "left", false)
+				toggleControl(player, "right", false)
+				toggleControl(player, "sprint", false)
+				toggleControl(player, "fire", false)
+				setPedAnimation(player, "GRENADE", "WEAPON_throw", -1, false, false, false, false)
+				player.m_Thrown = false
+				player.m_isInThrowAnim = true
+				nextframe(
+					function()
+						setPedAnimationSpeed(player, "WEAPON_throw", 0.0)
+						setPedAnimationProgress(player, "WEAPON_throw", 0.15)
+						player:triggerEvent("startCenteredBonecam", 2, false, 25)
+					end
+				)
+				player:triggerEvent("prepareGrenadeThrow", true)
+			end
+		end
+	elseif keystate == "up" then
+		if not player.m_Thrown then
+			if player.m_isInThrowAnim then
+				player.m_isInThrowAnim = false 
+				nextframe(function() player:triggerEvent("stopCenteredBonecam") end)
+				player:triggerEvent("prepareGrenadeThrow", false)
+				if player:getWeapon() == 39 then
+					giveWeapon(player, 40, 1)
+				end
+				if not player.isTasered then
+					toggleControl(player, "next_weapon", true)
+					toggleControl(player, "previous_weapon", true)
+					toggleControl(player, "forwards", true)
+					toggleControl(player, "backwards", true)
+					toggleControl(player, "left", true)
+					toggleControl(player, "right", true)
+					toggleControl(player, "sprint", true)
+					toggleControl(player, "fire", true)
+					if not dontCancelAnimation then
+						setPedAnimation(player)
+					end
+				end
+			end
+		end
+	end
+end
+
+function Guns:startGrenadeThrow(throwForce)
+	if not client.m_LastGrenadeThrow then
+		client.m_LastGrenadeThrow = 0
+	end
+	if client.m_Thrown then
+		if getTickCount() - client.m_LastGrenadeThrow > 1000 then
+			local player = client
+			local projectile = player:getWeapon()
+			player.m_LastGrenadeThrow = getTickCount()
+			setPedAnimationSpeed(player, "WEAPON_throw", 1)
+			setTimer(function() player:triggerEvent("throwProjectile", projectile, throwForce) takeWeapon(player, projectile, 1) end, 200, 1)
+			setTimer(function() player.m_Thrown = false self:activeGrenadeThrowMode(player, false, "up", true) end, 400, 1)
+		end
+	end
+end
+
+function Guns:disableGrenadeAimLeave()
+	client.m_Thrown = true
 end

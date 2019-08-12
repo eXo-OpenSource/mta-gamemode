@@ -171,7 +171,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 1 nach Downtown bedienen",
+	self:addItem(_"Linie 1 nach Ganton bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1, true)
@@ -179,7 +179,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 2 nach Montgomery bedienen",
+	self:addItem(_"Linie 2 nach Dillimore bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2)
@@ -187,7 +187,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 2 nach East LS bedienen",
+	self:addItem(_"Linie 2 nach Jefferson bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2, true)

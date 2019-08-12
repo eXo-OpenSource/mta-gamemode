@@ -83,7 +83,11 @@ function CompanyManager:sendInfosToClient(client)
 	local company = client:getCompany()
 
 	if company then --use triggerLatentEvent to improve serverside performance
-        client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
+		if company:getPlayerRank(client) < CompanyRank.Manager then
+        	client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_RankNames)
+		else
+			client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_RankNames, company.m_RankLoans)
+		end
 	else
 		client:triggerEvent("companyRetrieveInfo")
 	end
@@ -468,4 +472,13 @@ function CompanyManager:Event_UpdateSkinPermissions(skinTable)
 	local c = client:getCompany()
 	local r = c:getPlayerRank(client)
 	triggerClientEvent(client, "openSkinSelectGUI", client, c:getSkinsForRank(r), c:getId(), "company", r >= CompanyRank.Manager, c:getAllSkins())
+end
+
+function CompanyManager:getFromName(name)
+	for k, company in pairs(CompanyManager.Map) do
+		if company:getName() == name then
+			return company
+		end
+	end
+	return false
 end

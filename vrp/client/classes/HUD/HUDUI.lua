@@ -393,7 +393,7 @@ function HUDUI:drawExo()
 
 	if isElementInWater(self:getLocalTarget()) then
 		dxDrawRectangle ((screenWidth-width)*1.05,sx*0.318,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
-		dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+		dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/(1000 + getPedStat(localPlayer, 22)*1.5 + getPedStat(localPlayer, 225)*1.5)).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
 	end
 end
 
@@ -490,7 +490,7 @@ function HUDUI:drawChart()
 	end
 
 	local health, armor, karma = self:getLocalTarget():getHealth(), self:getLocalTarget():getArmor(), math.round(self:getLocalTarget():getKarma())
-	local oxygen = math.percent(getPedOxygenLevel(self:getLocalTarget()), 1000)
+	local oxygen = math.percent(getPedOxygenLevel(self:getLocalTarget()), (1000 + getPedStat(self:getLocalTarget(), 22)*1.5 + getPedStat(self:getLocalTarget(), 225)*1.5))
 	local dsc = core:get("HUD", "chartLabels", true)
 	local healthColor = Color.HUD_Red
 	if health <= 20 then --quick and dirty flash animation

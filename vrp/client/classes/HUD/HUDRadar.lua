@@ -308,7 +308,7 @@ function HUDRadar:draw()
 		-- Draw oxygen bar
 		if isInWater then
 			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, self.m_Width/4-9, self.m_Height/20, tocolor(65, 56, 15))
-			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, (self.m_Width/4-9) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
+			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, (self.m_Width/4-9) * (getPedOxygenLevel(localPlayer)/ (1000 + getPedStat(localPlayer, 22)*1.5 + getPedStat(localPlayer, 225)*1.5) ), self.m_Height/20, tocolor(91, 79, 21))
 		end
 	end
 

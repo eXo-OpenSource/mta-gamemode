@@ -128,7 +128,11 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then --use triggerLatentEvent to improve serverside performance
-		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
+		if faction:getPlayerRank(client) < FactionRank.Manager then
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames)
+		else
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames, faction.m_RankLoans, faction.m_ValidWeapons, faction.m_RankWeapons)
+		end
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -671,4 +675,13 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
 	end
+end
+
+function FactionManager:getFromName(name)
+	for k, faction in pairs(FactionManager.Map) do
+		if faction:getName() == name then
+			return faction
+		end
+	end
+	return false
 end

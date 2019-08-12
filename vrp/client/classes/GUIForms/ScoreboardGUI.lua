@@ -28,7 +28,7 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:addColumn(_"Karma", 0.08)
 	self.m_Grid:addColumn(_"Ping", 0.11)
 	self.m_Grid:setSortable{"VIP", "Name", "Fraktion", "Unternehmen", "Gang/Firma", "Spielzeit"} --We can't sort Ping and Karma (Ping can be a number and also a string; karma is a numeric string eg. "+123" which will be not sort properly)
-	self.m_Grid:setSortColumn(_"Fraktion")
+	--self.m_Grid:setSortColumn(_"Fraktion")
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
@@ -92,7 +92,7 @@ function ScoreboardGUI:refresh()
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
 		local companyId = player:getCompany() and player:getCompany():getId() or 0
-		table.insert(self.m_Players, player)
+		table.insert(self.m_Players, {player, factionId})
 
 		if factionId ~= 0 then
 			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
@@ -115,6 +115,7 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
+	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
 
 	local scrollAreaDocumentSize_new = self.m_Grid.m_ScrollArea.m_DocumentHeight
@@ -167,7 +168,8 @@ end
 
 function ScoreboardGUI:insertPlayers()
 	local gname
-	for index, player in ipairs(self.m_Players) do
+	for index, playerTable in ipairs(self.m_Players) do
+		local player = playerTable[1]
 		local isLoggedIn = not player:getName():find("Gast_")
 
 		local playtime = ("%d:%.2d"):format(math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60))

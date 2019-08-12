@@ -8,9 +8,11 @@
 InteriorEnterExitManager = inherit(Singleton)
 InteriorEnterExitManager.Map ={}
 
-addRemoteEvents{"clientTryEnterEntrance"}
+addRemoteEvents{"clientTryEnterEntrance", "InteriorEnterExit:onEnterColHit", "InteriorEnterExit:onExitColHit"}
 function InteriorEnterExitManager:constructor() 
     addEventHandler("clientTryEnterEntrance", root, bind(self.Event_requestEntrance, self))
+    addEventHandler("InteriorEnterExit:onEnterColHit", root, bind(self.onEnterColHit, self))
+    addEventHandler("InteriorEnterExit:onExitColHit", root, bind(self.onExitColHit, self))
 end
 
 function InteriorEnterExitManager:destructor()
@@ -42,4 +44,22 @@ end
 
 function InteriorEnterExitManager:checkRange(element, player)
     return Vector3(element:getPosition() - player:getPosition()):getLength() < 3 
+end
+
+function InteriorEnterExitManager:sendInteriorEnterExitToClient(player)
+	if not player then player = root end
+	for key, enterexit in pairs(InteriorEnterExitManager.Map) do
+		local x, y, z = getElementPosition(enterexit.m_EnterMarker)
+        triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_EnterMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onEnterColHit")
+        local x, y, z = getElementPosition(enterexit.m_ExitMarker)
+        triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_ExitMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onExitColHit")
+	end
+end
+
+function InteriorEnterExitManager:onEnterColHit(id)
+    InteriorEnterExitManager.Map[id]:onEnterColHit(client)
+end
+
+function InteriorEnterExitManager:onExitColHit(id)
+    InteriorEnterExitManager.Map[id]:onExitColHit(client)
 end

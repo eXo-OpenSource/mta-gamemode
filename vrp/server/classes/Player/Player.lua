@@ -201,6 +201,9 @@ function Player:loadCharacter()
 		self:getFaction():takeEquipment(self)
 	end
 	FactionState:getSingleton():checkInsideGarage(self)
+	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
+	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
+	GrowableManager:getSingleton():sendGrowablesToClient(self)
 end
 
 function Player:createCharacter()
@@ -253,6 +256,7 @@ function Player:loadCharacterInfo()
 	VehicleCategory:getSingleton():syncWithClient(self)
 
 	self.m_IsDead = row.IsDead or 0
+	self.m_SpawnedDead = self.m_IsDead
 
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
@@ -288,6 +292,7 @@ function Player:initialiseBinds()
 		bindKey(self, "y", "down", "chatbox", "Fraktion")
 	end
 	bindKey(self, "horn", "both", PoliceAnnouncements:getSingleton().m_BindFunction)
+	bindKey(self, "aim_weapon", "both", Guns:getSingleton().m_GrenadeBind)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -347,6 +352,10 @@ function Player:save()
 		local sSkin = self.m_Skin
 		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+		if not self.m_PlayTimeAtLastSave then
+			outputServerLog("[PLAYER] Player " .. tostring(self.m_Id) .. " has no playTimeSave set - playtime " .. tostring(self:getPlayTime()))
+			self.m_PlayTimeAtLastSave = self:getPlayTime()
+		end
 		local timeDiff = self:getPlayTime() - self.m_PlayTimeAtLastSave
 		DatabasePlayer.save(self)
 		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
@@ -370,6 +379,10 @@ function Player:spawn()
 	local quitTick = PlayerManager:getSingleton().m_QuitPlayers[self:getId()]
 	local spawnSuccess = false
 	local SpawnLocationProperty = self:getSpawnLocationProperty()
+
+	--Increasing the max. oxygen (must be done before the player spawns)
+	self:setStat(22, 1000)
+	self:setStat(225, 1000)
 
 	if not quitTick or (getTickCount() - quitTick > 300000) then
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
@@ -443,7 +456,9 @@ function Player:spawn()
 
 	if self:isPremium() then
 		self:setArmor(100)
-		giveWeapon(self, 24, 35)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
 	end
 
 	if self.m_PrisonTime > 0 then
@@ -463,12 +478,16 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	if self.m_IsDead == 1 then
-		if not self:getData("isInDeathMatch") then
-			self:setReviveWeapons()
+	nextframe(
+		function()
+			if self.m_IsDead == 1 then
+				if not self:getData("isInDeathMatch") then
+					self:setReviveWeapons()
+				end
+				killPed(self)
+			end
 		end
-		killPed(self)
-	end
+	)
 
 	WearableManager:getSingleton():removeAllWearables(self)
 
@@ -512,16 +531,12 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	self:setCorrectSkin()
 
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
-	end
-
 	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
+	self.m_SpawnedDead = 0
 	FactionState:getSingleton():uncuffPlayer(self)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
@@ -533,6 +548,14 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	if self:isPremium() then
+		self:setArmor(100)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
 

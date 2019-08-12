@@ -12,6 +12,8 @@ if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
 
+DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "influxdb.merx.dev"}
+
 -- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
@@ -27,7 +29,7 @@ EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false --quests, mostly
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
-SNOW_SHADERS_ENABLED = true -- disable them during summer time
+SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
@@ -145,6 +147,7 @@ ADMIN_RANK_PERMISSION = {
 	["smode"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
+	["clearAd"] = RANK.Supporter,
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -203,6 +206,13 @@ ADMIN_RANK_PERMISSION = {
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,
+	["transactionMenu"] = RANK.Administrator,
+	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
+	["serialAccountMenu"] = RANK.Supporter,
+
+	["openMapEditor"] = RANK.Administrator,
+	["createNewMap"] = RANK.Administrator,
+	["setMapStatus"] = RANK.Administrator,
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
@@ -536,16 +546,16 @@ HOSPITAL_POSITION = Vector3(1177.80, -1323.94, 14.09)
 HOSPITAL_ROTATION = Vector3(0, 0, 270)
 
 WEAPON_LEVEL = {
-	[1] = {["costs"] = 500, ["hours"] = 1},
-	[2] = {["costs"] = 750, ["hours"] = 2},
-	[3] = {["costs"] = 1000, ["hours"] = 3},
-	[4] = {["costs"] = 1500, ["hours"] = 6},
-	[5] = {["costs"] = 2000, ["hours"] = 8},
-	[6] = {["costs"] = 2500, ["hours"] = 10},
-	[7] = {["costs"] = 3250, ["hours"] = 14},
-	[8] = {["costs"] = 4000, ["hours"] = 18},
-	[9] = {["costs"] = 4750, ["hours"] = 22},
-	[10] = {["costs"] = 5500, ["hours"] = 30}
+	[1] = {["costs"] = 750},
+	[2] = {["costs"] = 1125},
+	[3] = {["costs"] = 1500},
+	[4] = {["costs"] = 2250},
+	[5] = {["costs"] = 3000},
+	[6] = {["costs"] = 3750},
+	[7] = {["costs"] = 4875},
+	[8] = {["costs"] = 6000},
+	[9] = {["costs"] = 7125},
+	[10] = {["costs"] = 8250}
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}

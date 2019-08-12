@@ -399,7 +399,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 				if killer:isFactionDuty() then
 					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
-						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
+						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)
 						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
@@ -944,11 +944,7 @@ function PlayerManager:Event_weaponLevelTraining()
 	local nextLevel = currentLevel+1
 	if WEAPON_LEVEL[nextLevel] then
 		if client:getMoney() >= WEAPON_LEVEL[nextLevel]["costs"] then
-			if math.floor(client:getPlayTime()/60) >= WEAPON_LEVEL[nextLevel]["hours"] then
-				ShootingRanch:getSingleton():startTraining(client, nextLevel)
-			else
-				client:sendError(_("Du hast nicht genug Spielstunden!", client))
-			end
+			ShootingRanch:getSingleton():startTraining(client, nextLevel)
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
 		end

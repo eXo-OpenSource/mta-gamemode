@@ -258,6 +258,12 @@ addEventHandler("onClientVehicleDamage", root,
 			local newLoss = loss / source:getBulletArmorLevel()
 			source:setHealth(math.max(0, source:getHealth()-newLoss))
 		end
+		if weapon == 16 or weapon == 19 or weapon == 35 or weapon == 36 or weapon == 39 or weapon == 51 or weapon == 59 then
+			if source:getHealth() < 300 then
+				triggerServerEvent("vehicleBlow", source, weapon)
+				return
+			end
+		end
 		if totalLossVehicleTypes[source:getVehicleType()] then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then

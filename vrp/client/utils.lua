@@ -117,6 +117,13 @@ function getElementBehindCursor(worldX, worldY, worldZ)
     return element
 end
 
+function getWorldObjectBehindCursor(worldX, worldY, worldZ)
+    local x, y, z = getCameraMatrix()
+    local hit, hitX, hitY, hitZ, element, nX, nY, nZ, material, lightning, piece, worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId = processLineOfSight(x, y, z, worldX, worldY, worldZ, true, true, true, true, false, true, true, true, localPlayer, true, false)
+
+    return worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId
+end
+
 -- For easy use with: https://atom.io/packages/color-picker
 function rgb(r, g, b)
 	return tocolor(r, g, b)

@@ -25,8 +25,8 @@ function FactionRescue:constructor()
 
 	self.m_GateHitBind = bind(self.onBarrierHit, self)
 	-- Barriers
-	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
-	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
+	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onGateHit = self.m_GateHitBind
+	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onGateHit = self.m_GateHitBind
 
 	--Garage doors
 	self.m_Gates = {
@@ -420,7 +420,7 @@ function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
-	local money = math.floor(player:getMoney()*0.25)
+	local money = player.m_SpawnedDead == 0 and math.floor(player:getMoney()*0.25) or 0
 	player:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
 	player.m_DeathPickup.money = money
 

@@ -76,6 +76,11 @@ function VehicleCategory:getModelBaseHeight(model)
     return self.m_ModelData[model].baseHeight
 end
 
+function VehicleCategory:getMaxVelocityShopInfo(model)
+    if not self.m_ModelData[model] then return false end
+    return self.m_ModelData[model].vMaxShop
+end
+
 addEventHandler("onVehicleCategoryDataReceive", root, function(categoryData, modelData, customModels)
     VehicleCategory:getSingleton():loadData(categoryData, modelData, customModels)
 end)

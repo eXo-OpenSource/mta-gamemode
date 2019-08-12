@@ -863,6 +863,7 @@ function SelfGUI:onSettingChange(setting)
 			self.m_HUDScale:setVisible(false)
 			self.m_ChartMargin:setVisible(false)
 			self.m_ChartBlue:setVisible(false)
+			self.m_ChartDate:setVisible(false)
 			self.m_ChartLabels:setVisible(false)
 			self.m_ChartPoints:setVisible(false)
 			self.m_ChartZone:setVisible(false)
@@ -877,6 +878,7 @@ function SelfGUI:onSettingChange(setting)
 				self.m_HUDScale:setVisible(true)
 				self.m_ChartMargin:setVisible(true)
 				self.m_ChartBlue:setVisible(true)
+				self.m_ChartDate:setVisible(true)
 				self.m_ChartLabels:setVisible(true)
 				self.m_ChartPoints:setVisible(true)
 				self.m_ChartZone:setVisible(true)
@@ -922,9 +924,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
 
-		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"Datum", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
-		self.m_ChartBlue:setChecked(core:get("HUD", "chartDateVisible", false))
-		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartDateVisible", state) end
+		self.m_ChartDate = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"Datum", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartDate:setChecked(core:get("HUD", "chartDateVisible", false))
+		self.m_ChartDate.onChange = function (state) core:set("HUD", "chartDateVisible", state) end
 
 
 		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
@@ -1385,6 +1387,15 @@ function SelfGUI:onSettingChange(setting)
 		self.m_NaviSound:setChecked(core:get("Sounds", "Navi", true))
 		self.m_NaviSound.onChange = function (state)
 			core:set("Sounds", "Navi", state)
+		end
+
+		self.m_InteriorSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.9, self.m_Height*0.04, _"Interior Sounds", self.m_SettingBG)
+		self.m_InteriorSound:setFont(VRPFont(25))
+		self.m_InteriorSound:setFontSize(1)
+		self.m_InteriorSound:setChecked(core:get("Sounds", "Interiors", true))
+		self.m_InteriorSound.onChange = function (state)
+			core:set("Sounds", "Interiors", state)
+			setInteriorSoundsEnabled(state)
 		end
 
 		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)

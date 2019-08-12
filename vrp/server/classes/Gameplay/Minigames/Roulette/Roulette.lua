@@ -9,7 +9,6 @@ function Roulette:constructor(player, custombank)
     else
         self.m_BankAccountServer = BankServer.get("gameplay.roulett") 
     end
-    if not RouletteManager.Bets[player:getId()] then RouletteManager.Bets[player:getId()] = 0 end
 end
 
 function Roulette:destructor()
@@ -35,8 +34,10 @@ function Roulette:spin(bets)
 		self.m_Player:sendError(_("Du hast nicht genug Geld für deinen Einsatz dabei!", self.m_Player))
 		self.m_Bets = nil
 		return false
-	end
-    RouletteManager.Bets[self.m_Player:getId()] = RouletteManager.Bets[self.m_Player:getId()] + bet
+    end
+    if RouletteManager.Limits[self.m_Player:getId()] then
+        RouletteManager.Limits[self.m_Player:getId()].Bets = RouletteManager.Limits[self.m_Player:getId()].Bets + bet
+    end
     self.m_Player:transferMoney(self.m_BankAccountServer, bet, "Roulette-Einsatz", "Gameplay", "Roulett")
 	RouletteManager:getSingleton():setStats(-bet, true)
 	self.m_Random = math.random(0, 36)

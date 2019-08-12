@@ -27,7 +27,7 @@ function VehicleManager:constructor()
 
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
-	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
+	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleBlow",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling"}
@@ -48,6 +48,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
+	addEventHandler("vehicleBlow", root, bind(self.Event_vehicleBlow, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
 	addEventHandler("vehiclePark", root, bind(self.Event_vehiclePark, self))
 	addEventHandler("vehicleToggleHandbrake", root, bind(self.Event_toggleHandBrake, self))
@@ -1368,6 +1369,17 @@ function VehicleManager:Event_vehicleBreak(weapon)
 	end
 end
 
+function VehicleManager:Event_vehicleBlow(weapon)
+	if not source:isBlown() then
+		source:blow(false)
+		for key, player in pairs(getVehicleOccupants(source)) do
+			StatisticsLogger:getSingleton():addKillLog(client, player, weapon)
+			player:removeFromVehicle()
+			player:kill()
+		end
+	end
+end
+
 function VehicleManager:Event_soundvanChangeURL(url)
 	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
 		source.m_SoundURL = url
@@ -1384,8 +1396,8 @@ end
 
 function VehicleManager:Event_TrailerAttach(truck)
 	if not getVehicleOccupant(truck) then return end
-	if not instanceof(truck, PermanentVehicle) then return end
-	if not instanceof(source, PermanentVehicle) then return end
+	if not instanceof(truck, PermanentVehicle) or not instanceof(truck, GroupVehicle) then return end
+	if not instanceof(source, PermanentVehicle) or not instanceof(source, GroupVehicle) then return end
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)

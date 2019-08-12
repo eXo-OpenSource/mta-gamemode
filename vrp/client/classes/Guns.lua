@@ -73,9 +73,13 @@ function Guns:constructor()
 	--addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
-	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash"}
+	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash", "prepareGrenadeThrow", "throwProjectile"}
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
 	addEventHandler("clientMonochromeFlash", root, bind(self.monochromeFlash, self))
+	addEventHandler("prepareGrenadeThrow", root, bind(self.prepareGrenadeThrow, self))
+	addEventHandler("throwProjectile", root, bind(self.throwProjectile, self))
+	self.m_GrenadeThrowBind = bind(self.renderThrowPreparation, self)
+	self.m_GrenadeHandleBind = bind(self.handleThrowBind, self)
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 
@@ -184,7 +188,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	else
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze and not NetworkMonitor:getSingleton():getPingDisabled() and not NetworkMonitor:getSingleton():getLossDisabled() then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
-				if WEAPON_DAMAGE[weapon] then
+				if WEAPON_DAMAGE[weapon] or EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
 					if WEAPON_RANGE_CHECK[weapon] and self:isInRange(source, bodypart, weapon)  then
 						bPlaySound = true
 						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss, self:isInMeleeRange( source))
@@ -192,6 +196,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 						bPlaySound = true
 						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss)
 					end
+					if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then cancelEvent() end
 				else
 					if weapon ~= 17 or ( not WearableHelmet:getSingleton().m_GasMask ) then
 						bPlaySound = false
@@ -290,6 +295,7 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 		local cWeapon = getPedWeapon(localPlayer, cw)
 		if cWeapon ~= 34 then
 			toggleControl("fire",true)
+			toggleControl("action",true)
 			if localPlayer.m_FireToggleOff then
 				if localPlayer.m_LastSniperShot+4000 <= getTickCount() then
 					localPlayer.m_FireToggleOff = false
@@ -300,13 +306,16 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 			if localPlayer.m_FireToggleOff then
 				if localPlayer.m_LastSniperShot+4000 >= getTickCount() then
 					toggleControl("fire",false)
+					toggleControl("action",false)
 				else
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
+					toggleControl("action",true)
 				end
 			else
 				if not NoDm:getSingleton().m_NoDm then
 					toggleControl("fire",true)
+					toggleControl("action",true)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
@@ -350,22 +359,26 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				localPlayer.m_LastSniperShot = getTickCount()
 				localPlayer.m_FireToggleOff = true
 				toggleControl("fire",false)
+				toggleControl("action",false)
 				setTimer(function()
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
+					toggleControl("action",true)
 				end, 4000,1)
 			end
 		end
 		if self.m_TracerEnabled then
-			local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
-			local x, y, z = normalize(hitX-wx, hitY-wy, hitZ-wz)
-			local x, y, z = x*10, y*10, z*10
-			if (x^2+y^2+z^2)^0.5 > getDistanceBetweenPoints3D(wx, wy, wz, hitX, hitY, hitZ) then
-				x, y, z = hitX-wx, hitY-wy, hitZ-wz
+			if not THROWABLE_WEAPONS[weapon] then
+				local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
+				local x, y, z = normalize(hitX-wx, hitY-wy, hitZ-wz)
+				local x, y, z = x*10, y*10, z*10
+				if (x^2+y^2+z^2)^0.5 > getDistanceBetweenPoints3D(wx, wy, wz, hitX, hitY, hitZ) then
+					x, y, z = hitX-wx, hitY-wy, hitZ-wz
+				end
+				local length = getDistanceBetweenPoints3D(hitX, hitY, hitZ, wx, wy, wz)
+				local steps = length / (x^2+y^2+z^2)^0.5
+				self.m_TracerTable[getTickCount()] = {wx-x, wy-y, wz-z, hitX, hitY, hitZ, steps, x, y, z, 0}
 			end
-			local length = getDistanceBetweenPoints3D(hitX, hitY, hitZ, wx, wy, wz)
-			local steps = length / (x^2+y^2+z^2)^0.5
-			self.m_TracerTable[getTickCount()] = {wx-x, wy-y, wz-z, hitX, hitY, hitZ, steps, x, y, z, 0}
 		end
 	end
 
@@ -617,5 +630,54 @@ function Guns:toggleFastShot(bool)
 	if not self.m_AntiFastShotEnabled then
 		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
 		unbindKey ( "crouch", "both", crouch )
+	end
+end
+
+function Guns:throwProjectile(projectile, force, leftHanded)
+	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25) 
+	local x, y, z, x2, y2, z2 = getCameraMatrix()
+	local x, y, z = normalize(x2-x, y2-y, z2-z) 
+	createProjectile(localPlayer, projectile, bx, by, bz, 1, false, 0, 0, 0, x*force, y*force, z*force)
+	localPlayer.m_HasThrownGrenade = false
+end
+
+function Guns:renderThrowPreparation() 
+	localPlayer.m_GrenadeThrowProgress = localPlayer.m_GrenadeThrowProgress - 0.001
+	setPedAnimationProgress(localPlayer, "WEAPON_throw", localPlayer.m_GrenadeThrowProgress)
+	localPlayer.m_GrenadeThrowForce = localPlayer.m_GrenadeThrowForce + 0.02
+
+	if localPlayer.m_GrenadeThrowProgress < 0.12 then 
+		removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind) 
+	end
+end
+
+function Guns:handleThrowBind(key, keystate)
+	if localPlayer.m_HasThrownGrenade == false then
+		if keystate == "down" then
+			localPlayer.m_GrenadeThrowProgress = 0.15
+			localPlayer.m_GrenadeThrowForce = 0.2
+			triggerServerEvent("disableGrenadeAimLeave", localPlayer)
+			if not isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+				addEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+			end
+		elseif keystate == "up" then
+			if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+				removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+			end
+			triggerServerEvent("startGrenadeThrow", localPlayer, localPlayer.m_GrenadeThrowForce)
+			localPlayer.m_HasThrownGrenade = true
+		end
+	end
+end
+
+function Guns:prepareGrenadeThrow(state)
+	if state == true then
+		bindKey("fire", "both", self.m_GrenadeHandleBind)
+		localPlayer.m_HasThrownGrenade = false
+	else
+		unbindKey("fire", "both", self.m_GrenadeHandleBind)
+		if isEventHandlerAdded("onClientRender", root, self.m_GrenadeThrowBind) then
+			removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
+		end
 	end
 end

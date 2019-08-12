@@ -78,6 +78,8 @@ function PoliceAnnouncements:syncSirens(singlePlayer)
 end
 
 function PoliceAnnouncements:setSirenState(vehicle, sirenType)
+    if not self.m_SirenVehicles[vehicle] and sirenType == "inactive" then return end
+
     if self:isValidVehicle(vehicle) then 
         self.m_SirenVehicles[vehicle] = sirenType
         for key, player in ipairs(getElementsByType("player")) do
@@ -91,7 +93,7 @@ function PoliceAnnouncements:getSirenState(vehicle)
 end
 
 function PoliceAnnouncements:handleBind(player, key, keystate)
-    if player ~= player.vehicle.controller then return end
+    if player.vehicle and player ~= player.vehicle.controller then return end
     if keystate == "down" then
         player.m_LastSirenAction = getTickCount()
         if self:getSirenState(player.vehicle) == "active" then

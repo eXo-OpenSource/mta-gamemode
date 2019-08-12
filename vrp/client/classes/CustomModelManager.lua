@@ -39,6 +39,9 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/hedge01_law.col", 6046)
 	self:loadImportDFF("files/models/objects/hedge01_law.dff", 6046)
 	self:setLODDistance(6046, 500)
+	--Ammunation Street hedge gap
+	self:loadImportCOL("files/models/objects/lawroads_law21.col", 6127)
+	self:loadImportDFF("files/models/objects/lawroads_law21.dff", 6127)
 
 	--bank
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)

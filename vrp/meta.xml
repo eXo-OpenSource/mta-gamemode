@@ -52,6 +52,7 @@
 	<script src="shared/classes/Thread.lua" type="shared"/>
 	<script src="shared/classes/Promise.lua" type="shared"/>
 	<script src="shared/classes/MusicAPI.lua" type="shared"/>
+	<script src="shared/classes/InfluxDB.lua" type="shared"/>
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
@@ -109,6 +110,7 @@
 	<script src="server/classes/ServerSettings.lua" type="server"/>
 	<script src="server/classes/Forum.lua" type="server"/>
 	<script src="server/classes/ServiceSync.lua" type="server"/>
+	<script src="server/classes/InfluxLogging.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -250,7 +252,6 @@
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/ArmsDealer.lua" type="server"/>
 	<script src="server/classes/Gameplay/ArmsPackage.lua" type="server"/>
-	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
 	<script src="server/classes/Gameplay/Jail.lua" type="server"/>
@@ -337,6 +338,9 @@
 
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
+
+	<script src="server/classes/MapEditor/MapLoader.lua" type="server" />
+	<script src="server/classes/MapEditor/MapEditor.lua" type="server" />
 
 	<script src="server/constants/shops.lua" type="server"/>
 
@@ -480,9 +484,6 @@
 	<script src="server/classes/Jobs/JobRoadSweeper.lua" type="server"/>
 	<script src="server/classes/Jobs/JobLumberjack.lua" type="server"/>
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
-	<script src="server/classes/Jobs/JobServiceTechnician.lua" type="server"/>
-	<script src="server/classes/Jobs/JobServiceTechnicianTask.lua" type="server"/>
-	<script src="server/classes/Jobs/JobServiceTechnicianTaskQuestion.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPizzaDelivery.lua" type="server"/>
 	<script src="server/classes/Jobs/JobHeliTransport.lua" type="server"/>
 	<script src="server/classes/Jobs/JobForkLift.lua" type="server"/>
@@ -523,6 +524,7 @@
 	<script src="client/classes/ExecTimeRecorder.lua" type="client"/>
 	<script src="client/classes/NetworkMonitor.lua" type="client"/>
 	<script src="client/classes/HelpTextManager.lua" type="client"/>
+	<script src="client/classes/ColshapeStreamer.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>
@@ -568,10 +570,12 @@
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
 	<script src="client/classes/WeaponRecorder.lua" type="client"/>
+	<script src="client/classes/InfluxLogging.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
 	<script src="client/classes/Utils/FileModdingHelper.lua" type="client"/>
+	<script src="client/classes/Utils/CenteredBonecam.lua" type="client"/>
 	<script src="client/classes/Utils/RadioStationManager.lua" type="client"/>
 
 	<!-- GUI system -->
@@ -581,6 +585,7 @@
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUITooltip.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIRotatable.lua" type="client"/>
 	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
 	<script src="client/classes/GUI/DxElement.lua" type="client"/>
 	<script src="client/classes/GUI/DxRectangle.lua" type="client"/>
@@ -631,6 +636,9 @@
 	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
 	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
+	<script src="client/classes/GUI/GUIElementMask.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMaskedImage.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMaskedRendertarget.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
@@ -760,6 +768,8 @@
 	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminPedGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminFireGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminSerialAccountsGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminTransactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
 
@@ -809,7 +819,6 @@
 	<script src="client/classes/GUIForms/PerformanceStatsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseEditGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/JailBreakGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SendMoneyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MapGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HelpBar.lua" type="client"/>
@@ -836,7 +845,6 @@
 	<script src="client/classes/GUIForms/VehicleCustomTextureGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
@@ -917,6 +925,13 @@
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PoliceSoundsGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/MultiAccountWindow.lua" type="client"/>
+	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectCreateGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorMapGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorMainGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorEditingPlayersGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/MapEditor/MapEditorHelpGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -983,7 +998,6 @@
 	<script src="client/classes/Jobs/JobRoadSweeper.lua" type="client"/>
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
-	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPizzaDelivery.lua" type="client"/>
 	<script src="client/classes/Jobs/JobHeliTransport.lua" type="client"/>
 	<script src="client/classes/Jobs/JobForkLift.lua" type="client"/>
@@ -1072,7 +1086,6 @@
 	<script src="client/classes/Effects/MonochromeShader.lua" type="client"/>
 
 	<!-- Gameplay -->
-	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/BarShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
@@ -1143,6 +1156,9 @@
 
 	<!-- PoliceAnnouncements -->
 	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />
+
+	<script src="client/classes/MapEditor/MapEditor.lua" type="client" />
+	<file src="files/data/objects.xml" />
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
@@ -1449,7 +1465,7 @@
 	<vrpfile src="files/images/Weapons/44.png"/>
 	<vrpfile src="files/images/Weapons/45.png"/>
 	<vrpfile src="files/images/Weapons/46.png"/>
-	
+
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Other/info.png"/>
@@ -2350,6 +2366,8 @@
 	<vrpfile src="files/models/objects/a51fensin.dff"/>
 	<vrpfile src="files/models/objects/hedge01_law.col" />
 	<vrpfile src="files/models/objects/hedge01_law.dff" />
+	<vrpfile src="files/models/objects/lawroads_law21.col" />
+	<vrpfile src="files/models/objects/lawroads_law21.dff" />
 	<vrpfile src="files/models/objects/blitzer.col"/>
 	<vrpfile src="files/models/objects/blitzer.dff"/>
 	<vrpfile src="files/models/objects/blitzer.txd"/>
@@ -2487,6 +2505,7 @@
 	<vrpfile src="files/shader/loginShader.fx"/>
 	<vrpfile src="files/shader/radialFog.fx"/>
 	<vrpfile src="files/shader/monochrome.fx"/>
+	<vrpfile src="files/shader/mapeditorColorize.fx"/>
 	<file src="files/shader/cylinder.fx"/>
 
 

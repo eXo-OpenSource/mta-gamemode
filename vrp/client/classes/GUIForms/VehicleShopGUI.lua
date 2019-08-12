@@ -172,13 +172,13 @@ function VehicleShopInfoGUI:updateVehicle(veh)
 	local driveType = {["fwd"] = _"Front-Antrieb", ["rwd"] = _"Heck-Antrieb", ["awd"] = _"Allrad-Antrieb"}
 	self.m_Veh = veh
 	self.m_Window:setTitleBarText(veh:getName())
-	self.m_Label:setText(("- %s\n- %s%s\n- %s-Gang Getriebe\n- %s kg Leergewicht\n~ %s km/h Höchstgeschw.\n- %s\n- %s Sitzplätze"):format(
+	self.m_Label:setText(("- %s\n- %s%s\n- %s$ Steuern / PayDay\n- %s kg Leergewicht\n~ %s km/h Höchstgeschw.\n- %s\n- %s Sitzplätze"):format(
 		veh:getCategoryName(),
 		(veh:getFuelType() ~= "nofuel" and veh:getFuelTankSize().."-Liter-" or ""),
 		(veh:getFuelType() == "nofuel" and "kein Tank" or "Tank ("..FUEL_NAME[veh:getFuelType()]..")"),
-		handling["numberOfGears"],
+		veh:getTax(),
 		handling["mass"],
-		handling["maxVelocity"],
+		veh:getMaxVelocityShopInfo(),
 		driveType[handling["driveType"]],
 		veh:getMaxPassengers()+1
 	))

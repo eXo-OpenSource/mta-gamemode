@@ -20,8 +20,10 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_PickList = { }
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_DamageFunc = bind(self.onGangwarDamage, self)
-	addEventHandler("onClientDamage", root, self.m_DamageFunc)
+
+	--self.m_DamageFunc = bind(self.onGangwarDamage, self)
+	--addEventHandler("onClientDamage", root, self.m_DamageFunc)
+
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
@@ -56,7 +58,7 @@ function AttackSession:destructor()
 		killTimer( self.m_NotifiyAgainTimer )
 	end
 	self.m_Active = false
-	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
+	--removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
 function AttackSession:logSession(winner)
@@ -289,32 +291,23 @@ function AttackSession:sessionCheck()
 	end
 end
 
-function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
-	local bParticipant = self:isParticipantInList( player )
-	if bParticipant then
-		if killer then
-			local bParticipant2 = self:isParticipantInList( killer )
-			if bParticipant2 then
-				if player and isElement(player) then 
-					if killer.g_kills then 
-						killer.g_kills = killer.g_kills + 1
-					else 
-						killer.g_kills = 1 
-					end
-					player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
-					killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
-					local loss = player.m_LossBeforeDead or 0
-					triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
-					self:onPlayerLeaveCenter( player ) 
-					killer.g_damage = killer.g_damage + math.floor(loss)
-					self:disqualifyPlayer( player )
+function AttackSession:onPlayerWasted( player, killer, weapon, bodypart )
+	if self:isParticipantInList( player ) then
+		if killer and isElement(killer) then
+			if self:isParticipantInList(killer) and killer:getFaction() ~= player:getFaction() then
+				if killer.g_kills then 
+					killer.g_kills = killer.g_kills + 1
+				else 
+					killer.g_kills = 1 
 				end
+				triggerClientEvent("onGangwarKill", killer)
 			end
-		else
-			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
-			self:disqualifyPlayer( player )
-			self:onPlayerLeaveCenter( player ) 
 		end
+		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
+		local faction = player.m_Faction == self.m_Faction1 and self.m_Faction2 or self.m_Faction1
+		faction:sendMessage(_("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist %s!", player, killer and "getötet worden" or "gestorben"),0,200,0,true)
+		self:onPlayerLeaveCenter( player ) 
+		self:disqualifyPlayer( player )
 	end
 end
 

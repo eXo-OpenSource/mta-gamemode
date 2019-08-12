@@ -13,7 +13,7 @@ RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 	cd /var/lib/mtasa && \
 
 	# Download and install MTA Server
-	wget -q -O mta.tar.gz https://nightly.mtasa.com/multitheftauto_linux_x64-1.5.6-rc-16191.tar.gz && \
+	wget -q -O mta.tar.gz https://nightly.mtasa.com/multitheftauto_linux_x64-1.5.6-rc-18724.tar.gz && \
 	tar xfz mta.tar.gz && mv multitheftauto*/* ./ && \
 	rm -Rf multitheftauto* && \
 	rm mta.tar.gz && \
@@ -35,6 +35,7 @@ EXPOSE 8080/tcp
 # Add subproject artitifacts
 ADD build/workerserver /var/lib/mtasa/workerserver
 ADD build/ml_gps.so /var/lib/mtasa/x64/modules/ml_gps.so
+ADD build/ml_jwt.so /var/lib/mtasa/x64/modules/ml_jwt.so
 
 # Add entrypoint script
 ADD build/docker-entrypoint.sh /docker-entrypoint.sh

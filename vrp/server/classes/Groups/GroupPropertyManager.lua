@@ -176,7 +176,7 @@ function GroupPropertyManager:SellProperty(  )
 		local property = client.m_LastPropertyPickup
 		if property then
 			local price = property.m_Price
-			local sellMoney = math.floor(price * 0.66)
+			local sellMoney = math.floor(price * 0.75)
 			local pOwner = property.m_Owner
 			local group = client:getGroup()
 			if pOwner == group then
@@ -187,7 +187,7 @@ function GroupPropertyManager:SellProperty(  )
 				if property.m_Pickup and isElement(property.m_Pickup) then
 					setPickupType(property.m_Pickup, 3, PICKUP_FOR_SALE)
 				end
-				self.m_BankAccountServer:transferMoney(group, price, "Immobilie "..property.m_Name.." verkauft!", "Group", "PropertySell")
+				self.m_BankAccountServer:transferMoney(group, sellMoney, "Immobilie "..property.m_Name.." verkauft!", "Group", "PropertySell")
 				client:sendInfo("Sie haben die Immobilie verkauft! Das Geld befindet sich in der Firmen/Gangkasse!")
 				for key, player in ipairs( pOwner:getOnlinePlayers() ) do
 					player:triggerEvent("destroyGroupBlip",property.m_Id)
@@ -244,7 +244,7 @@ function GroupPropertyManager:clearProperty(id, groupId, price)
 		setPickupType(property.m_Pickup, 3, 1273)
 	end
 	if GroupManager.Map[groupId] then
-		self.m_BankAccountServer:transferMoney(GroupManager.Map[groupId].m_BankAccount, math.floor(price * 0.66), "Inactivity", "Group", "PropertyClear")
+		self.m_BankAccountServer:transferMoney(GroupManager.Map[groupId].m_BankAccount, math.floor(price * 0.75), "Inactivity", "Group", "PropertyClear")
 		sqlLogs:queryExec("INSERT INTO ??_propertiesfreed (GroupId, PropertyID, Date) VALUES (?, ?, Now())", sqlLogs:getPrefix(), groupId, id)
 	end
 end

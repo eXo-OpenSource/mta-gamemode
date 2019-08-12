@@ -65,10 +65,10 @@ factionNavigationpoint[1] = Vector3(1552.278, -1675.725, 12.6)
 
 -- ID 2 = FBI:
 factionRankNames[2] = {
-[0] = "Probationary Agent",
+[0] = "Probat. Agent",
 [1] = "Special Agent",
 [2] = "Sen. Special Agent",
-[3] = "Supervisory Agent",
+[3] = "Sup. Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
 [6] = "FBI-Director"
@@ -171,11 +171,12 @@ factionRankNames[7] = {
 factionColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52}
 factionCarColors[7] = {["r"] = 20,["g"] = 90,["b"] = 10, ["r1"] = 20,["g1"] = 90,["b1"] = 10}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [293]=true, [300]=true, [301]=true, [311]=true}
-factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [32]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[7] = Vector3(2522.5205078125, -1679.2890625, 15.496999740601)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 factionSpawnpoint[7] = {Vector3(2501.12, -1666.82, 13.36), 0, 0}
 factionNavigationpoint[7] = evilFactionInteriorEnter[7]
+factionAirDropPoint[7] = Vector3(2476.883, -1667.080, 13.326)
 
 -- ID 8 = Ballas
 factionRankNames[8] = {

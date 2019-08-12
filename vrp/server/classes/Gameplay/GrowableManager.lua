@@ -60,9 +60,11 @@ function GrowableManager:constructor()
 	self.m_Timer = setTimer(bind(self.grow, self), 10*60*1000, 0)
 	self:load()
 
-	addRemoteEvents{"plant:harvest", "plant:getClientCheck"}
+	addRemoteEvents{"plant:harvest", "plant:getClientCheck", "plant:onClientColShapeHit", "plant:onClientColShapeLeave"}
 	addEventHandler("plant:harvest", root, bind(self.harvest, self))
 	addEventHandler("plant:getClientCheck",root, bind(self.getClientCheck, self))
+	addEventHandler("plant:onClientColShapeHit", root, bind(self.onClientColShapeHit, self))
+	addEventHandler("plant:onClientColShapeLeave", root, bind(self.onClientColShapeLeave, self))
 
 	--DEBUG
 	addCommandHandler("growPlants", function(player)
@@ -117,6 +119,11 @@ function GrowableManager:addNewPlant(type, position, owner)
 	StatisticsLogger:getSingleton():addPlantLog(owner, type)
 	local id = sql:lastInsertId()
 	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getId(), 0, ts, ts, 0, 0)
+	for key, player in ipairs(getElementsByType("player")) do
+		if player:isLoggedIn() then
+			player:triggerEvent("ColshapeStreamer:registerColshape", {position.x, position.y, position.z+1}, GrowableManager.Map[id].m_Object, "growable", GrowableManager.Map[id].m_Id, 1, "plant:onClientColShapeHit", "plant:onClientColShapeLeave")
+		end
+	end
 	GrowableManager.Map[id]:onColShapeHit(owner, true)
 end
 
@@ -165,5 +172,23 @@ function GrowableManager:getClientCheck(seed, bool, z_pos, isUnderWater)
 		--end
 	else
 		client:sendError(_("Dies ist kein guter Untergrund zum Anpflanzen! Suche dir ebene Gras- oder Erdflächen", client))
+	end
+end
+
+function GrowableManager:sendGrowablesToClient(player)
+	if not player then player = root end
+	for key, growable in pairs(GrowableManager.Map) do
+		local x, y, z = getElementPosition(growable.m_Object)
+		triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+1}, growable.m_Object, "growable", growable.m_Id, 1, "plant:onClientColShapeHit", "plant:onClientColShapeLeave")
+	end
+end
+
+function GrowableManager:onClientColShapeHit(id)
+	GrowableManager.Map[id]:onColShapeHit(client, true)
+end
+
+function GrowableManager:onClientColShapeLeave(id)
+	if GrowableManager.Map[id] then
+		GrowableManager.Map[id]:onColShapeLeave(client, true)
 	end
 end

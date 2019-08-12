@@ -60,43 +60,12 @@ function AttackClient:onDamage( attacker )
 	end
 end
 
-function AttackClient:addDamage( target, weapon, bodypart, loss )
-	if target ~= localPlayer then
-		local facSource = source:getFactionId()
-		local facTarget = target:getFactionId()
-		if facSource ~= facTarget then
-			if facSource == self.m_Faction.m_Id or facSource == self.m_Faction2.m_Id then
-				if facTarget == self.m_Faction.m_Id or facTarget == self.m_Faction2.m_Id then
-					if source == localPlayer then
-						if not self.m_GangwarDamage then
-							self.m_GangwarDamage = 0
-						end
-						self.m_GangwarDamage = math.ceil( self.m_GangwarDamage + loss )
-					end
-				end
-			end
-		end
-	end
+function AttackClient:addDamage(loss)
+	self.m_GangwarDamage = math.ceil(self.m_GangwarDamage + loss)
 end
 
-function AttackClient:addKill( target, weapon, bodypart, loss)
-	if target ~= localPlayer then
-		local facSource = source:getFactionId()
-		local facTarget = target:getFactionId()
-		if facTarget ~= facSource then
-			if facSource == self.m_Faction.m_Id or facSource == self.m_Faction2.m_Id then
-				if facTarget == self.m_Faction.m_Id or facTarget == self.m_Faction2.m_Id then
-					if source == localPlayer then
-						self.m_GangwarKill = math.floor( self.m_GangwarKill + 1 )
-						if not self.m_GangwarDamage then
-							self.m_GangwarDamage = 0
-						end
-						self.m_GangwarDamage = math.ceil( self.m_GangwarDamage + loss )
-					end
-				end
-			end
-		end
-	end
+function AttackClient:addKill()
+	self.m_GangwarKill = math.floor(self.m_GangwarKill + 1)
 end
 
 function AttackClient:destructor()
@@ -249,17 +218,22 @@ function AttackClient:createTeamBlips(playertable)
 	self:destroyTeamBlips()
 	for key, player in ipairs(playertable) do
 		if player ~= localPlayer then
-			AttackClient.Blips[player:getName()] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
-			AttackClient.Blips[player:getName()]:attach(player)
-			AttackClient.Blips[player:getName()]:setDisplayText(player:getName(), "Anderes")
+			AttackClient.Blips[player:getName()] = {}
+			AttackClient.Blips[player:getName()][1] = Blip:new("Marker.png", player:getPosition().x, player:getPosition().y, 700, {235, 125, 15}, {235, 125, 15})
+			AttackClient.Blips[player:getName()][1]:attach(player)
+			AttackClient.Blips[player:getName()][1]:setDisplayText(player:getName(), "Anderes")
+
+			AttackClient.Blips[player:getName()][2] = createBlipAttachedTo(player, 0, 1, 50, 200, 50, 255, 0, 700)
+			AttackClient.Blips[player:getName()][2]:setData("isGangwarBlip", true)
 		end
 	end
 end
 
 addEvent("Gangwar:destroyTeamBlips",true)
 function AttackClient:destroyTeamBlips()
-	for player, blip in pairs(AttackClient.Blips) do
-		delete(blip)
+	for player, table in pairs(AttackClient.Blips) do
+		delete(table[1])
+		table[2]:destroy()
 	end
 	AttackClient.Blips = {}
 end
