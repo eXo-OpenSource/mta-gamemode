@@ -24,6 +24,12 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
+		
+		-- Sawed-Off: 
+		setWeaponProperty(26, skill ,"maximum_clip_ammo", 1) -- GTA-Std: 2
+		setWeaponProperty(26, skill ,"flags", 0x008000) -- GTA-STD: no flag
+		setWeaponProperty(26, skill ,"anim_loop_bullet_fire" , 0.5) -- GTA-Std: 0.20000001788139
+
 		--Uzi:
 		setWeaponProperty(28, skill, "accuracy",1.1999999523163)
 		-- MP5:
