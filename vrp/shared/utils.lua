@@ -745,11 +745,7 @@ function normaliseRange( min, max, value)
 end
 
 function serialiseVector(vector)
-	if (vector and type(vector) == "table") then
-		return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
-	else 
-		return {}
-	end
+	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
 
 -- GTA SA workaround, isVehicleOnGround return always false for some vehicles
