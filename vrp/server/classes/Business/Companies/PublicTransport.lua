@@ -116,7 +116,7 @@ function PublicTransport:Event_PlayerRequestBusData()
 				if endStationFound then
 					table.insert(data[line], {
 						name = self.m_BusStops[id].name,
-						position = serialiseVector(self.m_BusStops[id].object.position)
+						position = serialiseVector(self.m_BusStops[id].object.position) -- vector not found for some stations
 					})
 				end
 				if quitNextStation then

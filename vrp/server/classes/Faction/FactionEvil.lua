@@ -20,6 +20,7 @@ function FactionEvil:constructor()
 		--self:loadLCNGates(5)
 		--self:loadCartelGates(11)
 		--self:loadYakGates(6)
+		self:loadTriadGates(9)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -250,6 +251,28 @@ function FactionEvil:loadYakGates(factionId)
 	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
 
 end
+
+function FactionEvil:loadTriadGates(factionId) 
+	 
+	local lcnGates = {}
+	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120-4.04))
+	for index, gate in pairs(lcnGates) do
+		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
+		gate.onGateHit = bind(self.onBarrierGateHit, self)
+	end
+	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)	
+	local door = Door:new(6400, Vector3(1908.597, 967.407, 10.750), Vector3(0, 0, 90))
+	setElementDoubleSided(door.m_Door, true)
+	local crate = createObject(3576, 1909.020,965.252,11.320)
+	setElementRotation(crate, 0, 0, 180)
+	local box = createObject(18260, 1910.220, 969.863, 11.420)
+	local checkFunction = function(player) if player and player.getFaction and player:getFaction():getId() == factionId then return true end return false end
+	local elevator = Elevator:new(checkFunction)
+	elevator:addStation("Garage", Vector3(1904.38, 1016.85, 11), 351-180)
+	elevator:addStation("Casino", Vector3(1963.30, 973.03, 994.27), 204-180, 10, 0)
+	elevator:addStation("Dach - Heliports", Vector3(1941.15, 988.72, 52.74), 0)
+end
+
 
 function FactionEvil:loadCartelGates( factionId) 
 	 

@@ -148,7 +148,7 @@ function Gangwar:Event_OnPickupHit( player )
 end
 
 function Gangwar:RESET()
-	local sql_query = "UPDATE ??_gangwar SET Besitzer='5', lastAttack='0'"
+	local sql_query = "UPDATE ??_gangwar SET Besitzer='8', lastAttack='0'"
 	sql:queryFetch(sql_query,  sql:getPrefix())
 	outputDebugString("Gangwar-areas were reseted!")
 end

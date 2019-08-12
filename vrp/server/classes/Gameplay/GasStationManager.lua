@@ -480,15 +480,6 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
-	}, ]]--
-	{
-		name = "Grove Street",
-		stations = {
-			{Vector3(2509.69, -1692.47, 14.09), 90, 1},
-		},
-		accessible =  {1, FactionStaticId.GROVE},
-		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
 	},
 	{
 		name = "Lost MC",
@@ -498,7 +489,27 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.OUTLAWS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
+	}, ]]--
+	{
+		name = "Triaden",
+		stations = {
+			{Vector3(1913.78, 964.34, 11.22), 185, 1},
+		},
+		accessible =  {1, FactionStaticId.TRIAD},
+		nonInterior = true,
+		fuelTypes = {"petrol", "diesel"},
 	},
+
+	{
+		name = "Grove Street",
+		stations = {
+			{Vector3(2509.69, -1692.47, 14.09), 90, 1},
+		},
+		accessible =  {1, FactionStaticId.GROVE},
+		nonInterior = true,
+		fuelTypes = {"petrol", "diesel"},
+	},
+
 	{
 		name = "Ballas",
 		stations = {
