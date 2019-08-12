@@ -87,6 +87,9 @@ function LocalPlayer:constructor()
 	local col5 = createColRectangle(2350.23, -2666.53, 100,  250) -- ls docks
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col5)
 
+	local col6 = createColCuboid( 1367.295,  -1282.958, 12, 30, 20, 10) -- ammunation ls downtown
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col6)
+
 	NetworkMonitor:new()
 end
 
