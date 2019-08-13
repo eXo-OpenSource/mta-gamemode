@@ -685,3 +685,33 @@ function FactionManager:getFromName(name)
 	end
 	return false
 end
+
+function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitchTo)
+	local faction = self:getFromId(factionId)
+	local players = {}
+
+	if not faction then
+		local result = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), factionIdToSwitchTo)
+		for i, factionRow in ipairs(result) do
+			players[factionRow.Id] = factionRow.FactionRank
+		end
+	else
+		admin:sendError(_("Die Fraktion mit der ID %s ist noch geladen!", admin, factionId))
+		return
+	end
+
+	local factionToSwitchTo = self:getFromId(factionIdToSwitchTo)
+	if not factionToSwitchTo then
+		admin:sendError(_("Die Fraktion mit der ID %s ist nicht geladen!", admin, factionIdToSwitchTo))
+		return
+	end
+
+	for playerId, rank in pairs(players) do
+		HistoryPlayer:getSingleton():addLeaveEntry(playerId, admin:getId(), factionId, "faction", rank, "Fraktionstausch", "Fraktionstausch")
+
+		HistoryPlayer:getSingleton():addJoinEntry(playerId, admin:getId(), factionIdToSwitchTo, "faction")
+		factionToSwitchTo:addPlayer(playerId, rank)
+	end
+
+	admin:sendSuccess(_("Die Fraktionsmitglieder der %s wurden erfolgreich in die Fraktion %s transferiert!", admin, faction:getName(), factionToSwitchTo:getName()))
+end

@@ -198,25 +198,24 @@ factionSpawnpoint[8] = {Vector3(2226.87, -1441.04, 24.00), 0, 0}
 factionAirDropPoint[8] = Vector3(2199.05, -1385.16, 23.83)
 factionNavigationpoint[8] = evilFactionInteriorEnter[8]
 
--- ID 9 = Triads
+-- ID 9 = Biker
 factionRankNames[9] = {
-[0] = "Blue Lantern",
-[1] = "49er",
-[2] = "Straw Sandal",
-[3] = "White Paper Fan",
-[4] = "Red Pole",
-[5] = "Intense Master",
-[6] = "Dragon Head"
+	[0] = "Hangaround",
+	[1] = "Prospect",
+	[2] = "Patch Member",
+	[3] = "Road Captain",
+	[4] = "Sergeant at Arms",
+	[5] = "Vice-President",
+	[6] = "President"
 }
-factionColors[9] = {["r"] = 140,["g"] = 20,["b"] = 0}
-factionCarColors[9] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
-factionSkins[9] = {[117]=true, [118]=true, [120]=true, [122]=true, [123]=true, [141]=true, [169]=true,[294]=true}
-factionWeapons[9] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[9] = Vector3(1923.46, 959.96, 11.0)
-factionWTDestination[9] = Vector3( 1912.89, 935.21, 9.7)
-factionSpawnpoint[9] = {Vector3(1894.32, 965.32, 11.1), 0, 0}
-factionNavigationpoint[9] = evilFactionInteriorEnter[9]
-factionAirDropPoint[9] = Vector3(1877.10, 934.00, 9.67)
+factionColors[9] = {["r"] = 86,["g"] =66,["b"] = 33}
+factionCarColors[9] = {["r"] = 190,["g"] = 193,["b"] = 198, ["r1"] = 190,["g1"] = 193,["b1"] = 198}
+factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
+factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[9] =  Vector3(761.18, 379.50, 22.97)
+factionWTDestination[9] =   Vector3(755.24, 324.81, 18.88)
+factionSpawnpoint[9] = {Vector3(775.86, 376.73, 21.08), 0, 0}
+factionAirDropPoint[9] = Vector3(755.24, 324.81, 18.88)
 
 -- ID 10 = Vatos
 factionRankNames[10] = {
@@ -238,25 +237,25 @@ factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
 factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38+2.71)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
--- ID 11 = Cartel
+-- ID 11 = Triads
 factionRankNames[11] = {
-[0] = "Diablo",
-[1] = "Reciente",
-[2] = "Halcón",
-[3] = "Sicario ",
-[4] = "Consejo",
-[5] = "Secretario",
-[6] = "Patrón"
+	[0] = "Blue Lantern",
+	[1] = "49er",
+	[2] = "Straw Sandal",
+	[3] = "White Paper Fan",
+	[4] = "Red Pole",
+	[5] = "Intense Master",
+	[6] = "Dragon Head"
 }
-factionColors[11] = {["r"] = 135,["g"] = 62,["b"] = 18}
-factionCarColors[11] = {["r"] = 22,["g"] =  10,["b"] = 2, ["r1"] = 22,["g1"] = 10,["b1"] = 2}
-factionSkins[11] = {[47]=true, [48]=true, [30]=true, [43]=true, [152]=true, [44]=true}
+factionColors[11] = {["r"] = 140,["g"] = 20,["b"] = 0}
+factionCarColors[11] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
+factionSkins[11] = {[49]=true, [118]=true, [120]=true, [122]=true, [123]=true, [141]=true, [169]=true,[294]=true}
 factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[11] = Vector3(2494.06, -1464.34, 24.03)
-factionWTDestination[11] = Vector3( 2549.74, -1470.37, 22.95)
-factionSpawnpoint[11] = {Vector3(2509.91, -1468.94, 24.03), 0, 0}
-factionAirDropPoint[11] = Vector3(2437.67, -1504.29, 23.83)
+evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.0)
+factionWTDestination[11] = Vector3(1912.89, 935.21, 9.7)
+factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.1), 0, 0}
 factionNavigationpoint[11] = evilFactionInteriorEnter[11]
+factionAirDropPoint[11] = Vector3(1877.10, 934.00, 9.67)
 
 -- General:
 factionWeaponDepotInfo = {

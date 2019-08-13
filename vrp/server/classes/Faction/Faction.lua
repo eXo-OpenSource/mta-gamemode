@@ -311,8 +311,8 @@ function Faction:addPlayer(playerId, rank)
 		if self.m_Name_Short == "SAPD" then
 			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
+		bindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
 	Async.create(
