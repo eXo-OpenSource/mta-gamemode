@@ -17,7 +17,7 @@ local damageTypes = {
 	[63] = "Fahrzeugexplosion"
 }
 
-local DATE_AFTER =  "2019-08-11 00:00:00"
+local DATE_AFTER =  "2019-01-01 00:00:00"
 local EVALUATION_FILE = "zusammenfassung"
 local EVALUATION_CSV = "ammunation"
 --// use local functions https://www.lua.org/gems/sample.pdf #page 17
@@ -64,20 +64,17 @@ function AmmunationEvaluation:evaluate()
 	sqlLogs:queryFetchSingle(Async.waitFor(), "SELECT Count(*) as Damage FROM ??_Damage WHERE Date >= ?", sqlLogs:getPrefix(), DATE_AFTER)
 	local totalDamage = Async.wait().Damage
 
-
 	local killData = {}
 	for weapon, data in pairs(killDataResult) do 
-		weapon = scope_tonumber(data.Weapon)
 		percentage = formatPercentage(data.Kills, totalKills)
-		killData[weapon]  = {data.Kills, formatPercentage(data.Kills, totalKills)}
+		killData[scope_tonumber(data.Weapon)]  = {data.Kills, formatPercentage(data.Kills, totalKills)}
 	end
 
 	
 	local damageData = {}
 	for weapon, data in pairs(damageDataResult) do 
-		weapon = scope_tonumber(data.Weapon)
 		percentage = formatPercentage(data.Damage, totalDamage)
-		damageData[weapon]  = {data.Damage, formatPercentage(data.Damage, totalDamage)}
+		damageData[scope_tonumber(data.Weapon)]  = {data.Damage, formatPercentage(data.Damage, totalDamage)}
 	end
 
 	debug.sethook(nil) -- suppress infinite-loop
@@ -86,18 +83,18 @@ function AmmunationEvaluation:evaluate()
 		currentCount = currentCount + 1
 		data = fromJSON(row.Weapons) 
 		for key, obj in scope_pairs( data ) do
-			if not self.m_EvaluationTable[key] then 
-				self.m_EvaluationTable[key] = {}
-				self.m_EvaluationTable[key]["Waffe"] = 0
-				self.m_EvaluationTable[key]["Munition"] = 0
+			if not self.m_EvaluationTable[scope_tonumber(key)] then 
+				self.m_EvaluationTable[scope_tonumber(key)] = {}
+				self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] = 0
+				self.m_EvaluationTable[scope_tonumber(key)]["Munition"] = 0
 			end
 
 			if scope_type(data[key]) == "table" then
-				self.m_EvaluationTable[key]["Waffe"] = self.m_EvaluationTable[key]["Waffe"] + scope_tonumber(data[key]["Waffe"])
-				self.m_EvaluationTable[key]["Munition"] = self.m_EvaluationTable[key]["Munition"] + scope_tonumber(data[key]["Munition"])
+				self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] = self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] + scope_tonumber(data[key]["Waffe"])
+				self.m_EvaluationTable[scope_tonumber(key)]["Munition"] = self.m_EvaluationTable[scope_tonumber(key)]["Munition"] + scope_tonumber(data[key]["Munition"])
 			elseif scope_type(data[key]) == "number" then
-				self.m_EvaluationTable[key]["Munition"] = self.m_EvaluationTable[key]["Munition"] + scope_tonumber(data[key])-1
-				self.m_EvaluationTable[key]["Waffe"] = self.m_EvaluationTable[key]["Waffe"] + 1
+				self.m_EvaluationTable[scope_tonumber(key)]["Munition"] = self.m_EvaluationTable[scope_tonumber(key)]["Munition"] + scope_tonumber(data[key])-1
+				self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] = self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] + 1
 			end
 			
 			if (currentCount  % 100 == 0 or currentCount == totalOrders) then
@@ -118,9 +115,9 @@ function AmmunationEvaluation:evaluate()
 
 	self:writeLineToCSV(("Art, Tode, Anteil an Toden, Schaden, Antel an Schaden"), "deathmatch") -- setup csv-titles for general damage
 
-	local costWeapon, costMagazine, pieceOnly
-	for weapon, data in pairs(self.m_EvaluationTable) do
-		weapon = scope_tonumber(weapon)
+	local costWeapon, costMagazine, pieceOnly, weapon
+	for k, data in pairs(self.m_EvaluationTable) do
+		weapon = scope_tonumber(k)
 		if AmmuNationInfo[weapon] then 
 			if AmmuNationInfo[weapon].Weapon then 
 				costWeapon = data["Waffe"] * AmmuNationInfo[weapon].Weapon 
@@ -169,6 +166,7 @@ function AmmunationEvaluation:evaluate()
 	local copyKillData = {} -- used for accessing kill data outside of the sql
 	self:writeLineToFile(("\n**Totale Tötungen: %s**"):format(totalKills))
 	for weapon, data in pairs(killData) do 
+		weapon = scope_tonumber(weapon)
 		self:writeLineToFile((" %s - %s (%s%%)"):format(damageTypes[weapon] or WEAPON_NAMES[weapon] or getWeaponNameFromID(weapon), data[1], data[2]))
 		percentageCheck = percentageCheck + data[2]
 		copyKillData[weapon] = {data[1], data[2]}
@@ -178,6 +176,7 @@ function AmmunationEvaluation:evaluate()
 	percentageCheck = 0
 	self:writeLineToFile(("\n**Totaler Schaden: %s**"):format(totalDamage))
 	for weapon, data in pairs(damageData) do 
+		weapon = scope_tonumber(weapon)
 		self:writeLineToFile((" %s - %s (%s%%)"):format(damageTypes[weapon] or WEAPON_NAMES[weapon] or getWeaponNameFromID(weapon), data[1], data[2]))
 		percentageCheck = percentageCheck + data[2]
 
