@@ -17,9 +17,10 @@ local damageTypes = {
 	[63] = "Fahrzeugexplosion"
 }
 
-local DATE_AFTER =  "2019-01-01 00:00:00"
+local DATE_AFTER =  os.date("%Y-%m-%d",os.time()-48*60*60)
 local EVALUATION_FILE = "zusammenfassung"
 local EVALUATION_CSV = "ammunation"
+
 --// use local functions https://www.lua.org/gems/sample.pdf #page 17
 local scope_print = print
 local scope_type = type
@@ -76,7 +77,7 @@ function AmmunationEvaluation:evaluate()
 		percentage = formatPercentage(data.Damage, totalDamage)
 		damageData[scope_tonumber(data.Weapon)]  = {data.Damage, formatPercentage(data.Damage, totalDamage)}
 	end
-
+	local f1, f2, f3 = debug.gethook() 
 	debug.sethook(nil) -- suppress infinite-loop
 	
 	for k, row in scope_pairs(ordersResult) do 
@@ -191,8 +192,58 @@ function AmmunationEvaluation:evaluate()
 	self:writeLineToFile(("\n-> Prozent des Schadens der nicht in der Statistik ist: %s%%"):format(100 - percentageCheck))
 	self:writeLineToFile("\n")
 
+	debug.sethook( f0, f1, f2, f3 ) -- restore hook 
+	
+	self:getData().Costs = totalCosts
+	self:getData().Orders = totalOrders
+	self.m_TotalCosts = totalCosts
 	self:closeFile()
 	self:closeCSV()
+	self:save()
+	
+	sqlLogs:queryFetch(Async.waitFor(), "SELECT MAX(Id) FROM ??_ammunation_evaluations", sqlLogs:getPrefix())
+	local id = Async.wait()
+	if id then	
+		self:compare(id) -- compare the results to the last evaluation
+	end
+end
+
+
+function AmmunationEvaluation:compare(id)
+	local row = sqlLogs:queryFetchSingle('SELECT Data, Date FROM ??_ammunation_evaluations WHERE Id = ?;', sqlLogs:getPrefix(), id)
+	if row then 
+		self.m_CompareTable = {}
+		local evaluationTable = fromJSON(row.Data)
+		for key, entry in scope_pairs(evaluationTable) do 
+			if scope_tonumber(key) then 
+				if not self.m_CompareTable[scope_tonumber(key)] then 
+					self.m_CompareTable[scope_tonumber(key)] = {}
+				end
+				if self:getData()[scope_tonumber(key)]["Waffe"] then 
+					self.m_CompareTable[scope_tonumber(key)]["Waffe"] = {self:getData()[scope_tonumber(key)]["Waffe"] / scope_tonumber(entry["Waffe"]), self:getData()[scope_tonumber(key)]["Waffe"], scope_tonumber(entry["Waffe"])}
+				end
+				if self:getData()[scope_tonumber(key)]["Munition"] then 
+					self.m_CompareTable[scope_tonumber(key)]["Munition"] = {self:getData()[scope_tonumber(key)]["Munition"] / scope_tonumber(entry["Munition"]), self:getData()[scope_tonumber(key)]["Munition"], scope_tonumber(entry["Munition"])}
+				end
+			else
+				if scope_tonumber(entry) then
+					self.m_CompareTable[key] = {self:getData()[key] / scope_tonumber(entry), self:getData()[key], entry}
+				end
+			end
+		end
+	end
+end
+
+function AmmunationEvaluation:getData() 
+	return self.m_EvaluationTable
+end
+
+function AmmunationEvaluation:getCost() 
+	return self.m_TotalCosts
+end
+
+function AmmunationEvaluation:save() 
+	sqlLogs:queryExec("INSERT INTO ??_ammunation_evaluations (Data) VALUES (?)", sqlLogs:getPrefix(), toJSON(self:getData()))
 end
 
 
