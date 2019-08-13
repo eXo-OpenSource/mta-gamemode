@@ -333,6 +333,7 @@
 	<script src="server/classes/Gameplay/Shops/GasStationShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Ammunation.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/AmmunationEvaluation.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
