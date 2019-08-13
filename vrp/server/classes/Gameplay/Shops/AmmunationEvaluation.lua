@@ -31,7 +31,15 @@ local scope_floor = math.floor
 function AmmunationEvaluation:constructor() 
 	self.m_EvaluationTable = {}
 	self.m_CSVTable = {}
-	Async.create(function() self:evaluate() end)()
+
+	if not sqlLogs:queryFetch("SELECT 1 FROM ??_ammunation_evaluations;", sqlLogs:getPrefix()) then -- ping to see if we have all dependant tables before things get fucked up
+		return scope_print("** MISSING TABLE! PLEASE ADD vrpLogs_ammunation_evaluations **")
+	end
+
+	Async.create(function() 
+		scope_print("Commencing evaluation of Ammunation...")
+		self:evaluate() 
+	end)()
 end
 
 function AmmunationEvaluation:evaluate() 
@@ -98,7 +106,7 @@ function AmmunationEvaluation:evaluate()
 				self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] = self.m_EvaluationTable[scope_tonumber(key)]["Waffe"] + 1
 			end
 			
-			if (currentCount  % 100 == 0 or currentCount == totalOrders) then
+			if (currentCount  % 200 == 0 or currentCount == totalOrders) then
 				scope_print(("Auswertung Ammunation: %s von %s (%.2f%%)"):format(currentCount, totalOrders, (currentCount/totalOrders)*100))
 			end
 		end
