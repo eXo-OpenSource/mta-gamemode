@@ -148,7 +148,7 @@ function AmmunationEvaluation:evaluate()
 					self:writeLineToFile((" Anteil an Schaden mit dieser Waffe: %s%%"):format(damageData[weapon][2]))
 				end
 			end
-			--	Name, Waffen, WaffenKost, Magazin, MagazinKost, KillRatio, DamageRatio
+			
 			self:writeLineToCSV(("%s, %s, %s, %s, %s, %s, %s"):format(
 				(weapon and weapon > 0 and WEAPON_NAMES[weapon]) or "Schutzweste", 
 				data["Waffe"],
