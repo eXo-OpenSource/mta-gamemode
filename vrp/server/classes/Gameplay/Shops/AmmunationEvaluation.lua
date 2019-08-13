@@ -32,8 +32,8 @@ function AmmunationEvaluation:constructor()
 	self.m_EvaluationTable = {}
 	self.m_CSVTable = {}
 
-	if not sqlLogs:queryFetch("SELECT 1 FROM ??_ammunation_evaluations;", sqlLogs:getPrefix()) then -- ping to see if we have all dependant tables before things get fucked up
-		return scope_print("** MISSING TABLE! PLEASE ADD vrpLogs_ammunation_evaluations **")
+	if not sqlLogs:queryFetch("SELECT 1 FROM ??_AmmunationEvaluations;", sqlLogs:getPrefix()) then -- ping to see if we have all dependant tables before things get fucked up
+		return scope_print("** MISSING TABLE! PLEASE ADD vrpLogs_AmmunationEvaluations **")
 	end
 
 	Async.create(function() 
@@ -48,13 +48,13 @@ function AmmunationEvaluation:evaluate()
 		return ((scope_floor((value/max)*1000)/1000)*100)
 	end
 
-	sqlLogs:queryFetch(Async.waitFor(), 'SELECT Weapons, Type, Costs FROM ??_ammunation WHERE (Type LIKE "Bestellung" OR Type LIKE "Shop") AND Date >= ?;', sqlLogs:getPrefix(),  DATE_AFTER)
+	sqlLogs:queryFetch(Async.waitFor(), 'SELECT Weapons, Type, Costs FROM ??_Ammunation WHERE (Type LIKE "Bestellung" OR Type LIKE "Shop") AND Date >= ?;', sqlLogs:getPrefix(),  DATE_AFTER)
 	local ordersResult = Async.wait()
 	
-	sqlLogs:queryFetchSingle(Async.waitFor(), 'SELECT COUNT(*) as Anzahl FROM ??_ammunation WHERE (Type LIKE "Bestellung" OR Type LIKE "Shop") AND Date >= ?;', sqlLogs:getPrefix(), DATE_AFTER) -- could be done with table.count but using sql for COUNT is faster
+	sqlLogs:queryFetchSingle(Async.waitFor(), 'SELECT COUNT(*) as Anzahl FROM ??_Ammunation WHERE (Type LIKE "Bestellung" OR Type LIKE "Shop") AND Date >= ?;', sqlLogs:getPrefix(), DATE_AFTER) -- could be done with table.count but using sql for COUNT is faster
 	local totalOrders = Async.wait().Anzahl
 	
-	sqlLogs:queryFetchSingle(Async.waitFor(), 'SELECT SUM(Costs) as Kosten FROM ??_ammunation WHERE (Type LIKE "Bestellung" OR Type LIKE "Shop") AND Date >= ?;', sqlLogs:getPrefix(), DATE_AFTER) -- could be done with table.count but using sql for SUM is fastern
+	sqlLogs:queryFetchSingle(Async.waitFor(), 'SELECT SUM(Costs) as Kosten FROM ??_Ammunation WHERE (Type LIKE "Bestellung" OR Type LIKE "Shop") AND Date >= ?;', sqlLogs:getPrefix(), DATE_AFTER) -- could be done with table.count but using sql for SUM is fastern
 	local totalCosts = Async.wait().Kosten
 
 	local currentCount = 0
@@ -209,7 +209,7 @@ function AmmunationEvaluation:evaluate()
 	self:closeCSV()
 	self:save()
 	
-	sqlLogs:queryFetch(Async.waitFor(), "SELECT MAX(Id) FROM ??_ammunation_evaluations", sqlLogs:getPrefix())
+	sqlLogs:queryFetch(Async.waitFor(), "SELECT MAX(Id) FROM ??_AmmunationEvaluations", sqlLogs:getPrefix())
 	local id = Async.wait()
 	if id then	
 		self:compare(id) -- compare the results to the last evaluation
@@ -218,7 +218,7 @@ end
 
 
 function AmmunationEvaluation:compare(id)
-	local row = sqlLogs:queryFetchSingle('SELECT Data, Date FROM ??_ammunation_evaluations WHERE Id = ?;', sqlLogs:getPrefix(), id)
+	local row = sqlLogs:queryFetchSingle('SELECT Data, Date FROM ??_AmmunationEvaluations WHERE Id = ?;', sqlLogs:getPrefix(), id)
 	if row then 
 		self.m_CompareTable = {}
 		local evaluationTable = fromJSON(row.Data)
@@ -251,7 +251,7 @@ function AmmunationEvaluation:getCost()
 end
 
 function AmmunationEvaluation:save() 
-	sqlLogs:queryExec("INSERT INTO ??_ammunation_evaluations (Data) VALUES (?)", sqlLogs:getPrefix(), toJSON(self:getData()))
+	sqlLogs:queryExec("INSERT INTO ??_AmmunationEvaluations (Data) VALUES (?)", sqlLogs:getPrefix(), toJSON(self:getData()))
 end
 
 
