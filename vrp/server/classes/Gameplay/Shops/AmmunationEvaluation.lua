@@ -155,9 +155,9 @@ function AmmunationEvaluation:evaluate()
 			self:writeLineToCSV(("%s, %s, %s, %s, %s, %s, %s"):format(
 				(weapon and weapon > 0 and WEAPON_NAMES[weapon]) or "Schutzweste", 
 				data["Waffe"],
-				toMoneyString(costWeapon), 
+				costWeapon, 
 				data["Munition"], 
-				toMoneyString(costMagazine), 
+				costMagazine, 
 				killData[weapon] and killData[weapon][2] or 0, 
 				damageData[weapon] and damageData[weapon][2] or 0
 			))
