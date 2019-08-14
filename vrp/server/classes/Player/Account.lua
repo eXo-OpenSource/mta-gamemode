@@ -155,10 +155,9 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	player:triggerEvent("loginsuccess", pwhash)
 
 	if player:isActive() then
-		local boardId = Account.getBoardIdFromId(player:getId())
 		jwtSign(function(result)
 			player:setSessionId(result)
-		end, {["sub"] = player:getId(), ["forumId"] = boardId, ["name"] = player:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, JWT_ALGORITHM_HS256, "0ea757596e044cbe16c77f54fc5e969a72c4eab2")
+		end, {["sub"] = player:getId(), ["name"] = player:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, JWT_ALGORITHM_HS256, "0ea757596e044cbe16c77f54fc5e969a72c4eab2")
 	end
 
 
