@@ -13,7 +13,8 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self.m_IsLocal = url:sub(0, 10) == "http://mta"
     self.m_Browser = Browser.create(width, height, self.m_IsLocal, transparent)
     self.m_PauseOnHide = true
-    self.m_ControlsEnabled = true
+	self.m_ControlsEnabled = true
+	self.m_ScrollMultiplier = 1
 
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
     self.m_UpdateFunc = bind(self.updateBrowserTeture, self)
@@ -22,14 +23,14 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self:setRenderingEnabled(true)
     addEventHandler("onClientBrowserLoadingFailed", root, self.m_OutputLoadErrorFunc)
     addEventHandler("onClientBrowserCreated", self.m_Browser, function() source:loadURL(url) end)
-    addEventHandler("onClientBrowserDocumentReady", self.m_Browser, 
-    function(...) 
-        if self.onDocumentReady then self:onDocumentReady(...) end 
+    addEventHandler("onClientBrowserDocumentReady", self.m_Browser,
+    function(...)
+        if self.onDocumentReady then self:onDocumentReady(...) end
         -- Request redraw
         nextframe(function()
             self:anyChange()
         end)
-        
+
     end)
     addEventHandler("onClientBrowserInputFocusChanged", self.m_Browser, function(gainedFocus) guiSetInputEnabled(gainedFocus) end)
 end
@@ -95,11 +96,20 @@ function GUIWebView:getUnderlyingBrowser()
     return self.m_Browser
 end
 
+function GUIWebView:setScrollMultiplier(multiplier)
+	self.m_ScrollMultiplier = multiplier
+    return self.m_ScrollMultiplier
+end
+
+function GUIWebView:getScrollMultiplier()
+    return self.m_ScrollMultiplier
+end
+
 function GUIWebView:setVolume(volume)
     return self.m_Browser:setVolume(volume)
 end
 
-function GUIWebView:getVolume(volume)
+function GUIWebView:getVolume()
     return self.m_Browser:getVolume()
 end
 
@@ -133,12 +143,12 @@ end
 
 function GUIWebView:onInternalMouseWheelDown()
     if not self.m_ControlsEnabled then return end
-    self.m_Browser:injectMouseWheel(getKeyState("lshift") and -40 or -20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and -40 * self.m_ScrollMultiplier or -20 * self.m_ScrollMultiplier, 0)
 end
 
 function GUIWebView:onInternalMouseWheelUp()
     if not self.m_ControlsEnabled then return end
-    self.m_Browser:injectMouseWheel(getKeyState("lshift") and 40 or 20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and 40 * self.m_ScrollMultiplier or 20 * self.m_ScrollMultiplier, 0)
 end
 
 function GUIWebView:onCursorMove(relX, relY, absX, absY)
