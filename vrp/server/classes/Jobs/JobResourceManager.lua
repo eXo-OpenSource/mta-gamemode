@@ -9,7 +9,7 @@
 JobResourceManager = inherit(Singleton)
 
 function JobResourceManager:constructor() 
-	
+	JobResourceEvaluate:getSingleton():startAsyncEvaluate()
 end
 
 function JobResourceManager:destructor()

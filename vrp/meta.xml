@@ -479,6 +479,8 @@
 	<script src="server/classes/Jobs/JobTreasureSeeker.lua" type="server"/>
 	<script src="server/classes/Jobs/JobGravel.lua" type="server"/>
 
+	<script src="server/classes/Jobs/JobResourceEvaluate.lua" type="server"/>
+	<script src="server/classes/Jobs/JobResourceManager.lua" type="server"/>
 
 	<!-- AI -->
 	<script src="server/classes/AI/ActorManager.lua" type="server"/>

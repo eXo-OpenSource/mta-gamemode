@@ -954,3 +954,24 @@ URLEncoder = {
         end,
 }
 
+function getPastDateDay(hoursInPast)
+	return os.date("%Y-%m-%d", os.time()-hoursInPast*60*60)
+end
+
+function getTimestampFromStringDate( datetime ) -- not sure if we have this one already
+	if datetime:find(" ") then
+		local pattern = "(%d+)-(%d+)-(%d+) (%d+):(%d+):(%d+)" -- "YYYY-MM-DD hh:mm:ss"
+		local syear, smonth, sday, shour, sminute, sseconds = datetime:match(pattern)
+		return os.time({year = syear, month = smonth, day = sday, hour = shour, min = sminute, sec = sseconds})
+	else 
+		local pattern = "(%d+)-(%d+)-(%d+)" -- "YYYY-MM-DD"
+		local syear, smonth, sday  = datetime:match(pattern)
+		return os.time({year = syear, month = smonth, day = sday, hour = "00", min = "00", sec = "00"})
+	end
+end
+
+function getDateFromDatetime( datetime ) -- extracts the date from datetime YYYY-MM-DD hh:mm:ss -> YYYY-MM-DD
+	local pattern = "(%d+)-(%d+)-(%d+) (%d+):(%d+):(%d+)" -- "YYYY-MM-DD hh:mm:ss"
+	local year, month, day = datetime:match(pattern)
+	return ("%s-%s-%s"):format(year, month, day)
+end

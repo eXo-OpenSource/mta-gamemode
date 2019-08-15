@@ -47,6 +47,8 @@ function JobManager:constructor()
 			player:setJob(nil)
 		end
 	)
+
+	JobResourceManager:new()
 end
 
 function JobManager:getFromId(jobId)
