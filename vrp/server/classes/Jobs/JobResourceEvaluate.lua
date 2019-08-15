@@ -9,7 +9,7 @@ JobResourceEvaluate = inherit(Singleton)
 
 function JobResourceEvaluate:constructor() 
 	self.m_EvaluationTable = {}
-	self.m_Date = getPastDateDay(24*365*9)
+	self.m_Date = getPastDateDay(24*3)
 
 	print("** Pinging for Job-Evaluations, this will cause a warning if the table is not found! **")
 	if not sqlLogs:queryFetch("SELECT 1 FROM ??_JobEvaluations;", sqlLogs:getPrefix()) then -- ping to see if we have all dependant tables before things get fucked up
