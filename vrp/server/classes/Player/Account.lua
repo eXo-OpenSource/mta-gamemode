@@ -155,11 +155,13 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	player:triggerEvent("loginsuccess", pwhash)
 
 	if player:isActive() then
-		jwtSign(function(result)
-			player:setSessionId(result)
-		end, {["sub"] = player:getId(), ["name"] = player:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, JWT_ALGORITHM_HS256, "0ea757596e044cbe16c77f54fc5e969a72c4eab2")
-	end
+		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
+		local payload = toJSON({["sub"] = player:getId(), ["name"] = player:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, true):sub(2, -2)
 
+		local jwtBase = base64Encode(header) .. "." .. base64Encode(payload)
+
+		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) player:setSessionId(jwtBase.."."..responseData)	end)
+	end
 
 	ServiceSync:getSingleton():syncPlayer(Id)
 end

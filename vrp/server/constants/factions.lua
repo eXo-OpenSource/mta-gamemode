@@ -247,7 +247,7 @@ factionRankNames[11] = {
 	[5] = "Intense Master",
 	[6] = "Dragon Head"
 }
-factionColors[11] = {["r"] = 140,["g"] = 20,["b"] = 0}
+factionColors[11] = {["r"] = 230,["g"] = 20,["b"] = 0}
 factionCarColors[11] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
 factionSkins[11] = {[49]=true, [118]=true, [120]=true, [122]=true, [123]=true, [141]=true, [169]=true,[294]=true}
 factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}

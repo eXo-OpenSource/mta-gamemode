@@ -53,9 +53,8 @@ function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 
 	-- Ask the server to calculate a route for us
 	if position then
-		triggerServerEvent("GPS.calcRoute", localPlayer, "GPS.retrieveRoute", serialiseVector(localPlayer:getPosition()), serialiseVector(position)) -- position vector sometimes not serialised
+		triggerServerEvent("GPS.calcRoute", localPlayer, "GPS.retrieveRoute", serialiseVector(localPlayer:getPosition()), serialiseVector(position))
 	end
-	
 end
 
 function GPS:stopNavigation()
