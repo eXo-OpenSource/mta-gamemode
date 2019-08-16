@@ -95,7 +95,15 @@ function BlackJack:stand()
 			if compare then 
 				self:compare()
 			else 
-				self:playerWin(true)
+				if self.m_PlayerValue ~= self.m_DealerValue then
+					if self.m_PlayerValue < 21 then
+						self:playerWin(true)
+					else 
+						self:playerBlackJack()
+					end
+				else 
+					self:tie()
+				end
 			end
 		end
 	end
