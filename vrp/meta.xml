@@ -227,6 +227,11 @@
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGame.lua" type="server"/>
 
+
+	<script src="server/classes/Gameplay/Minigames/BlackJack/BlackJackManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/BlackJack/BlackJack.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/BlackJack/BlackJackCards.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
@@ -586,6 +591,7 @@
 	<script src="client/classes/GUI/GUIDebugging.lua" type="client"/>
 	<script src="client/classes/GUI/GUIInputControl.lua" type="client"/>
 	<script src="client/classes/GUI/GUIImage.lua" type="client"/>
+	<script src="client/classes/GUI/GUIImageSection.lua" type="client"/>
 	<script src="client/classes/GUI/GUIEdit.lua" type="client"/>
 	<script src="client/classes/GUI/GUIForm.lua" type="client"/>
 	<script src="client/classes/GUI/GUIForm3D.lua" type="client"/>
@@ -1080,6 +1086,7 @@
 	<script src="client/classes/Gameplay/Jail.lua" type="client"/>
 	<script src="client/classes/Gameplay/Prison.lua" type="client"/>
 	<script src="client/classes/Gameplay/Slotmachine.lua" type="client"/>
+	<script src="client/classes/Gameplay/BlackJack.lua" type="client"/>
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
@@ -1527,6 +1534,71 @@
 	<vrpfile src="files/images/RockPaperScissors/paper.png"/>
 	<vrpfile src="files/images/RockPaperScissors/rock.png"/>
 	<vrpfile src="files/images/RockPaperScissors/scissors.png"/>
+
+	<vrpfile src="files/images/BlackJack/dealer_e_open.png" />
+	<vrpfile src="files/images/BlackJack/dealer_e_close.png" />
+
+
+	<!-- Card Deck -->
+	<vrpfile src="files/images/CardDeck/back.png"/>
+
+	<vrpfile src="files/images/CardDeck/s01.png"/>
+	<vrpfile src="files/images/CardDeck/s02.png"/>
+	<vrpfile src="files/images/CardDeck/s03.png"/>
+	<vrpfile src="files/images/CardDeck/s04.png"/>
+	<vrpfile src="files/images/CardDeck/s05.png"/>
+	<vrpfile src="files/images/CardDeck/s06.png"/>
+	<vrpfile src="files/images/CardDeck/s07.png"/>
+	<vrpfile src="files/images/CardDeck/s08.png"/>
+	<vrpfile src="files/images/CardDeck/s09.png"/>
+	<vrpfile src="files/images/CardDeck/s10.png"/>
+	<vrpfile src="files/images/CardDeck/s11.png"/>
+	<vrpfile src="files/images/CardDeck/s12.png"/>
+	<vrpfile src="files/images/CardDeck/s13.png"/>
+
+	<vrpfile src="files/images/CardDeck/c01.png"/>
+	<vrpfile src="files/images/CardDeck/c02.png"/>
+	<vrpfile src="files/images/CardDeck/c03.png"/>
+	<vrpfile src="files/images/CardDeck/c04.png"/>
+	<vrpfile src="files/images/CardDeck/c05.png"/>
+	<vrpfile src="files/images/CardDeck/c06.png"/>
+	<vrpfile src="files/images/CardDeck/c07.png"/>
+	<vrpfile src="files/images/CardDeck/c08.png"/>
+	<vrpfile src="files/images/CardDeck/c09.png"/>
+	<vrpfile src="files/images/CardDeck/c10.png"/>
+	<vrpfile src="files/images/CardDeck/c11.png"/>
+	<vrpfile src="files/images/CardDeck/c12.png"/>
+	<vrpfile src="files/images/CardDeck/c13.png"/>
+
+	<vrpfile src="files/images/CardDeck/h01.png"/>
+	<vrpfile src="files/images/CardDeck/h02.png"/>
+	<vrpfile src="files/images/CardDeck/h03.png"/>
+	<vrpfile src="files/images/CardDeck/h04.png"/>
+	<vrpfile src="files/images/CardDeck/h05.png"/>
+	<vrpfile src="files/images/CardDeck/h06.png"/>
+	<vrpfile src="files/images/CardDeck/h07.png"/>
+	<vrpfile src="files/images/CardDeck/h08.png"/>
+	<vrpfile src="files/images/CardDeck/h09.png"/>
+	<vrpfile src="files/images/CardDeck/h10.png"/>
+	<vrpfile src="files/images/CardDeck/h11.png"/>
+	<vrpfile src="files/images/CardDeck/h12.png"/>
+	<vrpfile src="files/images/CardDeck/h13.png"/>
+
+	<vrpfile src="files/images/CardDeck/d01.png"/>
+	<vrpfile src="files/images/CardDeck/d02.png"/>
+	<vrpfile src="files/images/CardDeck/d03.png"/>
+	<vrpfile src="files/images/CardDeck/d04.png"/>
+	<vrpfile src="files/images/CardDeck/d05.png"/>
+	<vrpfile src="files/images/CardDeck/d06.png"/>
+	<vrpfile src="files/images/CardDeck/d07.png"/>
+	<vrpfile src="files/images/CardDeck/d08.png"/>
+	<vrpfile src="files/images/CardDeck/d09.png"/>
+	<vrpfile src="files/images/CardDeck/d10.png"/>
+	<vrpfile src="files/images/CardDeck/d11.png"/>
+	<vrpfile src="files/images/CardDeck/d12.png"/>
+	<vrpfile src="files/images/CardDeck/d13.png"/>
+
+
 
 	<!-- Radar -->
 	<vrpfile src="files/images/Radar/Radar_GTA/Radar.jpg"/>

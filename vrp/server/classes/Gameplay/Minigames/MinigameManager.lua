@@ -36,6 +36,7 @@ function MinigameManager:constructor()
 
 	SlotGameManager:new()
 	RouletteManager:new()
+	BlackJackManager:new()
 end
 
 function MinigameManager.getRealTime()
