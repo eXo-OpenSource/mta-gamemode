@@ -9,48 +9,80 @@
 BlackJack = inherit(Object)
 
 function BlackJack:constructor(player) 
+	self.m_BankAccountServer = BankServer.get("gameplay.blackjack")
 	self.m_Player = player 
 	self.m_Spectators = {}
-
+	self.m_Bets = {1000, 5000, 10000, 20000, 50000, 75000, 100000, 250000, 300000, 400000, 500000}
+	self.m_Bet = 0
 
 	self.m_Deck = BlackJackCards:new()
 	
-	player:triggerEvent("BlackJack:start")
+	player:triggerEvent("BlackJack:start", self.m_Bets)
 end
 
 function BlackJack:destructor() 
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:cancel")
 	end
+	for player, k in pairs(self.m_Spectators) do 
+		if isValidElement(player, "player") then 
+			player:triggerEvent("BlackJack:cancel")
+		else 
+			self.m_Spectators[player] = nil
+		end
+	end
 	self.m_Deck:delete()
 end
 
-function BlackJack:start()
-	self.m_PlayerValue = 0 
-	self.m_DealerValue = 0
-	self.m_DealerHand = {}
-	self.m_PlayerHand = {}
-
-	local sendDealerCards = {}
-	local sendPlayerCards = {}
-	local card
-
-	for i = 1, 2 do
-		card = self.m_Deck:draw()
-		self.m_DealerHand[#self.m_DealerHand+1] = card
-		self.m_DealerValue = self:addValue(self.m_DealerValue, card)
-		table.insert(sendDealerCards, card)
+function BlackJack:start(bet)
+	if not isValidElement(self.m_Player, "player") then return end
+	if self.m_Bets[bet] then 
+		self.m_Bet = self.m_Bets[bet]
+	else 
+		self.m_Bet = self.m_Bets[1]
 	end
+	if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet, "BlackJack-Einsatz", "Gameplay", "BlackJack", {silent = true}) then
+		for player, k in pairs(self.m_Spectators) do 
+			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:reset")
+			else 
+				self.m_Spectators[player] = nil
+			end
+		end
+		self.m_PlayerValue = 0 
+		self.m_DealerValue = 0
+		self.m_DealerHand = {}
+		self.m_PlayerHand = {}
 
-	for i = 1, 2 do
-		card = self.m_Deck:draw()
-		self.m_PlayerHand[#self.m_PlayerHand+1] = card
-		self.m_PlayerValue = self:addValue(self.m_PlayerValue, card)
-		table.insert(sendPlayerCards, card)
-	end
-	self.m_Player:triggerEvent("BlackJack:draw", sendDealerCards, sendPlayerCards, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1].Value)
-	for player, k in pairs(self.m_Spectators) do 
-		player:triggerEvent("BlackJack:draw", sendDealerCards, sendPlayerCards, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1].Value)
+
+		local sendDealerCards = {}	
+		local sendPlayerCards = {}
+		local card
+
+		for i = 1, 2 do
+			card = self.m_Deck:draw()
+			self.m_DealerHand[#self.m_DealerHand+1] = card
+			self.m_DealerValue = self:addValue(self.m_DealerValue, card)
+			table.insert(sendDealerCards, card)
+		end
+
+		for i = 1, 2 do
+			card = self.m_Deck:draw()
+			self.m_PlayerHand[#self.m_PlayerHand+1] = card
+			self.m_PlayerValue = self:addValue(self.m_PlayerValue, card)
+			table.insert(sendPlayerCards, card)
+		end
+		self.m_Player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1].Value)
+		for player, k in pairs(self.m_Spectators) do 
+			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1].Value)
+			else 
+				self.m_Spectators[player] = nil
+			end
+		end
+	else 
+		self.m_Player:sendError(_("Du hast nicht genügend Geld für den Einsatz!", self.m_Player))
+		self.m_Player:triggerEvent("BlackJack:start", self.m_Bets)
 	end
 end
 
@@ -88,9 +120,13 @@ function BlackJack:stand()
 				end
 			end
 
-			self.m_Player:triggerEvent("BlackJack:draw", sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
+			self.m_Player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
 			for player, k in pairs(self.m_Spectators) do 
-				player:triggerEvent("BlackJack:draw", sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
+				if isValidElement(player, "player") then
+					player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
+				else 
+					self.m_Spectators[player] = nil
+				end
 			end
 			if compare then 
 				self:compare()
@@ -123,19 +159,76 @@ function BlackJack:compare()
 	end
 end
 
-function BlackJack:reset()
+function BlackJack:reset(bet)
 	if self.m_Pause then
 		self.m_PlayerValue = 0 
 		self.m_DealerValue = 0
+
 		self.m_Pause = false 
-		self.m_DealerHitting = false	
+		self.m_PostFirstRound = false
+		self.m_DealerHitting = false
+		self.m_InsuranceWon = false	
 
 		if self.m_Deck then 
 			self.m_Deck:delete()
 		end
 	
 		self.m_Deck = BlackJackCards:new()
-		self:start()
+		self:start(bet)
+	end
+end
+
+function BlackJack:spectate(spectator)
+	if not isValidElement(self.m_Player, "player") then return end
+	if not self.m_Spectators[spectator] then 
+		self.m_Spectators[spectator] = true
+		spectator:triggerEvent("BlackJack:start", self.m_Bets, self.m_Player)
+		
+		self.m_Player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
+		for player, k in pairs(self.m_Spectators) do 
+			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
+			else 
+				self.m_Spectators[player] = nil
+			end
+		end
+		
+		if not self.m_PostFirstRound then 
+			spectator:triggerEvent("BlackJack:draw", self.m_Bet, self.m_DealerHand, self.m_PlayerHand, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1].Value)
+		else 
+			spectator:triggerEvent("BlackJack:draw", self.m_Bet, self.m_DealerHand, self.m_PlayerHand, false, self.m_PlayerValue, self.m_DealerValue)
+		end
+	end
+end
+
+function BlackJack:stopSpectate(spectator)
+	if self.m_Spectators[spectator] then 
+		spectator:triggerEvent("BlackJack:cancel")
+		self.m_Spectators[spectator] = nil
+
+		self.m_Player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
+		for player, k in pairs(self.m_Spectators) do 
+			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
+			else 
+				self.m_Spectators[player] = nil
+			end
+		end
+	end
+end
+
+function BlackJack:insurance() 
+	if isValidElement(self.m_Player, "player") then
+		if not self.m_PostFirstRound then 
+			if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet*0.5, "BlackJack-Einsatz (Insurance)", "Gameplay", "BlackJack", {silent = false}) then
+				if tonumber(self.m_DealerHand[1].Value) == 1 and tonumber(self.m_DealerHand[2].Value) == 10 then 
+					self.m_InsuranceWon = true
+				end
+				self.m_Player:triggerEvent("BlackJack:insurance")
+			else 
+				self.m_Player:sendError(_("Du hast nicht genügend Geld für die Insurance!", self.m_Player))
+			end
+		end		
 	end
 end
 
@@ -144,12 +237,27 @@ function BlackJack:playerBust()
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:notify", "Du bist über 21! Bust!", false, true)
 	end
+	for player, k in pairs(self.m_Spectators) do 
+		if isValidElement(player, "player") then
+			player:triggerEvent("BlackJack:notify", "Spieler ist über 21! Bust!", false, true)
+		else 
+			self.m_Spectators[player] = nil
+		end
+	end
 end
 
 function BlackJack:playerBlackJack() 
 	self.m_Pause = true
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:notify", "Du hast genau 21! Blackjack!", true)
+		self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet*2.5, "BlackJack-Gewinn (BlackJack 2:3)", "Gameplay", "BlackJack", {silent = false})
+	end
+	for player, k in pairs(self.m_Spectators) do 
+		if isValidElement(player, "player") then
+			player:triggerEvent("BlackJack:notify", "Spieler hat genau 21! Blackjack!", true)
+		else 
+			self.m_Spectators[player] = nil
+		end
 	end
 end
 
@@ -157,13 +265,40 @@ function BlackJack:playerWin(dealerBust)
 	self.m_Pause = true
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:notify", dealerBust and "Der Dealer ist über 21! Sieg!" or "Du hast mehr als der Dealer! Sieg!", true)
+		self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet*2, "BlackJack-Gewinn (Regulär 1:2)", "Gameplay", "BlackJack", {silent = false})
+	end
+	for player, k in pairs(self.m_Spectators) do 
+		if isValidElement(player, "player") then
+			player:triggerEvent("BlackJack:notify", dealerBust and "Der Dealer ist über 21! Sieg!" or "Spieler hat mehr als der Dealer! Sieg!", true)
+		else 
+			self.m_Spectators[player] = nil
+		end
 	end
 end
 
 function BlackJack:playerLose()
 	self.m_Pause = true
 	if isValidElement(self.m_Player, "player") then 
-		self.m_Player:triggerEvent("BlackJack:notify", "Du hast weniger als der Dealer! Verloren!")
+		if not self.m_InsuranceWon then
+			self.m_Player:triggerEvent("BlackJack:notify", "Du hast weniger als der Dealer! Verloren!")
+			for player, k in pairs(self.m_Spectators) do 
+				if isValidElement(player, "player") then
+					player:triggerEvent("BlackJack:notify", "Dealer hat mehr als Spieler! Verloren!")
+				else 
+					self.m_Spectators[player] = nil
+				end
+			end
+		else 
+			self.m_Player:triggerEvent("BlackJack:notify", "Du hast die Insurance-Wette gewonnen!")
+			for player, k in pairs(self.m_Spectators) do 
+				if isValidElement(player, "player") then
+					player:triggerEvent("BlackJack:notify", "Insurance-Wette gewonnen!")
+				else 
+					self.m_Spectators[player] = nil
+				end
+			end
+			self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet, "BlackJack-Insurance (3:2)", "Gameplay", "BlackJack", {silent = false})
+		end
 	end
 end
 
@@ -171,11 +306,20 @@ function BlackJack:tie()
 	self.m_Pause = true
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:notify", "Du hast genau so viel wie der Dealer! Unentschieden!")
+		for player, k in pairs(self.m_Spectators) do 
+			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:notify", "Unentschieden!")
+			else 
+				self.m_Spectators[player] = nil
+			end
+		end
+		self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet, "BlackJack-Rückzahlung (Unentschieden)", "Gameplay", "BlackJack", {silent = false})
 	end
 end
 
 function BlackJack:hit() 
 	if not self.m_Pause and not self.m_DealerHitting then
+		self.m_PostFirstRound = true
 		local sendDealerCards = {}
 		local sendPlayerCards = {}
 		local card
@@ -184,9 +328,13 @@ function BlackJack:hit()
 		self.m_PlayerHand[#self.m_PlayerHand+1] = card
 		table.insert(sendPlayerCards, card)
 		self.m_PlayerValue = self:addValue(self.m_PlayerValue, card)
-		self.m_Player:triggerEvent("BlackJack:draw", sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
+		self.m_Player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
 		for player, k in pairs(self.m_Spectators) do 
-			player:triggerEvent("BlackJack:draw", sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
+			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
+			else 
+				self.m_Spectators[player] = nil
+			end
 		end
 		if self.m_PlayerValue > 21 then 
 			self:playerBust()
