@@ -15,9 +15,7 @@ function BlackJackCards:constructor()
 	cards = {}
 	local values = {}
 	for i = 1, 13 do 
-		if i == 1 or i >= 10 then
-	    	table.insert(values, ("%02d"):format(i))
-		end
+	    table.insert(values, ("%02d"):format(i))
 	end
 	numericalindex = 0
 	for k, suit in ipairs(suits) do 

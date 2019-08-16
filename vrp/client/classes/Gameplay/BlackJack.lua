@@ -15,7 +15,7 @@ local soundPath = "files/audio/"
 
 addRemoteEvents{"BlackJack:start", "BlackJack:cancel", "BlackJack:end", "BlackJack:draw", "BlackJack:reset", "BlackJack:notify", "BlackJack:insurance", "BlackJack:updateSpectator"}
 
-function BlackJack:constructor(bets, spectate) 
+function BlackJack:constructor(bets, spectate, object) 
 	localPlayer:setFrozen(true)
 
 	GUIForm.constructor(self, screenWidth/2 - 800/2, screenHeight/2-506/2, 800, 506, false)
@@ -26,6 +26,7 @@ function BlackJack:constructor(bets, spectate)
 	self.m_Bets = bets
 	self.m_Player = {}
 	self.m_CardTimers = {}
+	self.m_Object = object
 	self.m_Spectate = spectate
 	self:setup()
 	
@@ -363,6 +364,14 @@ function BlackJack:onRender()
 			self.m_DealerImage:setImage(self:makeImagePath("dealer_e_open.png"))
 		end
 	end
+	if not self.m_Specting and self.m_Object and isElement(self.m_Object) then 
+		local x,y,z = getElementPosition(self.m_Object)
+		local x2, y2, z2 = getElementPosition(localPlayer) 
+		if getDistanceBetweenPoints3D(x, y, z, x2, y2, z2) > 5 then 
+			self:cancel()
+			ErrorBox:new("Du bist zu weit vom Black-Jack entfernt!")
+		end
+	end
 end
 
 
@@ -449,11 +458,11 @@ function BlackJack:destructor()
 	localPlayer:setFrozen(false)
 end
 
-addEventHandler("BlackJack:start", localPlayer, function(bets, spectate) 
+addEventHandler("BlackJack:start", localPlayer, function(bets, spectate, object) 
 	if BlackJack:isInstantiated() then 
 		delete(BlackJack:getSingleton())
 	end
-	BlackJack:new(bets, spectate)
+	BlackJack:new(bets, spectate, object)
 end)
 
 addEventHandler("BlackJack:cancel", localPlayer, function() 
