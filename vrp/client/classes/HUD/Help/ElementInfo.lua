@@ -16,11 +16,12 @@ function ElementInfo:constructor(object, text, offset, icon, iconOnly)
 	self.m_Icon = icon or "Info"
 	self.m_IconOnly = iconOnly
 	ElementInfoManager:getSingleton().m_Infos[object] = self
-	ElementInfoManager:getSingleton():addEventToElement(self)
 end
 
 function ElementInfo:destructor()
+	ElementInfoManager:getSingleton():removeEventFromElement(self.m_Object)
 	ElementInfoManager:getSingleton().m_Infos[self.m_Object] = nil
+	ElementInfoManager:getSingleton().m_ActiveInfos[self.m_Object] = nil
 end
 
 function ElementInfo:draw(distance, prog)

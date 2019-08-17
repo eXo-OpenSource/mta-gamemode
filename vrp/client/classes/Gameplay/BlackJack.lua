@@ -15,7 +15,9 @@ local soundPath = "files/audio/"
 
 addRemoteEvents{"BlackJack:start", "BlackJack:cancel", "BlackJack:end", "BlackJack:draw", "BlackJack:reset", "BlackJack:notify", "BlackJack:insurance", "BlackJack:updateSpectator"}
 
-function BlackJack:constructor(bets, spectate) 
+function BlackJack:constructor(bets, spectate, object, previous) 
+	self.m_Shader = DxShader("files/shader/vignette.fx")
+	self.m_ScreenSource = dxCreateScreenSource(screenWidth, screenHeight)
 	localPlayer:setFrozen(true)
 
 	GUIForm.constructor(self, screenWidth/2 - 800/2, screenHeight/2-506/2, 800, 506, false)
@@ -26,6 +28,7 @@ function BlackJack:constructor(bets, spectate)
 	self.m_Bets = bets
 	self.m_Player = {}
 	self.m_CardTimers = {}
+	self.m_Object = object
 	self.m_Spectate = spectate
 	self:setup()
 	
@@ -42,7 +45,7 @@ function BlackJack:constructor(bets, spectate)
 	self.m_Insurance = bind(self.Event_Insurance, self)
 	addEventHandler("BlackJack:insurance", localPlayer, self.m_Insurance)
 
-	self.m_UpdateSpectator = bind(self.EventUpdateSpectator, self)
+	self.m_UpdateSpectator = bind(self.Event_UpdateSpectator, self)
 	addEventHandler("BlackJack:updateSpectator", localPlayer, self.m_UpdateSpectator)
 
 	if not self.m_Spectate then
@@ -69,6 +72,10 @@ function BlackJack:constructor(bets, spectate)
 		end
 		self.m_StartButton:setVisible(true):setEnabled(true)
 	end
+
+		
+	self.m_ShaderRadius = previous and 20 or 0
+	self.m_ShaderDarkness = previous and 1 or 0
 end
 
 function BlackJack:setup() 
@@ -117,7 +124,7 @@ function BlackJack:setup()
 	end
 
 	self.m_BindRender = bind(self.onRender, self)
-	addEventHandler("onClientRender", root, self.m_BindRender)
+	addEventHandler("onClientPreRender", root, self.m_BindRender)
 
 	self.m_BetLabel = GUILabel:new(self.m_Width/2-100, self.m_Height/2-20, 200, 30, "", self):setFont(VRPFont(30*.9)):setAlignX("center"):setAlignY("center"):setVisible(false)
 
@@ -135,6 +142,10 @@ function BlackJack:setup()
 	self.m_EndButton = GUIButton:new(10, 20, 160, 30, "← Ende", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
 	self.m_EndButton.m_AnimatedBar:setColor(Color.Black)
 	self.m_EndButton.onLeftClick = bind(self.cancel, self)
+
+	self.m_InfoButton = GUIButton:new(self.m_Width-170, 20, 160, 30, "Hilfe", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
+	self.m_InfoButton.m_AnimatedBar:setColor(Color.Black)
+	self.m_InfoButton.onLeftClick = bind(self.info, self)
 
 	self.m_HitButton = GUIButton:new(self.m_Width/2-300, 506-60, 160, 30, "Hit", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
 	self.m_HitButton.m_AnimatedBar:setColor(Color.Black)
@@ -162,16 +173,13 @@ function BlackJack:setup()
 	--self.m_SpectatorBorder = self:createBorder(10, 60, 160, 110, 2, Color.White, self)
 	self.m_SpectatorGrid = 	GUIGridList:new(10, 60, 160, 109, self, Color.Clear, Color.White):setBackgroundColor(Color.Clear):setColor(Color.Clear)
 	self.m_SpectatorGrid:addColumn("Zuschauer 0", 1)
-
 end
-
 
 function BlackJack:putCardPlayer(card)
 	playSound(self:makeSoundPath("card_draw.ogg"))
 	card = ("%s%s"):format(card.Suit, card.Value)
 	self.m_Player[#self.m_Player+1] = GUIImage:new(self.m_Width/2-36+(40*#self.m_Player), self.m_Height/2+90, 72, 100, self:makeCardPath(card), self)
 end
-
 
 function BlackJack:putCardDealer(card, hidden)
 	if #self.m_Dealer == 0 and tonumber(card.Value) == 1 then
@@ -260,8 +268,7 @@ function BlackJack:Event_DrawCard(bet, dealerCards, playerCards, isInitial, play
 	self:revelDealer()
 end
 
-
-function BlackJack:EventUpdateSpectator(spectators) 
+function BlackJack:Event_UpdateSpectator(spectators) 
 	self.m_SpectatorList = spectators
 	self.m_SpectatorGrid:clear()
 	local count = 0
@@ -363,33 +370,29 @@ function BlackJack:onRender()
 			self.m_DealerImage:setImage(self:makeImagePath("dealer_e_open.png"))
 		end
 	end
+	if not self.m_Specting and self.m_Object and isElement(self.m_Object) then 
+		local x,y,z = getElementPosition(self.m_Object)
+		local x2, y2, z2 = getElementPosition(localPlayer) 
+		if getDistanceBetweenPoints3D(x, y, z, x2, y2, z2) > 5 then 
+			self:cancel()
+			ErrorBox:new("Du bist zu weit vom Black-Jack entfernt!")
+		end
+	end
+	if self.m_Shader and self.m_ScreenSource then
+		if self.m_ShaderDarkness+.05 <= 1 then 
+			self.m_ShaderDarkness = self.m_ShaderDarkness + 0.05 
+		end
+		if self.m_ShaderRadius+1 <=20 then 
+			self.m_ShaderRadius = self.m_ShaderRadius + 1 
+		end
+
+		dxUpdateScreenSource(self.m_ScreenSource) 
+		dxSetShaderValue(self.m_Shader, "ScreenSource", self.m_ScreenSource)
+		dxSetShaderValue(self.m_Shader, "radius", self.m_ShaderRadius)
+		dxSetShaderValue(self.m_Shader, "darkness", self.m_ShaderDarkness)
+		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_Shader)
+	end
 end
-
-
-
-function BlackJack:createBorder(x, y, width, height, borderwidth, color)
-	local borders = {}
-	
-	borders[1] = GUIRectangle:new(x, y, width, borderwidth, color, self)
-	borders[2] = GUIRectangle:new(x, y+height-borderwidth, width, borderwidth, color, self)
-
-	borders[3] = GUIRectangle:new(x, y, borderwidth, height, color, self)
-	borders[4] = GUIRectangle:new(x+width-borderwidth, y, borderwidth, height, color, self)
-	return borders
-end
-
-function BlackJack:makeImagePath(file) 
-	return ("%s%s"):format(imagePath, file)
-end
-
-function BlackJack:makeCardPath(file) 
-	return ("%s%s.png"):format(cardPath, file)
-end
-
-function BlackJack:makeSoundPath(file) 
-	return ("%s%s"):format(soundPath, file)
-end
-
 
 function BlackJack:hit() 
 	if not self.m_BlockInput then
@@ -433,27 +436,77 @@ function BlackJack:cancel()
 	triggerServerEvent("BlackJackManager:onCancel", localPlayer, self.m_Spectate)
 end
 
+function BlackJack:info() 
+	self:setVisible(false)
+	if not self.m_Info then 	
+		self.m_Info = BlackJackHelp:new(self)
+	end
+end
 
 function BlackJack:destructor() 
 	GUIForm.destructor(self)
 	if self.m_BlinkTimer then 
 		killTimer(self.m_BlinkTimer)
 	end
-	removeEventHandler("onClientRender", root, self.m_BindRender)
-	removeEventHandler("BlackJack:draw", root, self.m_BindDrawCard)
+	removeEventHandler("onClientPreRender", root, self.m_BindRender)
+	
+	removeEventHandler("BlackJack:draw", localPlayer, self.m_BindDrawCard)
+	
+	removeEventHandler("BlackJack:reset", localPlayer, self.m_ResetCards)
+	
+	removeEventHandler("BlackJack:notify", localPlayer, self.m_Notify)
+
+	removeEventHandler("BlackJack:insurance", localPlayer, self.m_Insurance)
+
+	removeEventHandler("BlackJack:updateSpectator", localPlayer, self.m_UpdateSpectator)
+	
 	for timer, k in pairs(self.m_CardTimers) do 
 		if timer and isTimer(timer) then 
 			killTimer(timer)
 		end
 	end
+	if self.m_ScreenSource then 
+		self.m_ScreenSource:destroy() 
+	end
+	if self.m_Shader then 
+		self.m_Shader:destroy()
+	end
 	localPlayer:setFrozen(false)
 end
 
-addEventHandler("BlackJack:start", localPlayer, function(bets, spectate) 
-	if BlackJack:isInstantiated() then 
+
+
+function BlackJack:createBorder(x, y, width, height, borderwidth, color)
+	local borders = {}
+	
+	borders[1] = GUIRectangle:new(x, y, width, borderwidth, color, self)
+	borders[2] = GUIRectangle:new(x, y+height-borderwidth, width, borderwidth, color, self)
+
+	borders[3] = GUIRectangle:new(x, y, borderwidth, height, color, self)
+	borders[4] = GUIRectangle:new(x+width-borderwidth, y, borderwidth, height, color, self)
+	return borders
+end
+
+function BlackJack:makeImagePath(file) 
+	return ("%s%s"):format(imagePath, file)
+end
+
+function BlackJack:makeCardPath(file) 
+	return ("%s%s.png"):format(cardPath, file)
+end
+
+function BlackJack:makeSoundPath(file) 
+	return ("%s%s"):format(soundPath, file)
+end
+
+
+addEventHandler("BlackJack:start", localPlayer, function(bets, spectate, object) 
+	local previous = false
+	if BlackJack:isInstantiated() then
+		previous = true 
 		delete(BlackJack:getSingleton())
 	end
-	BlackJack:new(bets, spectate)
+	BlackJack:new(bets, spectate, object, previous)
 end)
 
 addEventHandler("BlackJack:cancel", localPlayer, function() 

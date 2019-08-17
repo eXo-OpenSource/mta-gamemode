@@ -8,16 +8,17 @@
 
 BlackJack = inherit(Object)
 
-function BlackJack:constructor(player) 
+function BlackJack:constructor(player, object) 
 	self.m_BankAccountServer = BankServer.get("gameplay.blackjack")
 	self.m_Player = player 
 	self.m_Spectators = {}
 	self.m_Bets = {1000, 5000, 10000, 20000, 50000, 75000, 100000, 250000, 300000, 400000, 500000}
 	self.m_Bet = 0
-
+	self.m_DealerHand = {}
+	self.m_PlayerHand = {}
 	self.m_Deck = BlackJackCards:new()
-	
-	player:triggerEvent("BlackJack:start", self.m_Bets)
+	self.m_Object = object
+	player:triggerEvent("BlackJack:start", self.m_Bets, false, self.m_Object)
 end
 
 function BlackJack:destructor() 
@@ -30,6 +31,10 @@ function BlackJack:destructor()
 		else 
 			self.m_Spectators[player] = nil
 		end
+	end
+	self:setTableBet(nil)
+	if not self.m_Object.m_Info then
+		self.m_Object.m_Info = ElementInfo:new(self.m_Object.infoObj, "Casino", .4, "DoubleDown", true)
 	end
 	self.m_Deck:delete()
 end
@@ -80,9 +85,14 @@ function BlackJack:start(bet)
 				self.m_Spectators[player] = nil
 			end
 		end
+		self:setTableBet(self.m_Bet)
+		if self.m_Object.m_Info then 
+			self.m_Object.m_Info:delete()
+			self.m_Object.m_Info = nil
+		end 
 	else 
 		self.m_Player:sendError(_("Du hast nicht genügend Geld für den Einsatz!", self.m_Player))
-		self.m_Player:triggerEvent("BlackJack:start", self.m_Bets)
+		self.m_Player:triggerEvent("BlackJack:start", self.m_Bets, false, self.m_Object)
 	end
 end
 
@@ -182,8 +192,8 @@ function BlackJack:spectate(spectator)
 	if not isValidElement(self.m_Player, "player") then return end
 	if not self.m_Spectators[spectator] then 
 		self.m_Spectators[spectator] = true
-		spectator:triggerEvent("BlackJack:start", self.m_Bets, self.m_Player)
-		
+		spectator:triggerEvent("BlackJack:start", self.m_Bets, self.m_Player, self.m_Object)
+		spectator.m_BlackJackSpectate = self
 		self.m_Player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then
@@ -194,7 +204,7 @@ function BlackJack:spectate(spectator)
 		end
 		
 		if not self.m_PostFirstRound then 
-			spectator:triggerEvent("BlackJack:draw", self.m_Bet, self.m_DealerHand, self.m_PlayerHand, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1].Value)
+			spectator:triggerEvent("BlackJack:draw", self.m_Bet, self.m_DealerHand, self.m_PlayerHand, true, self.m_PlayerValue, self.m_DealerValue, self.m_DealerHand[1] and self.m_DealerHand[1].Value or 0)
 		else 
 			spectator:triggerEvent("BlackJack:draw", self.m_Bet, self.m_DealerHand, self.m_PlayerHand, false, self.m_PlayerValue, self.m_DealerValue)
 		end
@@ -205,7 +215,7 @@ function BlackJack:stopSpectate(spectator)
 	if self.m_Spectators[spectator] then 
 		spectator:triggerEvent("BlackJack:cancel")
 		self.m_Spectators[spectator] = nil
-
+		spectator.m_BlackJackSpectate = nil
 		self.m_Player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then
@@ -328,6 +338,7 @@ function BlackJack:hit()
 		self.m_PlayerHand[#self.m_PlayerHand+1] = card
 		table.insert(sendPlayerCards, card)
 		self.m_PlayerValue = self:addValue(self.m_PlayerValue, card)
+		outputChatBox("hit")
 		self.m_Player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then
@@ -340,6 +351,10 @@ function BlackJack:hit()
 			self:playerBust()
 		end
 	end
+end
+
+function BlackJack:setTableBet(bet)
+	self.m_Object:setData("BlackJack:TableBet", bet, true)
 end
 
 function BlackJack:addValue(element, card)
