@@ -182,7 +182,7 @@ function BlackJack:putCardPlayer(card)
 end
 
 function BlackJack:putCardDealer(card, hidden)
-	if #self.m_Dealer == 0 and tonumber(card.Value) == 1 then
+	if #self.m_Dealer == 0 and (tonumber(card.Value) == 1 or tonumber(card.Value) >= 10) then
 		if not self.m_Spectate then
 			self.m_InsuranceButton:setEnabled(true)
 			self.m_InsuranceButton:setVisible(true)

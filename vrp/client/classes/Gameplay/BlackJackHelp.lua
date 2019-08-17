@@ -104,7 +104,7 @@ function BlackJackHelp:constructor(mainInstance) -- soz, for not using gridsyste
 
 	self.m_BtnBack = GUIButton:new(10, 20, 80, 26, "Zurück", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
 	self.m_BtnBack.m_AnimatedBar:setColor(Color.Black)
-	self.m_BtnBack.onLeftClick = function() self.m_Main:setVisible(true);GUIForm.destructor(self);delete(self); self.m_Main.m_Info = nil end
+	self.m_BtnBack.onLeftClick = function() self.m_Main:setVisible(true);GUIForm.destructor(self);delete(self); self.m_Main.m_Info = nil;showCursor(true); end
 
 	self:showPage()
 

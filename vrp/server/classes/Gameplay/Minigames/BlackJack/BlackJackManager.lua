@@ -96,11 +96,10 @@ end
 
 function BlackJackManager:Event_onPlayerSpectate(spectator, player) 
 	if self.m_Players[player] then
-		if not spectator.m_BlackJackSpectate then
-			self.m_Players[player]:spectate(spectator)
-		else 
-			spectator:sendInfo(_("Du schaust bereits einem Spiel zu!", spectator))
+		if spectator.m_BlackJackSpectate then
+			spectator.m_BlackJackSpectate:stopSpectate()
 		end
+		self.m_Players[player]:spectate(spectator)
 	end
 end
 
