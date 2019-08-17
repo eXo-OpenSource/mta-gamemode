@@ -24,7 +24,6 @@ end
 
 function ElementInfo:destructor()
 	ElementInfo.Map[self.m_Object] = nil
-	outputChatBox("HEHEREH")
 	triggerClientEvent("elementInfoDestroy", root, self.m_Object)
 end
 

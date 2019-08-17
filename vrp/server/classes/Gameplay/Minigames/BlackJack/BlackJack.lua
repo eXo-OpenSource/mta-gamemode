@@ -34,7 +34,6 @@ function BlackJack:destructor()
 	end
 	self:setTableBet(nil)
 	if not self.m_Object.m_Info then
-		outputChatBox("DOCh")
 		self.m_Object.m_Info = ElementInfo:new(self.m_Object.infoObj, "Casino", .4, "DoubleDown", true)
 	end
 	self.m_Deck:delete()
@@ -88,7 +87,6 @@ function BlackJack:start(bet)
 		end
 		self:setTableBet(self.m_Bet)
 		if self.m_Object.m_Info then 
-			outputChatBox("HERE)=")
 			self.m_Object.m_Info:delete()
 			self.m_Object.m_Info = nil
 		end 
@@ -340,6 +338,7 @@ function BlackJack:hit()
 		self.m_PlayerHand[#self.m_PlayerHand+1] = card
 		table.insert(sendPlayerCards, card)
 		self.m_PlayerValue = self:addValue(self.m_PlayerValue, card)
+		outputChatBox("hit")
 		self.m_Player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then

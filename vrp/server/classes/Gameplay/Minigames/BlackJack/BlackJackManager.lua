@@ -95,8 +95,12 @@ function BlackJackManager:Event_onPlayerReset(bet)
 end
 
 function BlackJackManager:Event_onPlayerSpectate(spectator, player) 
-	if self.m_Players[player] then 
-		self.m_Players[player]:spectate(spectator)
+	if self.m_Players[player] then
+		if not spectator.m_BlackJackSpectate then
+			self.m_Players[player]:spectate(spectator)
+		else 
+			spectator:sendInfo(_("Du schaust bereits einem Spiel zu!", spectator))
+		end
 	end
 end
 

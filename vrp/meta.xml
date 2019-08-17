@@ -1088,6 +1088,7 @@
 	<script src="client/classes/Gameplay/Slotmachine.lua" type="client"/>
 	<script src="client/classes/Gameplay/BlackJack.lua" type="client"/>
 	<script src="client/classes/Gameplay/BlackJackTable.lua" type="client"/>
+	<script src="client/classes/Gameplay/BlackJackHelp.lua" type="client"/>
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
@@ -2568,6 +2569,7 @@
 	<vrpfile src="files/shader/radialFog.fx"/>
 	<vrpfile src="files/shader/monochrome.fx"/>
 	<vrpfile src="files/shader/mapeditorColorize.fx"/>
+	<vrpfile src="files/shader/vignette.fx"/>
 	<file src="files/shader/cylinder.fx"/>
 
 

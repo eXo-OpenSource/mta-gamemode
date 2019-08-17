@@ -33,11 +33,9 @@ function ElementInfoManager:setState(bool)
 end
 
 function ElementInfoManager:addEventToElement(element) 
-	outputChatBox("che")
 	addEventHandler("onClientElementStreamIn", element, self.m_StreamInBind)
 	addEventHandler("onClientElementStreamOut", element, self.m_StreamOutBind)
 	if isElementStreamedIn(element) then 
-		outputChatBox("HEHEK")
 		self.m_ActiveInfos[element] = self.m_Infos[element] 
 	end
 end
@@ -109,11 +107,8 @@ addEventHandler("elementInfoRetrieve", root,
 addEvent("elementInfoDestroy", true)
 addEventHandler("elementInfoDestroy", root,
 	function(object)
-		outputChatBox("HERRE0");
 		if object and isElement(object) then
-		outputChatBox("HERRE1");
 			if ElementInfoManager:getSingleton().m_Infos[object] then 
-				outputChatBox("HERRE");
 				ElementInfoManager:getSingleton().m_Infos[object]:delete()
 			end
 		end
