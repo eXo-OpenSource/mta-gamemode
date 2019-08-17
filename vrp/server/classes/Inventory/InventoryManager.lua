@@ -49,10 +49,10 @@ function InventoryManager:constructor()
 		ItemNails = ItemNails;
 		ItemRadio = ItemRadio;
 		ItemBomb = ItemBomb;
-		DrugsWeed = DrugsWeed;
-		DrugsHeroin = DrugsHeroin;
-		DrugsShroom = DrugsShroom;
-		DrugsCocaine = DrugsCocaine;
+		DrugsWeed = ItemDrugs;
+		DrugsHeroin = ItemDrugs;
+		DrugsShroom = ItemDrugs;
+		DrugsCocaine = ItemDrugs;
 		ItemDonutBox = ItemDonutBox;
 		ItemEasteregg = ItemEasteregg;
 		ItemPumpkin = ItemPumpkin;

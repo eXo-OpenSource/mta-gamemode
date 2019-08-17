@@ -26,12 +26,12 @@ end
 
 function ItemManager:loadItems()
 	self.m_Items = {  }
-	self.m_Items["Weed"] = DrugsWeed:new()
-	self.m_Items["Heroin"] = DrugsHeroin:new()
-	self.m_Items["Shrooms"] = DrugsShroom:new()
-	self.m_Items["Kokain"] = DrugsCocaine:new()
+	self.m_Items["weed"] = DrugsWeed:new()
+	self.m_Items["heroin"] = DrugsHeroin:new()
+	self.m_Items["shrooms"] = DrugsShroom:new()
+	self.m_Items["cocaine"] = DrugsCocaine:new()
 	self.m_Items["Weed-Samen"] = Plant:new()
-  
+
 	ItemDestructable:new()
 	ItemSlam:new()
 end

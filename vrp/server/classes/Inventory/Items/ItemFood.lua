@@ -39,13 +39,10 @@ function ItemFood:use()
 	player:meChat(true, ""..itemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, itemSettings["Health"], "Item "..self:getTechnicalName())
 
-	if itemSettings["CustomEvent"] then
-		triggerClientEvent(itemSettings["CustomEvent"], player, item)
-	end
 	player.m_IsConsuming = true
 	local block, animation, time = unpack(itemSettings["Animation"])
 	local item = nil
-	if not player.vehicle then 
+	if not player.vehicle then
 		player:setAnimation(block, animation, time, true, false, false)
 
 		if itemSettings["Model"] and itemSettings["Model"] ~= 0 then
@@ -59,6 +56,10 @@ function ItemFood:use()
 				exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
 			end
 		end
+	end
+
+	if itemSettings["CustomEvent"] then
+		triggerClientEvent(itemSettings["CustomEvent"], player, item)
 	end
 
 	setTimer(

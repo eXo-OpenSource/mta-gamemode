@@ -148,6 +148,7 @@ function Core:ready() --onClientResourceStart
 	EasterEgg:new()
 	EasterEggArcade.Game:new()
 	Shaders.load()
+	DrugEffects:new()
 
 	GroupProperty:new()
 	GUIWindowsFocus:new()

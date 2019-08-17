@@ -30,10 +30,10 @@
 		ItemNails = ItemNails;
 		ItemRadio = ItemRadio;
 		ItemBomb = ItemBomb;
-		DrugsWeed = DrugsWeed;
-		DrugsHeroin = DrugsHeroin;
-		DrugsShroom = DrugsShroom;
-		DrugsCocaine = DrugsCocaine;
+		DrugsWeed = DrugsWeed; -- done
+		DrugsHeroin = DrugsHeroin; -- done
+		DrugsShroom = DrugsShroom; -- done
+		DrugsCocaine = DrugsCocaine; -- done
 		ItemDonutBox = ItemDonutBox;
 		ItemEasteregg = ItemEasteregg;
 		ItemPumpkin = ItemPumpkin;
