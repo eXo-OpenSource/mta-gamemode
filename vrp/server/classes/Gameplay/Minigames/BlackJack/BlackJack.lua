@@ -32,6 +32,11 @@ function BlackJack:destructor()
 			self.m_Spectators[player] = nil
 		end
 	end
+	self:setTableBet(nil)
+	if not self.m_Object.m_Info then
+		outputChatBox("DOCh")
+		self.m_Object.m_Info = ElementInfo:new(self.m_Object.infoObj, "Casino", .4, "DoubleDown", true)
+	end
 	self.m_Deck:delete()
 end
 
@@ -81,6 +86,12 @@ function BlackJack:start(bet)
 				self.m_Spectators[player] = nil
 			end
 		end
+		self:setTableBet(self.m_Bet)
+		if self.m_Object.m_Info then 
+			outputChatBox("HERE)=")
+			self.m_Object.m_Info:delete()
+			self.m_Object.m_Info = nil
+		end 
 	else 
 		self.m_Player:sendError(_("Du hast nicht genügend Geld für den Einsatz!", self.m_Player))
 		self.m_Player:triggerEvent("BlackJack:start", self.m_Bets, false, self.m_Object)
@@ -341,6 +352,10 @@ function BlackJack:hit()
 			self:playerBust()
 		end
 	end
+end
+
+function BlackJack:setTableBet(bet)
+	self.m_Object:setData("BlackJack:TableBet", bet, true)
 end
 
 function BlackJack:addValue(element, card)

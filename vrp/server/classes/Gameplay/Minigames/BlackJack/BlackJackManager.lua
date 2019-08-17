@@ -7,13 +7,15 @@
 -- ****************************************************************************
 
 BlackJackManager = inherit(Singleton)
-addRemoteEvents{"BlackJackManager:onReady", "BlackJackManager:onHit", "BlackJackManager:onStand", "BlackJackManager:onCancel", "BlackJackManager:onReset", "BlackJackManager:onInsurance"}
+addRemoteEvents{"BlackJackManager:onReady", "BlackJackManager:onHit", "BlackJackManager:onStand", "BlackJackManager:onCancel", 
+				"BlackJackManager:onReset", "BlackJackManager:onInsurance", "BlackJackManager:requestTables"}
 
 function BlackJackManager:constructor() 
 	self.m_Players = {}
 	
 	self.m_Tables = {}
-
+	
+	self.m_OccupiedTables = {}
 	addEventHandler("BlackJackManager:onReady", root, bind(self.Event_onPlayerReady, self))
 
 	addEventHandler("BlackJackManager:onHit", root, bind(self.Event_onPlayerHit, self))
@@ -25,6 +27,8 @@ function BlackJackManager:constructor()
 	addEventHandler("BlackJackManager:onReset", root, bind(self.Event_onPlayerReset, self))
 
 	addEventHandler("BlackJackManager:onInsurance", root, bind(self.Event_onPlayerInsurance, self))
+
+	addEventHandler("BlackJackManager:requestTables", root, bind(self.Event_onPlayerRequestTables, self))
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.Event_PlayerQuit, self))
 
@@ -38,14 +42,15 @@ end
 function BlackJackManager:pulse() 
 	for table, player in pairs(self.m_Tables) do 
 		if table.ped and isValidElement(table.ped, "ped") then 
-			if player and isValidElement(player, "player") then 
-				table.ped:setAnimation("casino", "cards_loop", -1, true)
+			if self.m_OccupiedTables[table] and isValidElement(self.m_OccupiedTables[table], "player") then 
+				table.ped:setAnimation("casino", "slot_wait", -1, true, false, false, true)
 			else 
-				table.ped:setAnimation("casino", "slot_wait", 100, true, false, false, true)
+				table.ped:setAnimation("casino", "cards_loop", -1, true)
 			end
 		end
 	end
 end
+
 function BlackJackManager:Event_onPlayerReady(bet)
 	if client and self.m_Players[client] then 
 		self.m_Players[client]:start(bet)
@@ -66,7 +71,7 @@ end
 
 function BlackJackManager:Event_onPlayerCancel(spectating) 
 	if not spectating and self.m_Players[client] then 
-		self.m_Tables[self.m_Players[client].m_Object] = nil
+		self.m_OccupiedTables[self.m_Players[client].m_Object] = nil
 		self.m_Players[client]:delete()
 		self.m_Players[client] = nil
 		
@@ -98,7 +103,7 @@ end
 function BlackJackManager:Event_onStart(player, object) 
 	if not self.m_Players[player] then 
 		self.m_Players[player] = BlackJack:new(player, object)
-		self.m_Tables[object] = player
+		self.m_OccupiedTables[object] = player
 	end
 end
 
@@ -111,19 +116,29 @@ function BlackJackManager:Event_PlayerQuit(player)
 	end
 end
 
+function BlackJackManager:Event_onPlayerRequestTables()
+	client:triggerEvent("BlackJack:sendTableObjects", self.m_Tables)
+end
+
 function BlackJackManager:getTablePlayer(object)
-	if self.m_Tables[object] then 
-		return isValidElement(self.m_Tables[object], "player") and self.m_Tables[object]
+	if self.m_OccupiedTables[object] then 
+		return isValidElement(self.m_OccupiedTables[object], "player") and self.m_OccupiedTables[object]
 	end
 end
 
 function BlackJackManager:createTable(pos, rot) 
 	
 	local obj = createObject(2188, pos, Vector3(rot.x, rot.y, rot.z+180))
-	obj.ped = createPed(220, pos, rot.z)
+	obj.ped = NPC:new(220, pos.x, pos.y, pos.z, rot.z)
 	obj.ped:setPosition(obj.ped.position + obj.ped.matrix:getForward()*(-0.32))
 	obj.ped:setFrozen(true)
+	obj.ped.obj = obj
+	obj.ped:setImmortal(true)
 	obj:setData("clickable", true, true)
+	obj.ped:setData("clickable", true, true)
+	obj.infoObj = createObject(1858, (obj.position + obj.matrix:getForward()*-1)+ obj.matrix:getUp()*0.2)
+	obj.infoObj:setCollisionsEnabled(false)
+	obj.infoObj:setAlpha(0)
     addEventHandler("onElementClicked", obj, function(button, state, player)
 		if self.m_Players[player] then return end
         if Vector3(source:getPosition()-player:getPosition()):getLength() > 5 then return end
@@ -136,5 +151,22 @@ function BlackJackManager:createTable(pos, rot)
 			end
 		end
 	end)
+    addEventHandler("onElementClicked", obj.ped, function(button, state, player)
+		if self.m_Players[player] then return end
+        if Vector3(source.obj:getPosition()-player:getPosition()):getLength() > 5 then return end
+		if button == "left" and state == "up" then
+			if self:getTablePlayer(source.obj) then return player:sendShortMessage(_("Der Tisch ist schon besetzt! Rechtsklick zum Zuschauen!", player)) end
+			self:Event_onStart(player, source.obj)
+		elseif button == "right" and state == "up" then
+			if self:getTablePlayer(source.obj) then
+				self:Event_onPlayerSpectate(player, self:getTablePlayer(source.obj) )
+			end
+		end
+	end)
 	self.m_Tables[obj] = true
+	obj:setData("BlackJackTable:ped", obj.ped, true)
+	for k, p in ipairs(getElementsByType("player")) do 
+		p:triggerEvent("BlackJack:sendTableObject", obj)
+	end
+	obj.m_Info = ElementInfo:new(obj.infoObj, "Casino", .4, "DoubleDown", true)
 end

@@ -43,7 +43,7 @@ function BlackJack:constructor(bets, spectate, object)
 	self.m_Insurance = bind(self.Event_Insurance, self)
 	addEventHandler("BlackJack:insurance", localPlayer, self.m_Insurance)
 
-	self.m_UpdateSpectator = bind(self.EventUpdateSpectator, self)
+	self.m_UpdateSpectator = bind(self.Event_UpdateSpectator, self)
 	addEventHandler("BlackJack:updateSpectator", localPlayer, self.m_UpdateSpectator)
 
 	if not self.m_Spectate then
@@ -166,13 +166,11 @@ function BlackJack:setup()
 
 end
 
-
 function BlackJack:putCardPlayer(card)
 	playSound(self:makeSoundPath("card_draw.ogg"))
 	card = ("%s%s"):format(card.Suit, card.Value)
 	self.m_Player[#self.m_Player+1] = GUIImage:new(self.m_Width/2-36+(40*#self.m_Player), self.m_Height/2+90, 72, 100, self:makeCardPath(card), self)
 end
-
 
 function BlackJack:putCardDealer(card, hidden)
 	if #self.m_Dealer == 0 and tonumber(card.Value) == 1 then
@@ -261,8 +259,7 @@ function BlackJack:Event_DrawCard(bet, dealerCards, playerCards, isInitial, play
 	self:revelDealer()
 end
 
-
-function BlackJack:EventUpdateSpectator(spectators) 
+function BlackJack:Event_UpdateSpectator(spectators) 
 	self.m_SpectatorList = spectators
 	self.m_SpectatorGrid:clear()
 	local count = 0
@@ -374,32 +371,6 @@ function BlackJack:onRender()
 	end
 end
 
-
-
-function BlackJack:createBorder(x, y, width, height, borderwidth, color)
-	local borders = {}
-	
-	borders[1] = GUIRectangle:new(x, y, width, borderwidth, color, self)
-	borders[2] = GUIRectangle:new(x, y+height-borderwidth, width, borderwidth, color, self)
-
-	borders[3] = GUIRectangle:new(x, y, borderwidth, height, color, self)
-	borders[4] = GUIRectangle:new(x+width-borderwidth, y, borderwidth, height, color, self)
-	return borders
-end
-
-function BlackJack:makeImagePath(file) 
-	return ("%s%s"):format(imagePath, file)
-end
-
-function BlackJack:makeCardPath(file) 
-	return ("%s%s.png"):format(cardPath, file)
-end
-
-function BlackJack:makeSoundPath(file) 
-	return ("%s%s"):format(soundPath, file)
-end
-
-
 function BlackJack:hit() 
 	if not self.m_BlockInput then
 		if self.m_InsuranceEnabled then 
@@ -442,7 +413,6 @@ function BlackJack:cancel()
 	triggerServerEvent("BlackJackManager:onCancel", localPlayer, self.m_Spectate)
 end
 
-
 function BlackJack:destructor() 
 	GUIForm.destructor(self)
 	if self.m_BlinkTimer then 
@@ -457,6 +427,32 @@ function BlackJack:destructor()
 	end
 	localPlayer:setFrozen(false)
 end
+
+
+
+function BlackJack:createBorder(x, y, width, height, borderwidth, color)
+	local borders = {}
+	
+	borders[1] = GUIRectangle:new(x, y, width, borderwidth, color, self)
+	borders[2] = GUIRectangle:new(x, y+height-borderwidth, width, borderwidth, color, self)
+
+	borders[3] = GUIRectangle:new(x, y, borderwidth, height, color, self)
+	borders[4] = GUIRectangle:new(x+width-borderwidth, y, borderwidth, height, color, self)
+	return borders
+end
+
+function BlackJack:makeImagePath(file) 
+	return ("%s%s"):format(imagePath, file)
+end
+
+function BlackJack:makeCardPath(file) 
+	return ("%s%s.png"):format(cardPath, file)
+end
+
+function BlackJack:makeSoundPath(file) 
+	return ("%s%s"):format(soundPath, file)
+end
+
 
 addEventHandler("BlackJack:start", localPlayer, function(bets, spectate, object) 
 	if BlackJack:isInstantiated() then 

@@ -186,6 +186,7 @@ function Core:ready() --onClientResourceStart
 	PlaneManager:new()
 	FileModdingHelper:new()
 	PoliceAnnouncements:new()
+	BlackJackTable:new()
 end
 
 function Core:afterLogin()
