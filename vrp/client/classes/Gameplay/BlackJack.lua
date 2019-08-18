@@ -18,7 +18,6 @@ addRemoteEvents{"BlackJack:start", "BlackJack:cancel", "BlackJack:end", "BlackJa
 function BlackJack:constructor(bets, spectate, object, previous) 
 	self.m_Shader = DxShader("files/shader/vignette.fx")
 	self.m_ScreenSource = dxCreateScreenSource(screenWidth, screenHeight)
-	localPlayer:setFrozen(true)
 
 	GUIForm.constructor(self, screenWidth/2 - 800/2, screenHeight/2-506/2, 800, 506, false)
 	
@@ -471,7 +470,6 @@ function BlackJack:destructor()
 	if self.m_Shader then 
 		self.m_Shader:destroy()
 	end
-	localPlayer:setFrozen(false)
 end
 
 

@@ -291,6 +291,12 @@ function GUIGridList:drawThis()
 	end
 end
 
+function GUIGridList:setAlternativeColor(color) 
+	self.m_AlternateColor = color
+	self:anyChange()
+	return self
+end
+
 function GUIGridList:onScrollDown(callbackFunction)
 	self.m_ScrollArea.m_OnScrollDownFunction = callbackFunction
 end

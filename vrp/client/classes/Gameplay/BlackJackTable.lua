@@ -63,10 +63,10 @@ end
 function BlackJackTable:applyTexture(object)
 	local ped = object:getData("BlackJackTable:ped") 
 	if ped and isValidElement(ped, "ped") then
-		object.m_Ped = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {})
+		object.m_Ped = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {}, true)
 		local cone = ped:getData("BlackJackPed:cone")
 		if cone and isValidElement(cone, "object") then
-			object.m_Cone = FileTextureReplacer:new(cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {})
+			object.m_Cone = FileTextureReplacer:new(cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {}, true)
 		end
 	end
 end

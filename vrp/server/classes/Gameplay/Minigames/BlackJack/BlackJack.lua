@@ -26,9 +26,11 @@ end
 function BlackJack:destructor() 
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:cancel")
+		self.m_Player:setFrozen(false)
 	end
 	for player, k in pairs(self.m_Spectators) do 
 		if isValidElement(player, "player") then 
+			player:setFrozen(false)
 			player:triggerEvent("BlackJack:cancel")
 		else 
 			self.m_Spectators[player] = nil
@@ -50,6 +52,7 @@ function BlackJack:start(bet)
 		self.m_Bet = self.m_Bets[1]
 	end
 	if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet, "BlackJack-Einsatz", "Gameplay", "BlackJack", {silent = true}) then
+		self.m_Player:setFrozen(true)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then
 				player:triggerEvent("BlackJack:notify", "")
@@ -103,6 +106,7 @@ function BlackJack:start(bet)
 	else 
 		self.m_Player:sendError(_("Du hast nicht genügend Geld für den Einsatz!", self.m_Player))
 		self.m_Player:triggerEvent("BlackJack:start", self.m_Bets, false, self.m_Object)
+		self.m_Player:setFrozen(true)
 	end
 end
 
@@ -137,6 +141,9 @@ function BlackJack:stand()
 							break
 						end
 					end
+				else 
+					compare = true 
+					break
 				end
 			end
 
@@ -203,6 +210,7 @@ function BlackJack:spectate(spectator)
 	if not self.m_Spectators[spectator] then 
 		self.m_Spectators[spectator] = true
 		spectator:triggerEvent("BlackJack:start", self.m_Bets, self.m_Player, self.m_Object)
+		spectator:setFrozen(true)
 		spectator.m_BlackJackSpectate = self
 		self.m_Player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
 		for player, k in pairs(self.m_Spectators) do 
@@ -224,6 +232,7 @@ end
 function BlackJack:stopSpectate(spectator)
 	if self.m_Spectators[spectator] then 
 		spectator:triggerEvent("BlackJack:cancel")
+		spectator:setFrozen(false)
 		self.m_Spectators[spectator] = nil
 		spectator.m_BlackJackSpectate = nil
 		self.m_Player:triggerEvent("BlackJack:updateSpectator", self.m_Spectators)
