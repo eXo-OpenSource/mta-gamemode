@@ -286,6 +286,7 @@ function Core:destructor()
 		delete(StatisticsLogger:getSingleton())
 		delete(BankServer:getSingleton())
 		ItemManager:updateOnQuit()
+		delete(BlackJackManager:getSingleton())
 		delete(sql) -- Very slow
 	end
 end
