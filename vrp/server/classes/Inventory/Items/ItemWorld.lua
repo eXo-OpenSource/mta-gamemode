@@ -6,8 +6,6 @@
 -- *
 -- ****************************************************************************
 ItemWorld = inherit(ItemNew)
-ItemWorld.Map = {}
-
 
 function ItemWorld:constructor()
 	self.m_WorldItemClass = KeyPadWorldItem -- TODO: Create GenericWorldItem

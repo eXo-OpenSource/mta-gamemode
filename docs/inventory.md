@@ -1,61 +1,59 @@
 # TODO
-[ ] Rework WorldItems
-[ ] Rework StatisticsLogger:getSingleton():worldItemLog
-[ ] Fix StaticWorldItems
-[ ] Rewrite all ItemClasses for new Inventory
-[ ] Implement invetory storing & and auto cleanup
-[ ] Implement inventory interactions (player inventory -> vehicle inventory)
-[ ] Reimplement trading
-[ ] Replace all old giveItem & takeItem
-[ ] Look for hardcoded item ids
-[ ] Write testing list
-[ ] Implement inventory change events
-[ ] Write inventory migration
-[ ] Write world items migration
-[ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
-[ ] Implement new weapon handling with inventory
-[ ] Create new GUI for inventory, inventory interaction and trading
+
+- [ ] Rework WorldItems
+- [ ] Rework StatisticsLogger:getSingleton():worldItemLog
+- [ ] Fix StaticWorldItems
+- [ ] Rewrite all ItemClasses for new Inventory
+- [ ] Implement invetory storing & and auto cleanup
+- [ ] Implement inventory interactions (player inventory -> vehicle inventory)
+- [ ] Reimplement trading
+- [ ] Replace all old giveItem & takeItem
+- [ ] Look for hardcoded item ids
+- [ ] Write testing list
+- [ ] Implement inventory change events
+- [ ] Write inventory migration
+- [ ] Write world items migration
+- [ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
+- [ ] Implement new weapon handling with inventory
+- [ ] Create new GUI for inventory, inventory interaction and trading
 
 ## Items
 
-		ItemFood = ItemFood; -- done
-		ItemKeyPad = ItemKeyPad; -- done
-		ItemDoor = ItemDoor;
-		ItemFurniture = ItemFurniture;
-		ItemEntrance = ItemEntrance;
-		ItemTransmitter = ItemTransmitter;
-		ItemBarricade = ItemBarricade;
-		ItemSkyBeam = ItemSkyBeam;
-		ItemSpeedCam = ItemSpeedCam;
-		ItemNails = ItemNails;
-		ItemRadio = ItemRadio;
-		ItemBomb = ItemBomb;
-		DrugsWeed = DrugsWeed; -- done
-		DrugsHeroin = DrugsHeroin; -- done
-		DrugsShroom = DrugsShroom; -- done
-		DrugsCocaine = DrugsCocaine; -- done
-		ItemDonutBox = ItemDonutBox;
-		ItemEasteregg = ItemEasteregg;
-		ItemPumpkin = ItemPumpkin;
-		ItemTaser = ItemTaser;
-		ItemSlam = ItemSlam;
-		ItemSmokeGrenade = ItemSmokeGrenade;
-		ItemDefuseKit = ItemDefuseKit;
-		ItemFishing = ItemFishing;
-		ItemDice = ItemDice;
-		Plant = Plant;
-		ItemCan = ItemCan;
-		ItemSellContract = ItemSellContract;
-		ItemIDCard = ItemIDCard;
-		ItemFuelcan = ItemFuelcan;
-		ItemRepairKit = ItemRepairKit;
-		ItemHealpack = ItemHealpack;
-		ItemAlcohol = ItemAlcohol;
-		ItemFirework = ItemFirework;
-		WearableHelmet = WearableHelmet;
-		WearableShirt = WearableShirt;
-		WearablePortables = WearablePortables;
-		WearableClothes = WearableClothes;
+* ~~ItemFood = ItemFood;~~ - done
+* ~~ItemKeyPad = ItemKeyPad;~~ - done
+* ItemDoor = ItemDoor;
+* ItemFurniture = ItemFurniture;
+* ItemEntrance = ItemEntrance;
+* ItemTransmitter = ItemTransmitter;
+* ItemBarricade = ItemBarricade;
+* ItemSkyBeam = ItemSkyBeam; - remove
+* ItemSpeedCam = ItemSpeedCam;
+* ItemNails = ItemNails;
+* ItemRadio = ItemRadio;
+* ItemBomb = ItemBomb;
+* ~~ItemDrugs = ItemDrugs;~~ - done
+* ItemDonutBox = ItemDonutBox;
+* ItemEasteregg = ItemEasteregg;
+* ItemPumpkin = ItemPumpkin;
+* ItemTaser = ItemTaser;
+* ItemSlam = ItemSlam;
+* ItemSmokeGrenade = ItemSmokeGrenade;
+* ItemDefuseKit = ItemDefuseKit;
+* ItemFishing = ItemFishing;
+* ItemDice = ItemDice;
+* Plant = Plant;
+* ItemCan = ItemCan;
+* ItemSellContract = ItemSellContract;
+* ItemIDCard = ItemIDCard;
+* ItemFuelcan = ItemFuelcan;
+* ItemRepairKit = ItemRepairKit;
+* ItemHealpack = ItemHealpack;
+* ItemAlcohol = ItemAlcohol;
+* ~~ItemFirework = ItemFirework;~~ - done
+* WearableHelmet = WearableHelmet;
+* WearableShirt = WearableShirt;
+* WearablePortables = WearablePortables;
+* WearableClothes = WearableClothes;
 
 ## Notes
 

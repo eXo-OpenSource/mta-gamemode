@@ -17,7 +17,7 @@ function InventoryGUI:constructor()
 	self.m_Height = grid("y", 10)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self) -- temporarly disable close button as it breaks the closing of the gui
 
 	self.m_InventoryList = GUIGridGridList:new(1, 1, 7, 9, self.m_Window)
 	self.m_InventoryList:addColumn(_"Name", 0.5)

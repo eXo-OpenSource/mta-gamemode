@@ -362,6 +362,14 @@ function Player:save()
 			outputDebugString("Saved Data for Player "..self:getName())
 		end
 
+		if Core.isServerStopping then
+			self:getInventory():save(true)
+		else
+			Async.create(function(inventory)
+				inventory:save()
+			end)(self:getInventory())
+		end
+
 		self.m_PlayTimeAtLastSave = self:getPlayTime()
 	end
 end

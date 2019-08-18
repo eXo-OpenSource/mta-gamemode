@@ -5,57 +5,65 @@
 -- *  PURPOSE:     Firework items Class
 -- *
 -- ****************************************************************************
-ItemFirework = inherit(Item)
+ItemFirework = inherit(ItemNew)
 
 ItemFirework.Cooldown = { -- in Seconds
-	["Römische Kerzen Batterie"] = 20,
-	["Raketen Batterie"] = 20,
-	["Rakete"] = 1,
-	["Römische Kerze"] = 5,
-	["Rohrbombe"] = 5,
-	["Kugelbombe"] = 5,
+	["fireworksRomanBattery"] = 20,
+	["fireworksBattery"] = 20,
+	["fireworksRocket"] = 1,
+	["fireworksRoman"] = 5,
+	["fireworksPipeBomb"] = 5,
+	["fireworksBomb"] = 5,
 }
 
-function ItemFirework:constructor()
-end
+function ItemFirework:use()
+	local player = self.m_Inventory:getPlayer()
 
-function ItemFirework:destructor()
-end
+	if not player then return false end
 
-function ItemFirework:use(player, itemId, bag, place, itemName)
 	if not FIREWORK_ENABLED then
 		player:sendError("Das Feuerwerk ist zurzeit deaktiviert!")
-		return
+		return false
+	end
+
+	if player.isTasered then player:sendError(_("Du bist gerade getasert!", player)) return false end
+	if player.m_IsConsuming then player:sendError(_("Du konsumierst gerade etwas!", player)) return false end
+	if player:isInGangwar() then player:sendError(_("Du bist im Gangwar!", player)) return false end
+	if player:getInterior() ~= 0 or player:getDimension() ~= 0 then
+		player:sendError("Du kannst kein Feuerwerk in einem Interior zünden!")
+		return false
 	end
 
 	if player.vehicle then
 		player:sendError("Du kannst kein Feuerwerk in einem Fahrzeug zünden!")
-		return
+		return false
 	end
 
-	if player:getInterior() == 0 and player:getDimension() == 0 then
-		if ItemFirework.Cooldown[itemName] then
-			if not player.fireworkCooldown then player.fireworkCooldown = {} end
-			if player.fireworkCooldown[itemName] then
-				if not timestampCoolDown(player.fireworkCooldown[itemName], ItemFirework.Cooldown[itemName]) then
-					player:sendError(_("Du kannst die %s nicht so knapp hintereinander nutzen!", player, itemName))
-					return
-				end
+	local cooldown = ItemFirework.Cooldown[self:getTechnicalName()]
+
+	if ItemFirework.Cooldown[self:getTechnicalName()] then
+		if not player.m_FireworkCooldown then player.m_FireworkCooldown = {} end
+		if player.m_FireworkCooldown[self:getTechnicalName()] then
+			if not timestampCoolDown(player.m_FireworkCooldown[self:getTechnicalName()], ItemFirework.Cooldown[self:getTechnicalName()]) then
+				player:sendError(_("Du kannst die %s nicht so knapp hintereinander nutzen!", player, self:getName()))
+				return
 			end
-			player.fireworkCooldown[itemName] = getRealTime().timestamp
 		end
-
-		local rnd = 0
-
-		if itemName == "Raketen Batterie" then rnd = math.random(5, 8)
-		elseif itemName == "Römische Kerze" then rnd = math.random(10, 15)
-		elseif itemName == "Römische Kerzen Batterie" then rnd = math.random(7, 12)
-		end
-		player:meChat(true, _("zündet eine/n %s!", player, itemName))
-
-		triggerClientEvent(root, "onClientFireworkStart", player, itemName, serialiseVector(player:getPosition()), rnd)
-		player:getInventoryOld():removeItem(itemName, 1)
-	else
-		player:sendError("Du kannst kein Feuerwerk in einem Interior zünden!")
+		player.m_FireworkCooldown[self:getTechnicalName()] = getRealTime().timestamp
 	end
+
+	local rnd = 0
+
+	if self:getTechnicalName() == "fireworksBattery" then
+		rnd = math.random(5, 8)
+	elseif self:getTechnicalName() == "fireworksRoman" then
+		rnd = math.random(10, 15)
+	elseif self:getTechnicalName() == "fireworksRomanBattery" then
+		rnd = math.random(7, 12)
+	end
+
+	player:meChat(true, _("zündet eine/n %s!", player, self:getName()))
+
+	triggerClientEvent(root, "onClientFireworkStart", player, self:getTechnicalName(), serialiseVector(player:getPosition()), rnd)
+	return true, true
 end

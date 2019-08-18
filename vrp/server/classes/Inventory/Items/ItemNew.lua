@@ -15,6 +15,14 @@ function ItemNew:virtual_constructor(inventory, itemData, item)
     self.m_Item = item
 end
 
+function ItemNew:getName()
+    return self.m_ItemData.Name
+end
+
+function ItemNew:getDescription()
+    return self.m_ItemData.Description
+end
+
 function ItemNew:getTechnicalName()
     return self.m_ItemData.TechnicalName
 end
@@ -61,7 +69,7 @@ function Item:startObjectPlacing(player, callback, hideObject, customModel)
 		return false
 	end
 	if player:getData("inJail") or player:getData("inAdminPrison") then
-		player:sendError(_("Du kannst hier keine Objekte platzieren.", player)) 
+		player:sendError(_("Du kannst hier keine Objekte platzieren.", player))
 		return false
 	end
 
@@ -81,7 +89,7 @@ addEventHandler("itemPlaced", root,
 				placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
 			else
 				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
-				placingInfo.callback(placingInfo.item, false) 
+				placingInfo.callback(placingInfo.item, false)
 			end
 			client.m_PlacingInfo = nil
 		end

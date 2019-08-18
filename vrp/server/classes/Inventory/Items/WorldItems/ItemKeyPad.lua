@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 ItemKeyPad = inherit(ItemWorld)
-ItemKeyPad.Map = {}
 
 function ItemKeyPad:constructor()
 	self.m_WorldItemClass = KeyPadWorldItem

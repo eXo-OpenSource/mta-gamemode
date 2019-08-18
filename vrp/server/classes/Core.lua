@@ -1,5 +1,6 @@
 Core = inherit(Object)
 addEvent("Core.onClientInternalError", true)
+Core.isServerStopping = false
 
 function Core:constructor()
 	outputServerLog("Initializing core...")
@@ -258,6 +259,7 @@ end
 
 function Core:destructor()
 	if not self.m_Failed then
+		Core.isServerStopping = true
 		ACLGroup.get("Admin"):removeObject("user.exo_web")
 		if self.m_ACLAccount then
 			removeAccount(self.m_ACLAccount)

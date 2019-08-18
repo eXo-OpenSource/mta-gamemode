@@ -5,9 +5,18 @@
 -- *  PURPOSE:     Barricade item class
 -- *
 -- ****************************************************************************
-ItemBarricade = inherit(Item)
-addRemoteEvents{"worldItemToggleBlinkingLight"}
+ItemBarricade = inherit(ItemWorld)
 
+function ItemBarricade:constructor()
+	self.m_WorldItemClass = BarricadeWorldItem
+end
+
+function ItemBarricade:destructor()
+end
+
+
+
+--[[
 function ItemBarricade:use(player)
 	if player:isFactionDuty() then
 		local result = self:startObjectPlacing(player,
@@ -19,7 +28,7 @@ function ItemBarricade:use(player)
 				addEventHandler("onClientBreakItem", self.m_WorldItem.m_Object, function()
 					source.m_Super:onDelete()
 				end)
-				if self:getModelId() == 1238 then --Cone 
+				if self:getModelId() == 1238 then --Cone
 					addEventHandler("worldItemToggleBlinkingLight", self.m_WorldItem.m_Object, function()
 						self:toggleBlinkingLight(source, client)
 					end)
@@ -45,7 +54,7 @@ function ItemBarricade:blink()
 
 			end
 		end
-	end 
+	end
 
 end
 
@@ -78,3 +87,4 @@ function ItemBarricade:removeFromWorld(player, worlditem, object)
 		self:toggleBlinkingLight(object, player)
 	end
 end
+]]

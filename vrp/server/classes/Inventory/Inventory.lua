@@ -139,11 +139,17 @@ function Inventory:getCurrentSize()
 	return size
 end
 
-function Inventory:save()
+function Inventory:save(sync)
 	if not self.m_IsDirty then
 		return false
 	end
-	local items = sql:asyncQueryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), self.m_Id)
+	local items
+
+	if sync then
+		items = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), self.m_Id)
+	else
+		items = sql:asyncQueryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), self.m_Id)
+	end
 	local changes = {
 		insert = {},
 		remove = {},
@@ -152,7 +158,7 @@ function Inventory:save()
 
 	local dbItems = {}
 	for k, v in pairs(items) do
-		dbItems[v.DatabaseId] = v
+		dbItems[v.Id] = v
 	end
 
 	for k, v in pairs(self.m_Items) do
