@@ -1174,6 +1174,10 @@
 
 	<vrpfile src="files/audio/vehicles/turbo.ogg" />
 
+	<!-- blackjack -->
+	<vrpfile src="files/images/Textures/BlackJack/sbmyst.jpg"/>
+	<vrpfile src="files/images/Textures/BlackJack/redwhite_stripe.jpg"/>
+	
 	<!-- ware-gamemode -->
 	<vrpfile src="files/images/Textures/Ware/waretex.jpg"/>
 	<vrpfile src="files/images/Textures/Ware/bomb.png"/>

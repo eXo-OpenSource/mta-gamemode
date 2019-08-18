@@ -7,17 +7,19 @@
 -- ****************************************************************************
 
 BlackJack = inherit(Object)
+BlackJack.DEFAULT_BETS = {1000, 5000, 10000, 20000, 50000}
 
 function BlackJack:constructor(player, object) 
 	self.m_BankAccountServer = BankServer.get("gameplay.blackjack")
 	self.m_Player = player 
-	self.m_Spectators = {}
-	self.m_Bets = {1000, 5000, 10000, 20000, 50000, 75000, 100000, 250000, 300000, 400000, 500000}
+	self.m_Spectators = {}	
 	self.m_Bet = 0
 	self.m_DealerHand = {}
 	self.m_PlayerHand = {}
 	self.m_Deck = BlackJackCards:new()
 	self.m_Object = object
+	self.m_Bets = object.bets
+
 	player:triggerEvent("BlackJack:start", self.m_Bets, false, self.m_Object)
 end
 
@@ -36,6 +38,7 @@ function BlackJack:destructor()
 	if not self.m_Object.m_Info then
 		self.m_Object.m_Info = ElementInfo:new(self.m_Object.infoObj, "Casino", .4, "DoubleDown", true)
 	end
+	self.m_Object.ped:setAnimation("casino", "cards_loop", -1, false, false, false, true)
 	self.m_Deck:delete()
 end
 
