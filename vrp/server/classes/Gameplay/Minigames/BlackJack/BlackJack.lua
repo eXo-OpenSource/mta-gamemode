@@ -49,6 +49,13 @@ function BlackJack:start(bet)
 	if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet, "BlackJack-Einsatz", "Gameplay", "BlackJack", {silent = true}) then
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then
+				player:triggerEvent("BlackJack:notify", "")
+			else 
+				self.m_Spectators[player] = nil
+			end
+		end
+		for player, k in pairs(self.m_Spectators) do 
+			if isValidElement(player, "player") then
 				player:triggerEvent("BlackJack:reset")
 			else 
 				self.m_Spectators[player] = nil
@@ -231,14 +238,14 @@ function BlackJack:insurance()
 	if isValidElement(self.m_Player, "player") then
 		if not self.m_PostFirstRound then 
 			if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet*0.5, "BlackJack-Einsatz (Insurance)", "Gameplay", "BlackJack", {silent = false}) then
-				if tonumber(self.m_DealerHand[1].Value) == 1 and tonumber(self.m_DealerHand[2].Value) == 10 then 
+				if (tonumber(self.m_DealerHand[1].Value) == 1 or tonumber(self.m_DealerHand[1].Value) >= 10) and (tonumber(self.m_DealerHand[2].Value) >= 10 or tonumber(self.m_DealerHand[2].Value) == 1) then 
 					self.m_InsuranceWon = true
 				end
 				self.m_Player:triggerEvent("BlackJack:insurance")
 			else 
 				self.m_Player:sendError(_("Du hast nicht genügend Geld für die Insurance!", self.m_Player))
 			end
-		end		
+		end
 	end
 end
 
@@ -338,7 +345,6 @@ function BlackJack:hit()
 		self.m_PlayerHand[#self.m_PlayerHand+1] = card
 		table.insert(sendPlayerCards, card)
 		self.m_PlayerValue = self:addValue(self.m_PlayerValue, card)
-		outputChatBox("hit")
 		self.m_Player:triggerEvent("BlackJack:draw", self.m_Bet, sendDealerCards, sendPlayerCards, false, self.m_PlayerValue, self.m_DealerValue)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then

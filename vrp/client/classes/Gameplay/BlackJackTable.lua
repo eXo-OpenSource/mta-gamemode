@@ -60,27 +60,30 @@ function BlackJackTable:onRender()
 		local ped = table:getData("BlackJackTable:ped") and isValidElement(table:getData("BlackJackTable:ped"), "ped") and table:getData("BlackJackTable:ped")
 		local x, y, z = getPedBonePosition(ped, 8)
 		local lx, ly = getElementPosition(localPlayer)
-		local th = dxGetFontHeight(1.4, "sans")
-		if getDistanceBetweenPoints2D(x, y, lx, ly) < 10 then
+		local dist = getDistanceBetweenPoints2D(x, y, lx, ly)
+		local distModifier = (0.7+ .3*(1/dist))
+		if dist < 1 then dist = 1 end
+		local th = dxGetFontHeight(1.4, "sans") * distModifier
+		if dist < 10 then
 			local sx, sy = getScreenFromWorldPosition(x, y, z+.4)
 			if isElementOnScreen(table) and sx and sy then
 				if table:getData("BlackJack:TableBet") then 
 					local text = ("Einsatz: $%s"):format(convertNumber(table:getData("BlackJack:TableBet")))
-					local tw = dxGetTextWidth(text, 1.4, "sans")
+					local tw = dxGetTextWidth(text, 1.4, "sans") * distModifier
 					
 					dxDrawBoxShape(sx-tw*0.55, sy-th*0.05, tw*1.1, th*1.1)
 					dxDrawBoxShape((sx-tw*0.55)+1, (sy-th*0.05)+1, tw*1.1, th*1.1, Color.Black)
-					dxDrawText(text, (sx-tw*0.5)+1, sy+1, sx+tw*0.5, sy, Color.Black, 1.4, "sans")
-					dxDrawText(text, sx-tw*0.5, sy, sx+tw*0.5, sy, Color.White, 1.4, "sans")
+					dxDrawText(text, (sx-tw*0.5)+1, sy+1, sx+tw*0.5, sy, Color.Black, 1.4 * distModifier, "sans")
+					dxDrawText(text, sx-tw*0.5, sy, sx+tw*0.5, sy, Color.White, 1.4 * distModifier, "sans")
 					
-					dxDrawText("Rechtsklick zum Zuschauen", (sx-tw*0.5)+1, (sy+th*1.1)+1, sx+tw*0.5, sy+th*1.1, Color.Black, 0.9, "sans", "center")
-					dxDrawText("Rechtsklick zum Zuschauen", sx-tw*0.5, sy+th*1.1, sx+tw*0.5, sy+th*1.1, Color.White, 0.9, "sans", "center")
+					dxDrawText("Rechtsklick zum Zuschauen", (sx-tw*0.5)+1, (sy+th*1.1)+1, sx+tw*0.5, sy+th*1.1, Color.Black, 0.9 * distModifier, "sans", "center")
+					dxDrawText("Rechtsklick zum Zuschauen", sx-tw*0.5, sy+th*1.1, sx+tw*0.5, sy+th*1.1, Color.White, 0.9 * distModifier, "sans", "center")
 				else 
-					local tw = dxGetTextWidth("Tisch frei", 1.4, "sans")
+					local tw = dxGetTextWidth("Tisch frei", 1.4, "sans") * distModifier
 					dxDrawBoxShape((sx-tw*0.55)+1, (sy-th*0.05)+1, tw*1.1, th*1.1, Color.Black)
 					dxDrawBoxShape(sx-tw*0.55, sy-th*0.05, tw*1.1, th*1.1)
-					dxDrawText(("Tisch frei"), (sx-tw*0.5)+1, sy+1, sx+tw*0.5, sy, Color.Black, 1.4, "sans")
-					dxDrawText(("Tisch frei"), sx-tw*0.5, sy, sx+tw*0.5, sy, Color.White, 1.4, "sans")
+					dxDrawText(("Tisch frei"), (sx-tw*0.5)+1, sy+1, sx+tw*0.5, sy, Color.Black, 1.4 *distModifier, "sans")
+					dxDrawText(("Tisch frei"), sx-tw*0.5, sy, sx+tw*0.5, sy, Color.White, 1.4 * distModifier, "sans")
 				end
 			end
 		end
