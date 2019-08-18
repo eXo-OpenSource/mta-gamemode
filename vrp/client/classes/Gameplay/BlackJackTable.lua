@@ -63,10 +63,10 @@ end
 function BlackJackTable:applyTexture(object)
 	local ped = object:getData("BlackJackTable:ped") 
 	if ped and isValidElement(ped, "ped") then
-		object.m_Ped = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {}, true)
+		object.m_Ped = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {}, true, true)
 		local cone = ped:getData("BlackJackPed:cone")
 		if cone and isValidElement(cone, "object") then
-			object.m_Cone = FileTextureReplacer:new(cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {}, true)
+			object.m_Cone = FileTextureReplacer:new(cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {}, true, true)
 		end
 	end
 end
@@ -95,8 +95,9 @@ function BlackJackTable:onRender()
 			local x, y, z = getPedBonePosition(ped, 8)
 			local lx, ly = getElementPosition(localPlayer)
 			local dist = getDistanceBetweenPoints2D(x, y, lx, ly)
-			local distModifier = (0.7+ .3*(1/dist))
 			if dist < 1 then dist = 1 end
+			local distModifier = (0.7+ .3*(1/dist))
+			
 			local th = dxGetFontHeight(1.4, "sans") * distModifier
 			if dist < 10 then
 				local sx, sy = getScreenFromWorldPosition(x, y, z+.4)
