@@ -135,6 +135,7 @@ end
 
 function BlackJackManager:Event_onStart(player, object) 
 	if not self.m_Players[player] then
+		player:setFrozen(true)
 		self.m_Players[player] = BlackJack:new(player, object)
 		self.m_OccupiedTables[object] = player
 		object.ped:setAnimation("casino", "slot_wait", -1, false, false, false, true)
@@ -207,10 +208,10 @@ function BlackJackManager:createTable(pos, rot, bets, id)
 	self.m_Tables[obj] = true
 	obj:setData("BlackJackTable:ped", obj.ped, true)
 	obj.ped.pone = createObject(1238, obj.ped:getPosition())
-	obj.ped.pone:setScale(0.5)
 	obj.ped:setData("BlackJackPed:cone", obj.ped.pone, true)
-	exports.bone_attach:attachElementToBone(obj.ped.pone, obj.ped, 1, 0.02, 0.01, 0.26, 10, 0)
-
+	obj.ped.pone:setScale(0.6, 0.65, 0.6)
+	exports.bone_attach:attachElementToBone(obj.ped.pone, obj.ped, 1, 0.02, 0.05, 0.29, 3, 0, 90)
+	
 	for k, p in ipairs(getElementsByType("player")) do 
 		p:triggerEvent("BlackJack:sendTableObject", obj)
 	end
