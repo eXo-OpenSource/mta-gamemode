@@ -117,7 +117,7 @@ function BlackJackTable:onRender()
 						local tw = dxGetTextWidth("Tisch frei", 1.4, "sans") * distModifier
 						dxDrawBoxShape((sx-tw*0.55)+1, (sy-th*0.05)+1, tw*1.1, th*1.1, Color.Black)
 						dxDrawBoxShape(sx-tw*0.55, sy-th*0.05, tw*1.1, th*1.1)
-							dxDrawText(("Tisch frei"), (sx-tw*0.5)+1, sy+1, sx+tw*0.5, sy, Color.Black, 1.4 *distModifier, "sans")
+						dxDrawText(("Tisch frei"), (sx-tw*0.5)+1, sy+1, sx+tw*0.5, sy, Color.Black, 1.4 *distModifier, "sans")
 						dxDrawText(("Tisch frei"), sx-tw*0.5, sy, sx+tw*0.5, sy, Color.White, 1.4 * distModifier, "sans")
 					end
 				end

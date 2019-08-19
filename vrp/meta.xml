@@ -228,6 +228,10 @@
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGame.lua" type="server"/>
 
 
+	<script src="server/classes/Gameplay/Minigames/CasinoWheel/CasinoWheelManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/CasinoWheel/CasinoWheel.lua" type="server"/>
+
+
 	<script src="server/classes/Gameplay/Minigames/BlackJack/BlackJackManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/BlackJack/BlackJack.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/BlackJack/BlackJackCards.lua" type="server"/>
@@ -1089,6 +1093,8 @@
 	<script src="client/classes/Gameplay/BlackJack.lua" type="client"/>
 	<script src="client/classes/Gameplay/BlackJackTable.lua" type="client"/>
 	<script src="client/classes/Gameplay/BlackJackHelp.lua" type="client"/>
+	<script src="client/classes/Gameplay/CasinoWheel.lua" type="client"/>
+	<script src="client/classes/Gameplay/CasinoWheelBet.lua" type="client"/>
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
@@ -1544,6 +1550,8 @@
 	<vrpfile src="files/images/BlackJack/dealer_e_open.png" />
 	<vrpfile src="files/images/BlackJack/dealer_e_close.png" />
 
+	<!-- Casino Wheel -->
+	<vrpfile src="files/images/CasinoWheel/table.png" />
 
 	<!-- Card Deck -->
 	<vrpfile src="files/images/CardDeck/back.png"/>
