@@ -187,6 +187,7 @@ function Core:ready() --onClientResourceStart
 	FileModdingHelper:new()
 	PoliceAnnouncements:new()
 	BlackJackTable:new()
+	CasinoWheel:new()
 end
 
 function Core:afterLogin()

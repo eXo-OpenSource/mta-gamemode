@@ -35,6 +35,9 @@ function TextureReplacer:constructor(element, textureName, options, force, force
 	else
 		self.m_LoadingMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
 	end
+	if self.m_ForceMaximum then 
+		self.m_LoadingMode = TEXTURE_LOADING_MODE.STREAM
+	end
 
 	self.m_Active      = true
 	self.m_OnElementDestroy   = bind(delete, self)
@@ -44,13 +47,7 @@ function TextureReplacer:constructor(element, textureName, options, force, force
 	if self.m_Element then
 		assert(isElement(element), "Bad Argument @ TextureReplacer:constructor #1")
 		addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestroy, false)
-		if forceMaximum then 
-			addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
-			addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
-			if isElementStreamedIn(self.m_Element) then
-				self:onStreamIn()
-			end
-		elseif self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+		if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 			addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 			addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 			if isElementStreamedIn(self.m_Element) then
@@ -76,7 +73,7 @@ function TextureReplacer:destructor()
 	-- Remove events
 	if self.m_Element and isElement(self.m_Element) then -- does the element still exist?
 		removeEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestroy)
-		if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM or self.m_ForceMaximum then
+		if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 			removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 			removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 		end
@@ -86,9 +83,6 @@ end
 
 function TextureReplacer:onStreamIn()
 	if not self.m_Active then return false end
-	if self.m_ForceMaximum then 
-		return self:addToLoadingQeue()
-	end
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		self:addToLoadingQeue()
 	end
@@ -96,9 +90,6 @@ end
 
 function TextureReplacer:onStreamOut()
 	if not self.m_Active then return false end
-	if self.m_ForceMaximum then 
-		return self:unload()
-	end
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		self:unload()
 	end
@@ -136,9 +127,8 @@ function TextureReplacer:detach()
 end
 
 function TextureReplacer:setLoadingMode(loadingMode)
-	if not self.m_Force then
+	if not self.m_Force and not self.m_ForceMaximum then
 		if loadingMode == self.m_LoadingMode then return false end
-		if self.m_ForceMaximum then return end
 		self.m_Active = true
 		self:unload()
 
@@ -147,6 +137,7 @@ function TextureReplacer:setLoadingMode(loadingMode)
 				removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 				removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 			end
+
 			if loadingMode == TEXTURE_LOADING_MODE.STREAM then
 				addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 				addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
@@ -202,7 +193,7 @@ end
 
 --// Queue
 function TextureReplacer:addToLoadingQeue()
-	if not self.m_Force then
+	if not self.m_Force and not self.m_ForceMaximum then
 		if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", FILE_TEXTURE_DEFAULT_STATE) then
 			self:unload()
 			return false
@@ -274,17 +265,19 @@ function TextureReplacer.forceReload()
 			if instanceof(instance, TextureReplacer, false) then
 				if instance.m_Element then
 					instance:unload()
-					if instance.m_ForceMaximum then 
-						if isElementStreamedIn(instance.m_Element) then
-							return instance:addToLoadingQeue()
+					if not instance.m_ForceMaximum then
+						if instance.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+							if isElementStreamedIn(instance.m_Element) then
+								instance:onStreamIn()
+							end
+						elseif instance.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
+							instance:addToLoadingQeue()
 						end
-					end
-					if instance.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+					else 
+						instance:unload() 
 						if isElementStreamedIn(instance.m_Element) then
 							instance:onStreamIn()
 						end
-					elseif instance.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
-						instance:addToLoadingQeue()
 					end
 				end
 			end
