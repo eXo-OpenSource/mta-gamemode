@@ -37,7 +37,7 @@ function ItemFood:use()
 	local itemSettings = ItemFood.Settings[self:getTechnicalName()]
 
 	player:meChat(true, ""..itemSettings["Text"].."!")
-	StatisticsLogger:getSingleton():addHealLog(client, itemSettings["Health"], "Item "..self:getTechnicalName())
+	StatisticsLogger:getSingleton():addHealLog(player, itemSettings["Health"], "Item "..self:getTechnicalName())
 
 	player.m_IsConsuming = true
 	local block, animation, time = unpack(itemSettings["Animation"])

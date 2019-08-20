@@ -5,6 +5,123 @@
 -- *  PURPOSE:     Alcohol Item Super class
 -- *
 -- ****************************************************************************
+ItemAlcohol = inherit(ItemNew)
+
+ItemAlcohol.Settings = {
+	beer = {
+		Model = 1486,
+		Attach = {12, -0.05, 0.05, 0.09, 0, -90, 0},
+		Text = "trinkt ein Bier",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 0.25
+	},
+	whiskey = {
+		Model = 1455,
+		Text = "trinkt einen Whiskey",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 1.2
+	},
+	sexOnTheBeach = {
+		Model = 1455,
+		Text = "trinkt einen Sex on the Beach",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 0.5
+	},
+	pinaColada = {
+		Model = 1455,
+		Text = "trinkt einen Pina Colada",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 0.7
+	},
+	monster = {
+		Model = 1455,
+		Text = "trinkt einen Pina Colada",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 2.1
+	},
+	shot = {
+		Model = 1455,
+		Text = "trinkt einen Pina Colada",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 2.1
+	},
+	cubaLibre = {
+		Model = 1455,
+		Text = "trinkt einen Cuba Libre",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 0.8
+	},
+	gluvine = {
+		Model = 1455,
+		Text = "trinkt einen Glühwein",
+		Animation = {"BAR", "dnk_stndM_loop", 4500},
+		Alcohol = 0.4
+	}
+}
+
+
+function ItemAlcohol:use()
+	local player = self.m_Inventory:getPlayer()
+
+	if not player then return false end
+	if player.isTasered then return false end
+	if player.m_IsConsuming then player:sendError(_("Du konsumierst bereits etwas!", player)) return false end
+	if player:isInGangwar() and player:getArmor() == 0 then player:sendError(_("Du hast keine Schutzweste mehr!", player)) return false end
+	if JobBoxer:getSingleton():isPlayerBoxing(player) == true then player:sendError(_("Du darfst dich während des Boxkampfes nicht heilen!", player)) return false end
+	if math.round(math.abs(player.velocity.z*100)) ~= 0 and not player.vehicle then player:sendError(_("Du kannst in der Luft nichts trinken!", player)) return false end
+
+	local itemSettings = ItemAlcohol.Settings[self:getTechnicalName()]
+
+	player:meChat(true, ""..itemSettings.Text.."!")
+
+	if itemSettings.Health then
+		StatisticsLogger:getSingleton():addHealLog(player, itemSettings.Health, "Item "..self:getTechnicalName())
+	end
+
+	player.m_IsConsuming = true
+	local block, animation, time = unpack(itemSettings.Animation)
+	local item = nil
+	if not player.vehicle then
+		player:setAnimation(block, animation, time, true, false, false)
+
+		if itemSettings.Model and itemSettings.Model ~= 0 then
+			item = createObject(itemSettings.Model, 0, 0, 0)
+			item:setDimension(player:getDimension())
+			item:setInterior(player:getInterior())
+			if itemSettings.ModelScale then item:setScale(itemSettings.ModelScale) end
+			if itemSettings.Attach then
+				exports.bone_attach:attachElementToBone(item, player, unpack(itemSettings.Attach))
+			else
+				exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
+			end
+		end
+	end
+
+	if itemSettings.CustomEvent then
+		triggerClientEvent(itemSettings.CustomEvent, player, item)
+	end
+
+	setTimer(
+		function()
+			if isElement(item) then item:destroy() end
+			if not isElement(player) or getElementType(player) ~= "player" then return false end
+
+			if itemSettings.Health then
+				player:setHealth(player:getHealth() + itemSettings.Health)
+			end
+
+			player:incrementAlcoholLevel(itemSettings.Alcohol)
+
+			player.m_IsConsuming = false
+			player:setAnimation()
+		end, time, 1
+	)
+
+	return true, true
+end
+
+
+--[[
 ItemAlcohol = inherit(Item)
 
 ItemAlcohol.Settings = {
@@ -65,3 +182,4 @@ function ItemAlcohol:use(player)
 	end, time, 1)
 
 end
+]]
