@@ -182,6 +182,7 @@ function BlackJackManager:createTable(pos, rot, bets, id)
 	obj.infoObj:setCollisionsEnabled(false)
 	obj.infoObj:setAlpha(0)
     addEventHandler("onElementClicked", obj, function(button, state, player)
+		if not player.m_LoggedIn then return end
 		if self.m_Players[player] then return end
         if Vector3(source:getPosition()-player:getPosition()):getLength() > 5 then return end
 		if button == "left" and state == "up" then
@@ -194,6 +195,7 @@ function BlackJackManager:createTable(pos, rot, bets, id)
 		end
 	end)
     addEventHandler("onElementClicked", obj.ped, function(button, state, player)
+		if not player.m_LoggedIn then return end
 		if self.m_Players[player] then return end
         if Vector3(source.obj:getPosition()-player:getPosition()):getLength() > 5 then return end
 		if button == "left" and state == "up" then

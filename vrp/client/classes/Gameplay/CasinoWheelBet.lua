@@ -29,6 +29,8 @@ function CasinoWheelBet:constructor()
 
 
     self.m_InfoLabel = GUILabel:new(49, 57, 370, 30, "", self):setFont(VRPFont(24))
+    
+    self.m_WinLabel = GUILabel:new(374, 25, 52, 38, "", self):setFont(VRPFont(32, Fonts.Digital)):setAlign("center", "center"):setColor(Color.Yellow)
     self.m_BetLabel = GUILabel:new(49, 270, 370, 30, "", self):setFont(VRPFont(24))
 
     self.m_BetButton = GUIButton:new(458, 280, 98, 30, "Setzen", self):setAlternativeColor(tocolor(11,54,42)):setBackgroundColor(Color.White)
@@ -59,13 +61,26 @@ function CasinoWheelBet:constructor()
     self:createFields()
 end
 
-function CasinoWheelBet:reset() 
+function CasinoWheelBet:reset(win, turntime) 
     self:clearTokens()
     self.m_BetButton:setVisible(true)
     self.m_BetButton:setEnabled(true)
 
     self.m_RedrawButton:setVisible(false)
     self.m_RedrawButton:setEnabled(false)
+    if win then 
+        if self.m_CountDown then 
+            self.m_CountDown:delete()
+        end
+        self.m_CountDownTimer = setTimer(function() self.m_CountDown = Countdown:new( (turntime/1000)-4, "Dreh") end, 4000, 1)
+        if tonumber(win) == 0 then
+            self.m_WinLabel:setText("40")
+        else 
+            self.m_WinLabel:setText(win)
+        end
+    else 
+        self.m_WinLabel:setText("")
+    end
 end
 
 function CasinoWheelBet:activateRedraw() 
@@ -92,15 +107,14 @@ function CasinoWheelBet:destructor()
     GUIForm.destructor(self)
     CasinoWheel:getSingleton():stop()
     setCameraTarget(localPlayer)
+    if self.m_CountDown then 
+        self.m_CountDown:delete()
+    end
+    if self.m_CountDownTimer and isTimer(self.m_CountDownTimer) then 
+        killTimer(self.m_CountDownTimer)
+    end
 end
 
-function CasinoWheelBet:updateRenderTarget()
-	self.m_Circle:setRotation(-self.m_CircleRot)
-	self.m_CurrentNumber = CasinoWheelBet_NUMBERS[math.floor(self.m_CircleRot%360/9.73)+1]
-
-	self.m_CurrentLabel:setText(self.m_CurrentNumber)
-	self.m_CurrentRect:setColor(self.m_Color[self.m_CurrentNumber])
-end
 
 function CasinoWheelBet:onSpinDone()
     triggerServerEvent("CasinoWheelBetOnSpinDone", localPlayer, clientNumber)
@@ -109,33 +123,6 @@ function CasinoWheelBet:onSpinDone()
 		 self:clearTokens()
 	end, 2000, 1)
 end
-
-function CasinoWheelBet:spin()
-    if self.m_TableLocked then
-        ErrorBox:new(_"Der Tisch ist gesperrt!")
-        return
-    end
-	if self:calcBet() == 0 then
-		ErrorBox:new(_"Du hast nichts gesetzt!")
-        return
-	end
-	if localPlayer:getMoney() < self:calcBet() then
-		ErrorBox:new(_"Du hast nicht genug Geld dabei!")
-        return
-	end
-	self.m_TableLocked = true
-    triggerServerEvent("CasinoWheelBetSpin", root, self.m_PlacedToken)
-end
-
-function CasinoWheelBet:cheatSpin(value)
-    if self.m_TableLocked then
-        ErrorBox:new(_"Der Tisch ist gesperrt!")
-        return
-    end
-	self.m_TableLocked = true
-    triggerServerEvent("CasinoWheelBetCheatSpin", root, self.m_PlacedToken, value)
-end
-
 
 function CasinoWheelBet:createFields() 
     self.m_Fields = {}
@@ -214,7 +201,7 @@ function CasinoWheelBet:placeToken(field)
     self.m_PlacedToken[field][color] =  self.m_PlacedToken[field][color] + 1
     self:updateBetGui()
     self.m_InfoLabel:setText(("%s - Du hast auf das Feld %s gesetzt!"):format(field, toMoneyString(self:calcBetOnField(field))))
-    ShortMessage:new(_("Du hast deinen %d. %sen Token auf das %s gesetzt!", self.m_PlacedToken[field][color], CasinoWheelBet.ColorNames[color], field), "Glücksrad")
+    --ShortMessage:new(_("Du hast deinen %d. %sen Token auf das %s gesetzt!", self.m_PlacedToken[field][color], CasinoWheelBet.ColorNames[color], field), "Glücksrad")
     setTimer(function()
         self:attachTokenToMouse(color)
     end, 75, 1)
@@ -329,6 +316,7 @@ function CasinoWheelBet:createTokens()
 end
 
 function CasinoWheelBet:submit() 
+    self.m_WinLabel:setText("")
     if self.m_PlacedToken and self.m_PlacedToken ~= {} then
         triggerServerEvent("CasinoWheel:onPlayerSubmitBet", localPlayer, self.m_PlacedToken)
     end

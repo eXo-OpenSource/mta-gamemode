@@ -73,6 +73,7 @@ function CasinoWheelManager:create(pos, rot)
 		instance.m_Ped:setData("clickable", true, true)
 
     	addEventHandler("onElementClicked", instance:getObject(), function(button, state, player)
+			if not player.m_LoggedIn then return end
 			if self.m_Players[player] then return end
         	if Vector3(source:getPosition()-player:getPosition()):getLength() > 5 then return end
 			if button == "left" and state == "up" then
@@ -82,6 +83,7 @@ function CasinoWheelManager:create(pos, rot)
 			end
 		end)
 		addEventHandler("onElementClicked", instance.m_Ped, function(button, state, player)
+			if not player.m_LoggedIn then return end
 			if self.m_Players[player] then return end
         	if Vector3(source:getPosition()-player:getPosition()):getLength() > 5 then return end
 			if button == "left" and state == "up" then
