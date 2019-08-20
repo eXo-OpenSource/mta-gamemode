@@ -51,10 +51,10 @@ function CasinoWheel:Event_onClickWheel(obj)
 	end
 end
 
-function CasinoWheel:Event_onReset() 
+function CasinoWheel:Event_onReset(win, turntime) 
 	if self.m_CurrentWheel and isValidElement(self.m_CurrentWheel, "object") then
 		if CasinoWheelBet:isInstantiated() then 
-			CasinoWheelBet:getSingleton():reset()
+			CasinoWheelBet:getSingleton():reset(win, turntime)
 		end
 	end
 end
@@ -77,6 +77,11 @@ end
 
 function CasinoWheel:Event_onSpinWheel(obj, clicker, time) 
 	if self.m_CurrentWheel == obj then
+		if CasinoWheelBet:isInstantiated() then 
+			if CasinoWheelBet:getSingleton().m_CountDown then
+				CasinoWheelBet:getSingleton().m_CountDown:delete()
+			end
+		end
 		if CasinoWheelBet:isInstantiated() then 
 			self:moveCamera(self.m_CurrentWheel, true)
 		else 
@@ -211,6 +216,7 @@ end
 
 
 function CasinoWheel:onRender() 
+	if not localPlayer.m_LoggedIn then return end
 	for obj, k in pairs(self.m_Streamed) do 
 		if isValidElement(obj, "object") then
 			local ped = obj:getData("CasinoWheel:ped") and isValidElement(obj:getData("CasinoWheel:ped"), "ped") and obj:getData("CasinoWheel:ped")

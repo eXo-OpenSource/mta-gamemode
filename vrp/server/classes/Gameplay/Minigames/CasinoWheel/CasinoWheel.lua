@@ -8,7 +8,7 @@
 
 CasinoWheel = inherit(Object)
 CasinoWheel.Model = 1895
-CasinoWheel.TurnTime = 30000 --ms
+CasinoWheel.TurnTime = 45000 --ms
 CasinoWheel.AnglePerField = 360 / 54
 CasinoWheel.FieldValue = 
 {
@@ -79,8 +79,9 @@ function CasinoWheel:constructor(pos, rot)
 	self.m_ClickAlternator = false
 	self.m_Ped = NPC:new(142, pos.x, pos.y, pos.z, rot.z)
 	self.m_Ped.m_Obj = self.m_Object
-	self.m_Ped:setPosition((self.m_Ped.position + self.m_Ped.matrix:getForward()*-0.5))
-	self.m_Ped:setRotation(Vector3(rot.x, rot.y, rot.z+(180+20)))
+	self.m_Ped:setPosition((self.m_Ped.position + self.m_Ped.matrix:getForward()*-0.44))
+	self.m_Ped:setPosition(self.m_Ped.position + self.m_Ped.matrix:getRight()*0.2)
+	self.m_Ped:setRotation(Vector3(rot.x, rot.y, rot.z+(180+25)))
 	self.m_Ped:setFrozen(true)
 	self.m_Ped:setImmortal(true) 
 	
@@ -95,7 +96,7 @@ function CasinoWheel:constructor(pos, rot)
 
 	self.m_Players = {}
 	self.m_Bets = {}
-	self.m_Step = 1
+	self.m_Step = 0
 
 	self:pulse()
 	self.m_PulseTime = setTimer(bind(self.pulse, self), CasinoWheel.TurnTime / 6 , 0)
@@ -119,6 +120,7 @@ function CasinoWheel:spin()
 		local targetRot = CasinoWheel.AnglePerField * (value + spin)
 		local leftRight = math.random(-2, 2)
 		local spinTime = math.random(8000, 10000)
+		self.m_LastSpinTime = spinTime
 		leftRight = leftRight/10*CasinoWheel.AnglePerField
 		self.m_Object:setRotation(self.m_OriginalRotation.x, 0, self.m_OriginalRotation.z)
 		self.m_Object:move(spinTime, self.m_Object.position.x, self.m_Object.position.y, self.m_Object.position.z, 0, targetRot+leftRight, 0, "OutQuad")
@@ -171,14 +173,14 @@ function CasinoWheel:pay()
 		self.m_Bets[player] = nil
 	end
 	for player, k in pairs(self.m_Players) do 
-		player:triggerEvent("CasinoWheel:reset")
+		player:triggerEvent("CasinoWheel:reset", self.m_WinValue, CasinoWheel.TurnTime - self.m_LastSpinTime)
 	end
 end
 
 function CasinoWheel:redrawBet(player, isStop) 
 	if self.m_Players[player] then 
 		local betAmount = self:calcBet(player)
-		if self.m_BankAccountServer:transferMoney(player, betAmount, "Glücksrad-Rückerstattung", "Gameplay", "Glücksrad-WOF", {silent = false}) then
+		if self.m_BankAccountServer:transferMoney(player, betAmount, "Glücksrad-Rückerstattung", "Gameplay", "Glücksrad-WOF", {silent = true}) then
 			self.m_Bets[player] = nil
 			if not isStop then
 				player:triggerEvent("CasinoWheel:reset")
@@ -207,7 +209,7 @@ function CasinoWheel:pulse()
 	self.m_Object:setData("CasinoWheel:WheelInfo", ("Nächster Dreh in %s Sekunden!"):format(math.floor((CasinoWheel.TurnTime - timePerStep*self.m_Step)/1000)), true)
 	if self.m_Step == 6 then 
 		self.m_Object:setData("CasinoWheel:WheelInfo", ("Nächster Dreh in %s Sekunden!"):format(math.floor(CasinoWheel.TurnTime/1000)), true)
-		self.m_Step = 1
+		self.m_Step = 0
 		self:spin()
 	end
 end
@@ -228,7 +230,8 @@ function CasinoWheel:calcBetWinOnField(player, field)
 		local total = 0
     	if self.m_Bets[player][field] then
     	    for color, amount in pairs(self.m_Bets[player][field]) do
-    	        total = total + ROULETTE_TOKENS[color] * amount * tonumber(field)
+				--outputChatBox("einsatz" .. ROULETTE_TOKENS[color] * amount.. " win "..   ROULETTE_TOKENS[color] * amount *tonumber(field))
+    	        total = total +  ROULETTE_TOKENS[color] * amount + (ROULETTE_TOKENS[color] * amount * tonumber(field))
     	    end
     	end
     	return total

@@ -89,6 +89,7 @@ end
 
 
 function BlackJackTable:onRender() 
+	if not localPlayer.m_LoggedIn then return end
 	for obj, k in pairs(self.m_Streamed) do 
 		if isValidElement(obj, "object") then
 			local ped = obj:getData("BlackJackTable:ped") and isValidElement(obj:getData("BlackJackTable:ped"), "ped") and obj:getData("BlackJackTable:ped")
