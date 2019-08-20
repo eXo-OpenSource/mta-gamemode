@@ -68,10 +68,14 @@ CasinoWheel.FieldValue =
 	1,
 }
 CasinoWheel.Fields = #CasinoWheel.FieldValue
-
-function CasinoWheel:constructor(pos, rot) 
+CasinoWheel.MaximumBet = 50000
+function CasinoWheel:constructor(pos, rot, maximumBet, spinTime, id) 
 	
 	self.m_BankAccountServer = BankServer.get("gameplay.casinowheel")
+	self.m_MaximumBet = maximumBet or CasinoWheel.MaximumBet
+	self.m_SpinTime = spinTime or CasinoWheel.TurnTime
+	self.m_Position = pos
+	self.m_Id = id or 0
 	self.m_Object = createObject(self.Model, Vector3(pos.x, pos.y, pos.z+0.5), rot)
 	self.m_Object:setDoubleSided(true)
 
@@ -99,7 +103,7 @@ function CasinoWheel:constructor(pos, rot)
 	self.m_Step = 0
 
 	self:pulse()
-	self.m_PulseTime = setTimer(bind(self.pulse, self), CasinoWheel.TurnTime / 6 , 0)
+	self.m_PulseTime = setTimer(bind(self.pulse, self), self.m_SpinTime / 6 , 0)
 	
 	
 	self.m_OriginalRotation = self.m_Object.rotation
@@ -150,6 +154,10 @@ function CasinoWheel:submitBet(player, bet)
 	if not self.m_Bets[player] then
 		self.m_Bets[player] = bet
 		local amount = self:calcBet(player)
+		if amount > self.m_MaximumBet then 
+			self.m_Bets[player] = nil
+			return player:sendError(_("Du kannst an diesem Rad maximal $%s einsetzen!", player, convertNumber(self.m_MaximumBet)))
+		end
 		if player:transferMoney(self.m_BankAccountServer, amount, "Glücksrad-Einsatz", "Gameplay", "Glücksrad-WOF", {silent = false}) then
 			self.m_Bets[player] = bet
 			player:triggerEvent("CasinoWheel:acceptBet")
@@ -173,7 +181,7 @@ function CasinoWheel:pay()
 		self.m_Bets[player] = nil
 	end
 	for player, k in pairs(self.m_Players) do 
-		player:triggerEvent("CasinoWheel:reset", self.m_WinValue, CasinoWheel.TurnTime - self.m_LastSpinTime)
+		player:triggerEvent("CasinoWheel:reset", self.m_WinValue, self.m_SpinTime - self.m_LastSpinTime)
 	end
 end
 
@@ -205,10 +213,10 @@ end
 
 function CasinoWheel:pulse() 
 	self.m_Step = self.m_Step + 1
-	local timePerStep = CasinoWheel.TurnTime / 6
-	self.m_Object:setData("CasinoWheel:WheelInfo", ("Nächster Dreh in %s Sekunden!"):format(math.floor((CasinoWheel.TurnTime - timePerStep*self.m_Step)/1000)), true)
+	local timePerStep = self.m_SpinTime / 6
+	self.m_Object:setData("CasinoWheel:WheelInfo", ("Nächster Dreh in %s Sekunden!"):format(math.floor((self.m_SpinTime - timePerStep*self.m_Step)/1000)), true)
 	if self.m_Step == 6 then 
-		self.m_Object:setData("CasinoWheel:WheelInfo", ("Nächster Dreh in %s Sekunden!"):format(math.floor(CasinoWheel.TurnTime/1000)), true)
+		self.m_Object:setData("CasinoWheel:WheelInfo", ("Nächster Dreh in %s Sekunden!"):format(math.floor(self.m_SpinTime/1000)), true)
 		self.m_Step = 0
 		self:spin()
 	end
@@ -230,7 +238,6 @@ function CasinoWheel:calcBetWinOnField(player, field)
 		local total = 0
     	if self.m_Bets[player][field] then
     	    for color, amount in pairs(self.m_Bets[player][field]) do
-				--outputChatBox("einsatz" .. ROULETTE_TOKENS[color] * amount.. " win "..   ROULETTE_TOKENS[color] * amount *tonumber(field))
     	        total = total +  ROULETTE_TOKENS[color] * amount + (ROULETTE_TOKENS[color] * amount * tonumber(field))
     	    end
     	end

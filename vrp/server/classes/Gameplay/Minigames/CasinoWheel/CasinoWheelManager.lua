@@ -20,7 +20,41 @@ function CasinoWheelManager:constructor()
 	addEventHandler("CasinoWheel:onPlayerRedrawBet", root, bind(self.Event_onPlayerRedrawBet, self))
 	addEventHandler("CasinoWheel:onPlayerClose", root, bind(self.Event_onPlayerRedrawBet, self))
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.Event_PlayerQuit, self))
+	self:load()
 end
+
+function CasinoWheelManager:load() 
+	sql:queryExec(
+	"CREATE TABLE IF NOT EXISTS ??_casino_wheels (" ..
+	"`Id` INT NOT NULL AUTO_INCREMENT," ..
+	"`X` FLOAT NOT NULL DEFAULT '0'," ..
+	"`Y` FLOAT NOT NULL DEFAULT '0'," ..
+	"`Z` FLOAT NOT NULL DEFAULT '0'," ..
+	"`Rz` FLOAT NOT NULL DEFAULT '0'," ..
+	"`TurnTime` INT NULL," ..
+	"`MaximumBet` FLOAT NULL," ..
+	"`Date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," ..
+	"PRIMARY KEY (`Id`)" ..
+	")	COLLATE='latin1_swedish_ci' ENGINE=InnoDB;", sql:getPrefix())
+
+	local result = sql:queryFetch("SELECT * FROM ??_casino_wheels", sql:getPrefix())
+	for k, row in pairs(result) do 
+		self:create(Vector3(row.X, row.Y, row.Z), Vector3(0, 0, row.Rz), row.MaximumBet, row.TurnTime, row.Id)
+	end
+end
+
+function CasinoWheelManager:destructor() 
+	for object, instance in pairs(self.m_Map) do 
+		if object and isValidElement(object, "object") then 
+			if not instance.m_Id or instance.m_Id == 0 then 
+				sql:queryExec("INSERT INTO ??_casino_wheels (X, Y, Z, Rz, MaximumBet, TurnTime) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), instance.m_Position.x, instance.m_Position.y, instance.m_Position.z, object.rotation.z, instance.m_MaximumBet, instance.m_SpinTime)
+			else 
+				sql:queryExec("UPDATE ??_casino_wheels SET MaximumBet =?, TurnTime=? WHERE Id =?", sql:getPrefix(), instance.m_MaximumBet, instance.m_SpinTime, instance.m_Id)
+			end
+		end
+	end
+end
+
 
 function CasinoWheelManager:Event_onPlayerRequestMap()
 	client:triggerEvent("CasinoWheel:sendTableObjects", self.m_Map)
@@ -61,9 +95,9 @@ function CasinoWheelManager:Event_onPlayerRedrawBet()
 end
 
 
-function CasinoWheelManager:create(pos, rot)
+function CasinoWheelManager:create(pos, rot, maximum, spin, id)
 	if pos and rot then
-		local instance = CasinoWheel:new(pos, rot) 
+		local instance = CasinoWheel:new(pos, rot, maximum, spin, id) 
 		self.m_Map[instance:getObject()] = instance
 			
 		for k, p in ipairs(getElementsByType("player")) do 
@@ -96,6 +130,3 @@ function CasinoWheelManager:create(pos, rot)
 	end
 end
 
-function CasinoWheelManager:destructor() 
-
-end

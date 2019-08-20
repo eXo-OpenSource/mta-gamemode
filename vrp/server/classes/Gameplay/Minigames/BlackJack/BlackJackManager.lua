@@ -43,7 +43,7 @@ function BlackJackManager:load()
 	"`X` FLOAT NOT NULL DEFAULT '0'," ..
 	"`Y` FLOAT NOT NULL DEFAULT '0'," ..
 	"`Z` FLOAT NOT NULL DEFAULT '0'," ..
-	"`Rx` FLOAT NOT NULL DEFAULT '0'," ..
+	"`Rz` FLOAT NOT NULL DEFAULT '0'," ..
 	"`Bets` JSON NULL," ..
 	"`Date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," ..
 	"PRIMARY KEY (`Id`)" ..
@@ -61,7 +61,7 @@ function BlackJackManager:destructor()
 	for obj, bool in pairs(self.m_Tables) do 
 		if isValidElement(obj, "object") then 
 			if not obj.Id or obj.Id == 0 then 
-				sql:queryExec("INSERT INTO ??_blackjack_tables (X, Y, Z, Rx, Bets) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), obj.position.x, obj.position.y, obj.position.z, obj.rotation.z, toJSON(obj.bets))
+				sql:queryExec("INSERT INTO ??_blackjack_tables (X, Y, Z, Rz, Bets) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), obj.position.x, obj.position.y, obj.position.z, obj.rotation.z-180, toJSON(obj.bets))
 			else 
 				sql:queryExec("UPDATE ??_blackjack_tables SET Bets =? WHERE Id =?", sql:getPrefix(), obj.bets and toJSON(obj.bets), obj.Id)
 			end
