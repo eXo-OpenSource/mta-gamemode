@@ -72,7 +72,7 @@ function CasinoWheelBet:reset(win, turntime)
         if self.m_CountDown then 
             self.m_CountDown:delete()
         end
-        self.m_CountDownTimer = setTimer(function() self.m_CountDown = Countdown:new( (turntime/1000)-4, "Dreh") end, 4000, 1)
+        self.m_CountDownTimer = setTimer(function() self.m_CountDown = Countdown:new( (turntime/1000)-4, "Nächster Dreh") end, 4000, 1)
         if tonumber(win) == 0 then
             self.m_WinLabel:setText("40")
         else 
