@@ -238,7 +238,7 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 	if target:hasTemporaryStorage() then player:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", player)) return end
 
 	local weaponSlot = getSlotFromWeapon(weaponId)
-	if player:getWeapon(weaponSlot) > 0 then
+	if player:getWeapon(weaponSlot) == weaponId then
 		if player:getTotalAmmo(weaponSlot) >= amount then
 			if target:getMoney() >= money then
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
