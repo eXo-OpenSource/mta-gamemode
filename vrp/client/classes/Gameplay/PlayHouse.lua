@@ -11,7 +11,7 @@ PlayHouse.TexturePath = "files/images/Textures/Spielbunker"
 
 addRemoteEvents{"PlayHouse:resetWeatherTime"}
 function PlayHouse:constructor() 
-	self.m_ColShape = createColRectangle(452.46, 476.06, 1045.81,  120, 60, 40)
+	self.m_ColShape = createColCuboid(452.46, 476.06, 1045.81,  120, 60, 40)
 	self.m_ColShape:setInterior(12)
 	self.m_Textures = {}
 	self.m_Lights = {}
@@ -132,8 +132,7 @@ function PlayHouse:Event_onHit(element, dim)
 		--self:createLight()
 
 		setWeather(1)
-		setTimer(setTime, 1000, 3, 20, 0)
-		setMinuteDuration(0)
+		self.m_TimeSetter = setTimer(setTime, 60000, 0, 20, 0)
 		addEventHandler("onClientClick", root, self.m_ClickBind)
 		self.m_AnimTimer = 
 		setTimer(function() 
@@ -175,6 +174,9 @@ function PlayHouse:Event_onLeave(element)
 		removeEventHandler("onClientClick", root, self.m_ClickBind)
 		if self.m_AnimTimer and isTimer(self.m_AnimTimer) then 
 			killTimer(self.m_AnimTimer)
+		end
+		if self.m_TimeSetter and isTimer(self.m_TimeSetter) then 
+			killTimer(self.m_TimeSetter)
 		end
 	end
 end
