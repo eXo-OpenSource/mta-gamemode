@@ -202,6 +202,8 @@
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/PlayHouse.lua" type="server"/>
+
 	<!-- New Years Eve -->
 	<script src="server/classes/Gameplay/NewYearsEve.lua" type="server" />
 
@@ -223,6 +225,9 @@
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Minigames/HighStakeRoulette/HighStakeRouletteManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/HighStakeRoulette/HighStakeRoulette.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGame.lua" type="server"/>
@@ -913,6 +918,7 @@
 	<script src="client/classes/GUIForms/GasStationShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HighStakeRouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
@@ -1081,7 +1087,8 @@
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
 	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
 	<script src="client/classes/Effects/MonochromeShader.lua" type="client"/>
-
+	<script src="client/classes/Effects/DynamicLightingBind.lua" type="client"/>
+	
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/BarShop.lua" type="client"/>
@@ -1099,6 +1106,7 @@
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/Sewers.lua" type="client"/>
+	<script src="client/classes/Gameplay/PlayHouse.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
@@ -1141,6 +1149,7 @@
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/HighStakeRoulette.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/SlotGame.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/WheelOfFortune.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
@@ -1178,6 +1187,21 @@
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
 	<vrpfile src="files/audio/vehicles/turbo.ogg" />
+
+	<!-- spielbunker -->
+	<vrpfile src="files/images/Textures/Spielbunker/fire.png"/>
+	<vrpfile src="files/images/Textures/Spielbunker/clear.png"/>
+	<vrpfile src="files/images/Textures/Spielbunker/wood.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/portrait.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/map.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/shield.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/banner_small.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/banner.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/stone.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/white_wall.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/white_window.png"/>
+	<vrpfile src="files/images/Textures/Spielbunker/carpet.jpg"/>
+
 
 	<!-- blackjack -->
 	<vrpfile src="files/images/Textures/BlackJack/sbmyst.jpg"/>
@@ -2630,6 +2654,7 @@
 	<include resource="Contrast" />
 	<include resource="Detail" />
 	<include resource="RoadShine" />
+	<!--include resource="dynamic_lighting" /-->
 	<include resource="SkyBox" />
 	<include resource="DoF" />
 	<include resource="VehicleReflections" />

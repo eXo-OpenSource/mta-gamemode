@@ -221,13 +221,13 @@ function CasinoWheel:onRender()
 		if isValidElement(obj, "object") then
 			local ped = obj:getData("CasinoWheel:ped") and isValidElement(obj:getData("CasinoWheel:ped"), "ped") and obj:getData("CasinoWheel:ped")
 			local x, y, z = getPedBonePosition(ped, 2)
-			local lx, ly = getElementPosition(localPlayer)
+			local lx, ly, lz = getElementPosition(localPlayer)
 			local dist = getDistanceBetweenPoints2D(x, y, lx, ly)
 			if dist < 1 then dist = 1 end
 			local distModifier = (0.7+ .3*(1/dist))
 			
 			local th = dxGetFontHeight(1.4, "sans") * distModifier
-			if dist < 10 then
+			if dist < 10 and isLineOfSightClear(lx, ly, lz, x, y, z, true, false, false, true, false, false, false, localPlayer)  then
 				local sx, sy = getScreenFromWorldPosition(x, y, z+.2)
 				if isElementOnScreen(obj) and sx and sy then
 					if obj:getData("CasinoWheel:WheelInfo") then 

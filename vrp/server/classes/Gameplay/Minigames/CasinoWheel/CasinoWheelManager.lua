@@ -33,13 +33,15 @@ function CasinoWheelManager:load()
 	"`Rz` FLOAT NOT NULL DEFAULT '0'," ..
 	"`TurnTime` INT NULL," ..
 	"`MaximumBet` FLOAT NULL," ..
+	"`Interior` INT NOT NULL DEFAULT '0'," ..
+	"`Dimension` INT NOT NULL DEFAULT '0'," ..
 	"`Date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," ..
 	"PRIMARY KEY (`Id`)" ..
 	")	COLLATE='latin1_swedish_ci' ENGINE=InnoDB;", sql:getPrefix())
 
 	local result = sql:queryFetch("SELECT * FROM ??_casino_wheels", sql:getPrefix())
 	for k, row in pairs(result) do 
-		self:create(Vector3(row.X, row.Y, row.Z), Vector3(0, 0, row.Rz), row.MaximumBet, row.TurnTime, row.Id)
+		self:create(Vector3(row.X, row.Y, row.Z), Vector3(0, 0, row.Rz), row.MaximumBet, row.TurnTime, row.Id, row.Interior, row.Dimension)
 	end
 end
 
@@ -47,9 +49,9 @@ function CasinoWheelManager:destructor()
 	for object, instance in pairs(self.m_Map) do 
 		if object and isValidElement(object, "object") then 
 			if not instance.m_Id or instance.m_Id == 0 then 
-				sql:queryExec("INSERT INTO ??_casino_wheels (X, Y, Z, Rz, MaximumBet, TurnTime) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), instance.m_Position.x, instance.m_Position.y, instance.m_Position.z, object.rotation.z, instance.m_MaximumBet, instance.m_SpinTime)
+				sql:queryExec("INSERT INTO ??_casino_wheels (X, Y, Z, Rz, MaximumBet, TurnTime, Interior, Dimension) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), instance.m_Position.x, instance.m_Position.y, instance.m_Position.z, instance.m_Rotation.z, instance.m_MaximumBet, instance.m_SpinTime, instance.m_Interior, instance.m_Dimension)
 			else 
-				sql:queryExec("UPDATE ??_casino_wheels SET MaximumBet =?, TurnTime=? WHERE Id =?", sql:getPrefix(), instance.m_MaximumBet, instance.m_SpinTime, instance.m_Id)
+				sql:queryExec("UPDATE ??_casino_wheels SET MaximumBet =?, TurnTime=?, X = ?, Y = ?, Z = ?, Rz = ?, Interior = ?, Dimension = ? WHERE Id =?", sql:getPrefix(), instance.m_MaximumBet, instance.m_SpinTime, instance.m_Position.x, instance.m_Position.y, instance.m_Position.z, instance.m_Rotation.z,  instance.m_Interior, instance.m_Dimension, instance.m_Id)
 			end
 		end
 	end
@@ -95,9 +97,9 @@ function CasinoWheelManager:Event_onPlayerRedrawBet()
 end
 
 
-function CasinoWheelManager:create(pos, rot, maximum, spin, id)
+function CasinoWheelManager:create(pos, rot, maximum, spin, id, int, dim)
 	if pos and rot then
-		local instance = CasinoWheel:new(pos, rot, maximum, spin, id) 
+		local instance = CasinoWheel:new(pos, rot, maximum, spin, id, int or 0, dim or 0) 
 		self.m_Map[instance:getObject()] = instance
 			
 		for k, p in ipairs(getElementsByType("player")) do 

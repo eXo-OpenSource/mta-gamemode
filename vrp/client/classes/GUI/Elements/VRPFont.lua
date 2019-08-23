@@ -128,6 +128,7 @@ FontAwesomeSymbols = {
 	Double_Left = "",
 	Double_Right = "",
 	Music = "",
+	Dice = "",
 	Random = "",
 	Handshake = "",
 	Building = "",

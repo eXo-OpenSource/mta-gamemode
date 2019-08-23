@@ -136,6 +136,8 @@ function Core:ready() --onClientResourceStart
 		setInteriorSoundsEnabled(false)
 	end
 
+	--Light = DynamicLightingBind:getSingleton() | disabled needs to be rewritten for mutliple pass
+
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()
@@ -143,6 +145,7 @@ function Core:ready() --onClientResourceStart
 	HorseRace:new()
 	Townhall:new()
 	Sewers:new()
+	PlayHouse:new()
 	PremiumArea:new()
 
 	ColshapeStreamer:new()
