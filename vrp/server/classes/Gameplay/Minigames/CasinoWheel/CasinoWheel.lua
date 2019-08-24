@@ -69,8 +69,11 @@ CasinoWheel.FieldValue =
 }
 CasinoWheel.Fields = #CasinoWheel.FieldValue
 CasinoWheel.MaximumBet = 50000
-function CasinoWheel:constructor(pos, rot, maximumBet, spinTime, id) 
+function CasinoWheel:constructor(pos, rot, maximumBet, spinTime, id, int, dim) 
 	
+	self.m_Interior = int 
+	self.m_Dimension = dim 
+	self.m_Rotation = rot
 	self.m_BankAccountServer = BankServer.get("gameplay.casinowheel")
 	self.m_MaximumBet = maximumBet or CasinoWheel.MaximumBet
 	self.m_SpinTime = spinTime or CasinoWheel.TurnTime
@@ -78,10 +81,16 @@ function CasinoWheel:constructor(pos, rot, maximumBet, spinTime, id)
 	self.m_Id = id or 0
 	self.m_Object = createObject(self.Model, Vector3(pos.x, pos.y, pos.z+0.5), rot)
 	self.m_Object:setDoubleSided(true)
+	self.m_Object:setInterior(int)
+	self.m_Object:setDimension(dim)
 
 	self.m_Clicker = createObject(1898, Vector3(pos.x, pos.y, pos.z+1.55), rot)
+	self.m_Clicker:setInterior(int)
+	self.m_Clicker:setDimension(dim)
 	self.m_ClickAlternator = false
 	self.m_Ped = NPC:new(142, pos.x, pos.y, pos.z, rot.z)
+	self.m_Ped:setInterior(int)
+	self.m_Ped:setDimension(dim)
 	self.m_Ped.m_Obj = self.m_Object
 	self.m_Ped:setPosition((self.m_Ped.position + self.m_Ped.matrix:getForward()*-0.44))
 	self.m_Ped:setPosition(self.m_Ped.position + self.m_Ped.matrix:getRight()*0.2)
@@ -90,12 +99,16 @@ function CasinoWheel:constructor(pos, rot, maximumBet, spinTime, id)
 	self.m_Ped:setImmortal(true) 
 	
 	self.m_Stand = createObject(1897, Vector3(pos.x, pos.y, pos.z+0.2), rot)
+	self.m_Stand:setInterior(int)
+	self.m_Stand:setDimension(dim)
 	self.m_Stand:setPosition( self.m_Stand.position + self.m_Stand.matrix:getForward()*0.08)
 	self.m_Stand:setScale(1, 1, 1.2)
 	self.m_Object:setData("CasinoWheel:ped", self.m_Ped, true)
 	self.m_Ped.pone = createObject(1238, self.m_Ped:getPosition())
 	self.m_Ped:setData("CasinoWheel:cone", self.m_Ped.pone, true)
 	self.m_Ped.pone:setScale(0.6, 0.65, 0.6)
+	self.m_Ped.pone:setInterior(int)
+	self.m_Ped.pone:setDimension(dim)
 	exports.bone_attach:attachElementToBone(self.m_Ped.pone, self.m_Ped, 1, 0.02, 0.05, 0.29, 3, 0, 90)
 
 	self.m_Players = {}
@@ -158,7 +171,7 @@ function CasinoWheel:submitBet(player, bet)
 			self.m_Bets[player] = nil
 			return player:sendError(_("Du kannst an diesem Rad maximal $%s einsetzen!", player, convertNumber(self.m_MaximumBet)))
 		end
-		if player:transferMoney(self.m_BankAccountServer, amount, "Glücksrad-Einsatz", "Gameplay", "Glücksrad-WOF", {silent = false}) then
+		if player:transferMoney(self.m_BankAccountServer, amount, "Glücksrad-Einsatz", "Gameplay", "Glücksrad-WOF") then
 			self.m_Bets[player] = bet
 			player:triggerEvent("CasinoWheel:acceptBet")
 		else 
@@ -172,9 +185,9 @@ end
 
 function CasinoWheel:pay() 
 	for player, bet in pairs(self.m_Bets) do 
-		local win = self:calcBetWinOnField(player, tostring(self.m_WinValue))
+		local win = self:calcBetWinOnField(player, tostring(self.m_WinValue == 0 and "40" or self.m_WinValue))
 		if win > 0 then 
-			if self.m_BankAccountServer:transferMoney(player, win, "Glücksrad-Gewinn", "Gameplay", "Glücksrad-WOF", {silent = false}) then
+			if self.m_BankAccountServer:transferMoney(player, win, ("Glücksrad-Gewinn (Zahl %s)"):format(self.m_WinValue), "Gameplay", "Glücksrad-WOF") then
 				player:sendInfo(_("Glückwunsch! Du hast gewonnen!", player))
 			end
 		end
@@ -188,7 +201,7 @@ end
 function CasinoWheel:redrawBet(player, isStop) 
 	if self.m_Players[player] then 
 		local betAmount = self:calcBet(player)
-		if self.m_BankAccountServer:transferMoney(player, betAmount, "Glücksrad-Rückerstattung", "Gameplay", "Glücksrad-WOF", {silent = true}) then
+		if self.m_BankAccountServer:transferMoney(player, betAmount, "Glücksrad-Rückerstattung", "Gameplay", "Glücksrad-WOF") then
 			self.m_Bets[player] = nil
 			if not isStop then
 				player:triggerEvent("CasinoWheel:reset")

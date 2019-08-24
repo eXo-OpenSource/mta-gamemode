@@ -36,6 +36,7 @@ function MinigameManager:constructor()
 
 	SlotGameManager:new()
 	RouletteManager:new()
+	HighStakeRouletteManager:new()
 	BlackJackManager:new()
 	CasinoWheelManager:new()
 end

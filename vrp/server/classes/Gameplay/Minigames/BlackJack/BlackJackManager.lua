@@ -44,6 +44,8 @@ function BlackJackManager:load()
 	"`Y` FLOAT NOT NULL DEFAULT '0'," ..
 	"`Z` FLOAT NOT NULL DEFAULT '0'," ..
 	"`Rz` FLOAT NOT NULL DEFAULT '0'," ..
+	"`Interior` INT NOT NULL DEFAULT '0'," ..
+	"`Dimension` INT NOT NULL DEFAULT '0'," ..
 	"`Bets` JSON NULL," ..
 	"`Date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," ..
 	"PRIMARY KEY (`Id`)" ..
@@ -52,7 +54,7 @@ function BlackJackManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_blackjack_tables", sql:getPrefix())
 	if result then 
 		for k, row in pairs(result) do
-			self:createTable(Vector3(row.X, row.Y, row.Z), Vector3(0, 0, row.Rz), row.Bets, row.Id)
+			self:createTable(Vector3(row.X, row.Y, row.Z), Vector3(0, 0, row.Rz), row.Bets, row.Id, row.Interior, row.Dimension)
 		end
 	end
 end
@@ -61,9 +63,9 @@ function BlackJackManager:destructor()
 	for obj, bool in pairs(self.m_Tables) do 
 		if isValidElement(obj, "object") then 
 			if not obj.Id or obj.Id == 0 then 
-				sql:queryExec("INSERT INTO ??_blackjack_tables (X, Y, Z, Rz, Bets) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), obj.position.x, obj.position.y, obj.position.z, obj.rotation.z-180, toJSON(obj.bets))
+				sql:queryExec("INSERT INTO ??_blackjack_tables (X, Y, Z, Rz, Bets, Interior, Dimension) VALUES (?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), obj.position.x, obj.position.y, obj.position.z, obj.rotation.z-180, toJSON(obj.bets), obj:getInterior(), obj:getDimension())
 			else 
-				sql:queryExec("UPDATE ??_blackjack_tables SET Bets =? WHERE Id =?", sql:getPrefix(), obj.bets and toJSON(obj.bets), obj.Id)
+				sql:queryExec("UPDATE ??_blackjack_tables SET Bets =?, X = ?, Y = ?, Z = ?, Rz = ?, Interior = ?, Dimension = ? WHERE Id =?", sql:getPrefix(), obj.bets and toJSON(obj.bets), obj.position.x, obj.position.y, obj.position.z, obj.rotation.z-180, obj:getInterior(), obj:getDimension(), obj.Id)
 			end
 		end
 	end
@@ -73,9 +75,9 @@ function BlackJackManager:pulse()
 	for table, bool in pairs(self.m_Tables) do 
 		if table.ped and isValidElement(table.ped, "ped") then 
 			if self.m_OccupiedTables[table] and isValidElement(self.m_OccupiedTables[table], "player") then 
-				table.ped:setAnimation("casino", "slot_wait", -1, false, false, false, true)
+				setTimer(function() table.ped:setAnimation("casino", "slot_wait", -1, false, false, false, true) end, math.random(50, 4500), 1)
 			else 
-				table.ped:setAnimation("casino", "cards_loop", -1, false, false, false, true)
+				setTimer(function() table.ped:setAnimation("casino", "cards_loop", -1, false, false, false, true) end, math.random(50, 4500), 1)
 			end
 		end
 	end
@@ -162,15 +164,19 @@ function BlackJackManager:getTablePlayer(object)
 	end
 end
 
-function BlackJackManager:createTable(pos, rot, bets, id) 
+function BlackJackManager:createTable(pos, rot, bets, id, int, dim) 
 	
 	local obj = createObject(2188, pos, Vector3(rot.x, rot.y, rot.z+180))
 	obj.Id = id -- Id
 	obj.bets = bets and fromJSON(bets) or bets
+	obj:setInterior(int or 0)
+	obj:setDimension(dim or 0)
 	if not obj.bets then
 		obj.bets = BlackJack.DEFAULT_BETS
 	end
 	obj.ped = NPC:new(142, pos.x, pos.y, pos.z, rot.z)
+	obj.ped:setInterior(int or 0)
+	obj.ped:setDimension(dim or 0)
 	obj.ped:setPosition(obj.ped.position + obj.ped.matrix:getForward()*(-0.45))
 	obj.ped:setFrozen(true)
 	obj.ped.obj = obj
@@ -180,6 +186,8 @@ function BlackJackManager:createTable(pos, rot, bets, id)
 	obj.ped:setAnimation("casino", "cards_loop", -1, false, false, false, true)
 	obj.infoObj = createObject(1858, (obj.position + obj.matrix:getForward()*-1)+ obj.matrix:getUp()*0.2)
 	obj.infoObj:setCollisionsEnabled(false)
+	obj.infoObj:setInterior(int or 0)
+	obj.infoObj:setDimension(dim or 0)
 	obj.infoObj:setAlpha(0)
     addEventHandler("onElementClicked", obj, function(button, state, player)
 		if not player.m_LoggedIn then return end
@@ -211,6 +219,8 @@ function BlackJackManager:createTable(pos, rot, bets, id)
 	obj:setData("BlackJackTable:ped", obj.ped, true)
 	obj.ped.pone = createObject(1238, obj.ped:getPosition())
 	obj.ped:setData("BlackJackPed:cone", obj.ped.pone, true)
+	obj.ped.pone:setInterior(int or 0)
+	obj.ped.pone:setDimension(dim or 0)
 	obj.ped.pone:setScale(0.6, 0.65, 0.6)
 	exports.bone_attach:attachElementToBone(obj.ped.pone, obj.ped, 1, 0.02, 0.05, 0.29, 3, 0, 90)
 	
@@ -240,10 +250,10 @@ function BlackJackManager:destroyTable(obj)
 				obj.m_Info = nil
 			end
 			if isValidElement(obj.ped, "ped") then 
-				obj.ped:destroy()
 				if obj.ped.pone and isValidElement(obj.ped.pone, "object") then 
 					obj.ped.pone:destroy()
 				end
+				obj.ped:destroy()
 			end
 			if isValidElement(obj.infoObj, "object") then 
 				obj.infoObj:destroy()

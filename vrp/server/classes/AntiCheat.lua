@@ -39,6 +39,7 @@ AntiCheat.AllowedDataChange = {
 	["lastSync"] = true,
 	["superman:flying"] = true,
 	["isEquipmentGUIOpen"] = true,
+	["clickable"] = true,
 }
 
 function AntiCheat:constructor()

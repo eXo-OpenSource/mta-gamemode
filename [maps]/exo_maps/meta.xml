@@ -9,6 +9,9 @@
 	<script src="mapEditorScriptingExtension_s.lua" type="server"></script>
 	<script src="mapEditorScriptingExtension_c.lua" type="client"></script>
 
+	<map src="spielbunker.map" />
+	<map src="spielbunker-ext.map" />
+		
 	<map src="atm.map" />
 
 	<map src="tiefgarage.map" />

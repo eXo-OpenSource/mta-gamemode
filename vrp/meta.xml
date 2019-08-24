@@ -202,6 +202,8 @@
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/PlayHouse.lua" type="server"/>
+
 	<!-- New Years Eve -->
 	<script src="server/classes/Gameplay/NewYearsEve.lua" type="server" />
 
@@ -223,6 +225,9 @@
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Minigames/HighStakeRoulette/HighStakeRouletteManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/HighStakeRoulette/HighStakeRoulette.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGame.lua" type="server"/>
@@ -914,6 +919,7 @@
 	<script src="client/classes/GUIForms/GasStationShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HighStakeRouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
@@ -931,6 +937,8 @@
 	<script src="client/classes/GUIForms/MapEditor/MapEditorMainGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/MapEditor/MapEditorEditingPlayersGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/MapEditor/MapEditorHelpGUI.lua" type="client" />
+
+	<script src="client/classes/GUIForms/PlayHouseShopGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1082,7 +1090,8 @@
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
 	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
 	<script src="client/classes/Effects/MonochromeShader.lua" type="client"/>
-
+	<script src="client/classes/Effects/DynamicLightingBind.lua" type="client"/>
+	
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/BarShop.lua" type="client"/>
@@ -1100,6 +1109,7 @@
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/Sewers.lua" type="client"/>
+	<script src="client/classes/Gameplay/PlayHouse.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
@@ -1142,6 +1152,7 @@
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/HighStakeRoulette.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/SlotGame.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/WheelOfFortune.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
@@ -1179,6 +1190,21 @@
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
 	<vrpfile src="files/audio/vehicles/turbo.ogg" />
+
+	<!-- spielbunker -->
+	<vrpfile src="files/images/Textures/Spielbunker/fire.png"/>
+	<vrpfile src="files/images/Textures/Spielbunker/clear.png"/>
+	<vrpfile src="files/images/Textures/Spielbunker/wood.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/portrait.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/map.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/shield.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/banner_small.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/banner.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/stone.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/white_wall.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/white_window.png"/>
+	<vrpfile src="files/images/Textures/Spielbunker/carpet.jpg"/>
+
 
 	<!-- blackjack -->
 	<vrpfile src="files/images/Textures/BlackJack/sbmyst.jpg"/>
@@ -1892,6 +1918,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Radio.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Wuerfel.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Ausweis.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Clubcard.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Munition.png" />
 	<vrpfile src="files/images/Inventory/items/Items/eXoPad.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Mats.png" />
@@ -2163,6 +2190,7 @@
 	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
+	<vrpfile src="files/audio/devils_harp.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.ogg"/>
 	<vrpfile src="files/audio/Enginestart2.ogg"/>
@@ -2384,6 +2412,8 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/taser.txd"/>
 	<vrpfile src="files/models/taser.dff"/>
+	<vrpfile src="files/models/guitar.txd"/>
+	<vrpfile src="files/models/guitar.dff"/>
 	<vrpfile src="files/models/firework.col"/>
 	<vrpfile src="files/models/firework.dff"/>
 	<vrpfile src="files/models/firework.txd"/>
@@ -2631,6 +2661,7 @@
 	<include resource="Contrast" />
 	<include resource="Detail" />
 	<include resource="RoadShine" />
+	<!--include resource="dynamic_lighting" /-->
 	<include resource="SkyBox" />
 	<include resource="DoF" />
 	<include resource="VehicleReflections" />
