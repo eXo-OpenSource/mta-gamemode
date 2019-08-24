@@ -27,7 +27,19 @@ function PlayHouse:constructor()
 
 	self.m_ClickBind = bind(self.Event_onClick, self)
 
-
+	
+	self.m_ShopMarker =  createMarker(500.06, 509.67, 1054.82, "cylinder", 1, 224, 255, 255, 200)
+	self.m_ShopMarker:setInterior(12)
+	self.m_ShopKeeper = self:createGnome(Vector3(503, 509.79, 1055.82), Vector3(0, 0, 90))
+	self.m_ShopKeeper:setAnimation("food", "shp_tray_lift_loop", -1, false, false, false, true)
+	self.m_ShopKeeper.shopkeeper = true
+	addEventHandler("onClientMarkerHit", self.m_ShopMarker, function(hE)
+		if hE == localPlayer then 
+			PlayHouseShopGUI:new()
+		end
+	end)
+	ElementInfo:new(self.m_ShopMarker, "Theke", 1, "Dice", true)
+	ElementInfoManager:getSingleton():addEventToElement(self.m_ShopMarker)
 end
 
 function PlayHouse:Event_onClick(button, state, aX, aY, wX, wY, wZ, cW) 
@@ -132,20 +144,28 @@ function PlayHouse:Event_onHit(element, dim)
 		--self:createLight()
 
 		setWeather(1)
-		self.m_TimeSetter = setTimer(setTime, 60000, 0, 20, 0)
+		self.m_TimeSetter = setTimer(setTime, 5000, 0, 20, 0)
 		addEventHandler("onClientClick", root, self.m_ClickBind)
 		self.m_AnimTimer = 
 		setTimer(function() 
 			for ped, k in pairs(self.m_Gnomes) do 
 				if ped and isValidElement(ped, "ped") then 
-					setTimer(function() ped:setAnimation("casino", "cards_loop", -1, false, false, false, true) end, math.random(0, 6000), 1)
+					if ped.shopkeeper then 
+						setTimer(function() ped:setAnimation("food", "shp_tray_lift_loop", -1, false, false, false, true) end, math.random(0, 6000), 1)
+					else
+						setTimer(function() ped:setAnimation("casino", "cards_loop", -1, false, false, false, true) end, math.random(0, 6000), 1)
+					end
 				end
 			end
 		end, 5000, 0)
+
+		self.m_ClubCol = createColCuboid(482.00, 497.20, 1060.5, 30, 30, 10)
+		triggerServerEvent("PlayHouse:checkClubcard", localPlayer)
 	end
 end
 
 function PlayHouse:onUpdate()
+	self.m_AllowedIn = localPlayer:getData("PlayHouse:clubcard")
 	if not self.m_AllowedIn then
 		for i = 1, #self.m_Doors do 
 			self.m_Doors[i]:setFrozen(true)
@@ -154,6 +174,13 @@ function PlayHouse:onUpdate()
 	else 
 		for i = 1, #self.m_Doors do 
 			self.m_Doors[i]:setFrozen(false)
+		end
+	end
+	if not self.m_AllowedIn then 
+		if self.m_ClubCol and isValidElement(self.m_ClubCol, "colshape") and isElementWithinColShape(localPlayer, self.m_ClubCol) then 
+			localPlayer:setPosition(Vector3(506.19, 514.97, 1058.19))
+			localPlayer:setRotation(Vector3(0, 0, 90))
+			ShortMessage:new("Du wurdest aus dem Raum geworfen...", "Back-Lounge")
 		end
 	end
 end
@@ -177,6 +204,9 @@ function PlayHouse:Event_onLeave(element)
 		end
 		if self.m_TimeSetter and isTimer(self.m_TimeSetter) then 
 			killTimer(self.m_TimeSetter)
+		end
+		if self.m_ClubCol then 
+			self.m_ClubCol:destroy()
 		end
 	end
 end

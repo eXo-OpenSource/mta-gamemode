@@ -442,6 +442,9 @@ function Inventory:throwItem(item, bag, id, place, name)
 	local value = self:getItemValueByBag(bag,place)
 	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )
 	self:removeItemFromPlace(bag, place)
+	if name == "Clubkarte" then 
+		self.m_Owner:setData("PlayHouse:clubcard", nil, true)	
+	end
 end
 
 function Inventory:giveItem(item, amount, value)

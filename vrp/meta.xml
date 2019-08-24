@@ -937,6 +937,8 @@
 	<script src="client/classes/GUIForms/MapEditor/MapEditorEditingPlayersGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/MapEditor/MapEditorHelpGUI.lua" type="client" />
 
+	<script src="client/classes/GUIForms/PlayHouseShopGUI.lua" type="client"/>
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -1915,6 +1917,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Radio.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Wuerfel.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Ausweis.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Clubcard.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Munition.png" />
 	<vrpfile src="files/images/Inventory/items/Items/eXoPad.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Mats.png" />
