@@ -21,7 +21,7 @@ function TextureCache.removeCached(path, instance)
 			TextureCache.Map[path] = nil
 		end
 
-		return true
+		return true, cachedTexture
 	end
 
 	return false

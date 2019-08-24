@@ -38,7 +38,9 @@ function PlayHouse:constructor()
 	self.m_ShopKeeper.shopkeeper = true
 	addEventHandler("onClientMarkerHit", self.m_ShopMarker, function(hE)
 		if hE == localPlayer then 
-			PlayHouseShopGUI:new()
+			if hE.position.z < source.position.z+2 then
+				PlayHouseShopGUI:new()
+			end
 		end
 	end)
 	ElementInfo:new(self.m_ShopMarker, "Theke", 1, "Dice", true)
@@ -111,7 +113,13 @@ function PlayHouse:createGnome(pos, rot)
 	ped.cone = createObject(1238, pos)
 	ped.cone:setInterior(12)
 	ped.cone:setScale(0.6, 0.65, 0.6)
+	if ped.texture then 
+		ped.texture:delete()
+	end
 	ped.texture = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {}, true, true)
+	if ped.cone.texture then 
+		ped.cone.texture:delete()
+	end
 	ped.cone.texture = FileTextureReplacer:new(ped.cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {}, true, true)
 	exports.bone_attach:attachElementToBone(ped.cone, ped, 1, 0.02, 0.05, 0.29, 3, 0, 90)
 	self.m_Gnomes[ped] = true

@@ -24,8 +24,8 @@ function FileTextureReplacer:unload()
 	if not self.m_FileName then return delete(self) end
 
 
-	local a = TextureCache.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
-	local b = self:detach()
+	local a, c = TextureCache.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
+	local b = self:detach((c and not isElement(c:getTexture())) or nil)
 	if b == TextureReplacer.Status.SUCCESS and a then
 		return TextureReplacer.Status.SUCCESS
 	elseif not a then
