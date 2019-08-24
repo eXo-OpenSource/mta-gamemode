@@ -2189,6 +2189,7 @@
 	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
+	<vrpfile src="files/audio/devils_harp.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.ogg"/>
 	<vrpfile src="files/audio/Enginestart2.ogg"/>
@@ -2410,6 +2411,8 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/taser.txd"/>
 	<vrpfile src="files/models/taser.dff"/>
+	<vrpfile src="files/models/guitar.txd"/>
+	<vrpfile src="files/models/guitar.dff"/>
 	<vrpfile src="files/models/firework.col"/>
 	<vrpfile src="files/models/firework.dff"/>
 	<vrpfile src="files/models/firework.txd"/>

@@ -9,7 +9,7 @@
 PlayHouse = inherit(Singleton)
 PlayHouse.TexturePath = "files/images/Textures/Spielbunker"
 
-addRemoteEvents{"PlayHouse:resetWeatherTime"}
+addRemoteEvents{"PlayHouse:resetWeatherTime", "PlayHouse:sendStream"}
 function PlayHouse:constructor() 
 	self.m_ColShape = createColCuboid(452.46, 476.06, 1045.81,  120, 60, 40)
 	self.m_ColShape:setInterior(12)
@@ -19,11 +19,12 @@ function PlayHouse:constructor()
 	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.Event_onHit, self))
 	addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.Event_onLeave, self))
 	addEventHandler("PlayHouse:resetWeatherTime", localPlayer, bind(self.Event_resetTimeWeather, self))
+	addEventHandler("PlayHouse:sendStream", localPlayer, bind(self.Event_getStream, self))
 
-	addEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
 
 	self:createDoors()
 	self:createRoulette()
+	self:createGuitarist()
 
 	self.m_ClickBind = bind(self.Event_onClick, self)
 
@@ -40,6 +41,40 @@ function PlayHouse:constructor()
 	end)
 	ElementInfo:new(self.m_ShopMarker, "Theke", 1, "Dice", true)
 	ElementInfoManager:getSingleton():addEventToElement(self.m_ShopMarker)
+end
+
+function PlayHouse:Event_getStream(url) 
+	if self.m_Sound then 
+		self.m_Sound:stop()
+		self.m_Sound = nil 
+	end
+	self.m_Stream = url
+	if self.m_Stream then 
+		self.m_Sound = playSound3D(url, 466.91, 511.49, 1055.82, true)
+		setSoundMaxDistance(self.m_Sound, 180)
+	end
+end
+
+function PlayHouse:createGuitarist() 
+	self.m_Guitarist = self:createGnome(Vector3(466.91, 511.49, 1055.82), Vector3(0, 0, 223))
+	self.m_Guitarist.chair = createObject(1720, 466.44, 512.40, 1054.82)
+	self.m_Guitarist.chair:setRotation(0, 0, 13)
+	self.m_Guitarist.chair:setInterior(12)
+	self.m_Guitarist.guitarist = true
+	self.m_Guitarist.tick = getTickCount()
+	givePedWeapon(self.m_Guitarist, 31, 1, true)
+end
+
+function PlayHouse:loadGuitar() 
+	self.m_Txd = engineLoadTXD("files/models/guitar.txd")
+	engineImportTXD(self.m_Txd, 356)
+	self.m_DFF = engineLoadDFF("files/models/guitar.dff")
+	engineReplaceModel(self.m_DFF, 356)
+
+end
+
+function PlayHouse:unloadGuitar() 
+	engineRestoreModel(356)
 end
 
 function PlayHouse:Event_onClick(button, state, aX, aY, wX, wY, wZ, cW) 
@@ -117,6 +152,12 @@ end
 function PlayHouse:Event_onHit(element, dim) 
 	if element and isValidElement(element, "player") and element == localPlayer then 
 
+		if self.m_TextureApplied then 
+			for texture, k in pairs(self.m_Textures) do 
+				texture:delete()
+			end
+		end
+		self.m_TextureApplied = false
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/wood.jpg", "tislndshpillar01_128") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/wood.jpg", "ws_floortiles4") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/wood.jpg", "ws_rooftarmac1") ] = true
@@ -141,6 +182,7 @@ function PlayHouse:Event_onHit(element, dim)
 		self.m_Textures[ StaticFileTextureReplacer:new("files/images/Textures/BlackJack/redwhite_stripe.jpg", "redwhite_stripe") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/banner_small.jpg", "CJ_SUBURBAN_1") ] = true
 		
+		self.m_TextureApplied = true
 		--self:createLight()
 
 		setWeather(1)
@@ -152,6 +194,8 @@ function PlayHouse:Event_onHit(element, dim)
 				if ped and isValidElement(ped, "ped") then 
 					if ped.shopkeeper then 
 						setTimer(function() ped:setAnimation("food", "shp_tray_lift_loop", -1, false, false, false, true) end, math.random(0, 6000), 1)
+					elseif ped.guitarist then 
+
 					else
 						setTimer(function() ped:setAnimation("casino", "cards_loop", -1, false, false, false, true) end, math.random(0, 6000), 1)
 					end
@@ -159,13 +203,36 @@ function PlayHouse:Event_onHit(element, dim)
 			end
 		end, 5000, 0)
 
+		self:loadGuitar()
+
 		self.m_ClubCol = createColCuboid(482.00, 497.20, 1060.5, 30, 30, 10)
 		triggerServerEvent("PlayHouse:checkClubcard", localPlayer)
+		addEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
 	end
 end
 
 function PlayHouse:onUpdate()
 	self.m_AllowedIn = localPlayer:getData("PlayHouse:clubcard")
+	if self.m_Guitarist and isValidElement(self.m_Guitarist, "ped") then 
+		if getTickCount() - self.m_Guitarist.tick > ((self.m_Guitarist.step and self.m_Guitarist.step) or 1200) then 
+			self.m_Guitarist.tick = getTickCount()
+			if not self.m_Guitarist.animState then 
+				setPedControlState(self.m_Guitarist, "aim_weapon", true)
+				setPedAnimation(self.m_Guitarist, "shop", "shp_gun_aim", 1200, false, false, false, false, 800, true)
+				setPedAnimationSpeed(self.m_Guitarist, "shp_gun_aim", 0.1)
+				self.m_Guitarist.step = math.random(700, 1100)
+				setPedAimTarget(self.m_Guitarist, math.random(-4, 4)/10,  math.random(-4, 4)/10,  math.random(-4, 4)/10)
+				self.m_Guitarist.animState = true
+			else 
+				setPedControlState(self.m_Guitarist, "aim_weapon", true)
+				setPedAnimation(self.m_Guitarist, "shop", "shp_gun_aim", 1200, false, false, false, false, 800, true)
+				setPedAnimationSpeed(self.m_Guitarist, "shp_gun_aim", 0.1)
+				self.m_Guitarist.step = math.random(700, 1100)
+				setPedAimTarget(self.m_Guitarist, math.random(-4, 4)/10,  math.random(-4, 4)/10,  math.random(-4, 4)/10)
+				self.m_Guitarist.animState = false
+			end
+		end
+	end
 	if not self.m_AllowedIn then
 		for i = 1, #self.m_Doors do 
 			self.m_Doors[i]:setFrozen(true)
@@ -183,6 +250,12 @@ function PlayHouse:onUpdate()
 			ShortMessage:new("Du wurdest aus dem Raum geworfen...", "Back-Lounge")
 		end
 	end
+	toggleControl("fire", false)
+	toggleControl("aim_weapon", false)
+	toggleControl("next_weapon", false)
+	toggleControl("previous_weapon", false)
+	toggleControl("action", false)
+	setPedWeaponSlot(localPlayer, 0)
 end
 
 function PlayHouse:createLight() 
@@ -194,6 +267,7 @@ function PlayHouse:Event_onLeave(element)
 		for texture, k in pairs(self.m_Textures) do 
 			texture:delete()
 		end
+		self.m_TextureApplied = false
 		for i = 1, #self.m_Lights do 
 			Light:destroyLight(self.m_Lights[i])
 		end
@@ -208,7 +282,19 @@ function PlayHouse:Event_onLeave(element)
 		if self.m_ClubCol then 
 			self.m_ClubCol:destroy()
 		end
+		if self.m_Sound then 
+			self.m_Sound:stop()
+			self.m_Sound = nil 
+		end
+		
+		self:unloadGuitar()
 	end
+	removeEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
+	toggleControl("fire", true)
+	toggleControl("aim_weapon", true)
+	toggleControl("next_weapon", true)
+	toggleControl("previous_weapon", true)
+	toggleControl("action", true)
 end
 
 function PlayHouse:Event_resetTimeWeather(timeHour, timeMinute, weather) 

@@ -12,6 +12,7 @@ PlayHouse.Items =
 {
     ["Clubkarte"] = 50000,
 }
+PlayHouse.StreamUrl = "files/audio/devils_harp.mp3"
 addRemoteEvents{"PlayHouse:requestTimeWeather", "PlayHouse:buyItem", "PlayHouse:checkClubcard"}
 function PlayHouse:constructor() 
    	self.m_BankAccountServer = BankServer.get("gameplay.playhouse")
@@ -29,6 +30,16 @@ function PlayHouse:Event_checkClubCard()
         client:setData("PlayHouse:clubcard", true, true)
     else   
         client:setData("PlayHouse:clubcard", false, true)
+    end
+    client:triggerEvent("PlayHouse:sendStream", PlayHouse.StreamUrl)
+end
+
+function PlayHouse:sendStream(url) 
+    PlayHouse.StreamUrl = url 
+    for k, p in pairs(getElementsByType("player")) do 
+        if p:getInterior() == 12 then 
+            p:triggerEvent("PlayHouse:sendStream", url)
+        end
     end
 end
 
