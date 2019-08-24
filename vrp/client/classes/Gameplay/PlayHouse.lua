@@ -16,6 +16,8 @@ function PlayHouse:constructor()
 	self.m_Textures = {}
 	self.m_Lights = {}
 	self.m_Gnomes = {}
+	self.m_UpdateBind = bind(self.onUpdate, self)
+
 	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.Event_onHit, self))
 	addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.Event_onLeave, self))
 	addEventHandler("PlayHouse:resetWeatherTime", localPlayer, bind(self.Event_resetTimeWeather, self))
@@ -207,7 +209,7 @@ function PlayHouse:Event_onHit(element, dim)
 
 		self.m_ClubCol = createColCuboid(482.00, 497.20, 1060.5, 30, 30, 10)
 		triggerServerEvent("PlayHouse:checkClubcard", localPlayer)
-		addEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
+		addEventHandler("onClientPreRender", root, self.m_UpdateBind)
 	end
 end
 
@@ -289,7 +291,7 @@ function PlayHouse:Event_onLeave(element)
 		
 		self:unloadGuitar()
 	end
-	removeEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
+	removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
 	toggleControl("fire", true)
 	toggleControl("aim_weapon", true)
 	toggleControl("next_weapon", true)
