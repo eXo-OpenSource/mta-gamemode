@@ -105,9 +105,15 @@ end
 function CasinoWheel:applyTexture(object)
 	local ped = object:getData("CasinoWheel:ped") 
 	if ped and isValidElement(ped, "ped") then
+		if object.m_Ped then 
+			object.m_Ped:delete()
+		end
 		object.m_Ped = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {}, true, true)
 		local cone = ped:getData("CasinoWheel:cone")
 		if cone and isValidElement(cone, "object") then
+			if object.m_Cone then 
+				object.m_Cone:delete()
+			end
 			object.m_Cone = FileTextureReplacer:new(cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {}, true, true)
 		end
 	end

@@ -115,12 +115,14 @@ function TextureReplacer:attach()
 	end
 end
 
-function TextureReplacer:detach()
+function TextureReplacer:detach(bDeleteCache)
 	if not self.m_Active then return TextureReplacer.Status.DENIED end
 	if not self.m_Shader or not isElement(self.m_Shader) then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader:destroy()
-	if self.m_Texture and isElement(self.m_Texture) then self.m_Texture:destroy() end
+	if bDeleteCache then
+		if self.m_Texture and isElement(self.m_Texture) then self.m_Texture:destroy() end
+	end
 	if self.m_Shader then self.m_Shader = nil end
 	if self.m_Texture then self.m_Texture = nil end
 	return TextureReplacer.Status.SUCCESS

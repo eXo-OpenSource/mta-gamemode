@@ -16,6 +16,8 @@ function PlayHouse:constructor()
 	self.m_Textures = {}
 	self.m_Lights = {}
 	self.m_Gnomes = {}
+	self.m_UpdateBind = bind(self.onUpdate, self)
+
 	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.Event_onHit, self))
 	addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.Event_onLeave, self))
 	addEventHandler("PlayHouse:resetWeatherTime", localPlayer, bind(self.Event_resetTimeWeather, self))
@@ -36,7 +38,9 @@ function PlayHouse:constructor()
 	self.m_ShopKeeper.shopkeeper = true
 	addEventHandler("onClientMarkerHit", self.m_ShopMarker, function(hE)
 		if hE == localPlayer then 
-			PlayHouseShopGUI:new()
+			if hE.position.z < source.position.z+2 then
+				PlayHouseShopGUI:new()
+			end
 		end
 	end)
 	ElementInfo:new(self.m_ShopMarker, "Theke", 1, "Dice", true)
@@ -109,7 +113,13 @@ function PlayHouse:createGnome(pos, rot)
 	ped.cone = createObject(1238, pos)
 	ped.cone:setInterior(12)
 	ped.cone:setScale(0.6, 0.65, 0.6)
+	if ped.texture then 
+		ped.texture:delete()
+	end
 	ped.texture = FileTextureReplacer:new(ped, "BlackJack/sbmyst.jpg", "sbmyst", {}, true, true)
+	if ped.cone.texture then 
+		ped.cone.texture:delete()
+	end
 	ped.cone.texture = FileTextureReplacer:new(ped.cone, "BlackJack/redwhite_stripe.jpg", "redwhite_stripe", {}, true, true)
 	exports.bone_attach:attachElementToBone(ped.cone, ped, 1, 0.02, 0.05, 0.29, 3, 0, 90)
 	self.m_Gnomes[ped] = true
@@ -207,7 +217,7 @@ function PlayHouse:Event_onHit(element, dim)
 
 		self.m_ClubCol = createColCuboid(482.00, 497.20, 1060.5, 30, 30, 10)
 		triggerServerEvent("PlayHouse:checkClubcard", localPlayer)
-		addEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
+		addEventHandler("onClientPreRender", root, self.m_UpdateBind)
 	end
 end
 
@@ -289,7 +299,7 @@ function PlayHouse:Event_onLeave(element)
 		
 		self:unloadGuitar()
 	end
-	removeEventHandler("onClientPreRender", root, bind(self.onUpdate, self))
+	removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
 	toggleControl("fire", true)
 	toggleControl("aim_weapon", true)
 	toggleControl("next_weapon", true)
