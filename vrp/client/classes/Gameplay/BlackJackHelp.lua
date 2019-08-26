@@ -118,8 +118,12 @@ function BlackJackHelp:showPage()
 		end
 	end
 	
-	for k, element in pairs(self.m_Pages[self.m_Page]) do 
-		element:setVisible(true)
+	if self.m_Pages[self.m_Page] then 
+		for k, element in pairs(self.m_Pages[self.m_Page]) do 
+			element:setVisible(true)
+		end
+	else 
+		self.m_Page = 1
 	end
 end
 
