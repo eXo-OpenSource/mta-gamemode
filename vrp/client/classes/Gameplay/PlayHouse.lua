@@ -161,7 +161,7 @@ end
 
 function PlayHouse:Event_onHit(element, dim) 
 	if element and isValidElement(element, "player") and element == localPlayer then 
-
+		addEventHandler("onClientPreRender", root, self.m_UpdateBind)
 		if self.m_TextureApplied then 
 			for texture, k in pairs(self.m_Textures) do 
 				texture:delete()
@@ -217,7 +217,7 @@ function PlayHouse:Event_onHit(element, dim)
 
 		self.m_ClubCol = createColCuboid(482.00, 497.20, 1060.5, 30, 30, 10)
 		triggerServerEvent("PlayHouse:checkClubcard", localPlayer)
-		addEventHandler("onClientPreRender", root, self.m_UpdateBind)
+		
 	end
 end
 
@@ -298,13 +298,15 @@ function PlayHouse:Event_onLeave(element)
 		end
 		
 		self:unloadGuitar()
+	
+		removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
+		toggleControl("fire", true)
+		toggleControl("aim_weapon", true)
+		toggleControl("next_weapon", true)
+		toggleControl("previous_weapon", true)
+		toggleControl("action", true)
 	end
-	removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
-	toggleControl("fire", true)
-	toggleControl("aim_weapon", true)
-	toggleControl("next_weapon", true)
-	toggleControl("previous_weapon", true)
-	toggleControl("action", true)
+
 end
 
 function PlayHouse:Event_resetTimeWeather(timeHour, timeMinute, weather) 
