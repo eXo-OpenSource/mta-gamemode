@@ -194,7 +194,11 @@ function CasinoWheel:pay()
 		self.m_Bets[player] = nil
 	end
 	for player, k in pairs(self.m_Players) do 
-		player:triggerEvent("CasinoWheel:reset", self.m_WinValue, self.m_SpinTime - self.m_LastSpinTime)
+		if isValidElement(player, "player") then 
+			player:triggerEvent("CasinoWheel:reset", self.m_WinValue, self.m_SpinTime - self.m_LastSpinTime)
+		else 
+			self.m_Players[player] = nil
+		end
 	end
 end
 
