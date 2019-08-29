@@ -10,10 +10,10 @@ PlayHouse = inherit(Singleton)
 
 PlayHouse.Items =
 {
-    ["Wochenkarte"] =  50000, 
-	["Zweiwochenkarte"] =  90000,
-	["Dreiwochenkarte"] =  135000,
-	["Monatskarte"]  = 170000,
+    ["Wochenkarte"] =  70000, 
+	["Zweiwochenkarte"] =  130000,
+	["Dreiwochenkarte"] =  190000,
+	["Monatskarte"]  = 250000,
 }
 
 PlayHouse.StreamUrl = "files/audio/devils_harp.mp3"
@@ -34,9 +34,19 @@ function PlayHouse:constructor()
     self.m_SkullThird = createObject(3524,  -1432.1949,  -950.11603, 201.66901, 34, 0, 352.25)
 
     self.m_MoveState = false
-    self.m_EnterCasino:setLocked(true)
+    self.m_EnterCasino:setEntryLocked()
     self.m_Open = false 
-    GlobalTimer:getSingleton():registerEvent(bind(self.open, self), "PlayHouseOpen", nil, 20, 00)
+
+    local atm = createObject(2942, 495.604, 497.160, 1055.415, 0, 0, 180)
+    atm:setInterior(12)
+
+    atm = createObject(2942, 495.604+1, 497.160, 1055.415, 0, 0, 180)
+    atm:setInterior(12)
+
+    atm = createObject(2942, 495.604-1, 497.160, 1055.415, 0, 0, 180)
+    atm:setInterior(12)
+
+    GlobalTimer:getSingleton():registerEvent(bind(self.open, self), "PlayHouseOpen", nil, 22, 00)
 end
 
 function PlayHouse:open() 

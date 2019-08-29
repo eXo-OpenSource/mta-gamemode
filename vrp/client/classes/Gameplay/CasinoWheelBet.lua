@@ -180,8 +180,8 @@ function CasinoWheelBet:placeToken(field)
 
     local color = self.m_AttachedToken
 
-    if self:calcBet() + ROULETTE_TOKENS[color] > 400000  then
-        ErrorBox:new(_("Der maximal Einsatz beträgt %s!", "lol"))
+    if self:calcBet() + ROULETTE_TOKENS[color] > 250000  then
+        ErrorBox:new(_("Der maximal Einsatz beträgt %s!", convertNumber(250000)))
         return
     end
 

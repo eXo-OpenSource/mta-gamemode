@@ -47,7 +47,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 				if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
 					self:removeAllItem("Clubkarte")
 					if isElement(self.m_Owner) then
-						self.m_Owner:sendMessage(_("Dein Spiel-Clubkarte ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+						self.m_Owner:sendMessage(_("Deine Spiel-Clubkarte ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
 					end
 				end
 			end
