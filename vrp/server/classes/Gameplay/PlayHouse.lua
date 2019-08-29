@@ -56,8 +56,12 @@ function PlayHouse:constructor()
     ") COLLATE='latin1_swedish_ci' ENGINE=InnoDB;"
 
     sqlLogs:queryExec(query, sqlLogs:getPrefix())
-
-    self.m_Profit = -1 * (sqlLogs:queryFetchSingle("SELECT SUM(Amount) as Profit FROM `??_PlayhousePlayers`", sqlLogs:getPrefix()).Profit)
+    local result = sqlLogs:queryFetchSingle("SELECT SUM(Amount) as Profit FROM `??_PlayhousePlayers`", sqlLogs:getPrefix())
+    if result then 
+        self.m_Profit = -1 * (result.Profit)
+    else 
+        self.m_Profit = 0 
+    end
 end
 
 function PlayHouse:Event_onRequestProfit() 
