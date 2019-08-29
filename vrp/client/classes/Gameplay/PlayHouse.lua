@@ -184,6 +184,9 @@ function PlayHouse:Event_onHit(element, dim)
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/wood.jpg", "slated") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/wood.jpg", "ab_fabriccheck2") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/wood.jpg", "goldpillar") ] = true
+		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/atm_wood.jpg", "kmb_atm") ] = true
+		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/atm_sign_wood.jpg", "kmb_atm_sign") ] = true
+		
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/clear.png", "excalibursign02") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/stone.jpg", "greyground256") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/white_window.png", "carshowwin2") ] = true
@@ -194,7 +197,6 @@ function PlayHouse:Event_onHit(element, dim)
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/banner.jpg", "diderSachs01") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/map.jpg", "bow_loadingbaydoor") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/portrait.jpg", "cj_pizza_men1") ] = true
-
 		self.m_Textures[ StaticFileTextureReplacer:new("files/images/Textures/BlackJack/redwhite_stripe.jpg", "concretenewb256") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new("files/images/Textures/BlackJack/redwhite_stripe.jpg", "redwhite_stripe") ] = true
 		self.m_Textures[ StaticFileTextureReplacer:new(PlayHouse.TexturePath.."/banner_small.jpg", "CJ_SUBURBAN_1") ] = true

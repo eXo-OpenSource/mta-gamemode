@@ -1195,6 +1195,8 @@
 	<vrpfile src="files/images/Textures/Spielbunker/fire.png"/>
 	<vrpfile src="files/images/Textures/Spielbunker/clear.png"/>
 	<vrpfile src="files/images/Textures/Spielbunker/wood.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/atm_wood.jpg"/>
+	<vrpfile src="files/images/Textures/Spielbunker/atm_sign_wood.jpg"/>
 	<vrpfile src="files/images/Textures/Spielbunker/portrait.jpg"/>
 	<vrpfile src="files/images/Textures/Spielbunker/map.jpg"/>
 	<vrpfile src="files/images/Textures/Spielbunker/shield.jpg"/>

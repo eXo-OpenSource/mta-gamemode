@@ -10,20 +10,12 @@ inherit(Singleton, PlayHouseShopGUI)
 
 PlayHouseShopGUI.Items = 
 {
-	{"Wochenkarte", 50000, (60*60*24*7)}, 
-	{"Zweiwochenkarte", 90000,  (60*60*24*14)},
-	{"Dreiwochenkarte", 135000,  (60*60*24*21)},
-	{"Monatskarte", 170000,  (60*60*24*30)}
+	{"Wochenkarte", 70000, (60*60*24*7), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (1 Woche)"}, 
+	{"Zweiwochenkarte", 130000,  (60*60*24*14), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (2 Wochen)"},
+	{"Dreiwochenkarte", 190000,  (60*60*24*21), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (3 Wochen)"},
+	{"Monatskarte", 250000,  (60*60*24*30), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (Monat)"}
 }
 
-PlayHouseShopGUI.ItemDesc = 
-{
-	["Wochenkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (1 Woche)"},
-	["Zweiwochenkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (2 Wochen)"},
-	["Wochenkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (3 Wochen)"},
-	["Monatskarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (Monat)"},
-	
-}
 function PlayHouseShopGUI:constructor()
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 12)
@@ -47,6 +39,8 @@ function PlayHouseShopGUI:constructor()
 		item.price = data[2] 
 		item.duration = data[3]
 		item.name = data[1]
+		item.text = data[5]
+		item.path = data[4]
 		item.onLeftClick = bind(self.Event_UpdateDescription, self, item)
 		item.onLeftDoubleClick = bind(self.Event_ClickItem, self, item)
 	end
@@ -54,10 +48,10 @@ function PlayHouseShopGUI:constructor()
 end
 
 function PlayHouseShopGUI:Event_UpdateDescription(item) 
-	if item and PlayHouseShopGUI.ItemDesc[item.name] then 
-		self.m_ItemImage:setImage(PlayHouseShopGUI.ItemDesc[item.name][1])
+	if item then 
+		self.m_ItemImage:setImage(item.path)
 		self.m_ItemImage:setVisible(true)
-		self.m_ItemDescription:setText(PlayHouseShopGUI.ItemDesc[item.name][2])
+		self.m_ItemDescription:setText(item.text)
 	end
 end
 

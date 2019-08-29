@@ -189,10 +189,10 @@ function HighStakeRoulette:placeToken(field)
 
     local color = self.m_AttachedToken
 
-    --if self:calcBet() + ROULETTE_TOKENS[color] > ROULETTE_MAX_BET and not (Sewers:getSingleton().m_AppliedCasino) then
-      --  ErrorBox:new(_("Der maximal Einsatz beträgt %s!", toMoneyString(ROULETTE_MAX_BET)))
-       -- return
-    ---end
+    if self:calcBet() + ROULETTE_TOKENS[color] > 250000 then
+        ErrorBox:new(_("Der maximal Einsatz beträgt %s!", convertNumber(250000)))
+        return
+    end
 
 	if localPlayer:getMoney() < self:calcBet() + ROULETTE_TOKENS[color] then
 		ErrorBox:new(_"Du hast nicht genug Geld dabei!")
