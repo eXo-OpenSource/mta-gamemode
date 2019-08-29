@@ -18,12 +18,13 @@ PlayHouse.Items =
 
 PlayHouse.StreamUrl = "files/audio/devils_harp.mp3"
 
-addRemoteEvents{"PlayHouse:requestTimeWeather", "PlayHouse:buyItem", "PlayHouse:checkClubcard"}
+addRemoteEvents{"PlayHouse:requestTimeWeather", "PlayHouse:buyItem", "PlayHouse:checkClubcard", "PlayHouse:requestProfit"}
 function PlayHouse:constructor() 
    	self.m_BankAccountServer = BankServer.get("gameplay.playhouse")
     addEventHandler("PlayHouse:requestTimeWeather", root, bind(self.Event_requestTimeWeather, self))
     addEventHandler("PlayHouse:buyItem", root, bind(self.Event_buyItem, self))
     addEventHandler("PlayHouse:checkClubcard", root, bind(self.Event_checkClubCard, self))
+    addEventHandler("PlayHouse:requestProfit", root, bind(self.Event_onRequestProfit, self))
     self.m_EnterCasino = InteriorEnterExit:new(Vector3(-1431.87, -952.25, 200.96), Vector3(467.85, 498.00, 1055.82), 0, 180, 12, 0, 0, 0)
 
     local antifall = createColCuboid(452.46, 476.06, 1045.81,  120, 60, 40)
@@ -47,6 +48,34 @@ function PlayHouse:constructor()
     atm:setInterior(12)
 
     GlobalTimer:getSingleton():registerEvent(bind(self.open, self), "PlayHouseOpen", nil, 22, 00)
+
+    local query = "CREATE TABLE IF NOT EXISTS `??_PlayhousePlayers`  (" ..
+    "`UserId` INT NOT NULL," ..
+	"`Amount` INT NULL," ..
+	"PRIMARY KEY (`UserId`)" ..
+    ") COLLATE='latin1_swedish_ci' ENGINE=InnoDB;"
+
+    sqlLogs:queryExec(query, sqlLogs:getPrefix())
+
+    self.m_Profit = -1 * (sqlLogs:queryFetchSingle("SELECT SUM(Amount) as Profit FROM `??_PlayhousePlayers`", sqlLogs:getPrefix()).Profit)
+end
+
+function PlayHouse:Event_onRequestProfit() 
+    client:triggerEvent("PlayHouse:sendProfit", self:getProfit())
+end
+
+function PlayHouse:onPlayerMoney(player, money) 
+    if isValidElement(player, "player") then 
+        local id = player:getId() 
+        if id then 
+            sqlLogs:queryExec("INSERT INTO `??_PlayhousePlayers` (UserId, Amount ) VALUES(?, ?) ON DUPLICATE KEY UPDATE Amount = Amount + ?", sqlLogs:getPrefix(), id, money, money)
+        end
+        self.m_Profit = self.m_Profit - money
+    end
+end
+
+function PlayHouse:getProfit() 
+    return self.m_Profit
 end
 
 function PlayHouse:open() 
@@ -141,6 +170,7 @@ function PlayHouse:Event_buyItem(item, price, cardDuration)
                         client:getInventory():removeAllItem("Clubkarte")
                         client:sendError(_("Etwas ist fehlgeschlagen!", client))
                     else 
+                        self:onPlayerMoney(client, -price)
                         if item:find("karte")  then 
                             client:setData("PlayHouse:clubcard", true, true)
                         end

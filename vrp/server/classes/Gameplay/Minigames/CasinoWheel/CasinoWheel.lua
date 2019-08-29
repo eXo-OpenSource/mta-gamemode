@@ -172,6 +172,7 @@ function CasinoWheel:submitBet(player, bet)
 			return player:sendError(_("Du kannst an diesem Rad maximal $%s einsetzen!", player, convertNumber(self.m_MaximumBet)))
 		end
 		if player:transferMoney(self.m_BankAccountServer, amount, "Glücksrad-Einsatz", "Gameplay", "Glücksrad-WOF") then
+			PlayHouse:getSingleton():onPlayerMoney(player, -amount)
 			self.m_Bets[player] = bet
 			player:triggerEvent("CasinoWheel:acceptBet")
 		else 
@@ -188,6 +189,7 @@ function CasinoWheel:pay()
 		local win = self:calcBetWinOnField(player, tostring(self.m_WinValue == 0 and "40" or self.m_WinValue))
 		if win > 0 then 
 			if self.m_BankAccountServer:transferMoney(player, win, ("Glücksrad-Gewinn (Zahl %s)"):format(self.m_WinValue), "Gameplay", "Glücksrad-WOF") then
+				PlayHouse:getSingleton():onPlayerMoney(player, win)
 				player:sendInfo(_("Glückwunsch! Du hast gewonnen!", player))
 			end
 		end
@@ -206,6 +208,7 @@ function CasinoWheel:redrawBet(player, isStop)
 	if self.m_Players[player] then 
 		local betAmount = self:calcBet(player)
 		if self.m_BankAccountServer:transferMoney(player, betAmount, "Glücksrad-Rückerstattung", "Gameplay", "Glücksrad-WOF") then
+			PlayHouse:getSingleton():onPlayerMoney(player, betAmount)
 			self.m_Bets[player] = nil
 			if not isStop then
 				player:triggerEvent("CasinoWheel:reset")

@@ -37,6 +37,7 @@ function HighStakeRoulette:spin(bets)
     end
 
     self.m_Player:transferMoney(self.m_BankAccountServer, bet, "High-Stake Roulette-Einsatz", "Gameplay", "Roulett")
+    PlayHouse:getSingleton():onPlayerMoney(self.m_Player, -bet)
 	HighStakeRouletteManager:getSingleton():setStats(-bet, true)
 	self.m_Random = math.random(0, 36)
 	self.m_Player:triggerEvent("highStakeRouletteStartSpin", self.m_Random)
@@ -73,6 +74,7 @@ function HighStakeRoulette:spinDone(clientNumber)
 	if win > 0 then
 		self.m_Player:sendShortMessage(_("Du hast %s gewonnen!", self.m_Player, toMoneyString(win)), "Roulette")
         self.m_BankAccountServer:transferMoney(self.m_Player, win, "Roulette-Gewinn", "Gameplay", "Roulett")
+        PlayHouse:getSingleton():onPlayerMoney(self.m_Player, win)
 		HighStakeRouletteManager:getSingleton():setStats(win, false)
 	else
 		self.m_Player:sendShortMessage(_("Du hast nichts gewonnen!", self.m_Player), "Roulette")
