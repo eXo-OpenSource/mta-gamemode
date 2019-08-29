@@ -164,6 +164,7 @@
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemHealpack.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemPlayHouseCard.lua" type="server"/>
 
 	<!-- wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
@@ -2186,6 +2187,7 @@
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
 	<vrpfile src="files/audio/gasmask.ogg"/>
+	<vrpfile src="files/audio/door_open_playhouse.ogg" />
 	<vrpfile src="files/audio/smoke_explode.ogg"/>
 	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
