@@ -10,12 +10,19 @@ inherit(Singleton, PlayHouseShopGUI)
 
 PlayHouseShopGUI.Items = 
 {
-	["Clubkarte"] = 50000, 
+	{"Wochenkarte", 50000, (60*60*24*7)}, 
+	{"Zweiwochenkarte", 90000,  (60*60*24*14)},
+	{"Dreiwochenkarte", 135000,  (60*60*24*21)},
+	{"Monatskarte", 170000,  (60*60*24*30)}
 }
 
 PlayHouseShopGUI.ItemDesc = 
 {
-	["Clubkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten."},
+	["Wochenkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (1 Woche)"},
+	["Zweiwochenkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (2 Wochen)"},
+	["Wochenkarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (3 Wochen)"},
+	["Monatskarte"] = {"files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (Monat)"},
+	
 }
 function PlayHouseShopGUI:constructor()
 	GUIWindow.updateGrid()
@@ -35,10 +42,11 @@ function PlayHouseShopGUI:constructor()
 	self.m_ItemImage:setVisible(false)
 	
 	local item
-	for name, price in pairs(PlayHouseShopGUI.Items) do
-		item = self.m_ShopItems:addItem(name, ("$%s"):format(convertNumber(price)))
-		item.price = price 
-		item.name = name
+	for index, data in ipairs(PlayHouseShopGUI.Items) do
+		item = self.m_ShopItems:addItem(data[1], ("$%s"):format(convertNumber(data[2])))
+		item.price = data[2] 
+		item.duration = data[3]
+		item.name = data[1]
 		item.onLeftClick = bind(self.Event_UpdateDescription, self, item)
 		item.onLeftDoubleClick = bind(self.Event_ClickItem, self, item)
 	end
@@ -54,7 +62,8 @@ function PlayHouseShopGUI:Event_UpdateDescription(item)
 end
 
 function PlayHouseShopGUI:Event_ClickItem(item) 
-	triggerServerEvent("PlayHouse:buyItem", localPlayer, item.name, item.price)
+	local name = item.name 
+	triggerServerEvent("PlayHouse:buyItem", localPlayer, name, item.price, item.duration)
 	delete(self)
 end
 

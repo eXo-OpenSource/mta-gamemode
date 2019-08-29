@@ -107,7 +107,8 @@ function BlackJackHelp:constructor(mainInstance) -- soz, for not using gridsyste
 	self.m_BtnBack.onLeftClick = function() self.m_Main:setVisible(true);GUIForm.destructor(self);delete(self); self.m_Main.m_Info = nil;showCursor(true); end
 
 	self:showPage()
-
+	self.m_BtnLeft:setVisible(false)
+	self.m_BtnRight:setVisible(true)
 
 end
 
@@ -130,10 +131,12 @@ end
 function BlackJackHelp:right() 
 	playSound(self:makeSoundPath("card_draw.ogg"))
 	self.m_Page = self.m_Page + 1 
+	if self.m_Page > 4 then self.m_Page = 4 end
 	if self.m_Page == 4 then 
 		self.m_BtnRight:setVisible(false)
 		self.m_BtnLeft:setVisible(true)
 	else 
+		self.m_BtnLeft:setVisible(true)
 		self.m_BtnRight:setVisible(true)
 	end
 	self:showPage()
@@ -142,6 +145,7 @@ end
 function BlackJackHelp:left() 
 	playSound(self:makeSoundPath("card_draw.ogg"))
 	self.m_Page = self.m_Page - 1
+	if self.m_Page < 1 then self.m_Page = 1 end
 	if self.m_Page == 1 then 
 		self.m_BtnLeft:setVisible(false)
 		self.m_BtnRight:setVisible(true)

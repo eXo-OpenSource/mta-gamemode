@@ -106,6 +106,8 @@ function ItemManager:constructor()
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
 		["Kleidung"] = WearableClothes,
+
+		["Clubkarte"] = ItemPlayHouseCard,
 	}
 
 	self.m_Properties = {
