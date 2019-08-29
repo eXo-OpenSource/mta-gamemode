@@ -58,7 +58,7 @@ function PlayHouse:constructor()
     sqlLogs:queryExec(query, sqlLogs:getPrefix())
     local result = sqlLogs:queryFetchSingle("SELECT SUM(Amount) as Profit FROM `??_PlayhousePlayers`", sqlLogs:getPrefix())
     if result then 
-        self.m_Profit = -1 * (result.Profit)
+        self.m_Profit = -1 * (result.Profit or 0)
     else 
         self.m_Profit = 0 
     end
