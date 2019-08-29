@@ -52,6 +52,7 @@ function BlackJack:start(bet)
 		self.m_Bet = self.m_Bets[1]
 	end
 	if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet, "BlackJack-Einsatz", "Gameplay", "BlackJack", {silent = true}) then
+		PlayHouse:getSingleton():onPlayerMoney(self.m_Player, -self.m_Bet)
 		self.m_Player:setFrozen(true)
 		for player, k in pairs(self.m_Spectators) do 
 			if isValidElement(player, "player") then
@@ -250,6 +251,7 @@ function BlackJack:insurance()
 	if isValidElement(self.m_Player, "player") then
 		if not self.m_PostFirstRound then 
 			if self.m_Player:transferMoney(self.m_BankAccountServer, self.m_Bet*0.5, "BlackJack-Einsatz (Insurance)", "Gameplay", "BlackJack", {silent = false}) then
+				PlayHouse:getSingleton():onPlayerMoney(self.m_Player, -1*(self.m_Bet*0.5))
 				if (tonumber(self.m_DealerHand[1].Value) == 1 or tonumber(self.m_DealerHand[1].Value) >= 10) and (tonumber(self.m_DealerHand[2].Value) >= 10 or tonumber(self.m_DealerHand[2].Value) == 1) then 
 					self.m_InsuranceWon = true
 				end
@@ -280,6 +282,7 @@ function BlackJack:playerBlackJack()
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:notify", "Du hast genau 21! Blackjack!", true)
 		self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet*2.5, "BlackJack-Gewinn (BlackJack 2:3)", "Gameplay", "BlackJack", {silent = false})
+		PlayHouse:getSingleton():onPlayerMoney(self.m_Player, self.m_Bet*2.5)
 	end
 	for player, k in pairs(self.m_Spectators) do 
 		if isValidElement(player, "player") then
@@ -295,6 +298,7 @@ function BlackJack:playerWin(dealerBust)
 	if isValidElement(self.m_Player, "player") then 
 		self.m_Player:triggerEvent("BlackJack:notify", dealerBust and "Der Dealer ist über 21! Sieg!" or "Du hast mehr als der Dealer! Sieg!", true)
 		self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet*2, "BlackJack-Gewinn (Regulär 1:2)", "Gameplay", "BlackJack", {silent = false})
+		PlayHouse:getSingleton():onPlayerMoney(self.m_Player, self.m_Bet*2)
 	end
 	for player, k in pairs(self.m_Spectators) do 
 		if isValidElement(player, "player") then
@@ -327,6 +331,7 @@ function BlackJack:playerLose()
 				end
 			end
 			self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet, "BlackJack-Insurance (3:2)", "Gameplay", "BlackJack", {silent = false})
+			PlayHouse:getSingleton():onPlayerMoney(self.m_Player, self.m_Bet)
 		end
 	end
 end
@@ -343,6 +348,7 @@ function BlackJack:tie()
 			end
 		end
 		self.m_BankAccountServer:transferMoney(self.m_Player, self.m_Bet, "BlackJack-Rückzahlung (Unentschieden)", "Gameplay", "BlackJack", {silent = false})
+		PlayHouse:getSingleton():onPlayerMoney(self.m_Player, self.m_Bet)
 	end
 end
 

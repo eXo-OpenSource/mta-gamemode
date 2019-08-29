@@ -9,7 +9,7 @@
 PlayHouse = inherit(Singleton)
 PlayHouse.TexturePath = "files/images/Textures/Spielbunker"
 
-addRemoteEvents{"PlayHouse:resetWeatherTime", "PlayHouse:sendStream", "PlayHouse:playOpen"}
+addRemoteEvents{"PlayHouse:resetWeatherTime", "PlayHouse:sendStream", "PlayHouse:playOpen", "PlayHouse:sendProfit"}
 function PlayHouse:constructor() 
 	self.m_ColShape = createColCuboid(452.46, 476.06, 1045.81,  120, 60, 40)
 	self.m_ColShape:setInterior(12)
@@ -23,6 +23,7 @@ function PlayHouse:constructor()
 	addEventHandler("PlayHouse:resetWeatherTime", localPlayer, bind(self.Event_resetTimeWeather, self))
 	addEventHandler("PlayHouse:sendStream", localPlayer, bind(self.Event_getStream, self))
 	addEventHandler("PlayHouse:playOpen", localPlayer, bind(self.Event_playOpenSound, self))
+	addEventHandler("PlayHouse:sendProfit", localPlayer, bind(self.Event_getProfit, self))
 
 	self:createDoors()
 	self:createRoulette()
@@ -45,6 +46,19 @@ function PlayHouse:constructor()
 	end)
 	ElementInfo:new(self.m_ShopMarker, "Theke", 1, "Dice", true)
 	ElementInfoManager:getSingleton():addEventToElement(self.m_ShopMarker)
+
+	self.m_RenderBind = bind(self.renderProfit, self)
+end
+
+function PlayHouse:Event_getProfit(profit) 
+	self.m_ProfitTimer = setTimer(function() triggerServerEvent("PlayHouse:requestProfit", localPlayer) end, 5000, 0)
+	self.m_Profit = profit
+	removeEventHandler("onClientRender", root, self.m_RenderBind)
+	addEventHandler("onClientRender", root,self.m_RenderBind)
+end
+
+function PlayHouse:renderProfit() 
+	dxDrawText(("$%s"):format(convertNumber(self.m_Profit)), 0, 0, screenWidth-8, screenHeight-200, (self.m_Profit > 0 and tocolor(0, 200, 0, 255)) or (self.m_Profit > 0 and tocolor(200, 0, 0, 255)) or tocolor(255, 128, 0, 255), 2, "sans", "right", "bottom")
 end
 
 function PlayHouse:Event_playOpenSound() 
@@ -52,7 +66,6 @@ function PlayHouse:Event_playOpenSound()
 	self.m_OpenSound:setMaxDistance(200)
 	self.m_OpenSound:setVolume(1.5)
 end
-
 
 function PlayHouse:Event_getStream(url) 
 	if self.m_Sound then 
@@ -314,8 +327,12 @@ function PlayHouse:Event_onLeave(element)
 		toggleControl("next_weapon", true)
 		toggleControl("previous_weapon", true)
 		toggleControl("action", true)
-	end
 
+		removeEventHandler("onClientRender", root, self.m_RenderBind)
+		if self.m_ProfitTimer and isTimer(self.m_ProfitTimer) then 
+			killTimer(self.m_ProfitTimer)
+		end
+	end
 end
 
 function PlayHouse:Event_resetTimeWeather(timeHour, timeMinute, weather) 
