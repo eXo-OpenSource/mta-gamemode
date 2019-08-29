@@ -51,6 +51,9 @@ function PlayHouse:constructor()
 end
 
 function PlayHouse:Event_getProfit(profit) 
+	if self.m_ProfitTimer and isTimer(self.m_ProfitTimer) then 
+		killTimer(self.m_ProfitTimer)
+	end
 	self.m_ProfitTimer = setTimer(function() triggerServerEvent("PlayHouse:requestProfit", localPlayer) end, 5000, 0)
 	self.m_Profit = profit
 	removeEventHandler("onClientRender", root, self.m_RenderBind)
