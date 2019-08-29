@@ -9,7 +9,7 @@
 PlayHouse = inherit(Singleton)
 PlayHouse.TexturePath = "files/images/Textures/Spielbunker"
 
-addRemoteEvents{"PlayHouse:resetWeatherTime", "PlayHouse:sendStream"}
+addRemoteEvents{"PlayHouse:resetWeatherTime", "PlayHouse:sendStream", "PlayHouse:playOpen"}
 function PlayHouse:constructor() 
 	self.m_ColShape = createColCuboid(452.46, 476.06, 1045.81,  120, 60, 40)
 	self.m_ColShape:setInterior(12)
@@ -22,7 +22,7 @@ function PlayHouse:constructor()
 	addEventHandler("onClientColShapeLeave", self.m_ColShape, bind(self.Event_onLeave, self))
 	addEventHandler("PlayHouse:resetWeatherTime", localPlayer, bind(self.Event_resetTimeWeather, self))
 	addEventHandler("PlayHouse:sendStream", localPlayer, bind(self.Event_getStream, self))
-
+	addEventHandler("PlayHouse:playOpen", localPlayer, bind(self.Event_playOpenSound, self))
 
 	self:createDoors()
 	self:createRoulette()
@@ -46,6 +46,13 @@ function PlayHouse:constructor()
 	ElementInfo:new(self.m_ShopMarker, "Theke", 1, "Dice", true)
 	ElementInfoManager:getSingleton():addEventToElement(self.m_ShopMarker)
 end
+
+function PlayHouse:Event_playOpenSound() 
+	self.m_OpenSound = playSound3D("files/audio/door_open_playhouse.ogg", -1431.96, -955.22, 200.96)
+	self.m_OpenSound:setMaxDistance(200)
+	self.m_OpenSound:setVolume(1.5)
+end
+
 
 function PlayHouse:Event_getStream(url) 
 	if self.m_Sound then 

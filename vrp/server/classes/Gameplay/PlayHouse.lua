@@ -36,9 +36,13 @@ function PlayHouse:constructor()
     self.m_MoveState = false
     self.m_EnterCasino:setLocked(true)
     self.m_Open = false 
+    GlobalTimer:getSingleton():registerEvent(bind(self.open, self), "PlayHouseOpen", nil, 20, 00)
 end
 
 function PlayHouse:open() 
+    for k, p in pairs(getElementsByType("player")) do 
+        p:triggerEvent("PlayHouse:playOpen")
+    end
     if self.m_Open then return end
     self.m_MoveState = not self.m_MoveState
     self.m_Open = true
