@@ -38,7 +38,7 @@ function PlayHouse:constructor()
 	self.m_ShopKeeper:setAnimation("food", "shp_tray_lift_loop", -1, false, false, false, true)
 	self.m_ShopKeeper.shopkeeper = true
 	addEventHandler("onClientMarkerHit", self.m_ShopMarker, function(hE)
-		if hE == localPlayer and he:getInterior() == source:getInterior() then 
+		if hE == localPlayer and hE:getInterior() == source:getInterior() then 
 			if hE.position.z < source.position.z+2 then
 				PlayHouseShopGUI:new()
 			end
