@@ -33,11 +33,17 @@ function ElementInfoManager:setState(bool)
 end
 
 function ElementInfoManager:addEventToElement(element) 
-	addEventHandler("onClientElementStreamIn", element.m_Object, self.m_StreamInBind)
-	addEventHandler("onClientElementStreamOut", element.m_Object, self.m_StreamOutBind)
-	if isElementStreamedIn(element.m_Object) then 
+	addEventHandler("onClientElementStreamIn", element, self.m_StreamInBind)
+	addEventHandler("onClientElementStreamOut", element, self.m_StreamOutBind)
+	if isElementStreamedIn(element) then 
 		self.m_ActiveInfos[element] = self.m_Infos[element] 
 	end
+end
+
+function ElementInfoManager:removeEventFromElement(element) 
+	removeEventHandler("onClientElementStreamIn", element, self.m_StreamInBind)
+	removeEventHandler("onClientElementStreamOut", element, self.m_StreamOutBind)
+	self.m_ActiveInfos[element] = nil
 end
 
 function ElementInfoManager:onStreamIn() 
@@ -78,9 +84,10 @@ end
 
 addEvent("elementInfoCreate", true)
 addEventHandler("elementInfoCreate", root,
-	function(object, text, offset, iconOnly)
+	function(object, text, offset, icon, iconOnly)
 		if object and isElement(object) then
-			ElementInfo:new(object, text, offset, iconOnly)
+			ElementInfo:new(object, text, offset, icon, iconOnly)
+			ElementInfoManager:getSingleton():addEventToElement(object)
 		end
 	end
 	)
@@ -91,6 +98,19 @@ addEventHandler("elementInfoRetrieve", root,
 		for object, subdata in pairs(data) do 
 			if object and isElement(object) then
 				ElementInfo:new(object, subdata[1], subdata[2], subdata[3], subdata[4])
+				ElementInfoManager:getSingleton():addEventToElement(object)
 			end
 		end
 	end)
+
+
+addEvent("elementInfoDestroy", true)
+addEventHandler("elementInfoDestroy", root,
+	function(object)
+		if object and isElement(object) then
+			if ElementInfoManager:getSingleton().m_Infos[object] then 
+				ElementInfoManager:getSingleton().m_Infos[object]:delete()
+			end
+		end
+	end
+	)

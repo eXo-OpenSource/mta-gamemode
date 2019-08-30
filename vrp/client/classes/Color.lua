@@ -51,6 +51,8 @@ Color = {
 	Warning 	= {254, 138, 0}, -- green
 
 	AD_LightBlue = {0, 125, 125},
+
+	Wood = {143, 91, 41},
 }
 
 function Color.changeAlphaRate(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color

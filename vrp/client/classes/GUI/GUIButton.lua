@@ -37,7 +37,7 @@ function GUIButton:drawThis()
 	dxSetBlendMode("modulate_add")
 
 	if self.m_BarActivated then
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 2, self.m_Width, self.m_Height - 2, Color.Primary)
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 2, self.m_Width, self.m_Height - 2, self.m_AlternateColor or Color.Primary)
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, 2, self.m_BackgroundColor)
 	else
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
@@ -128,6 +128,12 @@ end
 function GUIButton:setBackgroundColor(color)
 	self.m_BackgroundColor = color
 	self.m_BackgroundNormalColor = color
+	self:anyChange()
+	return self
+end
+
+function GUIButton:setAlternativeColor(color) 
+	self.m_AlternateColor = color 
 	self:anyChange()
 	return self
 end

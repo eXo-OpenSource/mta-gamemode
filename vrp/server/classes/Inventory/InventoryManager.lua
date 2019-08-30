@@ -202,6 +202,10 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 				if item == "Osterei" and money == 0 then
 					target:giveAchievement(91) -- Verschenke ein Osterei
 				end
+				if item == "Clubkarte" then 
+					player:setData("PlayHouse:clubcard", false, true)
+					target:setData("PlayHouse:clubcard", true, true)
+				end
 			else
 				target:sendError(_("Du hast nicht genug Platz für dieses Item!", player))
 				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player, target:getName()))

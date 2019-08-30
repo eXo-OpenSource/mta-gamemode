@@ -1,9 +1,9 @@
 FileTextureReplacer = inherit(TextureReplacer)
 FileTextureReplacer.ClientPath = "files/images/Textures/%s"
 
-function FileTextureReplacer:constructor(element, fileName, textureName, options, force)
+function FileTextureReplacer:constructor(element, fileName, textureName, options, force, forceMaximum)
 	assert(fileName and fileName:len() > 0, "Bad Argument @ FileTextureReplacer:constructor #2")
-	TextureReplacer.constructor(self, element, textureName, options, force)
+	TextureReplacer.constructor(self, element, textureName, options, force, forceMaximum)
 
 	self.m_FileName = fileName:gsub("files/images/Textures/", "")
 end
@@ -13,7 +13,8 @@ function FileTextureReplacer:destructor()
 end
 
 function FileTextureReplacer:load()
-	if not self.m_FileName then return delete(self) end
+
+	if not self.m_FileName then return  delete(self) end
 
 	self.m_Texture = TextureCache.getCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
 	return self:attach()
@@ -22,8 +23,9 @@ end
 function FileTextureReplacer:unload()
 	if not self.m_FileName then return delete(self) end
 
-	local a = TextureCache.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
-	local b = self:detach()
+
+	local a, c = TextureCache.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
+	local b = self:detach((c and not isElement(c:getTexture())) or nil)
 	if b == TextureReplacer.Status.SUCCESS and a then
 		return TextureReplacer.Status.SUCCESS
 	elseif not a then

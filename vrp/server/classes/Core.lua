@@ -194,6 +194,7 @@ function Core:constructor()
 		Discord:new()
 		TeleportManager:new()
 		Sewers:new()
+		PlayHouse:new()
 		ArmsDealer:new()
 		PlaneManager:new()
 		PoliceAnnouncements:new()
@@ -286,6 +287,8 @@ function Core:destructor()
 		delete(StatisticsLogger:getSingleton())
 		delete(BankServer:getSingleton())
 		ItemManager:updateOnQuit()
+		delete(BlackJackManager:getSingleton())
+		delete(CasinoWheelManager:getSingleton())
 		delete(sql) -- Very slow
 	end
 end

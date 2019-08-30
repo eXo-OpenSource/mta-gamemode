@@ -511,7 +511,17 @@ function PlayerManager:playerChat(message, messageType)
 				Achievements["PewPew"](source)
 			end
 		end
-
+		if string.lower(message) == "das wiesel lacht um mitternacht" then 
+			if source:getRank() >= 5 then 
+				if source:getInterior() == 0 and  Vector3(source:getPosition() - PlayHouse:getSingleton().m_Skull.position):getLength() < 20 then 
+					PlayHouse:getSingleton():open() 
+					source:sendShortMessage(_("Das Gebäude wurde geöffnet!", source))
+				elseif source:getInterior() == 12 then 
+					PlayHouse:getSingleton():close() 
+					source:sendShortMessage(_("Das Gebäude wurde von außen geschlossen!", source))
+				end
+			end
+		end
 		Admin:getSingleton():outputSpectatingChat(source, "C", message, phonePartner, playersToSend)
 		cancelEvent()
 	elseif messageType == 1 then

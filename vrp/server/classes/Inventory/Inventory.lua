@@ -43,6 +43,13 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 						self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
 					end
 				end
+			elseif row["Objekt"] == "Clubkarte" then 
+				if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
+					self:removeAllItem("Clubkarte")
+					if isElement(self.m_Owner) then
+						self.m_Owner:sendMessage(_("Deine Spiel-Clubkarte ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+					end
+				end
 			end
 		else
 			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
@@ -442,6 +449,9 @@ function Inventory:throwItem(item, bag, id, place, name)
 	local value = self:getItemValueByBag(bag,place)
 	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )
 	self:removeItemFromPlace(bag, place)
+	if name == "Clubkarte" then 
+		self.m_Owner:setData("PlayHouse:clubcard", nil, true)	
+	end
 end
 
 function Inventory:giveItem(item, amount, value)

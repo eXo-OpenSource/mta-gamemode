@@ -23,16 +23,20 @@ TextureReplacer.load   = pure_virtual
 TextureReplacer.unload = pure_virtual
 
 -- normal methods
-function TextureReplacer:constructor(element, textureName, options, force)
+function TextureReplacer:constructor(element, textureName, options, force, forceMaximum)
 	assert(textureName and textureName:len() > 0, "Bad Argument @ TextureReplacer:constructor #2")
 	self.m_Element     = element
 	self.m_TextureName = textureName
 	self.m_Force = force
+	self.m_ForceMaximum = forceMaximum
 
 	if self.m_Force then
 		self.m_LoadingMode = TEXTURE_LOADING_MODE.PERMANENT
 	else
 		self.m_LoadingMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
+	end
+	if self.m_ForceMaximum then 
+		self.m_LoadingMode = TEXTURE_LOADING_MODE.STREAM
 	end
 
 	self.m_Active      = true
@@ -111,19 +115,21 @@ function TextureReplacer:attach()
 	end
 end
 
-function TextureReplacer:detach()
+function TextureReplacer:detach(bDeleteCache)
 	if not self.m_Active then return TextureReplacer.Status.DENIED end
 	if not self.m_Shader or not isElement(self.m_Shader) then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader:destroy()
-	if self.m_Texture and isElement(self.m_Texture) then self.m_Texture:destroy() end
+	if bDeleteCache then
+		if self.m_Texture and isElement(self.m_Texture) then self.m_Texture:destroy() end
+	end
 	if self.m_Shader then self.m_Shader = nil end
 	if self.m_Texture then self.m_Texture = nil end
 	return TextureReplacer.Status.SUCCESS
 end
 
 function TextureReplacer:setLoadingMode(loadingMode)
-	if not self.m_Force then
+	if not self.m_Force and not self.m_ForceMaximum then
 		if loadingMode == self.m_LoadingMode then return false end
 		self.m_Active = true
 		self:unload()
@@ -189,7 +195,7 @@ end
 
 --// Queue
 function TextureReplacer:addToLoadingQeue()
-	if not self.m_Force then
+	if not self.m_Force and not self.m_ForceMaximum then
 		if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", FILE_TEXTURE_DEFAULT_STATE) then
 			self:unload()
 			return false
@@ -261,12 +267,19 @@ function TextureReplacer.forceReload()
 			if instanceof(instance, TextureReplacer, false) then
 				if instance.m_Element then
 					instance:unload()
-					if instance.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+					if not instance.m_ForceMaximum then
+						if instance.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+							if isElementStreamedIn(instance.m_Element) then
+								instance:onStreamIn()
+							end
+						elseif instance.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
+							instance:addToLoadingQeue()
+						end
+					else 
+						instance:unload() 
 						if isElementStreamedIn(instance.m_Element) then
 							instance:onStreamIn()
 						end
-					elseif instance.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
-						instance:addToLoadingQeue()
 					end
 				end
 			end

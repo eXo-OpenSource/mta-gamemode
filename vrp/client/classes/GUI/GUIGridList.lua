@@ -9,12 +9,14 @@ GUIGridList = inherit(GUIElement)
 inherit(GUIColorable, GUIGridList)
 inherit(GUIFontContainer, GUIGridList)
 
-function GUIGridList:constructor(posX, posY, width, height, parent)
+function GUIGridList:constructor(posX, posY, width, height, parent, alternateColor, lineColor)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 180))
 	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 
 	self.m_ColumnBGColor = self.m_Color
+	self.m_AlternateColor = alternateColor
+	self.m_LineColor = lineColor
 	self.m_ItemHeight = 30
 	self.m_Columns = {}
 	self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
@@ -268,10 +270,10 @@ function GUIGridList:drawThis()
 	-- Draw column header
 	if self.m_ColumnBGColor then
 		dxSetBlendMode("add")
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_ItemHeight, self.m_ColumnBGColor)
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_ItemHeight, self.m_AlternateColor or self.m_ColumnBGColor)
 		dxSetBlendMode("blend")
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.Accent)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, self.m_LineColor or Color.Accent)
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
 		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + self.m_ItemHeight, Color.White, self:getFontSize(), self:getFont(), "left", "center")
@@ -287,6 +289,12 @@ function GUIGridList:drawThis()
 
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
+end
+
+function GUIGridList:setAlternativeColor(color) 
+	self.m_AlternateColor = color
+	self:anyChange()
+	return self
 end
 
 function GUIGridList:onScrollDown(callbackFunction)
