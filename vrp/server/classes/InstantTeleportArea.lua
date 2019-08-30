@@ -13,7 +13,7 @@ end
 
 function InstantTeleportArea:Event_onColShapeHit( hE, bDim ) 
     local hE = hE
-    if bDim then 
+    if bDim and hE:getInterior() == self.m_DestinationInt then 
         if hE:getType() ~= "vehicle" or not hE:getTowingVehicle() then  
             setElementDimension(hE, self.m_DestinationDim)
             setElementInterior(hE, self.m_DestinationInt)
