@@ -58,6 +58,7 @@ function ItemManager:loadItems()
 			Size = row.Size;
 			ModelId = row.ModelId;
 			MaxDurability = row.MaxDurability;
+			DurabilityDestroy = row.DurabilityDestroy == 1;
 			Consumable = row.Consumable == 1;
 			Tradeable = row.Tradeable == 1;
 			Expireable = row.Expireable == 1;

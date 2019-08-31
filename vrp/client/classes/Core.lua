@@ -101,6 +101,7 @@ function Core:ready() --onClientResourceStart
 	--JailBreak:new()
 	RadioStationManager:new()
 	DimensionManager:new()
+	InventoryManager:new()
 	InventoryOld:new()
 	InventoryGUI:new()
 	Guns:new()
@@ -140,7 +141,7 @@ function Core:ready() --onClientResourceStart
 	Sewers:new()
 	PremiumArea:new()
 
-	Plant.initalize()
+	ItemPlant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
 	CoronaEffect.initalize()

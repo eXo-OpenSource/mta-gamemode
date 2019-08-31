@@ -6,17 +6,15 @@
 -- *
 -- ****************************************************************************
 
-ItemHealpack = inherit(Item)
+ItemHealpack = inherit(ItemNew)
 
-function ItemHealpack:constructor()
+function ItemHealpack:use()
+	local player = self.m_Inventory:getPlayer()
 
-end
+	if not player then return false end
 
-function ItemHealpack:destructor()
-
-end
-
-function ItemHealpack:use(player)
 	player:meChat(true, "benutzt ein Medikit!")
 	player:setHealth(100)
+
+	return true, true
 end

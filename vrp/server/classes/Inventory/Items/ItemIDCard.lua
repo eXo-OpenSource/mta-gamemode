@@ -5,17 +5,14 @@
 -- *  PURPOSE:     Id Card
 -- *
 -- ****************************************************************************
-ItemIDCard = inherit(Item)
+ItemIDCard = inherit(ItemNew)
 
-function ItemIDCard:constructor()
+function ItemIDCard:use()
+	local player = self.m_Inventory:getPlayer()
+	if not player then return false end
 
-end
-
-function ItemIDCard:destructor()
-
-end
-
-function ItemIDCard:use(player)
 	player:triggerEvent("closeInventory")
 	player:triggerEvent("showIDCard")
+
+	return true
 end

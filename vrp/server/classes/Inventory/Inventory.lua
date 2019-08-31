@@ -44,9 +44,9 @@ function Inventory:constructor(inventory, items, persistent, player)
 				item[k] = v
 			end
 		end
-		item.DatabaseId = item.Id
-		item.Id = self.m_NextItemId
-		self.m_NextItemId = self.m_NextItemId + 1
+		--item.DatabaseId = item.Id
+		--item.Id = self.m_NextItemId
+		--self.m_NextItemId = self.m_NextItemId + 1
 	end
 end
 
@@ -110,6 +110,75 @@ function Inventory:getItem(id)
 	return false
 end
 
+function Inventory:getItemDurability(id)
+	local item = self:getItem(id)
+	if not item then return false end
+
+	return item.Durability
+end
+
+function Inventory:setItemDurability(id, durability)
+	local durability = tonumber(durability)
+	if durability < 0 then return false end
+
+	local item = self:getItem(id)
+	if not item then return false end
+
+	if durability > item.MaxDurability then
+		item.Durability = item.MaxDurability
+	else
+		if durability == 0 and item.DurabilityDestroy then
+			self:takeItem(id, 1)
+			return true
+		else
+			item.Durability = durability
+		end
+	end
+	self:onInventoryChanged()
+	return true
+end
+
+function Inventory:increaseItemDurability(id, durability)
+	local durability = tonumber(durability) or 1
+	if durability < 1 then return false end
+	local item = self:getItem(id)
+	if not item then return false end
+
+	local newDurability = item.Durability + durability
+
+	if newDurability > item.MaxDurability then
+		item.Durability = item.MaxDurability
+	else
+		item.Durability = newDurability
+	end
+
+	self:onInventoryChanged()
+	return true
+end
+
+function Inventory:decreaseItemDurability(id, durability)
+	local durability = tonumber(durability) or 1
+	if durability < 1 then return false end
+	local item = self:getItem(id)
+	if not item then return false end
+
+	local newDurability = item.Durability - durability
+
+	if newDurability < 1 then
+		if item.DurabilityDestroy then
+			self:takeItem(id, 1)
+			return true
+		else
+			item.Durability = 0
+		end
+	else
+		item.Durability = newDurability
+	end
+
+	self:onInventoryChanged()
+	return true
+end
+
 function Inventory:hasPlayerAccessTo(player)
 	-- Typbasierte Checks, bspw.:
 	--  Fraktion: ist der Spieler OnDuty in der Besitzerfraktion
@@ -162,49 +231,46 @@ function Inventory:save(sync)
 	end
 
 	for k, v in pairs(self.m_Items) do
-		if v.DatabaseId and v.DatabaseId ~= -1 then
-			if dbItems[v.DatabaseId] then
-				local dbItem = dbItems[v.DatabaseId]
-				local needsUpdate = false
-				local update = {
-					Id = v.DatabaseId;
-				}
 
-				-- Check amount
-				if dbItem.Amount ~= v.Amount then
-					needsUpdate = true
-					update.Amount = v.Amount
-				end
+		if dbItems[v.Id] then
+			local dbItem = dbItems[v.Id]
+			local needsUpdate = false
+			local update = {
+				Id = v.Id;
+			}
 
-				-- Check durability
-				if dbItem.Durability ~= v.Durability then
-					needsUpdate = true
-					update.Durability = v.Durability
-				end
-
-				-- Check slot
-				if dbItem.Slot ~= v.Slot then
-					needsUpdate = true
-					update.Slot = v.Slot
-				end
-
-				-- Check metadata
-				if dbItem.Metadata ~= v.Metadata then
-					needsUpdate = true
-					update.Metadata = v.Metadata
-				end
-
-				if needsUpdate then
-					table.insert(changes.update, update)
-				end
-
-				dbItems[v.DatabaseId] = nil
-			else
-				outputDebugString("[INVENTORY]: Item has been deleted from db but still exists ingame!")
+			-- Check amount
+			if dbItem.Amount ~= v.Amount then
+				needsUpdate = true
+				update.Amount = v.Amount
 			end
+
+			-- Check durability
+			if dbItem.Durability ~= v.Durability then
+				needsUpdate = true
+				update.Durability = v.Durability
+			end
+
+			-- Check slot
+			if dbItem.Slot ~= v.Slot then
+				needsUpdate = true
+				update.Slot = v.Slot
+			end
+
+			-- Check metadata
+			if dbItem.Metadata ~= v.Metadata then
+				needsUpdate = true
+				update.Metadata = v.Metadata
+			end
+
+			if needsUpdate then
+				table.insert(changes.update, update)
+			end
+
+			dbItems[v.Id] = nil
 		else
 			table.insert(changes.insert, {
-				InternalId = v.Id;
+				Id = v.Id;
 				ItemId = v.ItemId;
 				Amount = v.Amount;
 				Durability = v.Durability;
@@ -266,27 +332,41 @@ function Inventory:save(sync)
 
 	if #changes.remove > 0 then
 		if queries ~= "" then queries = queries .. " " end
-		queries = queries .. "DELETE FROM ??_inventory_items WHERE Id IN (?" .. string.rep(", ?", #changes.remove - 1) .. ")"
+		queries = queries .. "DELETE FROM ??_inventory_items WHERE Id IN (?" .. string.rep(", ?", #changes.remove - 1) .. ");"
 		table.insert(queriesParams, sql:getPrefix())
 		for k, v in pairs(changes.remove) do
 			table.insert(queriesParams, v.Id)
 		end
 	end
 
-	if queries ~= "" then
-		sql:queryExec(queries, unpack(queriesParams))
-	end
+	if #changes.insert > 0 then
+		if queries ~= "" then queries = queries .. " " end
+		queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+		local first = true
+		table.insert(queriesParams, sql:getPrefix())
+		for k, v in pairs(changes.insert) do
+			if not first then queries = queries .. ", " end
+			if first then first = false end
+			queries = queries .. "(?, ?, ?, ?, ?, ?, "
 
-	for k, v in pairs(changes.insert) do
-		sql:queryExec("INSERT INTO ??_inventory_items (InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES (?, ?, ?, ?, ?, ?)",
-			sql:getPrefix(), self.m_Id, v.ItemId, v.Slot, v.Amount, v.Durability, v.Metadata or nil)
-		local id = sql:lastInsertId()
-		for _, i in pairs(self.m_Items) do
-			if v.InternalId == i.Id then
-				i.DatabaseId = id
-				break
+			table.insert(queriesParams, v.Id)				-- 1 - Id
+			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
+			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
+			table.insert(queriesParams, v.Slot)				-- 4 - Slot
+			table.insert(queriesParams, v.Amount)			-- 5 - Amount
+			table.insert(queriesParams, v.Durability)		-- 6 - Durability
+			if not v.Metadata then
+				queries = queries .. "NULL)"
+			else
+				queries = queries .. "?)"
+				table.insert(queriesParams, v.Metadata or nil)	-- 7 - Metadata
 			end
 		end
+		queries = queries .. ";"
+	end
+
+	if queries ~= "" then
+		sql:queryExec(queries, unpack(queriesParams))
 	end
 
 	return true

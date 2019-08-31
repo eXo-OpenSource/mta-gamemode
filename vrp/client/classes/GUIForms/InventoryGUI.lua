@@ -44,6 +44,7 @@ function InventoryGUI:Event_syncInventory(data, inventoryId)
 		item.m_Item = v
 		item.onLeftClick = function()
 			triggerServerEvent("onItemUse", localPlayer, inventoryId, v.Id)
+			self.m_InventoryList:setSelectedItem()
 		end
 
 		item.onRightClick = function()
@@ -54,6 +55,7 @@ function InventoryGUI:Event_syncInventory(data, inventoryId)
 				end
 			end
 			triggerServerEvent("onItemUseSecondary", localPlayer, inventoryId, v.Id)
+			self.m_InventoryList:setSelectedItem()
 		end
 	end
 end

@@ -6,21 +6,21 @@
 -- *
 -- ****************************************************************************
 
-Plant = inherit( Object )
+ItemPlant = inherit( Object )
 
 addRemoteEvents{"Plant:sendClientCheck", "Plant:syncPlantMap", "Plant:onWaterPlant"}
 
-function Plant.initalize()
-	Plant.Shader = dxCreateShader ( "files/shader/shell_layer.fx",0,20,true, "object" )
-	Plant.Shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,20,true, "object" )
-	Plant.WaterDrop =  "files/images/Inventory/waterdrop.png"
+function ItemPlant.initalize()
+	ItemPlant.Shader = dxCreateShader ( "files/shader/shell_layer.fx",0,20,true, "object" )
+	ItemPlant.Shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,20,true, "object" )
+	ItemPlant.WaterDrop =  "files/images/Inventory/waterdrop.png"
 end
 
-function Plant:constructor( )
-	self.m_BindRemoteFunc = bind( Plant.onUse, self )
-	self.m_BindRemoteFunc2 = bind( Plant.onSync, self )
-	self.m_BindRemoteFunc3 = bind( Plant.Render, self )
-	self.m_BindRemoteFunc4 = bind( Plant.onWaterPlant, self )
+function ItemPlant:constructor( )
+	self.m_BindRemoteFunc = bind( ItemPlant.onUse, self )
+	self.m_BindRemoteFunc2 = bind( ItemPlant.onSync, self )
+	self.m_BindRemoteFunc3 = bind( ItemPlant.Render, self )
+	self.m_BindRemoteFunc4 = bind( ItemPlant.onWaterPlant, self )
 	self.m_EntityTable = {	}
 	addEventHandler("Plant:sendClientCheck", localPlayer, self.m_BindRemoteFunc )
 	addEventHandler("Plant:syncPlantMap", localPlayer, self.m_BindRemoteFunc2 )
@@ -28,7 +28,7 @@ function Plant:constructor( )
 	addEventHandler("Plant:onWaterPlant", localPlayer, self.m_BindRemoteFunc4 )
 end
 
-function Plant:isUnderWater()
+function ItemPlant:isUnderWater()
 	local pos = localPlayer:getPosition()
 	local waterLevel = getWaterLevel(pos.x, pos.y, pos.z)
 	if waterLevel and pos.z-waterLevel < 0 then
@@ -37,12 +37,12 @@ function Plant:isUnderWater()
 	return false
 end
 
-function Plant:onUse(plant)
+function ItemPlant:onUse(plant)
 	local pos = localPlayer:getPosition()
 	local gz = getGroundPosition(pos)
 	local surfaceClear = true
-	local surfaceRightType = true 
-	if math.abs(pos.z - gz) < 2 then  
+	local surfaceRightType = true
+	if math.abs(pos.z - gz) < 2 then
 		local base, __, __, __, __, __, __, __, surface = processLineOfSight(pos.x, pos.y, pos.z, pos.x, pos.y, gz-0.5, true, false, false)
 		if base then
 			local edges = {
@@ -52,7 +52,7 @@ function Plant:onUse(plant)
 				right = {processLineOfSight(pos.x, pos.y - 1, pos.z, pos.x, pos.y - 1, gz-0.5, true, false, false)},
 			}
 			for i,v in pairs(edges) do
-				if v[1] then 
+				if v[1] then
 					if not IsMatInMaterialType(v[9]) then
 						surfaceRightType = false
 						break
@@ -65,28 +65,28 @@ function Plant:onUse(plant)
 			if not IsMatInMaterialType(surface) then
 				surfaceRightType = false
 			end
-		else	
+		else
 			surfaceClear = false
 		end
-	else	
+	else
 		surfaceClear = false
 	end
 	triggerServerEvent("plant:getClientCheck", localPlayer, plant, surfaceClear and surfaceRightType, gz, self:isUnderWater())
 end
 
-function Plant:Render()
+function ItemPlant:Render()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/PlantUI") end
-	if Plant.Shader and Plant.Shader2 then
+	if ItemPlant.Shader and ItemPlant.Shader2 then
 		if #self.m_EntityTable ~= 0 then
 			local timeElapsed = getTickCount() - self.m_RendTick
 			local f = timeElapsed / 500
 			f = math.min( f, 1 )
 			local size = math.lerp ( 1, 1.2, f )
 			local alpha = math.lerp ( 1.0, 0.0, f )
-			dxSetShaderValue( Plant.Shader, "sMorphSize", size, size, size )
-			dxSetShaderValue( Plant.Shader, "sMorphColor", 0, 1, 0, alpha )
-			dxSetShaderValue( Plant.Shader2, "sMorphSize", size, size, size )
-			dxSetShaderValue( Plant.Shader2, "sMorphColor", 1, 0, 0, alpha )
+			dxSetShaderValue( ItemPlant.Shader, "sMorphSize", size, size, size )
+			dxSetShaderValue( ItemPlant.Shader, "sMorphColor", 0, 1, 0, alpha )
+			dxSetShaderValue( ItemPlant.Shader2, "sMorphSize", size, size, size )
+			dxSetShaderValue( ItemPlant.Shader2, "sMorphColor", 1, 0, 0, alpha )
 		end
 	end
 	if self.m_HydPlant  and isElementStreamedIn(self.m_HydPlant) then
@@ -98,7 +98,7 @@ function Plant:Render()
 			local sx, sy = getScreenFromWorldPosition( x,y,(z+1)- offsetZ)
 			local alpha = 255 * prog
 			local color = tocolor( 255, 255, 255, alpha)
-			dxDrawImage(sx,sy,screenWidth*0.03,screenWidth*0.05, Plant.WaterDrop, 0,0,0, color)
+			dxDrawImage(sx,sy,screenWidth*0.03,screenWidth*0.05, ItemPlant.WaterDrop, 0,0,0, color)
 		else
 			self.m_HydPlant = nil
 		end
@@ -106,7 +106,7 @@ function Plant:Render()
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/PlantUI", 1, 1) end
 end
 
-function Plant:destructor( )
+function ItemPlant:destructor( )
 
 end
 
@@ -123,7 +123,7 @@ function IsMatInMaterialType( mat )
 	return false
 end
 
-function Plant:onSync( tbl )
+function ItemPlant:onSync( tbl )
 	local iHyd,obj
 	for i = 1,#self.m_EntityTable do
 		obj = self.m_EntityTable[i]
@@ -135,16 +135,16 @@ function Plant:onSync( tbl )
 	for i = 1,#self.m_EntityTable do
 		obj = self.m_EntityTable[i]
 		if getElementData(obj, "Plant:Hydration") then
-			obj.m_Shader = Plant.Shader
+			obj.m_Shader = ItemPlant.Shader
 		else
-			obj.m_Shader = Plant.Shader2
+			obj.m_Shader = ItemPlant.Shader2
 		end
 		engineApplyShaderToWorldTexture ( obj.m_Shader, "*", obj)
 		setElementAlpha( obj, 254 )
 	end
 end
 
-function Plant:onWaterPlant( plant )
+function ItemPlant:onWaterPlant( plant )
 	self.m_HydPlant = plant
 	self.m_HydDrawTick = getTickCount()
 end

@@ -59,7 +59,7 @@ function InventoryManager:constructor()
 		ItemDefuseKit = ItemDefuseKit;
 		ItemFishing = ItemFishing;
 		ItemDice = ItemDice;
-		Plant = Plant;
+		ItemPlant = ItemPlant;
 		ItemCan = ItemCan;
 		ItemSellContract = ItemSellContract;
 		ItemIDCard = ItemIDCard;
@@ -101,10 +101,14 @@ function InventoryManager:Event_onItemUseSecondary(inventoryId, itemId)
 	end
 end
 
-function InventoryManager:syncInventory(player)
+function InventoryManager:syncInventory(player, inventoryId)
 	if not player.m_Disconnecting then
 		local inventory = player:getInventory()
 		player:triggerEvent("syncInventory", inventory.m_Items, inventory.m_Id)
+
+		if inventoryId then inventory = self:getInventory(inventoryId) end
+
+		player:triggerEvent("onInventorySync", inventory.m_Id, inventory.m_ElementId, inventory.m_ElementType, inventory.m_Size, inventory.m_Items)
 	end
 end
 
@@ -370,8 +374,8 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 
 		local data = table.copy(itemData)
 
-		data.DatabaseId = -1
-		data.Id = id
+		-- data.DatabaseId = uuid()
+		data.Id = uuid()
 		data.ItemId = item
 		data.Slot = 0
 		data.Amount = amount

@@ -5,15 +5,14 @@
 -- *  PURPOSE:     Dice item class
 -- *
 -- ****************************************************************************
-ItemDice = inherit(Item)
+ItemDice = inherit(ItemNew)
 
-function ItemDice:constructor()
-end
+function ItemDice:use()
+	local player = self.m_Inventory:getPlayer()
 
-function ItemDice:destructor()
+	if not player then return false end
 
-end
-
-function ItemDice:use(player)
 	player:meChat(true, "würfelt eine "..math.random(1,6).."!")
+
+	return true
 end

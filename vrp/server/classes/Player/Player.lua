@@ -202,6 +202,7 @@ function Player:loadCharacter()
 		self:getFaction():takeEquipment(self)
 	end
 	FactionState:getSingleton():checkInsideGarage(self)
+	InventoryManager:syncInventory(self)
 end
 
 function Player:createCharacter()

@@ -8,7 +8,7 @@
 Randomizer = inherit(Object)
 
 function Randomizer:changeSeed()
-	math.randomseed(getTickCount())
+	math.randomseed(tonumber(tostring(os.time()) + tostring(getTickCount()):sub(-3) + ("00" .. tostring(math.floor(math.random() * 100))):sub(-2)))
 end
 
 function Randomizer:get(min, max)

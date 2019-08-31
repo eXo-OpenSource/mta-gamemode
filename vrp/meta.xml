@@ -166,7 +166,7 @@
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemPumpkin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemPlant.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemHealpack.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 
@@ -188,6 +188,8 @@
 	<script src="server/classes/Inventory/Items/WorldItems/ItemNails.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemSkyBeam.lua" type="server"/>
+
+	<script src="server/classes/Inventory/Items/Managers/ItemCanManager.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
@@ -645,8 +647,9 @@
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Game.lua" type="client" />
 
 	<!-- Inventory -->
+	<script src="client/classes/Inventory/InventoryManager.lua" type="client"/>
 	<script src="client/classes/Inventory/InventoryOld.lua" type="client"/>
-	<script src="client/classes/Inventory/Plant.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemPlant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemKeyPad.lua" type="client"/>

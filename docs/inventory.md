@@ -19,19 +19,15 @@
 
 ## Items
 
-* ~~ItemFood = ItemFood;~~ - done
-* ~~ItemKeyPad = ItemKeyPad;~~ - done
 * ItemDoor = ItemDoor;
 * ItemFurniture = ItemFurniture;
 * ItemEntrance = ItemEntrance;
 * ItemTransmitter = ItemTransmitter;
 * ItemBarricade = ItemBarricade;
-* ItemSkyBeam = ItemSkyBeam; - remove
 * ItemSpeedCam = ItemSpeedCam;
 * ItemNails = ItemNails;
 * ItemRadio = ItemRadio;
 * ItemBomb = ItemBomb;
-* ~~ItemDrugs = ItemDrugs;~~ - done
 * ItemDonutBox = ItemDonutBox;
 * ItemEasteregg = ItemEasteregg;
 * ItemPumpkin = ItemPumpkin;
@@ -40,22 +36,29 @@
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
 * ItemFishing = ItemFishing;
-* ItemDice = ItemDice;
-* Plant = Plant;
-* ItemCan = ItemCan;
 * ItemSellContract = ItemSellContract;
-* ItemIDCard = ItemIDCard;
 * ItemFuelcan = ItemFuelcan;
 * ItemRepairKit = ItemRepairKit;
-* ItemHealpack = ItemHealpack;
-* ItemAlcohol = ItemAlcohol;
-* ~~ItemFirework = ItemFirework;~~ - done
 * WearableHelmet = WearableHelmet;
 * WearableShirt = WearableShirt;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
+* ~~ItemFood = ItemFood;~~ - done
+* ~~ItemKeyPad = ItemKeyPad;~~ - done
+* ~~ItemDrugs = ItemDrugs;~~ - done
+* ~~ItemDice = ItemDice;~~ - done
+* ~~Plant = Plant;~~ - done
+* ~~ItemCan = ItemCan;~~ - done
+* ~~ItemIDCard = ItemIDCard;~~ - done
+* ~~ItemHealpack = ItemHealpack;~~ - done
+* ~~ItemAlcohol = ItemAlcohol;~~ - done
+* ~~ItemFirework = ItemFirework;~~ - done
+* ~~ItemSkyBeam = ItemSkyBeam;~~ - remove
 
 ## Notes
+
+### Give yourself every item
+`drun for k, v in pairs(ItemManager:getSingleton().m_Items) do me:getInventory():giveItem(v.TechnicalName, 1) end`
 
 #### Inventar-Rework der Extraklasse
 
@@ -225,7 +228,7 @@ TODO by MegaThorx
 
 ## vrp_inventory_items
 
--   Id int PK
+-   Id varchar(36) PK
 -   InventoryId int NOT NULL FK
 -   ItemId int NOT NULL FK
 -   Slot int NOT NULL
@@ -252,6 +255,7 @@ CREATE TABLE `vrp_items`  (
   `Size` int(0) NOT NULL,
   `ModelId` int(0) NOT NULL DEFAULT 0,
   `MaxDurability` int(0) NOT NULL DEFAULT 0,
+  `DurabilityDestroy` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Destroys item on zero durability',
   `Consumable` tinyint(1) NOT NULL DEFAULT 0,
   `Tradeable` tinyint(1) NOT NULL DEFAULT 0,
   `Expireable` tinyint(1) NOT NULL DEFAULT 0,
@@ -290,7 +294,7 @@ CREATE TABLE `vrp_inventories`  (
 );
 
 CREATE TABLE `vrp_inventory_items`  (
-  `Id` int(0) NOT NULL AUTO_INCREMENT,
+  `Id` varchar(36) NOT NULL AUTO_INCREMENT,
   `InventoryId` int(0) NOT NULL,
   `ItemId` int(0) NOT NULL,
   `Slot` int(0) NOT NULL,

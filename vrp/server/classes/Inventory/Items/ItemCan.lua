@@ -5,7 +5,18 @@
 -- *  PURPOSE:     Item Empty Watering-Can class
 -- *
 -- ****************************************************************************
+ItemCan = inherit(ItemNew)
+ItemCan.m_Cans = {}
 
+function ItemCan:use()
+	local player = self.m_Inventory:getPlayer()
+
+	if not player then return false end
+
+	ItemCanManager:getSingleton():toggleCan(player, self.m_Item.Id)
+end
+
+--[[
 ItemCan = inherit(Item)
 
 function ItemCan:constructor( )
@@ -59,3 +70,4 @@ function ItemCan:action(player, key, state, bag, place)
 		end
 	end
 end
+]]
