@@ -10,6 +10,7 @@ PlayHouse = inherit(Singleton)
 
 PlayHouse.Items =
 {
+    ["Tageskarte"] =  12000, 
     ["Wochenkarte"] =  70000, 
 	["Zweiwochenkarte"] =  130000,
 	["Dreiwochenkarte"] =  190000,

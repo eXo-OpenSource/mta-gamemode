@@ -13,7 +13,7 @@ function HighStakeRouletteGUI:constructor(customBank)
 
     self.m_ClearTokens = GUIButton:new(10, 70, 150, 25, "Jetons entfernen", self.m_Window)
     self.m_ClearTokens.onLeftClick = function()
-        HighStakeRouletteGUI:getSingleton():clearTokens(true)
+        HighStakeRoulette:getSingleton():clearTokens(true)
     end
 --[[
     self.m_CheatEdit = GUIEdit:new(130, 100, 40, 25, self.m_Window)

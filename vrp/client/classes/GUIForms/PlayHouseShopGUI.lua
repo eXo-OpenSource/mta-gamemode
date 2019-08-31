@@ -10,6 +10,7 @@ inherit(Singleton, PlayHouseShopGUI)
 
 PlayHouseShopGUI.Items = 
 {
+	{"Tageskarte", 12000, (60*60*7), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (7 Stunden)"}, 
 	{"Wochenkarte", 70000, (60*60*24*7), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (1 Woche)"}, 
 	{"Zweiwochenkarte", 130000,  (60*60*24*14), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (2 Wochen)"},
 	{"Dreiwochenkarte", 190000,  (60*60*24*21), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (3 Wochen)"},

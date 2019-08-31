@@ -1579,7 +1579,8 @@
 
 	<vrpfile src="files/images/BlackJack/dealer_e_open.png" />
 	<vrpfile src="files/images/BlackJack/dealer_e_close.png" />
-
+	<vrpfile src="files/images/BlackJack/table.jpg" />
+	
 	<!-- Casino Wheel -->
 	<vrpfile src="files/images/CasinoWheel/table.png" />
 
