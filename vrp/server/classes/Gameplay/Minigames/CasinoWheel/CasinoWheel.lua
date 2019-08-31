@@ -205,7 +205,7 @@ function CasinoWheel:pay()
 end
 
 function CasinoWheel:redrawBet(player, isStop) 
-	if self.m_Players[player] then 
+	if self.m_Players[player] and not self.m_Spin then 
 		local betAmount = self:calcBet(player)
 		if self.m_BankAccountServer:transferMoney(player, betAmount, "Glücksrad-Rückerstattung", "Gameplay", "Glücksrad-WOF") then
 			PlayHouse:getSingleton():onPlayerMoney(player, betAmount)
