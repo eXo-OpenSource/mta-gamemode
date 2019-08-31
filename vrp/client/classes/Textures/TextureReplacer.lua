@@ -29,7 +29,6 @@ function TextureReplacer:constructor(element, textureName, options, force, force
 	self.m_TextureName = textureName
 	self.m_Force = force
 	self.m_ForceMaximum = forceMaximum
-	outputChatBox(tostring(forceMaximum))
 	if self.m_Force then
 		self.m_LoadingMode = TEXTURE_LOADING_MODE.PERMANENT
 	else
