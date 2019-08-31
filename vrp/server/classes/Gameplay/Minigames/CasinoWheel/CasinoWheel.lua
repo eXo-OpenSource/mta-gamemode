@@ -186,14 +186,18 @@ end
 
 function CasinoWheel:pay() 
 	for player, bet in pairs(self.m_Bets) do 
-		local win = self:calcBetWinOnField(player, tostring(self.m_WinValue == 0 and "40" or self.m_WinValue))
-		if win > 0 then 
-			if self.m_BankAccountServer:transferMoney(player, win, ("Glücksrad-Gewinn (Zahl %s)"):format(self.m_WinValue), "Gameplay", "Glücksrad-WOF") then
-				PlayHouse:getSingleton():onPlayerMoney(player, win)
-				player:sendInfo(_("Glückwunsch! Du hast gewonnen!", player))
+		if isValidElement(player, "player") then 
+			local win = self:calcBetWinOnField(player, tostring(self.m_WinValue == 0 and "40" or self.m_WinValue))
+			if win > 0 then 
+				if self.m_BankAccountServer:transferMoney(player, win, ("Glücksrad-Gewinn (Zahl %s)"):format(self.m_WinValue), "Gameplay", "Glücksrad-WOF") then
+					PlayHouse:getSingleton():onPlayerMoney(player, win)
+					player:sendInfo(_("Glückwunsch! Du hast gewonnen!", player))
+				end
 			end
+			self.m_Bets[player] = nil
+		else 
+			self.m_Bets[player] = nil
 		end
-		self.m_Bets[player] = nil
 	end
 	for player, k in pairs(self.m_Players) do 
 		if isValidElement(player, "player") then 

@@ -10,11 +10,12 @@ VehicleTexture.Map = {}
 VehicleTexture.WeirdCamperTexture = "#emapcamperbody256" -- fuck this, just hack it in. If some other vehicle has the same problem, maybe we should use a better system, but for now... /shrug
 
 
-function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, player, forceTexture)
+function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, player, forceTexture, forceMaximumTexture)
 	if vehicle and isElement(vehicle) then
 		self.m_Id = #VehicleTexture.Map+1
 		self.m_Optional = not self:checkOptional(vehicle)
 		self.m_Force = forceTexture
+		self.m_ForceMaximum = forceMaximumTexture
 		self.m_Vehicle = vehicle
 		self.m_Path = path
 		if texture then
@@ -30,14 +31,14 @@ function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, pl
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
 				if not isPreview then
 					if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
-						VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = VehicleTexture.WeirdCamperTexture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
+						VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = VehicleTexture.WeirdCamperTexture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force, forceMaximumTexture = self.m_ForceMaximum}})
 					end
-					VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
+					VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force, forceMaximumTexture = self.m_ForceMaximum}})
 				else
 					if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
-						VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = VehicleTexture.WeirdCamperTexture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
+						VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = VehicleTexture.WeirdCamperTexture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force, forceMaximumTexture = self.m_ForceMaximum}})
 					end
-					VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
+					VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force, forceMaximumTexture = self.m_ForceMaximum}})
 				end
 			end
 		end
@@ -84,7 +85,7 @@ function VehicleTexture.requestTextures(target)
 	local vehicleTab = {}
 	for index, instance in pairs(VehicleTexture.Map) do
 		if instance.m_Vehicle and isElement(instance.m_Vehicle) then
-			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional, isRequested = true, forceTexture = instance.m_Force}
+			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional, isRequested = true, forceTexture = instance.m_Force, forceMaximumTexture = instance.m_ForceMaximum}
 		end
 	end
 	VehicleTexture.sendToClient(target, vehicleTab)
