@@ -79,7 +79,7 @@ end
 
 function BlackJack:setup() 
   	--self.m_Table = GUIImageSection:new(0, 0, self.m_Width, self.m_Height, 0, 0, 1000, 1000, "files/images/BlackJack/table.jpg", self)
-	GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(51,120,37), self)
+	GUIImage:new(0, 0, self.m_Width, self.m_Height, self:makeImagePath("table.jpg"), self)
 	GUIRectangle:new(0, 0, 10, self.m_Height, Color.Wood, self)
 	GUIRectangle:new(self.m_Width-10, 0, 10, self.m_Height, Color.Wood, self)
 	GUIRectangle:new(0, 0, self.m_Width, 10, Color.Wood, self)
@@ -132,27 +132,27 @@ function BlackJack:setup()
 
 	self.m_ResultLabel = GUILabel:new(self.m_Width/2-300, self.m_Height/2-70, 600, 10, "", self):setFont(VRPFont(36)):setAlignX("center"):setVisible(false)
 
-	self.m_RestartButton = GUIButton:new(self.m_Width/2-300, 506-120, 160, 30, "Nochmal", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White):setEnabled(false):setVisible(false)
+	self.m_RestartButton = GUIButton:new(self.m_Width/2-300, 506-120, 160, 30, "Nochmal", self):setAlternativeColor(Color.Clear):setBackgroundColor(Color.White):setEnabled(false):setVisible(false)
 	self.m_RestartButton.m_AnimatedBar:setColor(Color.Black)
 	if not self.m_Spectate then
 		self.m_RestartButton.onLeftClick = bind(self.restart, self)
 	end
 
-	self.m_EndButton = GUIButton:new(10, 20, 160, 30, "← Ende", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
+	self.m_EndButton = GUIButton:new(10, 20, 160, 30, "← Ende", self):setAlternativeColor(Color.Clear):setBackgroundColor(Color.White)
 	self.m_EndButton.m_AnimatedBar:setColor(Color.Black)
 	self.m_EndButton.onLeftClick = bind(self.cancel, self)
 
-	self.m_InfoButton = GUIButton:new(self.m_Width-170, 20, 160, 30, "Hilfe", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
+	self.m_InfoButton = GUIButton:new(self.m_Width-170, 20, 160, 30, "Hilfe", self):setAlternativeColor(Color.Clear):setBackgroundColor(Color.White)
 	self.m_InfoButton.m_AnimatedBar:setColor(Color.Black)
 	self.m_InfoButton.onLeftClick = bind(self.info, self)
 
-	self.m_HitButton = GUIButton:new(self.m_Width/2-300, 506-60, 160, 30, "Hit", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
+	self.m_HitButton = GUIButton:new(self.m_Width/2-300, 506-60, 160, 30, "Hit", self):setAlternativeColor(Color.Clear):setBackgroundColor(Color.White)
 	self.m_HitButton.m_AnimatedBar:setColor(Color.Black)
 	if not self.m_Spectate then
 		self.m_HitButton.onLeftClick = bind(self.hit, self)
 	end
 
-	self.m_InsuranceButton = GUIButton:new(self.m_Width/2-300, 506-130, 160, 30, "Insurance", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White):setEnabled(false):setVisible(false)
+	self.m_InsuranceButton = GUIButton:new(self.m_Width/2-300, 506-130, 160, 30, "Insurance", self):setAlternativeColor(Color.Clear):setBackgroundColor(Color.White):setEnabled(false):setVisible(false)
 	self.m_InsuranceButton.m_AnimatedBar:setColor(Color.Black)
 	if not self.m_Spectate then
 		self.m_InsuranceButton.onLeftClick = bind(self.insurance, self)
@@ -160,7 +160,7 @@ function BlackJack:setup()
 
 	self.m_InsuranceLabel = GUILabel:new(self.m_Width/2-300, 506-130, 160, 30, "Insurance-Wette aktiv!", self):setFont(VRPFont(20)):setAlignX("center"):setAlignY("center"):setVisible(false)
 
-	self.m_StandButton = GUIButton:new(self.m_Width-260, 506-60, 160, 30, "Stand", self):setAlternativeColor(tocolor(51,120,37)):setBackgroundColor(Color.White)
+	self.m_StandButton = GUIButton:new(self.m_Width-260, 506-60, 160, 30, "Stand", self):setAlternativeColor(Color.Clear):setBackgroundColor(Color.White)
 	self.m_StandButton.m_AnimatedBar:setColor(Color.Black)
 	if not self.m_Spectate then
 		self.m_StandButton.onLeftClick = bind(self.stand, self)

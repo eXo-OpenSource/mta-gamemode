@@ -29,7 +29,7 @@ function TextureReplacer:constructor(element, textureName, options, force, force
 	self.m_TextureName = textureName
 	self.m_Force = force
 	self.m_ForceMaximum = forceMaximum
-
+	outputChatBox(tostring(forceMaximum))
 	if self.m_Force then
 		self.m_LoadingMode = TEXTURE_LOADING_MODE.PERMANENT
 	else
@@ -308,9 +308,9 @@ addEventHandler("changeElementTexture", root,
 			end
 			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
 			if string.find(vehData.texturePath, "https://") or string.find(vehData.texturePath, "http://") then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture)
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture,  vehData.forceMaximumTexture)
 			else
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture)
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture,  vehData.forceMaximumTexture)
 			end
 		end
 
