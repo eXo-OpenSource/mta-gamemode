@@ -127,8 +127,10 @@ function CasinoWheel:spin()
 	setTimer(function() self.m_Ped:setAnimation("cop_ambient", "coplook_think", 1000, false) end, 1100, 1)
 	self.m_WinValue = false
 	self.m_Spin = true
-	for player, k in pairs(self.m_Players) do 
-		player:triggerEvent("CasinoWheel:lockBet")
+	for player, k in pairs(self.m_Players) do
+		if isValidElement(player, "player") then
+			player:triggerEvent("CasinoWheel:lockBet")
+		end 
 	end
 	setTimer(function()
 
