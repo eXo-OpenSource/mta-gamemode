@@ -1075,7 +1075,9 @@ function SelfGUI:onSettingChange(setting)
 		local SpawnIDToCheckbox = {[0] = self.m_Default, [1] = self.m_Noobspawn, [3] = self.m_FactionBase, [4] = self.m_CompanyBase, [5] = self.m_House, [6] = self.m_Vehicle, [7] = self.m_GroupBase}
 		local uncheckAll = function() for _, checkbox in pairs(SpawnIDToCheckbox) do checkbox:setChecked(false) end end
 
-		SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")]:setChecked(true)
+		if SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")] then  -- this happens when any spawn option is not avaialble anymore (ie, player got kicked out of faction and has spawn still set to faction-spawn)
+			SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")]:setChecked(true)
+		end 
 
 		self.m_Default.onChange = function() uncheckAll() self.m_Default:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.DEFAULT) end
 		self.m_Noobspawn.onChange = function() uncheckAll() self.m_Noobspawn:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.NOOBSPAWN) end

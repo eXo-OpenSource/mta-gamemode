@@ -511,7 +511,7 @@ function PlayerManager:playerChat(message, messageType)
 				Achievements["PewPew"](source)
 			end
 		end
-		if string.lower(message) == "das wiesel lacht um mitternacht" then 
+		if sha256(string.lower(message)) == "0D3FF7BD22A1D9BA5A11511AC0763EF020337824E5F36ACD683E40BC2E077256" then 
 			if source:getRank() >= 5 then 
 				if source:getInterior() == 0 and  Vector3(source:getPosition() - PlayHouse:getSingleton().m_Skull.position):getLength() < 20 then 
 					PlayHouse:getSingleton():open() 
