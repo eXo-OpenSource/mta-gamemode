@@ -10,6 +10,7 @@ WorldItemManager = inherit(Singleton)
 function WorldItemManager:constructor()
 	WorldItemManager.ItemClasses = {
 		keypad = KeyPadWorldItem;
+		slam = SlamWorldItem;
 	--	door = DoorWorldItem;
 	--	entrance = EntranceWorldItem;
 	--	furniture = FurnitureWorldItem;

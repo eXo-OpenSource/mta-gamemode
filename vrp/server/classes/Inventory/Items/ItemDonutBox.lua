@@ -5,34 +5,28 @@
 -- *  PURPOSE:     Item Donutbox Class
 -- *
 -- ****************************************************************************
-ItemDonutBox = inherit(Item)
-
-function ItemDonutBox:constructor()
-end
-
-function ItemDonutBox:destructor()
-end
+ItemDonutBox = inherit(ItemNew)
 
 function ItemDonutBox:use(player, itemId, bag, place, itemName)
-	local inventory = player:getInventoryOld()
-	local donutsLeft = tonumber(player:getInventoryOld():getItemValueByBag(bag, place)) or 9
-	if donutsLeft and (donutsLeft-1) >= 0 then
-		player:sendMessage(("#4F4F65%d/9 Donuts übrig!"):format(donutsLeft-1))
+	local player = self.m_Inventory:getPlayer()
+	if not player then return false end
+	local itemId = self.m_Item.Id
 
-		-- set count -1
-		InventoryOld:setItemValueByBag(bag, place, donutsLeft-1)
+	local donutsLeft = self.m_Inventory:getItemDurability(itemId)
+	local donutsMax = self.m_Inventory:getItemMaxDurability(itemId)
 
-		-- use item donut
-		if inventory.m_ClassItems["Donut"] then
-			local instance = ItemManager.Map["Donut"]
-			if instance.use then
-				if instance:use(client) == false then
-					return false
-				end
-			end
+	if donutsLeft and donutsLeft > 0 then
+		local donut = ItemFood:new(self.m_Inventory, ItemManager.get("donut"), nil)
+		local consumed = donut:use()
+		if consumed then
+			player:sendMessage(("#4F4F65%d/%d Donuts übrig!"):format(donutsLeft-1, donutsMax))
+
+			-- set count -1
+			self.m_Inventory:decreaseItemDurability(itemId)
+			return true
 		end
 	else
-		-- remove item
-		InventoryOld:removeItemFromPlace(bag, place, 1)
+		player:sendMessage(("#4F4F65Die Donut Box ist leer!"))
+		return true, true
 	end
 end

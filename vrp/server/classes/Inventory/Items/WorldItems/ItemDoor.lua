@@ -5,9 +5,18 @@
 -- *  PURPOSE:     Door item class
 -- *
 -- ****************************************************************************
+ItemDoor = inherit(ItemWorld)
+
+function ItemDoor:constructor()
+	self.m_WorldItemClass = DoorWorldItem
+end
+
+function ItemDoor:destructor()
+end
+
+--[[
 ItemDoor = inherit(Item)
 ItemDoor.Map = {}
-
 
 function ItemDoor:constructor()
 	addRemoteEvents{"confirmDoorDelete", "onDoorDataChange", "onKeyPadSignal"}
@@ -24,9 +33,9 @@ end
 
 function ItemDoor:destructor()
 	local rebuildKeyListString = ""
-	for id , obj in pairs(self.m_Doors) do 
-		if obj and obj.getObject and isElement(obj:getObject()) and obj:getObject().UpdateDoor then 
-			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad ) 
+	for id , obj in pairs(self.m_Doors) do
+		if obj and obj.getObject and isElement(obj:getObject()) and obj:getObject().UpdateDoor then
+			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad )
 			obj:setValue(rebuildKeyListString..":"..getElementModel(obj:getObject())..":"..obj:getObject().openPos.x..":"..obj:getObject().openPos.y..":"..obj:getObject().openPos.z)
 			obj:onChanged()
 		end
@@ -38,16 +47,16 @@ function ItemDoor:addWorldObjectCallback(Id, worldObject)
 	local value = worldObject:getValue()
 	local pos = worldObject:getObject():getPosition()
 	local updateDoor = false
-	if not value or value == "" then 
+	if not value or value == "" then
 		linkedKeyPadList = "#"
 		model, oX, oY, oZ, updateDoor = self.m_Model, pos.x, pos.y, pos.z - 2, true
-	else 
+	else
 		linkedKeyPadList, model, oX, oY, oZ = gettok(value, 1, ":") or "#", tonumber(gettok(value, 2, ":")), tonumber(gettok(value, 3, ":")), tonumber(gettok(value, 4, ":")), tonumber(gettok(value, 5, ":"))
 	end
 	worldObject:setModel(model)
 	worldObject:setAnonymous(true)
 	worldObject:setAccessRange(10)
-	worldObject:setAccessIntDimCheck(true) 
+	worldObject:setAccessIntDimCheck(true)
 	self.m_Doors[Id] = worldObject
 	if self.m_Doors[Id] then
 		local object = self.m_Doors[Id]:getObject()
@@ -64,21 +73,21 @@ function ItemDoor:addWorldObjectCallback(Id, worldObject)
 		self.m_BindKeyClick = bind(self.onDoorClick, self)
 		addEventHandler("onElementClicked", object, self.m_BindKeyClick)
 		return true
-	else 
+	else
 		return false
 	end
 end
 
-function ItemDoor:seperateLinkedKeypads( door, keypadString ) 
+function ItemDoor:seperateLinkedKeypads( door, keypadString )
 	local count = 1
 	local sepString
 	local list = {}
 	if #keypadString > 1 then
-		while gettok(keypadString, count, "+") do 
-			sepString = gettok(keypadString, count, "+") 
-			if tonumber(sepString) then 
+		while gettok(keypadString, count, "+") do
+			sepString = gettok(keypadString, count, "+")
+			if tonumber(sepString) then
 				sepString = tonumber(sepString)
-				if not self.m_KeyPadLinks[sepString] then self.m_KeyPadLinks[sepString] = {} end 
+				if not self.m_KeyPadLinks[sepString] then self.m_KeyPadLinks[sepString] = {} end
 				table.insert(list, sepString)
 				table.insert(self.m_KeyPadLinks[sepString], door)
 			end
@@ -88,25 +97,25 @@ function ItemDoor:seperateLinkedKeypads( door, keypadString )
 	door.LinkedKeyPad = list
 end
 
-function ItemDoor:rebuildLinkedKeypads( keypadList ) 
+function ItemDoor:rebuildLinkedKeypads( keypadList )
 	local keypadId
 	local listString = ""
-	for i = 1, #keypadList do 
+	for i = 1, #keypadList do
 		keypadId = keypadList[i]
 		listString = listString.."+"..keypadId
 	end
 	return listString
 end
 
-function ItemDoor:removeKeyPadLink( id, keyPadId) 
-	if id and keyPadId then 
-		if not self.m_KeyPadLinks[keyPadId] then 
-			self.m_KeyPadLinks[keyPadId] = {} 
-			return true 
+function ItemDoor:removeKeyPadLink( id, keyPadId)
+	if id and keyPadId then
+		if not self.m_KeyPadLinks[keyPadId] then
+			self.m_KeyPadLinks[keyPadId] = {}
+			return true
 		end
 		if type(keyPadId) == "number" then
 			for i = 1, #self.m_KeyPadLinks[keyPadId] do
-				if self.m_KeyPadLinks[keyPadId][i] == self.m_Doors[id] then 
+				if self.m_KeyPadLinks[keyPadId][i] == self.m_Doors[id] then
 					return table.remove(self.m_KeyPadLinks[keyPadId], i)
 				end
 			end
@@ -115,15 +124,15 @@ function ItemDoor:removeKeyPadLink( id, keyPadId)
 	return false
 end
 
-function ItemDoor:addKeyPadLink( id, keyPadId) 
-	if id and keyPadId then 
-		if not self.m_KeyPadLinks[keyPadId] then 
+function ItemDoor:addKeyPadLink( id, keyPadId)
+	if id and keyPadId then
+		if not self.m_KeyPadLinks[keyPadId] then
 			self.m_KeyPadLinks[keyPadId] = {}
 			return table.insert( self.m_KeyPadLinks[keyPadId], self.m_Doors[id])
 		end
 		if type(keyPadId) == "number" then
 			for i = 1, #self.m_KeyPadLinks[keyPadId] do
-				if self.m_KeyPadLinks[keyPadId][i] == self.m_Doors[id] then 
+				if self.m_KeyPadLinks[keyPadId][i] == self.m_Doors[id] then
 					return
 				end
 			end
@@ -133,11 +142,11 @@ function ItemDoor:addKeyPadLink( id, keyPadId)
 	return false
 end
 
-function ItemDoor:addLinkKey( id, keyPadId) 
-	if id and keyPadId then 
+function ItemDoor:addLinkKey( id, keyPadId)
+	if id and keyPadId then
 		if type(keyPadId) == "number" and self.m_Doors[id] then
 			for i = 1, #self.m_Doors[id].LinkedKeyPad do
-				if self.m_Doors[id].LinkedKeyPad[i] == keyPadId then 
+				if self.m_Doors[id].LinkedKeyPad[i] == keyPadId then
 					return
 				end
 			end
@@ -147,11 +156,11 @@ function ItemDoor:addLinkKey( id, keyPadId)
 end
 
 
-function ItemDoor:removeLinkKey( id, keyPadId) 
-	if id and keyPadId then 
+function ItemDoor:removeLinkKey( id, keyPadId)
+	if id and keyPadId then
 		if type(keyPadId) == "number" and self.m_Doors[id] then
 			for i = 1, #self.m_Doors[id].LinkedKeyPad do
-				if self.m_Doors[id].LinkedKeyPad[i] == keyPadId then 
+				if self.m_Doors[id].LinkedKeyPad[i] == keyPadId then
 					return table.remove(self.m_Doors[id].LinkedKeyPad, i)
 				end
 			end
@@ -177,8 +186,8 @@ function ItemDoor:openDoor(door)
     end
 end
 
-function ItemDoor:removeObject( id ) 
-	if self.m_Doors[id] then 
+function ItemDoor:removeObject( id )
+	if self.m_Doors[id] then
 		self.m_Doors[id]:forceDelete()
 		self.m_Doors[id] = nil
 	end
@@ -194,14 +203,14 @@ function ItemDoor:use(player, itemId, bag, place, itemName)
 		local valueString = (value or "#:"..self.m_Model)
 		player:getInventoryOld():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Tor Modell ("..model..")"))
-		local dim = player:getDimension() 
+		local dim = player:getDimension()
 		local int = player:getInterior()
 		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Tor", position.x..","..position.y..","..position.z)
 		local worldObject = PlayerWorldItem:new(ItemManager:getSingleton():getInstance("Tor"), player:getId(), position, rotation, false, player:getId(), true, false, valueString)
-		worldObject:setDimension(dim) 
+		worldObject:setDimension(dim)
 		worldObject:setInterior(int)
-		local id = worldObject:forceSave() 
-		if id then 
+		local id = worldObject:forceSave()
+		if id then
 			if not self:addWorldObjectCallback(id, worldObject) then
 				player:sendInfo(_("Ein Fehler trat auf beim Platzieren!", player))
 			end
@@ -220,16 +229,16 @@ function ItemDoor:onDoorClick(button, state, player)
 	end
 end
 
-function ItemDoor:Event_onKeyPadSignal( ) 
+function ItemDoor:Event_onKeyPadSignal( )
 	local keypad = source
 	if keypad and isElement(keypad) and keypad.Id then
-		if self.m_KeyPadLinks[keypad.Id] then 
+		if self.m_KeyPadLinks[keypad.Id] then
 			local sourcePos = keypad:getPosition()
 			local pos
-			for id, obj in ipairs(self.m_KeyPadLinks[keypad.Id] ) do 
+			for id, obj in ipairs(self.m_KeyPadLinks[keypad.Id] ) do
 				if obj and obj.getObject and isElement(obj:getObject()) then
-					pos = obj:getObject():getPosition() 
-					if getDistanceBetweenPoints3D(pos.x, pos.y, pos.z, sourcePos.x, sourcePos.y, sourcePos.z) <= 30 then 
+					pos = obj:getObject():getPosition()
+					if getDistanceBetweenPoints3D(pos.x, pos.y, pos.z, sourcePos.x, sourcePos.y, sourcePos.z) <= 30 then
 						self:openDoor( obj:getObject() )
 					end
 				end
@@ -238,20 +247,20 @@ function ItemDoor:Event_onKeyPadSignal( )
 	end
 end
 
-function ItemDoor:Event_onConfirmDoorDelete( id ) 
-	if source.m_DoorQuestionDeleteId then 
+function ItemDoor:Event_onConfirmDoorDelete( id )
+	if source.m_DoorQuestionDeleteId then
 		if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 		self:removeObject( source.m_DoorQuestionDeleteId )
 		source:sendSuccess(_("Das Tor mit der ID %s wurde gelöscht!", source, id))
 	end
 end
 
-function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, removePadId, model) 
-	if client then 
-		if client.m_LastDoorId then 
-			if self.m_Doors[client.m_LastDoorId] then 
+function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, removePadId, model)
+	if client then
+		if client.m_LastDoorId then
+			if self.m_Doors[client.m_LastDoorId] then
 				local door = self.m_Doors[client.m_LastDoorId]
-				if door and door.getObject and isElement(door:getObject()) then 
+				if door and door.getObject and isElement(door:getObject()) then
 					door = door:getObject()
 					local x,y,z = getElementPosition(door)
 					door.openPos.x, door.openPos.y, door.openPos.z = tonumber(posX) or door.openPos.x, tonumber(posY) or door.openPos.y, tonumber(posZ) or door.openPos.z
@@ -266,7 +275,7 @@ function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, removePadId, 
 						self:removeKeyPadLink(door.Id, removePadId)
 						self:removeLinkKey(door.Id, removePadId)
 					end
-					if model and tonumber(model) then 
+					if model and tonumber(model) then
 						setElementModel(door, tonumber(model))
 					end
 					door.UpdateDoor = true
@@ -277,18 +286,18 @@ function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, removePadId, 
 	end
 end
 
-function ItemDoor:Event_onNearbyCommand( source, cmd) 
+function ItemDoor:Event_onNearbyCommand( source, cmd)
 	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 	local position = source:getPosition()
 	local objectPosition, dist
 	outputChatBox("** Tore in deiner Nähe **", source, 244, 182, 66)
 	local count = 0
-	for id , obj in pairs(self.m_Doors) do 
+	for id , obj in pairs(self.m_Doors) do
 		if obj and obj.getObject and isElement(obj:getObject()) then
 			count = count + 1
 			objectPosition = obj:getObject():getPosition()
 			dist = getDistanceBetweenPoints2D(objectPosition.x, objectPosition.y, position.x, position.y)
-			if dist <= 10 then  
+			if dist <= 10 then
 				outputChatBox(" #ID "..obj:getObject().Id.." Model: "..getElementModel(obj:getObject()).." Distanz: "..dist , source, 244, 182, 66)
 			end
 		end
@@ -301,13 +310,13 @@ function ItemDoor:Event_onDeleteCommand( source, cmd, id)
 	local position = source:getPosition()
 	local objectPosition, dist
 	if id and tonumber(id) then
-		local obj = self.m_Doors[tonumber(id)] 
-		if obj and obj.getObject and isElement(obj:getObject()) then 
+		local obj = self.m_Doors[tonumber(id)]
+		if obj and obj.getObject and isElement(obj:getObject()) then
 			obj = obj:getObject()
-			local objPos = obj:getPosition() 
-			local sourcePos = source:getPosition() 
-			if getDistanceBetweenPoints2D(objPos.x, objPos.y, sourcePos.x, sourcePos.y) <= 10 then 
-				self:removeObject( tonumber(id) ) 
+			local objPos = obj:getPosition()
+			local sourcePos = source:getPosition()
+			if getDistanceBetweenPoints2D(objPos.x, objPos.y, sourcePos.x, sourcePos.y) <= 10 then
+				self:removeObject( tonumber(id) )
 				source:sendInfo(_("Das Tor mit der ID %s wurde gelöscht!", source, id))
 			end
 		end
@@ -342,5 +351,4 @@ function ItemDoor:createColshapes(model, object, pos, rot, customOffset)
 	self.m_ColShape1 = ColShape.Sphere(Vector3(x1, y1, pos.z - 1.75) + object.matrix.forward*(customOffset and -customOffset or -2), 5)
     self.m_ColShape2 = ColShape.Sphere(Vector3(x2, y2, pos.z - 1.75) + object.matrix.forward*(customOffset or 2), 5)
 end
-
-
+]]

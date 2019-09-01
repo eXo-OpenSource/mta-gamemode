@@ -1,15 +1,14 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Inventory/WorldItems/Items/BarricadeWorldItem.lua
+-- *  FILE:        server/classes/Inventory/WorldItems/Items/DoorWorldItem.lua
 -- *  PURPOSE:
 -- *
 -- ****************************************************************************
-BarricadeWorldItem = inherit(FactionWorldItem)
-BarricadeWorldItem.Map = {}
-addRemoteEvents{"worldItemToggleBlinkingLight"}
+DoorWorldItem = inherit(PlayerWorldItem)
+DoorWorldItem.Map = {}
 
-function BarricadeWorldItem.onPlace(player, placingInfo, position, rotation)
+function DoorWorldItem.onPlace(player, placingInfo, position, rotation)
 	if not position then return end
 	player:getInventory():takeItem(placingInfo.item.Id, 1)
 	player:sendInfo(_("%s hinzugefügt!", player, placingInfo.itemData.Name))
@@ -19,11 +18,11 @@ function BarricadeWorldItem.onPlace(player, placingInfo, position, rotation)
 	-- (item, owner, pos, rotation, breakable, player, isPermanent, locked, value, interior, dimension, databaseId)
 	-- FactionWorldItem:new(self, player:getFaction(), position, rotation, true, player)
 	-- (itemData, placedBy, elementId, elementType, position, rotation, dimension, interior, isPermanent, value, metadata, breakable, locked, databaseId)
-	BarricadeWorldItem:new(placingInfo.itemData, player:getId(), faction:getId(), DbElementType.Faction, position, rotation, dim, int, false, "", {}, true, false)
+	BarricadeWorldItem:new(placingInfo.itemData, player:getId(), player:getId(), DbElementType.Player, position, rotation, dim, int, false, "", {}, true, false)
 end
 
-function BarricadeWorldItem:constructor(itemData, placedBy, elementId, elementType, position, rotation, dimension, interior, isPermanent, value, metadata, breakable, locked, databaseId)
-    BarricadeWorldItem.Map[self.m_Id] = self
+function DoorWorldItem:constructor(itemData, placedBy, elementId, elementType, position, rotation, dimension, interior, isPermanent, value, metadata, breakable, locked, databaseId)
+    DoorWorldItem.Map[self.m_Id] = self
 
 	local object = self:getObject()
 

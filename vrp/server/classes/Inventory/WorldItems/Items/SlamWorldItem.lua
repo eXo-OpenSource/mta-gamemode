@@ -7,6 +7,7 @@
 -- ****************************************************************************
 SlamWorldItem = inherit(PlayerWorldItem)
 SlamWorldItem.Map = {}
+addRemoteEvents{"onSlamTouchLine", "onSlamToggleLaser"}
 
 function SlamWorldItem.onPlace(player, placingInfo, position, rotation)
 	if not position then return end
@@ -20,27 +21,15 @@ end
 function SlamWorldItem:constructor(itemData, placedBy, elementId, elementType, position, rotation, dimension, interior, isPermanent, value, metadata, breakable, locked, databaseId)
     SlamWorldItem.Map[self.m_Id] = self
 
-	self:setAnonymous(true)
-	self:setAccessRange(10)
-	self:setAccessIntDimCheck(true)
-
-	local pin, updatePin
-	local value = self:getValue()
-	if not value or value == "#####" then
-		pin, updatePin = "#####", true
-	else
-		pin, updatePin = value, false
-	end
-
 	local object = self:getObject()
-	object:setDoubleSided(true)
-	object.Id = databaseId
-	object.Type = "Keypad"
-	object.UpdatePin = updatePin
-	object.Pin = pin
-	object:setData("clickable", true, true)
-	self.m_BindKeyClick = bind(self.Event_onKeyPadClick, self)
-	addEventHandler("onElementClicked", object, self.m_BindKeyClick)
+
+	setElementDoubleSided(object, true)
+	setElementFrozen(object, true)
+	setElementData(object, "detonatorSlam", true)
+	-- ItemSlam.Map[object] = worldItem
+
+	addEventHandler("onSlamTouchLine", object, bind(self.Event_onTouchLine, self))
+	addEventHandler("onSlamToggleLaser", object, bind(self.Event_onSlamToggleLaser, self))
 end
 
 function SlamWorldItem:Event_onKeyPadClick(button, state, player)
@@ -52,4 +41,28 @@ function SlamWorldItem:Event_onKeyPadClick(button, state, player)
 			triggerClientEvent(root, "playKeyPadSound", root, source, "keypad_access")
         end
 	end
+end
+
+function SlamWorldItem:Event_onSlamToggleLaser()
+	local object = self:getObject()
+
+	local toggleLaser = not (getElementData(object, "Slam:laserEnabled"))
+	setElementData(object, "Slam:laserEnabled", toggleLaser)
+
+	if toggleLaser then
+		triggerClientEvent("itemRadioChangeURLClient", object, "files/audio/Items/slam_arm.ogg")
+	end
+end
+
+function SlamWorldItem:Event_onTouchLine()
+	self:detonateSlam(client)
+end
+
+function SlamWorldItem:detonateSlam(detonatedBy)
+	local x,y,z = getElementPosition(self.m_Object)
+
+	createExplosion(x, y, z, 8)
+	createExplosion(x, y, z, 8)
+
+	delete(self)
 end

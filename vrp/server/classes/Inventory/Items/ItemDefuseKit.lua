@@ -5,18 +5,11 @@
 -- *  PURPOSE:     Smoke Grenade Item
 -- *
 -- ****************************************************************************
-ItemDefuseKit = inherit(Item)
+ItemDefuseKit = inherit(ItemNew)
 ItemDefuseKit.Map = { }
 
-function ItemDefuseKit:constructor()
-
-end
-
-function ItemDefuseKit:destructor()
-
-end
-
-
-function ItemDefuseKit:use(player)
+function ItemDefuseKit:use()
+	local player = self.m_Inventory:getPlayer()
+	if not player then return false end
 
 end

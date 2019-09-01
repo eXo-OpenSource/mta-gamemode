@@ -17,7 +17,7 @@ function ItemSellContract:destructor()
 
 end
 
-function ItemSellContract:Event_OnSellRequest( player, price, veh )
+function ItemSellContract:Event_OnSellRequest(player, price, veh)
 	player = getPlayerFromName(player)
 	if isElement( player ) then
 		local car = getPedOccupiedVehicle(client)
@@ -45,7 +45,7 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	end
 end
 
-function ItemSellContract:Event_OnTradeSuceed( player, price, car )
+function ItemSellContract:Event_OnTradeSuceed(player, price, car)
 	if isElement( player ) then
 		local money = client:getMoney()
 		price = tonumber( price )
@@ -65,8 +65,8 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						car:setData("OwnerName", client.name, true)
 						VehicleManager:getSingleton():addRef( car, false)
 						car.m_Keys = {}
-						VehicleManager:getSingleton():syncVehicleInfo( player )
-						VehicleManager:getSingleton():syncVehicleInfo( client )
+						VehicleManager:getSingleton():syncVehicleInfo(player)
+						VehicleManager:getSingleton():syncVehicleInfo(client)
 						player:getInventoryOld():removeItem("Handelsvertrag", 1)
 						StatisticsLogger:getSingleton():addVehicleTradeLog(car, player, client, price, "player")
 					else
@@ -83,13 +83,13 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 end
 
 function ItemSellContract:use(player)
-	local veh = getPedOccupiedVehicle( player )
+	local veh = getPedOccupiedVehicle(player)
 	if veh then
 		if veh:getOwner() == player:getId() then
 			if veh:isPermanent() then
 				local time = getRealTime()
-				local dataTable = { time.monthday, time.month, time.year}
-				triggerClientEvent("vehicleStartSell", player,dataTable )
+				local dataTable = {time.monthday, time.month, time.year}
+				triggerClientEvent("vehicleStartSell", player,dataTable)
 			else player:sendError(_("Ungültiges Fahrzeug!", player))
 			end
 		else player:sendError(_("Dies ist nicht dein Fahrzeug!", player))

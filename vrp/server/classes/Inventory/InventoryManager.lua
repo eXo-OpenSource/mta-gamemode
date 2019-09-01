@@ -44,7 +44,6 @@ function InventoryManager:constructor()
 		ItemEntrance = ItemEntrance;
 		ItemTransmitter = ItemTransmitter;
 		ItemBarricade = ItemBarricade;
-		ItemSkyBeam = ItemSkyBeam;
 		ItemSpeedCam = ItemSpeedCam;
 		ItemNails = ItemNails;
 		ItemRadio = ItemRadio;
@@ -307,14 +306,14 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 	return true
 end
 
-function InventoryManager:isItemTakeable(inventory, itemId, amount)
+function InventoryManager:isItemTakeable(inventory, itemId, amount, all)
 	local inventory = inventory
 
 	if type(inventory) == "number" then
 		inventory = self:getInventory(inventory)
 	end
 
-	if amount < 1 then
+	if (not amount or amount < 1) and not all then
 		return false, "amount"
 	end
 
@@ -331,7 +330,7 @@ function InventoryManager:isItemTakeable(inventory, itemId, amount)
 		return false, "invalid"
 	end
 
-	if item.Amount < amount then
+	if item.Amount < amount and not all then
 		return false, "amount"
 	end
 	return true
@@ -379,7 +378,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		data.ItemId = item
 		data.Slot = 0
 		data.Amount = amount
-		data.Durability = durability or 0
+		data.Durability = durability or itemData.MaxDurability
 		data.Metadata = metadata
 
 		for k, v in pairs(itemData) do
@@ -395,7 +394,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
     return false, reason
 end
 
-function InventoryManager:takeItem(inventory, itemId, amount)
+function InventoryManager:takeItem(inventory, itemId, amount, all)
 	local inventory = inventory
 
 	if type(inventory) == "number" then
@@ -410,7 +409,11 @@ function InventoryManager:takeItem(inventory, itemId, amount)
 
 	if isTakeable then
 		local item = inventory:getItem(itemId)
-		item.Amount = item.Amount - amount
+		if all then
+			item.Amount = 0
+		else
+			item.Amount = item.Amount - amount
+		end
 
 		if item.Amount <= 0 then
 			for k, v in pairs(inventory.m_Items) do
@@ -464,12 +467,17 @@ function InventoryManager:useItem(inventory, id)
 		return false, "classUse"
 	end
 
-	local success, remove = instance:use()
+	local success, remove, removeAll = instance:use()
 	delete(instance)
 
 	if remove then
 		inventory:takeItem(id, 1)
 	end
+
+	if removeAll then
+		inventory:takeItem(id, nil, true)
+	end
+
 
 	if not success then
 		return false

@@ -54,7 +54,7 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 			self:addItem(_"Bewegungsmelder",
 				function()
 					if self:getElement() then
-						triggerServerEvent("onSlamToggleLaser", localPlayer, element)
+						triggerServerEvent("onSlamToggleLaser", element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Bomb)

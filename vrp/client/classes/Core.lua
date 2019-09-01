@@ -118,6 +118,7 @@ function Core:ready() --onClientResourceStart
 	VehicleGarages:new()
 	SkinShopGUI.initializeAll()
 	ItemManager:new()
+	SlamWorldItem:new()
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()

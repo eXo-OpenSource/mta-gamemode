@@ -23,26 +23,26 @@
 * ItemFurniture = ItemFurniture;
 * ItemEntrance = ItemEntrance;
 * ItemTransmitter = ItemTransmitter;
-* ItemBarricade = ItemBarricade;
 * ItemSpeedCam = ItemSpeedCam;
 * ItemNails = ItemNails;
-* ItemRadio = ItemRadio;
 * ItemBomb = ItemBomb;
-* ItemDonutBox = ItemDonutBox;
 * ItemEasteregg = ItemEasteregg;
 * ItemPumpkin = ItemPumpkin;
 * ItemTaser = ItemTaser;
-* ItemSlam = ItemSlam;
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
 * ItemFishing = ItemFishing;
 * ItemSellContract = ItemSellContract;
-* ItemFuelcan = ItemFuelcan;
-* ItemRepairKit = ItemRepairKit;
 * WearableHelmet = WearableHelmet;
 * WearableShirt = WearableShirt;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
+* ~~ItemRadio = ItemRadio;~~ - done
+* ~~ItemBarricade = ItemBarricade;~~ - done
+* ~~ItemDonutBox = ItemDonutBox;~~ - done
+* ~~ItemSlam = ItemSlam;~~ - done
+* ~~ItemFuelcan = ItemFuelcan;~~ - done
+* ~~ItemRepairKit = ItemRepairKit;~~ - done
 * ~~ItemFood = ItemFood;~~ - done
 * ~~ItemKeyPad = ItemKeyPad;~~ - done
 * ~~ItemDrugs = ItemDrugs;~~ - done
@@ -56,6 +56,9 @@
 * ~~ItemSkyBeam = ItemSkyBeam;~~ - remove
 
 ## Notes
+
+### Sky Beam
+Object ID: 2887
 
 ### Give yourself every item
 `drun for k, v in pairs(ItemManager:getSingleton().m_Items) do me:getInventory():giveItem(v.TechnicalName, 1) end`

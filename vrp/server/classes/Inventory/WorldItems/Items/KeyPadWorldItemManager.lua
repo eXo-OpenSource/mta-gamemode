@@ -8,7 +8,7 @@
 KeyPadWorldItemManager = inherit(Singleton)
 addRemoteEvents{"confirmKeypadDelete", "onKeyPadSubmit"}
 
-function KeyPadWorldItemManager:constructor(worldItem, id, itemData)
+function KeyPadWorldItemManager:constructor()
 	addCommandHandler("nearbykeypads", bind(self.Event_onNearbyCommand, self))
 	addCommandHandler("delkeypad", bind(self.Event_onDeleteCommand, self))
 	addEventHandler("confirmKeypadDelete", root, bind(self.Event_onConfirmKeyPadDelete, self))

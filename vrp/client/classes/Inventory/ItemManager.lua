@@ -33,7 +33,6 @@ function ItemManager:loadItems()
 	self.m_Items["weedSeed"] = ItemPlant:new()
 
 	ItemDestructable:new()
-	ItemSlam:new()
 end
 
 --[[

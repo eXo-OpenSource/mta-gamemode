@@ -5,16 +5,12 @@
 -- *  PURPOSE:     Fuel Can item class
 -- *
 -- ****************************************************************************
-ItemRepairKit = inherit(Item)
+ItemRepairKit = inherit(ItemNew)
 
-function ItemFuelcan:constructor()
-end
+function ItemRepairKit:use()
+	local player = self.m_Inventory:getPlayer()
+	if not player then return false end
 
-function ItemRepairKit:destructor()
-
-end
-
-function ItemRepairKit:use(player)
 	if player.vehicle then
 		if player.vehicle:getHealth() <= 310  then
 			player:meChat(true, "steigt aus und legt einige Kabel an den Motor an!")
@@ -23,13 +19,13 @@ function ItemRepairKit:use(player)
 				setElementHealth(player.vehicle, 500)
 				player.vehicle:setBroken(false)
 				player:sendSuccess(_("Dein Fahrzeug funktioniert wieder einigermaßen!", player))
-				player:getInventoryOld():removeItem(self:getName(), 1)
 				setVehicleEngineState(player.vehicle, true)
 				player:meChat(true, "versucht den Motor zu starten, welcher daraufhin angeht!")
+				return true, true
 			else
-				player:getInventoryOld():removeItem(self:getName(), 1)
 				player:meChat(true, "brennt die angelegten Kabel nach einigen Versuchen durch!")
 				player:sendInfo(_("Das Reparaturkit ist zerstört!", player))
+				return true, true
 			end
 		else
 			player:sendError(_("Dein Fahrzeug ist nicht kaputt!", player))
@@ -37,4 +33,5 @@ function ItemRepairKit:use(player)
 	else
 		player:sendError(_("Du musst in einem Fahrzeug sitzen!", player))
 	end
+	return false
 end

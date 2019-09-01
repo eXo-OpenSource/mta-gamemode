@@ -77,8 +77,8 @@ function Inventory:giveItem(item, amount, durability, metadata)
 	return InventoryManager:getSingleton():giveItem(self, item, amount, durability, metadata)
 end
 
-function Inventory:takeItem(itemId, amount)
-	return InventoryManager:getSingleton():takeItem(self, itemId, amount)
+function Inventory:takeItem(itemId, amount, all)
+	return InventoryManager:getSingleton():takeItem(self, itemId, amount, all)
 end
 
 function Inventory:useItem(id)
@@ -115,6 +115,13 @@ function Inventory:getItemDurability(id)
 	if not item then return false end
 
 	return item.Durability
+end
+
+function Inventory:getItemMaxDurability(id)
+	local item = self:getItem(id)
+	if not item then return false end
+
+	return item.MaxDurability
 end
 
 function Inventory:setItemDurability(id, durability)

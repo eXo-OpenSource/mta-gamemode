@@ -5,17 +5,12 @@
 -- *  PURPOSE:     C4 bomb item class
 -- *
 -- ****************************************************************************
-ItemBomb = inherit(Item)
+ItemBomb = inherit(ItemNew)
 
-function ItemBomb:constructor()
+function ItemBomb:use()
+	local player = self.m_Inventory:getPlayer()
+	if not player then return false end
 
-end
-
-function ItemBomb:destructor()
-
-end
-
-function ItemBomb:use(player)
 	local bombArea = BombArea.findAt(player:getPosition())
 	if bombArea then
 		-- Report the crime
