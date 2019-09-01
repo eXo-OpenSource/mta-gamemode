@@ -63,17 +63,29 @@ function HighStakeRoulette:spinDone(clientNumber)
     end
 
     local win = 0
+    local winFields = {}
     for field, tokens in pairs(self.m_Bets) do
         if table.find(ROULETTE_WINNUMBERS[field], self.m_Random) then
             win = win + self:calcBetWinOnField(field) + self:calcBetOnField(field)
+            if self:calcBetWinOnField(field) > 0 then 
+                table.insert(winFields, field)
+            end 
             --outputChatBox("Einsatz aus Feld "..field.." "..self:calcBetOnField(field).."$", self.m_Player)
             --outputChatBox("Gewinn aus Feld "..field.." "..self:calcBetWinOnField(field).."$", self.m_Player)
+        end
+    end
+    local winString = "["
+    for i = 1, #winFields do 
+        if i == #winFields then
+            winString = winString .. winFields[i] .. "]"
+        else 
+            winString = winString .. winFields[i] .. " & "
         end
     end
 
 	if win > 0 then
 		self.m_Player:sendShortMessage(_("Du hast %s gewonnen!", self.m_Player, toMoneyString(win)), "Roulette")
-        self.m_BankAccountServer:transferMoney(self.m_Player, win, "Roulette-Gewinn", "Gameplay", "Roulett")
+        self.m_BankAccountServer:transferMoney(self.m_Player, win, "Roulette-Gewinn "..winString , "Gameplay", "Roulett")
         PlayHouse:getSingleton():onPlayerMoney(self.m_Player, win)
 		HighStakeRouletteManager:getSingleton():setStats(win, false)
 	else
