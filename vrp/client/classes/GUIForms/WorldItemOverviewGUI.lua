@@ -16,9 +16,8 @@ WorldItemOverviewGUI.Action = {
 	Delete = "Delete"
 }
 
-function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
+function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, type)
 	--main
-	self.m_OwnerId = id
 	self.m_OwnerType = type
 	self.m_Width = 640
 	self.m_Height = 410
@@ -30,6 +29,10 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 		self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() delete(self) end)
 	elseif type == "faction" then
 		self.m_Window:addBackButton(function () FactionGUI:getSingleton():show() delete(self) end)
+	elseif type == "company" then
+		self.m_Window:addBackButton(function () CompanyGUI:getSingleton():show() delete(self) end)
+	elseif type == "admin" then
+		self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() delete(self) end)
 	end
 	--object list
 	self.m_PlacedObjectsLabel = GUILabel:new(5, 30, self.m_Width, 30, "", self) --will be set on list loading
@@ -46,9 +49,9 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 		self.m_Refreshing = true
 		self.m_FilterApplied = false
 		self.m_ListRefreshButton:setEnabled(false)
-		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, self.m_OwnerId, self.m_OwnerType)
+		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, self.m_OwnerType)
 	end
-	self:loadObjectsInList(tblObjects)
+	self:loadObjectsInList(tblObjects, type)
 
 	--filter
 	GUILabel:new(5, 270, self.m_Width, 30, _"Filter", self)
@@ -75,7 +78,7 @@ function WorldItemOverviewGUI:virtual_destructor()
 	self:updateDebugArrow(true)
 end
 
-function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
+function WorldItemOverviewGUI:loadObjectsInList(tblObjects, type)
 	self.m_ListRefreshButton:setEnabled(true)
 	self.m_Refreshing = false
 	self.m_ObjectList:clear()
@@ -85,48 +88,74 @@ function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
 	local x,y,z = localPlayer:getPosition()
 	local int, dim = localPlayer:getInterior(), localPlayer:getDimension()
 	local maxRange, dimCheck, insertObject, ox, oy, oz, oInt, oDim
-	for modelid, objects in pairs(tblObjects) do
-		for object in pairs(tblObjects[modelid]) do
-			maxRange, dimCheck = object:getData("WorldItem:AccessRange"),object:getData("WorldItem:IntDimCheck")
-			ox, oy, oz = getElementPosition(object)
-			if maxRange > 0 then
-				if getDistanceBetweenPoints3D(ox, oy, oz, x, y, z) <= maxRange then
-					if dimCheck then
+	if type ~= "admin" then
+		for modelid, objects in pairs(tblObjects) do
+			for object in pairs(tblObjects[modelid]) do
+				maxRange, dimCheck = object:getData("WorldItem:AccessRange"),object:getData("WorldItem:IntDimCheck")
+				ox, oy, oz = getElementPosition(object)
+				if maxRange > 0 then
+					if getDistanceBetweenPoints3D(ox, oy, oz, x, y, z) <= maxRange then
+						if dimCheck then
+							oInt, oDim = object:getInterior(), object:getDimension()
+							if (oInt==int) and (oDim==dim) then
+								insertObject = true
+							end
+						else
+							insertObject = true
+						end
+					else
+						insertObject =  false
+					end
+				else
+					if not dimCheck then
+						insertObject = true
+					else
 						oInt, oDim = object:getInterior(), object:getDimension()
 						if (oInt==int) and (oDim==dim) then
 							insertObject = true
 						end
-					else
-						insertObject = true
 					end
-				else
-					insertObject =  false
 				end
-			else
-				if not dimCheck then
-					insertObject = true
-				else
-					oInt, oDim = object:getInterior(), object:getDimension()
-					if (oInt==int) and (oDim==dim) then
-						insertObject = true
-					end
+				if insertObject then
+					self.m_ObjectList:addItem(
+						object:getData("Name"),
+						getZoneName(object:getPosition()),
+						object:getData("Placer"),
+						getOpticalTimestamp(object:getData("PlacedTimestamp"))
+					).m_Id = i
+					table.insert(self.m_FullObjectList, {
+						Object      = object,
+						Name        = object:getData("Name"),
+						Zone        = getZoneName(object:getPosition()),
+						Placer      = object:getData("Placer"),
+						Timestamp   = getOpticalTimestamp(object:getData("PlacedTimestamp"))
+					})
+					i = i + 1
 				end
 			end
-			if insertObject then
-				self.m_ObjectList:addItem(
-					object:getData("Name"),
-					getZoneName(object:getPosition()),
-					object:getData("Placer"),
-					getOpticalTimestamp(object:getData("PlacedTimestamp"))
-				).m_Id = i
-				table.insert(self.m_FullObjectList, {
-					Object      = object,
-					Name        = object:getData("Name"),
-					Zone        = getZoneName(object:getPosition()),
-					Placer      = object:getData("Placer"),
-					Timestamp   = getOpticalTimestamp(object:getData("PlacedTimestamp"))
-				})
-				i = i + 1
+		end
+	else
+		for elementType, typeObjects in pairs(tblObjects) do
+			for elementId, idObjects in pairs(typeObjects) do
+				for modelid, objects in pairs(idObjects) do
+					for object in pairs(idObjects[modelid]) do
+						self.m_ObjectList:addItem(
+							object:getData("Name"),
+							getZoneName(object:getPosition()),
+							object:getData("Placer"),
+							getOpticalTimestamp(object:getData("PlacedTimestamp"))
+						).m_Id = i
+
+						table.insert(self.m_FullObjectList, {
+							Object      = object,
+							Name        = object:getData("Name"),
+							Zone        = getZoneName(object:getPosition()),
+							Placer      = object:getData("Placer"),
+							Timestamp   = getOpticalTimestamp(object:getData("PlacedTimestamp"))
+						})
+						i = i + 1
+					end
+				end
 			end
 		end
 	end
@@ -243,21 +272,21 @@ function WorldItemOverviewGUI:Event_OnActionButtonClick(action)
 	end
 end
 
-addEventHandler("recieveWorldItemListOfOwner", root, function(sOwnerName, tblObjects, id, type)
+addEventHandler("recieveWorldItemListOfOwner", root, function(sOwnerName, tblObjects, type)
 	if WorldItemOverviewGUI:isInstantiated() then
 		if id == WorldItemOverviewGUI:getSingleton().m_OwnerId then
-			WorldItemOverviewGUI:getSingleton():loadObjectsInList(tblObjects)
+			WorldItemOverviewGUI:getSingleton():loadObjectsInList(tblObjects, type)
 		else
 			ErrorBox:new(_"Bitte schließe erst das alte Objektübersichts-Fenster!")
 		end
 	else
-		WorldItemOverviewGUI:new(sOwnerName, tblObjects, id, type)
+		WorldItemOverviewGUI:new(sOwnerName, tblObjects, type)
 	end
 end)
 
 addCommandHandler("foverview", function(cmd)
-	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getFaction():getId(), "faction")
+	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, "faction")
 end)
 addCommandHandler("poverview", function(cmd)
-	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getPrivateSync("Id"), "player")
+	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, "player")
 end)

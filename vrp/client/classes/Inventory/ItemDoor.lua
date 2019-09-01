@@ -4,21 +4,22 @@ inherit(Singleton, ItemDoor)
 local instance = nil
 addEvent("promptDoorOption", true)
 addEventHandler("promptDoorOption", localPlayer,
-	function(id, pos)
+	function(id, pos, object)
 		if not instance then
-			instance = ItemDoor:new(id, pos)
-		else 
-			--instance:setIdLabel( id )
-			instance:setPosLabel ( pos ) 
+			instance = ItemDoor:new(id, pos, object)
+		else
+			instance:setIdLabel(id)
+			instance:setPosLabel(pos)
+			instance:setObject(object)
 		end
 	end
 )
 
-
-function ItemDoor:constructor( id, pos )
-	GUIWindow.updateGrid()        
-	self.m_Width = grid("x", 10) 
-	self.m_Height = grid("y", 5) 
+function ItemDoor:constructor(id, pos, object)
+	self.m_Object = object
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 10)
+	self.m_Height = grid("y", 5)
 	GUIForm.constructor(self, screenWidth/2-(350/2)/2, 300, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Tor", true, false, self)
 	self.m_CoordLabel = GUIGridLabel:new(1, 1, 12, 1, "Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3], self.m_Window):setFont(VRPFont(18, Fonts.EkMukta))
@@ -32,19 +33,25 @@ function ItemDoor:constructor( id, pos )
 	self.m_AcceptButton.onLeftClick = bind(self.closeForm, self)
 	self.m_DeclineButton = GUIGridButton:new(6, 4, 4, 1, FontAwesomeSymbols.Accept, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(0, 140, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
 	self.m_DeclineButton.onLeftClick = bind(self.submitForm, self)
-	--self:setIdLabel( id ) 
+	--self:setIdLabel( id )
 end
 
 
-function ItemDoor:setIdLabel( id ) 
-	if self.m_Window then 
+function ItemDoor:setIdLabel(id)
+	if self.m_Window then
 		self.m_Window:setTitleBarText ( "Gehört zu Keypad #"..id )
 	end
 end
 
-function ItemDoor:setPosLabel( pos ) 
-	if self.m_Window then 
-		instance.m_CoordLabel:setText ("Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3])
+function ItemDoor:setPosLabel(pos)
+	if self.m_Window then
+		self.m_Window.m_CoordLabel:setText("Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3])
+	end
+end
+
+function ItemDoor:setObject(object)
+	if self.m_Window then
+		self.m_Window.m_Object = object
 	end
 end
 
@@ -53,17 +60,17 @@ function ItemDoor:destructor()
 	instance = nil
 end
 
-function ItemDoor:closeForm() 
+function ItemDoor:closeForm()
 	delete(self)
 end
 
-function ItemDoor:submitForm() 
+function ItemDoor:submitForm()
 	local posX = self.m_DoorPosX:getText()
 	local posY = self.m_DoorPosY:getText()
 	local posZ = self.m_DoorPosZ:getText()
 	local addKeyPad = self.m_EditKeyPadLink:getText()
 	local removeKeyPad = self.m_RemoveKeyPadLink:getText()
 	local model = self.m_EditModel:getText()
-	triggerServerEvent("onDoorDataChange", localPlayer, posX, posY, posZ, addKeyPad, removeKeyPad, model)
+	triggerServerEvent("onDoorDataChange", self.m_Object, posX, posY, posZ, addKeyPad, removeKeyPad, model)
 	delete(self)
 end

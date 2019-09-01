@@ -696,7 +696,7 @@ end
 
 function FactionGUI:ShowObjectList()
 	self:close()
-	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getFaction():getId(), "faction")
+	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, "faction")
 end
 
 function FactionGUI:ShowLogs()

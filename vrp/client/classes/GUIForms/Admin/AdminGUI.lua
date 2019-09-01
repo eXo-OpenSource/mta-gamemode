@@ -49,11 +49,17 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", self.onGeneralButtonClick, 10, 270, 250, 30, Color.Orange, tabAllgemein)
 	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 310, 250, 30, Color.Accent, tabAllgemein)
 
-	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.Accent)
-	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosY = GUIEdit:new(95, 400, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosZ = GUIEdit:new(180, 400, 80, 25, tabAllgemein):setNumeric(true, false)
-	self:addAdminButton("gotocords", "zu Koordinaten porten", self.onGeneralButtonClick, 10, 430, 250, 30, Color.Orange, tabAllgemein)
+	self.m_ObjectOverviewButton = GUIButton:new(10, 350, 250, 30, _"platzierte Objekte", tabAllgemein):setBarEnabled(true)
+	self.m_ObjectOverviewButton.onLeftClick = function()
+		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, "admin")
+		self:close()
+	end
+
+	GUILabel:new(10, 400, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.Accent)
+	self.m_EditPosX = GUIEdit:new(10, 430, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosY = GUIEdit:new(95, 430, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosZ = GUIEdit:new(180, 430, 80, 25, tabAllgemein):setNumeric(true, false)
+	self:addAdminButton("gotocords", "zu Koordinaten porten", self.onGeneralButtonClick, 10, 460, 250, 30, Color.Orange, tabAllgemein)
 
 	--Column 2
 	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.Accent)

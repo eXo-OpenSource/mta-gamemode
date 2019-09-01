@@ -152,7 +152,7 @@ function SelfGUI:constructor()
 
 	self.m_ObjectOverviewButton = GUIButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"platzierte Objekte", tabGeneral):setBarEnabled(true)
 	self.m_ObjectOverviewButton.onLeftClick = function()
-		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getPrivateSync("Id"), "player")
+		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, "player")
 		self:close()
 	end
 	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", tabGeneral):setBarEnabled(true)

@@ -182,7 +182,7 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		delete(self)
 		self.m_Delete = true
 		self:onChanged()
-		if resendList then WorldItem.sendItemListToPlayer(id, typ, player) end
+		if resendList then WorldItem.sendItemListToPlayer(typ, player) end
 
 		return true
 	end
@@ -244,7 +244,7 @@ function WorldItem:onDelete(player, resendList, id, type)
 	if self.m_Item.removeFromWorld then
 		self.m_Item:removeFromWorld(nil, self, self.m_Object)
 	end
-	if resendList then WorldItem.sendItemListToPlayer(id, type, player) end
+	if resendList then WorldItem.sendItemListToPlayer(type, player) end
 	delete(self)
 	self:onChanged()
 	self.m_Delete = true
@@ -470,26 +470,35 @@ function WorldItem.collectAllFromOwner(owner)
 	end
 end
 
-function WorldItem.sendItemListToPlayer(id, type, player)
+function WorldItem.sendItemListToPlayer(type, player)
 	local owner = id
 	local name
-	local typ = 0
+	local items = {}
+
 	if type == "player" then
-		name = Account.getNameFromId(id)
-		typ = 1
+		owner = player
+		name = player:getName()
+		items = WorldItem.MapByOwner[1][player.m_Id]
 	elseif type == "faction" then
-		owner = FactionManager:getSingleton():getFromId(id)
+		owner = player:getFaction()
 		name = owner:getName()
-		typ = 2
+		items = WorldItem.MapByOwner[2][owner.m_Id]
 	elseif type == "company" then
-		owner = FactionManager:getSingleton():getFromId(id)
+		owner = player:getCompany()
 		name = owner:getName()
-		typ = 3
-	else
-		typ = 4
+		items = WorldItem.MapByOwner[3][owner.m_Id]
+	elseif type == "group" then
+		owner = player:getGroup()
+		name = owner:getName()
+		items = WorldItem.MapByOwner[4][owner.m_Id]
+	elseif type == "admin" then
+		owner = "Admin"
+		name = "Admin"
+		items = WorldItem.MapByOwner
 	end
+
 	if owner then
-		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, WorldItem.MapByOwner[typ][owner] or {}, id, type)
+		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, items, type)
 	end
 end
 
@@ -586,8 +595,8 @@ addEventHandler("worldItemMassDelete", root,
 
 
 addEventHandler("requestWorldItemListOfOwner", root,
-	function(id, type)
-		WorldItem.sendItemListToPlayer(id, type, client)
+	function(type)
+		WorldItem.sendItemListToPlayer(type, client)
 	end
 )
 

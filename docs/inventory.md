@@ -1,8 +1,9 @@
 # TODO
 
-- [ ] Rework WorldItems
+- [x] Rework WorldItems
 - [ ] Rework StatisticsLogger:getSingleton():worldItemLog
 - [ ] Fix StaticWorldItems
+- [ ] Rewrite WorldItem GUI for Admins
 - [ ] Rewrite all ItemClasses for new Inventory
 - [ ] Implement invetory storing & and auto cleanup
 - [ ] Implement inventory interactions (player inventory -> vehicle inventory)
@@ -19,13 +20,11 @@
 
 ## Items
 
-* ItemDoor = ItemDoor;
 * ItemFurniture = ItemFurniture;
 * ItemEntrance = ItemEntrance;
 * ItemTransmitter = ItemTransmitter;
 * ItemSpeedCam = ItemSpeedCam;
 * ItemNails = ItemNails;
-* ItemBomb = ItemBomb;
 * ItemEasteregg = ItemEasteregg;
 * ItemPumpkin = ItemPumpkin;
 * ItemTaser = ItemTaser;
@@ -37,6 +36,8 @@
 * WearableShirt = WearableShirt;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
+* ItemDoor = ItemDoor; - started
+* ~~ItemBomb = ItemBomb;~~ - done
 * ~~ItemRadio = ItemRadio;~~ - done
 * ~~ItemBarricade = ItemBarricade;~~ - done
 * ~~ItemDonutBox = ItemDonutBox;~~ - done

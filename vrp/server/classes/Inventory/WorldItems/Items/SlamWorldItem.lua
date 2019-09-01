@@ -32,17 +32,6 @@ function SlamWorldItem:constructor(itemData, placedBy, elementId, elementType, p
 	addEventHandler("onSlamToggleLaser", object, bind(self.Event_onSlamToggleLaser, self))
 end
 
-function SlamWorldItem:Event_onKeyPadClick(button, state, player)
-    if source.Type ~= "Keypad" then return end
-	if button == "right" and state == "up" then
-        if source == self:getObject() then
-			player.m_LastKeyPadID = self.m_Id
-			player:triggerEvent("promptKeyPad", self.m_Id)
-			triggerClientEvent(root, "playKeyPadSound", root, source, "keypad_access")
-        end
-	end
-end
-
 function SlamWorldItem:Event_onSlamToggleLaser()
 	local object = self:getObject()
 

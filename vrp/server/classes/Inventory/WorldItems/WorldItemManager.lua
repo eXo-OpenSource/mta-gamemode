@@ -11,7 +11,7 @@ function WorldItemManager:constructor()
 	WorldItemManager.ItemClasses = {
 		keypad = KeyPadWorldItem;
 		slam = SlamWorldItem;
-	--	door = DoorWorldItem;
+	 	gate = DoorWorldItem;
 	--	entrance = EntranceWorldItem;
 	--	furniture = FurnitureWorldItem;
 	}
