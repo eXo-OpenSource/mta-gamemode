@@ -896,10 +896,10 @@ function LocalPlayer:deactivateBlur(bool)
 	end
 end
 
-function LocalPlayer:Event_tryEnterExit(object, name, icon)
+function LocalPlayer:Event_tryEnterExit(object, name, icon, checkRange, allowVehicleEnter)
 	if not self.m_LastEntrance or self.m_LastEntrance + 500 < getTickCount() then
-		if self.m_Entrance and self.m_Entrance:isInstantiated() then self.m_Entrance:delete() end
-		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon)
+		if self.m_Entrance and self.m_Entrance:isInstantiated() then delete(self.m_Entrance);self.m_Entrance = nil; end
+		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon, checkRange, allowVehicleEnter)
 		self.m_LastEntrance = getTickCount()
 	end
 end
