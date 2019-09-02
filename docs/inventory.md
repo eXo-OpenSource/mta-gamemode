@@ -17,6 +17,7 @@
 - [ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
 - [ ] Implement new weapon handling with inventory
 - [ ] Create new GUI for inventory, inventory interaction and trading
+- [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
 
 ## Items
 

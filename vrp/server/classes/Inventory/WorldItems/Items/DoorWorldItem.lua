@@ -7,8 +7,8 @@
 -- ****************************************************************************
 DoorWorldItem = inherit(PlayerWorldItem)
 DoorWorldItem.Map = {}
-DoorWorldItem.KeyPadLinks = {}
 addRemoteEvents{"onDoorDataChange"}
+addEvent("onKeyPadSignal")
 
 function DoorWorldItem.onPlace(player, placingInfo, position, rotation)
 	if not position then return end
@@ -37,6 +37,7 @@ function DoorWorldItem:constructor(itemData, placedBy, elementId, elementType, p
 		linkedKeyPadList, model, oX, oY, oZ = gettok(value, 1, ":") or "#", tonumber(gettok(value, 2, ":")), tonumber(gettok(value, 3, ":")), tonumber(gettok(value, 4, ":")), tonumber(gettok(value, 5, ":"))
 	end
 
+	self.m_KeyPadLinks = {}
 	local object = self:getObject()
 	object:setDoubleSided(true)
 	object.Id = Id
@@ -52,7 +53,7 @@ function DoorWorldItem:constructor(itemData, placedBy, elementId, elementType, p
 	addEventHandler("onElementClicked", object, self.m_BindKeyClick)
 
 	addEventHandler("onDoorDataChange", object, bind(self.Event_onDoorDataChange, self))
-	addEventHandler("onKeyPadSignal", object, bind(self.Event_onKeyPadSignal, self))
+	addEventHandler("onKeyPadSignal", root, bind(self.Event_onKeyPadSignal, self))
 end
 
 function DoorWorldItem:createColshapes(model, object, pos, rot, customOffset)
@@ -93,9 +94,9 @@ function DoorWorldItem:seperateLinkedKeypads(keypadString)
 			sepString = gettok(keypadString, count, "+")
 			if tonumber(sepString) then
 				sepString = tonumber(sepString)
-				if not DoorWorldItem.KeyPadLinks[sepString] then DoorWorldItem.KeyPadLinks[sepString] = {} end
+				if not self.m_KeyPadLinks[sepString] then self.m_KeyPadLinks[sepString] = {} end
 				table.insert(list, sepString)
-				table.insert(DoorWorldItem.KeyPadLinks[sepString], self)
+				table.insert(self.m_KeyPadLinks[sepString], self)
 			end
 			count = count + 1
 		end
@@ -115,14 +116,14 @@ end
 
 function DoorWorldItem:removeKeyPadLink(keyPadId)
 	if keyPadId then
-		if not DoorWorldItem.KeyPadLinks[keyPadId] then
-			DoorWorldItem.KeyPadLinks[keyPadId] = {}
+		if not self.m_KeyPadLinks[keyPadId] then
+			self.m_KeyPadLinks[keyPadId] = {}
 			return true
 		end
 		if type(keyPadId) == "number" then
-			for i = 1, #DoorWorldItem.KeyPadLinks[keyPadId] do
-				if DoorWorldItem.KeyPadLinks[keyPadId][i] == self then
-					return table.remove(DoorWorldItem.KeyPadLinks[keyPadId], i)
+			for i = 1, #self.m_KeyPadLinks[keyPadId] do
+				if self.m_KeyPadLinks[keyPadId][i] == self then
+					return table.remove(self.m_KeyPadLinks[keyPadId], i)
 				end
 			end
 		end
@@ -132,18 +133,18 @@ end
 
 function DoorWorldItem:addKeyPadLink(keyPadId)
 	if keyPadId then
-		if not DoorWorldItem.KeyPadLinks[keyPadId] then
-			DoorWorldItem.KeyPadLinks[keyPadId] = {}
-			return table.insert(DoorWorldItem.KeyPadLinks[keyPadId], self)
+		if not self.m_KeyPadLinks[keyPadId] then
+			self.m_KeyPadLinks[keyPadId] = {}
+			return table.insert(self.m_KeyPadLinks[keyPadId], self)
 		end
 		if type(keyPadId) == "number" then
-			for i = 1, #DoorWorldItem.KeyPadLinks[keyPadId] do
-				if DoorWorldItem.KeyPadLinks[keyPadId][i] == self then
+			for i = 1, #self.m_KeyPadLinks[keyPadId] do
+				if self.m_KeyPadLinks[keyPadId][i] == self then
 					return
 				end
 			end
 		end
-		return table.insert(DoorWorldItem.KeyPadLinks[keyPadId], self)
+		return table.insert(self.m_KeyPadLinks[keyPadId], self)
 	end
 	return false
 end
@@ -186,17 +187,17 @@ function DoorWorldItem:onDoorClick(button, state, player)
 	end
 end
 
-function DoorWorldItem:Event_onKeyPadSignal()
+function DoorWorldItem:Event_onKeyPadSignal(object)
 	local keypad = source
-	if keypad and isElement(keypad) and keypad.m_Id then
-		if self.m_KeyPadLinks[keypad.m_Id] then
+	if keypad and isElement(keypad) and object.m_Id then
+		if self.m_KeyPadLinks[object.m_Id] then
 			local sourcePos = keypad:getPosition()
 			local pos
-			for id, obj in ipairs(self.m_KeyPadLinks[keypad.m_Id] ) do
+			for id, obj in ipairs(self.m_KeyPadLinks[object.m_Id]) do
 				if obj and obj.getObject and isElement(obj:getObject()) then
 					pos = obj:getObject():getPosition()
 					if getDistanceBetweenPoints3D(pos.x, pos.y, pos.z, sourcePos.x, sourcePos.y, sourcePos.z) <= 30 then
-						self:openDoor(obj:getObject())
+						self:openDoor()
 					end
 				end
 			end
@@ -204,10 +205,13 @@ function DoorWorldItem:Event_onKeyPadSignal()
 	end
 end
 
-function DoorWorldItem:openDoor(door)
-	if self.m_Timers[door] and isTimer(self.m_Timers[door]) then
-		killTimer(self.m_Timers[door])
+function DoorWorldItem:openDoor()
+	local door = self:getObject()
+
+	if self.m_Timer and isTimer(self.m_Timer) then
+		killTimer(self.m_Timer)
 	end
+
 	if door and isElement(door) then
 		if door.m_Closed then
 			door:move((door.position - door.openPos).length * 800, door.openPos, 0, 0, 0, "InOutQuad")

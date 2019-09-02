@@ -67,7 +67,7 @@ function KeyPadWorldItem:Event_onAskForAccess(pin)
 		if cKeyPad.Pin == pin then
 			client:sendInfo(_("Code akzeptiert!", client))
 			triggerClientEvent(root, "playKeyPadSound", root, cKeyPad, "keypad_success")
-			self:sendSignal(cKeyPad)
+			self:sendSignal()
 		else
 			client:sendError(_("Falscher Code!", client))
 			triggerClientEvent(root, "playKeyPadSound", root, cKeyPad, "keypad_error")
@@ -76,5 +76,5 @@ function KeyPadWorldItem:Event_onAskForAccess(pin)
 end
 
 function KeyPadWorldItem:sendSignal()
-	triggerEvent("onKeyPadSignal", self:getObject())
+	triggerEvent("onKeyPadSignal", self:getObject(), self)
 end
