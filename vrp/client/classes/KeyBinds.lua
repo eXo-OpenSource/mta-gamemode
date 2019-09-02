@@ -233,6 +233,8 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 					triggerServerEvent("houseRequestGUI", localPlayer)
 				elseif localPlayer.m_Entrance.m_Text == "FAHRZEUGE" then 
 					triggerServerEvent("onTryVehicleSpawner", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "VERSCHROTTUNG" then 
+					triggerServerEvent("VehicleScrapper:onVehicleScrapRequest", localPlayer)
 				else
 					triggerServerEvent("GroupPropertyClientInput", localPlayer) 
 					triggerServerEvent("clientTryEnterEntrance", localPlayer)

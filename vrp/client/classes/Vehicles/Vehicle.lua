@@ -442,8 +442,8 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
-	if localPlayer.m_Entrance then 
-		if localPlayer.m_Entrance:check() then 
+	if localPlayer.m_Entrance and player == localPlayer then 
+		if localPlayer.m_Entrance:check() and localPlayer.m_Entrance:isCancelEnter() then 
 			cancelEvent()
 		end
 	end

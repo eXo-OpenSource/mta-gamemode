@@ -11,7 +11,7 @@ InteriorEnterExitGUI.m_Font = VRPFont(60)
 InteriorEnterExitGUI.m_FontSmall = VRPFont(24)
 InteriorEnterExitGUI.m_FontHeight = dxGetFontHeight(1, getVRPFont(InteriorEnterExitGUI.m_Font))
 
-function InteriorEnterExitGUI:constructor(entry, text, icon)
+function InteriorEnterExitGUI:constructor(entry, text, icon, checkRange, allowVehicleEnter)
     self.m_Width = screenWidth*0.276
     self.m_Height = screenHeight*0.083
     self.m_X, self.m_Y = screenWidth/2-self.m_Width/2, screenHeight-self.m_Height*2
@@ -19,6 +19,8 @@ function InteriorEnterExitGUI:constructor(entry, text, icon)
     self.m_Entry = entry
     self.m_Text = ("%s"):format(text:upper() or "EINGANG")
     self.m_Icon = icon
+    self.m_CheckRange = checkRange or 3
+    self.m_CancelVehicleEnter = not allowVehicleEnter
     local textWidth = dxGetTextWidth(self.m_Text, 1, getVRPFont(self.m_Font))
     if textWidth > self.m_Width*0.6 then
 		local exceed = (textWidth - self.m_Width*0.6) / (self.m_Width*0.6)
@@ -28,6 +30,9 @@ function InteriorEnterExitGUI:constructor(entry, text, icon)
     self.m_KeyText = ("Drücke %s[%s]%s zum Betreten!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
 
     self:start()
+    if not self.m_CancelVehicleEnter then 
+        toggleControl("enter_exit", false)
+    end
 end
 
 function InteriorEnterExitGUI:start()
@@ -99,10 +104,17 @@ function InteriorEnterExitGUI:check()
     if not isElement(self.m_Entry) then return end
     local x, y, z = getElementPosition(self.m_Entry)
     local px, py, pz = getElementPosition(localPlayer)
-    return getDistanceBetweenPoints3D(x, y, z, px, py, pz) < 3
+    return getDistanceBetweenPoints3D(x, y, z, px, py, pz) < self.m_CheckRange
+end
+
+function InteriorEnterExitGUI:isCancelEnter()
+    return self.m_CancelVehicleEnter
 end
 
 function InteriorEnterExitGUI:destructor()
+    if not self.m_CancelVehicleEnter then 
+        toggleControl("enter_exit", true)
+    end
     removeEventHandler("onClientRender", root, self.m_DrawBind)
 end
 
