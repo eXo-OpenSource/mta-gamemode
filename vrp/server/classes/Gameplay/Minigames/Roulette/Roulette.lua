@@ -4,10 +4,10 @@ function Roulette:constructor(player, custombank)
     self.m_Player = player
     self.m_Player:triggerEvent("rouletteOpen")
     self.m_Player:setFrozen(true)
-    if custombank then 
+    if custombank then
         self.m_BankAccountServer = BankServer.get(custombank)
     else
-        self.m_BankAccountServer = BankServer.get("gameplay.roulett") 
+        self.m_BankAccountServer = BankServer.get("gameplay.roulett")
     end
 end
 
@@ -41,6 +41,15 @@ function Roulette:spin(bets)
     self.m_Player:transferMoney(self.m_BankAccountServer, bet, "Roulette-Einsatz", "Gameplay", "Roulett")
 	RouletteManager:getSingleton():setStats(-bet, true)
 	self.m_Random = math.random(0, 36)
+
+    local win = 0
+    for field, tokens in pairs(self.m_Bets) do
+        if table.find(ROULETTE_WINNUMBERS[field], self.m_Random) then
+            win = win + self:calcBetWinOnField(field) + self:calcBetOnField(field)
+        end
+    end
+
+	StatisticsLogger:getSingleton():addRouletteLog(self.m_Player, bet, bets, self.m_Random, win, false)
 	self.m_Player:triggerEvent("rouletteStartSpin", self.m_Random)
 end
 

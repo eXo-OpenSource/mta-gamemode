@@ -321,7 +321,7 @@ function StatisticsLogger:addAdminVehicleAction(player, type, vehicle, arg)
 	if vehicle then
 		if isElement(vehicle) and getElementType(vehicle) == "vehicle" then
 			if not vehicle.m_Id then
-				error("bad vehicle specified ("..inspect(vehicle)..")")	
+				error("bad vehicle specified ("..inspect(vehicle)..")")
 			end
 			vehicle = vehicle.m_Id
 		elseif tonumber(vehicle) then
@@ -500,4 +500,33 @@ function StatisticsLogger:addGangwarDebugLog( warning, areaObj, attackSession)
 		sqlLogs:queryExec("INSERT INTO ??_GangwarDebugLog ( Warning, Name, Date) VALUES (?, ?, NOW())", sqlLogs:getPrefix(),
 		warning, areaID )
 	end
+end
+
+
+--[[
+CREATE TABLE `vrpLogs_Roulette`  (
+  `Id` int(0) NOT NULL AUTO_INCREMENT,
+  `UserId` int(0) NOT NULL,
+  `Bet` int(0) NOT NULL,
+  `Bets` text NOT NULL,
+  `WinningNumber` int(0) NOT NULL,
+  `WonAmount` int(0) NOT NULL,
+  `HighStake` tinyint(1) NOT NULL DEFAULT 0,
+  `Date` datetime(0) NOT NULL,
+  PRIMARY KEY (`Id`)
+);
+]]
+function StatisticsLogger:addRouletteLog(player, bet, bets, winningNumber, wonAmount, highStake)
+	local userId = 0
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	local betsInfo = {}
+    for field, tokens in pairs(bets) do
+        betsInfo[field] = 0
+        for color, amount in pairs(tokens) do
+            betsInfo[field] = betsInfo[field] + ROULETTE_TOKENS[color] * amount
+        end
+	end
+
+	sqlLogs:queryExec("INSERT INTO ??_Roulette (UserId, Bet, Bets, WinningNumber, WonAmount, HighStake, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())",
+		sqlLogs:getPrefix(), userId, bet, toJSON(betsInfo, true):sub(2, -2), winningNumber, wonAmount, highStake and 1 or 0)
 end
