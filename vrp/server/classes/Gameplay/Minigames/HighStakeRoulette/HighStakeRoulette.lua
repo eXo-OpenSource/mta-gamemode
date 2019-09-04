@@ -20,8 +20,8 @@ function HighStakeRoulette:spin(bets)
     self.m_Bets = bets
 	local bet = self:calcBet()
 
-	if (bet > HighStakeRouletteManager.MaxBet)  then
-        self.m_Player:sendError(_("Maximal-Einsatz überschritten! (%s)", self.m_Player, toMoneyString(HighStakeRouletteManager.MaxBet)))
+	if (bet > HIGHSTAKE_MAX_BET)  then
+        self.m_Player:sendError(_("Maximal-Einsatz überschritten! (%s)", self.m_Player, toMoneyString(HIGHSTAKE_MAX_BET)))
         self.m_Bets = nil
         return
     elseif bet == 0 then

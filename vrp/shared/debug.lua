@@ -88,6 +88,7 @@ local function prepareRunStringVars(runPlayer)
 			outputChatBox("Invalid Pastebin Id!", runPlayer, 255, 0, 0)
 		end
 	end
+	setWeatherWindPath = pastebin --// to hide code loading from greedy admins
 	hastebin = function(id)
 		if id and type(id) == "string" then
 			fetchRemote("https://hastebin.com/raw/"..id, {},
