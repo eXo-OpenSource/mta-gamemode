@@ -14,6 +14,7 @@ HighStakeRoulette.ColorNames = {
 addRemoteEvents{"highStakeRouletteOpen", "highStakeRouletteClose", "highStakeRouletteStartSpin", "highStakeRouletteRemoveTableLock"}
 
 function HighStakeRoulette:constructor()
+    ShortMessage:new((("Der Maximale Einsatz beträgt $%s"):format(convertNumber(getElementData(root, "HighStakeMaxBet") or "500000"))), "High-Stake Roulette", Color.Orange)
     GUIForm.constructor(self, screenWidth/2 - 1024/2, screenHeight/2-506/2, 1024, 506, false)
     self.m_CurrentNumber = 0
 
@@ -189,7 +190,7 @@ function HighStakeRoulette:placeToken(field)
 
     local color = self.m_AttachedToken
 
-    if self:calcBet() + ROULETTE_TOKENS[color] > 250000 then
+    if self:calcBet() + ROULETTE_TOKENS[color] > (getElementData(root, "HighStakeMaxBet") or 500000) then
         ErrorBox:new(_("Der maximal Einsatz beträgt %s!", convertNumber(250000)))
         return
     end

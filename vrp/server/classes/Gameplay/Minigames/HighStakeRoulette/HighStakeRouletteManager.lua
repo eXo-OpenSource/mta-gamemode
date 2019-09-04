@@ -1,6 +1,7 @@
 HighStakeRouletteManager = inherit(Singleton)
 HighStakeRouletteManager.Map = {}
-HighStakeRouletteManager.MaxBet = 250000
+HIGHSTAKE_MAX_BET = 500000
+setElementData(root, "HighStakeMaxBet", HIGHSTAKE_MAX_BET)
 
 function HighStakeRouletteManager:constructor()
 	self.m_Stats = StatisticsLogger:getSingleton():getGameStats("Roulette")
