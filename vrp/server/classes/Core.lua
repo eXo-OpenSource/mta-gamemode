@@ -200,7 +200,7 @@ function Core:constructor()
 		PoliceAnnouncements:new()
 		MapLoader:new()
 		MapEditor:new()
-		AmmunationEvaluation:new()
+		--AmmunationEvaluation:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
