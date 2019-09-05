@@ -795,6 +795,7 @@ function VehicleManager:Event_toggleHandBrake()
 end
 
 function VehicleManager:setSpeedLimits()
+	setModelHandling(451, "maxVelocity", 260) -- Turismo
 	setModelHandling(462, "maxVelocity", 50) -- Faggio
 	setModelHandling(509, "maxVelocity", 50) -- Bike
 	setModelHandling(481, "maxVelocity", 50) -- BMX
