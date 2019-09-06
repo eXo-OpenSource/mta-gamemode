@@ -30,6 +30,7 @@ function Vehicle:constructor()
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
 	end
+	
 end
 
 function Vehicle:getMaxHealth()

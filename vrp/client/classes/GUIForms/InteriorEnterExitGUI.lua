@@ -104,7 +104,11 @@ function InteriorEnterExitGUI:check()
     if not isElement(self.m_Entry) then return end
     local x, y, z = getElementPosition(self.m_Entry)
     local px, py, pz = getElementPosition(localPlayer)
-    return getDistanceBetweenPoints3D(x, y, z, px, py, pz) < self.m_CheckRange
+    local check = getDistanceBetweenPoints3D(x, y, z, px, py, pz) < self.m_CheckRange
+    if not self.m_CancelVehicleEnter and not check then 
+        toggleControl("enter_exit", true)
+    end
+    return check
 end
 
 function InteriorEnterExitGUI:isCancelEnter()
