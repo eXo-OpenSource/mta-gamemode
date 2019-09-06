@@ -226,7 +226,7 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 			if localPlayer:getPrivateSync("EntranceId") then
 				triggerEvent("onTryEnterance", localPlayer)
 			end
-			if localPlayer.m_Entrance then
+			if localPlayer.m_Entrance and localPlayer.m_Entrance:check() then
 				if localPlayer.m_Entrance.m_Text == "AUFZUG" then
 					triggerServerEvent("onTryElevator", localPlayer)
 				elseif localPlayer.m_Entrance.m_Text == "HAUS" then
