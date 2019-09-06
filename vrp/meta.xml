@@ -135,6 +135,7 @@
 	<script src="server/classes/Inventory/WorldItems/Items/KeyPadWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/SlamWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/DoorWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/Items/EntranceWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/BarricadeWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/RadioWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryOld.lua" type="server"/>
@@ -621,6 +622,7 @@
 	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
 	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
+	<script src="client/classes/GUI/GUIItemSlot.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
@@ -655,7 +657,6 @@
 	<script src="client/classes/Inventory/ItemKeyPad.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemEntrance.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemTransmitter.lua" type="client"/>
-	<script src="client/classes/Inventory/ItemDoor.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
@@ -688,6 +689,7 @@
 
 	<!-- World Items -->
 	<script src="client/classes/Inventory/WorldItems/SlamWorldItem.lua" type="client"/>
+	<script src="client/classes/Inventory/WorldItems/DoorWorldItem.lua" type="client"/>
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>

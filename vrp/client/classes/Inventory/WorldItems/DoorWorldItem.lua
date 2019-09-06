@@ -1,12 +1,12 @@
-ItemDoor = inherit(GUIForm)
-inherit(Singleton, ItemDoor)
+DoorWorldItem = inherit(GUIForm)
+inherit(Singleton, DoorWorldItem)
 
 local instance = nil
 addEvent("promptDoorOption", true)
 addEventHandler("promptDoorOption", localPlayer,
 	function(id, pos, object)
 		if not instance then
-			instance = ItemDoor:new(id, pos, object)
+			instance = DoorWorldItem:new(id, pos, object)
 		else
 			instance:setIdLabel(id)
 			instance:setPosLabel(pos)
@@ -15,7 +15,7 @@ addEventHandler("promptDoorOption", localPlayer,
 	end
 )
 
-function ItemDoor:constructor(id, pos, object)
+function DoorWorldItem:constructor(id, pos, object)
 	self.m_Object = object
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 10)
@@ -37,34 +37,34 @@ function ItemDoor:constructor(id, pos, object)
 end
 
 
-function ItemDoor:setIdLabel(id)
+function DoorWorldItem:setIdLabel(id)
 	if self.m_Window then
 		self.m_Window:setTitleBarText ( "Gehört zu Keypad #"..id )
 	end
 end
 
-function ItemDoor:setPosLabel(pos)
+function DoorWorldItem:setPosLabel(pos)
 	if self.m_Window then
 		self.m_Window.m_CoordLabel:setText("Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3])
 	end
 end
 
-function ItemDoor:setObject(object)
+function DoorWorldItem:setObject(object)
 	if self.m_Window then
 		self.m_Window.m_Object = object
 	end
 end
 
-function ItemDoor:destructor()
+function DoorWorldItem:destructor()
 	GUIForm.destructor(self)
 	instance = nil
 end
 
-function ItemDoor:closeForm()
+function DoorWorldItem:closeForm()
 	delete(self)
 end
 
-function ItemDoor:submitForm()
+function DoorWorldItem:submitForm()
 	local posX = self.m_DoorPosX:getText()
 	local posY = self.m_DoorPosY:getText()
 	local posZ = self.m_DoorPosZ:getText()

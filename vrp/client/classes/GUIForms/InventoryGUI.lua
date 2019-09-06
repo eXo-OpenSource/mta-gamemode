@@ -13,7 +13,7 @@ addRemoteEvents{"syncInventory"}
 
 function InventoryGUI:constructor()
 	GUIWindow.updateGrid()
-	self.m_Width = grid("x", 8)
+	self.m_Width = grid("x", 15)
 	self.m_Height = grid("y", 10)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
@@ -23,6 +23,9 @@ function InventoryGUI:constructor()
 	self.m_InventoryList:addColumn(_"Name", 0.5)
 	self.m_InventoryList:addColumn(_"Anzahl", 0.25)
 	self.m_InventoryList:addColumn(_"IID", 0.25)
+
+	self.m_Item = GUIGridItemSlot:new(8, 1, 1, 1, self.m_Window)
+	self.m_Item2 = GUIGridItemSlot:new(9, 1, 1, 1, self.m_Window)
 
 	self:hide()
 

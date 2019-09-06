@@ -12,7 +12,7 @@ function WorldItemManager:constructor()
 		keypad = KeyPadWorldItem;
 		slam = SlamWorldItem;
 	 	gate = DoorWorldItem;
-	--	entrance = EntranceWorldItem;
+		entrance = EntranceWorldItem;
 	--	furniture = FurnitureWorldItem;
 	}
 

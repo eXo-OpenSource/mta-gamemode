@@ -22,7 +22,6 @@
 ## Items
 
 * ItemFurniture = ItemFurniture;
-* ItemEntrance = ItemEntrance;
 * ItemTransmitter = ItemTransmitter;
 * ItemSpeedCam = ItemSpeedCam;
 * ItemNails = ItemNails;
@@ -37,6 +36,7 @@
 * WearableShirt = WearableShirt;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
+* ItemEntrance = ItemEntrance;
 * ItemDoor = ItemDoor; - started
 * ~~ItemBomb = ItemBomb;~~ - done
 * ~~ItemRadio = ItemRadio;~~ - done
