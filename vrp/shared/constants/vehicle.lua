@@ -343,3 +343,12 @@ PlaneSizeTable = {
     [513] = {15, 15},
     [553] = {15, 15}
 }
+
+VehicleShopColors =  -- unified colors for the vehicle shop
+{
+	{160,160,160},
+	{133, 133, 133},
+	{105,105,105},   
+	{128,128,128},
+	{105,105,105},
+}
