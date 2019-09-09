@@ -15,7 +15,7 @@ function ShopManager:constructor()
 	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyWeapon", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
 	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder", 
-	"requestVehicleShops", "editVehicleShop"
+	"requestVehicleShops", "editVehicleShop", "onVehicleShopOpen"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -47,6 +47,12 @@ function ShopManager:constructor()
 			ShopManager.Map[id]:onItemMarkerHit(client, true)
 		else
 			client:sendError(_("Invalid Shop ID!", client))
+		end
+	end)
+
+	addEventHandler("onVehicleShopOpen", root, function() 
+		if client and client.m_VehicleShop then 
+			client.m_VehicleShop:Event_onShopOpen(client)
 		end
 	end)
 end

@@ -15,7 +15,7 @@ function ShortMessageQuestion.initalize()
 	addEventHandler("questionShortMessageDiscard", root, ShortMessageQuestion.Discard)
 end
 
-function ShortMessageQuestion:constructor(player, target, msg, yesEvent, noEvent, ...)
+function ShortMessageQuestion:constructor(player, target, msg, yesEvent, noEvent, color, ...)
 	local additionalParameters = {...}
 	local id = ShortMessageQuestion.Count+1
 	self.m_Id = id
@@ -27,7 +27,7 @@ function ShortMessageQuestion:constructor(player, target, msg, yesEvent, noEvent
 		["additionalParameters"] = additionalParameters,
 		["object"] = self
 	}
-	target:triggerEvent("questionShortMessage", id, msg)
+	target:triggerEvent("questionShortMessage", id, msg, color)
 end
 
 function ShortMessageQuestion:destructor()
