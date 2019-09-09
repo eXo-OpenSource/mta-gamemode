@@ -140,7 +140,8 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	self.m_VehicleList[Model][index].template =  TuningTemplateManager:getSingleton():getNameFromId( TemplateId ) or ""
 	self.m_VehicleList[Model][index].level = Level
 	self.m_VehicleList[Model][index].vehicle = TemporaryVehicle.create(Model, Pos, Rot)
-
+	local color = VehicleShopColors[math.random(1, #VehicleShopColors)]
+	self.m_VehicleList[Model][index].vehicle:setColor(color[1], color[2], color[3], color[1], color[2], color[3], color[1], color[2], color[3])
 	local veh = self.m_VehicleList[Model][index].vehicle
 	veh.m_DisableToggleEngine = true
 	veh.m_DisableToggleHandbrake = true
