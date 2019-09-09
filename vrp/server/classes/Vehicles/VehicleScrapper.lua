@@ -38,7 +38,7 @@ function VehicleScrapper:Event_onRequestScrap()
 			if price then
 				ShortMessageQuestion:new(client, client, _("Möchtest du dieses Fahrzeug für $%s verschrotten?", client, convertNumber(price*.1)), function(player)
 					self:Event_onConfirmScrap(player)
-				end, function() end, client)
+				end, function() end, tocolor(0, 94, 255), client)
 			else 
 				client:sendError(_("Du kannst dieses Fahrzeug nicht Verschrotten!", client))
 			end 

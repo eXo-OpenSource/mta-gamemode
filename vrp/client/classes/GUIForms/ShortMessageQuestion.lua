@@ -10,8 +10,8 @@ inherit(Singleton, ShortMessageQuestion)
 
 addRemoteEvents{"questionShortMessage", "questionShortMessageClose"}
 
-function ShortMessageQuestion:constructor(text, yesCallback, noCallback)
-	self.m_Question = ShortMessage:new(("%s \n(Linksklick Ja, Rechtsklick Nein)"):format(text), "Frage", nil, -1)
+function ShortMessageQuestion:constructor(text, yesCallback, noCallback, color)
+	self.m_Question = ShortMessage:new(("%s \n(Linksklick Ja, Rechtsklick Nein)"):format(text), "Frage", color, -1)
 
 	self.m_Question.onLeftClick = function() if yesCallback then yesCallback() end delete(self) end
 	self.m_Question.onRightClick = function() if noCallback then noCallback() end delete(self) end
@@ -22,14 +22,15 @@ function ShortMessageQuestion:destructor()
 end
 
 addEventHandler("questionShortMessage", root,
-	function(id, text)
+	function(id, text, color)
 		ShortMessageQuestion:new(text,
 			function()
 				triggerServerEvent("questionShortMessageAccept", root, id)
 			end,
 			function()
 				triggerServerEvent("questionShortMessageDiscard", root, id)
-			end
+			end,
+			color
 		)
 	end
 )

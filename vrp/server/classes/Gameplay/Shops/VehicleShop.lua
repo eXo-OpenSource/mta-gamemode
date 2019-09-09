@@ -28,8 +28,6 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_VehicleList = {}
 
 	local markerPos = split(marker,",")
-	self.m_Marker = createMarker(markerPos[1], markerPos[2], markerPos[3]+0.5, "cylinder", 1, 255, 255, 0, 200)
-	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onMarkerHit, self))
 
 	self.m_Blip = Blip:new("CarShop.png", markerPos[1], markerPos[2],root,400)
 	self.m_Blip:setDisplayText("Autohaus", BLIP_CATEGORY.Shop)
@@ -37,6 +35,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 
 	local npcData = split(npc,",")
 	self.m_Ped = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
+	ElementInfo:new(self.m_Ped, "Fahrzeugverkauf", 1.3)
 	self.m_Ped:setImmortal(true)
 	self.m_Ped:setFrozen(true)
 	local spawnPos = split(spawn,",")
@@ -47,7 +46,9 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_Ped:setData("clickable",true,true)
 	addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
 		if button =="left" and state == "down" then
-			self:onMarkerHit(player, true)
+			player.m_VehicleShop = self
+			player.m_VehicleShopMarker = self.m_Ped
+			self:Event_onShopOpen(player)
 		end
 	end)
 end
@@ -66,9 +67,12 @@ function VehicleShop:getVehiclePrice(model, index)
 end
 --]]
 
-function VehicleShop:onMarkerHit(hitElement, dim)
-	if dim and hitElement:getType() == "player" then
-		if hitElement.vehicle then hitElement:sendWarning("Bitte steige erst aus dem Fahrzeug aus!") return end
+function VehicleShop:Event_onShopOpen(player) 
+	if not player or not player.m_VehicleShopMarker or Vector3(player.position - player.m_VehicleShopMarker.position):getLength() > 5 then
+		return 
+	end 
+	if (player:getDimension() == player.m_VehicleShopMarker:getDimension()) and player:getType() == "player" then
+		if player.vehicle then player:sendWarning("Bitte steige erst aus dem Fahrzeug aus!") return end
 
 		local vehicles = {}
 		for model, vehicleData in pairs(self.m_VehicleList) do
@@ -79,7 +83,7 @@ function VehicleShop:onMarkerHit(hitElement, dim)
 				vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level}
 			end
 		end
-		hitElement:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
+		player:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
 	end
 end
 
