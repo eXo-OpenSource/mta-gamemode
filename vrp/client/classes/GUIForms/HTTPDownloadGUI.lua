@@ -9,9 +9,7 @@ function HTTPDownloadGUI:constructor()
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)
 	self.m_Logo = GUIImage:new(screenWidth/2 - 350/2, screenHeight/2 - 200/2 - 120, 350, 167, "files/images/Logo.png", self)
 	self.m_Text = GUILabel:new(0, screenHeight - 150 - 60/2, screenWidth, 60, "Lade Dateien herunter...", self):setAlignX("center")
-	self.m_DownloadBar = GUIProgressBar:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, self):setPulsating(true)
-	self.m_DownloadBarAnyChangeForce = bind(self.forceDownloadBarAnyChange, self)
-	addEventHandler("onClientRender", root, self.m_DownloadBarAnyChangeForce)
+	self.m_DownloadBar = GUIProgressBar:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, self)
 	if core:get("Login", "LoginMusic", true) then
 		self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
 	else
@@ -26,12 +24,8 @@ function HTTPDownloadGUI:virtual_destructor()
 	if self.m_Music and isElement(self.m_Music) then
 		stopSound(self.m_Music)
 	end
-	removeEventHandler("onClientRender", root, self.m_DownloadBarAnyChangeForce)
-	fadeCamera(true)
-end
 
-function HTTPDownloadGUI:forceDownloadBarAnyChange()
-	self.m_DownloadBar:anyChange()
+	fadeCamera(true)
 end
 
 function HTTPDownloadGUI:launchMusic()
