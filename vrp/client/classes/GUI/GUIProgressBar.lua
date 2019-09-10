@@ -41,6 +41,14 @@ function GUIProgressBar:setProgressTextEnabled(state)
 	return self
 end
 
+--to use this, anyChange has to be called within a onClientRender function
+function GUIProgressBar:setPulsating(state)
+	self.m_Pulsating = state
+	self.m_LastPulseAlpha = 0
+	self.m_PulseStartTime = getTickCount()
+	return self
+end
+
 function GUIProgressBar:drawThis()
 	dxSetBlendMode("modulate_add")
 
@@ -51,6 +59,25 @@ function GUIProgressBar:drawThis()
 	local offsetHeight = 2
 
 	dxDrawRectangle(self.m_AbsoluteX + 2, self.m_AbsoluteY + offsetHeight, (self.m_Width - 4) * self.m_Progress/100, self.m_Height - offsetHeight*2, self.m_ForegroundColor)
+
+	-- Draw pulse
+	if self.m_Pulsating then
+		if getTickCount() - self.m_PulseStartTime <= 1500 then
+			local elapsedTime = getTickCount() - self.m_PulseStartTime
+			local progress = elapsedTime / 1500
+			self.m_LastPulseAlpha = interpolateBetween(0, 0, 0, 75, 0, 0, progress, "OutQuad")
+		elseif getTickCount() - self.m_PulseStartTime >= 1500 then
+			local elapsedTime = getTickCount() - (self.m_PulseStartTime+1500)
+			local progress = elapsedTime / 1500
+			self.m_LastPulseAlpha = interpolateBetween(75, 0, 0, 0, 0, 0, progress, "OutQuad")
+			if progress >= 1.0 then
+				self.m_LastPulseAlpha = 0
+				self.m_PulseStartTime = getTickCount()
+			end
+		end
+
+		dxDrawRectangle(self.m_AbsoluteX + 2, self.m_AbsoluteY + offsetHeight, (self.m_Width - 4) * self.m_Progress/100, self.m_Height - offsetHeight*2, tocolor(255, 255, 255, self.m_LastPulseAlpha))
+	end
 
 	-- Draw Display Text
 	dxDrawText(self:getText() .. (self.m_ProgressTextEnabled and " ("..(self.m_Progress).." %)" or ""), self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height/2, nil, nil, self:getColor(), self:getFontSize(), self:getFont(), "center", "center")
