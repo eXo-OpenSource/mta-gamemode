@@ -39,6 +39,8 @@ build_docker_job:
     - wget -q -O build/workerserver https://download.exo-reallife.de/build/workerserver # Built by deploy-workerunit project
     - wget -q -O build/ml_gps.so https://download.exo-reallife.de/build/ml_gps.so # Built by mta-module-gps project
     - wget -q -O build/ml_jwt.so https://glare.now.sh/eXo-OpenSource/ml_jwt/ml_jwt.so # Built by eXo-OpenSource/ml_jwt project
+    - wget -q -O build/ml_redis.so https://glare.now.sh/eXo-OpenSource/ml_redis/ml_redis.so # Built by eXo-OpenSource/ml_redis project
+    - wget -q -O build/install_ml_redis_deps.sh https://glare.now.sh/eXo-OpenSource/ml_redis/install-deps.sh # Built by eXo-OpenSource/ml_redis project
     - docker info
     - docker build -t exo-rl-mta .
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
