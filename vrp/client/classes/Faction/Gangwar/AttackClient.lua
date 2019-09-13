@@ -32,8 +32,8 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	end
 	if self.m_GangwarPick then
 		self.m_GangwarPick:setVisible(false)
+		self.m_GangwarPick:synchronize( pPickParticipants, pDisqualified)
 	end
-	self.m_GangwarPick:synchronize( pPickParticipants, pDisqualified)
 	self.m_DamageFunc = bind( AttackClient.addDamage, self)
 	addEventHandler("onGangwarDamage", localPlayer, self.m_DamageFunc)
 	self.m_KillFunc = bind( AttackClient.addKill, self)
