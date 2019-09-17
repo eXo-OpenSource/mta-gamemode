@@ -120,6 +120,7 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
+	["freeVip"] = RANK.Moderator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
