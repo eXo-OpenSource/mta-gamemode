@@ -63,6 +63,7 @@ function ItemManager:loadItems()
 			Tradeable = row.Tradeable == 1;
 			Expireable = row.Expireable == 1;
 			IsUnique = row.IsUnique == 1;
+			IsStackable = row.IsStackable == 1;
 			Throwable = row.Throwable == 1;
 			Breakable = row.Breakable == 1;
 		}

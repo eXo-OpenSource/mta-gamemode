@@ -623,6 +623,7 @@
 	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
 	<script src="client/classes/GUI/GUIItemSlot.lua" type="client"/>
+	<script src="client/classes/GUI/GUIItemSlotList.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>

@@ -27,6 +27,7 @@ GUIGridMemo = inherit(GUIMemo)
 GUIGridSkribble = inherit(GUISkribble)
 GUIGridRating = inherit(GUIRating)
 GUIGridItemSlot = inherit(GUIItemSlot)
+GUIGridItemSlotList = inherit(GUIItemSlotList)
 
 
 function GUIGridEdit:constructor(posX, posY, width, height, parent) return GUIEdit.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
@@ -44,6 +45,7 @@ function GUIGridMemo:constructor(posX, posY, width, height, parent) return GUIMe
 function GUIGridSkribble:constructor(posX, posY, width, height, parent) return GUISkribble.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridRating:constructor(posX, posY, width, height, amount, parent) return GUIRating.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), amount, parent) end
 function GUIGridItemSlot:constructor(posX, posY, width, height, parent) return GUIItemSlot.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
+function GUIGridItemSlotList:constructor(posX, posY, width, height, parent) return GUIItemSlotList.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)

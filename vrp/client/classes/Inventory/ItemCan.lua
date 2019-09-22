@@ -44,6 +44,9 @@ end
 
 function ItemCanGUI:destructor()
 	InventoryManager:getSingleton():getPlayerHook():unregister(self.m_UpdateEvent)
+	local cursor = isCursorShowing()
+	GUIForm.destructor(self)
+	if cursor then Cursor:show() end
 end
 
 function ItemCanGUI:refresh(inventoryId, elementId, elementType, size, items)

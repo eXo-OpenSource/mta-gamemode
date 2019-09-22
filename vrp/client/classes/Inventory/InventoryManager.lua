@@ -7,16 +7,22 @@
 -- ****************************************************************************
 InventoryManager = inherit(Singleton)
 
+addEvent("onInventoryItemLeft")
+addEvent("onInventoryItemRight")
 addRemoteEvents{"onInventorySync"}
 
 function InventoryManager:constructor()
 	self.m_OnInventorySync = bind(self.Event_onInventorySync, self)
+	self.m_OnInventoryLeft = bind(self.Event_onItemLeft, self)
+	self.m_OnInventoryRight = bind(self.Event_onItemRight, self)
 	self.m_SyncHookPlayer = Hook:new()
 	self.m_SyncHook = Hook:new()
 	self.m_CachedInventories = {}
 	self.m_PlayerInventoryId = 0
 
 	addEventHandler("onInventorySync", root, self.m_OnInventorySync)
+	addEventHandler("onInventoryItemLeft", root, self.m_OnInventoryLeft)
+	addEventHandler("onInventoryItemRight", root, self.m_OnInventoryRight)
 end
 
 function InventoryManager:Event_onInventorySync(inventoryId, elementId, elementType, size, items)
@@ -45,4 +51,18 @@ end
 
 function InventoryManager:getHook()
 	return self.m_SyncHook
+end
+
+function InventoryManager:Event_onItemLeft(inventoryId, item)
+	outputChatBox(item.Slot .. " item left")
+end
+
+function InventoryManager:Event_onItemRight(inventoryId, item)
+	if self.m_PlayerInventoryId == inventoryId then
+		if not getKeyState("lshift") then
+			triggerServerEvent("onItemUse", localPlayer, inventoryId, item.Id)
+		else
+			triggerServerEvent("onItemUseSecondary", localPlayer, inventoryId, item.Id)
+		end
+	end
 end

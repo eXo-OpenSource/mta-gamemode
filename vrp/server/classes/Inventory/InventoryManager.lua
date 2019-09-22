@@ -368,6 +368,12 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 			end
 		end
 
+		local slot = self:getNextFreeSlot(inventory)
+
+		if not slot then
+			return false, "slot"
+		end
+
 		local id = inventory.m_NextItemId
 		inventory.m_NextItemId = inventory.m_NextItemId + 1
 
@@ -376,7 +382,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		-- data.DatabaseId = uuid()
 		data.Id = uuid()
 		data.ItemId = item
-		data.Slot = 0
+		data.Slot = slot
 		data.Amount = amount
 		data.Durability = durability or itemData.MaxDurability
 		data.Metadata = metadata
@@ -428,6 +434,35 @@ function InventoryManager:takeItem(inventory, itemId, amount, all)
 		inventory:onInventoryChanged()
 		return true, false
     end
+    return false, reason
+end
+
+function InventoryManager:getNextFreeSlot(inventory)
+	local inventory = inventory
+
+	if type(inventory) == "number" then
+		inventory = self:getInventory(inventory)
+	end
+
+	if not inventory then
+		return false
+	end
+	local totalSlots = 200 -- TODO: move this to database
+
+	for i = 1, totalSlots, 1 do
+		local found = false
+		for k, v in pairs(inventory.m_Items) do
+			if v.Slot == i then
+				found = true
+				break
+			end
+		end
+
+		if not found then
+			return i
+		end
+	end
+
     return false, reason
 end
 

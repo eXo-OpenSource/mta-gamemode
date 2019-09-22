@@ -18,6 +18,7 @@
 - [ ] Implement new weapon handling with inventory
 - [ ] Create new GUI for inventory, inventory interaction and trading
 - [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
+- [ ] Rework WorldItem & Item IDs!!
 
 ## Items
 
@@ -265,6 +266,7 @@ CREATE TABLE `vrp_items`  (
   `Tradeable` tinyint(1) NOT NULL DEFAULT 0,
   `Expireable` tinyint(1) NOT NULL DEFAULT 0,
   `IsUnique` tinyint(1) NOT NULL DEFAULT 0,
+  `IsStackable` tinyint(1) NOT NULL DEFAULT 0,
   `Throwable` tinyint(1) NOT NULL DEFAULT 0,
   `Breakable` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`),

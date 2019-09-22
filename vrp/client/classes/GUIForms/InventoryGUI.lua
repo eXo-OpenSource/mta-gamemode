@@ -24,9 +24,11 @@ function InventoryGUI:constructor()
 	self.m_InventoryList:addColumn(_"Anzahl", 0.25)
 	self.m_InventoryList:addColumn(_"IID", 0.25)
 
-	self.m_Item = GUIGridItemSlot:new(8, 1, 1, 1, self.m_Window)
-	self.m_Item2 = GUIGridItemSlot:new(9, 1, 1, 1, self.m_Window)
-
+	self.m_ItemList = GUIGridItemSlotList:new(8, 1, 7, 9, self.m_Window)
+	--[[
+		self.m_Item = GUIGridItemSlot:new(8, 1, 1, 1, self.m_Window)
+		self.m_Item2 = GUIGridItemSlot:new(9, 1, 1, 1, self.m_Window)
+	]]
 	self:hide()
 
 	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
@@ -43,10 +45,11 @@ end
 function InventoryGUI:Event_syncInventory(data, inventoryId)
 	self.m_InventoryList:clear()
 	for k, v in pairs(data) do
+		self.m_ItemList:setItem(v.Slot, inventoryId, v)
+
 		local item = self.m_InventoryList:addItem(v.Name, v.Amount, v.Id)
 		item.m_Item = v
 		item.onLeftClick = function()
-			triggerServerEvent("onItemUse", localPlayer, inventoryId, v.Id)
 			self.m_InventoryList:setSelectedItem()
 		end
 
@@ -57,7 +60,6 @@ function InventoryGUI:Event_syncInventory(data, inventoryId)
 					break
 				end
 			end
-			triggerServerEvent("onItemUseSecondary", localPlayer, inventoryId, v.Id)
 			self.m_InventoryList:setSelectedItem()
 		end
 	end

@@ -22,6 +22,31 @@ function GUIItemSlot:constructor(posX, posY, width, height, parent)
 	self.m_AlignX = "left"
 	self.m_AlignY = "top"
 	self.m_Rotation = 0
+	self.m_InventoryId = nil
+	self.m_ItemData = nil
+end
+
+function GUIItemSlot:setItem(inventoryId, item)
+	self.m_InventoryId = inventoryId
+	self.m_ItemData = item
+
+	if item then
+		self.m_Text = item.Amount
+
+		local suffix = ""
+
+		if DEBUG then
+			suffix = "\n\nDEBUG\n"
+			suffix = suffix .. "TechnicalName: " .. item.TechnicalName .. "\n"
+			suffix = suffix .. "Class: " .. item.Class
+		end
+
+		self:setTooltip(item.Name .. "\n" .. item.Description .. suffix, nil, true)
+	else
+		self:setTooltip("")
+	end
+
+	self:anyChange()
 end
 
 function GUIItemSlot:drawThis(incache)
@@ -33,11 +58,21 @@ function GUIItemSlot:drawThis(incache)
 
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/Inventory/items/Essen/Burger.png")
+	if self.m_ItemData ~= nil then
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/Inventory/items/" .. self.m_ItemData.Icon)
 
-	local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
-	local height = dxGetFontHeight(self:getFontSize(), self:getFont()) / 1.5
-	dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2, width, height, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
+		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and not (self.m_ItemData.MaxDurability > 0) then
+			local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
+			local height = dxGetFontHeight(self:getFontSize(), self:getFont()) / 1.5
+			dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2, width, height, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
+		elseif self.m_ItemData.MaxDurability > 0 then
+			local progress = self.m_ItemData.Durability / self.m_ItemData.MaxDurability
+			local durabilityLevelColor = tocolor(255*(1-progress), 255*progress, 0)
+
+			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width, 4, Color.Background)
+			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width * progress, 4, durabilityLevelColor)
+		end
+	end
 
 	dxSetBlendMode("blend")
 end
@@ -48,6 +83,18 @@ end
 
 function GUIItemSlot:onUnhover(cursorX, cursorY)
 	self:setBackgroundColor(rgb(97, 129, 140)):anyChange()
+end
+
+function GUIItemSlot:onLeftClick()
+	if self.m_ItemData ~= nil then
+		triggerEvent("onInventoryItemLeft", localPlayer, self.m_InventoryId, self.m_ItemData)
+	end
+end
+
+function GUIItemSlot:onRightClick()
+	if self.m_ItemData ~= nil then
+		triggerEvent("onInventoryItemRight", localPlayer, self.m_InventoryId, self.m_ItemData)
+	end
 end
 
 function GUIItemSlot:setLineSpacing(lineSpacing)
