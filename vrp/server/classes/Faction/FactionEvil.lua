@@ -229,7 +229,7 @@ function FactionEvil:putOrderInDepot(player, box)
 		if id then
 			depot:addMagazineD(id,amount)
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
-			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product)) 
 		end
 	else
 		depot:addEquipment(player, product, amount, true)
