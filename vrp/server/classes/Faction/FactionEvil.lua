@@ -215,22 +215,26 @@ function FactionEvil:putOrderInDepot(player, box)
 			if id then
 				depot:addWeaponD(id,amount)
 				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+				player:getFaction():addLog(player, "Lager", ("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
 			end
 		else 
 			if id then
 				depot:addWeaponD(id,amount)
 				depot:addMagazineD(id,amount)
 				player:getFaction():sendShortMessage(("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+				player:getFaction():addLog(player, "Lager", ("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
 			end
 		end
 	elseif type == "Munition" then
 		if id then
 			depot:addMagazineD(id,amount)
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product)) 
 		end
 	else 
 		depot:addEquipment(player, product, amount, true) 
 		player:getFaction():sendShortMessage(("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
+		player:getFaction():addLog(player, "Lager", ("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
 	end
 	box.m_Package:delete()
 end
