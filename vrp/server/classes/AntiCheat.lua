@@ -40,6 +40,11 @@ AntiCheat.AllowedDataChange = {
 	["superman:flying"] = true,
 	["isEquipmentGUIOpen"] = true,
 	["clickable"] = true,
+	["FactionChatEnabled"] = true, 
+	["CompanyChatEnabled"] = true, 
+	["AllianceChatEnabled"] = true, 
+	["StateChatEnabled"] = true,
+	["GroupChatEnabled"] = true,
 }
 
 function AntiCheat:constructor()

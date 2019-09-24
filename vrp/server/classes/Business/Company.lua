@@ -244,6 +244,7 @@ end
 
 
 function Company:sendChatMessage(sourcePlayer,message)
+	if not getElementData(sourcePlayer, "CompanyChatEnabled") then return sourcePlayer:sendError(_("Du hast den Unternehmenschat deaktiviert!", sourcePlayer)) end
 	local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
 		cancelEvent()
@@ -258,8 +259,10 @@ function Company:sendChatMessage(sourcePlayer,message)
 	message = message:gsub("%%", "%%%%")
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, 100, 150, 250)
-        if player ~= sourcePlayer then
+		if getElementData(player, "CompanyChatEnabled") then
+			player:sendMessage(text, 100, 150, 250)
+        end
+		if player ~= sourcePlayer then
             receivedPlayers[#receivedPlayers+1] = player
         end
 	end

@@ -12,6 +12,7 @@ function KeyBinds:constructor()
 	self.m_HelpMenu = bind(self.helpMenu, self)
 	self.m_AnimationMenu = bind(self.animationMenu, self)
 	self.m_PolicePanel = bind(self.policePanel, self)
+	self.m_RadioCommunication = bind(self.radioCommunication, self)
 	self.m_SelfMenu = bind(self.selfMenu, self)
 	self.m_ScoreboardTrigger = bind(self.scoreboardGUI, self)
 	self.m_CustomMap = bind(self.customMap, self)
@@ -25,6 +26,7 @@ function KeyBinds:constructor()
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
+		["KeyToggleRadioComm"]		= {["defaultKey"] = "F5", ["name"] = "Funkgerät", ["func"] = self.m_RadioCommunication};
 		["KeyToggleSelfGUI"]		= {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
 		["KeyToggleHelpGUI"]		= {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
 		["KeyToggleAnimationMenu"]	= {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
@@ -181,6 +183,16 @@ function KeyBinds:policePanel()
 	if PolicePanel:getSingleton():isVisible() or isValidCop then -- hide it anytime, show it only if player is cop
 		PolicePanel:getSingleton():toggle()	
 		PolicePanel:getSingleton():updateCurrentView()
+	end
+end
+
+function KeyBinds:radioCommunication() 
+	if not RadioCommunicationGUI:isInstantiated() then
+		RadioCommunicationGUI:new()
+		return true
+	end
+	if RadioCommunicationGUI:isInstantiated() then
+		delete(RadioCommunicationGUI:getSingleton())	
 	end
 end
 

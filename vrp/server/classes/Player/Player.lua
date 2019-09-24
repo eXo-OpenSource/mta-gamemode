@@ -219,7 +219,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin, RadioCommunication FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -284,6 +284,8 @@ function Player:loadCharacterInfo()
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end
+	self.m_RadioFrequency = fromJSON(row.RadioCommunication) or {}
+	RadioCommunication:getSingleton():loadPlayer(self)
 end
 
 
@@ -358,8 +360,8 @@ function Player:save()
 		end
 		local timeDiff = self:getPlayTime() - self.m_PlayTimeAtLastSave
 		DatabasePlayer.save(self)
-		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), timeDiff, spawnWithFac, self.m_IsDead or 0, self.m_Id)
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =?, RadioCommunication = ? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), timeDiff, spawnWithFac, self.m_IsDead or 0, (self.m_RadioFrequency and toJSON(self.m_RadioFrequency)) or "", self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 
@@ -687,7 +689,11 @@ end
 
 function Player.staticFactionChatHandler(self, command, ...)
 	if self.m_Faction then
-		self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		if self.m_Faction:getId() >= 1 and self.m_Faction:getId() <= 3 then
+			Player.staticStateFactionChatHandler(self, command, ...)
+		else 
+			self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		end
 	end
 end
 

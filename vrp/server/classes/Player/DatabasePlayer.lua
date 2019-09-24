@@ -172,6 +172,7 @@ function DatabasePlayer:load(sync)
 	self:setWarns()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
+
 	self.m_TeamspeakId = Account.getTeamspeakIdFromId(self.m_Id)
 	self.m_LoggedIn = true
 

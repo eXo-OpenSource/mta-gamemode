@@ -877,16 +877,19 @@ function FactionState:sendMessage(text, r, g, b, ...)
 end
 
 function FactionState:sendStateChatMessage(sourcePlayer, message)
+	if not getElementData(sourcePlayer, "StateChatEnabled") then return sourcePlayer:sendError(_("Du hast den Staatschat deaktiviert!", sourcePlayer)) end
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
 		local playerId = sourcePlayer:getId()
 		local rank = faction:getPlayerRank(playerId)
 		local rankName = faction:getRankName(rank)
-		local r,g,b = 200, 100, 100
+		local r,g,b = 3, 173, 252
 		local receivedPlayers = {}
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in pairs(self:getOnlinePlayers()) do
-			player:sendMessage(text, r, g, b)
+			if getElementData(player, "StateChatEnabled") then
+				player:sendMessage(("[Staat] #ffffff %s"):format(text), r, g, b, true)
+			end
 			if player ~= sourcePlayer then
 				receivedPlayers[#receivedPlayers+1] = player
 			end

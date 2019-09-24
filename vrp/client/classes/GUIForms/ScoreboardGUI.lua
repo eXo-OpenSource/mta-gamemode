@@ -32,9 +32,9 @@ function ScoreboardGUI:constructor()
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
-	self.m_PlayerCount:setColor(Color.White):setFont(VRPFont(self.m_Height*0.05))
+	self.m_PlayerCount:setColor(tocolor(0, 0, 0, 200)):setFont(VRPFont(self.m_Height*0.05))
 	self.m_Ping = GUILabel:new(self.m_Width/2, self.m_Height*0.65, self.m_Width/2-self.m_Width*0.05, self.m_Height*0.05, "", self.m_Rect)
-	self.m_Ping:setColor(Color.White):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
+	self.m_Ping:setColor(tocolor(0, 0, 0, 200)):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
 
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 
@@ -91,17 +91,16 @@ function ScoreboardGUI:refresh()
 
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
+		if factionId > 0 and factionId < 4 then factionId = 1 end
 		local companyId = player:getCompany() and player:getCompany():getId() or 0
 		table.insert(self.m_Players, {player, factionId})
 
-		if factionId ~= 0 then
-			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
-			if not self.m_FactionAFKCount[factionId] then self.m_FactionAFKCount[factionId] = 0 end
+		if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
+		if not self.m_FactionAFKCount[factionId] then self.m_FactionAFKCount[factionId] = 0 end
 
-			self.m_FactionCount[factionId] = self.m_FactionCount[factionId] + 1
-			if player:isAFK() then
-				self.m_FactionAFKCount[factionId] = self.m_FactionAFKCount[factionId] + 1
-			end
+		self.m_FactionCount[factionId] = self.m_FactionCount[factionId] + 1
+		if player:isAFK() then
+			self.m_FactionAFKCount[factionId] = self.m_FactionAFKCount[factionId] + 1
 		end
 
 		if companyId ~= 0 then
@@ -133,9 +132,13 @@ function ScoreboardGUI:refresh()
 	end
 	self.m_CountRow = 0
 	self.m_CountColumn = 0
+	self:addPlayerCount("Zivilisten", self.m_FactionCount[0] or 0, self.m_FactionAFKCount[0] or 0, tocolor(255, 255, 255))
+
 	for id, faction in pairs(FactionManager.Map) do
-		local color = faction:getColor()
-		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0, self.m_FactionAFKCount[id] or 0, tocolor(color.r, color.g, color.b))
+		if id ~= 2 and id ~= 3  then
+			local color = faction:getColor()
+			self:addPlayerCount((id == 1 and "Staat") or faction:getShortName(), self.m_FactionCount[id] or 0, self.m_FactionAFKCount[id] or 0, tocolor(color.r, color.g, color.b))
+		end
 	end
 	for id, company in ipairs(CompanyManager.Map) do
 		self:addPlayerCount(company:getShortName(), self.m_CompanyCount[id] or 0, self.m_CompanyAFKCount[id] or 0)
@@ -192,7 +195,7 @@ function ScoreboardGUI:insertPlayers()
 		local item = self.m_Grid:addItem(
 			(isLoggedIn and player:isPremium()) and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
 			player:getName(),
-			isLoggedIn and (player:getFaction() and player:getFaction():getShortName() or "- Keine -") or "-",
+			isLoggedIn and (player:getFaction() and player:getFaction():getId() >= 1 and player:getFaction():getId() <= 3 and "Staat" or (player:getFaction() and player:getFaction():getShortName() or "- Keine -")) or "-",
 			isLoggedIn and (player:getCompany() and player:getCompany():getShortName()  or "- Keins -") or "-",
 			isLoggedIn and string.short(gname, 16) or "-",
 			isLoggedIn and playtime or "-",
@@ -204,7 +207,11 @@ function ScoreboardGUI:insertPlayers()
 
 		if player:getFaction() then
 			local color = player:getFaction():getColor()
-			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+			if player:getFaction():getId() >= 1 and player:getFaction():getId() <= 4 then
+				item:setColumnColor(3, tocolor(0, 200, 255))
+			else
+				item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+			end
 		end
 
 		if player:getGroupType() then

@@ -292,7 +292,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.9, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event"}
+	local SettingsTable = {"HUD", "Radar", "Chat", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -1049,6 +1049,59 @@ function SelfGUI:onSettingChange(setting)
 
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
+	elseif setting == "Chat" then 
+
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Textkanäle aktivieren/deaktivieren!", self.m_SettingBG)
+
+
+		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.8, self.m_Height*0.04, _"Fraktionschat aktivieren", self.m_SettingBG)
+		self.m_FactionChat:setFont(VRPFont(25))
+		self.m_FactionChat:setFontSize(1)
+		self.m_FactionChat:setChecked(core:get("Chat", "enableFactionChat", true))
+		self.m_FactionChat.onChange = function (state)
+			core:set("Chat", "enableFactionChat", state)
+			setElementData(localPlayer, "FactionChatEnabled", state)
+		end
+
+		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.22, self.m_Width*0.8, self.m_Height*0.04, _"Unternehmenschat aktivieren", self.m_SettingBG)
+		self.m_FactionChat:setFont(VRPFont(25))
+		self.m_FactionChat:setFontSize(1)
+		self.m_FactionChat:setChecked(core:get("Chat", "enableCompanyChat", true))
+		self.m_FactionChat.onChange = function (state)
+			core:set("Chat", "enableCompanyChat", state)
+			setElementData(localPlayer, "CompanyChatEnabled", state)
+		end
+
+		
+		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.32, self.m_Width*0.8, self.m_Height*0.04, _"Firmen/Gangchat aktivieren", self.m_SettingBG)
+		self.m_FactionChat:setFont(VRPFont(25))
+		self.m_FactionChat:setFontSize(1)
+		self.m_FactionChat:setChecked(core:get("Chat", "enableGroupChat", true))
+		self.m_FactionChat.onChange = function (state)
+			core:set("Chat", "enableGroupChat", state)
+			setElementData(localPlayer, "GroupChatEnabled", state)
+		end
+
+		self.m_AllianceChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.8, self.m_Height*0.04, _"Bündnischat aktivieren", self.m_SettingBG)
+		self.m_AllianceChat:setFont(VRPFont(25))
+		self.m_AllianceChat:setFontSize(1)
+		self.m_AllianceChat:setChecked(core:get("Chat", "enableAllianceChat", true))
+		self.m_AllianceChat.onChange = function (state)
+			core:set("Chat", "enableAllianceChat", state)
+			setElementData(localPlayer, "AllianceChatEnabled", state)
+		end
+
+		self.m_StateChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.04, _"Staatschat aktivieren", self.m_SettingBG)
+		self.m_StateChat:setFont(VRPFont(25))
+		self.m_StateChat:setFontSize(1)
+		self.m_StateChat:setChecked(core:get("Chat", "enableStateChat", true))
+		self.m_StateChat.onChange = function (state)
+			core:set("Chat", "enableStateChat", state)
+			setElementData(localPlayer, "StateChatEnabled", state)
+		end
+
+
 	elseif setting == "Spawn" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn", self.m_SettingBG)
 
@@ -1399,6 +1452,15 @@ function SelfGUI:onSettingChange(setting)
 		self.m_InteriorSound.onChange = function (state)
 			core:set("Sounds", "Interiors", state)
 			setInteriorSoundsEnabled(state)
+		end
+
+		
+		self.m_StaticNoiseRadio = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.9, self.m_Height*0.04, _"Funkkanal Rauschen", self.m_SettingBG)
+		self.m_StaticNoiseRadio:setFont(VRPFont(25))
+		self.m_StaticNoiseRadio:setFontSize(1)
+		self.m_StaticNoiseRadio:setChecked(core:get("Sounds", "StaticNoise", true))
+		self.m_StaticNoiseRadio.onChange = function (state)
+			core:set("Sounds", "StaticNoise", state)
 		end
 
 		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)

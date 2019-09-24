@@ -582,6 +582,17 @@ function convertNumber ( number )
 	return formatted
 end
 
+function convertFrequency ( number )
+	local formatted = number
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d)", '%2.%1')
+		if ( k==0 ) then
+			break
+		end
+	end
+	return formatted
+end
+
 function toMoneyString(money)
 	if tonumber(money) then
 		return convertNumber(math.floor(money)).."$"

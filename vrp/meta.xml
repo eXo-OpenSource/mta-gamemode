@@ -211,6 +211,9 @@
 	<!-- PoliceAnnouncements -->
 	<script src="server/classes/Gameplay/PoliceAnnouncements.lua" type="server" />
 
+	<!-- Radio Communication (WalkieTalkie) -->
+	<script src="server/classes/Gameplay/RadioCommunication.lua" type="server" />
+
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
@@ -841,6 +844,7 @@
 	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RadioCommunicationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPicker.lua" type="client"/>
@@ -1777,6 +1781,9 @@
 	<vrpfile src="files/images/Other/Close.png"/>
 	<vrpfile src="files/images/Other/KeyIcon.png"/>
 
+	<!-- radio -->
+	<vrpfile src="files/images/Other/Radioset.png"/>
+	
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
 	<vrpfile src="files/images/Gangwar/tilefade.png"/>
@@ -2199,6 +2206,8 @@
 	<vrpfile src="files/audio/death_ahead.mp3" />
 	<vrpfile src="files/audio/devils_harp.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
+	<vrpfile src="files/audio/walkie_beep.ogg"/>
+	<vrpfile src="files/audio/walkie_click.ogg"/>	
 	<vrpfile src="files/audio/Enginestart.ogg"/>
 	<vrpfile src="files/audio/Enginestart2.ogg"/>
 	<vrpfile src="files/audio/Siren.ogg"/>

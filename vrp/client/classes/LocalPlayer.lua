@@ -91,6 +91,16 @@ function LocalPlayer:constructor()
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col6)
 
 	NetworkMonitor:new()
+
+end
+
+function LocalPlayer:setChatSettings() 
+	setElementData(localPlayer, "ChatEnabled", core:get("Chat", "enableChat", true))
+	setElementData(localPlayer, "FactionChatEnabled", core:get("Chat", "enableFactionChat", true))
+	setElementData(localPlayer, "CompanyChatEnabled", core:get("Chat", "enableCompanyChat", true))
+	setElementData(localPlayer, "AllianceChatEnabled", core:get("Chat", "enableAllianceChat", true))
+	setElementData(localPlayer, "StateChatEnabled", core:get("Chat", "enableStateChat", true))
+	setElementData(localPlayer, "GroupChatEnabled", core:get("Chat", "enableGroupChat", true))
 end
 
 function LocalPlayer:startLookAt( )
