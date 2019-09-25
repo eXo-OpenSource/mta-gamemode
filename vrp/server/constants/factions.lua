@@ -48,9 +48,9 @@ FACTION_MIN_RANK_KARMA = {
 
 FACTION_STATE_BADGES = 
 {
-	[1] = "P",
-	[2] = "F",
-	[3] = "S",
+	[1] = "LSPD",
+	[2] = "LSPD-D",
+	[3] = "LSPD-S",
 }
 
 FACION_STATE_VEHICLE_MARK = 

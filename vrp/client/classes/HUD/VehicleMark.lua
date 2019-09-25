@@ -77,11 +77,12 @@ function VehicleMark:render()
 		end
 		local dist = getDistanceBetweenPoints2D(x, y, cx, cy)
 
-		if dist < 10 and isLineOfSightClear(cx, cy, cz, x, y, z, true, true, false, true, false, false, false, v) then  
+		if v:getDimension() == localPlayer:getDimension() and v:getInterior() == localPlayer:getInterior() and dist < 7 and isLineOfSightClear(cx, cy, cz, x, y, z, true, true, false, true, false, false, false, v) then  
 			local scale = 0.2 + (4 / dist )
 			local sx, sy = getScreenFromWorldPosition(x, y, z)
 			if sx and sy then
-				dxDrawText(mark, sx, sy, nil, nil, tocolor(255, 255, 255, 255), 1*scale, "sans")
+				dxDrawText(mark, sx, sy+1, nil, nil, tocolor(0, 0, 0, 255), scale, "sans")
+				dxDrawText(mark, sx, sy, nil, nil, tocolor(255, 255, 255, 255), scale, "sans")
 			end
 		end
 	end

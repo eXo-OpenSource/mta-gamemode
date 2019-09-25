@@ -126,6 +126,8 @@ function VehicleInteraction:drawTextBox(text, count)
 end
 
 function VehicleInteraction:getDoor()
+    if self.m_lookAtVehicle:getInterior() ~= localPlayer:getInterior() then return end
+    if self.m_lookAtVehicle:getDimension() ~= localPlayer:getDimension() then return end
     local min, minid = 10, 10 -- placeholders, no reason
     for type, id in pairs(self.m_ValidDoors) do
         local compPos

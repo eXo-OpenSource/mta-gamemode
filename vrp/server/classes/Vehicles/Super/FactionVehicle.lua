@@ -56,7 +56,7 @@ function FactionVehicle:constructor(data)
 	self.m_SpawnDim = data.Dimension 
 	self.m_SpawnInt = data.Interior
 
-	if self:isStateVehicle() and getVehicleType(self) == VehicleType.Automobile then 
+	if self:isStateVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
 		local count = 1 
 		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
 			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
