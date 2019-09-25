@@ -198,7 +198,6 @@ function RadioCommunicationGUI:send()
             self.m_Input = tostring(tonumber(self.m_Input) * 1000)
         end
     end
-	self.m_InputPre = self.m_Input
 	core:set("HUD", "radioFrequencyAlternate", self.m_InputPre)
 	playSound("files/audio/walkie_beep.ogg")
 	self:setFrequency(self.m_Input, self.m_InputPre)
