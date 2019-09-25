@@ -19,6 +19,11 @@ function RadioCommunication:destructor()
 
 end
 
+function RadioCommunication:allowPlayer(player, bool) 
+    player:triggerEvent("onAllowRadioCommunication", bool)
+    player.m_RadioCommunication = bool
+end
+
 function RadioCommunication:Event_OnMessageCommand(send, cmd, ... )
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
@@ -32,12 +37,14 @@ function RadioCommunication:sendMessage(sender, message, channel)
         message = message:gsub("%%", "%%%%")
         for frequency, data in pairs(self.m_Channels) do 
             for player, bool in pairs(data) do 
-                if player == sender and channelCount == channel then
-                    if message ~= "" then
-                        return self:broadcast(sender, frequency, ("%s sagt: %s"):format(sender:getName(), message))
+                if player == sender then
+                    if channel == channelCount then
+                         if message ~= "" then
+                            return self:broadcast(sender, frequency, ("%s sagt: %s"):format(sender:getName(), message))
+                        end
+                    else 
+                        channelCount = channelCount + 1
                     end
-                else
-                    channelCount = channelCount + 1
                 end
             end
         end
@@ -47,12 +54,14 @@ end
 function RadioCommunication:broadcast(sender, frequency, message) 
     if self.m_Channels[frequency] then 
         local receivedPlayers = {}
-        for player, bool in pairs(self.m_Channels[frequency]) do 
-            player:triggerEvent("RadioCommunication:playStaticNoise")
-            player:sendMessage(("#03cafc** [%s]#ffffff %s #03cafc**"):format(self:format(frequency), message), 3, 202, 252, true)
-        	if player ~= sender then
-			    receivedPlayers[#receivedPlayers+1] = player
-			end
+        for player, bool in pairs(self.m_Channels[frequency]) do
+            if player.m_RadioCommunication then
+                player:triggerEvent("RadioCommunication:playStaticNoise")
+                player:sendMessage(("#03cafc** [%s]#ffffff %s #03cafc**"):format(self:format(frequency), message), 3, 202, 252, true)
+        	    if player ~= sender then
+			        receivedPlayers[#receivedPlayers+1] = player
+			    end
+            end
         end
         StatisticsLogger:getSingleton():addChatLog(sender, "funk", message, receivedPlayers)
     end
@@ -132,4 +141,3 @@ function RadioCommunication:format(input)
 		return (("%s MHz"):format(input))
 	end
 end
-

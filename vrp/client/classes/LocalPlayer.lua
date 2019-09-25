@@ -8,7 +8,7 @@
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"
-,"onTryEnterExit"}
+,"onTryEnterExit", "onAllowRadioCommunication"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -29,6 +29,8 @@ function LocalPlayer:constructor()
 	self.m_FadeOut = bind(self.fadeOutScope, self)
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
 	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
+
+	
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -55,7 +57,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
 	addEventHandler("onTryEnterExit", root, bind(self.Event_tryEnterExit, self))
-
+	addEventHandler("onAllowRadioCommunication", root, bind(self.Event_allowRadioCommunication, self))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
 
@@ -163,6 +165,17 @@ function LocalPlayer:Event_OnObjectBrake( attacker )
 		end
 	end
 end
+
+function LocalPlayer:Event_allowRadioCommunication(bool) 
+	self.m_AllowRadioCommunication = bool
+	if not bool then 
+		if RadioCommunicationGUI:isInstantiated() then
+			delete(RadioCommunicationGUI:getSingleton())	
+		end
+	end
+end
+
+function LocalPlayer:isRadioCommunicationAllowed() return self.m_AllowRadioCommunication end 
 
 
 function LocalPlayer:onAlcoholLevelChange()

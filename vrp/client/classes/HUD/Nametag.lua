@@ -16,7 +16,6 @@ function Nametag:constructor()
 	self.m_Stream = {}
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
 	self.m_Draw = bind(self.draw, self)
-
 	addEventHandler("onClientRender", root, self.m_Draw, true, "high")
 	setPedTargetingMarkerEnabled(false)
 end
@@ -68,7 +67,7 @@ function Nametag:draw()
 						local r,g,b =  self:getColorFromHP(getElementHealth(player), getPedArmor(player))
 						local textWidth = dxGetTextWidth(drawName, 1.5*size, Nametag.font)
 						local fontHeight = dxGetFontHeight(1.5*size,Nametag.font)
-
+						local fontHeightName = dxGetFontHeight(2*size,Nametag.font)
 						if self:drawIcons(player, scx, scy, fontHeight, alpha) then
 							scy = scy - fontHeight
 						end
@@ -81,12 +80,70 @@ function Nametag:draw()
 						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
 						dxDrawText(player:getName(), scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
 						dxDrawText(player:getName(), scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
+						if core:get("HUD", "DisplayBadge", true) and localPlayer.m_DisplayMode and not localPlayer.vehicle and (localPlayer:getWeapon() == 43 or not isPedAiming(localPlayer)) and player:getData("Badge") and player:getData("Badge") ~= "" and getDistanceBetweenPoints2D(player.position.x, player.position.y, localPlayer.position.x, localPlayer.position.y) < 3 then
+							self:drawBadge(player, size*.8, alpha)
+						end
 					end
 				end
 			end
 		end
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/Nametag") end
+end
+
+function Nametag:drawBadge(player, size, alpha)
+	dxSetBlendMode ( "modulate_add" )
+	local relRot = findRotation(getCamera().position.x, getCamera().position.y, player.position.x, player.position.y) 
+	local white = tocolor(255, 255, 255, 255*alpha) 
+	local grey= tocolor(255, 255, 255, 255*alpha) 
+	relRot = (relRot - (player.rotation.z)) % 360
+	if relRot >= 110 and relRot <= 220 then
+		--local textRot = (relRot - 180)*.3
+		textRot = 0
+		local cx, cy, cz = getCameraMatrix()
+		local x, y, z = getPedBonePosition(player, 22)
+		local bLineOfSight = isLineOfSightClear(cx, cy, cz, x, y, z, true, false, false, true, false, false, false, localPlayer)
+		if not bLineOfSight then return end
+		local x2, y2 = x, y
+		
+		if x and y then
+			local sx, sy = getScreenFromWorldPosition(x2, y2, z)
+			local sx2, sy2 = getScreenFromWorldPosition(x, y, z-0.15)
+			
+			if sx and sy and sx2 and sy2 then
+				local leftShift = screenWidth*(0.05*size)
+				sx = sx  - leftShift
+				local textWidth = dxGetTextWidth(player:getData("Badge"), size, "sans" or Nametag.font)
+				local textWidthLower = dxGetTextWidth(player:getData("BadgeTitle") or "LSPD", size, "sans" or Nametag.font)
+				local diffAdjust = (textWidthLower - textWidth*1)-screenWidth*0.02
+				if diffAdjust < 0 then 
+					diffAdjust = 0
+				end
+	
+				local fontHeight = dxGetFontHeight(size, "sans" or Nametag.font)
+
+				dxDrawRectangle(sx-diffAdjust -  textWidth*.1,  sy - fontHeight*.1, textWidth*1.2 , fontHeight*1.2, tocolor(0,0,0,220*alpha))
+				dxDrawRectangle(sx - diffAdjust - textWidth*.1,   (sy  + fontHeight * 1.2), textWidthLower+textWidth*.2 , fontHeight, tocolor(0,0,0,220*alpha))
+				
+				dxDrawText(player:getData("Badge"), sx-diffAdjust, sy - fontHeight*.1, sx+textWidth, nil, white, size, "sans" or Nametag.font, "left", "top", false, false, false, false, false, textRot)
+			
+				dxDrawLine((sx-diffAdjust*1.2)-textWidth*.1, (sy + fontHeight*1.1) + 1, sx + textWidth, sy + fontHeight * 1.1,  tocolor(0, 0, 0, 255*alpha), 1)
+				dxDrawLine((sx-diffAdjust*1.2)-textWidth*.1, sy + fontHeight*1.1, sx + textWidth, sy + fontHeight * 1.1,  grey)
+
+				dxDrawLine(((sx-diffAdjust*1.2)-1) - textWidth*.1, (sy+1-fontHeight*.1) + 1, ((sx-diffAdjust*1.2) -1)-textWidth*.1, (sy  + fontHeight * 1.2 + fontHeight) + 1, tocolor(0, 0, 0, 255*alpha), 1)
+				dxDrawLine(((sx-diffAdjust*1.2)-1) - textWidth*.1, sy+1-fontHeight*.1, ((sx-diffAdjust*1.2) -1)-textWidth*.1, sy  + fontHeight * 1.2 + fontHeight, grey)
+
+				dxDrawLine(sx+textWidth,(sy + fontHeight*1.1)+1, sx + textWidth*1.5, sy2+1, tocolor(0, 0, 0, 255*alpha), 1)
+				dxDrawLine(sx+textWidth,sy + fontHeight*1.1, sx + textWidth*1.5, sy2, grey)
+				
+			
+				dxDrawText(player:getData("BadgeTitle") or "LSPD", sx - diffAdjust , (sy  + fontHeight * 1.2), sx+textWidthLower, nil, white, size,"sans" or  Nametag.font, "left", "top", false, false, false, false, false, textRot)
+				
+				dxDrawImage((sx + textWidth*1.5) - screenWidth*0.005,  sy2- (screenWidth*0.005), screenWidth*0.01, screenWidth*0.01, player:getData("BadgeImage") or "files/images/Nametag/SASF.png", 0, 0, 0, white)
+			end
+		end
+	end
+	dxSetBlendMode ( "blend" )
 end
 
 function Nametag:_weaponCheck ( player )

@@ -23,6 +23,7 @@ function KeyBinds:constructor()
 	self.m_VehicleELS = bind(self.vehicleELS, self)
 	self.m_Entrance = bind(self.tryEnterEntrance, self)
 	self.m_PoliceMegaphone = bind(self.usePoliceMegaphone, self)
+	self.m_ToggleDisplays = bind(self.toggleDisplay, self)
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
@@ -40,6 +41,7 @@ function KeyBinds:constructor()
 		["KeySpeedLimit"]			= {["defaultKey"] = "k", ["name"] = "Tempolimiter", ["func"] = self.m_SpeedLimit, ["trigger"] = "both"};
 		["KeyCruisingContro"]		= {["defaultKey"] = "c", ["name"] = "Cruise-Control", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
 		["KeyChairSitDown"]			= {["defaultKey"] = "l", ["name"] = "Hinsetzen", ["func"] = function() if localPlayer.vehicle then return false end if localPlayer:getWorldObject() then triggerServerEvent("onPlayerChairSitDown", localPlayer, localPlayer:getWorldObject()) end end};
+		["KeyToggleDisplay"]		= {["defaultKey"] = "ralt", ["name"] = "Anzeigen an/aus", ["func"] = self.m_ToggleDisplays};
 		["KeyToggleSeatbelt"]		= {["defaultKey"] = "m", ["name"] = "An/Abschnallen", ["func"] = function() if getPedOccupiedVehicle(localPlayer) then triggerServerEvent("toggleSeatBelt",localPlayer) end end, ["trigger"] =  "up"};
 		["KeyToggleGate"]			= {["defaultKey"] = "h", ["name"] = "Tore benutzen", ["func"] = function() if getElementHealth(localPlayer) > 0 and not localPlayer.m_LastGateInteraction or (getTickCount()-localPlayer.m_LastGateInteraction) > 100 then triggerServerEvent("onPlayerTryGateOpen",localPlayer) localPlayer.m_LastGateInteraction = getTickCount() end end, ["trigger"] = "down"};
 		["KeyMagnetUse"]		 	= {["defaultKey"] = "lctrl", ["name"] = "Magnet benutzen", ["func"] = function() if localPlayer.vehicle and localPlayer.vehicle:getModel() == 417 then localPlayer.vehicle:magnetVehicleCheck() end end, ["trigger"] = "down"};
@@ -187,7 +189,7 @@ function KeyBinds:policePanel()
 end
 
 function KeyBinds:radioCommunication() 
-	if not RadioCommunicationGUI:isInstantiated() then
+	if not RadioCommunicationGUI:isInstantiated() and localPlayer:isRadioCommunicationAllowed() then
 		RadioCommunicationGUI:new()
 		return true
 	end
@@ -210,6 +212,11 @@ function KeyBinds:scoreboardGUI(_, keyState)
 	else
 		ScoreboardGUI:getSingleton():setVisible(false)
 	end
+end
+
+function KeyBinds:toggleDisplay() 
+	localPlayer.m_DisplayMode = not localPlayer.m_DisplayMode
+	core:set("HUD", "ToggleQuickDisplay", localPlayer.m_DisplayMode)
 end
 
 function KeyBinds:vehicleELS(__, keyState)

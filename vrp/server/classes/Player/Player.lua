@@ -284,8 +284,12 @@ function Player:loadCharacterInfo()
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end
-	self.m_RadioFrequency = fromJSON(row.RadioCommunication) or {}
+	self.m_RadioFrequency = fromJSON(row.RadioCommunication or "") or {}
 	RadioCommunication:getSingleton():loadPlayer(self)
+
+	setElementData(self, "Badge", nil, true)
+	setElementData(self, "BadgeTitle", nil, true)
+	setElementData(self, "BadgeImage", nil, true)
 end
 
 
@@ -1699,4 +1703,10 @@ end
 
 function Player:getWalkingstyle()
 	return self.m_WalkingStyle or 0
+end
+
+function Player:setBadge(badgeTitle, badgeId, badgeImage)
+	setElementData(self, "Badge", badgeId, true)
+	setElementData(self, "BadgeTitle", badgeTitle, true)
+	setElementData(self, "BadgeImage", badgeImage, true)
 end

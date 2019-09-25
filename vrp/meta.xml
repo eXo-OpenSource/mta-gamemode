@@ -750,6 +750,7 @@
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/HUDAviation.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
+	<script src="client/classes/HUD/VehicleMark.lua" type="client"/>
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
 	<script src="client/classes/HUD/TreasureRadar.lua" type="client"/>
 
@@ -1760,6 +1761,8 @@
 	<vrpfile src="files/images/Nametag/San News.png"/>
 	<vrpfile src="files/images/Nametag/MT.png"/>
 	<vrpfile src="files/images/Nametag/LostMC.png"/>
+
+	<vrpfile src="files/images/Nametag/Badgebg.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>

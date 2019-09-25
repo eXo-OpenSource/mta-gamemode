@@ -137,6 +137,7 @@ function Core:ready() --onClientResourceStart
 		setInteriorSoundsEnabled(false)
 	end
 
+	localPlayer.m_DisplayMode = core:get("HUD", "ToggleQuickDisplay", true)
 	--Light = DynamicLightingBind:getSingleton() | disabled needs to be rewritten for mutliple pass
 
 	NoDm:new()
@@ -172,6 +173,7 @@ function Core:ready() --onClientResourceStart
 	Help:new()
 	ClientStatistics:new()
 	Nametag:new()
+	VehicleMark:new()
 	PickupWeaponManager:new()
 
 	if EVENT_HALLOWEEN then

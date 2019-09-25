@@ -1483,6 +1483,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
 				client:takeEquipment(true)
+				client:setBadge()
+				RadioCommunication:getSingleton():allowPlayer(client, false)
 				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
@@ -1492,6 +1494,9 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 					client:triggerEvent("companyForceOffduty")
 				end
 				client:setFactionDuty(true)
+				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
+				RadioCommunication:getSingleton():allowPlayer(client, true)
+				client.m_RadioCommunication = true
 				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)

@@ -55,11 +55,22 @@ function FactionVehicle:constructor(data)
 	self:setLocked(false) -- Unlock faction vehicles
 	self.m_SpawnDim = data.Dimension 
 	self.m_SpawnInt = data.Interior
+
+	if self:isStateVehicle() and getVehicleType(self) == VehicleType.Automobile then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
 end
 
 function FactionVehicle:destructor()
 	if self.m_VehELSObj then
 		self.m_VehELSObj:delete()
+	end
+	if self:isStateVehicle() then 
+		VehicleManager:getSingleton():removeVehicleMark(self)
 	end
 end
 

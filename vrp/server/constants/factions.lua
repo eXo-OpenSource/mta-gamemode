@@ -1,6 +1,7 @@
 factionColors = {}
 factionCarColors = {}
 factionRankNames = {}
+factionBadgeId = {}
 factionSkins = {}
 factionWeapons = {}
 evilFactionInteriorEnter = {}
@@ -44,6 +45,20 @@ FACTION_MIN_RANK_KARMA = {
 	[6] = 150;
 }
 
+
+FACTION_STATE_BADGES = 
+{
+	[1] = "P",
+	[2] = "F",
+	[3] = "S",
+}
+
+FACION_STATE_VEHICLE_MARK = 
+{
+	[1] = "PD",
+	[2] = "H",
+	[3] = "D"
+}
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
 [0] = "Officer",
@@ -53,6 +68,16 @@ factionRankNames[1] = {
 [4] = "Captain",
 [5] = "Deputy",
 [6] = "Chief of Police"
+}
+
+factionBadgeId[1] = {
+[0] = "Off.",
+[1] = "Det.",
+[2] = "Serg.",
+[3] = "Lieut.",
+[4] = "Capt.",
+[5] = "Dep.",
+[6] = "Chief"
 }
 
 factionColors[1] = {["r"] = 0,["g"] = 200,["b"] = 255}
@@ -73,6 +98,18 @@ factionRankNames[2] = {
 [5] = "Deputy Director",
 [6] = "FBI-Director"
 }
+
+factionBadgeId[2] = {
+[0] = "Agent",
+[1] = "Agent",
+[2] = "Agent",
+[3] = "Agent",
+[4] = "Chief",
+[5] = "Dep.",
+[6] = "Director"
+}
+
+
 factionColors[2] = {["r"] = 50,["g"] = 100,["b"] = 150}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[211]=true,[295]=true}
@@ -91,6 +128,18 @@ factionRankNames[3] = {
 [5] = "Colonel",
 [6] = "General"
 }
+
+factionBadgeId[3] = {
+[0] = "Priv.",
+[1] = "Corp.",
+[2] = "Serg.",
+[3] = "W-Off.",
+[4] = "Maj.",
+[5] = "Col.",
+[6] = "General"
+}
+
+
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 --factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionCarColors[3] = {["r"] = 110,["g"] = 95,["b"] = 73, ["r1"] = 110,["g1"] = 95,["b1"] = 73}
@@ -110,6 +159,18 @@ factionRankNames[4] = {
 	[5] = "Division Chief",
 	[6] = "Commissioner"
 }
+
+
+factionBadgeId[4] = {
+[0] = "Train.",
+[1] = "Assist.",
+[2] = "Medic.",
+[3] = "Engin.",
+[4] = "Bat Chief.",
+[5] = "Div Chief.",
+[6] = "Comm."
+}
+
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
 factionCarColors[4] = {["r"] = 178, ["g"] = 35, ["b"] = 33, ["r1"] = 255, ["g1"] = 255, ["b1"] = 255}
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true, [70]=true}

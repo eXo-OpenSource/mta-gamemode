@@ -1190,6 +1190,24 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "KillFeedbackShader", bool)
 			Guns:getSingleton():toggleMonochromeShader(bool)
 		end
+	
+	
+		self.m_DisplayBadge = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.8, self.m_Height*0.04, _"Dienstmarken anzeigen", self.m_SettingBG)
+		self.m_DisplayBadge:setFont(VRPFont(25))
+		self.m_DisplayBadge:setFontSize(1)
+		self.m_DisplayBadge:setChecked(core:get("HUD", "DisplayBadge", true))
+		self.m_DisplayBadge.onChange = function (bool)
+			core:set("HUD", "DisplayBadge", bool)
+		end
+
+		self.m_DisplayVehicleMark = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeugmarkierung anzeigen", self.m_SettingBG)
+		self.m_DisplayVehicleMark:setFont(VRPFont(25))
+		self.m_DisplayVehicleMark:setFontSize(1)
+		self.m_DisplayVehicleMark:setChecked(core:get("HUD", "DisplayVehicleMark", true))
+		self.m_DisplayVehicleMark.onChange = function (bool)
+			core:set("HUD", "DisplayVehicleMark", bool)
+		end
+
 
 	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)

@@ -55,6 +55,7 @@ function ElementInfoManager:onStreamOut()
 end
 
 function ElementInfoManager:iterate()
+	if not localPlayer.m_DisplayMode then return end
 	local now = getTickCount() 
 	local prog = (now - self.m_Start) / 2000
 	if prog > 1 then self.m_Start = getTickCount() end
