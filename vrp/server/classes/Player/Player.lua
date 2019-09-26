@@ -284,8 +284,6 @@ function Player:loadCharacterInfo()
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end
-	self.m_RadioFrequency = fromJSON(row.RadioCommunication or "") or {}
-	RadioCommunication:getSingleton():loadPlayer(self)
 
 	setElementData(self, "Badge", nil, true)
 	setElementData(self, "BadgeTitle", nil, true)
@@ -364,8 +362,8 @@ function Player:save()
 		end
 		local timeDiff = self:getPlayTime() - self.m_PlayTimeAtLastSave
 		DatabasePlayer.save(self)
-		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =?, RadioCommunication = ? WHERE Id = ?", sql:getPrefix(),
-			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), timeDiff, spawnWithFac, self.m_IsDead or 0, (self.m_RadioFrequency and toJSON(self.m_RadioFrequency)) or "", self.m_Id)
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), timeDiff, spawnWithFac, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 

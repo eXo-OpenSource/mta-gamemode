@@ -35,7 +35,7 @@ function FactionState:constructor()
 	--self.m_InstantTeleportCol:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	--self.m_InstantTeleportCol:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
-	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
+	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.35, 87.30, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	self.m_InteriorGarageEntrance:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
@@ -281,7 +281,7 @@ function FactionState:loadLSPD(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
+	elevator:addStation("Erdgeschoss", Vector3(258.68, 73.79, 1003.64), 84, 6, 0, 5)
 	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 0, 5)
 
 

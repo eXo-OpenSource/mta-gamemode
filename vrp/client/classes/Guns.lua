@@ -217,7 +217,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			outputDebugString("Canceling Damage")
 		end
 	end
-	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
+	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" and source ~= attacker then
 		playSound(self.m_hitpath or "files/audio/hitsound.wav")
 	end
 	if bPlaySound and self.m_HitMark and attacker == localPlayer  then
@@ -259,13 +259,13 @@ function Guns:addMeleeDamage( player, weapon , bodypart, loss )
 				self.m_MeleeCache["Tick"] = getTickCount()
 				self.m_MeleeCache["Bodypart"] = bodypart
 				self.m_MeleeCache["Loss"] = 0
-				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
+				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
 					playSound(self.m_hitpath or "files/audio/hitsound.wav")
 				end
 			end
 		else
 			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
-			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
+			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end

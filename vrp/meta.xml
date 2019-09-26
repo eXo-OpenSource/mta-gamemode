@@ -22,6 +22,7 @@
 	<script src="shared/constants/roulette.lua" type="shared"/>
 	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
+	<script src="shared/constants/injury.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -199,6 +200,10 @@
 	<script src="server/classes/UI/Blip.lua" type="server"/>
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 	<script src="server/classes/UI/ElementInfo.lua" type="server"/>
+
+	<!-- Damage -->
+	<script src="server/classes/Gameplay/InjurySystem/DamageManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/InjurySystem/Damage.lua" type="server"/>
 
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
@@ -784,6 +789,7 @@
 	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/InspectMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client"/>
@@ -917,6 +923,7 @@
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/InjuryGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
 	<script src="client/classes/Faction/Gangwar/GangwarPickGUI.lua" type="client"/>
@@ -1120,6 +1127,9 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/InjurySystem/Damage.lua" type="client"/>
+	<script src="client/classes/Gameplay/InjurySystem/Blood.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/PickupWeaponManager.lua" type="client"/>
 
@@ -1786,7 +1796,17 @@
 
 	<!-- radio -->
 	<vrpfile src="files/images/Other/Radioset.png"/>
-	
+
+	<!-- Injury  -->
+	<vrpfile src="files/images/Other/Injury/BodyInjury.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryHead.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryTorso.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryPelvis.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryArmLeft.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryArmRight.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryLegLeft.png"/>
+	<vrpfile src="files/images/Other/Injury/BodyInjuryLegRight.png"/>
+
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
 	<vrpfile src="files/images/Gangwar/tilefade.png"/>

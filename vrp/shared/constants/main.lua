@@ -510,13 +510,14 @@ AD_DURATIONS = {
 
 BODYPART_NAMES = {
 	[3] = "Körper",
-	[4] =  "Arsch",
+	[4] =  "Hüfte",
 	[5] =  "Linker Arm",
 	[6] =  "Rechter Arm",
 	[7] =  "Linkes Bein",
 	[8] =  "Rechtes Bein",
 	[9] =  "Kopf"
 }
+
 
 MEDIC_TIME = 180000
 DEATH_TIME = 30000

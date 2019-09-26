@@ -168,7 +168,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	local range = localPlayer:getPrivateSync("isSpecting") and 0 or getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
 
 	-- Phase 1: Check per-element handlers
-	if element == localPlayer then
+	if element == localPlayer and button ~= "right" then
 		--if trigger then
 		--	if button == "left" then
 			--	SelfGUI:getSingleton():open()
@@ -248,6 +248,9 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 			if trigger then
 				if button == "left" then
 					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				else 
+					self:addInspectMenu(InspectMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+					return false
 				end
 			end
 			return true
@@ -279,6 +282,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 end
 
 function ClickHandler:addMouseMenu(menu, element)
+	menu:setElement(element)
+	table.insert(self.m_OpenMenus, menu)
+end
+
+function ClickHandler:addInspectMenu(menu, element)
 	menu:setElement(element)
 	table.insert(self.m_OpenMenus, menu)
 end
