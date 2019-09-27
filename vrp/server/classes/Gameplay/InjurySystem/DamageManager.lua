@@ -8,14 +8,17 @@
 
 DamageManager = inherit(Singleton)
 
-addRemoteEvents{"Damage:getPlayerDamage", "Damage:onTryTreat"}
+addRemoteEvents{"Damage:getPlayerDamage", "Damage:onTryTreat", "Damage:onCancelTreat", "Damage:onDeclineTreat", "Damage:onTreat"}
 function DamageManager:constructor() 
 	self.m_Data = {}
 	self.m_Players = {}
 	self.m_IdCount = 0
 	self.m_TreatQueue = {}
 	addEventHandler("Damage:getPlayerDamage", root, bind(self.Event_GetPlayerDamage, self))
-	addEventHandler("Damage:onTryTreat", root, bind(self.Event_TreatPlayer, self))
+	addEventHandler("Damage:onTryTreat", root, bind(self.Event_requestTreat, self))
+	addEventHandler("Damage:onTreat", root, bind(self.Event_TreatPlayer, self))
+	addEventHandler("Damage:onCancelTreat", root, bind(self.Event_OnCancelTreat, self))
+	addEventHandler("Damage:onDeclineTreat", root, bind(self.Event_OnDeclineTreat, self))
 end
 
 function DamageManager:Event_GetPlayerDamage(player)
@@ -28,10 +31,34 @@ function DamageManager:Event_GetPlayerDamage(player)
 	client:triggerEvent("Damage:sendPlayerDamage", send, player)
 end
 
-function DamageManager:Event_TreatPlayer(player, data)
-	self:cancelQueue(player)
+function DamageManager:Event_requestTreat(player, data)
+	ShortMessageQuestion:new(client, player, ("Der Spieler %s möchte deine Wunden behandeln!"):format(client:getName()), "Damage:onTreat", "Damage:onDeclineTreat", nil, client, player, data)
+	client:sendInfo(_("Deine Anfrage wurde an den Spieler gesendet!", client))
+end
+
+function DamageManager:Event_OnDeclineTreat(healer) 
+	healer:sendInfo("Der Spieler hat eine Behandlung abgelehnt!")
+end
+
+
+function DamageManager:Event_TreatPlayer(healer, player, data)
+	local client = healer
+	if player.m_TreatedBy then 
+		if isElement(player.m_TreatedBy) then 
+			return client:sendInfo(_("Dieser Spieler wird bereits behandelt!", client))
+		end
+	end
+	if player.m_Treating then 
+		if isElement(player.m_Treating) then 
+			return client:sendInfo(_("Dieser Spieler behandelt zurzeit jemanden!", client))
+		end
+	end
 	if not self:validate(player, client) then return end
+	self:cancelQueue(player, player.m_TreatedBy,  true)
+	local firstTimer = false
 	local sumTimeCount = 0
+	player.m_TreatedBy = client
+	client.m_Treating = player
 	for i, item in ipairs(data) do 
 		local instances = self:getInjuryByTextBody(player, item.bodypart, item.text)
 		local count = table.size(instances)
@@ -45,16 +72,51 @@ function DamageManager:Event_TreatPlayer(player, data)
 					timeCount = (partTime*(damageTime*count))
 					sumTimeCount = sumTimeCount + timeCount 
 					first = true
-					outputChatBox(timeCount)
 				end
 			end
 			if not self.m_TreatQueue[player] then self.m_TreatQueue[player] = {} end
+
 			local timer = setTimer(bind(self.treat, self, instances, client), sumTimeCount*1000, 1) 
-			self.m_TreatQueue[player][timer] = true
+			table.insert(self.m_TreatQueue[player],  {timer, sumTimeCount})
+			if not firstTimer then 
+				client:triggerEvent("Damage:startTreatment", sumTimeCount, true)
+				if client ~= player then
+					player:triggerEvent("Damage:startTreatment", sumTimeCount)
+				end
+				firstTimer = true
+			end
 		end
 	end
 end
 
+function DamageManager:Event_OnCancelTreat(isHealer) 
+	if isHealer and client.m_Treating and isElement(client.m_Treating) then 
+		self:cancelQueue(client.m_Treating, client)
+	elseif not isHealer then 
+		self:cancelQueue(client, client.m_TreatedBy)
+	end
+	if not isHealer then
+		local healer = client.m_TreatedBy
+		if healer and isElement(healer) then
+			healer:triggerEvent("Damage:cancelTreatment")
+			healer.m_Treating = nil
+		end
+		client.m_TreatedBy = nil
+		if client ~= healer then
+			client:triggerEvent("Damage:cancelTreatment")
+		end
+	else 
+		local patient = client.m_Treating
+		client:triggerEvent("Damage:cancelTreatment")
+		client.m_Treating = nil
+
+		patient.m_TreatedBy = nil
+		if patient ~= client then
+			patient:triggerEvent("Damage:cancelTreatment")
+		end
+	end
+
+end
 function DamageManager:validate(player, healer)
 	if player:isLoggedIn() and healer:isLoggedIn() then 
 		if Vector3(player:getPosition() - healer:getPosition()):getLength() < 6 and (player:getInterior() == healer:getInterior() and player:getDimension() == healer:getDimension()) then 
@@ -65,14 +127,22 @@ function DamageManager:validate(player, healer)
 	end
 end
 
-function DamageManager:cancelQueue(player)
+function DamageManager:cancelQueue(player, healer, noOutput)
 	if self.m_TreatQueue[player] then 
-		for timer, k in pairs(self.m_TreatQueue[player]) do 
-			if timer and isTimer(timer) then 
-				killTimer(timer)
+		for i, data in ipairs(self.m_TreatQueue[player]) do 
+			if data[1] and isTimer(data[1]) then 
+				killTimer(data[1])
 			end
 		end
-		player:sendInfo(_("Deine Behandlung wurde abgebrochen!", player))
+		if healer ~= player and not noOutput then
+			player:sendInfo(_("Deine Behandlung wurde abgebrochen!", player))
+		end
+		if healer and isElement(healer)  then 
+			if not noOutput then
+				healer:sendInfo(_("Die Behandlung wurde abgebrochen!", healer))
+			end
+		end
+		self.m_TreatQueue[player] = {}
 	end
 end
 
@@ -83,6 +153,8 @@ function DamageManager:treat(data, healer)
 		player = instance:getPlayer()
 		healSum = healSum + instance:getAmount()
 	end
+	if not self:validate(player, healer) then return self:cancelQueue(player, healer)  end
+	local nextTimer = self:getNextTimer(player, sourceTimer)
 	if healSum > 0 then 
 		local health = player:getHealth() 
 		if health < 100 then 
@@ -90,6 +162,35 @@ function DamageManager:treat(data, healer)
 			StatisticsLogger:getSingleton():addHealLog(player, healSum, ("Wundbehandlung von %s"):format(healer:getName()))
 		end
 	end
+	if not nextTimer then 
+		healer:triggerEvent("Damage:finishTreatment")
+		if player ~= healer then 
+			player:triggerEvent("Damage:finishTreatment")
+		end
+		healer.m_Treating = nil 
+		player.m_TreatedBy = nil
+	else
+		local timeLeft = getTimerDetails(nextTimer[1])
+		healer:triggerEvent("Damage:startTreatment", timeLeft/1000, true)
+		if healer ~= player then
+			player:triggerEvent("Damage:startTreatment", timeLeft/1000)
+		end
+	end
+end
+
+function DamageManager:getNextTimer(player, timer)
+	if self.m_TreatQueue[player] then 
+		for i = 1, #self.m_TreatQueue[player] do 
+			if self.m_TreatQueue[player][i][1] == timer then 
+				if self.m_TreatQueue[player][i+1] then 
+					return self.m_TreatQueue[player][i+1]
+				else 
+					return nil
+				end
+			end
+		end
+	end
+	return nil
 end
 
 function DamageManager:getInjuryByTextBody(player, bodypart, text)
@@ -99,7 +200,6 @@ function DamageManager:getInjuryByTextBody(player, bodypart, text)
 			local instanceText = INJURY_WEAPON_TO_CAUSE[instance:getWeapon()]
 			
 			if instanceText == text and bodypart == instance:getBodypart() then 
-				outputChatBox(bodypart..";"..text)
 				damageInstances[id] = instance
 			end
 		end

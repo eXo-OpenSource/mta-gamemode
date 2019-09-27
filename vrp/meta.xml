@@ -825,6 +825,7 @@
 	<script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
+	<script src="client/classes/GUIForms/ShortCountdown.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehiclePerformanceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
@@ -924,6 +925,7 @@
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/InjuryGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/InjuryTreatmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
 	<script src="client/classes/Faction/Gangwar/GangwarPickGUI.lua" type="client"/>
@@ -1129,7 +1131,7 @@
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/InjurySystem/Damage.lua" type="client"/>
-	<script src="client/classes/Gameplay/InjurySystem/Blood.lua" type="client"/>
+	<script src="client/classes/Gameplay/InjurySystem/InjuryVisual.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/PickupWeaponManager.lua" type="client"/>
 
@@ -1519,6 +1521,7 @@
 	<vrpfile src="files/images/Weapons/46.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
+	<vrpfile src="files/images/Other/Treatment.png"/>
 	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Other/info.png"/>
 	<vrpfile src="files/images/Textures/Other/trans.png"/>

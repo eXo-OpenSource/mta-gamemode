@@ -13,7 +13,6 @@ function Core:constructor()
 	Provider:new()
 	influx = InfluxDB:new("exo_mta_client", "uMZNF3ot6hGvsP_NTggytFveYfUJfWaz", "exo_mta_cperf")
 	InfluxLogging:new()
-
 	Cursor = GUICursor:new()
 	self.m_WhitelistChecker = setTimer(bind(self.checkDomainsWhitelist, self), 1000, 0)
 
@@ -123,7 +122,7 @@ function Core:ready() --onClientResourceStart
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()
-
+	Damage:new()
 	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
 	if core:get("Other", "Movehead", true) then
 		localPlayer:startLookAt()

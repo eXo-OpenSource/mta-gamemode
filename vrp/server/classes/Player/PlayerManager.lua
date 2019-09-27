@@ -347,6 +347,16 @@ function PlayerManager:playerQuit()
 	if source.elevator then
 		source.elevator:forceStationPosition(source, source.elevatorStationId)
 	end
+	if source.m_TreatedBy and isElement(source.m_TreatedBy) then 
+		outputChatBox(source.m_TreatedBy:getName())
+		DamageManager:getSingleton():cancelQueue(source, source.m_TreatedBy)
+		source.m_TreatedBy:triggerEvent("Damage:cancelTreatment")
+	end
+	if source.m_Treating and isElement(source.m_Treating) then
+		DamageManager:getSingleton():cancelQueue(source.m_Treating, source)
+		source.m_Treating:triggerEvent("Damage:cancelTreatment")
+	end
+
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end

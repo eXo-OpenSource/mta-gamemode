@@ -27,7 +27,7 @@ function InjuryGUI:constructor(data, player)
 
 	self.m_FontScale = screenHeight / 1080
 	GUIForm.constructor(self, screenWidth-self.m_Width, screenHeight-self.m_Height*1.5, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Behandlung", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, ("%s"):format((player == localPlayer and "Selbstbehandlung") or ("%s"):format(player:getName())), true, true, self)
 	
 	GUIGridLabel:new(7, 1, 9, 1, "Behandelbare Wunden:", self)
 	GUIGridRectangle:new(1, 1, 6, 10, Color.changeAlpha(Color.Black, 150), self)
@@ -149,8 +149,13 @@ end
 
 function InjuryGUI:getColorFromCount(count) 
 	if count > 0 then 
-		local color = tocolor(255, 255 - (count/4)*255, 255 - (count/4)*255)
-		return color 
+		if count < 7 then
+			local color = tocolor(255, 255 - (count/6)*255, 255 - (count/6)*255)
+			return color
+		else 
+			local color = tocolor(255, 0, 0)
+			return color
+		end 
 	else
 		return tocolor(255, 255, 255)
 	end
