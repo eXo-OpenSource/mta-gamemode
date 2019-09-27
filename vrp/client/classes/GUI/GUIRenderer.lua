@@ -60,6 +60,7 @@ function GUIRenderer.updateAll(elapsedTime)
 	else
 		ClickHandler:getSingleton():clearClickInfo()
 	end
+	GUIItemDragging:getSingleton():prerender()
 end
 
 function GUIRenderer.process3DMouse()
@@ -109,6 +110,7 @@ function GUIRenderer.drawAll()
 		GUIRenderer.cache[i]:draw()
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/GUIRenderer", #GUIRenderer.cache) end
+	GUIItemDragging:getSingleton():render()
 end
 
 function GUIRenderer.restore(clearedRenderTargets)

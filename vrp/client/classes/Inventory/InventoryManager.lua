@@ -54,7 +54,7 @@ function InventoryManager:getHook()
 end
 
 function InventoryManager:Event_onItemLeft(inventoryId, item)
-	outputChatBox(item.Slot .. " item left")
+	GUIItemDragging:getSingleton():setItem(item)
 end
 
 function InventoryManager:Event_onItemRight(inventoryId, item)

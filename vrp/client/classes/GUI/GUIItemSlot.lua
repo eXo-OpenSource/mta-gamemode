@@ -86,9 +86,7 @@ function GUIItemSlot:onUnhover(cursorX, cursorY)
 end
 
 function GUIItemSlot:onLeftClick()
-	if self.m_ItemData ~= nil then
-		triggerEvent("onInventoryItemLeft", localPlayer, self.m_InventoryId, self.m_ItemData)
-	end
+	triggerEvent("onInventoryItemLeft", localPlayer, self.m_InventoryId, self.m_ItemData)
 end
 
 function GUIItemSlot:onRightClick()
