@@ -288,6 +288,7 @@ function Player:loadCharacterInfo()
 	setElementData(self, "Badge", nil, true)
 	setElementData(self, "BadgeTitle", nil, true)
 	setElementData(self, "BadgeImage", nil, true)
+	setElementData(self, "Damage:isTreating", nil, true)
 end
 
 

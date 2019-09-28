@@ -79,3 +79,35 @@ TIME_FOR_TREAT_DAMAGE =
 	["Schnittwunde"] = 1, 
 	["Unbekannt"] = 1,
 }
+
+TIME_FOR_HEALERS = 
+{
+	SELF_TREATMENT = 3, 
+	NON_RESCUE_PLAYER = 2, 
+	RESCUE_PLAYER = 1,
+	TRAINED_NON_RESCUE = 1.2,
+}
+
+TEXT_FOR_HEALER_PENALTY = 
+{
+	SELF_TREATMENT = "",
+	NON_RESCUE_PLAYER = "",
+	RESCUE_PLAYER = "",
+	TRAINED_NON_RESCUE = "",
+}
+
+TREAT_ANIMATION_PATIENT = 
+{
+	SELF_TREATMENT = {"bomber", "bom_plant_loop", .5},
+	NON_RESCUE_PLAYER = {"crack", "crckidle1", .1},
+	RESCUE_PLAYER = {"crack", "crckidle1", .1},
+	TRAINED_NON_RESCUE = {"crack", "crckidle1", .1},
+}
+
+TREAT_ANIMATION_HEALER = 
+{
+	SELF_TREATMENT = {"bomber", "bom_plant_loop", .5},
+	NON_RESCUE_PLAYER = {"bomber", "bom_plant_loop", .5},
+	RESCUE_PLAYER = {"bomber", "bom_plant_loop", .5},
+	TRAINED_NON_RESCUE = {"bomber", "bom_plant_loop", .5},
+}

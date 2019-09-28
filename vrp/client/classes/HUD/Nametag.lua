@@ -66,6 +66,7 @@ function Nametag:draw()
 						local alpha = localPlayer:getPrivateSync("isSpecting") and 1 or math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
 						local r,g,b =  self:getColorFromHP(getElementHealth(player), getPedArmor(player))
 						local textWidth = dxGetTextWidth(drawName, 1.5*size, Nametag.font)
+						local textWidth2 = dxGetTextWidth(drawName, 2*size, Nametag.font)
 						local fontHeight = dxGetFontHeight(1.5*size,Nametag.font)
 						local fontHeightName = dxGetFontHeight(2*size,Nametag.font)
 						if self:drawIcons(player, scx, scy, fontHeight, alpha) then
@@ -82,6 +83,10 @@ function Nametag:draw()
 						dxDrawText(player:getName(), scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
 						if core:get("HUD", "DisplayBadge", true) and localPlayer.m_DisplayMode and not localPlayer.vehicle and (localPlayer:getWeapon() == 43 or not isPedAiming(localPlayer)) and player:getData("Badge") and player:getData("Badge") ~= "" and getDistanceBetweenPoints2D(player.position.x, player.position.y, localPlayer.position.x, localPlayer.position.y) < 3 then
 							self:drawBadge(player, size*.8, alpha)
+						end
+						if getElementData(player, "Damage:isTreating") then 
+							dxDrawText("+", scx, (scy-fontHeight*3)+1, scx+textWidth2, (scy-fontHeight*.25)+1, Color.changeAlpha(Color.Black, alpha*255), 4, "default-bold", "center", "center")
+							dxDrawText("+", scx, scy-fontHeight*3, scx+textWidth2, scy-fontHeight*.25, Color.changeAlpha(Color.Red, alpha*255), 4, "default-bold", "center", "center")
 						end
 					end
 				end

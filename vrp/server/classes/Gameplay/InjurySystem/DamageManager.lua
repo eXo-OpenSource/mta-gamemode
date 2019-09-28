@@ -28,12 +28,16 @@ function DamageManager:Event_GetPlayerDamage(player)
 			send[id] = {instance:getBodypart(), instance:getWeapon(), instance:getAmount()}
 		end
 	end
-	client:triggerEvent("Damage:sendPlayerDamage", send, player)
+	client:triggerEvent("Damage:sendPlayerDamage", send, player, self:getHealerType(player, client))
 end
 
 function DamageManager:Event_requestTreat(player, data)
-	ShortMessageQuestion:new(client, player, ("Der Spieler %s möchte deine Wunden behandeln!"):format(client:getName()), "Damage:onTreat", "Damage:onDeclineTreat", nil, client, player, data)
-	client:sendInfo(_("Deine Anfrage wurde an den Spieler gesendet!", client))
+	if player ~= client then
+		ShortMessageQuestion:new(client, player, ("Der Spieler %s möchte deine Wunden behandeln!"):format(client:getName()), "Damage:onTreat", "Damage:onDeclineTreat", nil, client, player, data)
+		client:sendInfo(_("Deine Anfrage wurde an den Spieler gesendet!", client))
+	else 
+		self:Event_TreatPlayer(client, player, data)
+	end
 end
 
 function DamageManager:Event_OnDeclineTreat(healer) 
@@ -58,7 +62,22 @@ function DamageManager:Event_TreatPlayer(healer, player, data)
 	local firstTimer = false
 	local sumTimeCount = 0
 	player.m_TreatedBy = client
+	local playerAnimation = TREAT_ANIMATION_PATIENT[self:getHealerType(player, client)]
+	player:setFrozen(true)
+	player:setAnimation(playerAnimation[1], playerAnimation[2], -1, true, false, false, false, 250, true)
+	setPedAnimationSpeed(player, playerAnimation[2], playerAnimation[3])
+	toggleAllControls(player, false)
+	setElementData(player, "Damage:isTreating", true)
 	client.m_Treating = player
+
+	if client ~= player then
+		toggleAllControls(client, false)
+		client:setFrozen(true)
+		local healerAnimation = TREAT_ANIMATION_HEALER[self:getHealerType(player, client)]
+		client:setAnimation(healerAnimation[1], healerAnimation[2], -1, true, false, false, false, 250, true)
+		setPedAnimationSpeed(client, healerAnimation[2], healerAnimation[3])
+		setElementData(client, "Damage:isTreating", true)
+	end
 	for i, item in ipairs(data) do 
 		local instances = self:getInjuryByTextBody(player, item.bodypart, item.text)
 		local count = table.size(instances)
@@ -74,6 +93,8 @@ function DamageManager:Event_TreatPlayer(healer, player, data)
 					first = true
 				end
 			end
+			local healerType = self:getHealerType(player, client)
+			sumTimeCount = sumTimeCount * TIME_FOR_HEALERS[healerType]
 			if not self.m_TreatQueue[player] then self.m_TreatQueue[player] = {} end
 
 			local timer = setTimer(bind(self.treat, self, instances, client), sumTimeCount*1000, 1) 
@@ -99,10 +120,18 @@ function DamageManager:Event_OnCancelTreat(isHealer)
 		local healer = client.m_TreatedBy
 		if healer and isElement(healer) then
 			healer:triggerEvent("Damage:cancelTreatment")
+			toggleAllControls(healer, true)
+			healer:setFrozen(false)
+			healer:setAnimation(nil)
+			setElementData(healer, "Damage:isTreating", false)
 			healer.m_Treating = nil
 		end
 		client.m_TreatedBy = nil
 		if client ~= healer then
+			toggleAllControls(client, true)
+			client:setFrozen(false)
+			client:setAnimation(nil)
+			setElementData(client, "Damage:isTreating", false)
 			client:triggerEvent("Damage:cancelTreatment")
 		end
 	else 
@@ -113,6 +142,10 @@ function DamageManager:Event_OnCancelTreat(isHealer)
 		patient.m_TreatedBy = nil
 		if patient ~= client then
 			patient:triggerEvent("Damage:cancelTreatment")
+			patient:setFrozen(false)
+			patient:setAnimation(nil)
+			toggleAllControls(patient, true)
+			setElementData(patient, "Damage:isTreating", false)
 		end
 	end
 
@@ -142,6 +175,18 @@ function DamageManager:cancelQueue(player, healer, noOutput)
 				healer:sendInfo(_("Die Behandlung wurde abgebrochen!", healer))
 			end
 		end
+		if healer and isElement(healer) then 
+			healer:setFrozen(false)
+			toggleAllControls(healer, true)
+			healer:setAnimation(nil)
+			setElementData(healer, "Damage:isTreating", false)
+		end
+		if player and isElement(player) then 
+			player:setFrozen(false)
+			toggleAllControls(player, true)
+			player:setAnimation(nil)
+			setElementData(player, "Damage:isTreating", false)
+		end
 		self.m_TreatQueue[player] = {}
 	end
 end
@@ -164,7 +209,15 @@ function DamageManager:treat(data, healer)
 	end
 	if not nextTimer then 
 		healer:triggerEvent("Damage:finishTreatment")
+		healer:setFrozen(false)
+		toggleAllControls(healer, true)
+		healer:setAnimation(nil)
+		setElementData(healer, "Damage:isTreating", false)
 		if player ~= healer then 
+			player:setFrozen(false)
+			player:setAnimation(nil)
+			setElementData(player, "Damage:isTreating", false)
+			toggleAllControls(player, true)
 			player:triggerEvent("Damage:finishTreatment")
 		end
 		healer.m_Treating = nil 
@@ -177,6 +230,7 @@ function DamageManager:treat(data, healer)
 		end
 	end
 end
+
 
 function DamageManager:getNextTimer(player, timer)
 	if self.m_TreatQueue[player] then 
@@ -263,6 +317,20 @@ function DamageManager:serializePlayer(player)
 		return toJSON(serialize)
 	end
 	return toJSON({})
+end
+
+function DamageManager:getHealerType(player, healer)
+	if player == healer then 
+		return "SELF_TREATMENT"
+	else 
+		if healer:getFaction():isRescueFaction() then 
+			return "RESCUE_PLAYER"
+		elseif healer.m_IsTrainedInTreatment then --todo 
+			return "TRAINED_NON_RESCUE"
+		else 
+			return "NON_RESCUE_PLAYER"
+		end
+	end
 end
 
 function DamageManager:destructor() 
