@@ -66,7 +66,7 @@ function InspectMenu:forceChange()
 end
 
 function InspectMenu:Event_onDraw() 
-	if self.m_Element and isElement(self.m_Element) and isElementStreamedIn(self.m_Element) and not self.m_Element:getHealth() == 0 then 
+	if self.m_Element and isElement(self.m_Element) and isElementStreamedIn(self.m_Element) and self.m_Element:getHealth() ~= 0 then 
 		local x,y,z = getElementPosition(self.m_Element)
 		if getDistanceBetweenPoints2D(x, y, localPlayer.position.x, localPlayer.position.y) < 4.5 then 
 			local bx, by, bz = getPedBonePosition(self.m_Element, 3)
