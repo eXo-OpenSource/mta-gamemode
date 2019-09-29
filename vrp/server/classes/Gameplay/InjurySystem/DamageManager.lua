@@ -202,10 +202,19 @@ function DamageManager:treat(data, healer)
 	local nextTimer = self:getNextTimer(player, sourceTimer)
 	if healSum > 0 then 
 		local health = player:getHealth() 
-		if health < 100 then 
-			player:setHealth(health+healSum)
-			StatisticsLogger:getSingleton():addHealLog(player, healSum, ("Wundbehandlung von %s"):format(healer:getName()))
+		local armor = player:getArmor()
+		local giveHealth = health + healSum
+		if health < 100 then
+			if giveHealth <= 100 then 
+				player:setHealth(health+healSum)
+			else 
+				player:setHealth(100)
+				player:setArmor((healSum - (100-health)) + armor)
+			end
+		else 
+			player:setArmor(armor + healSum)
 		end
+		StatisticsLogger:getSingleton():addHealLog(player, healSum, ("Wundbehandlung von %s"):format(healer:getName()))
 	end
 	if not nextTimer then 
 		healer:triggerEvent("Damage:finishTreatment")
@@ -262,6 +271,7 @@ function DamageManager:getInjuryByTextBody(player, bodypart, text)
 end
 
 function DamageManager:addDamage(bodypart, weapon, amount, player)
+	if not player or (not isElement(player) or player:isDead()) then return end
 	self.m_IdCount = self.m_IdCount + 1
 	local instance = Damage:new(self.m_IdCount, bodypart, weapon, amount, player)
 	if not self.m_Players[player] then self.m_Players[player] = {} end

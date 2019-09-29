@@ -180,6 +180,8 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
+				RadioCommunication:getSingleton():allowPlayer(client, false)
+				client:setBadge()
 				takeAllWeapons(client)
 				if not wasted then faction:updateDutyGUI(client) end
 			else
@@ -200,6 +202,8 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				client:getInventory():giveItem("Warnkegel", 10)
 				faction:updateDutyGUI(client)
 				faction:changeSkin(client, prefSkin)
+				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
+				RadioCommunication:getSingleton():allowPlayer(client, true)
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))

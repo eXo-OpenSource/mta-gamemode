@@ -1496,7 +1496,6 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:setFactionDuty(true)
 				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
 				RadioCommunication:getSingleton():allowPlayer(client, true)
-				client.m_RadioCommunication = true
 				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)

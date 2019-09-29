@@ -63,6 +63,13 @@ function FactionVehicle:constructor(data)
 		end
 		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
 	end
+	if self:isRescueVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
 end
 
 function FactionVehicle:destructor()
@@ -84,6 +91,10 @@ end
 
 function FactionVehicle:isStateVehicle()
   	return self.m_Faction:isStateFaction()
+end
+
+function FactionVehicle:isRescueVehicle()
+  	return self.m_Faction:isRescueFaction()
 end
 
 function FactionVehicle:onStartEnter(player, seat)

@@ -240,16 +240,18 @@ end
 function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
 	--StatisticsLogger:getSingleton():addDamageLog(client, target, weapon, bodypart, loss)
 	local count, inst = DamageManager:getSingleton():getDamageByWeapon(target, weapon)
-	if count > 0 and inst and loss > 0  then 
-		if count > 10 then 
-			if loss > inst:getAmount() then 
-				inst:setAmount(loss)
+	if target and isElement(target) then
+		if count > 0 and inst and loss > 0  then 
+			if count > 10 then 
+				if loss > inst:getAmount() then 
+					inst:setAmount(loss)
+				end
+			else 
+				DamageManager:getSingleton():addDamage(bodypart, weapon, loss, target)
 			end
 		else 
 			DamageManager:getSingleton():addDamage(bodypart, weapon, loss, target)
 		end
-	else 
-		DamageManager:getSingleton():addDamage(bodypart, weapon, loss, target)
 	end
 	self:addDamageLog(target, loss, client, weapon, bodypart)
 end
