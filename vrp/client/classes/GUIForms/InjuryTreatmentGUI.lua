@@ -17,6 +17,6 @@ function InjuryTreatmentGUI:constructor(posX, posY, isHealer)
 
 end
 
-function InjuryTreatmentGUI:virtual_destructor()
-
+function InjuryTreatmentGUI:destructor()
+    GUIForm.destructor(self, posX, posY, screenWidth*0.06, screenHeight*.03, false)
 end

@@ -348,7 +348,6 @@ function PlayerManager:playerQuit()
 		source.elevator:forceStationPosition(source, source.elevatorStationId)
 	end
 	if source.m_TreatedBy and isElement(source.m_TreatedBy) then 
-		outputChatBox(source.m_TreatedBy:getName())
 		DamageManager:getSingleton():cancelQueue(source, source.m_TreatedBy)
 		source.m_TreatedBy:triggerEvent("Damage:cancelTreatment")
 	end

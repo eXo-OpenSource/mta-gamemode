@@ -47,7 +47,9 @@ end
 
 function DamageManager:Event_TreatPlayer(healer, player, data)
 	local client = healer
-	if player.m_TreatedBy then 
+	if not healer then return end 
+	if not player then return end
+	if player.m_TreatedBy then
 		if isElement(player.m_TreatedBy) then 
 			return client:sendInfo(_("Dieser Spieler wird bereits behandelt!", client))
 		end
@@ -197,7 +199,10 @@ function DamageManager:treat(data, healer)
 	for id, instance in pairs(data) do 
 		player = instance:getPlayer()
 		healSum = healSum + instance:getAmount()
+		self:removeDamage(instance:getId())
+		instance:delete()
 	end
+	if not player then return end 
 	if not self:validate(player, healer) then return self:cancelQueue(player, healer)  end
 	local nextTimer = self:getNextTimer(player, sourceTimer)
 	if healSum > 0 then 

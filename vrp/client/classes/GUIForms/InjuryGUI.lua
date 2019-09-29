@@ -206,6 +206,10 @@ addEventHandler("Damage:sendPlayerDamage", localPlayer, function(data, player, h
 	if InjuryGUI:isInstantiated() then 
 		delete(InjuryGUI:getSingleton())
 	end
-	InjuryGUI:new(data, player, healerType)
+	if not Damage:getSingleton():isInTreatment() then
+		InjuryGUI:new(data, player, healerType)
+	else 
+		ErrorBox:new(_("Du wirst zurzeit behandelt oder behandelst bereits einen Spieler!", localPlayer))
+	end
 end)
 

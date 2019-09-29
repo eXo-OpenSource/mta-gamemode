@@ -24,6 +24,4 @@ function Damage:getPlayer() return self.m_Player end
 function Damage:getAmount() return self.m_Amount end 
 function Damage:getId() return self.m_Id end
 
-function Damage:destructor() 
-
-end
+function Damage:destructor() end
