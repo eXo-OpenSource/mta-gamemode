@@ -207,7 +207,7 @@ function ScoreboardGUI:insertPlayers()
 
 		if player:getFaction() then
 			local color = player:getFaction():getColor()
-			if player:getFaction():getId() >= 1 and player:getFaction():getId() <= 4 then
+			if player:getFaction():getId() >= 1 and player:getFaction():getId() <= 3 then
 				item:setColumnColor(3, tocolor(0, 200, 255))
 			else
 				item:setColumnColor(3, tocolor(color.r, color.g, color.b))
