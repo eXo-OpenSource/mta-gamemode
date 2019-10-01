@@ -60,7 +60,7 @@ function Admin:constructor()
     addCommandHandler("permaban", adminCommandBind)
     addCommandHandler("prison", adminCommandBind)
     addCommandHandler("unprison", adminCommandBind)
-    addCommandHandler("smode", adminCommandBind)
+    addCommandHandler("aduty", adminCommandBind)
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
     addCommandHandler("spect", adminCommandBind)
@@ -229,7 +229,7 @@ function Admin:destructor()
     removeCommandHandler("timeban", adminCommandBind)
     removeCommandHandler("permaban", adminCommandBind)
     removeCommandHandler("prison", adminCommandBind)
-    removeCommandHandler("smode", adminCommandBind)
+    removeCommandHandler("aduty", adminCommandBind)
     removeCommandHandler("rkick", adminCommandBind)
     removeCommandHandler("warn", adminCommandBind)
     removeCommandHandler("spect", adminCommandBind)
@@ -356,7 +356,7 @@ end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
 
-	if cmd == "smode" or cmd == "clearchat" then
+	if cmd == "aduty" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
 		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
@@ -445,7 +445,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		return
 	end
 
-	if func == "smode" then
+	if func == "aduty" then
 		self:toggleSupportMode(admin)
 	elseif func == "clearchat" then
 		self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
@@ -963,10 +963,24 @@ end
 
 function Admin:onlineList(player)
 	if table.size(self.m_OnlineAdmins) > 0 then
-		outputChatBox("Folgende Teammitglieder sind derzeit online:", player, 50, 200, 255)
+
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox("Folgende Teammitglieder sind online:", player, 50, 200, 255)
 		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do 
-			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
+			if onlineAdmin:getPublicSync("supportMode") then
+				outputChatBox(("    • %s #ffffff%s (Aktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
+			end 
 		end
+		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do 
+			if not onlineAdmin:getPublicSync("supportMode") then
+				outputChatBox(("    • %s #ffffff%s (Inaktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, 192, 192, 192, true)
+			end 
+		end
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
 	else
 		outputChatBox("Derzeit sind keine Teammitglieder online!", player, 255, 0, 0)
 	end

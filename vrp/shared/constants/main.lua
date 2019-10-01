@@ -109,6 +109,20 @@ RANK[8] = "StellvProjektleiter"
 RANK[9] = "Projektleiter"
 
 
+RANKSCOREBOARD = {}
+RANKSCOREBOARD[-1] = "Banned"
+RANKSCOREBOARD[0] = "User"
+RANKSCOREBOARD[1] = "Ticket"
+RANKSCOREBOARD[2] = "Clan"
+RANKSCOREBOARD[3] = "Support"
+RANKSCOREBOARD[4] = "Moderator"
+RANKSCOREBOARD[5] = "Admin"
+RANKSCOREBOARD[6] = "Admin"
+RANKSCOREBOARD[7] = "Admin"
+RANKSCOREBOARD[8] = "Admin"
+RANKSCOREBOARD[9] = "Admin"
+
+
 local r2 = {}
 for k, v in pairs(RANK) do
 	r2[k] = v
@@ -145,7 +159,7 @@ ADMIN_RANK_PERMISSION = {
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["vehicleTexture"] = RANK.Moderator,
 	["spect"] = RANK.Supporter,
-	["smode"] = RANK.Supporter,
+	["aduty"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["clearAd"] = RANK.Supporter,

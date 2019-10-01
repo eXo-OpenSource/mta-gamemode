@@ -61,6 +61,11 @@ function Nametag:draw()
 					end
 					if bLineOfSight and not smokeHit or localPlayer:getPrivateSync("isSpecting") then
 						local drawName = getPlayerName(player)
+						local isAdmin = false
+						if player.getPublicSync and player:getPublicSync("supportMode") then 
+							drawName = ("(%s) %s"):format(RANKSCOREBOARD[player.getRank and player:getRank() or 3] or "Support", drawName)
+							isAdmin = true
+						end
 						local wanteds = player:getWanteds()
 						local size = math.max(0.5, 1 - bDistance/maxDistance)*0.9
 						local alpha = localPlayer:getPrivateSync("isSpecting") and 1 or math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
@@ -79,8 +84,12 @@ function Nametag:draw()
 							scx = scx + fontHeight
 						end
 						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
-						dxDrawText(player:getName(), scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
-						dxDrawText(player:getName(), scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
+						dxDrawText(drawName, scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
+						if isAdmin then
+							dxDrawText(drawName, scx,scy, nil, nil, Color.changeAlpha(Color.Accent, 255*alpha), 2*size, Nametag.font, "center", "center")	
+						else
+							dxDrawText(drawName, scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
+						end
 						if core:get("HUD", "DisplayBadge", true) and localPlayer.m_DisplayMode and not localPlayer.vehicle and (localPlayer:getWeapon() == 43 or not isPedAiming(localPlayer)) and player:getData("Badge") and player:getData("Badge") ~= "" and getDistanceBetweenPoints2D(player.position.x, player.position.y, localPlayer.position.x, localPlayer.position.y) < 3 then
 							self:drawBadge(player, size*.8, alpha)
 						end
