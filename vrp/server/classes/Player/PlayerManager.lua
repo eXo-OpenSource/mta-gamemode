@@ -324,9 +324,14 @@ function PlayerManager:playerCommand(cmd)
 	end
 end
 
-function PlayerManager:playerQuit()
+function PlayerManager:playerQuit(quitType, reason, responsibleElement)
 	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
+
+	if (not responsibleElement or responsibleElement.type ~= "player") and quitType == "Kicked" then -- kicked by console - likely by anticheat?
+		local userId = source.m_Id or nil
+		sqlLogs:queryExec("INSERT INTO ??_AntiCheatKicks (UserId, Serial, Ip, Reason, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(), userId, source.serial, source.ip, reason)
+	end
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
 
@@ -347,7 +352,7 @@ function PlayerManager:playerQuit()
 	if source.elevator then
 		source.elevator:forceStationPosition(source, source.elevatorStationId)
 	end
-	if source.m_TreatedBy and isElement(source.m_TreatedBy) then 
+	if source.m_TreatedBy and isElement(source.m_TreatedBy) then
 		DamageManager:getSingleton():cancelQueue(source, source.m_TreatedBy)
 		source.m_TreatedBy:triggerEvent("Damage:cancelTreatment")
 	end
@@ -494,7 +499,7 @@ function PlayerManager:playerChat(message, messageType)
 			for index = 1, #playersToSend do
 				if not source:getPublicSync("supportMode") then
 					outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
-				else 
+				else
 					outputChatBox(("(%s) %s sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
 				end
 				if playersToSend[index] ~= source then
@@ -513,7 +518,7 @@ function PlayerManager:playerChat(message, messageType)
 				if playersToSend[index] ~= source then
 					if not source:getPublicSync("supportMode") then
 						outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
-					else 
+					else
 						outputChatBox(("(%s) %s sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
 					end
 					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
@@ -529,13 +534,13 @@ function PlayerManager:playerChat(message, messageType)
 				Achievements["PewPew"](source)
 			end
 		end
-		if sha256(string.lower(message)) == "0D3FF7BD22A1D9BA5A11511AC0763EF020337824E5F36ACD683E40BC2E077256" then 
-			if source:getRank() >= 5 then 
-				if source:getInterior() == 0 and  Vector3(source:getPosition() - PlayHouse:getSingleton().m_Skull.position):getLength() < 20 then 
-					PlayHouse:getSingleton():open() 
+		if sha256(string.lower(message)) == "0D3FF7BD22A1D9BA5A11511AC0763EF020337824E5F36ACD683E40BC2E077256" then
+			if source:getRank() >= 5 then
+				if source:getInterior() == 0 and  Vector3(source:getPosition() - PlayHouse:getSingleton().m_Skull.position):getLength() < 20 then
+					PlayHouse:getSingleton():open()
 					source:sendShortMessage(_("Das Gebäude wurde geöffnet!", source))
-				elseif source:getInterior() == 12 then 
-					PlayHouse:getSingleton():close() 
+				elseif source:getInterior() == 12 then
+					PlayHouse:getSingleton():close()
 					source:sendShortMessage(_("Das Gebäude wurde von außen geschlossen!", source))
 				end
 			end

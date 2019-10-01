@@ -160,6 +160,7 @@ ADMIN_RANK_PERMISSION = {
 	["vehicleTexture"] = RANK.Moderator,
 	["spect"] = RANK.Supporter,
 	["aduty"] = RANK.Supporter,
+	["smode"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["clearAd"] = RANK.Supporter,
