@@ -195,7 +195,7 @@ function ScoreboardGUI:insertPlayers()
 		
 		local item = self.m_Grid:addItem(
 			(isLoggedIn and player:isPremium()) and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
-			(player.getPublicSync and player:getPublicSync("supportMode") and ("(%s) %s"):format(RANKSCOREBOARD[player.getRank and player:getRank() or 3] or "Support", player:getName())) or player:getName(),
+			(player.getPublicSync and player:getPublicSync("supportMode") and ("(%s) %s"):format(RANKSCOREBOARD[player.getPublicSync and player:getPublicSync("Rank") or 3] or "Support", player:getName())) or player:getName(),
 			isLoggedIn and (player:getFaction() and player:getFaction():getId() >= 1 and player:getFaction():getId() <= 3 and "Staat" or (player:getFaction() and player:getFaction():getShortName() or "- Keine -")) or "-",
 			isLoggedIn and (player:getCompany() and player:getCompany():getShortName()  or "- Keins -") or "-",
 			isLoggedIn and string.short(gname, 16) or "-",

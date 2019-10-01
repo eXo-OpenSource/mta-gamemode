@@ -63,7 +63,7 @@ function Nametag:draw()
 						local drawName = getPlayerName(player)
 						local isAdmin = false
 						if player.getPublicSync and player:getPublicSync("supportMode") then 
-							drawName = ("(%s) %s"):format(RANKSCOREBOARD[player.getRank and player:getRank() or 3] or "Support", drawName)
+							drawName = ("(%s) %s"):format(RANKSCOREBOARD[player.getPublicSync and player:getPublicSync("Rank") or 3] or "Support", drawName)
 							isAdmin = true
 						end
 						local wanteds = player:getWanteds()
