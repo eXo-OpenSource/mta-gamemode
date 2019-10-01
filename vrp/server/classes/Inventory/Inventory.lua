@@ -27,6 +27,7 @@ function Inventory:constructor(inventory, items, persistent, player)
 	self.m_ElementId = inventory.ElementId
 	self.m_ElementType = inventory.ElementType
 	self.m_Size = inventory.Size
+	self.m_Slots = inventory.Slots
 	self.m_TypeId = inventory.TypeId
 	self.m_Type = InventoryManager:getSingleton().m_InventoryTypes[inventory.TypeId].TechnicalName
 	self.m_Persistent = persistent

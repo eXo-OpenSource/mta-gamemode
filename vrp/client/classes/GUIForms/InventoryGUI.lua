@@ -22,20 +22,19 @@ function InventoryGUI:constructor()
 	self.m_ItemList = GUIGridItemSlotList:new(1, 1, 14, 9, self.m_Window)
 	self:hide()
 
-	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
+	InventoryManager:getSingleton():getPlayerHook():register(bind(self.Event_syncInventory, self))
+
+	triggerServerEvent("syncInventory", localPlayer)
 
 	bindKey("k", "up", function()
 		InventoryGUI:getSingleton():toggle()
 	end)
 end
 
-function InventoryGUI:onShow()
-	triggerServerEvent("syncInventory", localPlayer)
-end
-
-function InventoryGUI:Event_syncInventory(data, inventoryId)
-	for k, v in pairs(data) do
-		self.m_ItemList:setItem(v.Slot, inventoryId, v)
+function InventoryGUI:Event_syncInventory(data, items)
+	self.m_ItemList:setSlots(data.Slots)
+	for k, v in pairs(items) do
+		self.m_ItemList:setItem(v.Slot, data.Id, v)
 	end
 end
 

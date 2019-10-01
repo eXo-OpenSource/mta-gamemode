@@ -9,7 +9,7 @@ GUIItemSlot = inherit(GUIElement)
 inherit(GUIFontContainer, GUIItemSlot)
 inherit(GUIColorable, GUIItemSlot)
 
-function GUIItemSlot:constructor(posX, posY, width, height, parent)
+function GUIItemSlot:constructor(posX, posY, width, height, slot, parent)
 	checkArgs("GUIItemSlot:constructor", "number", "number", "number")
 	posX, posY = math.floor(posX), math.floor(posY)
 	width, height = math.floor(width), math.floor(height)
@@ -24,6 +24,8 @@ function GUIItemSlot:constructor(posX, posY, width, height, parent)
 	self.m_Rotation = 0
 	self.m_InventoryId = nil
 	self.m_ItemData = nil
+	self.m_IsMoving = false
+	self.m_Slot = slot
 end
 
 function GUIItemSlot:setItem(inventoryId, item)
@@ -59,7 +61,9 @@ function GUIItemSlot:drawThis(incache)
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 
 	if self.m_ItemData ~= nil then
-		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/Inventory/items/" .. self.m_ItemData.Icon)
+		local alpha = self.m_IsMoving and 100 or 255
+
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/Inventory/items/" .. self.m_ItemData.Icon, 0, 0, 0, tocolor(255, 255, 255, 255))
 
 		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and not (self.m_ItemData.MaxDurability > 0) then
 			local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
@@ -72,6 +76,10 @@ function GUIItemSlot:drawThis(incache)
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width, 4, Color.Background)
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width * progress, 4, durabilityLevelColor)
 		end
+
+		if self.m_IsMoving then
+			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150))
+		end
 	end
 
 	dxSetBlendMode("blend")
@@ -79,20 +87,30 @@ end
 
 function GUIItemSlot:onHover(cursorX, cursorY)
 	self:setBackgroundColor(rgb(50, 200, 255)):anyChange()
+	GUIItemDragging:getSingleton():setCurrentSlot(self)
 end
 
 function GUIItemSlot:onUnhover(cursorX, cursorY)
 	self:setBackgroundColor(rgb(97, 129, 140)):anyChange()
+	if GUIItemDragging:getSingleton():getCurrentSlot() == self then
+		GUIItemDragging:getSingleton():setCurrentSlot(nil)
+	end
 end
 
-function GUIItemSlot:onLeftClick()
-	triggerEvent("onInventoryItemLeft", localPlayer, self.m_InventoryId, self.m_ItemData)
+function GUIItemSlot:onLeftClickDown()
+	InventoryManager:getSingleton():onItemLeft(self.m_InventoryId, self.m_ItemData, self)
 end
 
 function GUIItemSlot:onRightClick()
 	if self.m_ItemData ~= nil then
-		triggerEvent("onInventoryItemRight", localPlayer, self.m_InventoryId, self.m_ItemData)
+		InventoryManager:getSingleton():onItemRight(self.m_InventoryId, self.m_ItemData, self)
 	end
+end
+
+function GUIItemSlot:setMoving(state)
+	self.m_IsMoving = state
+	self:anyChange()
+	return self
 end
 
 function GUIItemSlot:setLineSpacing(lineSpacing)

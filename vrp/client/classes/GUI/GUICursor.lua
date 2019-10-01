@@ -11,13 +11,16 @@ function GUICursor:constructor()
 	self.m_Counter = 0
 	self.m_CursorFunc = bind(self.toggleCursor, self)
 	self.m_CursorHook = Hook:new()
-
+	self.m_CursorClickHandler = bind(self.onCursorClick, self)
+	self.m_LeftClick = false
+	self.m_RightClick = false
 
 	if not core:get("HUD", "CursorMode", false) then
 		core:set("HUD", "CursorMode", 0)
 	end
 
 	self:setCursorMode(toboolean(core:get("HUD", "CursorMode", false)))
+	addEventHandler("onClientKey", root, self.m_CursorClickHandler)
 end
 
 function GUICursor:destructor()
@@ -129,5 +132,49 @@ function GUICursor:unloadBind()
 		unbindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "both", self.m_CursorFunc)
 	else
 		unbindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "down", self.m_CursorFunc)
+	end
+end
+
+function GUICursor:onCursorClick(button, pressOrRelease)
+	if button == "mouse1" or button == "mouse2" then
+		local cx, cy = getCursorPosition()
+
+		if cx then
+			cx, cy = cx*screenWidth, cy*screenHeight
+
+			if button == "mouse1" then -- left
+				self.m_LeftClickHandled = 0xFFFFFFFFFFFF
+				self.m_LeftClick = pressOrRelease and {x = cx, y = cy, time = getTickCount()} or false
+			elseif button == "mouse2" then -- right
+				self.m_RightClickHandled = 0xFFFFFFFFFFFF
+				self.m_RightClick = pressOrRelease and {x = cx, y = cy, time = getTickCount()} or false
+			end
+		end
+	end
+end
+
+function GUICursor:getLeftMouseState()
+	if self.m_LeftClick ~= false then
+		return true, self.m_LeftClickHandled, self.m_LeftClick.x, self.m_LeftClick.y, self.m_LeftClick.time
+	end
+	return false
+end
+
+function GUICursor:getRightMouseState()
+	if self.m_RightClick ~= false then
+		return true, self.m_RightClickHandled, self.m_RightClick.x, self.m_RightClick.y, self.m_RightClick.time
+	end
+	return false
+end
+
+function GUICursor:setLeftClickHandled()
+	if self.m_LeftClick ~= false then
+		self.m_LeftClickHandled = getTickCount()
+	end
+end
+
+function GUICursor:setRightClickHandled()
+	if self.m_RightClick ~= false then
+		self.m_RightClickHandled = getTickCount()
 	end
 end

@@ -7,38 +7,29 @@
 -- ****************************************************************************
 InventoryManager = inherit(Singleton)
 
-addEvent("onInventoryItemLeft")
-addEvent("onInventoryItemRight")
 addRemoteEvents{"onInventorySync"}
 
 function InventoryManager:constructor()
 	self.m_OnInventorySync = bind(self.Event_onInventorySync, self)
-	self.m_OnInventoryLeft = bind(self.Event_onItemLeft, self)
-	self.m_OnInventoryRight = bind(self.Event_onItemRight, self)
 	self.m_SyncHookPlayer = Hook:new()
 	self.m_SyncHook = Hook:new()
 	self.m_CachedInventories = {}
 	self.m_PlayerInventoryId = 0
 
 	addEventHandler("onInventorySync", root, self.m_OnInventorySync)
-	addEventHandler("onInventoryItemLeft", root, self.m_OnInventoryLeft)
-	addEventHandler("onInventoryItemRight", root, self.m_OnInventoryRight)
 end
 
-function InventoryManager:Event_onInventorySync(inventoryId, elementId, elementType, size, items)
-	self.m_CachedInventories[inventoryId] = {
-		inventoryId = inventoryId,
-		elementId = elementId,
-		elementType = elementType,
-		size = size,
-		items = items
+function InventoryManager:Event_onInventorySync(inventoryData, items)
+	self.m_CachedInventories[inventoryData.Id] = {
+		data = inventoryData;
+		items = items;
 	}
 
-	if elementType == 1 and elementId == localPlayer:getPrivateSync("Id") then
-		self.m_PlayerInventoryId = inventoryId
-		self.m_SyncHookPlayer:call(inventoryId, elementId, elementType, size, items)
+	if inventoryData.ElementType == 1 and inventoryData.ElementId == localPlayer:getPrivateSync("Id") then
+		self.m_PlayerInventoryId = inventoryData.Id
+		self.m_SyncHookPlayer:call(inventoryData, items)
 	end
-	self.m_SyncHook:call(inventoryId, elementId, elementType, size, items)
+	self.m_SyncHook:call(inventoryData, items)
 end
 
 function InventoryManager:getPlayerInventory()
@@ -53,11 +44,14 @@ function InventoryManager:getHook()
 	return self.m_SyncHook
 end
 
-function InventoryManager:Event_onItemLeft(inventoryId, item)
-	GUIItemDragging:getSingleton():setItem(item)
+function InventoryManager:onItemLeft(inventoryId, item, slot)
+	if item ~= nil then
+		playSound("files/audio/Inventory/move-pickup.mp3")
+		GUIItemDragging:getSingleton():setItem(item, slot)
+	end
 end
 
-function InventoryManager:Event_onItemRight(inventoryId, item)
+function InventoryManager:onItemRight(inventoryId, item)
 	if self.m_PlayerInventoryId == inventoryId then
 		if not getKeyState("lshift") then
 			triggerServerEvent("onItemUse", localPlayer, inventoryId, item.Id)

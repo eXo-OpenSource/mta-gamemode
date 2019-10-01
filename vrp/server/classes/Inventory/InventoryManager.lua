@@ -103,11 +103,19 @@ end
 function InventoryManager:syncInventory(player, inventoryId)
 	if not player.m_Disconnecting then
 		local inventory = player:getInventory()
-		player:triggerEvent("syncInventory", inventory.m_Items, inventory.m_Id)
+		if inventory then
+			if inventoryId then inventory = self:getInventory(inventoryId) end
 
-		if inventoryId then inventory = self:getInventory(inventoryId) end
+			local inventoryData = {
+				Id = inventory.m_Id;
+				ElementId = inventory.m_ElementId;
+				ElementType = inventory.m_ElementType;
+				Size = inventory.m_Size;
+				Slots = inventory.m_Slots;
+			}
 
-		player:triggerEvent("onInventorySync", inventory.m_Id, inventory.m_ElementId, inventory.m_ElementType, inventory.m_Size, inventory.m_Items)
+			player:triggerEvent("onInventorySync", inventoryData, inventory.m_Items)
+		end
 	end
 end
 

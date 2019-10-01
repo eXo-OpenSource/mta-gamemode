@@ -1196,6 +1196,11 @@
 	<file src="files/data/indicators.dat" />
 
 
+	<!-- inventory audio -->
+	<vrpfile src="files/audio/Inventory/move-drop.mp3" />
+	<vrpfile src="files/audio/Inventory/move-pickup.mp3" />
+
+
 	<!-- Events Start -->
 
 	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />

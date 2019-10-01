@@ -49,7 +49,7 @@ function ItemCanGUI:destructor()
 	if cursor then Cursor:show() end
 end
 
-function ItemCanGUI:refresh(inventoryId, elementId, elementType, size, items)
+function ItemCanGUI:refresh(data, items)
 	local durability = 0
 	for k, v in pairs(items) do
 		if v.Id == self.m_ItemId then

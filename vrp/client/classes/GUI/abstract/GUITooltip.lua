@@ -15,7 +15,7 @@ end
 function GUITooltip:updateTooltip(hovered)
 	if not self.m_TooltipText then return false end
 
-	if hovered and not self.m_TooltipActive then
+	if hovered and not self.m_TooltipActive and not GUIItemDragging:getSingleton():isDragging() then
 		if isTimer(self.m_TooltipCreateTimer) then killTimer(self.m_TooltipCreateTimer) end
 		self.m_TooltipCreateTimer = setTimer(self.m_CreateTooltip, 300, 1)
 	else

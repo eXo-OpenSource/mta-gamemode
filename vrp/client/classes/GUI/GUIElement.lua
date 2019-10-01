@@ -35,6 +35,9 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		absoluteY = absoluteY + self.m_CacheArea.m_AbsoluteY
 	end
 
+	local tick = getTickCount()
+	local leftState, leftClickHandled, leftX, leftY = Cursor:getLeftMouseState()
+	local leftInside = leftState and (absoluteX <= leftX and absoluteY <= leftY and absoluteX + self.m_Width > leftX and absoluteY + self.m_Height > leftY) or false
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy) and isDirectlyHovered
 
 	if self.m_LActive and not mouse1 and (not self.ms_ClickProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
@@ -94,10 +97,11 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			if self.m_TooltipText then self:updateTooltip(true) end
 			self.m_Hover = true
 		end
-		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
+		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) and leftInside and leftClickHandled + 2 >= tick then
 			if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end
 			if self.onInternalLeftClickDown then self:onInternalLeftClickDown(cx, cy) 	end
 			self.m_LActive = true
+			Cursor:setLeftClickHandled()
 
 			if self ~= GUIRenderer.cacheroot then
 				GUIElement.ms_ClickDownProcessed = true

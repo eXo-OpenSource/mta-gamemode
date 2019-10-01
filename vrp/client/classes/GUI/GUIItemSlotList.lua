@@ -30,23 +30,33 @@ function GUIItemSlotList:constructor(posX, posY, width, height, parent)
 	self.m_Spacing = math.floor((self.m_Width - (self.m_SlotSize * self.m_SlotsPerRow)) / (self.m_SlotsPerRow + 1))
 
 	self.m_Slots = {}
+	self.m_SlotCount = 0
+end
 
-	local row = 1
-	local column = 1
-	for i = 1, self.m_SlotsPerRow * 20, 1  do
-		self.m_Slots[i] = GUIItemSlot:new(self.m_Spacing * row + self.m_SlotSize * (row - 1), self.m_Spacing * column + self.m_SlotSize * (column - 1), self.m_SlotSize, self.m_SlotSize, self.m_ScrollArea)
-
-		row = row + 1
-
-		if row > self.m_SlotsPerRow then
-			row = 1
-			column = column + 1
+function GUIItemSlotList:setSlots(slots)
+	if self.m_SlotCount ~= slots then
+		for k, v in pairs(self.m_Slots) do
+			delete(v)
 		end
-	end
 
-	self.m_ScrollArea:resize(self.m_Width, self.m_Spacing * column + self.m_SlotSize * (column - 1))
-	outputChatBox(self.m_SlotsPerRow)
-	outputChatBox(self.m_Spacing)
+		self.m_Slots = {}
+		self.m_SlotCount = slots
+
+		local row = 1
+		local column = 1
+		for i = 1, self.m_SlotCount, 1  do
+			self.m_Slots[i] = GUIItemSlot:new(self.m_Spacing * row + self.m_SlotSize * (row - 1), self.m_Spacing * column + self.m_SlotSize * (column - 1), self.m_SlotSize, self.m_SlotSize, i, self.m_ScrollArea)
+
+			row = row + 1
+
+			if row > self.m_SlotsPerRow then
+				row = 1
+				column = column + 1
+			end
+		end
+
+		self.m_ScrollArea:resize(self.m_Width, self.m_Spacing * column + self.m_SlotSize * (column - 1))
+	end
 end
 
 function GUIItemSlotList:setItem(slot, inventoryId, item)
