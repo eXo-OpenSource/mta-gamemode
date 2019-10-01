@@ -22,6 +22,7 @@ function GUIItemDragging:render()
 				local inv = self.m_CurrentSlot.m_InventoryId
 				self.m_CurrentSlot:setItem(self.m_Slot.m_InventoryId,self.m_Slot.m_ItemData)
 				self.m_Slot:setItem(inv, itm)
+				playSound("files/audio/Inventory/move-drop.mp3")
 			end
 			self.m_Slot:setMoving(false)
 			self:clearItem()
