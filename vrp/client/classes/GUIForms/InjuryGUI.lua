@@ -29,7 +29,7 @@ function InjuryGUI:constructor(data, player, healerType)
 	GUIForm.constructor(self, screenWidth-self.m_Width, screenHeight-self.m_Height*1.5, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, ("%s"):format((player == localPlayer and "Selbstbehandlung") or ("%s"):format(player:getName())), true, true, self)
 	
-	GUIGridLabel:new(7, 1, 9, 1, "Behandelbare Wunden:", self)
+	GUIGridLabel:new(7, 1, 9, 1, "Behandelbare Wunden (Doppelklick)", self)
 	GUIGridRectangle:new(1, 1, 6, 10, Color.changeAlpha(Color.Black, 150), self)
 
 
@@ -146,7 +146,12 @@ function InjuryGUI:onSelectItem(item)
 end
 
 function InjuryGUI:Event_OnClick() 
-	triggerServerEvent("Damage:onTryTreat", localPlayer, self.m_Player, self:prepareData())
+	local data = self:prepareData()
+	if table.size(data) > 0 then
+		triggerServerEvent("Damage:onTryTreat", localPlayer, self.m_Player, data)
+	else 
+		ErrorBox:new(_("Wähle eine oder mehrere Wunden per Doppelklick aus!", localPlayer))
+	end
 end
 
 function InjuryGUI:prepareData() 

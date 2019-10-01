@@ -35,8 +35,12 @@ function DamageManager:Event_requestTreat(player, data)
 	if player ~= client then
 		ShortMessageQuestion:new(client, player, ("Der Spieler %s möchte deine Wunden behandeln!"):format(client:getName()), "Damage:onTreat", "Damage:onDeclineTreat", nil, client, player, data)
 		client:sendInfo(_("Deine Anfrage wurde an den Spieler gesendet!", client))
-	else 
-		self:Event_TreatPlayer(client, player, data)
+	else
+		if table.size(data) > 0 then 
+			self:Event_TreatPlayer(client, player, data)
+		else
+			client:sendError(_("Wähle eine oder mehrere Wunden zur Behandlung aus!", client))
+		end
 	end
 end
 
