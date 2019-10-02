@@ -552,7 +552,7 @@ function AdminGUI:onGeneralButtonClick(func)
 				end)
 	elseif func == "syncForum" then
 		ForumPermissionsGUI:new()
-	elseif func == "aduty" or func == "clearchat" or func == "clearAd" or func == "resetAction" then
+	elseif func == "aduty" or func == "smode" or func == "clearchat" or func == "clearAd" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "loginFix" then
 		triggerServerEvent("adminLoginFix", localPlayer, self.m_PlayerID:getText())
@@ -561,7 +561,7 @@ function AdminGUI:onGeneralButtonClick(func)
 		VehicleTuningTemplateGUI:getSingleton():open()
 	elseif func == "transactionMenu" then
 		self:close()
-		AdminTransactionGUI:new() 
+		AdminTransactionGUI:new()
 	elseif func == "multiAccountMenu" then
 		self:close()
 		MultiAccountWindow:new()

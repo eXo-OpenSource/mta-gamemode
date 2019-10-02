@@ -61,6 +61,7 @@ function Admin:constructor()
     addCommandHandler("prison", adminCommandBind)
     addCommandHandler("unprison", adminCommandBind)
     addCommandHandler("aduty", adminCommandBind)
+    addCommandHandler("smode", adminCommandBind)
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
     addCommandHandler("spect", adminCommandBind)
@@ -78,7 +79,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", 
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck",
 	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction", "adminRequestMultiAccounts",
 	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial"}
 
@@ -230,6 +231,7 @@ function Admin:destructor()
     removeCommandHandler("permaban", adminCommandBind)
     removeCommandHandler("prison", adminCommandBind)
     removeCommandHandler("aduty", adminCommandBind)
+    removeCommandHandler("smode", adminCommandBind)
     removeCommandHandler("rkick", adminCommandBind)
     removeCommandHandler("warn", adminCommandBind)
     removeCommandHandler("spect", adminCommandBind)
@@ -356,7 +358,7 @@ end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
 
-	if cmd == "aduty" or cmd == "clearchat" then
+	if cmd == "aduty" or cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
 		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
@@ -445,7 +447,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		return
 	end
 
-	if func == "aduty" then
+	if func == "aduty" or func == "smode" then
 		self:toggleSupportMode(admin)
 	elseif func == "clearchat" then
 		self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
@@ -968,15 +970,15 @@ function Admin:onlineList(player)
 		outputChatBox(" ", player, 50, 200, 255)
 		outputChatBox(" ", player, 50, 200, 255)
 		outputChatBox("Folgende Teammitglieder sind online:", player, 50, 200, 255)
-		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do 
+		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do
 			if onlineAdmin:getPublicSync("supportMode") then
 				outputChatBox(("    • %s #ffffff%s (Aktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
-			end 
+			end
 		end
-		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do 
+		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do
 			if not onlineAdmin:getPublicSync("supportMode") then
 				outputChatBox(("    • %s #ffffff%s (Inaktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, 192, 192, 192, true)
-			end 
+			end
 		end
 		outputChatBox(" ", player, 50, 200, 255)
 		outputChatBox(" ", player, 50, 200, 255)
@@ -1593,7 +1595,7 @@ function Admin:Event_forceTransaction(amount, from, fromType, to, toType)
 	elseif fromType == "admin" then
 		from = "Adminkasse"
 		fromBankAccount = self.m_BankAccount
-		
+
 	end
 
 	local id = false
@@ -1662,7 +1664,7 @@ function Admin:Event_adminRequestMultiAccounts()
 
         multiAccountTable[row.ID] = {serial=row.Serial, linkedTo=nameTable, allowCreate=row.allowCreate, admin=adminName}
 	end
-	
+
 	client:triggerEvent("adminSendMultiAccountsToClient", multiAccountTable)
 end
 
@@ -1673,7 +1675,7 @@ function Admin:Event_adminDelteMultiAccount(id)
 	end
 
 	local result = sql:queryExec("DELETE FROM ??_account_multiaccount WHERE ID = ?", sql:getPrefix(), tonumber(id))
-	if result then 
+	if result then
 		client:sendInfo("Der Multi-Account wurde gelöscht!")
 		client:triggerEvent("adminRemoveMultiAccountFromList", id)
 	else
@@ -1689,7 +1691,7 @@ function Admin:Event_adminCreateMultiAccount(serial, name, multiAccountName, all
 
 	local linkedToTable = {}
 	if name ~= "" then
-		local result = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name) 
+		local result = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
 		if result then
 			linkedToTable[#linkedToTable+1] = result.Id
 		else
@@ -1709,10 +1711,10 @@ function Admin:Event_adminCreateMultiAccount(serial, name, multiAccountName, all
 			end
 		end
 	end
-	
+
 	local allowCreate = (#linkedToTable < 2 and fromboolean(allowCreate)) or 0
 	local result, numrows, lastInsertID = sql:queryFetch("INSERT INTO ??_account_multiaccount (Serial, LinkedTo, allowCreate, Admin, Timestamp) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), serial, toJSON(linkedToTable), allowCreate, client:getId(), getRealTime().timestamp)
-	if result then 
+	if result then
 		client:sendInfo("Der Multi-Account wurde erstellt!")
 	else
 		client:sendError("Der Multi-Account konnte nicht erstellt werden!")
