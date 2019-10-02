@@ -342,7 +342,7 @@ function DamageManager:getHealerType(player, healer)
 	if player == healer then 
 		return "SELF_TREATMENT"
 	else 
-		if healer:getFaction():isRescueFaction() then 
+		if healer.getFaction and healer:getFaction() and healer:getFaction():isRescueFaction() then 
 			return "RESCUE_PLAYER"
 		elseif healer.m_IsTrainedInTreatment then --todo 
 			return "TRAINED_NON_RESCUE"
