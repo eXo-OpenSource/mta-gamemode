@@ -372,6 +372,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
 				client:setPublicSync("Company:Duty",false)
 				takeAllWeapons(client)
+				client:restoreStorage()
 				if company.stop then
 					company:stop(client)
 				end
@@ -383,10 +384,11 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				end
 				company:changeSkin(client, preferredSkin) 
 				client:setCompanyDuty(true)
+
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 				client:setPublicSync("Company:Duty",true)
-				takeAllWeapons(client)
+				client:createStorage()
 				if company.m_Id == CompanyStaticId.SANNEWS then
 					giveWeapon(client, 43, 50) -- Camera
 				end
