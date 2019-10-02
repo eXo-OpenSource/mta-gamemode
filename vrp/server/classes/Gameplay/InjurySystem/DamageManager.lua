@@ -84,6 +84,7 @@ function DamageManager:Event_TreatPlayer(healer, player, data)
 		setPedAnimationSpeed(client, healerAnimation[2], healerAnimation[3])
 		setElementData(client, "Damage:isTreating", true)
 	end
+	local healerType = self:getHealerType(player, client)
 	for i, item in ipairs(data) do 
 		local instances = self:getInjuryByTextBody(player, item.bodypart, item.text)
 		local count = table.size(instances)
@@ -95,12 +96,12 @@ function DamageManager:Event_TreatPlayer(healer, player, data)
 					local partTime = TIME_FOR_TREAT_BODYPART[inst:getBodypart()] or 1 
 					local damageTime = TIME_FOR_TREAT_DAMAGE[INJURY_WEAPON_TO_CAUSE[inst:getWeapon()] or 30] or 1 
 					timeCount = (partTime*(damageTime*count))
-					sumTimeCount = sumTimeCount + timeCount 
+					sumTimeCount = sumTimeCount + (timeCount * TIME_FOR_HEALERS[healerType]) 
 					first = true
 				end
 			end
-			local healerType = self:getHealerType(player, client)
-			sumTimeCount = sumTimeCount * TIME_FOR_HEALERS[healerType]
+			
+			sumTimeCount = sumTimeCount
 			if not self.m_TreatQueue[player] then self.m_TreatQueue[player] = {} end
 
 			local timer = setTimer(bind(self.treat, self, instances, client), sumTimeCount*1000, 1) 
