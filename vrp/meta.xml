@@ -110,6 +110,7 @@
 	<script src="server/classes/Forum.lua" type="server"/>
 	<script src="server/classes/ServiceSync.lua" type="server"/>
 	<script src="server/classes/InfluxLogging.lua" type="server"/>
+	<script src="server/classes/Time.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -584,6 +585,7 @@
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
 	<script src="client/classes/WeaponRecorder.lua" type="client"/>
 	<script src="client/classes/InfluxLogging.lua" type="client"/>
+	<script src="client/classes/Time.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
@@ -1107,7 +1109,7 @@
 	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
 	<script src="client/classes/Effects/MonochromeShader.lua" type="client"/>
 	<script src="client/classes/Effects/DynamicLightingBind.lua" type="client"/>
-	
+
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/BarShop.lua" type="client"/>
@@ -1230,7 +1232,7 @@
 	<!-- blackjack -->
 	<vrpfile src="files/images/Textures/BlackJack/sbmyst.jpg"/>
 	<vrpfile src="files/images/Textures/BlackJack/redwhite_stripe.jpg"/>
-	
+
 	<!-- ware-gamemode -->
 	<vrpfile src="files/images/Textures/Ware/waretex.jpg"/>
 	<vrpfile src="files/images/Textures/Ware/bomb.png"/>
@@ -1599,7 +1601,7 @@
 	<vrpfile src="files/images/BlackJack/dealer_e_open.png" />
 	<vrpfile src="files/images/BlackJack/dealer_e_close.png" />
 	<vrpfile src="files/images/BlackJack/table.jpg" />
-	
+
 	<!-- Casino Wheel -->
 	<vrpfile src="files/images/CasinoWheel/table.png" />
 
@@ -1774,6 +1776,7 @@
 	<vrpfile src="files/images/Nametag/San News.png"/>
 	<vrpfile src="files/images/Nametag/MT.png"/>
 	<vrpfile src="files/images/Nametag/LostMC.png"/>
+	<vrpfile src="files/images/Nametag/bandage.png"/>
 
 	<vrpfile src="files/images/Nametag/Badgebg.png"/>
 
@@ -2233,7 +2236,7 @@
 	<vrpfile src="files/audio/devils_harp.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/walkie_beep.ogg"/>
-	<vrpfile src="files/audio/walkie_click.ogg"/>	
+	<vrpfile src="files/audio/walkie_click.ogg"/>
 	<vrpfile src="files/audio/Enginestart.ogg"/>
 	<vrpfile src="files/audio/Enginestart2.ogg"/>
 	<vrpfile src="files/audio/Siren.ogg"/>

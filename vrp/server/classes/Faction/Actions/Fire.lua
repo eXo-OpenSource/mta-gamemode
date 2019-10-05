@@ -17,7 +17,7 @@ function Fire:constructor(iX, iY, iZ, iSize, bDecaying, uFireRoot, iRoot_i, iRoo
 	if tonumber(iX) and tonumber(iY) and tonumber(iZ) and tonumber(iSize) and iSize >= 1 and iSize <= 3 then
 		self.m_Ped = createPed(0, iX, iY, iZ, 0, false)
 			setElementFrozen(self.m_Ped, true)
-			setElementAlpha(self.m_Ped, 0)	
+			setElementAlpha(self.m_Ped, 0)
 		self.m_Size = iSize
 		self.m_FireRoot = uFireRoot
 		self.m_Root_i = iRoot_i

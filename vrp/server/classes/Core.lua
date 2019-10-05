@@ -68,6 +68,7 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
+		Time:new()
 		InfluxLogging:new()
 		ServerSettings:new()
 		AntiCheat:new()
