@@ -48,5 +48,6 @@ function DrugsWeed:effect( player )
   local health = getElementHealth( player )
   if health < 100 then
     setElementHealth( player, health + DrugsWeed.m_HealValue )
+	player:setPublicSync("LastHealTime", os.time())
   end
 end

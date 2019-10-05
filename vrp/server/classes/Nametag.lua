@@ -31,7 +31,7 @@ function Nametag:removeBuff(player,buff)
 	if not self.m_PlayerBuffs[getPlayerName(player)] then
 		self.m_PlayerBuffs[getPlayerName(player)] = {}
 		return
-	end	
+	end
 	for key, value in pairs(self.m_PlayerBuffs[getPlayerName(player)]) do
 		if value.BUFF == buff then
 			table.remove(self.m_PlayerBuffs[getPlayerName(player)],key)

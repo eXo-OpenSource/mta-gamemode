@@ -983,3 +983,18 @@ function math.randomchoice(t) --Selects a random item from a table
     index = keys[math.random(1, #keys)]
     return t[index], index
 end
+
+function getBiggestUnitByBytes(value)
+	if value < 1048576 then
+		return "KB/s"
+	end
+	return "MB/s"
+end
+
+function convertBytesToUnit(value, unit)
+	if unit == "MB/s" then
+		return value / 1048576
+	elseif unit == "KB/s" then
+		return value / 1024
+	end
+end

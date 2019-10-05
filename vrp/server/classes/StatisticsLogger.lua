@@ -188,6 +188,11 @@ end
 
 function StatisticsLogger:addHealLog(player, heal, reason)
 	local userId = 0
+
+	if isElement(player) then
+		player:setPublicSync("LastHealTime", os.time())
+	end
+
 	if isElement(player) then userId = player:getId() else userId = player end
     sqlLogs:queryExec("INSERT INTO ??_Heal (UserId, Heal, Reason, Position, Date) VALUES (?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, heal, reason, self:getZone(player))

@@ -282,7 +282,7 @@ function FactionRescue:getStretcher(player, vehicle)
 
 	setTimer(
 		function (player)
-			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5)) 
+			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
 			if player:getExecutionPed() then
 				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
 			end

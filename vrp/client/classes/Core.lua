@@ -132,7 +132,7 @@ function Core:ready() --onClientResourceStart
 	else
 		setFarClipDistance(992)
 	end
-	if not core:get("Sounds", "Interiors", true) then 
+	if not core:get("Sounds", "Interiors", true) then
 		setInteriorSoundsEnabled(false)
 	end
 
@@ -196,6 +196,7 @@ function Core:ready() --onClientResourceStart
 end
 
 function Core:afterLogin()
+	Time:new()
 	RadioGUI:new()
 	HUDSpeedo:new()
 	HUDAviation:new()

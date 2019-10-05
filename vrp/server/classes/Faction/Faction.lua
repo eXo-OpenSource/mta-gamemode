@@ -609,7 +609,7 @@ function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
 	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "factionBnd:"..self.m_Id, message, receivedPlayers)
 end
 
-function Faction:respawnVehicles( isAdmin )
+function Faction:respawnVehicles(isAdmin)
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min

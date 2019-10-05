@@ -25,9 +25,9 @@ function FactionState:constructor()
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	self.m_InstantTeleportGarage = InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
 	self.m_InstantTeleportGarage:addEnterEvent(
-		function(element) 
-			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end 
-			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end 
+		function(element)
+			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end
+			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end
 		end
 	)
 	self.m_InstantTeleportGarage:addExitEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", true) end end)
@@ -215,7 +215,7 @@ function FactionState:putEvidenceInDepot(player, box)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" then
 		if id then
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))		
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
 			StateEvidence:getSingleton():addWeaponsToEvidence(player, id, amount, true)
 		end
 	elseif type == "Munition" then
@@ -1499,6 +1499,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)
+				StatisticsLogger:getSingleton():addHealLog(player, 100, "Faction Duty Heal")
 				takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
@@ -1793,11 +1794,11 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
-			for i = 0, 8 do 
+			for i = 0, 8 do
 				local w = getPedWeapon(target,i)
-				if w ~= 0 then 
+				if w ~= 0 then
 					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(target, i))
-				end 
+				end
 			end
 			takeAllWeapons(target)
 
