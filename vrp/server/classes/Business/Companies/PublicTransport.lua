@@ -210,7 +210,7 @@ function PublicTransport:startTaxiDrive(veh, customer, isFree)
 	self.m_TaxiCustomer[customer]["price"] = 0
 	self.m_TaxiCustomer[customer]["isFree"] = isFree
 	self.m_TaxiCustomer[customer]["timer"] = setTimer(self.m_TaxoMeter, 1000, 0, customer)
-	self.m_TaxiCustomer[customer]["type"] = veh:getVehicleType()
+	self.m_TaxiCustomer[customer]["type"] = veh.vehicleType
 	customer:triggerEvent("showTaxoMeter")
 	customer:triggerEvent("showPublicTransportTaxiGUI")
 	--triggerClientEvent(self.m_TaxiCustomer[customer]["driver"], "showTaxoMeter", self.m_TaxiCustomer[customer]["driver"])
