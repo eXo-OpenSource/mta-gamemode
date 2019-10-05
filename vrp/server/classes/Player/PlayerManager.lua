@@ -1047,3 +1047,19 @@ end
 function PlayerManager:Event_AttachToVehicle()
 	client:attachToVehicle()
 end
+
+function PlayerManager:Event_onStartQuickTrade(bArmor, target)
+	if target:getDimension() ~= client:getDimension() then return end 
+	if target:getInterior() ~= client:getInterior() then return end 
+	if Vector3(target.position - client.position):getLength() > 5 then 
+		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
+	end
+	if bArmor then
+		if client:getArmor() == 0 then return end 
+	end
+
+	if bArmor then 
+	else
+
+	end
+end

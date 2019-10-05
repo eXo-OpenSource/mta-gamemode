@@ -62,8 +62,8 @@ function IDCardGUI:constructor(player)
 	GUILabel:new(200, 263, 140, 25, _"Wanteds:", self)
 	self.m_Wanteds = GUILabel:new(320, 263, 60, 20, "0", self):setAlignX("right")
 
-	GUILabel:new(200, 293, 140, 25, _"GWD-Note:", self)
-	self.m_PANote = GUILabel:new(320, 293, 60, 20, "0", self):setAlignX("right")
+	GUILabel:new(200, 288, 140, 25, _"GWD-Note:", self)
+	self.m_PANote = GUILabel:new(320, 288, 60, 20, "0", self):setAlignX("right")
 
 	triggerServerEvent("Event_getIDCardData", localPlayer, player)
 
