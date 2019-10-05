@@ -1745,3 +1745,18 @@ function Admin:Event_adminDeleteAccountFromSerial(userId, serial)
 		client:sendError("Der Account konnte von der Serial nicht getrennt werden!")
 	end
 end
+
+function Admin:toggleInvisible(player)
+	if player:getRank() == RANK.Scripter then
+		player:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	if player:getPublicSync("isInvisible") then
+		player:setPublicSync("isInvisible", false)
+		player:setAlpha(255)
+	else
+		player:setPublicSync("isInvisible", true)
+		player:setAlpha(0)
+	end
+end
