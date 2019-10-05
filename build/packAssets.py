@@ -82,7 +82,7 @@ for index, archive in archives.items():
                             target_path="cache/%s.tar" % index,
 		                   	hash=md5(outdir+"archives/%s.tar" % index))
     for _, file in files[archive].items():
-        ET.SubElement(element, "file", path=file, target_path=file, hash=md5(rootdir+file), size=file_size(rootdir+file))
+        ET.SubElement(element, "file", path=file, target_path=file, hash=md5(rootdir+file), size=str(file_size(rootdir+file)))
 
 
 asset_tree = ET.ElementTree(asset_root)
