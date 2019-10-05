@@ -80,7 +80,15 @@ function HTTPDownloadGUI:updateDownloadProgress(file)
 
 			local downloadspeed = convertBytesToUnit(self.m_DownloadSpeed, speedunit)
 
-			self:setStateText(("%.1f %s von %.1f %s heruntergeladen. (%d %s)"):format(downloaded, progressunit, toDownload, progressunit, downloadspeed, speedunit))
+			local remaining = ((self.m_DownloadSize - self.m_DownloadedSize) / self.m_DownloadSpeed)
+
+			if self.m_DownloadSpeed > 0 then
+				remainingTime = string.format("%.2d:%.2d", remaining/60%60, remaining%60)
+			else
+				remainingTime = "00:00"
+			end
+
+			self:setStateText(("%.1f %s von %.1f %s heruntergeladen. Zeit verbleibend: %s (%d %s)"):format(downloaded, progressunit, toDownload, progressunit, remainingTime, downloadspeed, speedunit))
 			self.m_DownloadBar:setProgress(100/self.m_DownloadSize*self.m_DownloadedSize)
 			self.m_DownloadingFile = file
 		else
