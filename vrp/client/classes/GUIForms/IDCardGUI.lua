@@ -17,7 +17,7 @@ function IDCardGUI:constructor(player)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Ausweis", true, true, self)
 
 	GUILabel:new(10, 40, 140, 30, player:getName(), self)
-	GUIWebView:new(10, 70, 140, 160, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewHead.php?skin="..player:getModel(), true, self)
+	GUIImage:new(10, 70, 140, 130, string.format("files/images/Skins/head/%s.png", player:getModel()), self)
 
 	GUILabel:new(10, 205, 140, 25, _"Levels", self)
 	GUILabel:new(10, 230, 140, 20, _"Job:", self)

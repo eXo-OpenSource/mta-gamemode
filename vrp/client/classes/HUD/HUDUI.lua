@@ -397,28 +397,6 @@ function HUDUI:drawExo()
 	end
 end
 
-function HUDUI:getSkinBrowserSave(skinid, w, h) -- get the correct skin texture and manage the underlying browser
-	if not self.m_SkinBrowser then
-		self.m_SkinBrowser = createBrowser(w, h, false, true)
-		self.m_SkinID = skinid
-		self.m_BrowserW = w
-		self.m_BrowserH = h
-		addEventHandler("onClientBrowserCreated", self.m_SkinBrowser, function()
-			self.m_SkinBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
-		end)
-	end
-	if skinid ~= self.m_SkinID then
-		self.m_SkinBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
-		self.m_SkinID = skinid
-	end
-	if w ~= self.m_BrowserW or h ~= self.m_BrowserH then
-		resizeBrowser (self.m_SkinBrowser, w, h)
-		self.m_BrowserW = w
-		self.m_BrowserH = h
-	end
-	return self.m_SkinBrowser
-end
-
 function HUDUI:drawChart()
 	local scale = self.m_Scale*1.2
 	local height = 30*scale
@@ -515,8 +493,7 @@ function HUDUI:drawChart()
 		local prog = getProgress("skin", not core:get("HUD", "chartSkinVisible", false))
 
 		dxDrawRectangle(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, tocolor(0, 0, 0, 150*prog)) --skin
-		dxDrawImage(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, self:getSkinBrowserSave(localPlayer:getModel(), col2_w + margin_save*2, w_height), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
-
+		dxDrawImageSection(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, 20, 40, 260, 260, string.format("files/images/Skins/head/%s.png", localPlayer:getModel()), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
 		col2_i = col2_i + prog * 2
 	end
 	drawCol(2, 0, Color.Clear, ("%d-%d"):format(getPlayerPing(self:getLocalTarget()), getNetworkStats().packetlossLastSecond), false, Color.Clear, "net", not DEBUG_NET)
