@@ -9,7 +9,7 @@ GUIItemSlot = inherit(GUIElement)
 inherit(GUIFontContainer, GUIItemSlot)
 inherit(GUIColorable, GUIItemSlot)
 
-function GUIItemSlot:constructor(posX, posY, width, height, slot, parent)
+function GUIItemSlot:constructor(posX, posY, width, height, slot, inventoryId, parent)
 	checkArgs("GUIItemSlot:constructor", "number", "number", "number")
 	posX, posY = math.floor(posX), math.floor(posY)
 	width, height = math.floor(width), math.floor(height)
@@ -22,14 +22,13 @@ function GUIItemSlot:constructor(posX, posY, width, height, slot, parent)
 	self.m_AlignX = "left"
 	self.m_AlignY = "top"
 	self.m_Rotation = 0
-	self.m_InventoryId = nil
+	self.m_InventoryId = inventoryId
 	self.m_ItemData = nil
 	self.m_IsMoving = false
 	self.m_Slot = slot
 end
 
-function GUIItemSlot:setItem(inventoryId, item)
-	self.m_InventoryId = inventoryId
+function GUIItemSlot:setItem(item)
 	self.m_ItemData = item
 
 	if item then

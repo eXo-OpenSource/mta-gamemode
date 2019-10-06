@@ -17,12 +17,12 @@ end
 function GUIItemDragging:render()
 	if self.m_Item then
 		if not getKeyState("mouse1") then
-			if self.m_CurrentSlot then
-				local itm = self.m_CurrentSlot.m_ItemData
-				local inv = self.m_CurrentSlot.m_InventoryId
-				self.m_CurrentSlot:setItem(self.m_Slot.m_InventoryId,self.m_Slot.m_ItemData)
-				self.m_Slot:setItem(inv, itm)
+			if self.m_CurrentSlot and InventoryGUI:getSingleton().m_Window:isHovered() then
+				triggerServerEvent("onItemMove", localPlayer, self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData.Id, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot)
 				playSound("files/audio/Inventory/move-drop.mp3")
+			elseif not InventoryGUI:getSingleton().m_Window:isHovered() then
+				--self.m_Slot:setItem(nil, nil)
+				InventoryActionGUI:new("Löschen")
 			end
 			self.m_Slot:setMoving(false)
 			self:clearItem()

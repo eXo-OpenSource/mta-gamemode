@@ -77,11 +77,12 @@ function InventoryManager:constructor()
 	self.m_InventoryTypesIdToName = {}
 	self:loadInventoryTypes()
 
-	addRemoteEvents{"syncInventory", "onItemUse", "onItemUseSecondary"}
+	addRemoteEvents{"syncInventory", "onItemUse", "onItemUseSecondary", "onItemMove"}
 
 	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
 	addEventHandler("onItemUse", root, bind(self.Event_onItemUse, self))
 	addEventHandler("onItemUseSecondary", root, bind(self.Event_onItemUseSecondary, self))
+	addEventHandler("onItemMove", root, bind(self.Event_onItemMove, self))
 
 	self.m_Inventories = {}
 end
@@ -97,6 +98,26 @@ function InventoryManager:Event_onItemUseSecondary(inventoryId, itemId)
 	if client ~= source then return end
 	if client:getInventory() and client:getInventory().m_Id == inventoryId then
 		client:getInventory():useItemSecondary(itemId)
+	end
+end
+
+function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInventoryId, toSlot)
+	if client ~= source then return end
+
+	local fromInventory = self:getInventory(fromInventoryId)
+	local toInventory = self:getInventory(toInventoryId)
+	local fromItem = fromInventory:getItem(fromItemId)
+	local toItem = toInventory:getItemFromSlot(toSlot)
+
+	if toSlot < 1 or toInventory.m_Slots < toSlot then return end
+	if fromInventory == toInventory then
+		if toItem then
+			toItem.Slot = fromItem.Slot
+			fromItem.Slot = toSlot
+		else
+			fromItem.Slot = toSlot
+		end
+		fromInventory:onInventoryChanged()
 	end
 end
 

@@ -32,9 +32,12 @@ function InventoryGUI:constructor()
 end
 
 function InventoryGUI:Event_syncInventory(data, items)
-	self.m_ItemList:setSlots(data.Slots)
+	self.m_ItemList:setSlots(data.Slots, data.Id)
+	for i = 1, data.Slots, 1 do
+		self.m_ItemList:setItem(i, nil)
+	end
 	for k, v in pairs(items) do
-		self.m_ItemList:setItem(v.Slot, data.Id, v)
+		self.m_ItemList:setItem(v.Slot, v)
 	end
 end
 

@@ -84,6 +84,20 @@ deploy_job_develop:
   only:
     - master
 
+deploy_job_inventory:
+  tags:
+    - linux
+    - dind
+  stage: deploy
+  script:
+    #- curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz http://ts.exo-reallife.de/upload/upload.php
+    - curl http://$DEPLOYRON_IP:6000/deploy/mta_inventory?APISecret=$DEPLOY_API_SECRET_INVENTORY
+  environment:
+    name: inventory
+    url: http://mta.exo-reallife.de:5002/
+  only:
+    - feature/inventory2
+
 deploy_job_testing:
   tags:
     - linux

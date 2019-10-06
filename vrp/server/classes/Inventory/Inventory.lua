@@ -111,6 +111,15 @@ function Inventory:getItem(id)
 	return false
 end
 
+function Inventory:getItemFromSlot(slot)
+	for k, v in pairs(self.m_Items) do
+		if v.Slot == slot then
+			return v
+		end
+	end
+	return false
+end
+
 function Inventory:getItemDurability(id)
 	local item = self:getItem(id)
 	if not item then return false end

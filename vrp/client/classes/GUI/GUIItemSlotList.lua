@@ -33,8 +33,9 @@ function GUIItemSlotList:constructor(posX, posY, width, height, parent)
 	self.m_SlotCount = 0
 end
 
-function GUIItemSlotList:setSlots(slots)
+function GUIItemSlotList:setSlots(slots, inventoryId)
 	if self.m_SlotCount ~= slots then
+		self.m_InventoryId = inventoryId
 		for k, v in pairs(self.m_Slots) do
 			delete(v)
 		end
@@ -45,7 +46,7 @@ function GUIItemSlotList:setSlots(slots)
 		local row = 1
 		local column = 1
 		for i = 1, self.m_SlotCount, 1  do
-			self.m_Slots[i] = GUIItemSlot:new(self.m_Spacing * row + self.m_SlotSize * (row - 1), self.m_Spacing * column + self.m_SlotSize * (column - 1), self.m_SlotSize, self.m_SlotSize, i, self.m_ScrollArea)
+			self.m_Slots[i] = GUIItemSlot:new(self.m_Spacing * row + self.m_SlotSize * (row - 1), self.m_Spacing * column + self.m_SlotSize * (column - 1), self.m_SlotSize, self.m_SlotSize, i, inventoryId, self.m_ScrollArea)
 
 			row = row + 1
 
@@ -59,9 +60,9 @@ function GUIItemSlotList:setSlots(slots)
 	end
 end
 
-function GUIItemSlotList:setItem(slot, inventoryId, item)
+function GUIItemSlotList:setItem(slot, item)
 	if self.m_Slots[slot] then
-		self.m_Slots[slot]:setItem(inventoryId, item)
+		self.m_Slots[slot]:setItem(item)
 		return self.m_Slots[slot]
 	end
 	return false
