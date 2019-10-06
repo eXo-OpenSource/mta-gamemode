@@ -11,6 +11,7 @@ SERVER = triggerServerEvent == nil
 function TranslationManager:constructor()
 	self.m_Translations = {}
 	self.m_AddonTranslations = {}
+	self.m_DefaultLocale = "de"
 
 	-- Load standard translations
 	self:loadTranslation("en")
@@ -83,14 +84,16 @@ if SERVER then
 					outputDebug(errOrReturn)
 					outputDebug(debug.traceback())
 				end
-				return errOrReturn 
+				return errOrReturn
 			else
 				if player.getLocale then
 					return TranslationManager:getSingleton():translate(message, player:getLocale()):format(...)
-				else 
+				else
 					outputDebug(debug.traceback())
 				end
 			end
+		else
+			return TranslationManager:getSingleton():translate(message, TranslationManager:getSingleton().m_DefaultLocale):format(...)
 		end
 	end
 else
