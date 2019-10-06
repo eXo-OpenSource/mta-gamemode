@@ -76,8 +76,8 @@ companySpawnpoint[3] = {Vector3(735.97, -1338.20, 13.53), 0, 0}
 companyRankNames[4] = {
 [0] = "Polierer",
 [1] = "Taxifahrer",
-[2] = "Kassierer",
-[3] = "Busfahrer",
+[2] = "Busfahrer",
+[3] = "Schichtleiter",
 [4] = "Fahrzeugverwalter",
 [5] = "Transportmanager"
 }

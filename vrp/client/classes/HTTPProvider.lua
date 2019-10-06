@@ -98,6 +98,9 @@ function HTTPProvider:downloadFiles()
 		if self.m_DownloadSpeedTimer and isTimer(self.m_DownloadSpeedTimer) then
 			killTimer(self.m_DownloadSpeedTimer)
 		end
+		if self.m_DownloadSpeedGUITimer and isTimer(self.m_DownloadSpeedGUITimer) then
+			killTimer(self.m_DownloadSpeedGUITimer)
+		end
 
 		self.m_isDownloadingAssets = false
 	else
@@ -269,8 +272,11 @@ function HTTPProvider:updateDownloadSpeed(downloadedSize)
 end
 
 function HTTPProvider:resetDownloadSpeed()
-	self.ms_GUIInstance:updateDownloadSpeed(self.m_DownloadSpeed)
 	self.m_LastDownloadProgress = self.m_LastDownloadedProgress
+	if not self.m_DownloadSpeedGUITimer then
+		self:updateRemainingTime()
+		self.m_DownloadSpeedGUITimer = setTimer(bind(self.updateRemainingTime, self), 5000, 0)
+	end
 end
 
 function HTTPProvider:sendDownloadedSizeToGUI(fetch)
@@ -279,4 +285,8 @@ function HTTPProvider:sendDownloadedSizeToGUI(fetch)
 	self.ms_GUIInstance:setDownloadedSize(self.m_DownloadedSize + downloadedSize)
 	self.m_LastDownloadedProgress = self.m_DownloadedSize + downloadedSize
 	self:updateDownloadSpeed(downloadedSize)
+end
+
+function HTTPProvider:updateRemainingTime()
+	self.ms_GUIInstance:updateDownloadSpeed(self.m_DownloadSpeed)
 end

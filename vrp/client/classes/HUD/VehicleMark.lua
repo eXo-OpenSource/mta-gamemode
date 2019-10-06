@@ -18,6 +18,18 @@ function VehicleMark:constructor()
 	self.m_StreamIn = bind(self.Event_StreamIn, self)
 	self.m_StreamOut = bind(self.Event_StreamOut, self)
 
+	self.m_Offsets = {
+		[407] = {x=0, y=-1.5, z=0},
+		[416] = {x=0, y=-1.5, z=0.25},
+		[427] = {x=0, y=-1.5, z=0.125},
+		[432] = {x=0, y=-1.2, z=0.625},
+		[433] = {x=0, y=-1.5, z=0.25},
+		[470] = {x=0, y=-0.65, z=0.575},
+		[544] = {x=0, y=-2, z=0},
+		[560] = {x=0, y=-0.75, z=0.25},
+		[601] = {x=0, y=-1.2, z=0.5}
+	}
+
 	addEventHandler("onClientRender", root, bind(self.render, self), true, "high")
 
 	addEventHandler("addVehicleMark", localPlayer, bind(self.Event_AddMark, self))
@@ -71,10 +83,19 @@ function VehicleMark:render()
 	for v, mark in pairs(self.m_Stream) do
 
 		if not mark then return end
-		local x,y,z = getVehicleComponentPosition ( v, "bump_rear_dummy", "world")
-		if not x then 
+		
+		if self.m_Offsets[v:getModel()] then
+			pos = Vector3(getVehicleComponentPosition(v, "wheel_lb_dummy", "world"))
+			pos = pos + v.matrix.right * self.m_Offsets[v:getModel()].x
+			pos = pos + v.matrix.forward * self.m_Offsets[v:getModel()].y
+			pos = pos + v.matrix.up * self.m_Offsets[v:getModel()].z
+			x, y, z = pos.x, pos.y, pos.z
+		elseif getVehicleComponentPosition(v, "bump_rear_dummy", "world") then
+			x,y,z = getVehicleComponentPosition(v, "bump_rear_dummy", "world")
+		else
 			x,y,z = getElementPosition(v)
 		end
+
 		local dist = getDistanceBetweenPoints2D(x, y, cx, cy)
 
 		if v:getDimension() == localPlayer:getDimension() and v:getInterior() == localPlayer:getInterior() and dist < 7 and isLineOfSightClear(cx, cy, cz, x, y, z, true, true, false, true, false, false, false, v) then  
