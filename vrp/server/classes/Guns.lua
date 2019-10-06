@@ -240,7 +240,7 @@ end
 function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
 	--StatisticsLogger:getSingleton():addDamageLog(client, target, weapon, bodypart, loss)
 	local count, inst = DamageManager:getSingleton():getDamageByWeapon(target, weapon)
-	if target and isElement(target) then
+	if target and isElement(target) and not target.deathmatchLobby then
 		if count > 0 and inst and loss > 0  then 
 			if count > 10 then 
 				if loss > inst:getAmount() then 
@@ -333,7 +333,7 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	end
 	self:addGangwarDamage(player, attacker, loss)
 	local count, inst = DamageManager:getSingleton():getDamageByWeapon(player, weapon)
-	if count > 0 and inst and loss > 0  then 
+	if count > 0 and inst and loss > 0 and not player.deathmatchLobby then 
 		if count > 10 then 
 			if loss > inst:getAmount() then 
 				inst:setAmount(loss)

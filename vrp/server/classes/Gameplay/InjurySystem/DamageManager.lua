@@ -219,10 +219,12 @@ function DamageManager:treat(data, healer)
 				player:setHealth(health+healSum)
 			else 
 				player:setHealth(100)
-				player:setArmor((healSum - (100-health)) + armor)
+				player:setArmor(((healSum - (100-health)))*0.5 + armor)
+				player:sendInfo(_("Der verursachte Schaden an deiner Schutzweste wurde zur Hälfte repariert!", player))
 			end
 		else 
-			player:setArmor(armor + healSum)
+			player:setArmor(armor + (healSum*0.5))
+			player:sendInfo(_("Der verursachte Schaden an deiner Schutzweste wurde zur Hälfte repariert!", player))
 		end
 		StatisticsLogger:getSingleton():addHealLog(player, healSum, ("Wundbehandlung von %s"):format(healer:getName()))
 	end

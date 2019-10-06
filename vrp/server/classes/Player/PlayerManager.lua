@@ -10,7 +10,8 @@ addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPoin
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", 
+"attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -63,6 +64,8 @@ function PlayerManager:constructor()
 	addEventHandler("unfreezePlayer", root, bind(self.Event_onUnfreezePlayer, self))
 	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
 
+	addEventHandler("PlayerManager:onAcceptQuickTrade", root, bind(self.Event_OnStartQuickTrade, self))
+	addEventHandler("PlayerManager:onRequestQuickTrade", root, bind(self.Event_RequestQuickTrade, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
@@ -1048,18 +1051,66 @@ function PlayerManager:Event_AttachToVehicle()
 	client:attachToVehicle()
 end
 
-function PlayerManager:Event_onStartQuickTrade(bArmor, target)
+function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
+	if not client:isLoggedIn() then return end 
+	if not target:isLoggedIn() then return end
+	if client == target then return end
+	if target:isDead() then return end
+	if client.deathmatchLobby then return end
+	if target.deathmatchLobby then return end
+	if target:getDimension() ~= client:getDimension() then return end 
+	if target:getInterior() ~= client:getInterior() then return end 
+	if Vector3(target.position - client.position):getLength() > 5 then 
+		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
+	end
+	if not bArmor then
+		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte dir Munition geben!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil,  client, client, target, bArmor, value)
+	else 
+		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte mit dir Schutzwesten tauschen!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil, client, client, target, bArmor, value)
+	end
+end
+
+
+function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
+	if not client:isLoggedIn() then return end 
+	if not target:isLoggedIn() then return end
+	if client == target then return end
+	if target:isDead() then return end
+	if client.deathmatchLobby then return end
+	if target.deathmatchLobby then return end
 	if target:getDimension() ~= client:getDimension() then return end 
 	if target:getInterior() ~= client:getInterior() then return end 
 	if Vector3(target.position - client.position):getLength() > 5 then 
 		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
 	end
 	if bArmor then
-		if client:getArmor() == 0 then return end 
-	end
-
-	if bArmor then 
+		local armor = target:getArmor()
+		target:setArmor(client:getArmor())
+		client:setArmor(armor) 
+		client:sendInfo(_("Du hast deine Schutzweste mit %s getauscht!", client, target:getName()))
+		target:sendInfo(_("Du hast deine Schutzweste mit %s getauscht!", target, client:getName()))
+		StatisticsLogger:getSingleton():itemTradeLogs( client, target, "Schutzwesten-Tausch", 0, armor)
+		StatisticsLogger:getSingleton():itemTradeLogs( target, client, "Schutzwesten-Tausch", 0, target:getArmor())
 	else
+		local weapon = client:getWeapon()
+		if weapon > 0 then
+			local targetWeapon = target:getWeapon(getSlotFromWeapon(weapon))
 
+			if targetWeapon == weapon then 
+				local ammo =  math.floor(client:getTotalAmmo() * value)
+				if ammo > 0 then 
+					giveWeapon(target, weapon, ammo)
+					takeWeapon(client, weapon, ammo)
+					target:sendInfo(_("Du hast %s Schuss %s von %s erhalten!", target, ammo, WEAPON_NAMES[weapon], client:getName()))
+					client:sendInfo(_("Du hast %s Schuss %s an %s vergeben!", client, ammo, WEAPON_NAMES[weapon], target:getName()))
+					StatisticsLogger:getSingleton():itemTradeLogs(client, target, "Munitionsvergabe", 0, ammo)
+				end
+			else 
+				client:sendError(_("Der Spieler hat die Waffe nicht!", client))
+			end
+		else 
+			target:sendError(_("Der Spieler hatte keine Waffe in der Hand!", target))
+			client:sendError(_("Du hast keine Waffe in der Hand!", client))
+		end
 	end
 end

@@ -55,7 +55,15 @@ function InspectMenu:constructor(posX, posY, element)
 			self.m_AnimationWeaponFade:stopAnimation()
 		end
 	end 	
-	self.m_InspectWeapon.onLeftClick = function() delete(self) end
+	self.m_InspectWeapon.onLeftClick = function() 
+		if element ~= localPlayer then
+			delete(self) 
+			if AmmoQuickTradeGUI:isInstantiated() then 
+				delete(AmmoQuickTradeGUI:getSingleton())
+			end
+			AmmoQuickTradeGUI:new(element)
+		end
+	end
 	self:adjustWidth()
 	self.m_RenderBind = bind(self.forceChange, self)
 	addEventHandler("onClientRender", root, self.m_RenderBind)

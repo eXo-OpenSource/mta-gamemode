@@ -927,6 +927,7 @@
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/InjuryGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/AmmoQuickTradeGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/InjuryTreatmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />

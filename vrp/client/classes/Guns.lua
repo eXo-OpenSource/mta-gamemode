@@ -208,6 +208,9 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		elseif localPlayer == source then
 			if attacker and weapon and bodypart and loss then
+				if InjuryTreatmentGUI:isInstantiated() then
+					triggerServerEvent("Damage:onCancelTreat", localPlayer)
+				end
 				if WEAPON_DAMAGE[weapon] then
 					cancelEvent()
 				end
