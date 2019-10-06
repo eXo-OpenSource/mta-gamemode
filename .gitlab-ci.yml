@@ -52,6 +52,7 @@ build_docker_job:
     - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   only:
     - master
+    - feature/inventory2
     - release/pre-production
     - release/production
 
