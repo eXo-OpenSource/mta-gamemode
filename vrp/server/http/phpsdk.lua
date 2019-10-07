@@ -75,8 +75,7 @@ function phpSDKGiveQRAchievement(playerId)
 	)()
 end
 
-function phpSDKKickPlayer(params)
-	local adminId, targetId, reason = params.adminId, params.targetId, params.reason
+function phpSDKKickPlayer(adminId, targetId, reason)
 	local target = DatabasePlayer.Map[targetId]
 
 	if not isElement(target) or target:getType() ~= "player" then
@@ -107,9 +106,7 @@ function phpSDKKickPlayer(params)
 	return targetName .. " wurde erfolgreich gekickt!"
 end
 
-function phpSDKBanPlayer(params)
-	local adminId, targetId, duration, reason = params.adminId, params.targetId, params.duration, params.reason
-
+function phpSDKBanPlayer(adminId, targetId, duration, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
 		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
@@ -148,9 +145,7 @@ function phpSDKBanPlayer(params)
 	return targetName .. " wurde erfolgreich gebannt!"
 end
 
-function phpSDKUnbanPlayer(params)
-	local adminId, targetId, reason = params.adminId, params.targetId, params.reason
-
+function phpSDKUnbanPlayer(adminId, targetId, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
 		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
