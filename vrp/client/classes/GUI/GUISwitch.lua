@@ -15,20 +15,27 @@ function GUISwitch:constructor(posX, posY, width, height, parent)
 	-- Create a dummy button for animation
 	self.m_Button = DxRectangle:new(0, 0, self.m_Width/2 - 4, self.m_Height - 4, Color.Clear, self)
 	self.m_State = true
+	self.m_Enabled = true
 end
 
 function GUISwitch:onInternalLeftClick()
-	self:setState(not self.m_State)
+	if self.m_Enabled then
+		self:setState(not self.m_State)
+	end
 end
 
 function GUISwitch:onInternalHover()
-	Animation.Size:new(self.m_Button, 150, self.m_Width/2, self.m_Height, "OutQuad")
-	self.m_Hovered = true
+	if self.m_Enabled then
+		Animation.Size:new(self.m_Button, 150, self.m_Width/2, self.m_Height, "OutQuad")
+		self.m_Hovered = true
+	end
 end
 
 function GUISwitch:onInternalUnhover()
-	Animation.Size:new(self.m_Button, 150, self.m_Width/2 - 4, self.m_Height - 4, "OutQuad")
-	self.m_Hovered = false
+	if self.m_Enabled then
+		Animation.Size:new(self.m_Button, 150, self.m_Width/2 - 4, self.m_Height - 4, "OutQuad")
+		self.m_Hovered = false
+	end
 end
 
 function GUISwitch:setState(state)
@@ -49,18 +56,30 @@ function GUISwitch:isChecked() -- make it like GUICheckBox
 	return self.m_State
 end
 
+function GUISwitch:isEnabled()
+	return self.m_Enabled
+end
+
+function GUISwitch:setEnabled(state)
+	if self.m_Hovered then
+		self:onInternalUnhover()
+	end
+	self.m_Enabled = state
+end
+
 function GUISwitch:drawThis()
 	dxSetBlendMode("modulate_add")
 	local white = Color.changeAlpha(Color.White, self:getAlpha())
 	local black = Color.changeAlpha(Color.Black, self:getAlpha())
 	local primary = Color.changeAlpha(Color.Primary, self:getAlpha())
 	local accent = Color.changeAlpha(Color.Accent, self:getAlpha())
+	local lightGrey = Color.changeAlpha(Color.LightGrey, self:getAlpha())
 
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, primary)
 
 	local x, y = self.m_Button:getPosition()
 	local w, h = self.m_Button:getSize()
-	dxDrawRectangle(self.m_AbsoluteX + x + self.m_Width/4 - w/2, self.m_AbsoluteY + y + self.m_Height/2 - h/2, w, h, self.m_Hovered and white or accent)
+	dxDrawRectangle(self.m_AbsoluteX + x + self.m_Width/4 - w/2, self.m_AbsoluteY + y + self.m_Height/2 - h/2, w, h, self.m_Hovered and white or not self.m_Enabled and lightGrey or accent)
 
 	dxDrawText("An", self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height, (self.m_Hovered and self.m_State) and black or white, self:getFontSize(), self:getFont(), "center", "center")
 	dxDrawText("Aus", self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, (self.m_Hovered and not self.m_State) and black or white, self:getFontSize(), self:getFont(), "center", "center")

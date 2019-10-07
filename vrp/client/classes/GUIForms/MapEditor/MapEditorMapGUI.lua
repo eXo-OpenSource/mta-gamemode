@@ -29,6 +29,8 @@ function MapEditorMapGUI:constructor()
 	self.m_EditingPlayers = GUIGridButton:new(1, 12, 8, 1, "Derzeit bearbeitende Spieler", self.m_Window)
 	
 	self.m_Headline = GUIGridLabel:new(9, 1, 11, 1, "Informationen zu Map", self.m_Window):setHeader()
+
+	self.m_EditMapSettings = GUIGridButton:new(16, 1, 4, 1, "Map Einstellungen", self.m_Window)
 	
 	self.m_NameLabel = GUIGridLabel:new(9, 2, 11, 1, "Name: -", self.m_Window)
 	self.m_CreatorLabel = GUIGridLabel:new(9, 3, 11, 1, "Ersteller: -", self.m_Window)
@@ -87,9 +89,18 @@ function MapEditorMapGUI:constructor()
 		MapEditorEditingPlayersGUI:new()
 	end
 
-	--[[self.m_ShowObject.onLeftClick = function()
-		
-	end]]
+	self.m_EditMapSettings.onLeftClick = function()
+		if localPlayer:getRank() < RANK.Administrator then
+			ErrorBox:new("Du bist nicht berechtigt!")
+			return
+		end
+		if not self.m_GridList:getSelectedItem() then
+			ErrorBox:new("Keine Map ausgewählt!")
+			return
+		end
+		local id = tonumber(self.m_GridList:getSelectedItem():getColumnText(1))
+		MapEditorMapSettingsGUI:new(id, self.m_MapInfos[id])
+	end
 
 	self.m_ShowAllObjects.onLeftClick = function()
 		self:removeMarks()
@@ -126,6 +137,8 @@ function MapEditorMapGUI:constructor()
 		end
 	end
 
+	self.m_ObjectNameLoadTime = 50
+
 	self.m_Blips = {}
     
     self.m_ReceiveBind = bind(self.receiveInfos, self)
@@ -147,6 +160,7 @@ end
 
 function MapEditorMapGUI:receiveInfos(mapTable)
 	self.m_GridList:clear()
+	self.m_MapInfos = mapTable
 	for key, infoTable in pairs(mapTable) do
 		local item = self.m_GridList:addItem(key, string.short(infoTable[1], 20), infoTable[3] == 1 and "aktiviert" or "deaktiviert")
 
@@ -181,8 +195,8 @@ function MapEditorMapGUI:receiveObjectInfos(objectTable, removalsTable)
 				local objectName = MapEditor:getSingleton():getWorldModelName(objectModel) or "-none-"
 				item:setColumnText(3, objectName)
 			end
-		, 20+timeToAdd, 1)
-		timeToAdd = timeToAdd+20
+		, self.m_ObjectNameLoadTime+timeToAdd, 1)
+		timeToAdd = timeToAdd+self.m_ObjectNameLoadTime
 	end
 	for key, data in pairs(removalsTable) do
 		local objectModel = data.worldModelId
@@ -196,8 +210,8 @@ function MapEditorMapGUI:receiveObjectInfos(objectTable, removalsTable)
 				local objectName = MapEditor:getSingleton():getWorldModelName(objectModel) or "-none- [Low LOD]"
 				item:setColumnText(3, objectName)
 			end
-		, 20+timeToAdd, 1)
-		timeToAdd = timeToAdd+20
+		, self.m_ObjectNameLoadTime+timeToAdd, 1)
+		timeToAdd = timeToAdd+self.m_ObjectNameLoadTime
 	end
 end
 
