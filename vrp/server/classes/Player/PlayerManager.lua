@@ -1061,9 +1061,16 @@ function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
 	if target:isDead() then return end
 	if client.deathmatchLobby then return end
 	if target.deathmatchLobby then return end
-	if client.getFaction() and client:getFaction() and client:getFaction():isStateFaction()then 
-		if target.getFaction() and target:getFaction() and not target:getFaction():isStateFaction() then 
-			return client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then 
+		if not target.getFaction or not target:getFaction() then 
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return 
+		end
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then 
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return 
 		end
 	end
 	if target:getDimension() ~= client:getDimension() then return end
@@ -1093,9 +1100,16 @@ function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
 	if Vector3(target.position - client.position):getLength() > 5 then
 		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
 	end
-	if client.getFaction() and client:getFaction() and client:getFaction():isStateFaction()then 
-		if target.getFaction() and target:getFaction() and not target:getFaction():isStateFaction() then 
-			return client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then 
+		if not target.getFaction or not target:getFaction() then 
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return 
+		end
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then 
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return 
 		end
 	end
 	if bArmor then
