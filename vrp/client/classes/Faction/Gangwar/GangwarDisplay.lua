@@ -196,7 +196,7 @@ function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b
 	dxDrawText(getPlayerName(player), x+overViewHealthWidth+height*0.3+width*0.08, y+height*0.05, x+width*0.15, y+height*0.45, tocolor(255, 255, 255, 255), overViewNameSize, "default-bold", "left", "center", false, false, false, true )
 	dxDrawText(zoneName, x+width*0.01, y+height*0.55, x+width, y+height, tocolor( 200, 200, 200, 255), overViewLocationSize, "default-bold")
 	dxDrawImage(x+width - height*0.8, y+height*0.1, height*0.3, height*0.3, "files/images/Gangwar/"..(moveStateImages[moveState] or "stand_icon")..".png")
-	dxDrawImage(x+width-height*0.5, y+height*0.25, height*0.5, height*0.5, "files/images/Weapons/"..(weapon or 0)..".png")
+	dxDrawImage(x+width-height*0.5, y+height*0.25, height*0.5, height*0.5, "files/images/Weapons/"..(getWeaponNameFromID(weapon) or "Fist")..".png")
 end
 
 function GangwarDisplay:drawEnemyOverview( player, x, y, width, height, r, g, b)

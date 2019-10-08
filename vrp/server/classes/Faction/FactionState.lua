@@ -25,9 +25,9 @@ function FactionState:constructor()
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	self.m_InstantTeleportGarage = InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
 	self.m_InstantTeleportGarage:addEnterEvent(
-		function(element) 
-			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end 
-			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end 
+		function(element)
+			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end
+			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end
 		end
 	)
 	self.m_InstantTeleportGarage:addExitEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", true) end end)
@@ -35,7 +35,7 @@ function FactionState:constructor()
 	--self.m_InstantTeleportCol:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	--self.m_InstantTeleportCol:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
-	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
+	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.35, 87.30, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	self.m_InteriorGarageEntrance:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
@@ -215,7 +215,7 @@ function FactionState:putEvidenceInDepot(player, box)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" then
 		if id then
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))		
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
 			StateEvidence:getSingleton():addWeaponsToEvidence(player, id, amount, true)
 		end
 	elseif type == "Munition" then
@@ -281,7 +281,7 @@ function FactionState:loadLSPD(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
+	elevator:addStation("Erdgeschoss", Vector3(258.68, 73.79, 1003.64), 84, 6, 0, 5)
 	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 0, 5)
 
 
@@ -877,16 +877,19 @@ function FactionState:sendMessage(text, r, g, b, ...)
 end
 
 function FactionState:sendStateChatMessage(sourcePlayer, message)
+	if not getElementData(sourcePlayer, "StateChatEnabled") then return sourcePlayer:sendError(_("Du hast den Staatschat deaktiviert!", sourcePlayer)) end
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
 		local playerId = sourcePlayer:getId()
 		local rank = faction:getPlayerRank(playerId)
 		local rankName = faction:getRankName(rank)
-		local r,g,b = 200, 100, 100
+		local r,g,b = 3, 173, 252
 		local receivedPlayers = {}
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in pairs(self:getOnlinePlayers()) do
-			player:sendMessage(text, r, g, b)
+			if getElementData(player, "StateChatEnabled") then
+				player:sendMessage(("[Staat] #ffffff %s"):format(text), r, g, b, true)
+			end
 			if player ~= sourcePlayer then
 				receivedPlayers[#receivedPlayers+1] = player
 			end
@@ -1480,6 +1483,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
 				client:takeEquipment(true)
+				client:setBadge()
+				RadioCommunication:getSingleton():allowPlayer(client, false)
 				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
@@ -1489,9 +1494,12 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 					client:triggerEvent("companyForceOffduty")
 				end
 				client:setFactionDuty(true)
+				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
+				RadioCommunication:getSingleton():allowPlayer(client, true)
 				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)
+				StatisticsLogger:getSingleton():addHealLog(player, 100, "Faction Duty Heal")
 				takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
@@ -1786,11 +1794,11 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
-			for i = 0, 8 do 
+			for i = 0, 8 do
 				local w = getPedWeapon(target,i)
-				if w ~= 0 then 
+				if w ~= 0 then
 					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(target, i))
-				end 
+				end
 			end
 			takeAllWeapons(target)
 

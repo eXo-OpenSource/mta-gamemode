@@ -20,7 +20,7 @@ function FactionVehicle:constructor(data)
 		addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 		addEventHandler("onVehicleExit", self, bind(self.onExit, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-    addEventHandler("onVehicleExplode",self, function()
+    addEventHandler("onVehicleExplode", self, function()
 		setTimer(function(veh)
 			veh:respawn(true)
 			PoliceAnnouncements:getSingleton():setSirenState(veh, "inactive")
@@ -55,11 +55,34 @@ function FactionVehicle:constructor(data)
 	self:setLocked(false) -- Unlock faction vehicles
 	self.m_SpawnDim = data.Dimension 
 	self.m_SpawnInt = data.Interior
+
+	if self.getFaction and self:isStateVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
+	if self.getFaction and self:isRescueVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
+	
+	addEventHandler("onElementDestroy", self, function() 
+		VehicleManager:getSingleton():removeVehicleMark(self)
+	end)
+
 end
 
 function FactionVehicle:destructor()
 	if self.m_VehELSObj then
 		self.m_VehELSObj:delete()
+	end
+	if self:isStateVehicle() then 
+		VehicleManager:getSingleton():removeVehicleMark(self)
 	end
 end
 
@@ -73,6 +96,10 @@ end
 
 function FactionVehicle:isStateVehicle()
   	return self.m_Faction:isStateFaction()
+end
+
+function FactionVehicle:isRescueVehicle()
+  	return self.m_Faction:isRescueFaction()
 end
 
 function FactionVehicle:onStartEnter(player, seat)

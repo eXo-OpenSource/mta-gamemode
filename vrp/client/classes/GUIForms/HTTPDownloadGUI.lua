@@ -18,6 +18,10 @@ function HTTPDownloadGUI:constructor()
 
 	fadeCamera(false, 0.1)
 	self:launchMusic()
+	self.m_LastFile = ""
+	self.m_DownloadSize = 0
+	self.m_DownloadedSize = 0
+	self.m_DownloadSpeed = 0
 end
 
 function HTTPDownloadGUI:virtual_destructor()
@@ -63,13 +67,39 @@ function HTTPDownloadGUI:setStateText(text)
 	self.m_DownloadBar:setText(text)
 end
 
-function HTTPDownloadGUI:setCurrentFile(file)
-	if file:sub(-9, #file) == "index.xml" then
+function HTTPDownloadGUI:updateDownloadProgress(file)
+	if file and file:sub(-9, #file) == "index.xml" then
 		self:setStateText("Lade Dateiliste herunter")
 	else
-		self:setStateText(("%d von %d Dateien heruntergeladen. Aktuelle Datei: %s"):format(self.m_CurrentFile, self.m_FileCount, file))
-		self.m_DownloadBar:setProgress(100/self.m_FileCount*self.m_CurrentFile)
-		self.m_CurrentFile = self.m_CurrentFile + 1
+		if getRemoteRequestInfo then
+			local speedunit = getBiggestUnitByBytes(self.m_DownloadSpeed)
+			local progressunit = getBiggestUnitByBytes(self.m_DownloadSize)
+
+			local downloaded = convertBytesToUnit(self.m_DownloadedSize, progressunit)
+			local toDownload = convertBytesToUnit(self.m_DownloadSize, progressunit)
+
+			local downloadspeed = convertBytesToUnit(self.m_DownloadSpeed, speedunit)
+
+			local remaining = ((self.m_DownloadSize - self.m_DownloadedSize) / self.m_DownloadSpeed)
+
+			if self.m_DownloadSpeed > 0 then
+				remainingTime = string.format("%.2d:%.2d", remaining/60%60, remaining%60)
+			else
+				remainingTime = "00:00"
+			end
+
+			self:setStateText(("%.1f %s von %.1f %s heruntergeladen. Zeit verbleibend: %s (%d %s)"):format(downloaded, progressunit, toDownload, progressunit, remainingTime, downloadspeed, speedunit))
+			self.m_DownloadBar:setProgress(100/self.m_DownloadSize*self.m_DownloadedSize)
+			self.m_DownloadingFile = file
+		else
+			self:setStateText(("%d von %d Dateien heruntergeladen. Aktuelle Datei: %s"):format(self.m_CurrentFile, self.m_FileCount, file))
+			self.m_DownloadBar:setProgress(100/self.m_FileCount*self.m_CurrentFile)
+			self.m_DownloadingFile = file
+			if self.m_DownloadingFile ~= self.m_LastFile then
+				self.m_CurrentFile = self.m_CurrentFile + 1
+			end
+			self.m_LastFile = file
+		end
 	end
 end
 
@@ -85,14 +115,20 @@ function HTTPDownloadGUI:setStatus(status, arg)
 	elseif status == "file count" then
 		self.m_FileCount = arg
 	elseif status == "current file" then
-		self:setCurrentFile(arg)
+		self:updateDownloadProgress(arg)
 	elseif status == "unpacking" then
 		self:setStateText(arg)
-		--self.m_DownloadBar:setBackgroundColor(tocolor(0, 125, 0, 255))
 		self.m_Text:setText("Entpacke Archive...")
 	elseif status == "waiting" then
-		--self.m_DownloadBar:setBackgroundColor(tocolor(0, 125, 0, 255))
 		self:setStateText(arg)
-		--self.m_Text:setText("")
 	end
+end
+
+function HTTPDownloadGUI:setDownloadedSize(size)
+	self.m_DownloadedSize = size
+	self:updateDownloadProgress(self.m_DownloadingFile)
+end
+
+function HTTPDownloadGUI:updateDownloadSpeed(speed)
+	self.m_DownloadSpeed = speed
 end

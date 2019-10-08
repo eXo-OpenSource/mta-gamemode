@@ -8,7 +8,8 @@
 
 MapEditor = inherit(Singleton)
 addRemoteEvents{"MapEditor:placeObject", "MapEditor:requestControlForObject", "MapEditor:requestMapInfos", "MapEditor:requestObjectInfos", "MapEditor:createNewMap", "MapEditor:setMapStatus",
-    "MapEditor:startMapEditing", "MapEditor:removeObject", "MapEditor:removeWorldModel", "MapEditor:restoreWorldModel", "MapEditor:requestEditingPlayers", "MapEditor:forceCloseEditor"}
+    "MapEditor:startMapEditing", "MapEditor:removeObject", "MapEditor:removeWorldModel", "MapEditor:restoreWorldModel", "MapEditor:requestEditingPlayers", "MapEditor:forceCloseEditor",
+    "MapEditor:changeSettings"}
 
 function MapEditor:constructor()
     --map loading
@@ -26,6 +27,7 @@ function MapEditor:constructor()
     self.m_WorldModelRestoreBind = bind(self.restoreWorldModel, self)
     self.m_EditingPlayersRequestBind = bind(self.sendEditingPlayersToClient, self)
     self.m_ForceCloseBind = bind(self.forceCloseEditor, self)
+    self.m_SettingsChangeBind = bind(self.changeSettings, self)
     self.m_CommandBind = bind(self.startEditing, self)
     
     addEventHandler("MapEditor:placeObject", root, self.m_PlaceObjectBind)
@@ -40,6 +42,7 @@ function MapEditor:constructor()
     addEventHandler("MapEditor:restoreWorldModel", root, self.m_WorldModelRestoreBind)
     addEventHandler("MapEditor:requestEditingPlayers", root, self.m_EditingPlayersRequestBind)
     addEventHandler("MapEditor:forceCloseEditor", root, self.m_ForceCloseBind)
+    addEventHandler("MapEditor:changeSettings", root, self.m_SettingsChangeBind)
 
     addCommandHandler("mapeditor", self.m_CommandBind)
 end
@@ -239,7 +242,10 @@ function MapEditor:startMapEditing(player, id)
     end
 end
 
-function MapEditor:setMapStatus(id)
+function MapEditor:setMapStatus(id, player)
+    if not client then
+        client = player
+    end
     if client:getRank() < ADMIN_RANK_PERMISSION["setMapStatus"] then
         client:sendError("Du bist nicht berechtigt!")
         return
@@ -283,4 +289,30 @@ function MapEditor:forceCloseEditor(name)
         self:setPlayerInEditorMode(player, false, true)
         Admin:getSingleton():sendShortMessage(_("%s hat den Map Editor von %s geschlossen!", client, client:getName(), name))
     end
+end
+
+function MapEditor:changeSettings(settingsTable)
+    local id = settingsTable[1]
+    local name = settingsTable[2]
+    local activate = settingsTable[3]
+    local saveObjects = settingsTable[4]
+    local deactivatable = settingsTable[5]
+
+    if name ~= false then
+        local result = MapLoader:getSingleton():setMapName(id, name)
+        if result == "invalid name" then 
+            client:sendError(_("Du darfst in dem Map Namen nur alphanumerische Zeichen verwenden!", client))
+        elseif result == "already exists" then
+            client:sendError(_("Es existiert bereits eine Map mit dem Namen \"%s\"!", client, name))
+        end
+    end
+
+    MapLoader:getSingleton():setMapObjectSavingEnabled(id, saveObjects)
+    MapLoader:getSingleton():setMapDeactivatable(id, deactivatable)
+
+    if MapLoader:getSingleton():getMapStatus(id) ~= activate then
+        self:setMapStatus(id, client)
+    end
+
+    client:sendSuccess("Einstellungen gespeichert!")
 end

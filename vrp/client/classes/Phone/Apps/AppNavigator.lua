@@ -61,6 +61,7 @@ AppNavigator.Positions = {
 		["Tuning-Shop"] = Vector3(1035.58, -1028.90, 32.10),
 		["Gebrauchtwagenhändler"] = Vector3(1098.83, -1240.20, 15.55),
 		["Kart-Strecke"] = Vector3(1262.375, 188.479, 19.5),
+		["Schrottplatz"] = Vector3(2198.86, -1977.55, 13.56),
 	},
 	["Jobs"] = {
 		["Pizza-Lieferant"] = Vector3(2096.89, -1826.28, 13.24),

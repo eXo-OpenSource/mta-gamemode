@@ -24,6 +24,12 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
+		
+		-- Sawed-Off: 
+		setWeaponProperty(26, skill ,"maximum_clip_ammo", 1) -- GTA-Std: 2
+		setWeaponProperty(26, skill ,"flags", 0x008000) -- GTA-STD: no flag
+		setWeaponProperty(26, skill ,"anim_loop_bullet_fire" , 0.32) -- GTA-Std: 0.20000001788139
+
 		--Uzi:
 		setWeaponProperty(28, skill, "accuracy",1.1999999523163)
 		-- MP5:
@@ -107,7 +113,6 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 	--if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
 	local attacker = client
-
 	if client:getData("isInDeathMatch") and target:getData("isInDeathMatch") then
 		if not DeathmatchManager:getSingleton():isDamageAllowed(target, attacker, weapon) then return end
 	end
@@ -130,7 +135,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 								target.m_IsWearingHelmet = false
 								target.m_Helmet = false
 								target:setData("isFaceConcealed", false)
-								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", source, 200,200,0)
+								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", client, 200,200,0)
 								target:triggerEvent("clientBloodScreen")
 								return
 							end
@@ -164,7 +169,6 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 						realLoss = basicDamage -- workaround
 					end
 				end
-
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
 				target:dropPlayerAttachedObjectOnDamage()
 			end
@@ -235,6 +239,20 @@ end
 
 function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
 	--StatisticsLogger:getSingleton():addDamageLog(client, target, weapon, bodypart, loss)
+	local count, inst = DamageManager:getSingleton():getDamageByWeapon(target, weapon)
+	if target and isElement(target) and not target.deathmatchLobby then
+		if count > 0 and inst and loss > 0  then 
+			if count > 10 then 
+				if loss > inst:getAmount() then 
+					inst:setAmount(loss)
+				end
+			else 
+				DamageManager:getSingleton():addDamage(bodypart, weapon, loss, target)
+			end
+		else 
+			DamageManager:getSingleton():addDamage(bodypart, weapon, loss, target)
+		end
+	end
 	self:addDamageLog(target, loss, client, weapon, bodypart)
 end
 
@@ -314,6 +332,18 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		end
 	end
 	self:addGangwarDamage(player, attacker, loss)
+	local count, inst = DamageManager:getSingleton():getDamageByWeapon(player, weapon)
+	if count > 0 and inst and loss > 0 and not player.deathmatchLobby then 
+		if count > 10 then 
+			if loss > inst:getAmount() then 
+				inst:setAmount(loss)
+			end
+		else 
+			DamageManager:getSingleton():addDamage(bodypart, weapon, loss, player)
+		end
+	else 
+		DamageManager:getSingleton():addDamage(bodypart, weapon, loss, player)
+	end
 	self:addDamageLog(player, loss, attacker, weapon, bodypart)
 end
 

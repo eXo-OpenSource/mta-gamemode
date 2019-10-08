@@ -67,7 +67,7 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
 	ElementInfo:new(self.m_ItemDepot[Id], "Itemlager")
-	
+
 	self.m_EquipmentDepot[Id] = createObject(964, 2819.84, -1173.51, 1024.57, 0, 0, 0)
 	self.m_EquipmentDepot[Id]:setDimension(Id)
 	self.m_EquipmentDepot[Id]:setInterior(8)
@@ -187,11 +187,11 @@ function FactionEvil:onEquipmentDepotClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
 			local box = player:getPlayerAttachedObject()
-			if box and isElement(box) and box.m_Content then 
+			if box and isElement(box) and box.m_Content then
 				self:putOrderInDepot(player, box)
 			else
 				if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
-					setElementData(player, "isEquipmentGUIOpen", true, true) 
+					setElementData(player, "isEquipmentGUIOpen", true, true)
 					player.m_LastEquipmentDepot = source
 					player:getFaction():getDepot():showEquipmentDepot(player)
 				end
@@ -202,12 +202,12 @@ function FactionEvil:onEquipmentDepotClicked(button, state, player)
 	end
 end
 
-function FactionEvil:isSpecialProduct(product) 
-	return (product == "RPG-7" or product == "Granate" or product == "Scharfschützengewehr" or product == "Gasgranate") 
+function FactionEvil:isSpecialProduct(product)
+	return (product == "RPG-7" or product == "Granate" or product == "Scharfschützengewehr" or product == "Gasgranate")
 end
 
 function FactionEvil:putOrderInDepot(player, box)
-	local content = box.m_Content 
+	local content = box.m_Content
 	local type, product, amount, price, id = unpack(box.m_Content)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" or self:isSpecialProduct(product) then
@@ -217,7 +217,7 @@ function FactionEvil:putOrderInDepot(player, box)
 				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
 				player:getFaction():addLog(player, "Lager", ("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
 			end
-		else 
+		else
 			if id then
 				depot:addWeaponD(id,amount)
 				depot:addMagazineD(id,amount)
@@ -229,10 +229,10 @@ function FactionEvil:putOrderInDepot(player, box)
 		if id then
 			depot:addMagazineD(id,amount)
 			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
-			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product)) 
+			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
 		end
-	else 
-		depot:addEquipment(player, product, amount, true) 
+	else
+		depot:addEquipment(player, product, amount, true)
 		player:getFaction():sendShortMessage(("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
 		player:getFaction():addLog(player, "Lager", ("%s hat %s Stück %s ins Lager gelegt!"):format(player:getName(), amount, product))
 	end
@@ -256,15 +256,15 @@ function FactionEvil:loadYakGates(factionId)
 
 end
 
-function FactionEvil:loadTriadGates(factionId) 
-	 
+function FactionEvil:loadTriadGates(factionId)
+
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120-4.04))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)	
+	local pillar = createObject( 2774, 1906.836, 967.180+0.6, 10.820-7)
 	local door = Door:new(6400, Vector3(1908.597, 967.407, 10.750), Vector3(0, 0, 90))
 	setElementDoubleSided(door.m_Door, true)
 	local crate = createObject(3576, 1909.020,965.252,11.320)
@@ -277,12 +277,12 @@ function FactionEvil:loadTriadGates(factionId)
 end
 
 
-function FactionEvil:loadCartelGates( factionId) 
-	 
+function FactionEvil:loadCartelGates( factionId)
+
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(6400, Vector3(2520.203, -1493.003, 25.094), Vector3(0, 0, 270), Vector3(2520.203, -1493.003, 20.094))
 	lcnGates[2] = Gate:new(16773, Vector3(2446.400, -1464.300, 23.800), Vector3(0, 0, 270), Vector3(2446.400, -1464.300, 17.800))
-	
+
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
@@ -309,7 +309,7 @@ function FactionEvil:loadLCNGates(factionId)
 end
 
 function FactionEvil:onBarrierGateHit(player, gate)
-    if player:getFaction() == gate:getOwner() or player:getFaction():getAllianceFaction() == gate:getOwner() then 
+    if player:getFaction() == gate:getOwner() or player:getFaction():getAllianceFaction() == gate:getOwner() then
 		return true
 	else
 		return false
@@ -425,6 +425,7 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
 		player:setHealth(100)
 		player:setArmor(100)
+		StatisticsLogger:getSingleton():addHealLog(player, 100, "Faction Duty Heal")
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
 		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	end

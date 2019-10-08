@@ -217,7 +217,7 @@ function MapLoader:createNewMap(name, creator)
 
     local result, numrows, insertId = sql:queryFetch("INSERT INTO ??_map_editor_maps (Name, Creator, SaveObjects, Activated, Deactivatable) VALUES(?, ?, ?, ?, ?)", sql:getPrefix(), name, creator:getId(), 1, 1, 1)
     if result then
-        self.m_MapInfos[insertId] = {name, creator:getName(), 1, 1}
+        self.m_MapInfos[insertId] = {name, creator:getName(), 1, 1, 1}
         self.m_Maps[insertId] = {}
         self.m_MapRemovals[insertId] = {}
         return true
@@ -251,6 +251,39 @@ function MapLoader:deactivateMap(id)
             end
         end
 
+        return true
+    end
+end
+
+function MapLoader:setMapName(id, name)
+    if not name:match("^[a-zA-Z0-9_.%[%]]*$") then
+        return "invalid name"
+    end
+    for i = 1, #self.m_MapInfos do
+        if self.m_MapInfos[i][1] == name then
+            return "already exists"
+        end
+    end
+    
+    local result = sql:queryExec("UPDATE ??_map_editor_maps SET Name = ? WHERE Id = ?", sql:getPrefix(), name, id)
+    if result then
+        self.m_MapInfos[id][1] = name
+        return true
+    end
+end
+
+function MapLoader:setMapObjectSavingEnabled(id, state)
+    local result = sql:queryExec("UPDATE ??_map_editor_maps SET SaveObjects = ? WHERE Id = ?", sql:getPrefix(), fromboolean(state), id)
+    if result then
+        self.m_MapInfos[id][4] = fromboolean(state)
+        return true
+    end
+end
+
+function MapLoader:setMapDeactivatable(id, state)
+    local result = sql:queryExec("UPDATE ??_map_editor_maps SET Deactivatable = ? WHERE Id = ?", sql:getPrefix(), fromboolean(state), id)
+    if result then
+        self.m_MapInfos[id][5] = fromboolean(state)
         return true
     end
 end

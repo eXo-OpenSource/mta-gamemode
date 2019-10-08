@@ -55,23 +55,17 @@ end
 
 function SkinSelectGUI:loadSkins()
 	local row = 0
-	local i = 1
 	local skin_count = table.size(self.m_Edit and self.m_SkinTableEdit or self.m_SkinTable)
 
 	self.m_ScrollableArea:clear()
 	self.m_ScrollableArea:resize(15, math.ceil(skin_count/5)*5)
 	self.m_ScrollableArea:updateGrid()
-	self.m_SkinUpdateTimer = setTimer(function()
+
+	for i = 1, skin_count, 1 do
 		local skinId = self.m_Edit and self.m_SkinTableEdit[i] or self.m_SkinTable[i]
 		local x, y, w, h = (i-1)*3 + 1 - row*images_per_row*3, row*images_per_row + 1, 3, 5
 
-		local image = GUIGridWebView:new(x, y, w, h, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..skinId, true, self.m_ScrollableArea)
-		image.onDocumentReady = function()
-			nextframe(function()
-				image:setRenderingEnabled(false)
-				image:setControlsEnabled(false)
-			end)
-		end
+		local image = GUIGridImage:new(x, y, w, h, string.format("files/images/Skins/full/%s.jpg", skinId), self.m_ScrollableArea)
 		image.onLeftClick = function()
 			if self.m_Edit then return false end
 			if self.m_GroupType == "faction" then
@@ -102,12 +96,9 @@ function SkinSelectGUI:loadSkins()
 					self.m_AllSkins[skinId] = index - 1
 				end
 			end
-		--else
-			--GUIGridLabel:new(x, y + h - 1, w, 1, "Skin "..skinId, self.m_ScrollableArea):setAlignX("center")
 		end
 		if i % images_per_row == 0 then row = row + 1 end
-		i = i + 1
-	end, 50, skin_count)
+	end
 end
 
 function SkinSelectGUI:setEditable()

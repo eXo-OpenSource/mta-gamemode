@@ -13,7 +13,6 @@ function Core:constructor()
 	Provider:new()
 	influx = InfluxDB:new("exo_mta_client", "uMZNF3ot6hGvsP_NTggytFveYfUJfWaz", "exo_mta_cperf")
 	InfluxLogging:new()
-
 	Cursor = GUICursor:new()
 	self.m_WhitelistChecker = setTimer(bind(self.checkDomainsWhitelist, self), 1000, 0)
 
@@ -109,6 +108,7 @@ function Core:ready() --onClientResourceStart
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
 	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
+	localPlayer:setChatSettings()
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
@@ -122,7 +122,7 @@ function Core:ready() --onClientResourceStart
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()
-
+	Damage:new()
 	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
 	if core:get("Other", "Movehead", true) then
 		localPlayer:startLookAt()
@@ -132,10 +132,11 @@ function Core:ready() --onClientResourceStart
 	else
 		setFarClipDistance(992)
 	end
-	if not core:get("Sounds", "Interiors", true) then 
+	if not core:get("Sounds", "Interiors", true) then
 		setInteriorSoundsEnabled(false)
 	end
 
+	localPlayer.m_DisplayMode = core:get("HUD", "ToggleQuickDisplay", true)
 	--Light = DynamicLightingBind:getSingleton() | disabled needs to be rewritten for mutliple pass
 
 	NoDm:new()
@@ -171,6 +172,7 @@ function Core:ready() --onClientResourceStart
 	Help:new()
 	ClientStatistics:new()
 	Nametag:new()
+	VehicleMark:new()
 	PickupWeaponManager:new()
 
 	if EVENT_HALLOWEEN then
@@ -194,6 +196,7 @@ function Core:ready() --onClientResourceStart
 end
 
 function Core:afterLogin()
+	Time:new()
 	RadioGUI:new()
 	HUDSpeedo:new()
 	HUDAviation:new()

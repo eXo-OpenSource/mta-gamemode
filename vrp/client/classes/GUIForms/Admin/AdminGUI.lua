@@ -41,7 +41,7 @@ function AdminGUI:constructor(money)
 	self.m_RespawnRadius:setText("50")
 
 	self:addAdminButton("adminAnnounce", "senden", self.onGeneralButtonClick, 490, 10, 100, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("smode", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
+	self:addAdminButton("aduty", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", self.onGeneralButtonClick, 10, 100, 250, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", self.onGeneralButtonClick, 10, 140, 250, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", self.onGeneralButtonClick, 75, 180, 185, 30, Color.Accent, tabAllgemein)
@@ -552,7 +552,7 @@ function AdminGUI:onGeneralButtonClick(func)
 				end)
 	elseif func == "syncForum" then
 		ForumPermissionsGUI:new()
-	elseif func == "smode" or func == "clearchat" or func == "clearAd" or func == "resetAction" then
+	elseif func == "aduty" or func == "smode" or func == "clearchat" or func == "clearAd" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "loginFix" then
 		triggerServerEvent("adminLoginFix", localPlayer, self.m_PlayerID:getText())
@@ -561,7 +561,7 @@ function AdminGUI:onGeneralButtonClick(func)
 		VehicleTuningTemplateGUI:getSingleton():open()
 	elseif func == "transactionMenu" then
 		self:close()
-		AdminTransactionGUI:new() 
+		AdminTransactionGUI:new()
 	elseif func == "multiAccountMenu" then
 		self:close()
 		MultiAccountWindow:new()

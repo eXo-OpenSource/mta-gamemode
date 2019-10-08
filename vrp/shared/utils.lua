@@ -582,6 +582,17 @@ function convertNumber ( number )
 	return formatted
 end
 
+function convertFrequency ( number )
+	local formatted = number
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d)", '%2.%1')
+		if ( k==0 ) then
+			break
+		end
+	end
+	return formatted
+end
+
 function toMoneyString(money)
 	if tonumber(money) then
 		return convertNumber(math.floor(money)).."$"
@@ -971,4 +982,19 @@ function math.randomchoice(t) --Selects a random item from a table
     end
     index = keys[math.random(1, #keys)]
     return t[index], index
+end
+
+function getBiggestUnitByBytes(value)
+	if value < 1048576 then
+		return "KB/s"
+	end
+	return "MB/s"
+end
+
+function convertBytesToUnit(value, unit)
+	if unit == "MB/s" then
+		return value / 1048576
+	elseif unit == "KB/s" then
+		return value / 1024
+	end
 end

@@ -9,7 +9,7 @@ VehicleCustomTextureGUI = inherit(GUIForm)
 addRemoteEvents{"vehicleCustomTextureShopEnter", "vehicleCustomTextureShopExit", "vehicleCustomTextureShopInfo"}
 
 function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
-    GUIForm.constructor(self, 10, 10, screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight*0.7)
+    GUIForm.constructor(self, 10, 10, screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight*0.8)
 
     -- Part selection form
     do
@@ -18,8 +18,10 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
      	GUIImage:new(0, 30, self.m_Width, self.m_Height*0.13, "files/images/Shops/CustomTexture.jpg", self.m_Window)
 		self.m_Color1 = GUIButton:new(self.m_Width*0.05, 30+self.m_Height*0.15, self.m_Width*0.42, self.m_Height*0.05, _"Farbe 1", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 		self.m_Color2 = GUIButton:new(self.m_Width*0.53, 30+self.m_Height*0.15, self.m_Width*0.42, self.m_Height*0.05, _"Farbe 2", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+		
+		self.m_Remove = GUIButton:new(self.m_Width*0.05, 30+self.m_Height*0.22, self.m_Width*0.9, self.m_Height*0.05, _"Textur entfernen", self.m_Window):setBackgroundColor(Color.Red):setBarEnabled(true)
 
-		self.m_TextureList = GUIGridList:new(0, 30+self.m_Height*0.22, self.m_Width, self.m_Height*0.67, self.m_Window)
+		self.m_TextureList = GUIGridList:new(0, 30+self.m_Height*0.29, self.m_Width, self.m_Height*0.57, self.m_Window)
         self.m_TextureList:addColumn(_"Name (Doppelklick zum Kauf)", 1)
 		self.m_MuteSound = GUILabel:new(self.m_Width-55, 5, 28, 28, FontAwesomeSymbols.SoundOn, self):setFont(FontAwesome(22))
 		self.m_MuteSound.onLeftClick = function()
@@ -34,8 +36,8 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 
 		end
 
-        GUIRectangle:new(0, 30+self.m_Height*0.895, self.m_Width, self.m_Height*0.005, Color.Accent, self.m_Window)
-        GUILabel:new(0, 30+self.m_Height*0.89, self.m_Width, self.m_Height*0.075, "↕", self.m_Window):setAlignX("center")
+        GUIRectangle:new(0, 30+self.m_Height*0.875, self.m_Width, self.m_Height*0.005, Color.Accent, self.m_Window)
+        GUILabel:new(0, 30+self.m_Height*0.875, self.m_Width, self.m_Height*0.075, "↕", self.m_Window):setAlignX("center")
     end
 
 
@@ -67,6 +69,11 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
             end
 			)
 		self.m_ColorPicker:setColor(unpack(self.m_Tuning:getTuning("Color2")))
+	end
+
+	self.m_Remove.onLeftClick = function() 
+		QuestionBox:new(_("Möchtest du wirklich alle Texturen von diesem Fahrzeug entfernen?", localPlayer),
+		function() triggerServerEvent("vehicleCustomTextureRemove", localPlayer) end)
 	end
 
     self.m_Vehicle = vehicle
@@ -135,7 +142,7 @@ function VehicleCustomTextureGUI:initTextures(textures)
 		item.Id = row["Id"]
         item.onLeftClick = bind(self.Texture_Click, self)
 		item.onLeftDoubleClick = function()
-			QuestionBox:new(_("Möchtest du die Textur wirklich für 120.000$ kaufen?"),
+			QuestionBox:new(_("Möchtest du die Textur wirklich für $%s kaufen?", (self.m_Vehicle:getData("TextureCount") and self.m_Vehicle:getData("TextureCount") > 0 and convertNumber(40000)) or convertNumber(120000)),
 				function()
 					triggerServerEvent("vehicleCustomTextureBuy", self.m_Vehicle, item.Id, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"))
 				end

@@ -562,6 +562,7 @@ function Faction:sendSuccess(text)
 end
 
 function Faction:sendChatMessage(sourcePlayer, message)
+	if not getElementData(sourcePlayer, "FactionChatEnabled") then return sourcePlayer:sendError(_("Du hast den Fraktionschat deaktiviert!", sourcePlayer)) end
 	--if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
 		local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
 		if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
@@ -578,7 +579,9 @@ function Faction:sendChatMessage(sourcePlayer, message)
 		message = message:gsub("%%", "%%%%")
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in ipairs(self:getOnlinePlayers()) do
-			player:sendMessage(text, r, g, b)
+			if getElementData(player, "FactionChatEnabled") then
+				player:sendMessage(text, r, g, b)
+			end
 			if player ~= sourcePlayer then
 	            receivedPlayers[#receivedPlayers+1] = player
 	        end
@@ -590,12 +593,15 @@ function Faction:sendChatMessage(sourcePlayer, message)
 end
 
 function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
+	if not getElementData(sourcePlayer, "AllianceChatEnabled") then return sourcePlayer:sendError(_("Du hast den Bündnischat deaktiviert!", sourcePlayer)) end
 	local playerId = sourcePlayer:getId()
 	local receivedPlayers = {}
 	local r,g,b = 20, 140, 0
 	local text = ("[Bündnis] %s: %s"):format(getPlayerName(sourcePlayer), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, r, g, b)
+		if getElementData(player, "AllianceChatEnabled") then
+			player:sendMessage(text, r, g, b)
+		end
 		if player ~= sourcePlayer then
 			receivedPlayers[#receivedPlayers+1] = player
 		end
@@ -603,7 +609,7 @@ function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
 	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "factionBnd:"..self.m_Id, message, receivedPlayers)
 end
 
-function Faction:respawnVehicles( isAdmin )
+function Faction:respawnVehicles(isAdmin)
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min

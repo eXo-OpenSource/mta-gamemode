@@ -27,7 +27,7 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false --quests, mostly
+EVENT_CHRISTMAS = false --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
 SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
@@ -109,6 +109,20 @@ RANK[8] = "StellvProjektleiter"
 RANK[9] = "Projektleiter"
 
 
+RANKSCOREBOARD = {}
+RANKSCOREBOARD[-1] = "Banned"
+RANKSCOREBOARD[0] = "User"
+RANKSCOREBOARD[1] = "Ticket"
+RANKSCOREBOARD[2] = "Clan"
+RANKSCOREBOARD[3] = "Support"
+RANKSCOREBOARD[4] = "Moderator"
+RANKSCOREBOARD[5] = "Admin"
+RANKSCOREBOARD[6] = "Admin"
+RANKSCOREBOARD[7] = "Admin"
+RANKSCOREBOARD[8] = "Admin"
+RANKSCOREBOARD[9] = "Admin"
+
+
 local r2 = {}
 for k, v in pairs(RANK) do
 	r2[k] = v
@@ -145,6 +159,7 @@ ADMIN_RANK_PERMISSION = {
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["vehicleTexture"] = RANK.Moderator,
 	["spect"] = RANK.Supporter,
+	["aduty"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
@@ -510,13 +525,14 @@ AD_DURATIONS = {
 
 BODYPART_NAMES = {
 	[3] = "Körper",
-	[4] =  "Arsch",
+	[4] =  "Hüfte",
 	[5] =  "Linker Arm",
 	[6] =  "Rechter Arm",
 	[7] =  "Linkes Bein",
 	[8] =  "Rechtes Bein",
 	[9] =  "Kopf"
 }
+
 
 MEDIC_TIME = 180000
 DEATH_TIME = 30000

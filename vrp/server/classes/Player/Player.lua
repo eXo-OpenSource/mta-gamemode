@@ -219,7 +219,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin, RadioCommunication FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -284,6 +284,12 @@ function Player:loadCharacterInfo()
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end
+
+	setElementData(self, "Badge", nil, true)
+	setElementData(self, "BadgeTitle", nil, true)
+	setElementData(self, "BadgeImage", nil, true)
+	setElementData(self, "Damage:isTreating", nil, true)
+	self:setPublicSync("LastHealTime", 0)
 end
 
 
@@ -687,7 +693,11 @@ end
 
 function Player.staticFactionChatHandler(self, command, ...)
 	if self.m_Faction then
-		self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		if self.m_Faction:getId() >= 1 and self.m_Faction:getId() <= 3 then
+			Player.staticStateFactionChatHandler(self, command, ...)
+		else
+			self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		end
 	end
 end
 
@@ -1693,4 +1703,10 @@ end
 
 function Player:getWalkingstyle()
 	return self.m_WalkingStyle or 0
+end
+
+function Player:setBadge(badgeTitle, badgeId, badgeImage)
+	setElementData(self, "Badge", badgeId, true)
+	setElementData(self, "BadgeTitle", badgeTitle, true)
+	setElementData(self, "BadgeImage", badgeImage, true)
 end
