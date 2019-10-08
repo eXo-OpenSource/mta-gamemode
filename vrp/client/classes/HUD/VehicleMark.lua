@@ -81,7 +81,10 @@ function VehicleMark:render()
 	if not core:get("HUD", "DisplayVehicleMark", true) then return end
 	local cx, cy, cz = getCameraMatrix()
 	for v, mark in pairs(self.m_Stream) do
-
+		if not v or not isElement(v) then 
+			self.m_Stream[v] = nil
+			return 
+		end
 		if not mark then return end
 		
 		if self.m_Offsets[v:getModel()] then

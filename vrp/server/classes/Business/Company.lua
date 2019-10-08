@@ -502,7 +502,7 @@ function Company:respawnVehicles()
 	local fails = 0
 	local vehicles = 0
 	for companyId, vehicle in pairs(companyVehicles) do
-		if vehicle:getFaction() == self then
+		if vehicle:getCompany() == self then
 			vehicles = vehicles + 1
 			if not vehicle:respawn(true, isAdmin and true or false) then
 				fails = fails + 1

@@ -20,7 +20,7 @@ function FactionVehicle:constructor(data)
 		addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 		addEventHandler("onVehicleExit", self, bind(self.onExit, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-    addEventHandler("onVehicleExplode",self, function()
+    addEventHandler("onVehicleExplode", self, function()
 		setTimer(function(veh)
 			veh:respawn(true)
 			PoliceAnnouncements:getSingleton():setSirenState(veh, "inactive")
@@ -56,20 +56,25 @@ function FactionVehicle:constructor(data)
 	self.m_SpawnDim = data.Dimension 
 	self.m_SpawnInt = data.Interior
 
-	if self:isStateVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+	if self.getFaction and self:isStateVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
 		local count = 1 
 		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
 			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
 		end
 		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
 	end
-	if self:isRescueVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+	if self.getFaction and self:isRescueVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
 		local count = 1 
 		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
 			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
 		end
 		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
 	end
+	
+	addEventHandler("onElementDestroy", self, function() 
+		VehicleManager:getSingleton():removeVehicleMark(self)
+	end)
+
 end
 
 function FactionVehicle:destructor()

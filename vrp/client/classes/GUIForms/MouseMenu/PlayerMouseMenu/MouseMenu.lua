@@ -75,16 +75,6 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Building)
 	end
 
-	if localPlayer:getFactionId() == 4 and localPlayer:getPublicSync("Faction:Duty") == true then
-		self:addItem(_"Medic: heilen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionRescueHealPlayerQuestion", localPlayer, self:getElement())
-				end
-			end
-		):setIcon(FontAwesomeSymbols.Medikit)
-	end
-
 	if localPlayer:getRank() >= RANK.Supporter then
 		self:addItem(_"Admin: kicken",
 			function()
