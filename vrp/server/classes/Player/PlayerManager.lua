@@ -1072,9 +1072,9 @@ function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
 		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
 	end
 	if not bArmor then
-		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte dir Munition geben!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil,  client, client, target, bArmor, value)
+		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte dir Munition geben!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil,  nil, client, target, bArmor, value)
 	else
-		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte mit dir Schutzwesten tauschen!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil, client, client, target, bArmor, value)
+		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte mit dir Schutzwesten tauschen!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil, nil, client, target, bArmor, value)
 	end
 end
 
