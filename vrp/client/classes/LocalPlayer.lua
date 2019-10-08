@@ -29,8 +29,9 @@ function LocalPlayer:constructor()
 	self.m_FadeOut = bind(self.fadeOutScope, self)
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
 	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
+	self.m_BikeBug = setTimer(bind(self.checkBikeBug, self), 250, 0)
 
-	
+
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -82,7 +83,7 @@ function LocalPlayer:constructor()
 
 	local col3 =  createColRectangle( 1837.515,  902.93, 160, 120) -- triad base
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col3)
-	
+
 	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 ) -- palo bank
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col4)
 
@@ -96,7 +97,7 @@ function LocalPlayer:constructor()
 
 end
 
-function LocalPlayer:setChatSettings() 
+function LocalPlayer:setChatSettings()
 	setElementData(localPlayer, "ChatEnabled", core:get("Chat", "enableChat", true))
 	setElementData(localPlayer, "FactionChatEnabled", core:get("Chat", "enableFactionChat", true))
 	setElementData(localPlayer, "CompanyChatEnabled", core:get("Chat", "enableCompanyChat", true))
@@ -166,16 +167,16 @@ function LocalPlayer:Event_OnObjectBrake( attacker )
 	end
 end
 
-function LocalPlayer:Event_allowRadioCommunication(bool) 
+function LocalPlayer:Event_allowRadioCommunication(bool)
 	self.m_AllowRadioCommunication = bool
-	if not bool then 
+	if not bool then
 		if RadioCommunicationGUI:isInstantiated() then
-			delete(RadioCommunicationGUI:getSingleton())	
+			delete(RadioCommunicationGUI:getSingleton())
 		end
 	end
 end
 
-function LocalPlayer:isRadioCommunicationAllowed() return self.m_AllowRadioCommunication end 
+function LocalPlayer:isRadioCommunicationAllowed() return self.m_AllowRadioCommunication end
 
 
 function LocalPlayer:onAlcoholLevelChange()
@@ -440,13 +441,13 @@ function LocalPlayer:Event_playerWasted()
 	self:createWastedTimer()
 end
 
-function LocalPlayer:setCameraOnTop() 
+function LocalPlayer:setCameraOnTop()
 	local x,y,z = getElementPosition(localPlayer)
 	local xr, yr, zr = getElementRotation(localPlayer)
 	if zr <= 180 then
 		roll = zr
 	elseif zr >= 180 then
-		roll = -(360 - zr) 
+		roll = -(360 - zr)
 	end
 	Camera.setMatrix(x, y, z+3, x, y, z, roll)
 end
@@ -476,7 +477,7 @@ function LocalPlayer:deathRender(deltaTime)
 	if zr <= 180 then
 		roll = zr
 	elseif zr >= 180 then
-		roll = -(360 - zr) 
+		roll = -(360 - zr)
 	end
 	Camera.setMatrix(x, y, z + self.m_Add, x, y, z, roll)
 end
@@ -819,7 +820,7 @@ function LocalPlayer:getWorldVehicle()
 	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
 	local px, py, pz = getElementPosition(localPlayer)
 	local lookX, lookY, lookZ = px+(nx)*3, py+(ny)*3, pz+(nz)*3
-	local result = {processLineOfSight(px, py, pz, lookX, lookY, lookZ, true, true, false, false, false, false, false, true, localPlayer, true) } 
+	local result = {processLineOfSight(px, py, pz, lookX, lookY, lookZ, true, true, false, false, false, false, false, true, localPlayer, true) }
 
 	if result[1] then
 		if result[5] then
@@ -924,5 +925,15 @@ function LocalPlayer:Event_tryEnterExit(object, name, icon, checkRange, allowVeh
 		if self.m_Entrance and self.m_Entrance:isInstantiated() then delete(self.m_Entrance);self.m_Entrance = nil; end
 		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon, checkRange, allowVehicleEnter)
 		self.m_LastEntrance = getTickCount()
+	end
+end
+
+function LocalPlayer:checkBikeBug()
+	if localPlayer.vehicle and localPlayer.vehicle.vehicleType == "Bike" then
+		local distance = (localPlayer.position - localPlayer.vehicle.position).length
+
+		if distance > 1.5 then
+			triggerServerEvent("removeMeFromVehicle", localPlayer, distance)
+		end
 	end
 end
