@@ -251,7 +251,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 						player:getFaction():addLog(player, "Item", ("hat %d %s für $%s gekauft!"):format(amount, itemName, price))
 					end
 				else 
-					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction):getName()))
+					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction) and FactionManager:getSingleton():getFromId(forFaction):getName()))
 				end
 			else 
 				player:sendError(_("Du kannst dieses Item nicht kaufen!", player))

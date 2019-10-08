@@ -1053,12 +1053,19 @@ function PlayerManager:Event_AttachToVehicle()
 end
 
 function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
+	if not client or not isElement(client) then return end 
+	if not target or not isElement(target) then return end
 	if not client:isLoggedIn() then return end
 	if not target:isLoggedIn() then return end
 	if client == target then return end
 	if target:isDead() then return end
 	if client.deathmatchLobby then return end
 	if target.deathmatchLobby then return end
+	if client.getFaction() and client:getFaction() and client:getFaction():isStateFaction()then 
+		if target.getFaction() and target:getFaction() and not target:getFaction():isStateFaction() then 
+			return client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+		end
+	end
 	if target:getDimension() ~= client:getDimension() then return end
 	if target:getInterior() ~= client:getInterior() then return end
 	if Vector3(target.position - client.position):getLength() > 5 then
@@ -1073,6 +1080,8 @@ end
 
 
 function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
+	if not client or not isElement(client) then return end 
+	if not target or not isElement(target) then return end
 	if not client:isLoggedIn() then return end
 	if not target:isLoggedIn() then return end
 	if client == target then return end
@@ -1083,6 +1092,11 @@ function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
 	if target:getInterior() ~= client:getInterior() then return end
 	if Vector3(target.position - client.position):getLength() > 5 then
 		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
+	end
+	if client.getFaction() and client:getFaction() and client:getFaction():isStateFaction()then 
+		if target.getFaction() and target:getFaction() and not target:getFaction():isStateFaction() then 
+			return client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+		end
 	end
 	if bArmor then
 		local armor = target:getArmor()

@@ -22,7 +22,7 @@ function StatisticsLogger:destructor()
 end
 
 function StatisticsLogger:getZone(player)
-	if player then
+	if player and isElement(player) then
 		return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
 	end
 	return "unknown"
