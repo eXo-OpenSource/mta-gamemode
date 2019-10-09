@@ -57,7 +57,7 @@ function RadioCommunication:broadcast(sender, frequency, message)
         for player, bool in pairs(self.m_Channels[frequency]) do
             if player.m_RadioCommunication then
                 player:triggerEvent("RadioCommunication:playStaticNoise")
-                player:sendMessage(("#03cafc** [%s]#ffffff %s #03cafc**"):format(self:format(frequency), message), 3, 202, 252, true)
+                player:sendMessage(("#03cafc** [%s]#b3eaff %s #03cafc**"):format(self:format(frequency), message), 3, 202, 252, true)
         	    if player ~= sender then
 			        receivedPlayers[#receivedPlayers+1] = player
 			    end

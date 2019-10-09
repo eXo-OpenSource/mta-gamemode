@@ -625,7 +625,7 @@ function FactionRescue:Event_healPlayer(medic, target)
 				target:sendInfo(_("Du wurdest vom Medic %s für %d$ geheilt!", target, medic.name, costs ))
 				target:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
-
+				client:checkLastDamaged() 
 				target:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
 
 				self.m_Faction:addLog(medic, "Heilung", ("hat %s geheilt!"):format(target.name))
@@ -649,6 +649,7 @@ function FactionRescue:Event_healPlayerHospital()
 			if client:getMoney() >= costs then
 				client:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team [Heal-Bot]")
+				client:checkLastDamaged() 
 				client:sendInfo(_("Du wurdest für %s$ von dem Arzt geheilt!", client, costs))
 
 				client:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")

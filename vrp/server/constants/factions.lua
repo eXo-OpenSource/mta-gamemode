@@ -106,7 +106,7 @@ factionBadgeId[2] = {
 	[1] = "Agent",
 	[2] = "Agent",
 	[3] = "Agent",
-	[4] = "Chief",
+	[4] = "Sec-Chief",
 	[5] = "Dep.",
 	[6] = "Director"
 }

@@ -47,6 +47,7 @@ function ItemAlcohol:use(player)
 	player:meChat(true, " "..ItemSettings["Text"].."!")
 	if ItemSettings["Health"] > 0 then
 		StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
+		client:checkLastDamaged() 
 	end
 	player:incrementAlcoholLevel(ItemSettings["Alcohol"])
 

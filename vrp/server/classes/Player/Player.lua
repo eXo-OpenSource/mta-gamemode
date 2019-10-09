@@ -34,6 +34,8 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self.m_LastJobAction = 0
 
+	self.m_LastDamagedBy = {}
+
 	self.m_detachPlayerObjectBindFunc = bind(Player.detachPlayerObjectBind, self)
 	self.m_detachPlayerObjectFunc = bind(Player.detachPlayerObject, self)
 end
@@ -833,6 +835,35 @@ end
 
 function Player:removeSyncListener(player)
 	self.m_SyncListener[player] = nil
+end
+
+function Player:addLastDamaged(player)
+	if player and isValidElement(player, "player") then
+		self.m_LastDamagedBy[player] = getRealTime().timestamp
+	end
+end
+
+function Player:removeLastDamaged(player)
+	self.m_LastDamagedBy[player] = nil
+end
+
+function Player:checkLastDamaged() 
+	local now = getRealTime().timestamp
+	for player, tick in pairs(self.m_LastDamagedBy) do 
+		if player and isValidElement(player, "player") then
+			if now - tick < 60*3 then 
+				local secondsMinutes = string.format("%.2d:%.2d", (now - tick)/60%60, (now - tick)%60)
+				player:sendShortMessage(_("Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)", player, player:getName(), secondsMinutes), "Kampfheilung!", nil, -1)
+				self:removeLastDamaged(player)
+			else 
+				if now - tick > 60*3 then
+					self:removeLastDamaged(player)
+				end
+			end
+		else 
+			self:removeLastDamaged(player)
+		end
+	end
 end
 
 function Player:updateSync()

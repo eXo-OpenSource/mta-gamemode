@@ -40,9 +40,12 @@ function Damage:Event_startTreatment(time, isHealer)
 	guiSetInputEnabled(true)
 	showCursor(true)
 	self.m_Countdown = ShortCountdown:new(time, "Behandlung", "files/images/Other/Treatment.png")
-	self.m_CancelGUI = InjuryTreatmentGUI:new(self.m_Countdown.m_AbsoluteX+self.m_Countdown.m_Width, self.m_Countdown.m_AbsoluteY, isHealer)
-	self.m_CancelTimer = setTimer(function() if self.m_CancelGUI then delete(self.m_CancelGUI:getSingleton()) end end, time*1000, 1)
-
+	if self.m_Countdown then
+		self.m_CancelGUI = InjuryTreatmentGUI:new(self.m_Countdown.m_AbsoluteX+self.m_Countdown.m_Width, self.m_Countdown.m_AbsoluteY, isHealer)
+		self.m_CancelTimer = setTimer(function() if self.m_CancelGUI then delete(self.m_CancelGUI:getSingleton()) end end, time*1000, 1)
+	else 
+		self:Event_cancelTreatment() 		
+	end
 end
 
 function Damage:Event_finishTreatment()

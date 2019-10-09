@@ -128,6 +128,7 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 		if client:getMoney() >= shop.m_Menues[menu]["Price"] then
 			client:setHealth(client:getHealth() + shop.m_Menues[menu]["Health"])
 			StatisticsLogger:getSingleton():addHealLog(client, shop.m_Menues[menu]["Health"], "Shop "..shop.m_Menues[menu]["Name"])
+			client:checkLastDamaged() 
 			client:transferMoney(shop.m_BankAccount, shop.m_Menues[menu]["Price"], "Essen", "Gameplay", "Food")
 			client:sendInfo(_("%s wünscht guten Appetit!", client, shop.m_Name))
 		else

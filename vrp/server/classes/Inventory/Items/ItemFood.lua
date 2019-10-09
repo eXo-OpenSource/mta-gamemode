@@ -50,7 +50,9 @@ function ItemFood:use(player)
 
 	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
-
+	
+	player:checkLastDamaged() 
+	
 	if ItemSettings["CustomEvent"] then
 		triggerClientEvent(ItemSettings["CustomEvent"], player, item)
 	end
