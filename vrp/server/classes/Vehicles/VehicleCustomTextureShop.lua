@@ -104,7 +104,7 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
         local vehicleType = vehicle:getVehicleType()
         if vehicleType == VehicleType.Automobile or vehicleType == VehicleType.Bike then
             self:openFor(hitElement, vehicle, garageId)
-			vehicle.m_TextureCount = table.size(vehicle.m_Texture)
+			vehicle.m_TextureCount = table.size(vehicle.m_Texture or {})
 			vehicle:setData("TextureCount", vehicle.m_TextureCount, true)
         else
             hitElement:sendError(_("Mit diesem Fahrzeugtyp kannst du die Tuningwerkstatt nicht betreten!", hitElement))
