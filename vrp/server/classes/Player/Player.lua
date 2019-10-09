@@ -853,7 +853,7 @@ function Player:checkLastDamaged()
 		if player and isValidElement(player, "player") then
 			if now - tick < 60*3 then 
 				local secondsMinutes = string.format("%.2d:%.2d", (now - tick)/60%60, (now - tick)%60)
-				player:sendShortMessage(_("Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)", player, player:getName(), secondsMinutes), "Kampfheilung!", nil, -1)
+				player:sendShortMessage(_("Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)", player, self:getName(), secondsMinutes), "Kampfheilung!", nil, -1)
 				self:removeLastDamaged(player)
 			else 
 				if now - tick > 60*3 then
