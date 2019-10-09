@@ -1747,8 +1747,7 @@ function Admin:Event_adminDeleteAccountFromSerial(userId, serial)
 end
 
 function Admin:toggleInvisible(player)
-	if player:getRank() ~= RANK.Scripter then
-		player:sendError("Du bist nicht berechtigt!")
+	if player:getRank() ~= RANK.Developer then
 		return
 	end
 

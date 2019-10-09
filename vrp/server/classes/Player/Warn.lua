@@ -7,11 +7,9 @@
 -- ****************************************************************************
 Warn = {}
 function Warn.addWarn(who, author, reason, duration)
-	local authorId = 0
+	local authorId = author
 	if type(author) == "userdata" and getElementType(author) == "player" then
 		authorId = author:getId()
-	elseif author == nil then
-		author = "System"
 	end
 
 	if not duration then return end
@@ -32,7 +30,7 @@ function Warn.addWarn(who, author, reason, duration)
 
 	if Warn.getAmount(who) >= 3 then
 		if not player then
-			player = DatabasePlayer.Map[id]
+			player = DatabasePlayer.Map[who]
 		end
 
 		if player then
@@ -56,6 +54,9 @@ function Warn.removeWarn(who, warnId)
 		who = player.m_Id
 	end
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND Id = ?;", sql:getPrefix(), who, warnId)
+	if not player then
+		player = DatabasePlayer.Map[who]
+	end
 	if isElement(player) then
 		player:setWarns()
 	end
