@@ -1487,6 +1487,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				RadioCommunication:getSingleton():allowPlayer(client, false)
 				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
+				--//fix
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
