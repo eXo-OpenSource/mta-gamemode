@@ -9,9 +9,8 @@ ShortCountdown = inherit(GUIForm)
 
 function ShortCountdown:constructor(seconds, title, icon)
 	if ShortCountdown.Map[title] then
-		outputDebugString("Countdown with title "..title.." already exists!")
-		delete(self)
-		return
+		outputDebugString("Countdown with title "..title.." already exists! Destroying it")
+		delete(ShortCountdown.Map[title])
 	end
 
 	local offset = screenHeight*0.95 - (ShortCountdown.getCurrentCountdowns()*screenHeight*0.035)
@@ -20,7 +19,7 @@ function ShortCountdown:constructor(seconds, title, icon)
 	self.m_Title = title
 	self.m_StartTick = getTickCount()
 	self.m_FontScale = screenHeight / 768
-	self.m_Font = getVRPFont(VRPFont(self.m_Height))
+	self.m_Font = getVRPFont(VRPFont(self.m_Height)) or "sans"
 
 	GUIRectangle:new(self.m_Width*.1, 0, self.m_Width*.6, self.m_Height, Color.PrimaryNoClick, self)
 	if icon then

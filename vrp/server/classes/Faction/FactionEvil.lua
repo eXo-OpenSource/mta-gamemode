@@ -426,6 +426,7 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		player:setHealth(100)
 		player:setArmor(100)
 		StatisticsLogger:getSingleton():addHealLog(player, 100, "Faction Duty Heal")
+		player:checkLastDamaged() 
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
 		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	end

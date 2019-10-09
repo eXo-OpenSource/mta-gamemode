@@ -72,6 +72,7 @@ function VendingMachine.Event_vendingBuySnack()
 			client:setAnimation("VENDING", "vend_eat1_P", -1, false, true, false, false)
 			client:setHealth(client:getHealth() + 10)
 			StatisticsLogger:getSingleton():addHealLog(client, 10, "VendingMachine")
+			client:checkLastDamaged() 
 			client:transferMoney(BankServer.get("gameplay.vending_machine"), 20, "Automat", "Gameplay", "VendingMachine")
 		else
 			client:sendError(_("Du hast nicht genügend Geld!", client))

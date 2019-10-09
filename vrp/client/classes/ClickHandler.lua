@@ -248,8 +248,10 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 			if trigger then
 				if button == "left" then
 					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-				else 
-					self:addInspectMenu(InspectMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				else
+					if self.m_Menu[elementType] == PlayerMouseMenu then
+						self:addInspectMenu(InspectMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+					end
 					return false
 				end
 			end
