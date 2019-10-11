@@ -51,6 +51,7 @@ function phpSDKSendOnlinePlayers()
 				["Faction"] = player:getFaction() and player:getFaction():getId() or 0,
 				["Company"] = player:getCompany() and player:getCompany():getId() or 0,
 				["GroupId"] = player:getGroup() and player:getGroup():getId() or 0,
+				["PlayTime"] = player:getPlayTime() or 0,
 			}
 			i = i+1
 		end
@@ -160,7 +161,7 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 	local targetName = Account.getNameFromId(targetId)
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s offline entbannt!", nil, adminName, targetName))
-	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", "", 0)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", nil, 0)
 	sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
 	outputChatBox(_("Der Spieler %s  wurde von %s entbannt!", nil, targetName, adminName), root, 200, 0, 0)
 
@@ -173,4 +174,66 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 	end
 
 	return targetName .. " wurde erfolgreich entbannt!"
+end
+
+function phpSDKAddWarn(adminId, targetId, duration, reason)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	Warn.addWarn(targetId, adminId, reason, duration*60*60*24)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineWarnCP", reason, duration*60*60*24)
+	Admin:getSingleton():sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", nil, adminName, targetName, duration, reason))
+
+	if target and isElement(target) then
+		target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, adminName, duration, reason), 255, 0, 0)
+	end
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	return targetName .. " wurde erfolgreich verwarnt!"
+end
+
+function phpSDKRemoveWarn(adminId, targetId, warnId)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	Warn.removeWarn(targetId, warnId)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "removeOfflineWarnCP", nil, 0)
+	Admin:getSingleton():sendShortMessage(_("%s hat einen Warn von %s entfernt!", nil, adminName, targetName))
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	return targetName .. " Warn wurde erfolgreich gelöscht!"
 end

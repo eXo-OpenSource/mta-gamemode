@@ -27,6 +27,7 @@ end
 
 function DatabasePlayer:destructor()
 	self:save()
+	outputServerLog("[DATABASE-PLAYER] Unloaded player with id " .. tostring(self.m_Id))
 end
 
 function DatabasePlayer:virtual_constructor()
