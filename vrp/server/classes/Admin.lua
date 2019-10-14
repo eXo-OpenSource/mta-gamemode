@@ -247,6 +247,7 @@ end
 function Admin:addAdmin(player,rank)
 	--outputDebug("Added Admin "..player:getName()) (gets outputted already (ACL addObject))
 	self.m_OnlineAdmins[player] = rank
+	player:triggerEvent("setClientAdmin", player, rank)
 	if DEBUG then
     	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
 	end
@@ -258,7 +259,6 @@ function Admin:addAdmin(player,rank)
 		if self.m_MtaAccounts[player] then
 			player:logIn(self.m_MtaAccounts[player], pw)
 			ACLGroup.get("Admin"):addObject("user."..user)
-			player:triggerEvent("setClientAdmin", player, rank)
 		end
     end
 end
