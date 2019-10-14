@@ -44,7 +44,7 @@ function GUIItemSlot:setItem(item)
 
 		self:setTooltip(item.Name .. "\n" .. item.Description .. suffix, nil, true)
 	else
-		self:setTooltip("")
+		self:setTooltip(nil)
 	end
 
 	self:anyChange()

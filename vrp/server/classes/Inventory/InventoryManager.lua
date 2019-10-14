@@ -73,18 +73,27 @@ function InventoryManager:constructor()
 		WearableClothes = WearableClothes;
 	}
 
+	self.m_Inventories = {}
 	self.m_InventoryTypes = {}
 	self.m_InventoryTypesIdToName = {}
 	self:loadInventoryTypes()
 
-	addRemoteEvents{"syncInventory", "onItemUse", "onItemUseSecondary", "onItemMove"}
+	self.m_InventorySubscriptions = {}
 
-	addEventHandler("syncInventory", root, bind(self.Event_syncInventory, self))
+	for k, v in pairs(DbElementType) do
+		self.m_InventorySubscriptions[v] = {}
+	end
+
+	addRemoteEvents{"subscribeToInventory", "unsubscribeFromInventory", "onItemUse", "onItemUseSecondary", "onItemMove"}
+
+	addEventHandler("subscribeToInventory", root, bindAsync(self.Event_subscribeToInventory, self))
+	addEventHandler("unsubscribeFromInventory", root, bindAsync(self.Event_unsubscribeFromInventory, self))
+
+	-- addEventHandler("unsubscribeFromInventory", root, bind(function(...) Async.create(function(me, player, params) me:Event_sunsubscribeFromInventory(player, unpack(params)) end)(self, client, {...}) end, self))
+	-- addEventHandler("unsubscribeFromInventory", root, bind(self.Event_sunsubscribeFromInventory, self))
 	addEventHandler("onItemUse", root, bind(self.Event_onItemUse, self))
 	addEventHandler("onItemUseSecondary", root, bind(self.Event_onItemUseSecondary, self))
 	addEventHandler("onItemMove", root, bind(self.Event_onItemMove, self))
-
-	self.m_Inventories = {}
 end
 
 function InventoryManager:Event_onItemUse(inventoryId, itemId)
@@ -118,30 +127,86 @@ function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInvent
 			fromItem.Slot = toSlot
 		end
 		fromInventory:onInventoryChanged()
+	else
+		fromItem.Slot = toSlot
+
+		for k, v in pairs(fromInventory.m_Items) do
+			if v == fromItem then
+				table.remove(fromInventory.m_Items, k)
+				break
+			end
+		end
+
+		table.insert(toInventory.m_Items, fromItem)
+
+		if toItem then
+			toItem.Slot = fromItem.Slot
+			table.insert(fromInventory.m_Items, toItem)
+		end
+
+		toInventory:onInventoryChanged()
+		fromInventory:onInventoryChanged()
 	end
 end
 
-function InventoryManager:syncInventory(player, inventoryId)
-	if not player.m_Disconnecting then
-		local inventory = player:getInventory()
-		if inventory then
-			if inventoryId then inventory = self:getInventory(inventoryId) end
+function InventoryManager:syncInventory(inventoryId, target)
+	local inventory = self:getInventory(inventoryId)
+	local target = target
 
-			local inventoryData = {
-				Id = inventory.m_Id;
-				ElementId = inventory.m_ElementId;
-				ElementType = inventory.m_ElementType;
-				Size = inventory.m_Size;
-				Slots = inventory.m_Slots;
-			}
+	local inventoryData = {
+		Id = inventory.m_Id;
+		ElementId = inventory.m_ElementId;
+		ElementType = inventory.m_ElementType;
+		Size = inventory.m_Size;
+		Slots = inventory.m_Slots;
+	}
 
-			player:triggerEvent("onInventorySync", inventoryData, inventory.m_Items)
+	if not target then
+		target = {}
+		if not self.m_InventorySubscriptions[inventory.m_ElementType][inventory.m_ElementId] then
+			return
+		end
+
+		for k, v in pairs(self.m_InventorySubscriptions[inventory.m_ElementType][inventory.m_ElementId]) do
+			local player = DatabasePlayer.Map[k]
+
+			if player and isElement(player) and not player.m_Disconnecting then
+				table.insert(target, player)
+			end
+		end
+
+		if table.size(target) == 0 then
+			return
 		end
 	end
+
+	triggerClientEvent(target, "onInventorySync", resourceRoot, inventoryData, inventory.m_Items)
 end
 
-function InventoryManager:Event_syncInventory()
-	self:syncInventory(client)
+function InventoryManager:Event_subscribeToInventory(elementType, elementId)
+	local player = client
+	if DbElementTypeName[elementType] then
+		if not self.m_InventorySubscriptions[elementType][elementId] then
+			self.m_InventorySubscriptions[elementType][elementId] = {}
+		end
+
+		local inventory = self:getInventory(elementType, elementId)
+		outputChatBox(tostring(inventory))
+
+		self.m_InventorySubscriptions[elementType][elementId][player.m_Id] = true
+
+		self:syncInventory(inventory.m_Id, player)
+	end
+end
+
+function InventoryManager:Event_sunsubscribeFromInventory(elementType, elementId)
+	local player = client
+	if DbElementTypeName[elementType] then
+		if not self.m_InventorySubscriptions[elementType][elementId] then
+			self.m_InventorySubscriptions[elementType][elementId] = {}
+		end
+		self.m_InventorySubscriptions[elementType][elementId][player.m_Id] = nil
+	end
 end
 
 function InventoryManager:loadInventoryTypes()
@@ -191,7 +256,6 @@ function InventoryManager:getInventory(inventoryIdOrElementType, elementId)
 	local elementType = inventoryId
 
 	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId)
-
 	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId)
 
 	if player then
@@ -211,7 +275,7 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
 		-- is inventory already loaded?
 		for id, inventory in pairs(self.m_Inventories) do
 			if inventory.m_ElementId == elementId and inventory.m_ElementType == elementType then
-				return inventory
+				return inventory.m_Id
 			end
 		end
 
@@ -229,27 +293,30 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
 		local elementType = 0
 
 		if type(inventoryId) == "table" then
-			if not InventoryTypes[inventoryId[1]] or table.size(inventoryId) ~= 2 then
+			if not DbElementTypeName[inventoryId[1]] or table.size(inventoryId) ~= 2 then
 				return false
 			end
 			elementId = inventoryId[2]
-			elementType = InventoryTypes[inventoryId[1]]
+			elementType = DbElementTypeName[inventoryId[1]]
 		elseif instanceof(inventoryId, Player) then
 			elementId = inventoryId.m_Id
-			elementType = InventoryTypes.Player
+			elementType = DbElementType.Player
 			player = inventoryId
 		elseif instanceof(inventoryId, Faction) then
 			elementId = inventoryId.m_Id
-			elementType = InventoryTypes.Faction
+			elementType = DbElementType.Faction
 		elseif instanceof(inventoryId, Company) then
 			elementId = inventoryId.m_Id
-			elementType = InventoryTypes.Company
+			elementType = DbElementType.Company
 		elseif instanceof(inventoryId, Group) then
 			elementId = inventoryId.m_Id
-			elementType = InventoryTypes.Group
+			elementType = DbElementType.Group
+		elseif instanceof(inventoryId, PermanentVehicle) then
+			elementId = inventoryId.m_Id
+			elementType = DbElementType.Vehicle
 		end
 
-		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ?", sql:getPrefix(), elementId, elementType)
+		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
 
 		if not row then
 			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))

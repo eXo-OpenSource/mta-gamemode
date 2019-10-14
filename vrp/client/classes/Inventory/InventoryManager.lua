@@ -16,6 +16,16 @@ function InventoryManager:constructor()
 	self.m_CachedInventories = {}
 	self.m_PlayerInventoryId = 0
 
+	setTimer(function(self)
+		self.m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, 4123) -- because fuck it
+		self.m_PlayerInventoryGUI:hide()
+
+		bindKey("k", "up", bind(function()
+			self.m_PlayerInventoryGUI:toggle()
+		end, self))
+	end, 100, 1, self)
+
+
 	addEventHandler("onInventorySync", root, self.m_OnInventorySync)
 end
 
@@ -25,7 +35,7 @@ function InventoryManager:Event_onInventorySync(inventoryData, items)
 		items = items;
 	}
 
-	if inventoryData.ElementType == 1 and inventoryData.ElementId == localPlayer:getPrivateSync("Id") then
+	if inventoryData.ElementType == DbElementType.Player and inventoryData.ElementId == localPlayer:getPrivateSync("Id") then
 		self.m_PlayerInventoryId = inventoryData.Id
 		self.m_SyncHookPlayer:call(inventoryData, items)
 	end
@@ -59,4 +69,9 @@ function InventoryManager:onItemRight(inventoryId, item)
 			triggerServerEvent("onItemUseSecondary", localPlayer, inventoryId, item.Id)
 		end
 	end
+end
+
+
+function InventoryManager:isHovering()
+	return true
 end

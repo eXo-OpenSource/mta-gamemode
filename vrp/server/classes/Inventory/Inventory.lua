@@ -97,9 +97,7 @@ function Inventory:onInventoryChanged()
 		self.m_DirtySince = getTickCount()
 	end
 
-	if self.m_Player and isElement(self.m_Player) then
-		InventoryManager:getSingleton():syncInventory(self.m_Player)
-	end
+	InventoryManager:getSingleton():syncInventory(self.m_Id)
 end
 
 function Inventory:getItem(id)

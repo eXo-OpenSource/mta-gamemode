@@ -101,9 +101,7 @@ function Core:ready() --onClientResourceStart
 	--JailBreak:new()
 	RadioStationManager:new()
 	DimensionManager:new()
-	InventoryManager:new()
 	InventoryOld:new()
-	InventoryGUI:new()
 	Guns:new()
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
@@ -201,6 +199,7 @@ function Core:afterLogin()
 	WheelOfFortune:new()
 	Atrium:new()
 	ElementInfoManager:new()
+	InventoryManager:new()
 
 	for i = 1,#GUNBOX_CRATES do
 		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)

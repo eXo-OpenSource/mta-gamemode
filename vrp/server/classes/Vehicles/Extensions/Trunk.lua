@@ -121,7 +121,7 @@ function Trunk:addItem(player, item, amount, value)
 end
 
 function Trunk:takeItem(player, slot)
-	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() 
+	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
 			local item = self.m_ItemSlot[slot]["Item"]
@@ -129,7 +129,7 @@ function Trunk:takeItem(player, slot)
 
 			local success = false
 			if isCopSeizing then
-				if FactionState:getSingleton():isItemIllegal(item) then 
+				if FactionState:getSingleton():isItemIllegal(item) then
 					success = StateEvidence:getSingleton():addItemToEvidence(player, item, amount)
 					if success then self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName())) end
 				else

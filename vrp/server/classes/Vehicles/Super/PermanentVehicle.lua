@@ -177,6 +177,12 @@ function PermanentVehicle:virtual_constructor(data)
 			self.m_Trunk = Trunk.load(data.TrunkId)
 			self.m_TrunkId = data.TrunkId
 			self.m_Trunk:setVehicle(self)
+
+			if self.m_Id == 8395 then
+				Async.create(function(self)
+					self.m_TrunkMe = InventoryManager:getSingleton():getInventory(self)
+				end)(self)
+			end
 		end
 
 		if health and health <= 300 then

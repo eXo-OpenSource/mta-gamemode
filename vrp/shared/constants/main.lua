@@ -445,6 +445,7 @@ DbElementType = {
 	Faction = 2;
 	Company = 3;
 	Group = 4;
+	Vehicle = 5;
 }
 
 DbElementTypeName = {
@@ -452,6 +453,7 @@ DbElementTypeName = {
 	[DbElementType.Faction] = "faction";
 	[DbElementType.Company] = "company";
 	[DbElementType.Group] = "group";
+	[DbElementType.Vehicle] = "vehicle";
 }
 
 
