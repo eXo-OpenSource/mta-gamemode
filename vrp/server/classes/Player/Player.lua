@@ -847,20 +847,20 @@ function Player:removeLastDamaged(player)
 	self.m_LastDamagedBy[player] = nil
 end
 
-function Player:checkLastDamaged() 
+function Player:checkLastDamaged()
 	local now = getRealTime().timestamp
-	for player, tick in pairs(self.m_LastDamagedBy) do 
+	for player, tick in pairs(self.m_LastDamagedBy) do
 		if player and isValidElement(player, "player") then
-			if now - tick < 60*3 then 
+			if now - tick < 60*3 then
 				local secondsMinutes = string.format("%.2d:%.2d", (now - tick)/60%60, (now - tick)%60)
 				player:sendShortMessage(_("Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)", player, self:getName(), secondsMinutes), "Kampfheilung!", nil, -1)
 				self:removeLastDamaged(player)
-			else 
+			else
 				if now - tick > 60*3 then
 					self:removeLastDamaged(player)
 				end
 			end
-		else 
+		else
 			self:removeLastDamaged(player)
 		end
 	end

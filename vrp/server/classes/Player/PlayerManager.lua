@@ -402,6 +402,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 	client:setAlcoholLevel(0)
 	client:increaseStatistics("Deaths", 1)
 	client:giveAchievement(37)
+	client.m_LastDamagedBy = {}
 	DamageManager:getSingleton():clearPlayer(client)
 	for key, obj in ipairs(getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then

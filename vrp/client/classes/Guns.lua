@@ -176,6 +176,11 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 				triggerServerEvent("onTaser",attacker,source)
 			end
 		end
+		if localPlayer == source then 
+			if InjuryTreatmentGUI:isInstantiated() then
+				triggerServerEvent("Damage:onCancelTreat", localPlayer)
+			end
+		end
 		cancelEvent()
 	elseif weapon == 17 then
 		if source.getPublicSync and source:getPublicSync("HelmetItem") == "Gasmaske" then

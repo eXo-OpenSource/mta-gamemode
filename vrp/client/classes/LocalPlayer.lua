@@ -690,7 +690,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		bindKey("lshift", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() and not vehicle.m_HasDI then
 						local vx, vy, vz = getElementVelocity(vehicle)
@@ -701,7 +701,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lalt", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*1.2)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -711,7 +711,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lctrl", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*0.8)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -719,25 +719,6 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		)
-
-		self:setPublicSyncChangeHandler("supportMode", function(state)
-			if not state then
-				if self.m_AircarsEnabled then
-					setWorldSpecialPropertyEnabled("aircars", false)
-					self.m_AircarsEnabled = false
-					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
-				end
-			end
-		end)
-
-		self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
-			if state then
-				if ego.Active then
-					delete(ego:getSingleton())
-					ego.Active = false
-				end
-			end
-		end)
 
 		if rank >= ADMIN_RANK_PERMISSION["runString"] then
 			addCommandHandler("dcrun", function(cmd, ...)
@@ -936,4 +917,15 @@ function LocalPlayer:checkBikeBug()
 			triggerServerEvent("removeMeFromVehicle", localPlayer, distance)
 		end
 	end
+end
+
+function LocalPlayer:addGangwarSyncChangeHandler()
+	self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
+		if state then
+			if ego.Active then
+				delete(ego:getSingleton())
+				ego.Active = false
+			end
+		end
+	end)
 end
