@@ -356,7 +356,9 @@ function Admin:Event_getOfflineWarns(target)
 	end
 end
 
-function Admin:command(admin, cmd, targetName, arg1, arg2)
+function Admin:command(admin, cmd, targetName, ...)
+	local argTable = {...}
+	local arg1, arg2 = argTable[1], argTable[2]
 
 	if cmd == "aduty" or cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
@@ -403,12 +405,15 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                     return
                 else
                     if arg1 then
-                        if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
-                            self:Event_playerFunction(cmd, target, arg1, 0, admin)
+						if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
+							local reason = table.concat(argTable," ")
+                            self:Event_playerFunction(cmd, target, reason, 0, admin)
                             return
                         else
-                            if arg2 then
-                                self:Event_playerFunction(cmd, target, arg2, arg1, admin)
+							if arg2 then
+								table.remove(argTable, 1)
+								local reason = table.concat(argTable," ")
+                                self:Event_playerFunction(cmd, target, reason, arg1, admin)
                                 return
                             else
                                 admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
