@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 ThrowObjectManager = inherit(Singleton)
-ThrowObjectManager.DESPAWN_TIME = 5000
+ThrowObjectManager.DESPAWN_TIME = 20000
 ThrowObjectManager.PULSE_TIME = 5000 -- time in ms to pulse for a despawn
 function ThrowObjectManager:constructor() 
 	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow"}
@@ -38,9 +38,6 @@ function ThrowObjectManager:pulse() -- check in a given interval for despawns
 	for index, instance in pairs(removeIndexes) do 
 		table.remove(self.m_SortedDespawnObjects, index)
 		instance:delete()
-	end
-	if DEBUG then
-		outputDebugString(("Despawned %s dynamic-entities from thrown objects!"):format(table.size(removeIndexes)))
 	end
 end
 
@@ -87,7 +84,7 @@ end
 function ThrowObjectManager:Bind_onThrowKey(player, key, keystate, dontCancelAnimation) 
 	if not player:getThrowingObject() then return end
 	if keystate == "down" then
-		player:triggerEvent("Throw:disableCollision", player:getThrowingObject():getDummyEntity(), false)
+		player:getThrowingObject():updateCollision(false)
 		setPedWeaponSlot(player, 0)
 		if not player.isTasered then
 			local x, y, z = getElementVelocity(player)
@@ -112,7 +109,6 @@ function ThrowObjectManager:Bind_onThrowKey(player, key, keystate, dontCancelAni
 				player.m_isInThrowAnim = false 
 				nextframe(function() player:triggerEvent("stopCenteredBonecam") end)
 				player:triggerEvent("Throw:prepareThrow", false)
-				player:triggerEvent("Throw:disableCollision", player:getThrowingObject():getDummyEntity(), true)
 				if not player.isTasered then
 					self:unlockControl(player)
 					if not dontCancelAnimation then
@@ -136,7 +132,9 @@ function ThrowObjectManager:Event_onExecuteThrow(velx, vely, velz, force)
 				client:getThrowingObject():push(Vector3(velx*force, vely*force, velz*force))
 				setTimer(function(player) 
 					player.m_Thrown = false 
-					player:triggerEvent("Throw:disableCollision", player:getThrowingObject():getDummyEntity(), true)
+					if not player:getThrowingObject():isDamageDisabled() then
+						player:getThrowingObject():updateCollision(true)
+					end
 					self:Bind_onThrowKey(player, false, "up", true) 
 					player:setThrowingObject(nil)
 				end, 400, 1, client)

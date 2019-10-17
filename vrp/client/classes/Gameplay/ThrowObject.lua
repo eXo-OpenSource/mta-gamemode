@@ -8,9 +8,9 @@
 ThrowObject = inherit(Singleton)
 
 function ThrowObject:constructor() 
-	addRemoteEvents{"Throw:prepareThrow", "Throw:disableCollision"}
+	addRemoteEvents{"Throw:prepareThrow", "Throw:updateCollision"}
 	addEventHandler("Throw:prepareThrow", localPlayer, bind(self.prepareThrow, self))
-	addEventHandler("Throw:disableCollision", localPlayer, bind(self.Event_disableCollision, self))
+	addEventHandler("Throw:updateCollision", localPlayer, bind(self.Event_updateCollision, self))
 	self.m_ThrowRenderBind = bind(self.renderThrowPreparation, self) 
 	self.m_ThrowHandleBind = bind(self.handleThrowBind, self)
 end
@@ -19,13 +19,13 @@ function ThrowObject:destructor()
 
 end
 
-function ThrowObject:Event_disableCollision(object)
-	object:setCollidableWith(localPlayer, false)
+function ThrowObject:Event_updateCollision(object, bool)
+	object:setCollidableWith(localPlayer, bool)
 end
 
 function ThrowObject:renderThrowPreparation() 
 	localPlayer.m_ThrowProgress = localPlayer.m_ThrowProgress - 0.001
-	setPedAnimationProgress(localPlayer, "WEAPON_throw", localPlayer.m_GrenadeThrowProgress)
+	setPedAnimationProgress(localPlayer, "WEAPON_throw", localPlayer.m_ThrowProgress)
 	localPlayer.m_ThrowForce = localPlayer.m_ThrowForce + 0.02
 
 	if localPlayer.m_ThrowProgress < 0.12 then 
