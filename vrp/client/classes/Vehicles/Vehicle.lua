@@ -444,13 +444,13 @@ local function disableShootingOfVehicles()
 	toggleControl("vehicle_secondary_fire", false)
 end
 
-local function onSyncEngineChange(key, old, new) 
-	if not new then 
-		toggleControl("brake_reverse", false)
-		toggleControl("accelerate", false)
-	else 
-		toggleControl("brake_reverse", true)
-		toggleControl("accelerate", true)
+local function onSyncEngineChange(key, old, new)
+	if key == "syncEngine" then
+		if not new then 
+			toggleControl("accelerate", false)
+		else 
+			toggleControl("accelerate", true)
+		end
 	end
 end
 
@@ -470,10 +470,8 @@ addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
 			toggleControl("vehicle_secondary_fire", true)
 		end
 		if not source:getData("syncEngine") then 
-			toggleControl("brake_reverse", false)
 			toggleControl("accelerate", false)
 		else 
-			toggleControl("brake_reverse", true)
 			toggleControl("accelerate", true)
 		end
 	end
