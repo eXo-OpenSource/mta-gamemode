@@ -40,7 +40,7 @@ function AmmoQuickTradeGUI:constructor(player)
 	self.m_ButtonArmor.onLeftClick = 
 	function() 
 		QuestionBox:new(
-		_("Möchtest du %s deiner Schutzweste vergeben?", ("%s%%"):format(math.ceil(self.m_AmmoAmount:getInternalRelativeValue()*100))),
+		_("Möchtest du deine Schutzweste mit diesem Spieler tauschen?", ("%s%%"):format(math.ceil(self.m_AmmoAmount:getInternalRelativeValue()*100))),
 		function ()
 			delete(self)
 			triggerServerEvent("PlayerManager:onRequestQuickTrade", localPlayer, true, self.m_Element)

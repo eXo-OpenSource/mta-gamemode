@@ -94,6 +94,7 @@ function VehicleTuningShop:openFor(player, vehicle, garageId, specialType, admin
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position + vehicle:getBaseHeight(true))
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
+    player.m_VehicleTuningGarageVehicle = vehicle
     player.m_VehicleTuningGarageId = garageId
     player.m_VehicleTuningAdminMode = adminSession
 	player.m_WasBuckeled = getElementData(player, "isBuckeled")
@@ -204,7 +205,8 @@ end
 function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
     local vehicle = client:getOccupiedVehicle()
     if not vehicle then return end
-
+    if not client.m_VehicleTuningGarageVehicle then return end 
+    if client.m_VehicleTuningGarageVehicle ~= vehicle then return end
     -- Calculate price
     local overallPrice = 0
     for slot, upgradeId in pairs(cartContent) do
