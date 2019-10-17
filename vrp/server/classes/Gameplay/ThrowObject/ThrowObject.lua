@@ -43,6 +43,15 @@ function ThrowObject:destructor()
 	ThrowObjectManager:getSingleton():removeThrowObjectFromPlayer(self:getPlayer(), self)
 end
 
+function ThrowObject:updateCollision(bool, everyone)
+	self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
+	if self:isDamageDisabled() then 
+		for k, player in ipairs(getElementsByType("player")) do 
+			player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
+		end
+	end
+end
+
 function ThrowObject:assertTransformMatrix(offsetMatrix) 
 	if not offsetMatrix then 
 		return {position={x=0,y=0,z=0}, rotation={x=0,y=0,z=0}}
@@ -102,6 +111,10 @@ function ThrowObject:setDespawnTime(despawnTime)
 	self.m_DespawnTime = despawnTime
 end
 
+function ThrowObject:setDamageDisabled(bool)
+	self.m_DamageDisabled = bool
+end
+
 function ThrowObject:getTypeFromModel(model) 
 	local skin = isValidPedModel(model)
 	local vehicle = getVehicleNameFromModel (model)
@@ -121,3 +134,4 @@ function ThrowObject:getType() return self.m_Type end
 function ThrowObject:isPersistent() return self.m_Persistent end 
 function ThrowObject:getDespawnTime() return self.m_DespawnTime end
 function ThrowObject:isPushed() return self.m_Pushed end
+function ThrowObject:isDamageDisabled() return self.m_DamageDisabled end
