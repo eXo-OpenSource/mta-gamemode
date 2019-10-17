@@ -220,6 +220,9 @@
 	<!-- Radio Communication (WalkieTalkie) -->
 	<script src="server/classes/Gameplay/RadioCommunication.lua" type="server" />
 
+	<script src="server/classes/Gameplay/ThrowObject/ThrowObjectManager.lua" type="server" />
+	<script src="server/classes/Gameplay/ThrowObject/ThrowObject.lua" type="server" />
+
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
@@ -1133,6 +1136,7 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
+	<script src="client/classes/Gameplay/ThrowObject.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/InjurySystem/Damage.lua" type="client"/>
 	<script src="client/classes/Gameplay/InjurySystem/InjuryVisual.lua" type="client"/>

@@ -1741,3 +1741,9 @@ function Player:setBadge(badgeTitle, badgeId, badgeImage)
 	setElementData(self, "BadgeTitle", badgeTitle, true)
 	setElementData(self, "BadgeImage", badgeImage, true)
 end
+
+function Player:setThrowingObject(object) 
+	self.m_ThrowingObject = object
+end
+
+function Player:getThrowingObject() return self.m_ThrowingObject end
