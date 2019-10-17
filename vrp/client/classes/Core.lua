@@ -109,6 +109,7 @@ function Core:ready() --onClientResourceStart
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
 	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
 	localPlayer:setChatSettings()
+	ThrowObject:new()
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
