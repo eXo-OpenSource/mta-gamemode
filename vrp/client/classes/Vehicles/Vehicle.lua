@@ -253,7 +253,7 @@ local totalLossVehicleTypes = {
 
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
-		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) and (table.size(source:getOccupants()) < 1) then return cancelEvent() end
+		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) and (table.size(source:getOccupants()) < 1 or (source:getVehicleType() == 1 or source:getVehicleType() == 3)) then return cancelEvent() end
 		if not tId and (source.isBroken and source:isBroken()) then return cancelEvent() end
 		--calculate vehicle armor
 		if not tId and weapon and source.getBulletArmorLevel then
