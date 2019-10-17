@@ -1075,12 +1075,12 @@
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
-	<!--<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/> -->
+	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
 
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
-	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
+	<!-- <script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/> -->
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>

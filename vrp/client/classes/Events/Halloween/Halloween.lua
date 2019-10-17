@@ -70,7 +70,6 @@ function Halloween:constructor()
 	end)
 
 	HalloweenSign:new()
-	--HalloweenSpookyScreen:new()
 
 	self.m_Font = VRPFont(18)
 	self.m_TeamNameTexture = dxCreateRenderTarget(1000, 100, true)
@@ -93,21 +92,21 @@ function Halloween:Event_restore(clear)
 		local color = tocolor(200, 200, 200, 200)
 		dxDrawText("Stumpy\nHeisi", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 55
-		dxDrawText("xXKing\nChris", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("G.Eazy\nOpposite", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("MiHawk\nOpposite", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Padty\nfreaK", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Zvenskeren\nDynesty\nFreak", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("DeanW.\nSaiya\nrottby\nPoldi\nRefrigerator", xoffs, 1, xoffs+60, 110, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Swatbird\nZAPPY\nBernie\nRaymaN.\nPadty\nSteven\nSven.Salvarez\nrottby", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Swatbird\nSven.Salvarez\nzomb4k33l\nBlack", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
-		dxDrawText("zomb4k33l\nSlliX\nChef532", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Renn\nkleiner\nMann", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
-		dxDrawText("Steven\n", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Strobe\nPewX\nMasterM", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
-		dxDrawText("Strobe\nPewX\nMasterM\nMegaThorx\nStivik", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("MegaThorx\nStivik\nSnake", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 	dxSetRenderTarget()
 end
@@ -163,62 +162,16 @@ function Halloween:renderDarkness() -- not to be confused with 'dankness'! :thin
 	dxDrawMaterialLine3D(909, -1057, 24.9, 909, -1057, 24.1, self.m_TeamNameTexture, 8.5, white, 909, -1058, 24.9)
 end
 
-
 HalloweenSign = inherit(GUIForm3D)
 inherit(Singleton, HalloweenSign)
 
 function HalloweenSign:constructor()
 	--1903, 1484.80, -1710.70
 	--rechts -> höher
-	GUIForm3D.constructor(self, Vector3(1484.86, -1710.80, 15.90), Vector3(0, 0, 180), Vector2(4.4, 2.09), Vector2(1200,600), 50)
+	GUIForm3D.constructor(self, Vector3(1507.69, -1753.78, 16.09), Vector3(0, 0, 0), Vector2(4.4, 2.09), Vector2(1200,600), 50)
 end
 
 function HalloweenSign:onStreamIn(surface)
 	self.m_Url = INGAME_WEB_PATH .. "/ingame/other/HalloweenSign.php"
 	GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
-end
-
-
-HalloweenSpookyScreen = inherit(GUIForm3D)
-inherit(Singleton, HalloweenSpookyScreen)
-
-function HalloweenSpookyScreen:constructor()
-	self.m_Position = Vector3(1480.35, -1777.64, 23)
-	self.m_StreamDistance = 100
-	self.m_ResX, self.m_ResY = 1280, 720
-	self.m_SizeM = 95
-	self.m_StartTime = 0
-	self.m_Volume = 0.25
-	GUIForm3D.constructor(self, self.m_Position, Vector3(0, 0, 0), Vector2(self.m_ResX/self.m_SizeM, self.m_ResY/self.m_SizeM), Vector2(self.m_ResX,self.m_ResY), self.m_StreamDistance)
-end
-
-function HalloweenSpookyScreen:onStreamIn(surface)
-	local startTime = (getRealTime().hour * 60 * 60 + getRealTime().minute * 60 + getRealTime().second) % 307 -- the video is 307 seconds long
-
-	self.m_WebView = GUIWebView:new(0, 0, self.m_ResX, self.m_ResY, string.format("https://www.youtube.com/embed/0DGoQo3HYF0?autoplay=1&controls=0&disablekb=1&loop=1&playlist=0DGoQo3HYF0&showinfo=0&iv_load_policy=3&start=%s", startTime), true, surface)
-	self.m_WebView:setControlsEnabled(false)
-	self.m_WebView.onDocumentReady = function()
-		local draw = surface.draw
-		surface.draw = function()
-			draw(surface)
-			if not self.m_Muted then
-				local vol = 1 - (getDistanceBetweenPoints3D(self.m_Position, localPlayer.position)/self.m_StreamDistance)
-				self.m_WebView:setVolume(vol*self.m_Volume)--max it to 0.5
-			else
-				self.m_WebView:setVolume(0)
-			end
-		end
-	end
-	--text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips
-	self.m_ShortMessage = ShortMessage:new(_("Lautstärke der Leinwand:\n\n"), nil, nil, -1)
-	self.m_ShortMessage.onLeftClick = nil
-	self.m_VolumeSlider = GUISlider:new(5, 35, self.m_ShortMessage.m_Width-10, 30, self.m_ShortMessage):setValue(self.m_Volume)
-	self.m_VolumeSlider.onUpdate = function(vol)
-		self.m_Volume = vol
-	end
-
-end
-
-function HalloweenSpookyScreen:onStreamOut()
-	if self.m_ShortMessage then self.m_ShortMessage:delete() end
 end
