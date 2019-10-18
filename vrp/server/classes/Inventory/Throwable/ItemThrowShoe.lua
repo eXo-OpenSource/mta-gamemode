@@ -22,13 +22,14 @@ end
 
 function ItemThrowShoe:Event_throwCallback(player) 
 	player:getInventory():removeItem("Schuh", 1)
+	player:increaseStatistics("ThrownObject")
 end
 
 function ItemThrowShoe:use(player)
 	if not player:getThrowingObject() then 
 		player:meChat(true, "zieht einen Schuh.")
 		player:sendInfo(_("Der Schuh ist bereit!", player))
-		ThrowObject:new(player, ItemThrowShoe.Model, 1654, ItemThrowShoe.OffsetMatrix):setThrowCallback(bind(self.Event_throwCallback, self))
+		ThrowObject:new(player, ItemThrowShoe.Model, 1654, ItemThrowShoe.OffsetMatrix):setThrowCallback(bind(self.Event_throwCallback, self)):setSkillBased(true)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowShoe.Model then 
 			player:getThrowingObject():delete()
