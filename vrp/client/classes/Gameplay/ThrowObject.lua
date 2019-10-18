@@ -8,9 +8,10 @@
 ThrowObject = inherit(Singleton)
 
 function ThrowObject:constructor() 
-	addRemoteEvents{"Throw:prepareThrow", "Throw:updateCollision"}
+	addRemoteEvents{"Throw:prepareThrow", "Throw:updateCollision", "Throw:throwPlayer"}
 	addEventHandler("Throw:prepareThrow", localPlayer, bind(self.prepareThrow, self))
 	addEventHandler("Throw:updateCollision", localPlayer, bind(self.Event_updateCollision, self))
+	addEventHandler("Throw:throwPlayer", localPlayer, bind(self.Event_onThrowPlayer, self))
 	self.m_ThrowRenderBind = bind(self.renderThrowPreparation, self) 
 	self.m_ThrowHandleBind = bind(self.handleThrowBind, self)
 end
@@ -19,8 +20,13 @@ function ThrowObject:destructor()
 
 end
 
-function ThrowObject:Event_updateCollision(object, bool)
+function ThrowObject:Event_updateCollision(object, bool, everyone)
 	object:setCollidableWith(localPlayer, bool)
+	if everyone then 
+		for k, player in pairs(getElementsByType("player")) do 
+			object:setCollidableWith(player, bool)
+		end
+	end
 end
 
 function ThrowObject:renderThrowPreparation() 
@@ -64,5 +70,15 @@ function ThrowObject:prepareThrow(state)
 		if isEventHandlerAdded("onClientRender", root, self.m_ThrowRenderBind) then
 			removeEventHandler("onClientRender", root, self.m_ThrowRenderBind)
 		end
+	end
+end
+
+function ThrowObject:Event_onThrowPlayer(entityDummy) 
+	if entityDummy:getData("Throw:dummyEntity") and localPlayer:getData("Throw:throwEntity") then
+		localPlayer:detach(entityDummy)
+		localPlayer:setPosition(entityDummy:getPosition())
+		localPlayer:setRotation(entityDummy:getRotation())
+		localPlayer:setVelocity(entityDummy:getVelocity())
+		triggerServerEvent("Throw:playerWasThrown", localPlayer)
 	end
 end

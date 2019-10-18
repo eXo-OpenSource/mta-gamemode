@@ -37,17 +37,17 @@ end
 
 function ThrowObject:destructor()
 	if isValidElement(self:getDummyEntity(), "object") then self:getDummyEntity():destroy() end
-	if isValidElement(self:getEntity(), self:getType()) and self:getType() ~= "ped" then 
+	if self:getEntity() and isElement(self:getEntity()) and self:getEntity():getType() ~= "player" then 
 		self:getEntity():destroy() 
 	end
 	ThrowObjectManager:getSingleton():removeThrowObjectFromPlayer(self:getPlayer(), self)
 end
 
-function ThrowObject:updateCollision(bool, everyone)
+function ThrowObject:updateCollision(bool)
 	self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
 	if self:isDamageDisabled() then 
 		for k, player in ipairs(getElementsByType("player")) do 
-			player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
+			player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool, true)
 		end
 	end
 end
@@ -68,7 +68,7 @@ function ThrowObject:attach()
 		offsetMatrix.rotation.x,
 		offsetMatrix.rotation.y,
 		offsetMatrix.rotation.z)
-
+	
 	self:getEntity():attach(self:getDummyEntity())
 	self:getEntity():setCollisionsEnabled(false)
 end
@@ -82,17 +82,35 @@ function ThrowObject:push(pushVector)
 	self:detach()
 	self:getDummyEntity():setVelocity(pushVector)
 	self:getDummyEntity():setAngularVelocity(Vector3(.1, 0, 0)) 
+	if isValidElement(self:getEntity(), "player") then 
+		setTimer(function()
+			StatisticsLogger:getSingleton():addAdminAction(self:getPlayer(), "Spielerwurf", self:getEntity())
+			self:getEntity():setCollisionsEnabled(true)
+			self:getDummyEntity():setData("Throw:dummyEntity", true, true)
+			self:getEntity():setData("Throw:throwEntity", true, true)
+			self:getEntity():triggerEvent("Throw:throwPlayer", self:getDummyEntity())
+			self:getEntity().m_ThrowInstance = self -- used to detach from dummy when the player was thrown to avoid any desync
+		end, 400, 1)
+	end
 	self:setDespawnTime(getTickCount()+ThrowObjectManager.DESPAWN_TIME)
 	if not self:isPersistent() then 
 		ThrowObjectManager:getSingleton():addToDespawnList(self)
 	end
 	self.m_Pushed = true
+	if self:getThrowCallback() then
+		self:getThrowCallback()(self:getPlayer(), self)
+	end
+end
+
+function ThrowObject:transfer() -- used to transfer the velocity from dummy to entity
+
 end
 
 function ThrowObject:initialise() 
 	self.m_Entity = ThrowObject.TypeLexicon[self:getType()](self:getModel(), self:getPlayer():getPosition())
 	self.m_Entity:setDimension(self:getPlayer():getDimension())
-	self.m_Entity:setInterior(self:getPlayer():getInterior()) 
+	self.m_Entity:setInterior(self:getPlayer():getInterior())
+	self.m_Entity:setDoubleSided(true)
 	self.m_Entity:setCollisionsEnabled(false)
 
 	self.m_DummyEntity = createObject(self:getPhysicsModel(), self:getPlayer():getPosition())
@@ -105,14 +123,39 @@ end
 
 function ThrowObject:setPersistent(bool)
 	self.m_Persistent = bool
+	return self
 end
 
 function ThrowObject:setDespawnTime(despawnTime)
 	self.m_DespawnTime = despawnTime
+	return self
+end
+
+function ThrowObject:replaceEntity(entity) 
+	if entity and isElement(entity) then
+		if self:getEntity() and isElement(self:getEntity()) then 
+			self:getEntity():destroy() 
+		end
+		self.m_Entity = entity 
+		self:getEntity():attach(self:getDummyEntity())
+		if entity:getType() == "player" then 
+			entity:setPosition(self:getDummyEntity():getPosition())
+			entity:setCollisionsEnabled(false)
+		end
+	end
+	return self
 end
 
 function ThrowObject:setDamageDisabled(bool)
 	self.m_DamageDisabled = bool
+	return self
+end
+
+function ThrowObject:setThrowCallback(callback)
+	if callback and type(callback) == "function" then
+		self.m_ThrowCallback = callback
+	end
+	return self
 end
 
 function ThrowObject:getTypeFromModel(model) 
@@ -135,3 +178,4 @@ function ThrowObject:isPersistent() return self.m_Persistent end
 function ThrowObject:getDespawnTime() return self.m_DespawnTime end
 function ThrowObject:isPushed() return self.m_Pushed end
 function ThrowObject:isDamageDisabled() return self.m_DamageDisabled end
+function ThrowObject:getThrowCallback() return self.m_ThrowCallback end

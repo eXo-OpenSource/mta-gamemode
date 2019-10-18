@@ -9,9 +9,10 @@ ThrowObjectManager = inherit(Singleton)
 ThrowObjectManager.DESPAWN_TIME = 20000
 ThrowObjectManager.PULSE_TIME = 5000 -- time in ms to pulse for a despawn
 function ThrowObjectManager:constructor() 
-	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow"}
+	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow", "Throw:playerWasThrown"}
 	addEventHandler("Throw:disableThrowLeave", root, bind(self.Event_onDisableThrowLeave, self))
 	addEventHandler("Throw:executeThrow", root, bind(self.Event_onExecuteThrow, self))
+	addEventHandler("Throw:playerWasThrown", root, bind(self.Event_onPlayerIsThrown, self)) -- !! This is only called when a player throws another player and the thrown player has been thrown
 	self.m_ThrowBind = bind(self.Bind_onThrowKey, self)
 	self.m_ThrownObjects = {}
 	self.m_SortedDespawnObjects = {} -- a list sorted by the despawn time to provide more efficient cleanup by minimizing indexing
@@ -142,6 +143,15 @@ function ThrowObjectManager:Event_onExecuteThrow(velx, vely, velz, force)
 		end
 	end
 end
+
+function ThrowObjectManager:Event_onPlayerIsThrown() 
+	client:setData("throwEntity", nil)
+	if client.m_ThrowInstance then 
+		client.m_ThrowInstance:delete()
+		client:setCollisionsEnabled(true)
+	end
+end
+
 
 function ThrowObjectManager:Event_onPlayerQuit() 
 	if source:getThrowingObject() then 

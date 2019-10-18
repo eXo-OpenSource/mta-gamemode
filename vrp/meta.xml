@@ -168,6 +168,9 @@
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemPlayHouseCard.lua" type="server"/>
 
+	<!-- throwable -->
+	<script src="server/classes/Inventory/Throwable/ItemThrowShoe.lua" type="server"/>
+
 	<!-- wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Wearables/WearableHelmet.lua" type="server"/>
@@ -2009,6 +2012,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keycard.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Schuh.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
@@ -3144,6 +3148,8 @@
 	<vrpfile src="files/models/objects/worldItems/mushroom01.col"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom02.dff"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom02.col"/>
+	<vrpfile src="files/models/objects/worldItems/boot.dff"/>
+	<vrpfile src="files/models/objects/worldItems/boot.txd"/>
 	<vrpfile src="files/models/objects/mostWanted.txd" />
 	<vrpfile src="files/models/objects/mostWanted.dff" />
 	<vrpfile src="files/models/objects/mostWanted.col" />
