@@ -80,8 +80,10 @@ end
 function ThrowObject:push(pushVector)
 	unbindKey(self:getPlayer(), "aim_weapon", "both", ThrowObjectManager:getSingleton():getBind())
 	self:detach()
-	self:getDummyEntity():setVelocity(pushVector)
-	self:getDummyEntity():setAngularVelocity(Vector3(.1, 0, 0)) 
+	local skillFactor = (not self:isSkillBased() and 1) or ThrowObjectManager:getSingleton():getSkillFactor(self:getPlayer()) 
+	self:getDummyEntity():setVelocity(pushVector * skillFactor)
+	self:getDummyEntity():setAngularVelocity(pushVector:getNormalized()*.1)
+	setTimer(function() self:getDummyEntity():setAngularVelocity(Vector3(0, 0, 0)) end, 1000, 1) -- stop the movement after one second | todo use calculations to determine a better time
 	if isValidElement(self:getEntity(), "player") then 
 		setTimer(function()
 			StatisticsLogger:getSingleton():addAdminAction(self:getPlayer(), "Spielerwurf", self:getEntity())
@@ -100,10 +102,6 @@ function ThrowObject:push(pushVector)
 	if self:getThrowCallback() then
 		self:getThrowCallback()(self:getPlayer(), self)
 	end
-end
-
-function ThrowObject:transfer() -- used to transfer the velocity from dummy to entity
-
 end
 
 function ThrowObject:initialise() 
@@ -158,6 +156,10 @@ function ThrowObject:setThrowCallback(callback)
 	return self
 end
 
+function ThrowObject:setSkillBased(bool)
+	self.m_SkillBased = bool
+end
+
 function ThrowObject:getTypeFromModel(model) 
 	local skin = isValidPedModel(model)
 	local vehicle = getVehicleNameFromModel (model)
@@ -178,4 +180,5 @@ function ThrowObject:isPersistent() return self.m_Persistent end
 function ThrowObject:getDespawnTime() return self.m_DespawnTime end
 function ThrowObject:isPushed() return self.m_Pushed end
 function ThrowObject:isDamageDisabled() return self.m_DamageDisabled end
+function ThrowObject:isSkillBased() return self.m_SkillBased end
 function ThrowObject:getThrowCallback() return self.m_ThrowCallback end

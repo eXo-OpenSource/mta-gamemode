@@ -42,6 +42,13 @@ function ThrowObjectManager:pulse() -- check in a given interval for despawns
 	end
 end
 
+function ThrowObjectManager:getSkillFactor(player) 
+	local thrownCount = player:getStatistics("ThrownObject") or 0
+	local skill = (-3.04518*(10^-19) * thrownCount^2) + (0.004*thrownCount) + 0.38
+	if skill > 1.5 then skill = 1.5 end 
+	return skill
+end
+
 function ThrowObjectManager:addToDespawnList(instance)
 	local inserted
 	for index, data in ipairs(self.m_SortedDespawnObjects) do 
