@@ -8,12 +8,17 @@
 ThrowObject = inherit(Singleton)
 
 function ThrowObject:constructor() 
-	addRemoteEvents{"Throw:prepareThrow", "Throw:updateCollision", "Throw:throwPlayer"}
-	addEventHandler("Throw:prepareThrow", localPlayer, bind(self.prepareThrow, self))
+	addRemoteEvents{"Throw:prepareThrow", "Throw:updateCollision", "Throw:throwPlayer", "Throw:syncObject", "Throw:deleteObject"}
+	addEventHandler("Throw:syncObject", localPlayer, bind(self.Event_onSyncObject, self))
+	addEventHandler("Throw:delteObject", localPlayer, bind(self.Event_onDeleteObject, self))
+	addEventHandler("Throw:prepareThrow", localPlayer, bind(self.Event_onPrepareThrow, self))
 	addEventHandler("Throw:updateCollision", localPlayer, bind(self.Event_updateCollision, self))
 	addEventHandler("Throw:throwPlayer", localPlayer, bind(self.Event_onThrowPlayer, self))
 	self.m_ThrowRenderBind = bind(self.renderThrowPreparation, self) 
 	self.m_ThrowHandleBind = bind(self.handleThrowBind, self)
+
+	self.m_Synced = {}
+
 end
 
 function ThrowObject:destructor() 
@@ -62,7 +67,27 @@ function ThrowObject:handleThrowBind(key, keystate)
 	end
 end
 
-function ThrowObject:prepareThrow(state)
+function ThrowObject:attachBounding(object)
+	local radius = object:getRadius()
+	if radius then 
+		object.m_BoundingBox = ColShape.Sphere(object:getPosition(), (radius < 1 and 1) or radius)
+		object.m_BoundingBox:attach(object)
+		addEventHandler("onClientColShapeHit", object.m_BoundingBox, bind(self.Event_onHitBoundingBox, self))
+		return true
+	end
+	return false
+end
+
+function ThrowObject:Event_onHitBoundingBox(element, dimension)
+	outputChatBox(element:getType())
+	if true then 
+		if element:getType() == "player" then 
+			-- todo
+		end
+	end
+end
+
+function ThrowObject:Event_onPrepareThrow(state)
 	if state == true then
 		bindKey("fire", "both", self.m_ThrowHandleBind)
 	else
@@ -80,5 +105,22 @@ function ThrowObject:Event_onThrowPlayer(entityDummy)
 		localPlayer:setRotation(entityDummy:getRotation())
 		localPlayer:setVelocity(entityDummy:getVelocity())
 		triggerServerEvent("Throw:playerWasThrown", localPlayer)
+	end
+end
+
+function ThrowObject:Event_onSyncObject(entity, entityDummy) 
+	if isValidElement(entityDummy, "object") then 
+		if not self.m_Synced[entityDummy] then 
+			self.m_Synced[entityDummy] = entity
+			if self:attachBounding(entityDummy) then 
+
+			end
+		end
+	end
+end
+
+function ThrowObject:Event_onDeleteObject(entity, entityDummy) 
+	if self.m_Synced[entityDummy] then 
+		self.m_Synced[entityDummy] = nil
 	end
 end

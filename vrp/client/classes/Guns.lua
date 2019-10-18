@@ -163,6 +163,12 @@ MELEE_CACHE_CHECK = 2000
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
 	local bRangeCheck = true
+	local isThrowingHit = false
+	if isValidElement(attacker, "object") then 
+		if self:onHitByThrowObject(attacker, weapon, bodypart, loss) then -- check if the object that damaged the player is a throwable
+			return cancelEvent()
+		end
+	end
 	if weapon == 9 then -- Chainsaw
 		cancelEvent()
 	elseif weapon == 42 then --Fire Extinguisher
@@ -228,12 +234,33 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" and source ~= attacker then
 		playSound(self.m_hitpath or "files/audio/hitsound.wav")
 	end
-	if bPlaySound and self.m_HitMark and attacker == localPlayer  then
-		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
+	if bPlaySound and self.m_HitMark and attacker == localPlayer then
+		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy") or 1
 		self.m_HitMarkRed = getElementHealth(source) == 0
 		self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 		addEventHandler("onClientRender", root, self.m_HitMarkRender)
+	end
+end
+
+function Guns:onHitByThrowObject(attacker, weapon, bodypart, loss)
+	local throwingPlayer =  attacker:getData("Throw:responsiblePlayer")
+	if throwingPlayer then
+		if throwingPlayer == localPlayer then 
+			if not attacker:getData("Throw:entityDamageDisabled") then 
+				triggerServerEvent("Throw:reportDamage", localPlayer, source, attacker, bodypart)
+			end
+			self.m_HitMark = true 
+			self.m_HitAccuracy = 1.3
+			self.m_HitMarkRed = true
+			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
+			removeEventHandler("onClientRender", root, self.m_HitMarkRender)
+			addEventHandler("onClientRender", root, self.m_HitMarkRender)
+			if core:get("Other", "HitSoundBell", true) then
+				playSound(self.m_hitpath or "files/audio/hitsound.wav")
+			end
+		end
+		return true
 	end
 end
 

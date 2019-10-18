@@ -12,6 +12,7 @@ ItemThrowShoe.OffsetMatrix =
 	rotation = {x=0, y=180, z=270}
 }
 ItemThrowShoe.Model = 1901
+
 function ItemThrowShoe:constructor()
 
 end
@@ -29,7 +30,9 @@ function ItemThrowShoe:use(player)
 	if not player:getThrowingObject() then 
 		player:meChat(true, "zieht einen Schuh.")
 		player:sendInfo(_("Der Schuh ist bereit!", player))
-		ThrowObject:new(player, ItemThrowShoe.Model, 1654, ItemThrowShoe.OffsetMatrix):setThrowCallback(bind(self.Event_throwCallback, self)):setSkillBased(true)
+		ThrowObject:new(player, ItemThrowShoe.Model, 1654, ItemThrowShoe.OffsetMatrix)
+			:setThrowCallback(bind(self.Event_throwCallback, self))
+			:setSkillBased(true)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowShoe.Model then 
 			player:getThrowingObject():delete()
