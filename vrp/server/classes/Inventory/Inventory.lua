@@ -11,13 +11,25 @@ function Inventory.create()
 
 end
 
-function Inventory.load(inventoryId, player)
-	local inventory = sql:asyncQueryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
+function Inventory.load(inventoryId, player, sync)
+	local inventory
+
+	if sync then
+		inventory = sql:queryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
+	else
+		inventory = sql:asyncQueryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
+	end
 
 	if not inventory then
 		return false
 	end
-	local items = sql:asyncQueryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+
+	local items
+	if sync then
+		items = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+	else
+		items = sql:asyncQueryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+	end
 
 	return Inventory:new(inventory, items, true, player)
 end

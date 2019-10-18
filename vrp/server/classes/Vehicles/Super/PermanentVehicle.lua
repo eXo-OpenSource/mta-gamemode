@@ -179,9 +179,7 @@ function PermanentVehicle:virtual_constructor(data)
 			self.m_Trunk:setVehicle(self)
 
 			if self.m_Id == 8395 then
-				Async.create(function(self)
-					self.m_TrunkMe = InventoryManager:getSingleton():getInventory(self)
-				end)(self)
+				self.m_TrunkMe = InventoryManager:getSingleton():getInventory(self, nil, true)
 			end
 		end
 

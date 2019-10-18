@@ -251,11 +251,11 @@ function InventoryManager:createInventory(elementId, elementType, size, allowedC
     return inventory
 end
 
-function InventoryManager:getInventory(inventoryIdOrElementType, elementId)
+function InventoryManager:getInventory(inventoryIdOrElementType, elementId, sync)
 	local inventoryId = inventoryIdOrElementType
 	local elementType = inventoryId
 
-	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId)
+	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId, sync)
 	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId)
 
 	if player then
@@ -265,7 +265,7 @@ function InventoryManager:getInventory(inventoryIdOrElementType, elementId)
     return inventory
 end
 
-function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
+function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId, sync)
 	local inventoryId = inventoryIdOrElementType
 	local elementType = inventoryId
 	local player = nil
@@ -278,8 +278,13 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
 				return inventory.m_Id
 			end
 		end
+		local result
 
-		local result = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		if sync then
+			result = sql:queryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		else
+			result = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		end
 
 		if not result then
 			return false
@@ -316,7 +321,13 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
 			elementType = DbElementType.Vehicle
 		end
 
-		local row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		local row
+
+		if sync then
+			row = sql:queryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		else
+			row = sql:asyncQueryFetchSingle("SELECT Id FROM ??_inventories WHERE ElementId = ? AND ElementType = ? AND Deleted IS NULL", sql:getPrefix(), elementId, elementType)
+		end
 
 		if not row then
 			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
@@ -327,13 +338,13 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId)
 	return inventoryId
 end
 
-function InventoryManager:loadInventory(inventoryId)
+function InventoryManager:loadInventory(inventoryId, sync)
 	local player = nil
 	if type(inventoryId) ~= "number" then
-		inventoryId, player = self:getInventoryId(inventoryId)
+		inventoryId, player = self:getInventoryId(inventoryId, nil, sync)
 	end
 
-	local inventory = Inventory.load(inventoryId, player)
+	local inventory = Inventory.load(inventoryId, player, sync)
 
 	if inventory then
 		self.m_Inventories[inventoryId] = inventory
