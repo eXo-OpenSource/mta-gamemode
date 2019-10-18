@@ -21,14 +21,14 @@ Async.create(function()
 end)()]]
 
 -- normal methods
-function HTTPTextureReplacer:constructor(element, fileName, textureName, options, force)
+function HTTPTextureReplacer:constructor(element, fileName, textureName, options, force, forceMaximum)
 	--do not use assert as it produces a "real" lua error and blocks any textures loading afterwards
 	if not (fileName and fileName:len() > 0 and (fileName:find(HTTPTextureReplacer.BasePath) or fileName:find(HTTPTextureReplacer.ExternalPath))) then
 		outputDebugString("Bad Argument @ HTTPTextureReplacer:constructor #2", 1)
 		outputDebugString(fileName, 1)
 	 	return
 	end
-	TextureReplacer.constructor(self, element, textureName, options, force)
+	TextureReplacer.constructor(self, element, textureName, options, force, forceMaximum)
 	self.m_PathType = 1
 	if fileName:find(HTTPTextureReplacer.ExternalPath) then self.m_PathType = 2 end
 	if self.m_PathType == 2 then

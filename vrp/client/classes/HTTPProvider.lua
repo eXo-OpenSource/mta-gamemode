@@ -5,10 +5,15 @@ function HTTPProvider:constructor(url, dgi)
 	self.ms_GUIInstance = dgi
 	self.m_FileList = Queue:new()
 	self.m_Archives = Queue:new()
+	self.m_DownloadSize = 0
+	self.m_DownloadedSize = 0
+	self.m_DownloadSpeed = 0
+	self.m_DownloadSinceReset = 0
+	self.m_LastDownloadProgress = 0
 end
 
 function HTTPProvider:addFile(fileNode)
-	self.m_FileList:push({path = xmlNodeGetAttribute(fileNode, "path"), target_path = xmlNodeGetAttribute(fileNode, "target_path")})
+	self.m_FileList:push({path = xmlNodeGetAttribute(fileNode, "path"), target_path = xmlNodeGetAttribute(fileNode, "target_path"), size = tonumber(xmlNodeGetAttribute(fileNode, "size"))})
 end
 
 function HTTPProvider:collectFiles()
@@ -29,17 +34,20 @@ function HTTPProvider:collectFiles()
 				if xmlNodeGetName(archive) == "archive" then
 					if not self.checkFile(xmlNodeGetAttribute(archive, "target_path"), xmlNodeGetAttribute(archive, "hash")) then
 						self:addFile(archive)
+						self:updateDownloadSize(tonumber(xmlNodeGetAttribute(archive, "size")))
 					else
 						for _, file in pairs(xmlNodeGetChildren(archive)) do
 							if xmlNodeGetName(file) == "file" then
 								if not self.checkFile(xmlNodeGetAttribute(file, "target_path"), xmlNodeGetAttribute(file, "hash")) then
 									self:addFile(file)
+									self:updateDownloadSize(tonumber(xmlNodeGetAttribute(file, "size")))
 								end
 							end
 						end
 					end
 				end
 			end
+			self.ms_GUIInstance.m_DownloadSize = self.m_DownloadSize
 		end
 
 		self.ms_GUIInstance:setStatus("file count", self.m_FileList:size())
@@ -53,6 +61,9 @@ end
 
 function HTTPProvider:downloadFiles()
 	if self:requestAccessAsync() then
+		self.m_isDownloadingAssets = true
+		self.m_DownloadSpeedTimer = setTimer(bind(self.resetDownloadSpeed, self), 1000, 0)
+
 		while(not self.m_FileList:empty()) do
 			local element = self.m_FileList:pop()
 			self.ms_GUIInstance:setStatus("current file", element.path)
@@ -78,7 +89,20 @@ function HTTPProvider:downloadFiles()
 					file:close()
 				end
 			end
+			self:updateDownloadedSize(element.size)
 		end
+
+		if self.m_DownloadSizeTimer and isTimer(self.m_DownloadSizeTimer) then
+			killTimer(self.m_DownloadSizeTimer)
+		end
+		if self.m_DownloadSpeedTimer and isTimer(self.m_DownloadSpeedTimer) then
+			killTimer(self.m_DownloadSpeedTimer)
+		end
+		if self.m_DownloadSpeedGUITimer and isTimer(self.m_DownloadSpeedGUITimer) then
+			killTimer(self.m_DownloadSpeedGUITimer)
+		end
+
+		self.m_isDownloadingAssets = false
 	else
 		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
 		return false
@@ -197,7 +221,10 @@ function HTTPProvider:fetch(callback, file)
 end
 
 function HTTPProvider:fetchAsync(...)
-	self:fetch(Async.waitFor(), ...)
+	local fetch = self:fetch(Async.waitFor(), ...)
+	if self.m_isDownloadingAssets then
+		self:createDownloadSizeTimer(fetch)
+	end
 	return Async.wait()
 end
 
@@ -221,4 +248,45 @@ end
 function HTTPProvider:requestAccessAsync()
 	self:requestAccess(Async.waitFor())
 	return Async.wait()
+end
+
+function HTTPProvider:createDownloadSizeTimer(fetch)
+	if getRemoteRequestInfo then
+		if self.m_DownloadSizeTimer and isTimer(self.m_DownloadSizeTimer) then
+			killTimer(self.m_DownloadSizeTimer)
+		end
+		self.m_DownloadSizeTimer = setTimer(bind(self.sendDownloadedSizeToGUI, self), 100, 0, fetch)
+	end
+end
+
+function HTTPProvider:updateDownloadSize(size) --size to download
+	self.m_DownloadSize = self.m_DownloadSize + size
+end
+
+function HTTPProvider:updateDownloadedSize(size) --already downloaded
+	self.m_DownloadedSize = self.m_DownloadedSize + size
+end
+
+function HTTPProvider:updateDownloadSpeed(downloadedSize)
+	self.m_DownloadSpeed = self.m_LastDownloadedProgress - self.m_LastDownloadProgress
+end
+
+function HTTPProvider:resetDownloadSpeed()
+	self.m_LastDownloadProgress = self.m_LastDownloadedProgress
+	if not self.m_DownloadSpeedGUITimer then
+		self:updateRemainingTime()
+		self.m_DownloadSpeedGUITimer = setTimer(bind(self.updateRemainingTime, self), 5000, 0)
+	end
+end
+
+function HTTPProvider:sendDownloadedSizeToGUI(fetch)
+	local fetchInfo = getRemoteRequestInfo(fetch)
+	local downloadedSize = fetchInfo.bytesReceived or 0
+	self.ms_GUIInstance:setDownloadedSize(self.m_DownloadedSize + downloadedSize)
+	self.m_LastDownloadedProgress = self.m_DownloadedSize + downloadedSize
+	self:updateDownloadSpeed(downloadedSize)
+end
+
+function HTTPProvider:updateRemainingTime()
+	self.ms_GUIInstance:updateDownloadSpeed(self.m_DownloadSpeed)
 end

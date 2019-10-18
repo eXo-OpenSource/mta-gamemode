@@ -17,11 +17,13 @@ function FactionVehicle:constructor(data)
 	setElementData(self, "OwnerType", "faction")
 	setElementData(self, "StateVehicle", self.m_Faction:isStateFaction())
 
-    addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+		addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+		addEventHandler("onVehicleExit", self, bind(self.onExit, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-    addEventHandler("onVehicleExplode",self, function()
+    addEventHandler("onVehicleExplode", self, function()
 		setTimer(function(veh)
 			veh:respawn(true)
+			PoliceAnnouncements:getSingleton():setSirenState(veh, "inactive")
 		end, 10000, 1, source)
 	end)
 
@@ -36,10 +38,8 @@ function FactionVehicle:constructor(data)
 	if (self:getModel() == 432 or self:getModel() == 520 or self:getModel() == 425) and self.m_Faction:isStateFaction() then
 		addEventHandler("onVehicleStartEnter", self, function(player, seat)
 			if seat == 0 then
-				if not self:isWithinColShape(FactionState:getSingleton().m_ArmySepcialVehicleCol) then
-					if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
-						cancelEvent()
-					end
+				if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
+					cancelEvent()
 				end
 			end
 		end)
@@ -55,11 +55,34 @@ function FactionVehicle:constructor(data)
 	self:setLocked(false) -- Unlock faction vehicles
 	self.m_SpawnDim = data.Dimension 
 	self.m_SpawnInt = data.Interior
+
+	if self.getFaction and self:isStateVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
+	if self.getFaction and self:isRescueVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
+	
+	addEventHandler("onElementDestroy", self, function() 
+		VehicleManager:getSingleton():removeVehicleMark(self)
+	end)
+
 end
 
 function FactionVehicle:destructor()
 	if self.m_VehELSObj then
 		self.m_VehELSObj:delete()
+	end
+	if self:isStateVehicle() then 
+		VehicleManager:getSingleton():removeVehicleMark(self)
 	end
 end
 
@@ -73,6 +96,10 @@ end
 
 function FactionVehicle:isStateVehicle()
   	return self.m_Faction:isStateFaction()
+end
+
+function FactionVehicle:isRescueVehicle()
+  	return self.m_Faction:isRescueFaction()
 end
 
 function FactionVehicle:onStartEnter(player, seat)
@@ -90,6 +117,12 @@ function FactionVehicle:onEnter(player, seat)
 		end
 	end
 	return true
+end
+
+function FactionVehicle:onExit(player, seat)
+	if seat == 0 then
+		PoliceAnnouncements:getSingleton():setSirenState(source, "inactive")
+	end
 end
 --[[
 function FactionVehicle:onEnter(player, seat)
@@ -218,7 +251,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 						player:getFaction():addLog(player, "Item", ("hat %d %s für $%s gekauft!"):format(amount, itemName, price))
 					end
 				else 
-					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction):getName()))
+					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction) and FactionManager:getSingleton():getFromId(forFaction):getName()))
 				end
 			else 
 				player:sendError(_("Du kannst dieses Item nicht kaufen!", player))

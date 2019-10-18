@@ -18,7 +18,7 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 end
 
 function ShopNPC:onInternalTargetted(playerBy)
-	if playerBy:getWeapon() ~= 0 then
+	if not NO_MUNITION_WEAPONS[playerBy:getWeapon()] and not THROWABLE_WEAPONS[playerBy:getWeapon()] then
 		self.m_TargettedBy[playerBy] = true
 	else
 		return false

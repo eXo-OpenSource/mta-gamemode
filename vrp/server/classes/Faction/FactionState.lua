@@ -24,47 +24,25 @@ function FactionState:constructor()
 
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	self.m_InstantTeleportGarage = InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
-	self.m_InstantTeleportGarage:addEnterEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", false) end end)
+	self.m_InstantTeleportGarage:addEnterEvent(
+		function(element)
+			if element:getType() == "player" then element:triggerEvent("setOcclusion", false) end
+			if element:getType() == "vehicle" then PoliceAnnouncements:getSingleton():setSirenState(element, "inactive") end
+		end
+	)
 	self.m_InstantTeleportGarage:addExitEvent(function(player) if player:getType() == "player" then player:triggerEvent("setOcclusion", true) end end)
 
 	--self.m_InstantTeleportCol:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	--self.m_InstantTeleportCol:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
-	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
+	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.35, 87.30, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	self.m_InteriorGarageEntrance:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
-	InteriorEnterExit:new(Vector3(1583.42, -1660.01, 13.39), Vector3(1591.63, -1667.39, 5.89), 180, 0, 4, 5) -- pd exit
 
 	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut", "Sprengstoff"}
 
-	self.m_ArmySpecialVehicleBorder = {
-		x = -179.915,
-		y = 1614.156,
-		sizeX = 616.486,
-		sizeY = 610.996
-	}
-
-	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
 	self.m_BankAccountServer = BankServer.get("faction.state")
-
-	addEventHandler("onColShapeLeave", self.m_ArmySepcialVehicleCol, function(element)
-		if element and isElement(element) and element:getType() == "player" and element.vehicle then
-			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
-				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
-					local veh = element.vehicle
-					element:removeFromVehicle()
-					veh:respawn(true)
-					FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
-					for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
-						if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
-							v:sendMessage(element:getName() .. " hat das Fahrzeug " .. veh:getName() .. " entwendet!", 193, 44, 44)
-						end
-					end
-				end
-			end
-		end
-	end)
 
 	self.m_Bugs = {}
 
@@ -91,6 +69,10 @@ function FactionState:constructor()
 		["SLAM"] = 25000,
 		["DefuseKit"] = 1000,
 	}
+
+	self.m_AlertBind = bind(self.startAreaAlert, self)
+	self.m_LeaveBind = bind(self.stopAreaAlert, self)
+	addEventHandler("onPlayerQuit", root, function() self:onAreaColShapeLeave() end)
 
 	nextframe(
 		function ()
@@ -233,7 +215,7 @@ function FactionState:putEvidenceInDepot(player, box)
 	local depot = player:getFaction():getDepot()
 	if type == "Waffe" then
 		if id then
-			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))		
+			player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] (%s $) konfesziert!"):format(player:getName(), amount, product, price))
 			StateEvidence:getSingleton():addWeaponsToEvidence(player, id, amount, true)
 		end
 	elseif type == "Munition" then
@@ -299,12 +281,13 @@ function FactionState:loadLSPD(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
+	elevator:addStation("Erdgeschoss", Vector3(258.68, 73.79, 1003.64), 84, 6, 0, 5)
 	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 0, 5)
 
 
 
-	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
+	local safe = createObject(2332, 238.212, 82.235, 1004.539)
+	safe:setInterior(6)
 	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
@@ -356,28 +339,58 @@ function FactionState:loadArmy(factionId)
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
-	local areaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
+	self.m_AreaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
 	--areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
-	areaGate.m_Gates[1]:setDoubleSided(true)
-	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
+	self.m_AreaGate.m_Gates[1]:setDoubleSided(true)
+	self.m_AreaGate.onGateHit = bind(self.onAreaBarrierGateHit, self)
 
 
-	local areaGateBack = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
-	areaGateBack.m_Gates[1]:setDoubleSided(true)
-	areaGateBack.onGateHit = bind(self.onBarrierGateHit, self)
+	self.m_AreaGateBack = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
+	self.m_AreaGateBack.m_Gates[1]:setDoubleSided(true)
+	self.m_AreaGateBack.onGateHit = bind(self.onAreaBarrierGateHit, self)
 
-	local areaGatesSmall = Gate:new(983, Vector3(97.55, 1920.5, 19.200), Vector3(0, 0, 0), Vector3(97.55, 1923.520, 19.200))
+	self.m_AreaGateSmall = Gate:new(983, Vector3(97.55, 1920.5, 19.200), Vector3(0, 0, 0), Vector3(97.55, 1924, 19.200))
 	local collision = createObject(3049, 96.699996948242, 1921.0999755859, 17, 0, 90, 90)
 	collision:setScale(0)
-	areaGatesSmall.m_Gates[1]:setDoubleSided(true)
-	areaGatesSmall.m_Gates[1]:setScale(1, 0.4749, 3)
-	collision:attach(areaGatesSmall.m_Gates[1], 0, 0.5, -2, 0, 90, 90)
-	areaGatesSmall.m_Gates[1]:setCollisionsEnabled(false)
-	areaGatesSmall.onGateHit = bind(self.onBarrierGateHit, self)
+	self.m_AreaGateSmall.m_Gates[1]:setDoubleSided(true)
+	self.m_AreaGateSmall.m_Gates[1]:setScale(1, 0.4749, 3)
+	collision:attach(self.m_AreaGateSmall.m_Gates[1], 0, 0.5, -2, 0, 90, 90)
+	self.m_AreaGateSmall.m_Gates[1]:setCollisionsEnabled(false)
+	self.m_AreaGateSmall.onGateHit = bind(self.onAreaBarrierGateHit, self)
 
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
 		areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local corners = {
+		112.889, 1799.158,
+		275.738, 1799.291,
+		276.803, 1783.479,
+		321.146, 1783.330,
+		356.127, 1806.452,
+		355.028, 1876.203,
+		389.539, 1890.022,
+		389.524, 2080.764,
+		237.930, 2080.900,
+		206.732, 2082.555,
+		204.228, 2092.311,
+		197.533, 2097.855,
+		188.231, 2099.769,
+		178.509, 2097.390,
+		171.304, 2091.416,
+		169.398, 2082.381,
+		171.998, 2072.544,
+		178.719, 2066.266,
+		188.813, 2063.285,
+		188.994, 1940.739,
+		98.153, 1941.039,
+		98.15, 1809.77
+	}
+	self.m_AreaColShape = createColPolygon(211.43, 1874.85, unpack(corners))
+	addEventHandler("onColShapeHit", self.m_AreaColShape, bind(self.onAreaColShapeHit, self))
+	addEventHandler("onColShapeLeave", self.m_AreaColShape, bind(self.onAreaColShapeLeave, self))
+
+	self.m_AreaAlert = false
 end
 
 function FactionState:createTakeItemsPickup(pos, int, dim)
@@ -637,6 +650,14 @@ function FactionState:onBarrierGateHit(player)
 	end
 end
 
+function FactionState:onAreaBarrierGateHit(player)
+    if player:getFaction() and player:getFaction():isStateFaction() and ActionsCheck:getSingleton():isCurrentAction() ~= "Geldtransport" then
+		return true
+	else
+		return false
+	end
+end
+
 function FactionState:createDutyPickup(x,y,z,int, dim)
 	self.m_DutyPickup = createPickup(x,y,z, 3, 1275) --PD
 	setElementInterior(self.m_DutyPickup, int or 0)
@@ -712,10 +733,7 @@ end
 
 function FactionState:getFullReasonFromShortcut(reason)
 	local amount = false
-	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
-        reason = "Beschuss/Waffennutzung"
-        amount = 3
-    elseif string.lower(reason) == "db" then
+	if string.lower(reason) == "db" then
         reason = "Drogenbesitz (>= 10 Gramm)"
         amount = 1
     elseif string.lower(reason) == "db2" then
@@ -724,82 +742,106 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "db3" then
         reason = "Drogenbesitz (>= 150 Gramm)"
         amount = 3
-    elseif string.lower(reason) == "br" then
-        reason = "Banküberfall"
-        amount = 6
-	 elseif string.lower(reason) == "mord" then
-        reason = "Mord"
-        amount = 4
-    elseif string.lower(reason) == "wt" then
-        reason = "Waffen-Truck"
-        amount = 5
-	elseif string.lower(reason) == "gt" then
-        reason = "Geldtransport-Überfall"
-        amount = 5
-    elseif string.lower(reason) == "dt" then
-        reason = "Drogen-Truck"
-        amount = 5
-    elseif string.lower(reason) == "swt" then
-        reason = "Staatswaffentruck-Überfall"
-        amount = 6
-    elseif string.lower(reason) == "illad" then
-        reason = "Illegale Werbung"
-        amount = 1
-    elseif string.lower(reason) == "kpv" then
-        reason = "Körperverletzung"
-        amount = 2
-    elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
-        reason = "Einbruch-in-die-PD-Garage"
-        amount = 3
-    elseif string.lower(reason) == "wd" then
-        reason = "Waffen-Drohung"
-        amount = 2
-    elseif string.lower(reason) == "bh" then
-        reason = "Beihilfe einer Straftat"
-        amount = false
-    elseif string.lower(reason) == "vw" then
-        reason = "Verweigerung-zur-Durchsuchung"
-        amount = 2
     elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
-        reason = "Beamtenbeleidigung"
+        reason = "Beleidigung"
         amount = 1
-    elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
-        reason = "Flucht aus Kontrolle"
-        amount = 2
     elseif string.lower(reason) == "bv" then
         reason = "Befehlsverweigerung"
         amount = 1
     elseif string.lower(reason) == "sb" then
         reason = "Sachbeschädigung"
         amount = 1
+    elseif string.lower(reason) == "ff" or string.lower(reason) == "fahrer" then
+        reason = "Fahrerflucht"
+        amount = 1
+    elseif string.lower(reason) == "illad" or string.lower(reason) == "werbung" then
+        reason = "Illegale Werbung"
+        amount = 1
+    elseif string.lower(reason) == "eöä" then
+        reason = "Erregung öffentlichen Ärgernisses"
+        amount = 1
+    elseif string.lower(reason) == "ds" then
+        reason = "Diebstahl"
+        amount = 1
+    elseif string.lower(reason) == "vd" then
+        reason = "Versuchter Diebstahl"
+        amount = 1
+    elseif string.lower(reason) == "fof" then
+        reason = "Fahren ohne Führerschein"
+        amount = 1
+    elseif string.lower(reason) == "wd" then
+        reason = "Waffendrohung"
+        amount = 2
+    elseif string.lower(reason) == "vw" then
+        reason = "Verweigerung zur Durchsuchung"
+        amount = 2
+    elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
+        reason = "Flucht aus Kontrolle"
+        amount = 2
+    elseif string.lower(reason) == "kanal" then
+        reason = "Betreten der Kanalisation"
+        amount = 2
+    elseif string.lower(reason) == "kpv" then
+        reason = "Körperverletzung"
+        amount = 2
+    elseif string.lower(reason) == "sds" then
+        reason = "Diebstahl von Staatsfahrzeugen"
+        amount = 2
+    elseif string.lower(reason) == "bs" or string.lower(reason) == "wn" then
+        reason = "Beschuss/Waffennutzung"
+        amount = 3
+    elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
+        reason = "Einbruch in die PD-Garage"
+        amount = 3
     elseif string.lower(reason) == "rts" then
         reason = "Shop-Überfall"
         amount = 3
     elseif string.lower(reason) == "haus" then
         reason = "Hauseinbruch"
         amount = 3
-    elseif string.lower(reason) == "eöä" then
-        reason = "Erregung öffentlichen Ärgernisses"
-        amount = 1
-    elseif string.lower(reason) == "vd" then
-        reason = "versuchter Diebstahl"
-        amount = 1
-    elseif string.lower(reason) == "fof" then
-        reason = "Fahren ohne Führerschein"
-        amount = 1
+    elseif string.lower(reason) == "raub" then
+        reason = "Raubüberfall"
+        amount = 3
+    elseif string.lower(reason) == "bombe" then
+        reason = "Mitführen von Sprengstoff"
+        amount = 3
+    elseif string.lower(reason) == "mord" then
+        reason = "Mord"
+        amount = 4
+    elseif string.lower(reason) == "wt" then
+        reason = "Waffentruck"
+        amount = 5
+    elseif string.lower(reason) == "gt" then
+        reason = "Überfall auf Geldtransport"
+        amount = 5
+    elseif string.lower(reason) == "dt" then
+        reason = "Drogentruck"
+        amount = 5
+    elseif string.lower(reason) == "swt" then
+        reason = "Angriff auf den Staatswaffentruck"
+        amount = 6
+    elseif string.lower(reason) == "br" then
+        reason = "Überfall auf Bank/Casino"
+        amount = 6
     elseif string.lower(reason) == "gn" then
         reason = "Geiselnahme"
         amount = 6
+    elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
+        reason = "Airdrop"
+        amount = 6
+    elseif string.lower(reason) == "ex" or string.lower(reason) == "rpg" then
+        reason = "Besitz von Explosivwaffen"
+        amount = 6
     elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
-		amount = 12
-	elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
-		reason = "Gefängis-Ausbruch"
-		amount = 12
-	elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
-		reason = "Airdrop"
-		amount = 6
-	end
+        amount = 12
+    elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
+        reason = "Gefängisausbruch"
+        amount = 12
+    elseif string.lower(reason) == "bh" then
+        reason = "Beihilfe einer Straftat"
+        amount = false
+    end
 	return reason, amount
 end
 
@@ -835,16 +877,19 @@ function FactionState:sendMessage(text, r, g, b, ...)
 end
 
 function FactionState:sendStateChatMessage(sourcePlayer, message)
+	if not getElementData(sourcePlayer, "StateChatEnabled") then return sourcePlayer:sendError(_("Du hast den Staatschat deaktiviert!", sourcePlayer)) end
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
 		local playerId = sourcePlayer:getId()
 		local rank = faction:getPlayerRank(playerId)
 		local rankName = faction:getRankName(rank)
-		local r,g,b = 200, 100, 100
+		local r,g,b = 3, 173, 252
 		local receivedPlayers = {}
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in pairs(self:getOnlinePlayers()) do
-			player:sendMessage(text, r, g, b)
+			if getElementData(player, "StateChatEnabled") then
+				player:sendMessage(("[Staat] #ffffff %s"):format(text), r, g, b, true)
+			end
 			if player ~= sourcePlayer then
 				receivedPlayers[#receivedPlayers+1] = player
 			end
@@ -914,6 +959,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
+						PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
 						target.m_LastWantedsByReason[reason] = getTickCount()
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -1405,7 +1451,7 @@ function FactionState:isPlayerInDutyPickup(player)
 	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
-function FactionState:Event_toggleDuty(wasted, preferredSkin)
+function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 	if wasted then
 		client:removeFromVehicle()
 		client.m_WasOnDuty = true
@@ -1425,7 +1471,9 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 					self:Event_storageWeapons(client)
 					takeAllWeapons(client) -- due to attached weapons
 				end
-				client:setCorrectSkin()
+				if not dontChangeSkin then
+					client:setCorrectSkin()
+				end
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:getInventoryOld():removeAllItem("Taser")
@@ -1435,17 +1483,24 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				client:getInventoryOld():removeAllItem("Blitzer")
 				client:getInventoryOld():removeAllItem("Einsatzhelm")
 				client:takeEquipment(true)
+				client:setBadge()
+				RadioCommunication:getSingleton():allowPlayer(client, false)
 				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					--return false
+					client:triggerEvent("companyForceOffduty")
 				end
 				client:setFactionDuty(true)
+				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
+				RadioCommunication:getSingleton():allowPlayer(client, true)
 				faction:changeSkin(client, preferredSkin)
 				client:setHealth(100)
 				client:setArmor(100)
+				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
+				client:checkLastDamaged() 
 				takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
@@ -1546,6 +1601,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
+			PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
@@ -1739,11 +1795,11 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
-			for i = 0, 8 do 
-				local w = getPedWeapon(me,i)
-				if w ~= 0 then 
-					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(me, i))
-				end 
+			for i = 0, 8 do
+				local w = getPedWeapon(target,i)
+				if w ~= 0 then
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(client, w, getPedTotalAmmo(target, i))
+				end
 			end
 			takeAllWeapons(target)
 
@@ -1960,5 +2016,69 @@ end
 function FactionState:sendMoveRequest(targetChannel, text)
 	for k, faction in pairs(self:getFactions()) do
 		faction:sendMoveRequest(targetChannel, text)
+	end
+end
+
+function FactionState:onAreaColShapeHit(hitElement, match)
+	if hitElement:getType() == "player" then
+		if (hitElement:getFaction() and not hitElement:getFaction():isStateFaction()) or not hitElement:getFaction() then
+			if not isTimer(self.m_AlertTimer) then
+				if not self.m_AreaAlert then
+					self.m_AlertTimer = setTimer(self.m_AlertBind, 10000, 1)
+					triggerClientEvent("playAreaAlertMessage", root, "blue")
+				end
+			end
+			if isTimer(self.m_LeaveTimer) then
+				killTimer(self.m_LeaveTimer)
+			end
+		end
+	end
+end
+
+function FactionState:onAreaColShapeLeave(leaveElement, match)
+	local counter = 0
+	for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+		if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+			counter = counter + 1
+		end
+	end
+	if counter == 0 then
+		if self.m_AreaAlert and not isTimer(self.m_LeaveTimer) then
+			self.m_LeaveTimer = setTimer(self.m_LeaveBind, 30000, 1)
+		end
+	end
+end
+
+function FactionState:startAreaAlert()
+	local counter = 0
+	for key, player in ipairs(getElementsWithinColShape(self.m_AreaColShape, "player")) do
+		if (player:getFaction() and not player:getFaction():isStateFaction()) or not player:getFaction() then
+			counter = counter + 1
+		end
+	end
+	if counter > 0 then
+		for key, player in ipairs(getElementsByType("player")) do
+			triggerClientEvent("startAreaAlert", player)
+		end
+		self.m_AreaAlert = true
+	else
+		triggerClientEvent("playAreaAlertMessage", root, "normalized")
+	end
+end
+
+function FactionState:stopAreaAlert()
+	triggerClientEvent("stopAreaAlert", root)
+	self.m_AreaAlert = false
+end
+
+function FactionState:forceOpenAreaGates()
+	if self.m_AreaGate.m_Closed == true then
+		self.m_AreaGate:triggerMovement(false, true)
+	end
+	if self.m_AreaGateBack.m_Closed == true then
+		self.m_AreaGateBack:triggerMovement(false, true)
+	end
+	if self.m_AreaGateSmall.m_Closed == true then
+		self.m_AreaGateSmall:triggerMovement(false, true)
 	end
 end

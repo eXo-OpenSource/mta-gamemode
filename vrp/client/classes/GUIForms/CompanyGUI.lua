@@ -187,7 +187,7 @@ function CompanyGUI:onSelectRank(name,rank)
 	self.m_SaveRank:setEnabled(true)
 end
 
-function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins)
+function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, rankNames, rankLoans)
 	if id then
 		if id > 0 then
 			self.m_Id = id
@@ -212,9 +212,7 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 			end
 
 			if rank >= CompanyRank.Manager then
-				self.m_skins = skins
 				self.m_RankLoans = rankLoans
-				self.m_RankSkins = rankSkins
 				self:addLeaderTab()
 			end
 		end

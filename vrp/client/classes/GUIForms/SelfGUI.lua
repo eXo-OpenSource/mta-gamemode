@@ -196,15 +196,16 @@ function SelfGUI:constructor()
 	--self.m_VehicleHangarButton.onHover = function () self.m_VehicleHangarButton:setColor(Color.White) end
 	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.Accent) end
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
-	self.m_VehicleSellButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", tabVehicles):setBarEnabled(true)
- 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
+	--self.m_VehicleSellButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", tabVehicles):setBarEnabled(true)
+ 	--self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
+	 GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
  	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
  	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
 
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	--self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
-	self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
+
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 	self.m_VehicleWorldRespawnButton.onLeftClick = bind(self.VehicleWorldRespawnButton_Click, self)
 	addRemoteEvents{"vehicleRetrieveInfo"}
@@ -291,7 +292,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.9, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event"}
+	local SettingsTable = {"HUD", "Radar", "Chat", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -510,6 +511,12 @@ function SelfGUI:RadioStationButton_Click()
 	self:close()
 	RadioStationEditGUI:getSingleton():open()
 	RadioStationEditGUI:getSingleton():setMainWindow(self)
+end
+
+function SelfGUI:PoliceSoundsButton_Click()
+	self:close()
+	PoliceSoundsGUI:getSingleton():open()
+	PoliceSoundsGUI:getSingleton():setMainWindow(self)
 end
 
 function SelfGUI:setFactionInfo(id, name, rank, __, __, __, rankNames)
@@ -857,6 +864,7 @@ function SelfGUI:onSettingChange(setting)
 			self.m_HUDScale:setVisible(false)
 			self.m_ChartMargin:setVisible(false)
 			self.m_ChartBlue:setVisible(false)
+			self.m_ChartDate:setVisible(false)
 			self.m_ChartLabels:setVisible(false)
 			self.m_ChartPoints:setVisible(false)
 			self.m_ChartZone:setVisible(false)
@@ -871,6 +879,7 @@ function SelfGUI:onSettingChange(setting)
 				self.m_HUDScale:setVisible(true)
 				self.m_ChartMargin:setVisible(true)
 				self.m_ChartBlue:setVisible(true)
+				self.m_ChartDate:setVisible(true)
 				self.m_ChartLabels:setVisible(true)
 				self.m_ChartPoints:setVisible(true)
 				self.m_ChartZone:setVisible(true)
@@ -916,9 +925,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
 
-		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"Datum", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
-		self.m_ChartBlue:setChecked(core:get("HUD", "chartDateVisible", false))
-		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartDateVisible", state) end
+		self.m_ChartDate = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"Datum", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartDate:setChecked(core:get("HUD", "chartDateVisible", false))
+		self.m_ChartDate.onChange = function (state) core:set("HUD", "chartDateVisible", state) end
 
 
 		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
@@ -1040,6 +1049,59 @@ function SelfGUI:onSettingChange(setting)
 
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
+	elseif setting == "Chat" then 
+
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Textkanäle aktivieren/deaktivieren!", self.m_SettingBG)
+
+
+		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.8, self.m_Height*0.04, _"Fraktionschat aktivieren", self.m_SettingBG)
+		self.m_FactionChat:setFont(VRPFont(25))
+		self.m_FactionChat:setFontSize(1)
+		self.m_FactionChat:setChecked(core:get("Chat", "enableFactionChat", true))
+		self.m_FactionChat.onChange = function (state)
+			core:set("Chat", "enableFactionChat", state)
+			setElementData(localPlayer, "FactionChatEnabled", state)
+		end
+
+		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.22, self.m_Width*0.8, self.m_Height*0.04, _"Unternehmenschat aktivieren", self.m_SettingBG)
+		self.m_FactionChat:setFont(VRPFont(25))
+		self.m_FactionChat:setFontSize(1)
+		self.m_FactionChat:setChecked(core:get("Chat", "enableCompanyChat", true))
+		self.m_FactionChat.onChange = function (state)
+			core:set("Chat", "enableCompanyChat", state)
+			setElementData(localPlayer, "CompanyChatEnabled", state)
+		end
+
+		
+		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.32, self.m_Width*0.8, self.m_Height*0.04, _"Firmen/Gangchat aktivieren", self.m_SettingBG)
+		self.m_FactionChat:setFont(VRPFont(25))
+		self.m_FactionChat:setFontSize(1)
+		self.m_FactionChat:setChecked(core:get("Chat", "enableGroupChat", true))
+		self.m_FactionChat.onChange = function (state)
+			core:set("Chat", "enableGroupChat", state)
+			setElementData(localPlayer, "GroupChatEnabled", state)
+		end
+
+		self.m_AllianceChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.8, self.m_Height*0.04, _"Bündnischat aktivieren", self.m_SettingBG)
+		self.m_AllianceChat:setFont(VRPFont(25))
+		self.m_AllianceChat:setFontSize(1)
+		self.m_AllianceChat:setChecked(core:get("Chat", "enableAllianceChat", true))
+		self.m_AllianceChat.onChange = function (state)
+			core:set("Chat", "enableAllianceChat", state)
+			setElementData(localPlayer, "AllianceChatEnabled", state)
+		end
+
+		self.m_StateChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.04, _"Staatschat aktivieren", self.m_SettingBG)
+		self.m_StateChat:setFont(VRPFont(25))
+		self.m_StateChat:setFontSize(1)
+		self.m_StateChat:setChecked(core:get("Chat", "enableStateChat", true))
+		self.m_StateChat.onChange = function (state)
+			core:set("Chat", "enableStateChat", state)
+			setElementData(localPlayer, "StateChatEnabled", state)
+		end
+
+
 	elseif setting == "Spawn" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn", self.m_SettingBG)
 
@@ -1067,7 +1129,9 @@ function SelfGUI:onSettingChange(setting)
 		local SpawnIDToCheckbox = {[0] = self.m_Default, [1] = self.m_Noobspawn, [3] = self.m_FactionBase, [4] = self.m_CompanyBase, [5] = self.m_House, [6] = self.m_Vehicle, [7] = self.m_GroupBase}
 		local uncheckAll = function() for _, checkbox in pairs(SpawnIDToCheckbox) do checkbox:setChecked(false) end end
 
-		SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")]:setChecked(true)
+		if SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")] then  -- this happens when any spawn option is not avaialble anymore (ie, player got kicked out of faction and has spawn still set to faction-spawn)
+			SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")]:setChecked(true)
+		end 
 
 		self.m_Default.onChange = function() uncheckAll() self.m_Default:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.DEFAULT) end
 		self.m_Noobspawn.onChange = function() uncheckAll() self.m_Noobspawn:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.NOOBSPAWN) end
@@ -1126,6 +1190,24 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "KillFeedbackShader", bool)
 			Guns:getSingleton():toggleMonochromeShader(bool)
 		end
+	
+	
+		self.m_DisplayBadge = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.8, self.m_Height*0.04, _"Dienstmarken anzeigen", self.m_SettingBG)
+		self.m_DisplayBadge:setFont(VRPFont(25))
+		self.m_DisplayBadge:setFontSize(1)
+		self.m_DisplayBadge:setChecked(core:get("HUD", "DisplayBadge", true))
+		self.m_DisplayBadge.onChange = function (bool)
+			core:set("HUD", "DisplayBadge", bool)
+		end
+
+		self.m_DisplayVehicleMark = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeugmarkierung anzeigen", self.m_SettingBG)
+		self.m_DisplayVehicleMark:setFont(VRPFont(25))
+		self.m_DisplayVehicleMark:setFontSize(1)
+		self.m_DisplayVehicleMark:setChecked(core:get("HUD", "DisplayVehicleMark", true))
+		self.m_DisplayVehicleMark.onChange = function (bool)
+			core:set("HUD", "DisplayVehicleMark", bool)
+		end
+
 
 	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
@@ -1381,8 +1463,29 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Sounds", "Navi", state)
 		end
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"Radio-Sender", self.m_SettingBG)
-		self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.59, self.m_Width*0.35, self.m_Height*0.07, _"Radiostationen", self.m_SettingBG):setBarEnabled(true)
+		self.m_InteriorSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.9, self.m_Height*0.04, _"Interior Sounds", self.m_SettingBG)
+		self.m_InteriorSound:setFont(VRPFont(25))
+		self.m_InteriorSound:setFontSize(1)
+		self.m_InteriorSound:setChecked(core:get("Sounds", "Interiors", true))
+		self.m_InteriorSound.onChange = function (state)
+			core:set("Sounds", "Interiors", state)
+			setInteriorSoundsEnabled(state)
+		end
+
+		
+		self.m_StaticNoiseRadio = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.9, self.m_Height*0.04, _"Funkkanal Rauschen", self.m_SettingBG)
+		self.m_StaticNoiseRadio:setFont(VRPFont(25))
+		self.m_StaticNoiseRadio:setFontSize(1)
+		self.m_StaticNoiseRadio:setChecked(core:get("Sounds", "StaticNoise", true))
+		self.m_StaticNoiseRadio.onChange = function (state)
+			core:set("Sounds", "StaticNoise", state)
+		end
+
+		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)
+		self.m_PoliceSoundsButton.onLeftClick = bind(self.PoliceSoundsButton_Click, self)
+
+		--GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"Radio-Sender", self.m_SettingBG)
+		self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.80, self.m_Width*0.35, self.m_Height*0.07, _"Radiostationen", self.m_SettingBG):setBarEnabled(true)
 		self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
 
 	elseif setting == "Fahrzeuge" then

@@ -205,7 +205,7 @@ function Trunk:addWeapon(player, weaponId, muni)
 	for index, slot in pairs(self.m_WeaponSlot) do
 		if slot["WeaponId"] == 0 then
 			local weaponSlot = getSlotFromWeapon(weaponId)
-			if player:getWeapon(weaponSlot) > 0 then
+			if player:getWeapon(weaponSlot) == weaponId then
 				if player:getTotalAmmo(weaponSlot) >= muni then
 					takeWeapon(player, weaponId)
 					slot["WeaponId"] = weaponId

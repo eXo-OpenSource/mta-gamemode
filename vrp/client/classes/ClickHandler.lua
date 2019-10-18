@@ -27,11 +27,12 @@ function ClickHandler:constructor()
 
 	self.m_ClickInfo = false
 	self.m_DrawCursor = false
+	self.m_LastWorldModel = 0
 
 	addEventHandler("onClientClick", root,
 		function(button, state, absoluteX, absoluteY, worldX, worldY, worldZ, element)
 			if state == "up" then
-				self.m_ClickInfo = {button = button, absoluteX = absoluteX, absoluteY = absoluteY, element = element}
+				self.m_ClickInfo = {button = button, absoluteX = absoluteX, absoluteY = absoluteY, element = element, worldX = worldX, worldY = worldY, worldZ = worldZ}
 			end
 		end
 	)
@@ -48,16 +49,18 @@ function ClickHandler:constructor()
 			end
 
 			local element = getElementBehindCursor(worldX, worldY, worldZ)
-			if not element then
-				self.m_DrawCursor = false
-				setCursorAlpha(255)
-				return
+			if not MapEditor:isInstantiated() then
+				if not element then
+					self.m_DrawCursor = false
+					setCursorAlpha(255)
+					return
+				end
 			end
 
-			local clickInfo = {button = "left", absoluteX = absX, absoluteY = absY, element = element}
+			local clickInfo = {button = "left", absoluteX = absX, absoluteY = absY, element = element, worldX = worldX, worldY = worldY, worldZ = worldZ}
 
 			-- ClickHandler:dispatchClick returns true if there is a special mouse event available, false otherwise
-			self.m_DrawCursor = self:dispatchClick(clickInfo)
+			self.m_DrawCursor, self.m_WorldModelInfo = self:dispatchClick(clickInfo)
 			if self.m_DrawCursor then
 				setCursorAlpha(0)
 			else
@@ -77,6 +80,27 @@ function ClickHandler:constructor()
 					cx, cy = cx * screenWidth, cy * screenHeight
 
 					dxDrawImage(cx-18/2, cy-32/2, 24, 24, "files/images/GUI/Mouse.png", 0, 0, 0, Color.White, true)
+					if self.m_WorldModelInfo then
+						local model = self.m_WorldModelInfo[1]
+						local text = "Standart Map Objekt löschen:\nID:#EE1111 "..tostring(model).."#FFFFFF, Name:#EE1111 "..tostring(self.m_LastWorldModelName)
+						local back = "Standart Map Objekt löschen:\nID: "..tostring(model)..", Name: "..tostring(self.m_LastWorldModelName)
+
+
+						dxDrawText(back, (cx-18/2)+23, (cy-32/2), 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+						dxDrawText(back, (cx-18/2)+23, (cy-32/2)-1, 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+
+						dxDrawText(back, (cx-18/2)+24, (cy-32/2)-1, 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+						dxDrawText(back, (cx-18/2)+25, (cy-32/2)-1, 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+
+						dxDrawText(back, (cx-18/2)+25, (cy-32/2), 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+						dxDrawText(back, (cx-18/2)+25, (cy-32/2)+1, 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+
+						dxDrawText(back, (cx-18/2)+24, (cy-32/2)+1, 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+						dxDrawText(back, (cx-18/2)+23, (cy-32/2)+1, 24, 24, Color.Black, 1.0, "default-bold", "left", "top", false, false, false, true)
+
+						dxDrawText(text, (cx-18/2)+24, cy-32/2, 24, 24, Color.White, 1.0, "default-bold", "left", "top", false, false, false, true)
+
+					end
 				end
 			end
 		end
@@ -115,6 +139,24 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	-- Close all currently open menus
 	if trigger then self:clearMouseMenus() end
 
+	--check for WorldObjects for MapEditor
+	if MapEditor:isInstantiated() then
+		if MapEditor:getSingleton():getRemovingMode() then
+			local worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId = getWorldObjectBehindCursor(clickInfo.worldX, clickInfo.worldY, clickInfo.worldZ)
+			if worldModelId then
+				if clickInfo.element then
+					return false
+				end
+				if worldModelId ~= self.m_LastWorldModel then
+					self.m_LastWorldModel = worldModelId
+					self.m_LastWorldModelName = MapEditor:getSingleton():getWorldModelName(worldModelId)
+				end
+				self.m_WorldObjectInfos = {worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId} -- gets requested from Map Editor
+				return true, self.m_WorldObjectInfos
+			end
+		end
+	end
+
 	local element, button = clickInfo.element, clickInfo.button
 	if not element or not isElement(element) then
 		return false
@@ -126,7 +168,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	local range = localPlayer:getPrivateSync("isSpecting") and 0 or getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
 
 	-- Phase 1: Check per-element handlers
-	if element == localPlayer then
+	if element == localPlayer and button ~= "right" then
 		--if trigger then
 		--	if button == "left" then
 			--	SelfGUI:getSingleton():open()
@@ -206,6 +248,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 			if trigger then
 				if button == "left" then
 					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				else
+					if self.m_Menu[elementType] == PlayerMouseMenu then
+						self:addInspectMenu(InspectMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+					end
+					return false
 				end
 			end
 			return true
@@ -222,11 +269,26 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 			return true
 		end
 	end
+	-- check map editor things
+	if MapEditor:isInstantiated() then
+
+		if getElementData(element, "MapEditor:object") then
+			if getElementData(element, "MapEditor:mapId") == MapEditor:getSingleton():getEditingMap() then
+				return true
+			end
+		end
+
+	end
 
 	return false
 end
 
 function ClickHandler:addMouseMenu(menu, element)
+	menu:setElement(element)
+	table.insert(self.m_OpenMenus, menu)
+end
+
+function ClickHandler:addInspectMenu(menu, element)
 	menu:setElement(element)
 	table.insert(self.m_OpenMenus, menu)
 end

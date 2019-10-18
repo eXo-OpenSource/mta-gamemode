@@ -10,7 +10,6 @@ RadioStationManager.Presets = {
 	{"Life Radio", "http://94.136.28.10:8000/liferadio.m3u"},
 	{"OE3", "http://mp3stream7.apasf.apa.at:8000"},
 	{"FM 4", "http://mp3stream1.apasf.apa.at:8000/listen.pls"},
-	{"NSW-LiVE", "http://nsw-radio.de"},
 	{"Technobase.fm", "http://listen.technobase.fm/dsl.asx"},
 	{"Hardbase.fm", "http://listen.hardbase.fm/tunein-dsl-asx"},
 	{"Housetime.fm", "http://listen.housetime.fm/tunein-dsl-asx"},
@@ -23,8 +22,7 @@ RadioStationManager.Presets = {
 	{"I Love Radio", "http://www.iloveradio.de/iloveradio.m3u"},
 	{"1Live", "http://www.wdr.de/wdrlive/media/einslive.m3u"},
 	{"1Live diggi", "http://www.wdr.de/wdrlive/media/einslivedigi.m3u"},
-    {"FFS (nicht 24/7 online)", "http://ffs-gaming.com:8008/ffs.ogg"},
-    
+
 	-- GTA channels
 	{"Playback FM", 1},
 	{"K-Rose", 2},

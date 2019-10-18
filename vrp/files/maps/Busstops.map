@@ -1,49 +1,45 @@
 <map edf:definitions="vrp_editortools">
-    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1,2" name="Little Mexico" alpha="255" interior="0" posX="1727.7227" posY="-1725.0967" posZ="13.80656" rotX="0" rotY="0" rotZ="89.753"></bus_stop>
     <bus_stop id="bus_stop (2)" markerdistance="4.5" lines="1,2" name="Pershing Square" alpha="255" interior="0" posX="1477.6377" posY="-1725.332" posZ="13.80656" rotX="0" rotY="0" rotZ="89.753"></bus_stop>
-
-    <bus_stop id="bus_stop (3)" markerdistance="4.5" lines="1" name="Conference Center" alpha="255" interior="0" posX="1155.9758" posY="-1845.2539" posZ="13.84247" rotX="0" rotY="0" rotZ="89.007"></bus_stop>
-    <bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Marina" alpha="255" interior="0" posX="713.17267" posY="-1745.7576" posZ="14.67861" rotX="0" rotY="0" rotZ="69.177"></bus_stop>
-    <bus_stop id="bus_stop (5)" markerdistance="4.5" lines="1" name="Santa Maria Beach" alpha="255" interior="0" posX="386.5744" posY="-1765.3474" posZ="5.78414" rotX="0" rotY="0" rotZ="90.824"></bus_stop>
-    <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Rodeo" alpha="255" interior="0" posX="135.58604" posY="-1539.4307" posZ="9.01914" rotX="0" rotY="0" rotZ="57.35"></bus_stop>
-    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Fleischberg-Fabrik" alpha="255" interior="0" posX="-200.53172" posY="-303.01425" posZ="1.66437" rotX="0" rotY="0" rotZ="43.524"></bus_stop>
-    <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Blueberry" alpha="255" interior="0" posX="114.57994" posY="-218.64977" posZ="1.81281" rotX="0" rotY="0" rotZ="269.277"></bus_stop>
-    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Fleischberg-Fabrik" alpha="255" interior="0" posX="-217.10378" posY="-318.42487" posZ="1.63937" rotX="0" rotY="0" rotZ="220.517"></bus_stop>
-    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Rodeo" alpha="255" interior="0" posX="107.17" posY="-1556.818" posZ="7.48429" rotX="0" rotY="0" rotZ="246.837"></bus_stop>
-    <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="1" name="Santa Maria Beach" alpha="255" interior="0" posX="386.5762" posY="-1779.5887" posZ="5.83171" rotX="0" rotY="0" rotZ="270.484"></bus_stop>
-    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Marina" alpha="255" interior="0" posX="700.11285" posY="-1772.1278" posZ="13.72861" rotX="0" rotY="0" rotZ="251.425"></bus_stop>
-    <bus_stop id="bus_stop (14)" markerdistance="4.5" lines="1" name="Conference Center" alpha="255" interior="0" posX="1160.14" posY="-1859.3146" posZ="13.80499" rotX="0" rotY="0" rotZ="270.055"></bus_stop>
     
-    <bus_stop id="bus_stop (15)" markerdistance="4.5" lines="2" name="Commerce" posX="1457.4009" posY="-1486.7881" posZ="13.78156" rotX="0" rotY="0" rotZ="346"></bus_stop>
-    <bus_stop id="bus_stop (16)" markerdistance="4.5" lines="2" name="Market" alpha="255" interior="0" posX="1166.48" posY="-1388.2064" posZ="13.98375" rotX="0" rotY="0" rotZ="89.844"></bus_stop>
-    <bus_stop id="bus_stop (17)" markerdistance="4.5" lines="2" name="Market Station" alpha="255" interior="0" posX="871.00958" posY="-1313.2692" posZ="13.81602" rotX="0" rotY="0" rotZ="90.014"></bus_stop>
-    <bus_stop id="bus_stop (18)" markerdistance="4.5" lines="2" name="Dillimore" posX="688.81384" posY="-553.82568" posZ="16.57062" rotX="0" rotY="0" rotZ="0"></bus_stop>
+	<bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Fundbüro Schatzsucher" alpha="255" interior="0" posX="713.17267" posY="-1745.7576" posZ="14.67861" rotX="0" rotY="0" rotZ="69.177"></bus_stop>
+    <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Stadtreinigung" alpha="255" interior="0" posX="226.26695" posY="-1436.6731" posZ="13.56707" rotX="0" rotY="0" rotZ="133.306"></bus_stop>
+    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Logistikzentrum" alpha="255" interior="0" posX="-200.53125" posY="-303.01465" posZ="1.66437" rotX="0" rotY="0" rotZ="43.524"></bus_stop>
+    <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" name="Blueberry Acres" alpha="255" interior="0" posX="-0.29841" posY="150.84393" posZ="2.68937" rotX="0" rotY="0" rotZ="238.263"></bus_stop>
+	<bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Blueberry" alpha="255" interior="0" posX="157.11008" posY="-218.64941" posZ="1.81281" rotX="0" rotY="0" rotZ="269.275"></bus_stop>
+    <bus_stop id="bus_stop (26)" markerdistance="4.5" lines="1" name="Blueberry Acres" alpha="255" interior="0" posX="8.51125" posY="164.93271" posZ="2.68937" rotX="0" rotY="0" rotZ="57.979"></bus_stop>
+    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Logistikzentrum" alpha="255" interior="0" posX="-217.10352" posY="-318.4248" posZ="1.63937" rotX="0" rotY="0" rotZ="220.512"></bus_stop>
+    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Stadtreinigung" alpha="255" interior="0" posX="242.354" posY="-1454.6709" posZ="13.77698" rotX="0" rotY="0" rotZ="313.958"></bus_stop>
+    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Fundbüro Schatzsucher" alpha="255" interior="0" posX="700.11285" posY="-1772.1278" posZ="13.72861" rotX="0" rotY="0" rotZ="251.425"></bus_stop>
+    
+	<bus_stop id="bus_stop (15)" markerdistance="4.5" lines="2" name="Japantown" posX="1461.7858" posY="-1354.3436" posZ="13.80656" rotX="0" rotY="0" rotZ="359.998"></bus_stop>
+    <bus_stop id="bus_stop (30)" markerdistance="4.5" lines="2" name="FBI Headquarters" alpha="255" interior="0" posX="1242.5752" posY="-1845.2349" posZ="13.80656" rotX="0" rotY="0" rotZ="89.444"></bus_stop>
+	<bus_stop id="bus_stop (16)" markerdistance="4.5" lines="2" name="Krankenhaus" alpha="255" interior="0" posX="1166.4805" posY="-1388.2061" posZ="13.98375" rotX="0" rotY="0" rotZ="89.841"></bus_stop>
+    <bus_stop id="bus_stop (17)" markerdistance="4.5" lines="2" name="SAN News Zentrale" alpha="255" interior="0" posX="770.38495" posY="-1388.0499" posZ="13.90026" rotX="0" rotY="0" rotZ="90.014"></bus_stop>
+    <bus_stop id="bus_stop (27)" markerdistance="4.5" lines="2" name="Tennisplatz Vinewood" alpha="255" interior="0" posX="641.57727" posY="-1242.0688" posZ="17.74586" rotX="0" rotY="0" rotZ="8.011"></bus_stop>
+	<bus_stop id="bus_stop (18)" markerdistance="4.5" lines="2" name="Dillimore" posX="688.81348" posY="-553.8252" posZ="16.57062" rotX="0" rotY="0" rotZ="0"></bus_stop>
     <bus_stop id="bus_stop (19)" markerdistance="4.5" lines="2" name="Hilltop Farm" posX="1032.559" posY="-462.92233" posZ="51.75039" rotX="0" rotY="0" rotZ="292.702"></bus_stop>
-    <bus_stop id="bus_stop (20)" markerdistance="4.5" lines="2" name="Montgomery" posX="1257.8196" posY="158.21503" posZ="19.88729" rotX="0" rotY="0" rotZ="342.175"></bus_stop>
-    <bus_stop id="bus_stop (21)" markerdistance="4.5" lines="2" name="Hilltop Farm" alpha="255" interior="0" posX="1040.0696" posY="-443.34528" posZ="51.99516" rotX="0" rotY="0" rotZ="110.416"></bus_stop>
     <bus_stop id="bus_stop (22)" markerdistance="4.5" lines="2" name="Dillimore" alpha="255" interior="0" posX="674.37848" posY="-553.8252" posZ="16.57062" rotX="0" rotY="0" rotZ="179.718"></bus_stop>
-    <bus_stop id="bus_stop (23)" markerdistance="4.5" lines="2" name="Market Station" alpha="255" interior="0" posX="871.00977" posY="-1334.0345" posZ="13.79102" rotX="0" rotY="0" rotZ="269.729"></bus_stop>
-    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="2" name="Market" alpha="255" interior="0" posX="1166.48" posY="-1413.0061" posZ="13.88375" rotX="0" rotY="0" rotZ="269.559"></bus_stop>
-    <bus_stop id="bus_stop (25)" markerdistance="4.5" lines="2" name="Commerce" alpha="255" interior="0" posX="1443.5764" posY="-1483.5631" posZ="13.78156" rotX="0" rotY="0" rotZ="165.716"></bus_stop>
-
-    <bus_stop id="bus_stop (50)" markerdistance="4.5" lines="1,2" name="Pershing Square" posX="1477.7627" posY="-1739.0469" posZ="13.80656" rotX="0" rotY="0" rotZ="270.038"></bus_stop>
-    <bus_stop id="bus_stop (51)" markerdistance="4.5" lines="1,2" name="Little Mexico" alpha="255" interior="0" posX="1727.7227" posY="-1739.0469" posZ="13.80656" rotX="0" rotY="0" rotZ="270.038"></bus_stop>
-    
-    <bus_stop id="bus_stop (52)" markerdistance="4.5" lines="1" name="Idlewood" alpha="255" interior="0" posX="2138.2627" posY="-1759.3618" posZ="13.80656" rotX="0" rotY="0" rotZ="270.043"></bus_stop>
-    <bus_stop id="bus_stop (53)" markerdistance="4.5" lines="1" name="Jefferson" alpha="255" interior="0" posX="2188.7527" posY="-1377.2513" posZ="24.25656" rotX="0" rotY="0" rotZ="90.32"></bus_stop>
-    <bus_stop id="bus_stop (54)" markerdistance="4.5" lines="1" name="Glen-Park" alpha="255" interior="0" posX="1783.3514" posY="-1271.3582" posZ="13.84946" rotX="0" rotY="0" rotZ="128.792"></bus_stop>
-    <bus_stop id="bus_stop (55)" markerdistance="4.5" lines="1" name="Downtown" alpha="255" interior="0" posX="1655.416" posY="-1154.0682" posZ="24.17" rotX="0" rotY="0" rotZ="89.814"></bus_stop>
-    <bus_stop id="bus_stop (56)" markerdistance="4.5" lines="1" name="Glen-Park" alpha="255" interior="0" posX="1792.7913" posY="-1281.808" posZ="13.84946" rotX="0" rotY="0" rotZ="308.778"></bus_stop>
-    <bus_stop id="bus_stop (57)" markerdistance="4.5" lines="1" name="Jefferson" alpha="255" interior="0" posX="2188.6279" posY="-1391.601" posZ="24.25656" rotX="0" rotY="0" rotZ="270.037"></bus_stop>
-    <bus_stop id="bus_stop (58)" markerdistance="4.5" lines="1" name="Idlewood" alpha="255" interior="0" posX="2138.2876" posY="-1745.1364" posZ="13.80656" rotX="0" rotY="0" rotZ="90.32"></bus_stop>
-
-    <bus_stop id="bus_stop (59)" markerdistance="4.5" lines="2" name="Unity Station" posX="1814.6416" posY="-1905.8877" posZ="13.80445" rotX="0" rotY="0" rotZ="180.282"></bus_stop>
-    <bus_stop id="bus_stop (60)" markerdistance="4.5" lines="2" name="Flughafen" alpha="255" interior="0" posX="1847.0872" posY="-2173.5664" posZ="13.80656" rotX="0" rotY="0" rotZ="271.051"></bus_stop>
-    <bus_stop id="bus_stop (61)" markerdistance="4.5" lines="2" name="Willowfield" alpha="255" interior="0" posX="2073.9126" posY="-2116.925" posZ="13.78156" rotX="0" rotY="0" rotZ="271.051"></bus_stop>
-    <bus_stop id="bus_stop (62)" markerdistance="4.5" lines="2" name="Hafen" alpha="255" interior="0" posX="2322.3735" posY="-2262.8469" posZ="13.78156" rotX="0" rotY="0" rotZ="315.273"></bus_stop>
-    <bus_stop id="bus_stop (63)" markerdistance="4.5" lines="2" name="Playa del Seville" alpha="255" interior="0" posX="2844.2" posY="-2068.4116" posZ="11.36124" rotX="0" rotY="0" rotZ="354.92"></bus_stop>
-    <bus_stop id="bus_stop (64)" markerdistance="4.5" lines="2" name="Hafen" alpha="255" interior="0" posX="2301.7573" posY="-2241.9644" posZ="13.78156" rotX="0" rotY="0" rotZ="133.164"></bus_stop>
-    <bus_stop id="bus_stop (65)" markerdistance="4.5" lines="2" name="Willowfield" alpha="255" interior="0" posX="2073.6631" posY="-2102.9497" posZ="13.78156" rotX="0" rotY="0" rotZ="90.767"></bus_stop>
-    <bus_stop id="bus_stop (66)" markerdistance="4.5" lines="2" name="Flughafen" alpha="255" interior="0" posX="1846.8877" posY="-2159.3965" posZ="13.80656" rotX="0" rotY="0" rotZ="90.767"></bus_stop>
-    <bus_stop id="bus_stop (67)" markerdistance="4.5" lines="2" name="Unity Station" alpha="255" interior="0" posX="1828.7416" posY="-1905.8877" posZ="13.75445" rotX="0" rotY="0" rotZ="359.998"></bus_stop>
+    <bus_stop id="bus_stop (28)" markerdistance="4.5" lines="2" name="Tennisplatz Vinewood" alpha="255" interior="0" posX="618.67108" posY="-1251.8743" posZ="18.06419" rotX="0" rotY="0" rotZ="186.782"></bus_stop>
+	<bus_stop id="bus_stop (23)" markerdistance="4.5" lines="2" name="SAN News Zentrale" alpha="255" interior="0" posX="778.7326" posY="-1412.7739" posZ="13.79221" rotX="0" rotY="0" rotZ="269.729"></bus_stop>
+    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="2" name="Krankenhaus" alpha="255" interior="0" posX="1166.4805" posY="-1413.0059" posZ="13.88375" rotX="0" rotY="0" rotZ="269.555"></bus_stop>
+    <bus_stop id="bus_stop (29)" markerdistance="4.5" lines="2" name="FBI Headquarters" alpha="255" interior="0" posX="1242.5747" posY="-1859.3208" posZ="13.80656" rotX="0" rotY="0" rotZ="269.729"></bus_stop>
+	<bus_stop id="bus_stop (25)" markerdistance="4.5" lines="2" name="Japantown" alpha="255" interior="0" posX="1447.6904" posY="-1354.1469" posZ="13.80656" rotX="0" rotY="0" rotZ="179.712"></bus_stop>
+   
+   
+	<bus_stop id="bus_stop (50)" markerdistance="4.5" lines="1,2" name="Pershing Square" posX="1477.7627" posY="-1739.0469" posZ="13.80656" rotX="0" rotY="0" rotZ="270.033"></bus_stop>
+   
+	<bus_stop id="bus_stop (59)" markerdistance="4.5" lines="2" name="Public Transport Zentrale" posX="1814.6416" posY="-1905.8877" posZ="13.80445" rotX="0" rotY="0" rotZ="180.28"></bus_stop>
+	<bus_stop id="bus_stop (52)" markerdistance="4.5" lines="2" name="Grove Street" alpha="255" interior="0" posX="2299.4348" posY="-1666.2263" posZ="15.03504" rotX="0" rotY="0" rotZ="270.038"></bus_stop>
+    <bus_stop id="bus_stop (53)" markerdistance="4.5" lines="2" name="Jefferson" alpha="255" interior="0" posX="2240.563" posY="-1377.251" posZ="24.25656" rotX="0" rotY="0" rotZ="90.319"></bus_stop>
+    <bus_stop id="bus_stop (58)" markerdistance="4.5" lines="2" name="Grove Street" alpha="255" interior="0" posX="2297.6477" posY="-1651.7726" posZ="15.03188" rotX="0" rotY="0" rotZ="90.319"></bus_stop>
+    <bus_stop id="bus_stop (67)" markerdistance="4.5" lines="2" name="Public Transport Zentrale" alpha="255" interior="0" posX="1828.7412" posY="-1905.8877" posZ="13.75445" rotX="0" rotY="0" rotZ="359.995"></bus_stop>
+	
+	<bus_stop id="bus_stop (60)" markerdistance="4.5" lines="1" name="Flughafen" alpha="255" interior="0" posX="1785.267" posY="-2173.5664" posZ="13.80656" rotX="0" rotY="0" rotZ="271.049"></bus_stop>
+    <bus_stop id="bus_stop (61)" markerdistance="4.5" lines="1" name="Recyclinghof Willowfield" alpha="255" interior="0" posX="2073.9131" posY="-2116.9248" posZ="13.78156" rotX="0" rotY="0" rotZ="271.049"></bus_stop>
+    <bus_stop id="bus_stop (62)" markerdistance="4.5" lines="1" name="Pizzastack Idlewood" alpha="255" interior="0" posX="2092.3826" posY="-1779.8344" posZ="13.80656" rotX="0" rotY="0" rotZ="345.096"></bus_stop>
+    <bus_stop id="bus_stop (63)" markerdistance="4.5" lines="1" name="Boxhalle Ganton" alpha="255" interior="0" posX="2225.1782" posY="-1705.6376" posZ="13.8571" rotX="0" rotY="0" rotZ="353.335"></bus_stop>
+    <bus_stop id="bus_stop (64)" markerdistance="4.5" lines="1" name="Pizzastack Idlewood" alpha="255" interior="0" posX="2078.6794" posY="-1776.0157" posZ="13.80656" rotX="0" rotY="0" rotZ="164.902"></bus_stop>
+    <bus_stop id="bus_stop (65)" markerdistance="4.5" lines="1" name="Recyclinghof Willowfield" alpha="255" interior="0" posX="2073.6631" posY="-2102.9492" posZ="13.78156" rotX="0" rotY="0" rotZ="90.764"></bus_stop>
+    <bus_stop id="bus_stop (66)" markerdistance="4.5" lines="1" name="Flughafen" alpha="255" interior="0" posX="1785.1471" posY="-2159.3965" posZ="13.80656" rotX="0" rotY="0" rotZ="90.764"></bus_stop>
+   
 </map>

@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.8.1"
+PROJECT_VERSION = "1.8.2"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -12,6 +12,8 @@ if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
 
+DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "influxdb.merx.dev"}
+
 -- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
@@ -22,12 +24,12 @@ MAX_FISHING_LEVEL = 15
 MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
-EVENT_EASTER = true
-EVENT_EASTER_SLOTMACHINES_ACTIVE = true
+EVENT_EASTER = false
+EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false --quests, mostly
+EVENT_CHRISTMAS = false --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
-SNOW_SHADERS_ENABLED = true -- disable them during summer time
+SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
@@ -107,6 +109,20 @@ RANK[8] = "StellvProjektleiter"
 RANK[9] = "Projektleiter"
 
 
+RANKSCOREBOARD = {}
+RANKSCOREBOARD[-1] = "Banned"
+RANKSCOREBOARD[0] = "User"
+RANKSCOREBOARD[1] = "Ticket"
+RANKSCOREBOARD[2] = "Clan"
+RANKSCOREBOARD[3] = "Support"
+RANKSCOREBOARD[4] = "Moderator"
+RANKSCOREBOARD[5] = "Admin"
+RANKSCOREBOARD[6] = "Admin"
+RANKSCOREBOARD[7] = "Admin"
+RANKSCOREBOARD[8] = "Admin"
+RANKSCOREBOARD[9] = "Admin"
+
+
 local r2 = {}
 for k, v in pairs(RANK) do
 	r2[k] = v
@@ -118,6 +134,7 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
+	["freeVip"] = RANK.Moderator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -142,9 +159,11 @@ ADMIN_RANK_PERMISSION = {
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["vehicleTexture"] = RANK.Moderator,
 	["spect"] = RANK.Supporter,
+	["aduty"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
+	["clearAd"] = RANK.Supporter,
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -203,6 +222,13 @@ ADMIN_RANK_PERMISSION = {
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,
+	["transactionMenu"] = RANK.Administrator,
+	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
+	["serialAccountMenu"] = RANK.Supporter,
+
+	["openMapEditor"] = RANK.Administrator,
+	["createNewMap"] = RANK.Administrator,
+	["setMapStatus"] = RANK.Administrator,
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
@@ -517,13 +543,14 @@ AD_DURATIONS = {
 
 BODYPART_NAMES = {
 	[3] = "Körper",
-	[4] =  "Arsch",
+	[4] =  "Hüfte",
 	[5] =  "Linker Arm",
 	[6] =  "Rechter Arm",
 	[7] =  "Linkes Bein",
 	[8] =  "Rechtes Bein",
 	[9] =  "Kopf"
 }
+
 
 MEDIC_TIME = 180000
 DEATH_TIME = 30000
@@ -554,16 +581,16 @@ HOSPITAL_POSITION = Vector3(1177.80, -1323.94, 14.09)
 HOSPITAL_ROTATION = Vector3(0, 0, 270)
 
 WEAPON_LEVEL = {
-	[1] = {["costs"] = 500, ["hours"] = 1},
-	[2] = {["costs"] = 750, ["hours"] = 2},
-	[3] = {["costs"] = 1000, ["hours"] = 3},
-	[4] = {["costs"] = 1500, ["hours"] = 6},
-	[5] = {["costs"] = 2000, ["hours"] = 8},
-	[6] = {["costs"] = 2500, ["hours"] = 10},
-	[7] = {["costs"] = 3250, ["hours"] = 14},
-	[8] = {["costs"] = 4000, ["hours"] = 18},
-	[9] = {["costs"] = 4750, ["hours"] = 22},
-	[10] = {["costs"] = 5500, ["hours"] = 30}
+	[1] = {["costs"] = 750},
+	[2] = {["costs"] = 1125},
+	[3] = {["costs"] = 1500},
+	[4] = {["costs"] = 2250},
+	[5] = {["costs"] = 3000},
+	[6] = {["costs"] = 3750},
+	[7] = {["costs"] = 4875},
+	[8] = {["costs"] = 6000},
+	[9] = {["costs"] = 7125},
+	[10] = {["costs"] = 8250}
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
@@ -647,7 +674,7 @@ FactionStaticId = {
 	BALLAS = 8,
 	OUTLAWS = 9,
 	VATOS = 10,
-	TRIAD = 11
+	TRIAD = 11,
 }
 
 SEASONS = {

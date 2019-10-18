@@ -10,14 +10,15 @@ inherit(GUIFontContainer, GUIButton)
 
 local GUI_BUTTON_BORDER_MARGIN = 5
 
-function GUIButton:constructor(posX, posY, width, height, text, parent)
+function GUIButton:constructor(posX, posY, width, height, text, parent, lineColor, hoverColor)
 	checkArgs("GUIButton:constructor", "number", "number", "number", "number", "string")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(height*.8))
 
 	self.m_NormalColor = Color.White
-	self.m_HoverColor = Color.Black
+
+	self.m_HoverColor = hoverColor or Color.Black
 	self.m_BackgroundNormalColor = Color.Accent
 	self.m_BackgroundHoverColor = Color.White
 	self.m_Color = self.m_NormalColor
@@ -30,14 +31,20 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 		self.m_BackgroundImage = ("files/images/Events/Halloween/ButtonSplatter%d.png"):format(math.random(1,4))
 	end
 	-- Create a dummy gui element for animation
-	self.m_AnimatedBar = DxRectangle:new(0, 0, 0, 2, Color.White, self):setDrawingEnabled(true)
+	self.m_AnimatedBar = DxRectangle:new(0, 0, 0, 2, lineColor or Color.White, self):setDrawingEnabled(true)
+end
+
+function GUIButton:setAlign(x, y)
+	self.m_AlignX = x or "center"
+	self.m_AlignY = y or "center"
+	return self
 end
 
 function GUIButton:drawThis()
 	dxSetBlendMode("modulate_add")
 
 	if self.m_BarActivated then
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 2, self.m_Width, self.m_Height - 2, Color.Primary)
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 2, self.m_Width, self.m_Height - 2, self.m_AlternateColor or Color.Primary)
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, 2, self.m_BackgroundColor)
 	else
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
@@ -47,7 +54,7 @@ function GUIButton:drawThis()
 		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundImage)
 	end
 
-	dxDrawText(self:getText(), self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), "center", "center", false, true)
+	dxDrawText(self:getText(), self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX or "center", self.m_AlignY or "center", false, true)
 
 	dxSetBlendMode("blend")
 end
@@ -128,6 +135,12 @@ end
 function GUIButton:setBackgroundColor(color)
 	self.m_BackgroundColor = color
 	self.m_BackgroundNormalColor = color
+	self:anyChange()
+	return self
+end
+
+function GUIButton:setAlternativeColor(color) 
+	self.m_AlternateColor = color 
 	self:anyChange()
 	return self
 end

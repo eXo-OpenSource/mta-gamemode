@@ -34,9 +34,9 @@ function VehicleTuningShop:constructor()
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
         },
 		{
-            Vector3(1448.12, -2438.56, 13), -- LS Airport
+            Vector3(1483.14, -2438.56, 13), -- LS Airport
             {Vector3(1494.73, -2455.32, 13), 180},
-            Vector3(1448.12, -2438.56, 13),
+            Vector3(1483.14, -2438.56, 13),
 			"AirportPainter"
         },
 		{
@@ -163,7 +163,7 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
-            if not vehicle:getGroup() ~= hitElement:getGroup() then
+            if not vehicle:getGroup() == hitElement:getGroup() then
                 hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
                 return
             end

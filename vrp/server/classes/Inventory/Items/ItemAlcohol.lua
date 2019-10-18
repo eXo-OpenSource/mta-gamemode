@@ -76,6 +76,7 @@ function ItemAlcohol:use()
 
 	if itemSettings.Health then
 		StatisticsLogger:getSingleton():addHealLog(player, itemSettings.Health, "Item "..self:getTechnicalName())
+		player:checkLastDamaged()
 	end
 
 	player.m_IsConsuming = true
@@ -109,7 +110,6 @@ function ItemAlcohol:use()
 			if itemSettings.Health then
 				player:setHealth(player:getHealth() + itemSettings.Health)
 			end
-
 			player:incrementAlcoholLevel(itemSettings.Alcohol)
 
 			player.m_IsConsuming = false

@@ -153,6 +153,7 @@ function GUIElement.unhoverAll()
 	while self do
 		if self.m_Hover then
 			local relCursorX, relCursorY = getCursorPosition()
+			if not relCursorX then return end
 			local cursorX, cursorY = relCursorX * screenWidth, relCursorY * screenHeight
 
 			if self.onUnhover		  then self:onUnhover(cursorX, cursorY)         end

@@ -128,7 +128,11 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then --use triggerLatentEvent to improve serverside performance
-		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
+		if faction:getPlayerRank(client) < FactionRank.Manager then
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames)
+		else
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames, faction.m_RankLoans, faction.m_ValidWeapons, faction.m_RankWeapons)
+		end
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -467,7 +471,7 @@ end
 
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(FactionManager.Map) do -- send the wt destination as point where players can navigate to
-		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()]))
+		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()])) -- navigation point on some instances missing! 
 	end
 end
 
@@ -671,4 +675,43 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
 	end
+end
+
+function FactionManager:getFromName(name)
+	for k, faction in pairs(FactionManager.Map) do
+		if faction:getName() == name then
+			return faction
+		end
+	end
+	return false
+end
+
+function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitchTo)
+	local faction = self:getFromId(factionId)
+	local players = {}
+
+	if not faction then
+		local result = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), factionIdToSwitchTo)
+		for i, factionRow in ipairs(result) do
+			players[factionRow.Id] = factionRow.FactionRank
+		end
+	else
+		admin:sendError(_("Die Fraktion mit der ID %s ist noch geladen!", admin, factionId))
+		return
+	end
+
+	local factionToSwitchTo = self:getFromId(factionIdToSwitchTo)
+	if not factionToSwitchTo then
+		admin:sendError(_("Die Fraktion mit der ID %s ist nicht geladen!", admin, factionIdToSwitchTo))
+		return
+	end
+
+	for playerId, rank in pairs(players) do
+		HistoryPlayer:getSingleton():addLeaveEntry(playerId, admin:getId(), factionId, "faction", rank, "Fraktionstausch", "Fraktionstausch")
+
+		HistoryPlayer:getSingleton():addJoinEntry(playerId, admin:getId(), factionIdToSwitchTo, "faction")
+		factionToSwitchTo:addPlayer(playerId, rank)
+	end
+
+	admin:sendSuccess(_("Die Fraktionsmitglieder der %s wurden erfolgreich in die Fraktion %s transferiert!", admin, faction:getName(), factionToSwitchTo:getName()))
 end

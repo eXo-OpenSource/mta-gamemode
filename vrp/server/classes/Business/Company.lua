@@ -49,7 +49,11 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
 	if not DEBUG then
-		self:getActivity()
+		Async.create(
+			function(self)
+				self:getActivity()
+			end
+		)(self)
 	end
 end
 
@@ -192,7 +196,11 @@ function Company:addPlayer(playerId, rank)
     self:onPlayerJoin(playerId, rank)
   end
 
-  self:getActivity(true)
+  Async.create(
+	function(self)
+		self:getActivity(true)
+	end
+)(self)
 end
 
 function Company:removePlayer(playerId)
@@ -217,12 +225,14 @@ function Company:removePlayer(playerId)
 	end
 end
 
-function Company:getOnlinePlayers()
+function Company:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			players[#players + 1] = player
+			if (not afkCheck or not player.m_isAFK) and (not dutyCheck or player:isCompanyDuty()) then
+				players[#players + 1] = player
+			end
 		end
 	end
 	return players
@@ -234,6 +244,7 @@ end
 
 
 function Company:sendChatMessage(sourcePlayer,message)
+	if not getElementData(sourcePlayer, "CompanyChatEnabled") then return sourcePlayer:sendError(_("Du hast den Unternehmenschat deaktiviert!", sourcePlayer)) end
 	local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
 		cancelEvent()
@@ -248,8 +259,10 @@ function Company:sendChatMessage(sourcePlayer,message)
 	message = message:gsub("%%", "%%%%")
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, 100, 150, 250)
-        if player ~= sourcePlayer then
+		if getElementData(player, "CompanyChatEnabled") then
+			player:sendMessage(text, 100, 150, 250)
+        end
+		if player ~= sourcePlayer then
             receivedPlayers[#receivedPlayers+1] = player
         end
 	end
@@ -313,18 +326,33 @@ function Company:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
 	end
+
 	self.m_LastActivityUpdate = getRealTime().timestamp
+	local playerIds = {}
 
 	for playerId, rank in pairs(self.m_Players) do
-		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
+		table.insert(playerIds, playerId)
+	end
 
+	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+
+	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
+
+	local rows = Async.wait()
+
+	self.m_PlayerActivity = {}
+	for playerId, rank in pairs(self.m_Players) do
+		self.m_PlayerActivity[playerId] = 0
+	end
+
+	for _, row in ipairs(rows) do
 		local activity = 0
 
 		if row and row.Activity then
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[playerId] = activity
+		self.m_PlayerActivity[row.UserID] = activity
 	end
 end
 
@@ -333,7 +361,11 @@ function Company:getPlayers(getIDsOnly)
 		return self.m_Players
 	end
 
-	self:getActivity()
+	Async.create(
+		function(self)
+			self:getActivity()
+		end
+	)(self)
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
@@ -456,22 +488,32 @@ function Company:createDutyMarker()
 end
 
 function Company:respawnVehicles()
+	local time = getRealTime().timestamp
+	if self.m_LastRespawn and not isAdmin then
+		if time - self.m_LastRespawn <= 900 then --// 15min
+			return self:sendShortMessage("Fahrzeuge können nur alle 15 Minuten respawned werden!")
+		end
+	end
+	if isAdmin then
+		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
+		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+	end
 	local companyVehicles = VehicleManager:getSingleton():getCompanyVehicles(self.m_Id)
 	local fails = 0
 	local vehicles = 0
-	if companyVehicles then
-		for companyId, vehicle in pairs(companyVehicles) do
-			if vehicle:getCompany() == self then
-				vehicles = vehicles + 1
-				if not vehicle:respawn() then
-					fails = fails + 1
-				else
-					vehicle:setInterior(0)
-					vehicle:setDimension(0)
-				end
+	for companyId, vehicle in pairs(companyVehicles) do
+		if vehicle:getCompany() == self then
+			vehicles = vehicles + 1
+			if not vehicle:respawn(true, isAdmin and true or false) then
+				fails = fails + 1
+			else
+				vehicle:setInterior(vehicle.m_SpawnInt or 0)
+				vehicle:setDimension(vehicle.m_SpawnDim or 0)
 			end
+			self.m_LastRespawn = getRealTime().timestamp
 		end
 	end
+
 	self:sendShortMessage(("%s/%s Fahrzeuge wurden respawned!"):format(vehicles-fails, vehicles))
 end
 

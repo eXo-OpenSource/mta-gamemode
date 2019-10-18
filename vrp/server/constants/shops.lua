@@ -129,7 +129,9 @@ SHOP_TYPES = {
 	},
 	[18] = {
 		["Name"] = "CJ-Tattoo-Studio",
-		["Marker"] = Vector3(-202.21, -6.92, 1001.6),
+		["ClothesMarker"] = {
+			["Tattoos"] = Vector3(-202.21, -6.92, 1001.6)
+		},
 		["Ped"] = {29, Vector3(-201.49, -4.85, 1002.27), 158},
 		["Interior"] = {17, Vector3(-204.40, -9.08, 1002.27)},
 		["Class"] = CJClothes
@@ -662,7 +664,7 @@ CJ_CLOTHES = {
 	},
 	["TattoosST"] = {
 		[-1] = {["Name"] = "Kein Tattoo", ["Price"] = 0},
-		[0] = {["Name"] = "Grove (1)", ["Preis"] = 90},
+		[0] = {["Name"] = "Grove (1)", ["Price"] = 90},
 		[1] = {["Name"] = "Grove (2)", ["Price"] = 100},
 		[2] = {["Name"] = "Grove (3)", ["Price"] = 90},
 		[3] = {["Name"] = "Dice (1)", ["Price"] = 80},

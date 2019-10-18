@@ -32,6 +32,7 @@ function AppBank:onOpen(form)
 
 	GUILabel:new(10, 155, 240, 20, _"Grund:", self.m_Tabs["Transfer"])
 	self.m_TransferPurposeEdit = GUIEdit:new(10, 175, 240, 30, self.m_Tabs["Transfer"])
+	self.m_TransferPurposeEdit:setMaxLength(20)
 
 	GUILabel:new(10, 210, 240, 20, _"Betrag:", self.m_Tabs["Transfer"])
 	self.m_TransferAmountEdit = GUIEdit:new(10, 230, 240, 30, self.m_Tabs["Transfer"])

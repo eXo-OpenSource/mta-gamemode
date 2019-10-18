@@ -8,7 +8,7 @@
 
 DeathmatchManager = inherit(Singleton)
 DeathmatchManager.Lobbys = {}
-DeathmatchManager.AllowedWeapons = {1, 2, 3, 4, 5, 6, 7, 8, 22, 24, 25, 26, 27, 28, 29, 32, 30, 31, 33, 34, 35, 37, 38, 16, 18, 10, 11, 12, 14, 15}
+DeathmatchManager.AllowedWeapons = {22, 24, 25, 28, 29, 32, 30, 31, 33, 34, 10, 11, 12, 14, 15}
 
 DeathmatchManager.Maps = {
 	["lvpd"] = {
@@ -222,7 +222,7 @@ function DeathmatchManager:createPlayerLobby(map, weapon, password)
 end
 
 function DeathmatchManager:joinLobby(id)
-	if client:isFactionDuty() then
+	if client:isFactionDuty() and client:getFaction():isStateFaction() then
 		client:sendError(_("Du darfst nicht im Dienst in eine DM-Lobby! (Fraktion)", client))
 		return
 	end

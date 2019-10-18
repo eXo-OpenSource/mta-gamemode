@@ -126,6 +126,7 @@ function Depot:getEquipmentTable()
 end
 
 function Depot:getWeapon(id)
+	if not self.m_Weapons[id] then return -1 end
 	return self.m_Weapons[id]["Waffe"],self.m_Weapons[id]["Munition"]
 end
 

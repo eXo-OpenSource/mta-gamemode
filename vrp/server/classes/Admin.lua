@@ -60,6 +60,7 @@ function Admin:constructor()
     addCommandHandler("permaban", adminCommandBind)
     addCommandHandler("prison", adminCommandBind)
     addCommandHandler("unprison", adminCommandBind)
+    addCommandHandler("aduty", adminCommandBind)
     addCommandHandler("smode", adminCommandBind)
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
@@ -78,7 +79,9 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck",
+	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction", "adminRequestMultiAccounts",
+	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -106,6 +109,12 @@ function Admin:constructor()
 	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
 	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	addEventHandler("adminLoginFix", root, bind(self.Event_OnAdminLoginFix, self))
+	addEventHandler("adminTriggerTransaction", root, bind(self.Event_forceTransaction, self))
+	addEventHandler("adminRequestMultiAccounts", root, bind(self.Event_adminRequestMultiAccounts, self))
+	addEventHandler("adminDelteMultiAccount", root, bind(self.Event_adminDelteMultiAccount, self))
+	addEventHandler("adminCreateMultiAccount", root, bind(self.Event_adminCreateMultiAccount, self))
+	addEventHandler("adminRequestSerialAccounts", root, bind(self.Event_adminRequestSerialAccounts, self))
+	addEventHandler("adminDeleteAccountFromSerial", root, bind(self.Event_adminDeleteAccountFromSerial, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -221,6 +230,7 @@ function Admin:destructor()
     removeCommandHandler("timeban", adminCommandBind)
     removeCommandHandler("permaban", adminCommandBind)
     removeCommandHandler("prison", adminCommandBind)
+    removeCommandHandler("aduty", adminCommandBind)
     removeCommandHandler("smode", adminCommandBind)
     removeCommandHandler("rkick", adminCommandBind)
     removeCommandHandler("warn", adminCommandBind)
@@ -321,7 +331,7 @@ end
 function Admin:Event_respawnFactionVehicles(Id)
     local faction = FactionManager:getSingleton():getFromId(Id)
     if faction then
-        faction:respawnVehicles( client )
+        faction:respawnVehicles(client)
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
     end
 end
@@ -329,7 +339,7 @@ end
 function Admin:Event_respawnCompanyVehicles(Id)
     local company = CompanyManager:getSingleton():getFromId(Id)
     if company then
-        company:respawnVehicles()
+        company:respawnVehicles(client)
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, company:getName()))
     end
 end
@@ -348,7 +358,7 @@ end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
 
-	if cmd == "smode" or cmd == "clearchat" then
+	if cmd == "aduty" or cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
 		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
@@ -437,7 +447,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		return
 	end
 
-	if func == "smode" then
+	if func == "aduty" or func == "smode" then
 		self:toggleSupportMode(admin)
 	elseif func == "clearchat" then
 		self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
@@ -445,10 +455,15 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			for i=0, 2100 do
 				player:sendMessage(" ")
 			end
-			player:triggerEvent("closeAd")
 		end
 		StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
 		outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+	elseif func == "clearAd" then
+		self:sendShortMessage(_("%s die aktuelle Werbung gelöscht!", admin, admin:getName()))
+		for index, player in pairs(Element.getAllByType("player")) do
+			player:triggerEvent("closeAd")
+		end
+		StatisticsLogger:getSingleton():addAdminAction( admin, "clearAd", false)
 	elseif func == "resetAction" then
 		self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
 		ActionsCheck:getSingleton():reset()
@@ -949,13 +964,25 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-	table.sort(self.m_OnlineAdmins, function(a, b) return a > b end)
-
 	if table.size(self.m_OnlineAdmins) > 0 then
-		outputChatBox("Folgende Teammitglieder sind derzeit online:", player, 50, 200, 255)
-		for onlineAdmin, rank in pairs(self.m_OnlineAdmins) do
-			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
+
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox("Folgende Teammitglieder sind online:", player, 50, 200, 255)
+		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do
+			if onlineAdmin:getPublicSync("supportMode") then
+				outputChatBox(("    • %s #ffffff%s (Aktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
+			end
 		end
+		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do
+			if not onlineAdmin:getPublicSync("supportMode") then
+				outputChatBox(("    • %s #ffffff%s (Inaktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, 192, 192, 192, true)
+			end
+		end
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
+		outputChatBox(" ", player, 50, 200, 255)
 	else
 		outputChatBox("Derzeit sind keine Teammitglieder online!", player, 255, 0, 0)
 	end
@@ -1068,7 +1095,7 @@ local tpTable = {
         ["cjkleidung"] =    {["pos"] = Vector3(1128.82, -1452.29, 15.48),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
-        ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
+        ["mechaniker"] =    {["pos"] = Vector3(2406.46, -2089.79, 13.55),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
 		["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
@@ -1079,7 +1106,7 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["vatos"] =         {["pos"] = Vector3(1882.53, -2029.32, 13.39),	["typ"] = "Fraktionen"},
-		["yakuza"] =        {["pos"] = Vector3(1406.541, -1426.492, 8.643),	["typ"] = "Fraktionen"},
+		["triaden"] =       {["pos"] = Vector3(1900.384, 954.533, 10.820),	["typ"] = "Fraktionen"},
 		["kartell"] =       {["pos"] = Vector3(2529.555, -1465.829, 23.94), ["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(752.73, 326.17, 19.88),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
@@ -1373,9 +1400,12 @@ function Admin:Event_vehicleDespawn(reason)
 						delTarget:addOfflineMessage(("Dein Fahrzeug (%s) wurde von %s despawnt (%s)!"):format(source:getName(), client:getName(), reason))
 						delete(delTarget)
 					else
-						delTarget:sendInfo(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason))
+						delTarget:sendShortMessage(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason), -1)
 					end
 				end
+			end
+			if instanceof(source, GroupVehicle) then
+				source:getGroup():sendShortMessage(_("Euer Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason), -1)
 			end
 		end
 
@@ -1526,4 +1556,207 @@ function Admin:Event_ObjectPlaced(x, y, z, rotation)
 	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
 	client.m_PlacingInfo = nil
 	return
+end
+
+function Admin:Event_forceTransaction(amount, from, fromType, to, toType)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	local id = false
+	if fromType == "player" then
+		local id = Account.getIdFromName(from)
+		if not id or id == 0 then
+			client:sendError(_("Der Spieler, der Geld abgezogen bekommen soll, existiert nicht!", client))
+			return
+		end
+		fromBankAccount = BankAccount.loadByOwner(id, 1)
+
+	elseif fromType == "faction" then
+		local id = FactionManager:getSingleton():getFromName(from) and FactionManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Die Fraktion, von der Geld abgezogen werden soll, existiert nicht!") return end
+		if id == 1 or id == 2 or id == 3 then
+			fromBankAccount = FactionState:getSingleton().m_BankAccountServer
+		else
+			fromBankAccount = BankAccount.loadByOwner(id, 2)
+		end
+		fromBankAccount = BankAccount.loadByOwner(id, 2)
+
+	elseif fromType == "company" then
+		local id = CompanyManager:getSingleton():getFromName(from) and CompanyManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Das Unternehmen, von dem Geld abgezogen werden soll, existiert nicht!") return end
+		fromBankAccount = BankAccount.loadByOwner(id, 3)
+
+	elseif fromType == "group" then
+		local id = GroupManager:getSingleton():getFromName(from) and GroupManager:getSingleton():getFromName(from):getId() or false
+		if not tonumber(id) then client:sendError("Die Gruppe, von der Geld abgezogen werden soll, existiert nicht!") return end
+		fromBankAccount = BankAccount.loadByOwner(id, 8)
+
+	elseif fromType == "admin" then
+		from = "Adminkasse"
+		fromBankAccount = self.m_BankAccount
+
+	end
+
+	local id = false
+	if toType == "player" then
+		local id = Account.getIdFromName(to)
+		if not id or id == 0 then
+			client:sendError(_("Der Spieler, dem Geld überwiesen werden soll, existiert nicht!", client))
+			return
+		end
+		toBankAccount = BankAccount.loadByOwner(id, 1)
+
+	elseif toType == "faction" then
+		local id = FactionManager:getSingleton():getFromName(to) and FactionManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Die Fraktion, der Geld überwiesen werden soll, existiert nicht!") return end
+		if id == 1 or id == 2 or id == 3 then
+			toBankAccount = FactionState:getSingleton().m_BankAccountServer
+		else
+			toBankAccount = BankAccount.loadByOwner(id, 2)
+		end
+
+	elseif toType == "company" then
+		local id = CompanyManager:getSingleton():getFromName(to) and CompanyManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Das Unternehmen, dem Geld überwiesen werden soll, existiert nicht!") return end
+		toBankAccount = BankAccount.loadByOwner(id, 3)
+
+	elseif toType == "group" then
+		local id = GroupManager:getSingleton():getFromName(to) and GroupManager:getSingleton():getFromName(to):getId() or false
+		if not tonumber(id) then client:sendError("Der Gruppe, der Geld überwiesen werden soll, existiert nicht!") return end
+		toBankAccount = BankAccount.loadByOwner(id, 8)
+
+	elseif toType == "admin" then
+		to = "Adminkasse"
+		toBankAccount = self.m_BankAccount
+
+	end
+
+	if fromBankAccount and toBankAccount then
+		fromBankAccount:transferMoney(toBankAccount, amount, ("Erzwungene Transaktion von %s"):format(client:getName()), "Admin", "TransactionForce")
+		fromBankAccount:save()
+		toBankAccount:save()
+		client:sendShortMessage(("Transaktion über %s$ von %s zu %s erfolgreich!"):format(addComas(tostring(amount)), from, to))
+	end
+end
+
+function Admin:Event_adminRequestMultiAccounts()
+	if client:getRank() < RANK.Supporter then
+		return
+	end
+
+	local multiAccountTable = {}
+	local result = sql:queryFetch("SELECT * FROM ??_account_multiaccount", sql:getPrefix())
+	for i, row in pairs(result) do
+		local nameTable = {}
+		for key, accountId in pairs(fromJSON(row.LinkedTo) or {}) do
+			local nameResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), accountId)
+			nameTable[#nameTable+1] = nameResult.Name
+		end
+
+		local adminResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.Admin)
+		local adminName
+		if adminResult then
+			adminName = adminResult.Name
+		else
+			adminName = "-"
+		end
+
+        multiAccountTable[row.ID] = {serial=row.Serial, linkedTo=nameTable, allowCreate=row.allowCreate, admin=adminName}
+	end
+
+	client:triggerEvent("adminSendMultiAccountsToClient", multiAccountTable)
+end
+
+function Admin:Event_adminDelteMultiAccount(id)
+	if client:getRank() < RANK.Administrator then
+		client:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	local result = sql:queryExec("DELETE FROM ??_account_multiaccount WHERE ID = ?", sql:getPrefix(), tonumber(id))
+	if result then
+		client:sendInfo("Der Multi-Account wurde gelöscht!")
+		client:triggerEvent("adminRemoveMultiAccountFromList", id)
+	else
+		client:sendError("Der Multi-Account konnte nicht gelöscht werden!")
+	end
+end
+
+function Admin:Event_adminCreateMultiAccount(serial, name, multiAccountName, allowCreate)
+	if client:getRank() < RANK.Administrator then
+		client:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	local linkedToTable = {}
+	if name ~= "" then
+		local result = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+		if result then
+			linkedToTable[#linkedToTable+1] = result.Id
+		else
+			client:sendError(_("Es existiert kein Spieler mit dem Namen %s!", client, name))
+			return
+		end
+	end
+	if multiAccountName ~= "" then
+		local nameTable = split(multiAccountName, ",")
+		for key, name in pairs(nameTable) do
+			local result = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+			if result then
+				linkedToTable[#linkedToTable+1] = result.Id
+			else
+				client:sendError(_("Es existiert kein Spieler mit dem Namen %s!", client, multiAccountName))
+				return
+			end
+		end
+	end
+
+	local allowCreate = (#linkedToTable < 2 and fromboolean(allowCreate)) or 0
+	local result, numrows, lastInsertID = sql:queryFetch("INSERT INTO ??_account_multiaccount (Serial, LinkedTo, allowCreate, Admin, Timestamp) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), serial, toJSON(linkedToTable), allowCreate, client:getId(), getRealTime().timestamp)
+	if result then
+		client:sendInfo("Der Multi-Account wurde erstellt!")
+	else
+		client:sendError("Der Multi-Account konnte nicht erstellt werden!")
+	end
+end
+
+function Admin:Event_adminRequestSerialAccounts(serial)
+	local result = sql:queryFetch("SELECT * FROM ??_account_to_serial WHERE Serial = ?", sql:getPrefix(), serial)
+	local accountTable = {}
+	for i, row in pairs(result) do
+		local singleResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.PlayerId)
+		accountTable[#accountTable+1] = {row.PlayerId, singleResult.Name}
+	end
+	client:triggerEvent("adminSendSerialAccountsToClient", serial, accountTable)
+end
+
+function Admin:Event_adminDeleteAccountFromSerial(userId, serial)
+	if client:getRank() < RANK.Administrator then
+		client:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	local result = sql:queryExec("DELETE FROM ??_account_to_serial WHERE PlayerId = ? AND Serial = ?", sql:getPrefix(), userId, serial)
+	if result then
+		client:sendInfo("Der Account wurde von der Serial getrennt!")
+		client:triggerEvent("adminDeleteAccountFromSerialList", userId)
+	else
+		client:sendError("Der Account konnte von der Serial nicht getrennt werden!")
+	end
+end
+
+function Admin:toggleInvisible(player)
+	if player:getRank() ~= RANK.Scripter then
+		player:sendError("Du bist nicht berechtigt!")
+		return
+	end
+
+	if player:getPublicSync("isInvisible") then
+		player:setPublicSync("isInvisible", false)
+		player:setAlpha(255)
+	else
+		player:setPublicSync("isInvisible", true)
+		player:setAlpha(0)
+	end
 end

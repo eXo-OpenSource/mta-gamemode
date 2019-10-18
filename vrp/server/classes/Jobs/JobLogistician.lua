@@ -197,6 +197,11 @@ function Crane:dropContainer(vehicle, player, callback)
 		player:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", player))
 		return false
 	end
+	if getAttachedElements(vehicle)[1] and getElementType(getAttachedElements(vehicle)[1]) == "player" then
+		player:sendError(_("Es darf sich kein Spieler am LKW festhalten!", player))
+		return
+	end
+	
 	self.m_Busy = true
 	vehicle:setFrozen(true)
 	toggleAllControls(player, false, true, false)

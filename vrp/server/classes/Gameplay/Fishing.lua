@@ -490,8 +490,8 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		for i = 1, 5000000 do end -- otherwise the script is too fast to create random numbers
-		fish.RareBonus = self.Random:nextDouble() --math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
+		-- for i = 1, 5000000 do end -- otherwise the script is too fast to create random numbers
+		fish.RareBonus = math.random(0, 10^6)/10^6 --math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 

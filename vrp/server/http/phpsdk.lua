@@ -74,3 +74,103 @@ function phpSDKGiveQRAchievement(playerId)
 		end
 	)()
 end
+
+function phpSDKKickPlayer(adminId, targetId, reason)
+	local target = DatabasePlayer.Map[targetId]
+
+	if not isElement(target) or target:getType() ~= "player" then
+		return "Der Spieler ist nicht online!"
+	end
+
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	Admin:getSingleton():sendShortMessage(_("%s hat %s gekickt! Grund: %s", nil, adminName, targetName, reason))
+	outputChatBox("Der Spieler "..targetName.." wurde von "..adminName.." gekickt!",root, 200, 0, 0)
+	outputChatBox("Grund: "..reason,root, 200, 0, 0)
+	kickPlayer(target, admin, reason)
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	return targetName .. " wurde erfolgreich gekickt!"
+end
+
+function phpSDKBanPlayer(adminId, targetId, duration, reason)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	if duration == 0 then -- perma
+		Admin:getSingleton():sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", nil, adminName,targetName, reason))
+		Admin:getSingleton():addPunishLog(adminId, targetId, "permabanCP", reason, 0)
+		outputChatBox(_("Der Spieler %s  wurde von %s gebannt!", nil, targetName, adminName), root, 200, 0, 0)
+		outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
+		Ban.addBan(targetId, adminId, reason, 0)
+	else -- time
+		Admin:getSingleton():sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", nil, adminName, targetName, duration, reason))
+		Admin:getSingleton():addPunishLog(adminId, targetId, "timebanCP", reason, duration * 60 * 60)
+		outputChatBox(_("Der Spieler %s  wurde von %s für %d Stunden gebannt!", nil, targetName, adminName, duration), root, 200, 0, 0)
+		outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
+		Ban.addBan(targetId, adminId, reason, duration * 60 * 60)
+	end
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	return targetName .. " wurde erfolgreich gebannt!"
+end
+
+function phpSDKUnbanPlayer(adminId, targetId, reason)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	Admin:getSingleton():sendShortMessage(_("%s hat %s offline entbannt!", nil, adminName, targetName))
+	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", "", 0)
+	sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+	outputChatBox(_("Der Spieler %s  wurde von %s entbannt!", nil, targetName, adminName), root, 200, 0, 0)
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	return targetName .. " wurde erfolgreich entbannt!"
+end

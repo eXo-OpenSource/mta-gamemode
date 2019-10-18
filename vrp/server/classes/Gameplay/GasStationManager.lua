@@ -9,14 +9,14 @@ GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
 addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle"}
 
-GAS_STATION_SHOP_PLAYER_PAYMENT = 20
-GAS_STATION_SHOP_FCT_CMP_PAYMENT = 10
+GAS_STATION_SHOP_PLAYER_PAYMENT = 40
+GAS_STATION_SHOP_FCT_CMP_PAYMENT = 30
 
 function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
 	for _, station in pairs(GAS_STATIONS) do
-		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.fuelTypes)
+		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.fuelTypes, station.blipPosition)
 
 		if station.name then
 			GasStationManager.Shops[station.name] = instance
@@ -378,20 +378,22 @@ GAS_STATIONS = {
 	{
 		name = "LV-Dock Tankstelle",
 		stations = {
-			{Vector3(1633.56, 532.25, 2.20), 270, 1}
+			{Vector3(2288.69, 522.70, 2.30), 180, 1}
 		},
 		accessible = {0, 0},
 		nonInterior = true,
 		fuelTypes = {"diesel"},
+		blipPosition = Vector2(2288.69, 522.70)
 	},
 	{
 		name = "LV-Airport Tankstelle",
 		stations = {
-			{Vector3(1551.45, 1719.63, 11.42), 270, 1}
+			{Vector3(1597.314, 1448.198, 11.42), 270, 1}
 		},
 		accessible = {0, 0},
 		nonInterior = true,
 		fuelTypes = {"petrol_plus", "jetfuel"},
+		blipPosition = Vector2(1597.314, 1448.198)
 	},
 	{
 		name = "Tankstelle Ocean Docks",
@@ -403,13 +405,24 @@ GAS_STATIONS = {
 		fuelTypes = {"diesel"},
 
 	},
+	{
+		name = "SF-Airport Tankstelle",
+		stations = {
+			{Vector3(-1131.73, -167.53, 14.650), 45, 1}
+		},
+		accessible = {0, 0},
+		nonInterior = true,
+		fuelTypes = {"petrol_plus", "jetfuel"},
+		blipPosition = Vector2(-1131.73, -167.53)
+	},
 	-- Company fuelstations
 	{
 		name = "M&T",
 		stations = {
-			{Vector3(877, -1184.6, 17.8), 90, 1},
+			{Vector3(2450.25, -2089.645, 14.1), 0, 1},
+			{Vector3(2452.1499, -2089.6445, 14.1), 0, 1}
 		},
-		accessible =  {2, CompanyStaticId.MECHANIC},
+		accessible =  {2, CompanyStaticId.MECHANIC}, 
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
@@ -450,7 +463,6 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	]]--
 	{
 		name = "Yakuza",
 		stations = {
@@ -460,21 +472,12 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	--[[{
+	{
 		name = "Vatos Locos",
 		stations = {
 			{Vector3(2819.12, -2143.39, 11.68), 90, 1},
 		},
 		accessible =  {1, FactionStaticId.VATOS},
-		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
-	},]]
-	{
-		name = "Grove Street",
-		stations = {
-			{Vector3(2509.69, -1692.47, 14.09), 90, 1},
-		},
-		accessible =  {1, FactionStaticId.GROVE},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
@@ -486,7 +489,27 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.OUTLAWS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
+	}, ]]--
+	{
+		name = "Triaden",
+		stations = {
+			{Vector3(1913.78, 964.34, 11.22), 185, 1},
+		},
+		accessible =  {1, FactionStaticId.TRIAD},
+		nonInterior = true,
+		fuelTypes = {"petrol", "diesel"},
 	},
+
+	{
+		name = "Grove Street",
+		stations = {
+			{Vector3(2509.69, -1692.47, 14.09), 90, 1},
+		},
+		accessible =  {1, FactionStaticId.GROVE},
+		nonInterior = true,
+		fuelTypes = {"petrol", "diesel"},
+	},
+
 	{
 		name = "Ballas",
 		stations = {
@@ -496,6 +519,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	--[[
 	{
 		name = "Kartell",
 		stations = {
@@ -505,6 +529,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	]]
 	{
 		name = "Aztecas",
 		stations = {

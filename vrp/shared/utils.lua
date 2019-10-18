@@ -582,6 +582,17 @@ function convertNumber ( number )
 	return formatted
 end
 
+function convertFrequency ( number )
+	local formatted = number
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d)", '%2.%1')
+		if ( k==0 ) then
+			break
+		end
+	end
+	return formatted
+end
+
 function toMoneyString(money)
 	if tonumber(money) then
 		return convertNumber(math.floor(money)).."$"
@@ -998,4 +1009,61 @@ function uuid(hwaddr)
 		INT2HEX(bytes[7])..INT2HEX(bytes[8]).."-"..
 		INT2HEX(bytes[9])..INT2HEX(bytes[10]).."-"..
 		INT2HEX(bytes[11])..INT2HEX(bytes[12])..INT2HEX(bytes[13])..INT2HEX(bytes[14])..INT2HEX(bytes[15])..INT2HEX(bytes[16])
+end
+function addComas(str)
+	return #str % 3 == 0 and str:reverse():gsub("(%d%d%d)", "%1."):reverse():sub(2) or str:reverse():gsub("(%d%d%d)", "%1."):reverse()
+end
+
+URLEncoder = {
+    encode = function(str)
+            if (not str) then
+                return str
+            end
+
+            str = string.gsub (str, "\n", "\r\n")
+            str = string.gsub (str, "[^%w.%-_~]",
+                function (c) return string.format ("%%%02X", string.byte(c)) end)
+
+            return str
+        end,
+    decode = function(str)
+            str = string.gsub(str, "%%([0-9a-fA-F][0-9a-fA-F])",
+                function (c) return string.char(tonumber("0x" .. c)) end)
+            str = string.gsub (str, "\n", "\r\n")
+            return str
+        end,
+}
+
+function fisherYatesShuffle( input ) -- https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+    local output = {}
+    for i = #input, 1, -1 do
+        local j = math.random(i)
+        input[i], input[j] = input[j], input[i]
+        table.insert(output, input[i])
+    end
+    return output
+end
+
+function math.randomchoice(t) --Selects a random item from a table
+    local keys = {}
+    for key, value in pairs(t) do
+        keys[#keys+1] = key --Store keys in another table
+    end
+    index = keys[math.random(1, #keys)]
+    return t[index], index
+end
+
+function getBiggestUnitByBytes(value)
+	if value < 1048576 then
+		return "KB/s"
+	end
+	return "MB/s"
+end
+
+function convertBytesToUnit(value, unit)
+	if unit == "MB/s" then
+		return value / 1048576
+	elseif unit == "KB/s" then
+		return value / 1024
+	end
 end

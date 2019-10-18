@@ -9,6 +9,9 @@
 	<script src="mapEditorScriptingExtension_s.lua" type="server"></script>
 	<script src="mapEditorScriptingExtension_c.lua" type="client"></script>
 
+	<map src="spielbunker.map" />
+	<map src="spielbunker-ext.map" />
+		
 	<map src="atm.map" />
 
 	<map src="tiefgarage.map" />
@@ -25,10 +28,9 @@
 	<map src="fraktionen/army.map" />
 	<!--<map src="fraktionen/army_lsbase.map" />-->
 	<map src="fraktionen/army_shooting_town.map" />
-	<!-- <map src="fraktionen/ballas.map" /> -->
+	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
 	<map src="fraktionen/aztecas.map" />
-	<map src="fraktionen/cartell.map" />
 
 	<!--<map src="fraktionen/biker.map" />--> <!--Outlaws base-->
 	<!--map src="fraktionen/cosanostra.map" /-->
@@ -40,15 +42,15 @@
 	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/rescue_int.map" />
-	<map src="fraktionen/lostmc.map" />
+	<!--map src="fraktionen/lostmc.map" /-->
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
-	<map src="fraktionen/yakuza.map"/>
+	<!-- <map src="fraktionen/yakuza.map"/> -->
 
-	<map src="fraktionen/insurgent_storage.map" />
+	<!-- <map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
-	<map src="fraktionen/terroristtown.map" />
-	<map src="fraktionen/terrorist_int.map" />-->
+	<map src="fraktionen/terroristtown.map" /> -->
+	<map src="fraktionen/terrorist_int.map" />
 
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
@@ -59,11 +61,13 @@
 	<map src="fishing/location_desert.map" />
 	<map src="fishing/location_cave.map" />
 
-	<map src="events/easter.map" />
+	<!--<map src="events/battleroyale.map" />-->
+	<!--<map src="events/easter.map" />-->
 	<!--<map src="events/halloween.map" />-->
 	<map src="events/auction.map" /><!--auction in interior-->
 
 	<!--fixes-->
+	<map src="mapfixes/bugfixes.map" />
 	<map src="mapfixes/CrackPalace.map" />
 	<map src="mapfixes/interior_fixes.map" />
 
@@ -81,6 +85,7 @@
 	<map src="gangwar/KLM-GW.map" />
 	<map src="gangwar/Raffi-GW.map" />
 	<map src="gangwar/gangwar.map" />
+	<map src="gangwar/drogenlabor-lv.map" />
 
 	<map src="jobs/gabelstapler.map" />
 	<map src="jobs/logistican.map" />

@@ -23,8 +23,8 @@ function ElementInfo:constructor(object, text, offset, icon, iconOnly)
 end
 
 function ElementInfo:destructor()
-	ElementInfo.Map[self.m_Id] = nil
-	triggerClientEvent("elementInfoDestroy", resourceRoot, self.m_Id)
+	ElementInfo.Map[self.m_Object] = nil
+	triggerClientEvent("elementInfoDestroy", root, self.m_Object)
 end
 
 function ElementInfo.sendAllToClient(player)

@@ -30,6 +30,7 @@ function ItemFood:use()
 	if not player then return false end
 	if player.isTasered then return false end
 	if player.m_IsConsuming then player:sendError(_("Du konsumierst bereits etwas!", player)) return false end
+	if AdminEventManager:getSingleton().m_EventRunning and AdminEventManager:getSingleton().m_CurrentEvent:isPlayerInEvent(player) and getPedArmor(player) == 0 then player:sendError("Du hast keine Schutzweste mehr!") return false end
 	if player:isInGangwar() and player:getArmor() == 0 then player:sendError(_("Du hast keine Schutzweste mehr!", player)) return false end
 	if JobBoxer:getSingleton():isPlayerBoxing(player) == true then player:sendError(_("Du darfst dich während des Boxkampfes nicht heilen!", player)) return false end
 	if math.round(math.abs(player.velocity.z*100)) ~= 0 and not player.vehicle then player:sendError(_("Du kannst in der Luft nichts essen!", player)) return false end
@@ -38,6 +39,7 @@ function ItemFood:use()
 
 	player:meChat(true, string.format("%s!", itemSettings["Text"]))
 	StatisticsLogger:getSingleton():addHealLog(player, itemSettings["Health"], string.format("Item %s", self:getTechnicalName()))
+	player:checkLastDamaged()
 
 	player.m_IsConsuming = true
 	local block, animation, time = unpack(itemSettings["Animation"])

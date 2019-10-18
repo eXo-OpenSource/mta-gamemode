@@ -7,7 +7,7 @@ WEAPON_DAMAGE = {
 
 	[25] = 20,
 	
-	[26] = 23,
+	[26] = 25,
 	
 	[28] = 8,
 	[29] = 8,
@@ -213,3 +213,13 @@ WEAPON_IDS = {}
 for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
+
+EXPLOSIVE_DAMAGE_MULTIPLIER = {
+	[16] = 2,
+	[19] = 3,
+	[35] = 3,
+	[36] = 3,
+	[39] = 2.5,
+	[51] = 2,
+	[59] = 3
+}

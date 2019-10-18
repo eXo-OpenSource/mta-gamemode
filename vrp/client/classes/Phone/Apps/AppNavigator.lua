@@ -61,6 +61,7 @@ AppNavigator.Positions = {
 		["Tuning-Shop"] = Vector3(1035.58, -1028.90, 32.10),
 		["Gebrauchtwagenhändler"] = Vector3(1098.83, -1240.20, 15.55),
 		["Kart-Strecke"] = Vector3(1262.375, 188.479, 19.5),
+		["Schrottplatz"] = Vector3(2198.86, -1977.55, 13.56),
 	},
 	["Jobs"] = {
 		["Pizza-Lieferant"] = Vector3(2096.89, -1826.28, 13.24),
@@ -73,12 +74,13 @@ AppNavigator.Positions = {
 		["Schatzsucher"] = Vector3(706.22, -1699.38, 3.12),
 		["Gabelstapler"] = Vector3(93.67, -205.68,  1.23),
 		["Kiesgruben-Job"] = Vector3(590.71, 868.91, -42.50),
-		["Holzfäller"] = Vector3(1026.51, -437.73, 54.24)
+		["Holzfäller"] = Vector3(1026.51, -437.73, 54.24),
+		["Boxer"] = Vector3(2219.51, -1715.47, 13.34),
 	},
 	["Unternehmen"] = {
 		["San News"] =     Vector3(762.05, -1343.33, 13.20),
 		["Fahrschule"] =  Vector3(1372.30, -1655.55, 13.38),
-		["Mechaniker"] =  Vector3(886.21, -1220.47, 16.97),
+		["Mechaniker"] =  Vector3(2416.29, -2089.54, 13.41),
 		["Public Transport"] =	 Vector3(1791.10, -1901.46, 13.08),
 	},
 	["Fraktionen"] = {}, -- get loaded dynamically!

@@ -17,8 +17,8 @@ function CustomModelManager:constructor()
 	self:createObjectsForMods()
 
 	--world objects
-	self:loadImportCOL("files/models/buildings/mech.col", 7520)
-	self:loadImportDFF("files/models/buildings/mech.dff", 7520)
+	--self:loadImportCOL("files/models/buildings/mech.col", 7520)
+	--self:loadImportDFF("files/models/buildings/mech.dff", 7520)
 
 	--Kart-Track
 	self:loadImportCOL("files/models/buildings/kart.col", 13083)
@@ -39,6 +39,9 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/hedge01_law.col", 6046)
 	self:loadImportDFF("files/models/objects/hedge01_law.dff", 6046)
 	self:setLODDistance(6046, 500)
+	--Ammunation Street hedge gap
+	self:loadImportCOL("files/models/objects/lawroads_law21.col", 6127)
+	self:loadImportDFF("files/models/objects/lawroads_law21.dff", 6127)
 
 	--bank
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)

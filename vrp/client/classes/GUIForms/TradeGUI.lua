@@ -36,6 +36,7 @@ function TradeGUI:constructor(target)
     self.m_LabelAmountText = GUILabel:new(340, 200, 110, 30, "Item-Anzahl:", self.m_Window)
     self.m_Amount = GUIEdit:new(460, 200, 85, 30, self.m_Window)
 	self.m_Amount:setText("1")
+	self.m_Amount:setNumeric(true, true)
     self.m_Amount.onChange = function()
         self:checkAmount()
     end

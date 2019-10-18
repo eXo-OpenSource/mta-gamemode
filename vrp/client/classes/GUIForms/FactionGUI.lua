@@ -556,7 +556,7 @@ function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp, localToplist)
 	ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, actionStatus)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, actionStatus, rankNames, rankLoans, validWeapons, rankWeapons)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -596,9 +596,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 			end
 
 			if rank >= FactionRank.Manager then
-				self.m_skins = skins
 				self.m_RankLoans = rankLoans
-				self.m_RankSkins = rankSkins
 				self.m_ValidWeapons = validWeapons
 				self.m_RankWeapons = rankWeapons
 				if localPlayer:getFaction():isEvilFaction() then

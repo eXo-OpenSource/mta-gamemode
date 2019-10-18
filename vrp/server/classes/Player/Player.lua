@@ -34,6 +34,8 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self.m_LastJobAction = 0
 
+	self.m_LastDamagedBy = {}
+
 	self.m_detachPlayerObjectBindFunc = bind(Player.detachPlayerObjectBind, self)
 	self.m_detachPlayerObjectFunc = bind(Player.detachPlayerObject, self)
 end
@@ -202,6 +204,9 @@ function Player:loadCharacter()
 		self:getFaction():takeEquipment(self)
 	end
 	FactionState:getSingleton():checkInsideGarage(self)
+	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
+	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
+	GrowableManager:getSingleton():sendGrowablesToClient(self)
 end
 
 function Player:createCharacter()
@@ -217,7 +222,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin, RadioCommunication FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -254,6 +259,7 @@ function Player:loadCharacterInfo()
 	VehicleCategory:getSingleton():syncWithClient(self)
 
 	self.m_IsDead = row.IsDead or 0
+	self.m_SpawnedDead = self.m_IsDead
 
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
@@ -281,6 +287,12 @@ function Player:loadCharacterInfo()
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end
+
+	setElementData(self, "Badge", nil, true)
+	setElementData(self, "BadgeTitle", nil, true)
+	setElementData(self, "BadgeImage", nil, true)
+	setElementData(self, "Damage:isTreating", nil, true)
+	self:setPublicSync("LastHealTime", 0)
 end
 
 
@@ -288,6 +300,8 @@ function Player:initialiseBinds()
 	if self:getFaction() then
 		bindKey(self, "y", "down", "chatbox", "Fraktion")
 	end
+	bindKey(self, "horn", "both", PoliceAnnouncements:getSingleton().m_BindFunction)
+	bindKey(self, "aim_weapon", "both", Guns:getSingleton().m_GrenadeBind)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -347,6 +361,10 @@ function Player:save()
 		local sSkin = self.m_Skin
 		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+		if not self.m_PlayTimeAtLastSave then
+			outputServerLog("[PLAYER] Player " .. tostring(self.m_Id) .. " has no playTimeSave set - playtime " .. tostring(self:getPlayTime()))
+			self.m_PlayTimeAtLastSave = self:getPlayTime()
+		end
 		local timeDiff = self:getPlayTime() - self.m_PlayTimeAtLastSave
 		DatabasePlayer.save(self)
 		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
@@ -378,6 +396,10 @@ function Player:spawn()
 	local quitTick = PlayerManager:getSingleton().m_QuitPlayers[self:getId()]
 	local spawnSuccess = false
 	local SpawnLocationProperty = self:getSpawnLocationProperty()
+
+	--Increasing the max. oxygen (must be done before the player spawns)
+	self:setStat(22, 1000)
+	self:setStat(225, 1000)
 
 	if not quitTick or (getTickCount() - quitTick > 300000) then
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
@@ -451,7 +473,9 @@ function Player:spawn()
 
 	if self:isPremium() then
 		self:setArmor(100)
-		giveWeapon(self, 24, 35)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
 	end
 
 	if self.m_PrisonTime > 0 then
@@ -471,12 +495,16 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	if self.m_IsDead == 1 then
-		if not self:getData("isInDeathMatch") then
-			self:setReviveWeapons()
+	nextframe(
+		function()
+			if self.m_IsDead == 1 then
+				if not self:getData("isInDeathMatch") then
+					self:setReviveWeapons()
+				end
+				killPed(self)
+			end
 		end
-		killPed(self)
-	end
+	)
 
 	WearableManager:getSingleton():removeAllWearables(self)
 
@@ -520,16 +548,12 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	self:setCorrectSkin()
 
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
-	end
-
 	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
+	self.m_SpawnedDead = 0
 	FactionState:getSingleton():uncuffPlayer(self)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
@@ -541,6 +565,14 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	if self:isPremium() then
+		self:setArmor(100)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
 
@@ -571,13 +603,13 @@ function Player:dropReviveWeapons()
 				end
 			end
 		end
-		nextframe( --Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
+		--[[nextframe( Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
 			function ()
 				local model = self:getModel()
 				self:setModel(0)
 				self:setModel(model)
 			end
-		)
+		)]]
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end
@@ -676,7 +708,11 @@ end
 
 function Player.staticFactionChatHandler(self, command, ...)
 	if self.m_Faction then
-		self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		if self.m_Faction:getId() >= 1 and self.m_Faction:getId() <= 3 then
+			Player.staticStateFactionChatHandler(self, command, ...)
+		else
+			self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		end
 	end
 end
 
@@ -812,6 +848,35 @@ end
 
 function Player:removeSyncListener(player)
 	self.m_SyncListener[player] = nil
+end
+
+function Player:addLastDamaged(player)
+	if player and isValidElement(player, "player") then
+		self.m_LastDamagedBy[player] = getRealTime().timestamp
+	end
+end
+
+function Player:removeLastDamaged(player)
+	self.m_LastDamagedBy[player] = nil
+end
+
+function Player:checkLastDamaged() 
+	local now = getRealTime().timestamp
+	for player, tick in pairs(self.m_LastDamagedBy) do 
+		if player and isValidElement(player, "player") then
+			if now - tick < 60*3 then 
+				local secondsMinutes = string.format("%.2d:%.2d", (now - tick)/60%60, (now - tick)%60)
+				player:sendShortMessage(_("Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)", player, self:getName(), secondsMinutes), "Kampfheilung!", nil, -1)
+				self:removeLastDamaged(player)
+			else 
+				if now - tick > 60*3 then
+					self:removeLastDamaged(player)
+				end
+			end
+		else 
+			self:removeLastDamaged(player)
+		end
+	end
 end
 
 function Player:updateSync()
@@ -1682,4 +1747,10 @@ end
 
 function Player:getWalkingstyle()
 	return self.m_WalkingStyle or 0
+end
+
+function Player:setBadge(badgeTitle, badgeId, badgeImage)
+	setElementData(self, "Badge", badgeId, true)
+	setElementData(self, "BadgeTitle", badgeTitle, true)
+	setElementData(self, "BadgeImage", badgeImage, true)
 end

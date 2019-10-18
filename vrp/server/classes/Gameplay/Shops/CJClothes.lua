@@ -22,7 +22,11 @@ function CJClothes:constructor(id, name, position, rotation, typeData, dimension
 			self.m_ClothesMarker[type].clothes = CJ_CLOTHES[type]
 			self.m_ClothesMarker[type]:setInterior(self.m_Interior)
 			self.m_ClothesMarker[type]:setDimension(self.m_Dimension)
-			addEventHandler("onMarkerHit", self.m_ClothesMarker[type], bind(self.onCJClothesMarkerHit, self))
+			if type == "Tattoos" then
+				addEventHandler("onMarkerHit", self.m_ClothesMarker[type], bind(self.onTattooMarkerHit, self))
+			else
+				addEventHandler("onMarkerHit", self.m_ClothesMarker[type], bind(self.onCJClothesMarkerHit, self))
+			end
 		end
 	end
 
@@ -45,7 +49,7 @@ function CJClothes:onTattooMarkerHit(hitElement, dim)
 			hitElement:triggerEvent("showTattooSelectionGUI", self.m_Id)
 		else
 			local cjName, cjPrice = unpack(SkinInfo[0])
-			QuestionBox:new(hitElement, hitElement, _("Diese Tattoos ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
+			QuestionBox:new(hitElement, hitElement, _("Diese Tattoos sind nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
 		end
 	end
 end

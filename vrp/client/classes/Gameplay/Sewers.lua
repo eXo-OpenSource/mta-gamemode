@@ -9,10 +9,10 @@
 Sewers = inherit(Singleton)
 
 Sewers.Textures = {  "newaterfal1_256", "LSV2"}
-Sewers.CasinoTextures = {"cj_tickm", "concretenewb256", "cj_sprunk_front", "mp_gs_libwall", "cj_don_post_1", "cj_don_post_2", "cj_tv_screen", "cj_pokerscreen2"}
+Sewers.CasinoTextures = {"cj_tickm", "concretenewb256", "cj_sprunk_front", "mp_gs_libwall", "cj_don_post_1", "cj_don_post_2", "cj_tv_screen", "cj_pokerscreen2", "bigsprunkcan", "bigsprunkends", "streetsign2_256", "forlease_law", "cj_sex_sign1"}
 Sewers.TexturePath = "files/images/Textures/Sewers"
 addRemoteEvents{"Sewers:applyTexture", "Sewers:removeTexture", "Sewers:getRadioLocation",
-"Sewers:casinoApplyTexture", "Sewers:casinoRemoveTexture"}
+"Sewers:casinoApplyTexture", "Sewers:casinoRemoveTexture", "Sewers:updateCasinoRadio", "Sewers:onWinJackpot"}
 
 function Sewers:constructor()
 
@@ -26,6 +26,9 @@ function Sewers:constructor()
 	self.m_ApplyCasinoTexture = bind(self.applyCasinoTexture, self)
 	addEventHandler("Sewers:casinoApplyTexture", localPlayer, self.m_ApplyCasinoTexture)
 	
+	self.m_UpdateCasinoRadio = bind(self.updateRadio, self)
+	addEventHandler("Sewers:updateCasinoRadio", localPlayer, self.m_UpdateCasinoRadio)
+
 	self.m_RemoveCasinoTexture = bind(self.removeCasinoTexture, self)
 	addEventHandler("Sewers:casinoRemoveTexture", localPlayer, self.m_RemoveCasinoTexture)
 end
@@ -56,7 +59,8 @@ function Sewers:applyInteriorTexture()
 	HUDRadar:getSingleton():hide()
 end
 
-function Sewers:applyCasinoTexture()
+function Sewers:applyCasinoTexture(radio, volume, noReverb)
+
 	if self.m_AppliedCasino then return end
 	if self.m_InteriorTextureCasino and #self.m_InteriorTextureCasino > 0 then 
 		self:removeCasinoTexture()
@@ -67,11 +71,25 @@ function Sewers:applyCasinoTexture()
 			self.m_InteriorTextureCasino[i] = StaticFileTextureReplacer:new(Sewers.TexturePath.."/texCasino"..i..".jpg", Sewers.CasinoTextures[i])
 		end
 	end
-
-	self.m_CasinoSound = playSound("files/audio/Ambient/spielo.ogg", true)
+	self.m_RadioPath = radio
+	self.m_CasinoSound = playSound(self.m_RadioPath, true)
+	setSoundEffectEnabled(self.m_CasinoSound, "reverb", not noReverb)
+	setSoundVolume(self.m_CasinoSound, volume or 1)
 	self.m_AppliedCasino = true
 	self:createCasinoPeds()
 	HUDRadar:getSingleton():hide()
+end
+
+function Sewers:updateRadio(radioPath, volume, noReverb) 
+	if radioPath and self.m_AppliedCasino then 
+		self.m_RadioPath = radioPath
+		if self.m_CasinoSound and isElement(self.m_CasinoSound) then 
+			stopSound(self.m_CasinoSound)
+		end
+		self.m_CasinoSound = playSound(self.m_RadioPath, true)
+		setSoundEffectEnabled(self.m_CasinoSound, "reverb", not noReverb)
+		setSoundVolume(self.m_CasinoSound, volume or 1)
+	end
 end
 
 function Sewers:createCasinoPeds()
@@ -133,6 +151,7 @@ function Sewers:removeCasinoTexture()
 		self.m_Peds[i]:destroy()
 	end
 	HUDRadar:getSingleton():show()
+	NoDm:getSingleton():checkNoDm()
 end
 
 
@@ -165,3 +184,18 @@ function Sewers:removeInteriorTexture()
 	end
 	HUDRadar:getSingleton():show()
 end
+
+
+addEventHandler("Sewers:onWinJackpot", localPlayer, function(x, y, z)
+	setTimer(function()
+		local sfx = playSound3D("files/audio/hitsound.wav", x, y, z)
+		sfx:setVolume(3)
+		setSoundEffectEnabled(sfx, "reverb", true)
+		sfx:setDimension(3)
+		sfx:setInterior(18)
+		for i = 1, 10, 1 do
+			fxAddSparks(x, y, z, 0, 0, 2, 5, 20, 0, 0, 0, false, 0.5, 5)
+		end
+	end, 300, 10)
+end)
+

@@ -30,6 +30,7 @@ function Vehicle:constructor()
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
 	end
+	
 end
 
 function Vehicle:getMaxHealth()
@@ -258,6 +259,12 @@ addEventHandler("onClientVehicleDamage", root,
 			local newLoss = loss / source:getBulletArmorLevel()
 			source:setHealth(math.max(0, source:getHealth()-newLoss))
 		end
+		if weapon == 16 or weapon == 19 or weapon == 35 or weapon == 36 or weapon == 39 or weapon == 51 or weapon == 59 then
+			if source:getHealth() < 300 then
+				triggerServerEvent("vehicleBlow", source, weapon)
+				return
+			end
+		end
 		if totalLossVehicleTypes[source:getVehicleType()] then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
@@ -436,8 +443,8 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
-	if localPlayer.m_Entrance then 
-		if localPlayer.m_Entrance:check() then 
+	if localPlayer.m_Entrance and player == localPlayer then 
+		if localPlayer.m_Entrance:check() and localPlayer.m_Entrance:isCancelEnter() then 
 			cancelEvent()
 		end
 	end

@@ -25,8 +25,8 @@ function FactionRescue:constructor()
 
 	self.m_GateHitBind = bind(self.onBarrierHit, self)
 	-- Barriers
-	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
-	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
+	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onGateHit = self.m_GateHitBind
+	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onGateHit = self.m_GateHitBind
 
 	--Garage doors
 	self.m_Gates = {
@@ -168,23 +168,28 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
+function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
-				client:setCorrectSkin()
+				if not dontChangeSkin then
+					client:setCorrectSkin()
+				end
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Rescue:Type",false)
-				client:getInventoryOld():removeAllItem("Warnkegel")
+				client:getInventory():removeAllItem("Warnkegel")
+				RadioCommunication:getSingleton():allowPlayer(client, false)
+				client:setBadge()
 				takeAllWeapons(client)
 				if not wasted then faction:updateDutyGUI(client) end
 			else
 				if wasted then return end
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					--return false
+					client:triggerEvent("companyForceOffduty")
 				end
 				takeAllWeapons(client)
 				if type == "fire" then
@@ -197,6 +202,8 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 				client:getInventoryOld():giveItem("Warnkegel", 10)
 				faction:updateDutyGUI(client)
 				faction:changeSkin(client, prefSkin)
+				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
+				RadioCommunication:getSingleton():allowPlayer(client, true)
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
@@ -275,7 +282,7 @@ function FactionRescue:getStretcher(player, vehicle)
 
 	setTimer(
 		function (player)
-			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5)) 
+			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
 			if player:getExecutionPed() then
 				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
 			end
@@ -417,7 +424,7 @@ function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
-	local money = math.floor(player:getMoney()*0.25)
+	local money = player.m_SpawnedDead == 0 and math.floor(player:getMoney()*0.25) or 0
 	player:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
 	player.m_DeathPickup.money = money
 
@@ -578,7 +585,7 @@ function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
 
-	if source:getFaction() and source.m_WasOnDuty then
+	if source:getFaction() and source.m_WasOnDuty and not source.m_DeathInJail then
 		source.m_WasOnDuty = false
 		local position = factionSpawnpoint[source:getFaction():getId()]
 		source:respawn(position[1])
@@ -618,7 +625,7 @@ function FactionRescue:Event_healPlayer(medic, target)
 				target:sendInfo(_("Du wurdest vom Medic %s für %d$ geheilt!", target, medic.name, costs ))
 				target:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
-
+				client:checkLastDamaged()
 				target:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
 
 				self.m_Faction:addLog(medic, "Heilung", ("hat %s geheilt!"):format(target.name))
@@ -642,6 +649,7 @@ function FactionRescue:Event_healPlayerHospital()
 			if client:getMoney() >= costs then
 				client:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team [Heal-Bot]")
+				client:checkLastDamaged()
 				client:sendInfo(_("Du wurdest für %s$ von dem Arzt geheilt!", client, costs))
 
 				client:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
