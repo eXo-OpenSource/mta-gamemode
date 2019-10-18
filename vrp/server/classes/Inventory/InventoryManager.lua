@@ -206,6 +206,10 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 					player:setData("PlayHouse:clubcard", false, true)
 					target:setData("PlayHouse:clubcard", true, true)
 				end
+				if player:getThrowingObject() then 
+					player:getThrowingObject():delete()
+					player:setThrowingObject(nil)
+				end
 			else
 				target:sendError(_("Du hast nicht genug Platz für dieses Item!", player))
 				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player, target:getName()))
