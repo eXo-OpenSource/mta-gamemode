@@ -83,7 +83,11 @@ function ThrowObject:push(pushVector)
 	local skillFactor = (not self:isSkillBased() and 1) or ThrowObjectManager:getSingleton():getSkillFactor(self:getPlayer()) 
 	self:getDummyEntity():setVelocity(pushVector * skillFactor)
 	self:getDummyEntity():setAngularVelocity(pushVector:getNormalized()*.1)
-	setTimer(function() self:getDummyEntity():setAngularVelocity(Vector3(0, 0, 0)) end, 1000, 1) -- stop the movement after one second | todo use calculations to determine a better time
+	setTimer(function() 
+		if isValidElement(self:getDummyEntity(), "object") then
+			self:getDummyEntity():setAngularVelocity(Vector3(0, 0, 0)) -- stop the movement after one second | todo use calculations to determine a better time
+		end 
+	end, 1000, 1)
 	if isValidElement(self:getEntity(), "player") then 
 		setTimer(function()
 			StatisticsLogger:getSingleton():addAdminAction(self:getPlayer(), "Spielerwurf", self:getEntity())
