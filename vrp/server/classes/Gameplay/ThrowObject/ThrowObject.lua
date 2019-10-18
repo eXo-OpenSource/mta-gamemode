@@ -36,6 +36,8 @@ function ThrowObject:constructor(player, model, dummy, offsetMatrix)
 end
 
 function ThrowObject:destructor()
+	self:syncRemoval()
+	
 	if isValidElement(self:getDummyEntity(), "object") then self:getDummyEntity():destroy() end
 	if self:getEntity() and isElement(self:getEntity()) and self:getEntity():getType() ~= "player" then 
 		self:getEntity():destroy() 
@@ -45,11 +47,6 @@ end
 
 function ThrowObject:updateCollision(bool)
 	self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
-	if self:isDamageDisabled() then 
-		for k, player in ipairs(getElementsByType("player")) do 
-			player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool, true)
-		end
-	end
 end
 
 function ThrowObject:assertTransformMatrix(offsetMatrix) 
@@ -120,7 +117,25 @@ function ThrowObject:initialise()
 	self.m_DummyEntity:setInterior(self:getPlayer():getInterior())
 	self.m_DummyEntity:setAlpha(0)
 	self.m_DummyEntity:setCollisionsEnabled(false)
+	self.m_DummyEntity:setData("Throw:responsiblePlayer", self:getPlayer(), true)
+	self.m_DummyEntity.m_ThrowInstance = self
+	self:setDamage(3)
+	
+	self:syncCreation() 
+
 	return isValidElement(self.m_Entity, self:getType()) and isValidElement(self.m_Entity, self:getType())
+end
+
+function ThrowObject:syncCreation() 
+	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
+		player:triggerEvent("Throw:syncObject", self:getEntity(), self:getDummyEntity())
+	end
+end
+
+function ThrowObject:syncRemoval() 
+	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
+		player:triggerEvent("Throw:deleteObject", self:getDummyEntity())
+	end
 end
 
 function ThrowObject:setPersistent(bool)
@@ -150,6 +165,7 @@ end
 
 function ThrowObject:setDamageDisabled(bool)
 	self.m_DamageDisabled = bool
+	self:getDummyEntity():setData("Throw:entityDamageDisabled", bool, true)
 	return self
 end
 
@@ -162,6 +178,12 @@ end
 
 function ThrowObject:setSkillBased(bool)
 	self.m_SkillBased = bool
+	return self
+end
+
+function ThrowObject:setDamage(damage) 
+	self.m_Damage = damage or 3
+	return self
 end
 
 function ThrowObject:getTypeFromModel(model) 
@@ -185,4 +207,5 @@ function ThrowObject:getDespawnTime() return self.m_DespawnTime end
 function ThrowObject:isPushed() return self.m_Pushed end
 function ThrowObject:isDamageDisabled() return self.m_DamageDisabled end
 function ThrowObject:isSkillBased() return self.m_SkillBased end
+function ThrowObject:getDamage() return self.m_Damage end
 function ThrowObject:getThrowCallback() return self.m_ThrowCallback end

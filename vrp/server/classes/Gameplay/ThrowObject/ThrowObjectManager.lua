@@ -9,11 +9,13 @@ ThrowObjectManager = inherit(Singleton)
 ThrowObjectManager.DESPAWN_TIME = 20000
 ThrowObjectManager.PULSE_TIME = 5000 -- time in ms to pulse for a despawn
 function ThrowObjectManager:constructor() 
-	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow", "Throw:playerWasThrown"}
+	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow", "Throw:playerWasThrown", "Throw:reportDamage"}
 	addEventHandler("Throw:disableThrowLeave", root, bind(self.Event_onDisableThrowLeave, self))
 	addEventHandler("Throw:executeThrow", root, bind(self.Event_onExecuteThrow, self))
-	addEventHandler("Throw:playerWasThrown", root, bind(self.Event_onPlayerIsThrown, self)) -- !! This is only called when a player throws another player and the thrown player has been thrown
+	addEventHandler("Throw:playerWasThrown", root, bind(self.Event_onPlayerIsThrown, self)) -- This is only called when a player throws another player and the thrown player has been thrown
+	addEventHandler("Throw:reportDamage", root, bind(self.Event_onPlayerDamage, self))
 	self.m_ThrowBind = bind(self.Bind_onThrowKey, self)
+	self.m_ThrowContactBind = bind(self.Event_onContactWithThrowable, self) -- detecting colshape hits
 	self.m_ThrownObjects = {}
 	self.m_SortedDespawnObjects = {} -- a list sorted by the despawn time to provide more efficient cleanup by minimizing indexing
 
@@ -128,6 +130,20 @@ function ThrowObjectManager:Bind_onThrowKey(player, key, keystate, dontCancelAni
 	end
 end
 
+function ThrowObjectManager:Event_onContactWithThrowable(element, dimension)
+	if true then 
+		outputChatBox(tostring(element))
+	end
+end
+
+function ThrowObjectManager:Event_onPlayerDamage(target, object, bodypart)
+	if object.m_ThrowInstance and object.m_ThrowInstance:isPushed() then
+		local loss = object.m_ThrowInstance:getDamage() or 3 
+		Guns:getSingleton():damagePlayer(target, loss, client, 56, bodypart)
+		target:triggerEvent("clientBloodScreen")
+	end
+end
+
 function ThrowObjectManager:Event_onExecuteThrow(velx, vely, velz, force) 
 	if client:getThrowingObject() then
 		if not client.m_LastGrenadeThrow then
@@ -195,3 +211,4 @@ function ThrowObjectManager:Event_onDisableThrowLeave()
 end
 
 function ThrowObjectManager:getBind() return self.m_ThrowBind end
+function ThrowObjectManager:getContactBind() return self.m_ThrowContactBind end
