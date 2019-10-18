@@ -83,7 +83,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 						_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self:getElement():getName()),
 						function (reason)
 							if reason then
-								triggerServerEvent("adminTriggerFunction", localPlayer, "rkick", self:getElement():getName(), reason)
+								triggerServerEvent("adminPlayerFunction", localPlayer, "rkick", self:getElement(), reason)
 							else
 								ErrorBox:new("Kein Grund angegeben!")
 							end
@@ -94,14 +94,14 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		self:addItem(_"Admin: ent/freezen",
 			function()
 				if self:getElement() then
-					triggerServerEvent("adminTriggerFunction", localPlayer, "freeze", self:getElement():getName())
+					triggerServerEvent("adminPlayerFunction", localPlayer, "freeze", self:getElement())
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Star)
 		self:addItem(_"Admin: specten",
 			function()
 				if self:getElement() then
-					triggerServerEvent("adminTriggerFunction", localPlayer, "spect", self:getElement())
+					triggerServerEvent("adminPlayerFunction", localPlayer, "spect", self:getElement())
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Star)

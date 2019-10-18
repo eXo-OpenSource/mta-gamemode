@@ -675,7 +675,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) --trig
+				if (admin != target) removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) end
 
 			end
 
@@ -696,7 +696,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 		addEventHandler("onPlayerQuit", admin, admin.m_SpectStop)
-		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+		if (admin != target) addEventHandler("onPlayerQuit", target, admin.m_SpectStop) end
 		bindKey(admin, "space", "down", admin.m_SpectStop)
 
 		admin:setFrozen(true)
