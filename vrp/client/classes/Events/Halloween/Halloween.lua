@@ -80,9 +80,10 @@ function Halloween:constructor()
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
 	end
 	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
-
-
 	addEventHandler("setHalloweenDarkness", root, bind(self.setDarkness, self))
+
+	self.m_Ghosts = {}
+	self.m_GhostTimer = setTimer(bind(self.createGhost, self), 200, 0)
 end
 
 function Halloween:Event_restore(clear)
@@ -98,7 +99,7 @@ function Halloween:Event_restore(clear)
 		xoffs = xoffs + 60 + 58
 		dxDrawText("Padty\nfreaK", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("DeanW.\nSaiya\nrottby\nPoldi\nRefrigerator", xoffs, 1, xoffs+60, 110, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("DeanW.\nSaiya\nrottby\nPoldi\nRefrigerator", xoffs, 5, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawText("Swatbird\nSven.Salvarez\nzomb4k33l\nBlack", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
@@ -160,6 +161,16 @@ function Halloween:renderDarkness() -- not to be confused with 'dankness'! :thin
 	--draw team Member names on tomb stones
 	--posX="909" posY="-1056.9" posZ="24.5" rotX="0" rotY="0" rotZ="90"
 	dxDrawMaterialLine3D(909, -1057, 24.9, 909, -1057, 24.1, self.m_TeamNameTexture, 8.5, white, 909, -1058, 24.9)
+end
+
+function Halloween:createGhost()
+	local x, y, z = getElementPosition(localPlayer)
+	local ghost = HalloweenGhost:new(Vector3(x+math.random(-20, 20), y+math.random(-20, 20), z+math.random(10, 20)), math.random(1, 360))
+	setTimer(
+		function()
+			ghost:move(math.random(15, 30))
+		end
+	, 500, 1)
 end
 
 HalloweenSign = inherit(GUIForm3D)

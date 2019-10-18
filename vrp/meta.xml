@@ -1072,6 +1072,7 @@
 
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenGhost.lua" type="client"/>
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
