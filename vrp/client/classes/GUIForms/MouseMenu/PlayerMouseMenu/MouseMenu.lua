@@ -98,6 +98,13 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Star)
+		self:addItem(_"Admin: specten",
+			function()
+				if self:getElement() then
+					triggerServerEvent("adminTriggerFunction", localPlayer, "spect", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Star)
 	end
 
 	self:adjustWidth()

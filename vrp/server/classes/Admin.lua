@@ -633,7 +633,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 	elseif func == "spect" then
 		if not target then return end
 		--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
-		if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
+		if admin:getPrivateSync("isSpecting") then 
+			if (type(admin.m_SpectStop) == "function") then 
+				admin.m_SpectStop() 
+			else 
+				admin:sendError("Beende das spectaten zuerst!") 
+				return 
+			end 
+		end
 
 		admin.m_IsSpecting = true
 		admin:setPrivateSync("isSpecting", target)
