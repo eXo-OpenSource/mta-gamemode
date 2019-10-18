@@ -8,10 +8,12 @@
 Ban = {}
 
 
-function Ban.addBan(who, author, reason, duration)
+function Ban.addBan(who, author, reason, duration, adminName)
 	local authorId = 0
+	local authorName = adminName
 	if type(author) == "userdata" and getElementType(author) == "player" then
 		authorId = author:getId()
+		authorName = author:getName()
 	elseif author == nil then
 		author = "System"
 	end
@@ -50,9 +52,9 @@ function Ban.addBan(who, author, reason, duration)
 			author = DatabasePlayer.getFromId(author)
 		end
 		if duration > 0 then
-			reasonstr = ("+Timeban: %s von %s (Grund: %s)"):format( string.duration(duration), author.name, reason)
+			reasonstr = ("+Timeban: %s von %s (Grund: %s)"):format( string.duration(duration), authorName, reason)
 		else
-			reasonstr = ("+Permanenter Bann von %s (Grund: %s)"):format(author.name, reason)
+			reasonstr = ("+Permanenter Bann von %s (Grund: %s)"):format(authorName, reason)
 		end
 		kickPlayer(player, author, reasonstr)
 	end
