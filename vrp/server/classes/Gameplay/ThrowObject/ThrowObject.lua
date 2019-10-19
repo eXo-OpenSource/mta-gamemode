@@ -37,7 +37,7 @@ end
 
 function ThrowObject:destructor()
 	self:syncRemoval()
-	
+
 	if isValidElement(self:getDummyEntity(), "object") then self:getDummyEntity():destroy() end
 	if self:getEntity() and isElement(self:getEntity()) and self:getEntity():getType() ~= "player" then 
 		self:getEntity():destroy() 
@@ -45,8 +45,16 @@ function ThrowObject:destructor()
 	ThrowObjectManager:getSingleton():removeThrowObjectFromPlayer(self:getPlayer(), self)
 end
 
-function ThrowObject:updateCollision(bool)
+function ThrowObject:updateCollision(bool, everyone)
 	self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
+	if everyone then 
+		for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
+			if player ~= self:getPlayer() then
+				player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool, true)
+			end
+		end
+	end
+	return self
 end
 
 function ThrowObject:assertTransformMatrix(offsetMatrix) 
@@ -103,6 +111,7 @@ function ThrowObject:push(pushVector)
 	if self:getThrowCallback() then
 		self:getThrowCallback()(self:getPlayer(), self)
 	end
+	self:syncCreation() -- we only need to sync on push since we do not need any collision detection whilst the object is in the hand of the throwing player
 end
 
 function ThrowObject:initialise() 
@@ -121,14 +130,12 @@ function ThrowObject:initialise()
 	self.m_DummyEntity.m_ThrowInstance = self
 	self:setDamage(3)
 	
-	self:syncCreation() 
-
 	return isValidElement(self.m_Entity, self:getType()) and isValidElement(self.m_Entity, self:getType())
 end
 
 function ThrowObject:syncCreation() 
 	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
-		player:triggerEvent("Throw:syncObject", self:getEntity(), self:getDummyEntity())
+		player:triggerEvent("Throw:syncObject", self:getPlayer(), self:getEntity(), self:getDummyEntity(), self:getCustomBoundingBox())
 	end
 end
 
@@ -176,6 +183,21 @@ function ThrowObject:setThrowCallback(callback)
 	return self
 end
 
+
+function ThrowObject:setContactCallback(callback)
+	if callback and type(callback) == "function" then
+		self.m_ContactCallback = callback
+	end
+	return self
+end
+
+function ThrowObject:setDamageCallback(callback)
+	if callback and type(callback) == "function" then
+		self.m_DamageCallback = callback
+	end
+	return self
+end
+
 function ThrowObject:setSkillBased(bool)
 	self.m_SkillBased = bool
 	return self
@@ -183,6 +205,22 @@ end
 
 function ThrowObject:setDamage(damage) 
 	self.m_Damage = damage or 3
+	return self
+end
+
+function ThrowObject:setEntityOffsetMatrix(offset) -- necessary when the dummy entity is not fitting right onto the visible entity (ie. collision is not in place correctly)
+	self:getEntity():attach(self:getDummyEntity(), 
+		offset.position.x, 
+		offset.position.y, 
+		offset.position.z, 
+		offset.rotation.x, 
+		offset.rotation.y, 
+		offset.rotation.z)
+	return self
+end
+
+function ThrowObject:setCustomBoundingBox(bound) -- set bounding box size / used for client detection of collision
+	self.m_CustomBound = bound 
 	return self
 end
 
@@ -209,3 +247,6 @@ function ThrowObject:isDamageDisabled() return self.m_DamageDisabled end
 function ThrowObject:isSkillBased() return self.m_SkillBased end
 function ThrowObject:getDamage() return self.m_Damage end
 function ThrowObject:getThrowCallback() return self.m_ThrowCallback end
+function ThrowObject:getContactCallback() return self.m_ContactCallback end 
+function ThrowObject:getDamageCallback() return self.m_DamageCallback end 
+function ThrowObject:getCustomBoundingBox() return self.m_CustomBound end 
