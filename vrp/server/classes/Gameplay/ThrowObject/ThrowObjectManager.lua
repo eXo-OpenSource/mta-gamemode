@@ -143,11 +143,15 @@ end
 function ThrowObjectManager:Event_onPlayerDamage(target, object, bodypart)
 	if object.m_ThrowInstance and object.m_ThrowInstance:isPushed() then
 		local loss = object.m_ThrowInstance:getDamage() or 3 
-		Guns:getSingleton():damagePlayer(target, loss, client, 56, bodypart)
-		target:triggerEvent("clientBloodScreen")
-		target:setAnimation("ped", "getup", -1, false, true, false, false, 50, true)
-		if object.m_ThrowInstance:getDamageCallback() then 
-			object.m_ThrowInstance:getDamageCallback()(target, object, bodypart)
+		if target and isElement(target) then
+			if target:getType() == "player" then
+				Guns:getSingleton():damagePlayer(target, loss, client, 56, bodypart)
+				target:triggerEvent("clientBloodScreen")
+			end
+			target:setAnimation("ped", "getup", -1, false, true, false, false, 50, true)
+			if object.m_ThrowInstance:getDamageCallback() then 
+				object.m_ThrowInstance:getDamageCallback()(target, object, bodypart)
+			end
 		end
 	end
 end
