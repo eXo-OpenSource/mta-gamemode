@@ -998,3 +998,12 @@ function convertBytesToUnit(value, unit)
 		return value / 1024
 	end
 end
+
+function isValidPedModel(model) 
+	for i, skin in ipairs(getValidPedModels()) do 
+		if model == skin then 
+			return true
+		end 
+	end
+	return false
+end

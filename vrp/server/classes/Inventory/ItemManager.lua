@@ -108,6 +108,8 @@ function ItemManager:constructor()
 		["Kleidung"] = WearableClothes,
 
 		["Clubkarte"] = ItemPlayHouseCard,
+
+		["Schuh"] = ItemThrowShoe, 
 	}
 
 	self.m_Properties = {

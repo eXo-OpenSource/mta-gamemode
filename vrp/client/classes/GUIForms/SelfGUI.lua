@@ -66,6 +66,11 @@ SelfGUI.Stats = {
 		["text"] = "Müll geangelt",
 		["value"] = function(value) return value end
 	},
+	{
+		["Name"] = "ThrownObject",
+		["text"] = "Sachen geworfen",
+		["value"] = function(value) return value end
+	},
 }
 
 function SelfGUI:constructor()

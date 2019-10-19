@@ -186,7 +186,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 	if isElement(killer) and getElementType(killer) == "vehicle" then
 		killer = killer.controller
 	end
-	if killer and isElement(killer) and weapon then
+	if killer and isValidElement(killer, "player") and weapon then
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
 		killer:triggerEvent("clientMonochromeFlash")
 	end

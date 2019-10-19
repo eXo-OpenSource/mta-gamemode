@@ -725,6 +725,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		else
 			admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
 		end
+	elseif func == "throwaway" then 
+		if target and isElement(target) then 
+			if target.vehicle then 
+				target:removeFromVehicle()
+			end
+			ThrowObject:new(admin, target:getModel()):replaceEntity(target)
+			StatisticsLogger:getSingleton():addAdminAction(admin, "Spielerwurf", target)
+		end
     end
 end
 
