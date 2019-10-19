@@ -233,7 +233,9 @@ ADMIN_RANK_PERMISSION = {
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
 
-	["disablereg"] = RANK.Servermanager --disablereg, enablereg
+	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
+
+	["throwaway"] = RANK.Administrator,
 }
 
 GroupRank = {
