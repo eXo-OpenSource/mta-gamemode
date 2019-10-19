@@ -6,11 +6,25 @@
 -- *
 -- ****************************************************************************
 ItemThrowShoe = inherit(Item)
-ItemThrowShoe.OffsetMatrix = 
+ItemThrowShoe.OffsetMatrix = -- bone attach offset
 {
-	position = {x=-.1, y=.06, z=.5},
+	position = {x=-.25, y=.06, z=.32},
 	rotation = {x=0, y=180, z=270}
 }
+
+ItemThrowShoe.EntityOffset = -- model offset on collision
+{
+	position = {x=-0, y=0.15, z=-.2},
+	rotation = {x=0, y=0, z=0}
+}
+
+ItemThrowShoe.CustomBound = 
+{
+	x = 0.3, 
+	y = 0.05, 
+	z = .8
+}
+
 ItemThrowShoe.Model = 1901
 
 function ItemThrowShoe:constructor()
@@ -33,6 +47,10 @@ function ItemThrowShoe:use(player)
 		ThrowObject:new(player, ItemThrowShoe.Model, 1654, ItemThrowShoe.OffsetMatrix)
 			:setThrowCallback(bind(self.Event_throwCallback, self))
 			:setSkillBased(true)
+			:setEntityOffsetMatrix(ItemThrowShoe.EntityOffset)
+			:setCustomBoundingBox(ItemThrowShoe.CustomBound)
+			:updateCollision(false, true)
+			
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowShoe.Model then 
 			player:getThrowingObject():delete()

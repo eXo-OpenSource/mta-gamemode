@@ -9,13 +9,13 @@ ThrowObjectManager = inherit(Singleton)
 ThrowObjectManager.DESPAWN_TIME = 20000
 ThrowObjectManager.PULSE_TIME = 5000 -- time in ms to pulse for a despawn
 function ThrowObjectManager:constructor() 
-	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow", "Throw:playerWasThrown", "Throw:reportDamage"}
+	addRemoteEvents{"Throw:disableThrowLeave", "Throw:executeThrow", "Throw:playerWasThrown", "Throw:reportDamage", "Throw:reportContact"}
 	addEventHandler("Throw:disableThrowLeave", root, bind(self.Event_onDisableThrowLeave, self))
 	addEventHandler("Throw:executeThrow", root, bind(self.Event_onExecuteThrow, self))
 	addEventHandler("Throw:playerWasThrown", root, bind(self.Event_onPlayerIsThrown, self)) -- This is only called when a player throws another player and the thrown player has been thrown
 	addEventHandler("Throw:reportDamage", root, bind(self.Event_onPlayerDamage, self))
+	addEventHandler("Throw:reportContact", root, bind(self.Event_onContactWithThrowable, self)) -- detecting colshape hits
 	self.m_ThrowBind = bind(self.Bind_onThrowKey, self)
-	self.m_ThrowContactBind = bind(self.Event_onContactWithThrowable, self) -- detecting colshape hits
 	self.m_ThrownObjects = {}
 	self.m_SortedDespawnObjects = {} -- a list sorted by the despawn time to provide more efficient cleanup by minimizing indexing
 
@@ -46,8 +46,8 @@ end
 
 function ThrowObjectManager:getSkillFactor(player) 
 	local thrownCount = player:getStatistics("ThrownObject") or 0
-	local skill = (-3.04518*(10^-19) * thrownCount^2) + (0.004*thrownCount) + 0.38
-	if skill > 1.5 then skill = 1.5 end 
+	local skill = -2.95038e-22 * thrownCount^2 + 0.001 * thrownCount + 0.6
+	if skill > 1 then skill = 1 end 
 	return skill
 end
 
@@ -130,9 +130,13 @@ function ThrowObjectManager:Bind_onThrowKey(player, key, keystate, dontCancelAni
 	end
 end
 
-function ThrowObjectManager:Event_onContactWithThrowable(element, dimension)
-	if true then 
-		outputChatBox(tostring(element))
+function ThrowObjectManager:Event_onContactWithThrowable(player, object)
+	if isValidElement(object, "object") and isValidElement(player, "player") then 
+		if object.m_ThrowInstance and object.m_ThrowInstance:isPushed() then
+			if object.m_ThrowInstance:getContactCallback() then
+				object.m_ThrowInstance:getContactCallback()(object, player)
+			end
+		end
 	end
 end
 
@@ -141,6 +145,10 @@ function ThrowObjectManager:Event_onPlayerDamage(target, object, bodypart)
 		local loss = object.m_ThrowInstance:getDamage() or 3 
 		Guns:getSingleton():damagePlayer(target, loss, client, 56, bodypart)
 		target:triggerEvent("clientBloodScreen")
+		target:setAnimation("ped", "getup", -1, false, true, false, false, 50, true)
+		if object.m_ThrowInstance:getDamageCallback() then 
+			object.m_ThrowInstance:getDamageCallback()(target, object, bodypart)
+		end
 	end
 end
 
