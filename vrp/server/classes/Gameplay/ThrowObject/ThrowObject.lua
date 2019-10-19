@@ -95,7 +95,6 @@ function ThrowObject:push(pushVector)
 	end, 1000, 1)
 	if isValidElement(self:getEntity(), "player") then 
 		setTimer(function()
-			StatisticsLogger:getSingleton():addAdminAction(self:getPlayer(), "Spielerwurf", self:getEntity())
 			self:getEntity():setCollisionsEnabled(true)
 			self:getDummyEntity():setData("Throw:dummyEntity", true, true)
 			self:getEntity():setData("Throw:throwEntity", true, true)
