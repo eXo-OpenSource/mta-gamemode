@@ -153,7 +153,7 @@ end
 
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
 	if killer == localPlayer then
-		if not source.m_isBoxer then
+		if not source.m_isClientSided then
 			triggerServerEvent("onDeathPedWasted", localPlayer, source, weapon)
 		end
 	end
