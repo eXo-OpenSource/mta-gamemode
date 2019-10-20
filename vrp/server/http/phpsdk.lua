@@ -126,13 +126,13 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 		Admin:getSingleton():addPunishLog(adminId, targetId, "permabanCP", reason, 0)
 		outputChatBox(_("Der Spieler %s  wurde von %s gebannt!", nil, targetName, adminName), root, 200, 0, 0)
 		outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
-		Ban.addBan(targetId, adminId, reason, 0)
+		Ban.addBan(targetId, adminId, reason, 0, adminName)
 	else -- time
 		Admin:getSingleton():sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", nil, adminName, targetName, duration, reason))
 		Admin:getSingleton():addPunishLog(adminId, targetId, "timebanCP", reason, duration * 60 * 60)
 		outputChatBox(_("Der Spieler %s  wurde von %s für %d Stunden gebannt!", nil, targetName, adminName, duration), root, 200, 0, 0)
 		outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
-		Ban.addBan(targetId, adminId, reason, duration * 60 * 60)
+		Ban.addBan(targetId, adminId, reason, duration * 60 * 60, adminName)
 	end
 
 	if aCreated then
