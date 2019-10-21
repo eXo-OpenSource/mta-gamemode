@@ -93,8 +93,8 @@ function StaticWorldItems:removePosition(player)
 			if element.Id then
 				player:sendInfo(_("%s entfernt!", player, element.Type))
 				sql:queryExec("DELETE FROM ??_word_objects WHERE Id = ?;", sql:getPrefix(), element.Id)
-				element:destroy()
 				self.m_Objects[element.Id] = nil
+				element:destroy()
 			else
 				player:sendError(_("Osterei nicht gefunden!", player))
 			end
