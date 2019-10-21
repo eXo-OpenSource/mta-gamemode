@@ -16,6 +16,36 @@ function WorldItemManager:constructor()
 	--	furniture = FurnitureWorldItem;
 	}
 
+	if not sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_world_items") then
+		sql:queryExec([[
+			CREATE TABLE ??_world_items  (
+				`Id` int NOT NULL AUTO_INCREMENT,
+				`Item` varchar(128) NOT NULL,
+				`Model` int NOT NULL,
+				`ElementId` int NOT NULL,
+				`ElementType` int NOT NULL COMMENT '1 = Player, 2 = Faction, 3 = Company, 4 = Group',
+				`PlacedBy` int NOT NULL,
+				`PosX` float NOT NULL,
+				`PosY` float NOT NULL,
+				`PosZ` float NOT NULL,
+				`RotX` float NOT NULL,
+				`RotY` float NOT NULL,
+				`RotZ` float NOT NULL,
+				`Interior` int NOT NULL,
+				`Dimension` int NOT NULL,
+				`Value` text NOT NULL DEFAULT '',
+				`Metadata` text NULL DEFAULT NULL,
+				`Breakable` tinyint(1) NOT NULL DEFAULT 0,
+				`Locked` tinyint(1) NOT NULL DEFAULT 0,
+				`CreatedAt` datetime NOT NULL,
+				`UpdatedAt` datetime NULL DEFAULT NULL,
+				PRIMARY KEY (`Id`)
+			);
+
+			INSERT INTO ??_world_items SELECT * FROM ??_WorldItems;
+		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	end
+
 	local result = sql:queryFetch("SELECT * FROM ??_world_items", sql:getPrefix())
 
 	for k, row in pairs(result) do
