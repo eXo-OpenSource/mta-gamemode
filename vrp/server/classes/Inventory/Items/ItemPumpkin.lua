@@ -23,8 +23,10 @@ function ItemPumpkin:use(...)
 	ItemManager:getSingleton():getInstance("Helm"):use(...)
 end
 
-function ItemPumpkin:addObject(Id, pos)
-	self.m_Pumpkins[Id] = createObject(self.m_Model, pos)
+function ItemPumpkin:addObject(Id, pos, rot, interior, dimension)
+    self.m_Pumpkins[Id] = createObject(self.m_Model, pos, rot)
+    self.m_Pumpkins[Id]:setInterior(interior)
+    self.m_Pumpkins[Id]:setDimension(dimension)
 	self.m_Pumpkins[Id].Id = Id
 	self.m_Pumpkins[Id].Type = "Pumpkin"
     self.m_Pumpkins[Id]:setData("clickable", true, true)
