@@ -41,6 +41,7 @@ function ItemThrowShoe:Event_throwCallback(player)
 end
 
 function ItemThrowShoe:use(player)
+	if Fishing:getSingleton():isPlayerFishing(player) then return player:sendError(_("Pack erst deine Angel weg!")) end
 	if not player:getThrowingObject() then 
 		player:meChat(true, "zieht einen Schuh.")
 		player:sendInfo(_("Der Schuh ist bereit!", player))

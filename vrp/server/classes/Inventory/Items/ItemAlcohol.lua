@@ -59,6 +59,10 @@ function ItemAlcohol:use(player)
 	player:setAnimation(block, animation, time, true, false, false)
 	setTimer(function()
 		item:destroy()
+		if self:getName() == "Bier" then
+			player:getInventory():giveItem("Flasche", 1)
+			player:sendInfo(_("Du hast eine leere Flasche erhalten!", player))
+		end
 		if ItemSettings["Health"] > 0 then
 			player:setHealth(player:getHealth()+ItemSettings["Health"])
 		end

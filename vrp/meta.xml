@@ -170,6 +170,8 @@
 
 	<!-- throwable -->
 	<script src="server/classes/Inventory/Throwable/ItemThrowShoe.lua" type="server"/>
+	<script src="server/classes/Inventory/Throwable/ItemThrowTrash.lua" type="server"/>
+	<script src="server/classes/Inventory/Throwable/ItemThrowBottle.lua" type="server"/>
 
 	<!-- wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
@@ -2013,6 +2015,8 @@
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keycard.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Schuh.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Trash.png" />
+	<vrpfile src="files/images/Inventory/items/Items/EmptyBottle.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
