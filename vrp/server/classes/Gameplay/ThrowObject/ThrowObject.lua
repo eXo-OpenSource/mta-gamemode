@@ -23,6 +23,7 @@ ThrowObject.DummyType =
 function ThrowObject:constructor(player, model, dummy, offsetMatrix) 
 	self.m_Pushed = false
 	self.m_Player = player
+	self.m_PlayerId = player:getId()
 	self.m_Model = model 
 	self.m_Type = self:getTypeFromModel(self:getModel())
 	self.m_PhysicModel = dummy or ThrowObject.DummyType[self.m_Type]
@@ -32,7 +33,7 @@ function ThrowObject:constructor(player, model, dummy, offsetMatrix)
 	end
 	player:setThrowingObject(self)
 	bindKey(player, "aim_weapon", "both", ThrowObjectManager:getSingleton():getBind())
-	ThrowObjectManager:getSingleton():addThrowObjectToPlayer(self:getPlayer(), self)
+	ThrowObjectManager:getSingleton():addThrowObjectToPlayer(self:getPlayerId(), self)
 end
 
 function ThrowObject:destructor()
@@ -42,14 +43,17 @@ function ThrowObject:destructor()
 	if self:getEntity() and isElement(self:getEntity()) and self:getEntity():getType() ~= "player" then 
 		self:getEntity():destroy() 
 	end
-	ThrowObjectManager:getSingleton():removeThrowObjectFromPlayer(self:getPlayer(), self)
+	ThrowObjectManager:getSingleton():removeThrowObjectFromPlayer(self:getPlayerId(), self)
+	self.Deleted = true
 end
 
 function ThrowObject:updateCollision(bool, everyone)
-	self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
+	if isValidElement(self:getPlayer(), "player") then
+		self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
+	end
 	if everyone then 
 		for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
-			if player ~= self:getPlayer() then
+			if isValidElement(player, "player") and player ~= self:getPlayer() then
 				player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool, true)
 			end
 		end
@@ -133,14 +137,19 @@ function ThrowObject:initialise()
 end
 
 function ThrowObject:syncCreation() 
+	if not isValidElement(self:getPlayer(), "player") then return end
 	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
-		player:triggerEvent("Throw:syncObject", self:getPlayer(), self:getEntity(), self:getDummyEntity(), self:getCustomBoundingBox())
+		if isValidElement(player, "player") then
+			player:triggerEvent("Throw:syncObject", self:getPlayer(), self:getEntity(), self:getDummyEntity(), self:getCustomBoundingBox())
+		end
 	end
 end
 
 function ThrowObject:syncRemoval() 
 	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
-		player:triggerEvent("Throw:deleteObject", self:getDummyEntity())
+		if isValidElement(player, "player") then
+			player:triggerEvent("Throw:deleteObject", self:getDummyEntity())
+		end
 	end
 end
 
@@ -239,6 +248,7 @@ function ThrowObject:getTypeFromModel(model)
 end
 
 function ThrowObject:getPlayer() return self.m_Player end
+function ThrowObject:getPlayerId() return self.m_PlayerId end
 function ThrowObject:getModel() return self.m_Model end 
 function ThrowObject:getPhysicsModel() return self.m_PhysicModel end
 function ThrowObject:getEntity() return self.m_Entity end 
