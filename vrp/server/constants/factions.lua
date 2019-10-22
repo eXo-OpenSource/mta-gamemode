@@ -48,9 +48,9 @@ FACTION_MIN_RANK_KARMA = {
 
 FACTION_STATE_BADGES = 
 {
-	[1] = "LSPD",
-	[2] = "LSPD-D",
-	[3] = "LSPD-S",
+	[1] = "SAPD",
+	[2] = "SAPD-D",
+	[3] = "SAPD-S",
 	[4] = "RESCUE"
 }
 
