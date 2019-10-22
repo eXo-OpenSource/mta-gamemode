@@ -140,7 +140,9 @@ function ThrowObject:update()
 						if self:pointInSphere(point, Vector3(player:getPosition() + (player:getMatrix():getUp()*-centerOfBase)), player:getRadius()*.4) or
 							(not player:isDucked() and self:pointInSphere(point, Vector3(player:getPosition() + (player:getMatrix():getUp()*centerOfBase)), player:getRadius()*.4)) or
 							self:pointInSphere(point, player:getPosition(), player:getRadius()*.4) then
-							self:drawTextOnWorldPosition("X", point, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255)))
+							if DEBUG then
+								self:drawTextOnWorldPosition("X", point, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255)))
+							end
 							if not entity.m_MarkedPlayers[player] then
 								entity.m_MarkedPlayers[player] = true
 								triggerServerEvent("Throw:reportContact", localPlayer, player, entity)

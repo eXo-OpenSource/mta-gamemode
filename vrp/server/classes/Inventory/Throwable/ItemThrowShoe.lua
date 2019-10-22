@@ -51,7 +51,7 @@ function ItemThrowShoe:use(player)
 			:setEntityOffsetMatrix(ItemThrowShoe.EntityOffset)
 			:setCustomBoundingBox(ItemThrowShoe.CustomBound)
 			:updateCollision(false, true)
-			:setDamageDisabled(true)
+			:setDamage(0)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowShoe.Model then 
 			player:getThrowingObject():delete()

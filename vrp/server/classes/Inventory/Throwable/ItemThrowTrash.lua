@@ -52,7 +52,7 @@ function ItemThrowTrash:use(player)
 			:setCustomBoundingBox(ItemThrowTrash.CustomBound)
 			:updateCollision(false, true)
 			:setScale(Vector3(0.7, 0.7, 0.8))
-			:setDamageDisabled(true)
+			:setDamage(0)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowTrash.Model then 
 			player:getThrowingObject():delete()
