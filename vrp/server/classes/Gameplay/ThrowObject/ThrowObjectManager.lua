@@ -18,7 +18,7 @@ function ThrowObjectManager:constructor()
 	self.m_ThrowBind = bind(self.Bind_onThrowKey, self)
 	self.m_ThrownObjects = {}
 	self.m_SortedDespawnObjects = {} -- a list sorted by the despawn time to provide more efficient cleanup by minimizing indexing
-
+	self.m_GarbageCollection = {} -- this is a counter-check list for when things have unexpected behaviour
 	setTimer(bind(self.pulse, self), ThrowObjectManager.PULSE_TIME, 0)
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.Event_onPlayerQuit, self))
@@ -34,6 +34,7 @@ function ThrowObjectManager:pulse() -- check in a given interval for despawns
 	for index, instance in ipairs(self.m_SortedDespawnObjects) do 
 		if  now > instance:getDespawnTime() then 
 			removeIndexes[index] = instance
+			self.m_GarbageCollection[instance] = index
 		else 
 			break
 		end
@@ -42,6 +43,17 @@ function ThrowObjectManager:pulse() -- check in a given interval for despawns
 		table.remove(self.m_SortedDespawnObjects, index)
 		instance:delete()
 	end
+	self:collectGarbage()
+end
+
+function ThrowObjectManager:collectGarbage() 
+	for instance, index in pairs(self.m_GarbageCollection) do 
+		if not instance.Deleted then 
+			if not self.m_SortedDespawnObjects[index] then 
+				instance:delete()
+			end 
+		end
+	end 
 end
 
 function ThrowObjectManager:getSkillFactor(player) 
