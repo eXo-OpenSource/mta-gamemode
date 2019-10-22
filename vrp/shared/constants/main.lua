@@ -235,7 +235,7 @@ ADMIN_RANK_PERMISSION = {
 
 	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
 
-	["throwaway"] = RANK.Administrator,
+	["throwaway"] = RANK.Moderator,
 }
 
 GroupRank = {

@@ -101,7 +101,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	end
 
 	
-	if localPlayer:getRank() > RANK.Moderator then
+	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Admin: Wegschmeißen",
 		function()
 			if self:getElement() then

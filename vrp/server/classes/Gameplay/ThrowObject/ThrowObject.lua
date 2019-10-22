@@ -218,6 +218,13 @@ function ThrowObject:setEntityOffsetMatrix(offset) -- necessary when the dummy e
 	return self
 end
 
+function ThrowObject:setScale(scale) 
+	if self:getEntity() then 
+		self:getEntity():setScale(scale or Vector3(1, 1, 1))
+	end
+	return self
+end
+
 function ThrowObject:setCustomBoundingBox(bound) -- set bounding box size / used for client detection of collision
 	self.m_CustomBound = bound 
 	return self
