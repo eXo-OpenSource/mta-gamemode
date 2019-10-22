@@ -51,7 +51,7 @@ function ItemThrowBottle:use(player)
 			:setEntityOffsetMatrix(ItemThrowBottle.EntityOffset)
 			:setCustomBoundingBox(ItemThrowBottle.CustomBound)
 			:updateCollision(false, true)
-			:setDamageDisabled(true)
+			:setDamage(0)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowBottle.Model then 
 			player:getThrowingObject():delete()
