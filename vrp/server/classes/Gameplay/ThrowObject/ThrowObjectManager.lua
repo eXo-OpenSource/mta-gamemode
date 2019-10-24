@@ -31,29 +31,12 @@ end
 function ThrowObjectManager:pulse() -- check in a given interval for despawns 
 	local now = getTickCount()
 	local removeIndexes = {} -- pack them into this table to remove them afterwards in order to avoid any access-violation
-	for index, instance in ipairs(self.m_SortedDespawnObjects) do 
-		if  now > instance:getDespawnTime() then 
-			removeIndexes[index] = instance
-			self.m_GarbageCollection[instance] = index
-		else 
-			break
+	for instance, bool in pairs(self.m_SortedDespawnObjects) do 
+		if instance:getDespawnTime() < now then
+			instance:delete()
+			self.m_SortedDespawnObjects[instance] = nil
 		end
 	end
-	for index, instance in pairs(removeIndexes) do 
-		table.remove(self.m_SortedDespawnObjects, index)
-		instance:delete()
-	end
-	self:collectGarbage()
-end
-
-function ThrowObjectManager:collectGarbage() 
-	for instance, index in pairs(self.m_GarbageCollection) do 
-		if not instance.Deleted then 
-			if not self.m_SortedDespawnObjects[index] then 
-				instance:delete()
-			end 
-		end
-	end 
 end
 
 function ThrowObjectManager:getSkillFactor(player) 
@@ -64,16 +47,7 @@ function ThrowObjectManager:getSkillFactor(player)
 end
 
 function ThrowObjectManager:addToDespawnList(instance)
-	local inserted
-	for index, data in ipairs(self.m_SortedDespawnObjects) do 
-		if data:getDespawnTime() > instance:getDespawnTime() then
-			table.insert(self.m_SortedDespawnObjects, index, instance)
-			inserted = true
-		end
-	end
-	if not inserted then 
-		table.insert(self.m_SortedDespawnObjects, instance)
-	end
+	self.m_SortedDespawnObjects[instance] = true
 end
 
 function ThrowObjectManager:addThrowObjectToPlayer(player, instance)
@@ -85,7 +59,7 @@ end
 
 function ThrowObjectManager:removeThrowObjectFromPlayer(player, instance) 
 	local index = self:hasPlayerInstance(player, instance) 
-	if index then 
+	if index then
 		table.remove(self.m_ThrownObjects[player], index)
 	end 
 end
@@ -153,7 +127,7 @@ function ThrowObjectManager:Event_onContactWithThrowable(player, object)
 end
 
 function ThrowObjectManager:Event_onPlayerDamage(target, object, bodypart)
-	if object.m_ThrowInstance and object.m_ThrowInstance:isPushed() then
+	if object and instanceof(object, MTAElement) and  object.m_ThrowInstance and object.m_ThrowInstance:isPushed() then
 		local loss = object.m_ThrowInstance:getDamage() or 3 
 		if target and isElement(target) then
 			if target:getType() == "player" then
