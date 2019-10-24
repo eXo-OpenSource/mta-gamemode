@@ -50,7 +50,6 @@ function ItemThrowShoe:use(player)
 			:setSkillBased(true)
 			:setEntityOffsetMatrix(ItemThrowShoe.EntityOffset)
 			:setCustomBoundingBox(ItemThrowShoe.CustomBound)
-			:updateCollision(false, true)
 			:setDamage(0)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowShoe.Model then 
