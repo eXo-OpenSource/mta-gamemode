@@ -50,7 +50,6 @@ function ItemThrowBottle:use(player)
 			:setSkillBased(true)
 			:setEntityOffsetMatrix(ItemThrowBottle.EntityOffset)
 			:setCustomBoundingBox(ItemThrowBottle.CustomBound)
-			:updateCollision(false, true)
 			:setDamage(0)
 	else 
 		if player:getThrowingObject():getModel() == ItemThrowBottle.Model then 

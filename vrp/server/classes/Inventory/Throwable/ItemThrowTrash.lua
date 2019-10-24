@@ -50,7 +50,6 @@ function ItemThrowTrash:use(player)
 			:setSkillBased(true)
 			:setEntityOffsetMatrix(ItemThrowTrash.EntityOffset)
 			:setCustomBoundingBox(ItemThrowTrash.CustomBound)
-			:updateCollision(false, true)
 			:setScale(Vector3(0.7, 0.7, 0.8))
 			:setDamage(0)
 	else 
