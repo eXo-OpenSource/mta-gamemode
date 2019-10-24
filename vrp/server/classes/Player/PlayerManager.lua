@@ -411,7 +411,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 		end
 	end
 
-	if killer and killer:getType() == "player" then
+	if killer and isValidElement(killer, "player") then
 		if killer ~= client then
 			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
