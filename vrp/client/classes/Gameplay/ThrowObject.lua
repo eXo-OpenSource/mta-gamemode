@@ -29,7 +29,7 @@ end
 
 function ThrowObject:Event_updateCollision(object, bool, everyone)
 	object:setCollidableWith(localPlayer, bool)
-	if everyone then 
+	if everyone then
 		for k, player in pairs(getElementsByType("player", root, true)) do 
 			object:setCollidableWith(player, bool)
 		end
