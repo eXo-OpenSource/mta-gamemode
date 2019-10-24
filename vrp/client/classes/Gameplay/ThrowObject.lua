@@ -81,7 +81,6 @@ function ThrowObject:attachBounding(object, responsible, bounding)
 		object.m_DebugColor = tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255))
 		object.m_CustomBound = bounding
 		object.m_BoundVector = {self:getBoundingBox(object)}
-		object.m_PlayerBound = {self:getBoundingBox(localPlayer)}
 		return true
 	end
 	return false
@@ -116,7 +115,7 @@ function ThrowObject:update()
 	for k, player in pairs(streamedPlayers) do 
 		if player ~= localPlayer then 
 			for entity, object in pairs(self.m_SyncedByLocal) do 
-				if entity.m_BoundVector and entity:getVelocity():getLength() > 0 then 
+				if entity.m_BoundVector and isElementStreamedIn(entity) and entity:getVelocity():getLength() > 0 then 
 					local centerOfBase = player:getDistanceFromCentreOfMassToBaseOfModel()
 					local min, max = entity.m_BoundVector[1], entity.m_BoundVector[2]
   					local minVector = entity:getMatrix():transformPosition(Vector3(min.x, min.y, min.z))
@@ -187,7 +186,8 @@ function ThrowObject:drawBounding(color, a, b, c, d, e, f, g , h)
 end
 
 function ThrowObject:getBoundingBox(element) -- just convert the 6 return values into two vectors min & max
-	local minX, minY, minZ, maxX, maxY, maxZ = element:getBoundingBox()
+	if not element:getBoundingBox() then return Vector3(0, 0, 0), Vector3(0, 0, 0) end
+	local minX, minY, minZ, maxX, maxY, maxZ = getElementBoundingBox(element)
 	if element.m_CustomBound then
 		minX, maxX = minX * element.m_CustomBound.x, maxX * element.m_CustomBound.x 
 		minY, minY = minY * element.m_CustomBound.y, maxY * element.m_CustomBound.y
@@ -197,7 +197,7 @@ function ThrowObject:getBoundingBox(element) -- just convert the 6 return values
 end
 
 function ThrowObject:getPlayerBounds(player) 
-    local minX, minY, minZ, maxX, maxY, maxZ = player:getBoundingBox()
+    local minX, minY, minZ, maxX, maxY, maxZ = getElementBoundingBox(player)
     local minVector = player:getMatrix():transformPosition(Vector3(minX, minY, minZ))
    	local maxVector = player:getMatrix():transformPosition(Vector3(maxX, maxY, maxZ))
 	return minVector, maxVector
