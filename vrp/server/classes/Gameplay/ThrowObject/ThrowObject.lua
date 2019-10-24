@@ -48,14 +48,11 @@ function ThrowObject:destructor()
 end
 
 function ThrowObject:updateCollision(bool, everyone)
-	if isValidElement(self:getPlayer(), "player") then
-		self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
-	end
-	if everyone then 
-		for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
-			if isValidElement(player, "player") and player ~= self:getPlayer() then
-				player:triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool, true)
-			end
+	if isValidElement(self:getDummyEntity()) then
+		if everyone then 
+			triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "Throw:updateCollision", root, self:getDummyEntity(), bool, true)
+		else 
+			self:getPlayer():triggerEvent("Throw:updateCollision", self:getDummyEntity(), bool)
 		end
 	end
 	return self
@@ -138,19 +135,11 @@ end
 
 function ThrowObject:syncCreation() 
 	if not isValidElement(self:getPlayer(), "player") then return end
-	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
-		if isValidElement(player, "player") then
-			player:triggerEvent("Throw:syncObject", self:getPlayer(), self:getEntity(), self:getDummyEntity(), self:getCustomBoundingBox())
-		end
-	end
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "Throw:syncObject", self:getPlayer(), self:getEntity(), self:getDummyEntity(), self:getCustomBoundingBox())
 end
 
 function ThrowObject:syncRemoval() 
-	for index, player in ipairs(PlayerManager:getSingleton():getReadyPlayers()) do
-		if isValidElement(player, "player") then
-			player:triggerEvent("Throw:deleteObject", self:getDummyEntity())
-		end
-	end
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "Throw:deleteObject", self:getDummyEntity())
 end
 
 function ThrowObject:setPersistent(bool)
