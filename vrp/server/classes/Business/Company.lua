@@ -487,7 +487,8 @@ function Company:createDutyMarker()
     	)
 end
 
-function Company:respawnVehicles()
+function Company:respawnVehicles(player)
+	local isAdmin = player and player:getRank() >= RANK.Supporter
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min
@@ -496,7 +497,7 @@ function Company:respawnVehicles()
 	end
 	if isAdmin then
 		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
-		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+		player:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
 	end
 	local companyVehicles = VehicleManager:getSingleton():getCompanyVehicles(self.m_Id)
 	local fails = 0
@@ -504,7 +505,7 @@ function Company:respawnVehicles()
 	for companyId, vehicle in pairs(companyVehicles) do
 		if vehicle:getCompany() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn(true, isAdmin and true or false) then
+			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
 				vehicle:setInterior(vehicle.m_SpawnInt or 0)
