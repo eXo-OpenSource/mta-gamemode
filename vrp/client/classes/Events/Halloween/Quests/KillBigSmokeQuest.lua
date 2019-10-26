@@ -65,7 +65,7 @@ function KillBigSmokeQuest:onGhostKill()
 	local sound = playSound3D("files/audio/halloween/smokescream.mp3", localPlayer:getPosition())
 	sound:setMaxDistance(75)
     sound:setVolume(2)
-    sound:setDimension(locaPlayer:getDimension())
+    sound:setDimension(localPlayer:getDimension())
 
     self.m_QuestMessage:setText("Kehre nun zum Friedhof zurück!")
     self:setSucceeded()
