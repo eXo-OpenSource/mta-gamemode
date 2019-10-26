@@ -3074,9 +3074,12 @@
 
 	<vrpfile src="files/audio/sniper.ogg" />
 
-	<vrpfile src="files/audio/evil_laugh.mp3" />
-	<vrpfile src="files/audio/evil_lullaby.mp3" />
-	<vrpfile src="files/audio/laser.mp3" />
+	<vrpfile src="files/audio/halloween/cemetery.mp3" />
+	<vrpfile src="files/audio/halloween/evil_laugh.mp3" />
+	<vrpfile src="files/audio/halloween/evil_lullaby.mp3" />
+	<vrpfile src="files/audio/halloween/laser.mp3" />
+	<vrpfile src="files/audio/halloween/scarymusic.mp3" />
+	<vrpfile src="files/audio/halloween/smokescream.mp3" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/piss.dff" />

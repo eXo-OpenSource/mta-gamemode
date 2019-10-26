@@ -1629,7 +1629,16 @@ function SelfGUI:onSettingChange(setting)
 			Halloween:getSingleton():setDarkness()
 		end
 
-		self.m_HalloweenBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.9, self.m_Height*0.04, _"Blut-Hintergrund bei Buttons (Erst nach Reconnect)", self.m_SettingBG)
+		self.m_HalloweenSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.9, self.m_Height*0.04, _"Hintergrundgeräusche am Friedhof", self.m_SettingBG)
+		self.m_HalloweenSound:setFont(VRPFont(25))
+		self.m_HalloweenSound:setFontSize(1)
+		self.m_HalloweenSound:setChecked(core:get("Event", "HalloweenSound", true))
+		self.m_HalloweenSound.onChange = function (state)
+			core:set("Event", "HalloweenSound", state)
+			Halloween:getSingleton():setAmbientSoundEnabled(state)
+		end
+
+		self.m_HalloweenBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.9, self.m_Height*0.04, _"Blut-Hintergrund bei Buttons (Erst nach Reconnect)", self.m_SettingBG)
 		self.m_HalloweenBlood:setFont(VRPFont(25))
 		self.m_HalloweenBlood:setFontSize(1)
 		self.m_HalloweenBlood:setChecked(core:get("Event", "HalloweenBlood", true))
@@ -1637,7 +1646,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Event", "HalloweenBlood", state)
 		end
 
-		self.m_HalloweenClickBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.9, self.m_Height*0.04, _"Blutspritzer bei Klick", self.m_SettingBG)
+		self.m_HalloweenClickBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.30, self.m_Width*0.9, self.m_Height*0.04, _"Blutspritzer bei Klick", self.m_SettingBG)
 		self.m_HalloweenClickBlood:setFont(VRPFont(25))
 		self.m_HalloweenClickBlood:setFontSize(1)
 		self.m_HalloweenClickBlood:setChecked(core:get("Event", "HalloweenBloodClick", true))
@@ -1651,8 +1660,8 @@ function SelfGUI:onSettingChange(setting)
 			self.m_HalloweenDarkness:setEnabled(false)
 		end
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.30, self.m_Width*0.8, self.m_Height*0.07, _"Winterzeit", self.m_SettingBG)
-		self.m_SnowFlakes = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.9, self.m_Height*0.04, _"Schneeflocken", self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.8, self.m_Height*0.07, _"Winterzeit", self.m_SettingBG)
+		self.m_SnowFlakes = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.44, self.m_Width*0.9, self.m_Height*0.04, _"Schneeflocken", self.m_SettingBG)
 		self.m_SnowFlakes:setFont(VRPFont(25))
 		self.m_SnowFlakes:setFontSize(1)
 		self.m_SnowFlakes:setChecked(core:get("Event", "SnowFlakes", EVENT_CHRISTMAS)) --only force enable them during christmas
@@ -1660,7 +1669,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Event", "SnowFlakes", state)
 			triggerEvent("switchSnowFlakes", root, state)
 		end
-		self.m_SnowGround = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.44, self.m_Width*0.9, self.m_Height*0.04, _"Schneedecke", self.m_SettingBG)
+		self.m_SnowGround = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.51, self.m_Width*0.9, self.m_Height*0.04, _"Schneedecke", self.m_SettingBG)
 		self.m_SnowGround:setFont(VRPFont(25))
 		self.m_SnowGround:setFontSize(1)
 		self.m_SnowGround:setChecked(core:get("Event", "SnowGround", EVENT_CHRISTMAS)) --only force enable them during christmas
@@ -1670,7 +1679,7 @@ function SelfGUI:onSettingChange(setting)
 			self.m_SnowGroundExtra:setEnabled(state)
 		end
 
-		self.m_SnowGroundExtra = GUICheckbox:new(self.m_Width*0.04, self.m_Height*0.51, self.m_Width*0.9, self.m_Height*0.04, _"dynamische Textur (schön, aber FPS-lastig!)", self.m_SettingBG)
+		self.m_SnowGroundExtra = GUICheckbox:new(self.m_Width*0.04, self.m_Height*0.58, self.m_Width*0.9, self.m_Height*0.04, _"dynamische Textur (schön, aber FPS-lastig!)", self.m_SettingBG)
 		self.m_SnowGroundExtra:setFont(VRPFont(25))
 		self.m_SnowGroundExtra:setFontSize(1)
 		self.m_SnowGroundExtra:setChecked(core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS)) --only force enable them during christmas

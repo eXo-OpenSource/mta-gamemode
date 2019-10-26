@@ -82,6 +82,9 @@ function Halloween:constructor()
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
 		--self.m_GhostTimer = setTimer(bind(self.createGhost, self), 200, 0)
 	end
+	if core:get("Event", "HalloweenSound", true) then
+		self:setAmbientSoundEnabled(true)
+	end
 	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
 	addEventHandler("setHalloweenDarkness", root, bind(self.setDarkness, self))
 	--addEventHandler("onClientPlayerWeaponSwitch", root, bind(self.onClientPlayerWeaponSwitch, self))
@@ -195,6 +198,16 @@ function Halloween:renderDarkness() -- not to be confused with 'dankness'! :thin
 	dxDrawMaterialLine3D(909, -1057, 24.9, 909, -1057, 24.1, self.m_TeamNameTexture, 8.5, white, 909, -1058, 24.9)
 end
 
+function Halloween:setAmbientSoundEnabled(state)
+	if state then
+		self.m_AmbientSound = playSound3D("files/audio/halloween/cemetery.mp3", 895.63, -1101.78, 24.9, true)
+		self.m_AmbientSound:setMaxDistance(150)
+		self.m_AmbientSound:setVolume(8)
+	else
+		self.m_AmbientSound:destroy()
+	end
+end
+
 function Halloween:createGhost()
 	if localPlayer:getInterior() == 0 and localPlayer:getDimension() == 0 then
 		local x, y, z = getElementPosition(localPlayer)
@@ -267,8 +280,9 @@ end
 function Halloween:onClientPlayerWeaponFire(weapon)
 	if weapon == 27 then
 		local x, y, z = getPedWeaponMuzzlePosition(source)
-		local sound = playSound3D("files/audio/laser.mp3", x, y, z)
+		local sound = playSound3D("files/audio/halloween/laser.mp3", x, y, z)
 		sound:setMaxDistance(75)
 		sound:setVolume(2)
+		sound:setDimension(source:getDimension())
 	end
 end

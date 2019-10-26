@@ -29,19 +29,27 @@ end
 
 -- Ghost Ships --
 function HalloweenEasterEggs:createGhostShip(ship)
-    self.m_ShipGhost = HalloweenGhost:new(ship:getPosition() + Vector3(0, 10, -9.503), 180, 0, 0, false, bind(self.onShipGhostKill, self))
-    self.m_ShipGhost:setModel(78)
-    self.m_ShipGhost:setAlpha(150)
+    if not self.m_ShipGhost then
+        self.m_ShipGhost = HalloweenGhost:new(ship:getPosition() + Vector3(0, 10, -9.503), 180, 0, 0, false, bind(self.onShipGhostKill, self))
+        self.m_ShipGhost:setModel(78)
+        self.m_ShipGhost:setAlpha(150)
+        self.m_ShipGhost:setAttackMode(true)
+        self.m_ShipGhost:setAlwaysDamagable(true)
+        self.m_ShipGhost:setHealth(10)
+        self.m_ShipTheme = playSound3D("files/audio/halloween/scarymusic.mp3", ship:getPosition(), true)
+        self.m_ShipTheme:setMaxDistance(150)
+        self.m_ShipTheme:setVolume(0.1)
+    end
 end
 
 function HalloweenEasterEggs:onShipGhostKill()
     local position = self.m_ShipGhost.m_Ped:getPosition()
-    laugh = playSound3D("files/audio/evil_laugh.mp3", position)
+    laugh = playSound3D("files/audio/halloween/evil_laugh.mp3", position)
     laugh:setVolume(5)
     laugh:setMaxDistance(200)
     nextframe(
         function()
-            laughHall = playSound3D("files/audio/evil_laugh.mp3", position)
+            laughHall = playSound3D("files/audio/halloween/evil_laugh.mp3", position)
             laughHall:setEffectEnabled("i3dl2reverb", true)
             laughHall:setVolume(4)
             laughHall:setMaxDistance(300)
@@ -156,12 +164,12 @@ end
 
 function HalloweenEasterEggs:onLullabyColShapeHit(hitElement)
     if hitElement == localPlayer then
-        self.m_Lullaby = playSound3D("files/audio/evil_lullaby.mp3", -2818.383, -1529.442, 140.844, true) 
+        self.m_Lullaby = playSound3D("files/audio/halloween/evil_lullaby.mp3", -2818.383, -1529.442, 140.844, true) 
         self.m_Lullaby:setVolume(5)
-        self.m_Lullaby:setMaxDistance(250)
+        self.m_Lullaby:setMaxDistance(300)
         nextframe(
             function() 
-                self.m_LullabyHall = playSound3D("files/audio/evil_lullaby.mp3", -2818.383, -1529.442, 140.844, true)
+                self.m_LullabyHall = playSound3D("files/audio/halloween/evil_lullaby.mp3", -2818.383, -1529.442, 140.844, true)
                 self.m_LullabyHall:setVolume(4)
                 self.m_LullabyHall:setMaxDistance(300)
                 self.m_LullabyHall:setEffectEnabled("echo", true)
