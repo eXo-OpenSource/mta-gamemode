@@ -1,5 +1,5 @@
 Halloween = inherit(Singleton)
-addRemoteEvents{"setHalloweenDarkness"}
+addRemoteEvents{"setHalloweenDarkness", "Halloween:sendQuestState"}
 
 function Halloween:constructor()
 
@@ -58,15 +58,17 @@ function Halloween:constructor()
 
 	createWater(884, -1112, 23, 908, -1112, 23, 884, -1090, 23, 908, -1090, 23)
 	setWaveHeight(0.2)
-	local col = createColSphere(895.49, -1101.41, 24.70, 40)
-	addEventHandler("onClientColShapeHit", col, function()
-		setTimer(function()
-			if localPlayer:isWithinColShape(col) then
-				self:addRandomBloodInPool()
-			else
-				killTimer(sourceTimer)
-			end
-		end, 50, 0)
+	local bloodPoolColShape = createColSphere(895.49, -1101.41, 24.70, 40)
+	addEventHandler("onClientColShapeHit", bloodPoolColShape, function(hitElement)
+		if hitElement == localPlayer then
+			setTimer(function()
+				if localPlayer:isWithinColShape(bloodPoolColShape) then
+					self:addRandomBloodInPool()
+				else
+					killTimer(sourceTimer)
+				end
+			end, 50, 0)
+		end
 	end)
 
 	HalloweenSign:new()
@@ -78,12 +80,37 @@ function Halloween:constructor()
 	self.m_DarkRenderBind = bind(Halloween.renderDarkness, self)
 	if core:get("Event", "HalloweenDarkness", true) then
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
+		--self.m_GhostTimer = setTimer(bind(self.createGhost, self), 200, 0)
 	end
 	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
 	addEventHandler("setHalloweenDarkness", root, bind(self.setDarkness, self))
+	--addEventHandler("onClientPlayerWeaponSwitch", root, bind(self.onClientPlayerWeaponSwitch, self))
+	addEventHandler("Halloween:sendQuestState", root, bind(self.receiveQuestState, self))
+	addEventHandler("onClientPlayerWeaponFire", root, bind(self.onClientPlayerWeaponFire, self))
 
-	self.m_Ghosts = {}
-	self.m_GhostTimer = setTimer(bind(self.createGhost, self), 200, 0)
+	self.m_Quests = {
+		GhostFinderQuest,
+		GhostKillerQuest,
+		BigSmokeQuest,
+		KillBigSmokeQuest,
+	}
+	self.m_QuestPed = Ped.create(148, 930.69, -1123.8, 23.98)
+	self.m_QuestPed:setData("NPC:Immortal", true)
+	self.m_QuestPed:setFrozen(true)
+	self.m_QuestPed.SpeakBubble = SpeakBubble3D:new(self.m_QuestPed, "Halloween", "Quests")
+	self.m_QuestPed.SpeakBubble:setBorderColor(Color.Orange)
+	self.m_QuestPed.SpeakBubble:setTextColor(Color.Orange)
+	setElementData(self.m_QuestPed, "clickable", true)
+	self.m_QuestPed:setData("onClickEvent", 
+		function()
+			Halloween:getSingleton():requestQuestState()
+		end
+	)
+	self.m_WastedBind = bind(self.abortQuest, self)
+
+	CustomModelManager:getSingleton():loadImportTXD("files/models/events/halloween/shotgspa.txd", 351)
+	CustomModelManager:getSingleton():loadImportDFF("files/models/events/halloween/shotgspa.dff", 351)
+	WEAPON_NAMES[27] = "Geistvertreiber"
 end
 
 function Halloween:Event_restore(clear)
@@ -93,11 +120,11 @@ function Halloween:Event_restore(clear)
 		local color = tocolor(200, 200, 200, 200)
 		dxDrawText("Stumpy\nHeisi", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 55
-		dxDrawText("G.Eazy\nOpposite", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Opposite\nfreaK", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Padty\nfreaK", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Padty", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawText("DeanW.\nSaiya\nrottby\nPoldi\nRefrigerator", xoffs, 5, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
@@ -107,7 +134,7 @@ function Halloween:Event_restore(clear)
 		xoffs = xoffs + 60 + 57
 		dxDrawText("Strobe\nPewX\nMasterM", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
-		dxDrawText("MegaThorx\nStivik\nSnake", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("MegaThorx\nStiviK\nSnake", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 	dxSetRenderTarget()
 end
@@ -117,9 +144,14 @@ function Halloween:setDarkness(force)
 		if EVENT_HALLOWEEN then -- ask again in case somebody has this option saved in preferences
 			removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
 			addEventHandler("onClientRender", root, self.m_DarkRenderBind)
+			--self.m_GhostTimer = setTimer(bind(self.createGhost, self), 200, 0)
 		end
 	else
 		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
+		if self.m_GhostTimer and isTimer(self.m_GhostTimer) then
+			--killTimer(self.m_GhostTimer)
+			--HalloweenGhost.destroyAll()
+		end
 		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
 		setWeather(0)
 		resetSkyGradient()
@@ -164,25 +196,79 @@ function Halloween:renderDarkness() -- not to be confused with 'dankness'! :thin
 end
 
 function Halloween:createGhost()
-	local x, y, z = getElementPosition(localPlayer)
-	local ghost = HalloweenGhost:new(Vector3(x+math.random(-20, 20), y+math.random(-20, 20), z+math.random(10, 20)), math.random(1, 360))
-	setTimer(
-		function()
-			ghost:move(math.random(15, 30))
+	if localPlayer:getInterior() == 0 and localPlayer:getDimension() == 0 then
+		local x, y, z = getElementPosition(localPlayer)
+		local ghost = HalloweenGhost:new(Vector3(x+math.random(-20, 20), y+math.random(-20, 20), z+math.random(10, 20)), math.random(1, 360), 0, 0, true)
+		setTimer(
+			function()
+				if ghost then
+					ghost:move(math.random(15, 30))
+				end
+			end
+		, 500, 1)
+	end
+end
+
+function Halloween:requestQuestState()
+	if not self.m_Quest then
+		triggerServerEvent("Halloween:requestQuestState", localPlayer)
+	else
+		if self.m_Quest:isSucceeded() then
+			self.m_Quest:endQuest()
+			delete(self.m_Quest)
+			self.m_Quest = nil
+			triggerServerEvent("Halloween:requestQuestUpdate", localPlayer, self.m_QuestState+1)
+			removeEventHandler("onClientPlayerWasted", localPlayer, self.m_WastedBind)
 		end
-	, 500, 1)
+	end
 end
 
-HalloweenSign = inherit(GUIForm3D)
-inherit(Singleton, HalloweenSign)
-
-function HalloweenSign:constructor()
-	--1903, 1484.80, -1710.70
-	--rechts -> höher
-	GUIForm3D.constructor(self, Vector3(1507.69, -1753.78, 16.09), Vector3(0, 0, 0), Vector2(4.4, 2.09), Vector2(1200,600), 50)
+function Halloween:receiveQuestState(quest)
+	self.m_QuestState = quest
+	self:startQuest(self.m_QuestState)
 end
 
-function HalloweenSign:onStreamIn(surface)
-	self.m_Url = INGAME_WEB_PATH .. "/ingame/other/HalloweenSign.php"
-	GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
+function Halloween:startQuest()
+	if not self.m_Quests[self.m_QuestState+1] then
+		DialogGUI:new(false,
+			"Merkwürdig, diese Ereignisse hier, nicht wahr?"
+		)
+		return
+	end
+	self.m_Quest = self.m_Quests[self.m_QuestState+1]:new()
+	self.m_Quest:startQuest()
+	addEventHandler("onClientPlayerWasted", localPlayer, self.m_WastedBind)
+end
+
+function Halloween:abortQuest()
+	if self.m_Quest then
+		delete(self.m_Quest)
+		self.m_Quest = nil
+		ErrorBox:new("Quest fehlgeschlagen!")
+		removeEventHandler("onClientPlayerWasted", localPlayer, self.m_WastedBind)
+	end
+end
+
+--[[
+local worldSoundsToDisable = {21, 22, 23, 71, 72, 73, 74}
+function Halloween:onClientPlayerWeaponSwitch(prevSlot, newSlot)
+	if getPedWeapon(localPlayer, newSlot) == 27 then
+		for key, worldSound in ipairs(worldSoundsToDisable) do
+			setWorldSoundEnabled(5, worldSound, false)
+		end
+	else
+		for key, worldSound in ipairs(worldSoundsToDisable) do
+			setWorldSoundEnabled(5, worldSound, true)
+		end
+	end
+end
+]]
+
+function Halloween:onClientPlayerWeaponFire(weapon)
+	if weapon == 27 then
+		local x, y, z = getPedWeaponMuzzlePosition(source)
+		local sound = playSound3D("files/audio/laser.mp3", x, y, z)
+		sound:setMaxDistance(75)
+		sound:setVolume(2)
+	end
 end

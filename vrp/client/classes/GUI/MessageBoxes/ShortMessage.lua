@@ -9,7 +9,7 @@ ShortMessage = inherit(GUIElement)
 inherit(GUIFontContainer, ShortMessage)
 
 local MAX_BOX_LIMIT = 20
-local TEXTURE_SIZE_X = (340*screenWidth/1600+6)
+local TEXTURE_SIZE_X = (340*screenWidth/1600)
 local TEXTURE_SIZE_Y = 250
 function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips, notClose)
 	if type(title) == "number" then
