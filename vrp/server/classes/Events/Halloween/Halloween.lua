@@ -74,7 +74,7 @@ Halloween.ms_Bonus = {
 	{
 		["Text"] = "Romero",
 		["Image"] = "Bonus_Romero.png",
-		["Pumpkin"] = 240,
+		["Pumpkin"] = 450,
 		["Sweets"] = 4200,
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 442
@@ -82,7 +82,7 @@ Halloween.ms_Bonus = {
 	{
 		["Text"] = "Broadway",
 		["Image"] = "Bonus_Broadway.png",
-		["Pumpkin"] = 250,
+		["Pumpkin"] = 650,
 		["Sweets"] = 4500,
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 575
