@@ -481,6 +481,7 @@
 	<!-- Halloween -->
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
+	<script src="server/classes/Events/Halloween/EasterEggs.lua" type="server"/>
 
 	<!-- Christmas -->
 	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
@@ -968,6 +969,8 @@
 
 	<script src="client/classes/GUIForms/PlayHouseShopGUI.lua" type="client"/>
 
+	<script src="client/classes/GUIForms/DialogGUI.lua" type="client"/>
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -1080,15 +1083,25 @@
 
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenSign.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenGhost.lua" type="client"/>
+
+	<script src="client/classes/Events/Halloween/EasterEggs.lua" type="client"/>
+
+	<script src="client/classes/Events/Halloween/Quests/HalloweenQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/GhostFinderQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/GhostKillerQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/BigSmokeQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/KillBigSmokeQuest.lua" type="client"/>
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
-	<!--<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/> -->
+	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
 
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
-	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
+	<!-- <script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/> -->
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
@@ -1308,6 +1321,7 @@
 	<vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
 
 	<vrpfile src="files/images/Events/Bonus/Bonus_Bravura.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Broadway.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Deagle.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Dildo.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Heroin.png" />
@@ -3072,7 +3086,9 @@
 
 	<vrpfile src="files/audio/sniper.ogg" />
 
-	<vrpfile src="files/audio/battleroyaledeath.ogg" />
+	<vrpfile src="files/audio/evil_laugh.mp3" />
+	<vrpfile src="files/audio/evil_lullaby.mp3" />
+	<vrpfile src="files/audio/laser.mp3" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/piss.dff" />
@@ -3111,6 +3127,10 @@
 	<vrpfile src="files/models/buildings/kart.txd" />
 	<vrpfile src="files/models/buildings/kart.dff" />
 	<vrpfile src="files/models/buildings/kart.col" />
+
+	<!--Events-->
+	<vrpfile src="files/models/events/halloween/shotgspa.txd"/>
+	<vrpfile src="files/models/events/halloween/shotgspa.dff"/>
 
 	<!--Pickups-->
 	<vrpfile src="files/models/pickups/arrow.txd" />

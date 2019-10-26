@@ -21,57 +21,6 @@ Halloween.ms_Phrases = {
 
 Halloween.ms_Bonus = {
 	{
-		["Text"] = "Schutzweste",
-		["Image"] = "Bonus_Vest.png",
-		["Pumpkin"] = 1,
-		["Sweets"] = 25,
-		["Type"] = "Special"
-	},
-	{
-		["Text"] = "50 Weed",
-		["Image"] = "Bonus_Weed.png",
-		["Pumpkin"] = 5,
-		["Sweets"] = 75,
-		["Type"] = "Item",
-		["ItemName"] = "Weed",
-		["ItemAmount"] = 50
-	},
-	{
-		["Text"] = "5 Heroin",
-		["Image"] = "Bonus_Heroin.png",
-		["Pumpkin"] = 5,
-		["Sweets"] = 100,
-		["Type"] = "Item",
-		["ItemName"] = "Heroin",
-		["ItemAmount"] = 5
-	},
-	{
-		["Text"] = "Deagle (20 Schuss)",
-		["Image"] = "Bonus_Deagle.png",
-		["Pumpkin"] = 10,
-		["Sweets"] = 150,
-		["Type"] = "Weapon",
-		["WeaponId"] = 24,
-		["Ammo"] = 20
-	},
-	{
-		["Text"] = "Dildo",
-		["Image"] = "Bonus_Dildo.png",
-		["Pumpkin"] = 15,
-		["Sweets"] = 200,
-		["Type"] = "Weapon",
-		["WeaponId"] = 10,
-		["Ammo"] = 1
-	},
-	{
-		["Text"] = "5.000$",
-		["Image"] = "Bonus_Money.png",
-		["Pumpkin"] = 20,
-		["Sweets"] = 350,
-		["Type"] = "Money",
-		["MoneyAmount"] = 5000
-	},
-	{
 		["Text"] = "10.000$",
 		["Image"] = "Bonus_Money.png",
 		["Pumpkin"] = 30,
@@ -131,13 +80,20 @@ Halloween.ms_Bonus = {
 		["VehicleModel"] = 442
 	},
 	{
-		["Text"] = "Bravura",
-		["Image"] = "Bonus_Bravura.png",
+		["Text"] = "Broadway",
+		["Image"] = "Bonus_Broadway.png",
 		["Pumpkin"] = 250,
 		["Sweets"] = 4500,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 401
+		["VehicleModel"] = 575
 	}
+}
+
+Halloween.ms_QuestRewards = {
+	{pumpkins=2, sweets=5},
+	{pumpkins=5, sweets=15},
+	{pumpkins=2, sweets=10},
+	{pumpkins=10, sweets=25},
 }
 
 function Halloween:constructor()
@@ -145,7 +101,7 @@ function Halloween:constructor()
 	WareManager:new()
 	self.m_TrickOrTreatPIDs = {}
 
-	self.m_EventSign = createObject(1903, 1484.80, -1710.70, 12.4, 0, 0, 90)
+	self.m_EventSign = createObject(1903, 1507.73, -1753.96, 12.59, 0, 0, 270)
 	self.m_EventSign:setDoubleSided(true)
 	self.m_BankServerAccount = BankServer.get("event.halloween")
 
@@ -168,11 +124,19 @@ function Halloween:constructor()
 	romero.m_DisableToggleHandbrake = true
 
 
-	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
+	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus", "Halloween:giveGhostCleaner", "Halloween:takeGhostCleaner", "Halloween:requestQuestState", "Halloween:requestQuestUpdate"}
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
 	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
+	addEventHandler("onPlayerQuit", root, bind(self.onPlayerQuit, self))
+	addEventHandler("Halloween:giveGhostCleaner", root, bind(self.Event_giveGhostCleaner, self))
+	addEventHandler("Halloween:takeGhostCleaner", root, bind(self.Event_takeGhostCleaner, self))
+	addEventHandler("Halloween:requestQuestState", root, bind(self.requestQuestState, self))
+	addEventHandler("Halloween:requestQuestUpdate", root, bind(self.requestQuestUpdate, self))
 
 	self:initHalloweenDM()
+	self:createQuestMarkers()
+
+	HalloweenEasterEggs:new()
 end
 
 function Halloween:initTTPlayer(pId)
@@ -381,5 +345,64 @@ function Halloween:halloweenDmStart()
 	DeathmatchManager:getSingleton():createLobby("Halloween Event", "Server", "halloween", {}, "halloween", 10)
 	for index, playeritem in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		playeritem:sendShortMessage(_("Die Halloween-Deathmatch Lobby wurde geöffnet!", playeritem), _("Halloween-DM", playeritem), {255, 130, 0})
+	end
+end
+
+function Halloween:Event_giveGhostCleaner()
+	giveWeapon(client, 27, 9999, true)
+end
+
+function Halloween:Event_takeGhostCleaner()
+	takeWeapon(client, 27)
+end
+
+function Halloween:onPlayerQuit()
+	takeWeapon(source, 27)
+end
+
+function Halloween:createQuestMarkers()
+	self.m_QuestEnterExits = {
+		[1] = {
+			InteriorEnterExit:new(Vector3(2751.914, -1962.834, 13.548), Vector3(-42.56, 1405.99, 1084.43), 270, 0, 8, 13, 0, 0)
+		},
+		[2] = {
+			InteriorEnterExit:new(Vector3(1851.825, -2135.402, 15.388), Vector3(-68.89, 1351.71, 1080.21), 0, 180, 6, 13, 0, 0),
+			InteriorEnterExit:new(Vector3(986.370, -1624.505, 14.930), Vector3(2365.25, -1135.06, 1050.88), 0, 90, 8, 13, 0, 0),
+			InteriorEnterExit:new(Vector3(824.521, -1423.724, 14.496), Vector3(-261.17, 1456.69, 1084.37), 90, 0, 4, 13, 0, 0),
+			InteriorEnterExit:new(Vector3(2092.063, -1166.489, 26.586), Vector3(318.55, 1114.98, 1083.88), 0, 90, 5, 13, 0, 0)
+		},
+		[3] = {
+			InteriorEnterExit:new(Vector3(2058.01, -1697.27, 13.55), Vector3(2270.01, -1210.48, 1047.56), 90, 0, 10, 13, 0, 0)
+		},
+		[4] = {
+			InteriorEnterExit:new(Vector3(2539.86, -1303.96, 34.95), Vector3(2542.45, -1304.00, 1025.07), 90, 270, 2, 13, 0, 0)
+		}
+	}
+end
+
+function Halloween:requestQuestState()
+	local state = self:getQuestState(client)
+	client:triggerEvent("Halloween:sendQuestState", state)
+end
+
+function Halloween:getQuestState(player)
+	local result = sql:queryFetchSingle("SELECT Quest FROM ??_halloween_quest WHERE UserId = ?", sql:getPrefix(), player:getId())
+	return result and result.Quest or 0 
+end
+
+function Halloween:requestQuestUpdate(quest)
+	self:setQuestState(client, quest)
+
+	client:getInventory():giveItem("Kürbis", Halloween.ms_QuestRewards[quest].pumpkins)
+    client:getInventory():giveItem("Suessigkeiten", Halloween.ms_QuestRewards[quest].sweets)
+
+    client:sendSuccess(_("Du hast %s Kürbisse und und %s Süßigkeiten erhalten!", client, Halloween.ms_QuestRewards[quest].pumpkins, Halloween.ms_QuestRewards[quest].sweets))
+end
+
+function Halloween:setQuestState(player, quest)
+	if quest == 1 then
+		sql:queryExec("INSERT INTO ??_halloween_quest (UserId, Quest) VALUES (?, ?)", sql:getPrefix(), player:getId(), 1)
+	else
+		sql:queryExec("UPDATE ??_halloween_quest SET Quest = ? WHERE UserId = ?", sql:getPrefix(), quest, player:getId())
 	end
 end
