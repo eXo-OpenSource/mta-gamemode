@@ -166,3 +166,49 @@ end
 function MapParser:getMapAuthor()
 	return self.m_Author
 end
+
+function MapParser:move(parent, position, index) 
+	if self:getElements(index) then 
+		if isValidElement(parent) then 
+			for indx, object in pairs(self:getElements(index)) do 
+				attachRotationAdjusted ( object, parent)
+			end
+			parent:setPosition(position)
+			for indx, object in pairs(self:getElements(index)) do 
+				object:detach(parent)
+			end
+		end
+	end
+end
+
+function MapParser:setDimension(dimension, index) 
+	if self:getElements(index) then 
+		for indx, object in pairs(self:getElements(index)) do 
+			object:setDimension(dimension)
+		end
+	end
+end
+
+function MapParser:setInterior(interior, index) 
+	if self:getElements(index) then 
+		for indx, object in pairs(self:getElements(index)) do 
+			object:setInterior(interior)
+		end
+	end
+end
+
+function MapParser:getBoundingBox(index)  
+	if self:getElements(index) then 
+		local minX, minY, maxX, maxY, minZ, maxZ = 8000, 8000, -8000, -8000, 36000, 0
+		for indx, obj in pairs(self:getElements(index)) do 
+    		if obj.position.x < minX then minX = obj.position.x end
+   			if obj.position.y < minY then minY = obj.position.y end
+			if obj.position.z < minZ then minZ = obj.position.z end
+    		if obj.position.x > maxX then maxX = obj.position.x end
+    		if obj.position.y > maxY then maxY = obj.position.y end
+    		if obj.position.y > maxY then maxY = obj.position.y end
+			if obj.position.z > maxZ then maxZ = obj.position.z end
+		end
+		return Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ)
+	end
+end

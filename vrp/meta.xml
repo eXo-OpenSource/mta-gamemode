@@ -240,6 +240,10 @@
 
 	<script src="server/constants/planes.lua" type="server"/>
 
+	<!-- Interiors -->
+	<script src="server/classes/Gameplay/Interior/InteriorManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Interior/Interior.lua" type="server"/>
+
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
@@ -436,7 +440,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
-
+	<script src="server/classes/Vehicles/Extensions/VehicleInterior.lua" type="server"/>
 
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>

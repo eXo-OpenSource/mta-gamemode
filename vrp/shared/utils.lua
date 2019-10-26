@@ -792,10 +792,7 @@ function getColorNameFromVehicle(c1, c2)
 end
 
 function attachRotationAdjusted ( from, to )
-    -- Note: Objects being attached to ('to') should have at least two of their rotations set to zero
-    --       Objects being attached ('from') should have at least one of their rotations set to zero
-    -- Otherwise it will look all funny
-
+	--// to should have a 0-rotation vector
     local frPosX, frPosY, frPosZ = getElementPosition( from )
     local frRotX, frRotY, frRotZ = getElementRotation( from )
     local toPosX, toPosY, toPosZ = getElementPosition( to )

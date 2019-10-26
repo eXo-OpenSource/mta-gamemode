@@ -20,6 +20,10 @@ function File.Create(filepath)
 	return File:new(fh)
 end
 
+function File.Exists(filepath) 
+	return fileExists(filepath)
+end
+
 function File.Close(fh)
 	fh:delete()
 end
