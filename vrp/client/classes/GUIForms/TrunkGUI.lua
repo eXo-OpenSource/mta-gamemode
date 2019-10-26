@@ -66,7 +66,8 @@ end
 
 function TrunkGUI:checkDistance() 
     if isValidElement(self.m_Vehicle, "vehicle") and isElementStreamedIn(self.m_Vehicle) then 
-        if self.m_Vehicle:getComponentPosition("boot_dummy", "world") and Vector3(self.m_Vehicle:getComponentPosition("boot_dummy", "world") - localPlayer:getPosition()):getLength() < 5  then 
+        local vecX, vecY, vecZ = getVehicleComponentPosition(self.m_Vehicle, "boot_dummy", "world")
+        if (vecX and vecY and vecZ and Vector3(Vector3(vecX, vecY, vecZ) - localPlayer:getPosition()):getLength() < 5) or (vecX and not vecY and not vecZ and Vector3(vecX - localPlayer:getPosition()):getLength() < 5) then 
             if self.m_Vehicle:getDimension() == localPlayer:getDimension() and self.m_Vehicle:getInterior() == localPlayer:getInterior() then 
                 return true
             else 
