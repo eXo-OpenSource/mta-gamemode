@@ -444,16 +444,6 @@ local function disableShootingOfVehicles()
 	toggleControl("vehicle_secondary_fire", false)
 end
 
-local function onSyncEngineChange(key, old, new)
-	if key == "syncEngine" then
-		if not new then 
-			toggleControl("accelerate", false)
-		else 
-			toggleControl("accelerate", true)
-		end
-	end
-end
-
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
 	if localPlayer.m_Entrance and player == localPlayer then 
 		if localPlayer.m_Entrance:check() and localPlayer.m_Entrance:isCancelEnter() then 
@@ -468,11 +458,6 @@ addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
 		elseif isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then
 			removeEventHandler("onClientRender", root, disableShootingOfVehicles)
 			toggleControl("vehicle_secondary_fire", true)
-		end
-		if not source:getData("syncEngine") then 
-			toggleControl("accelerate", false)
-		else 
-			toggleControl("accelerate", true)
 		end
 	end
 	if player == localPlayer and not isEventHandlerAdded("onClientElementDataChange", source, onSyncEngineChange) then

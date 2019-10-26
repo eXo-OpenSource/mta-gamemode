@@ -451,10 +451,23 @@ function Vehicle:setEngineState(state)
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
+	if self.controller and self.controller:getType() == "player" then 
+		self:allowControl(self.controller, state)
+	end
 
 	if instanceof(self, PermanentVehicle, true) then return end
 	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
+	end
+end
+
+
+function Vehicle:allowControl(player, bool)
+	if isValidElement(player) then 
+		player:toggleControl("accelerate", bool)
+		if self:getVehicleType() ~= VehicleType.Bike and not VEHICLE_BIKES[self:getModel()] then
+			player:toggleControl("brake_reverse", bool)
+		end
 	end
 end
 
