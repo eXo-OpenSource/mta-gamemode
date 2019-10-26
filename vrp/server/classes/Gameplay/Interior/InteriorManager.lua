@@ -20,7 +20,6 @@ function InteriorManager:add(instance)
 	InteriorManager.Map[instance] = true
 	if not InteriorManager.MapByName[instance:getName()] then InteriorManager.MapByName[instance:getName()] = {} end 
 	table.insert(InteriorManager.MapByName[instance:getName()], instance)
-	self:autoPlace(instance)
 end
 
 function InteriorManager:remove(instance) 
@@ -37,7 +36,7 @@ function InteriorManager:getMapCount(name)
 	return (not InteriorManager.MapByName[name] and 0) or #InteriorManager.MapByName[name]
 end
 
-function InteriorManager:autoPlace(instance) 
+function InteriorManager:findPlace(instance) 
 	local min, max = instance:getBounding()
 	if not self.m_MaxX then 
 		self.m_MaxX = DYNAMIC_INTERIOR_GRID_START_X
@@ -66,11 +65,11 @@ function InteriorManager:autoPlace(instance)
 	else 
 		self.m_MaxX = nextMaxX
 	end
+
 	self.m_MaxX = math.floor(self.m_MaxX) 
 	self.m_MaxY = math.floor(self.m_MaxY)
-	instance:move(Vector3(self.m_MaxX, self.m_MaxY, 2000))
-	instance:setDimension(self.m_CurrentDimension)
-	instance:setInterior(self.m_CurrentInterior)
+
+	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
 end
 
 function InteriorManager:destructor()
