@@ -37,6 +37,7 @@ function HalloweenGhost:constructor(pos, rot, int, dim, isAmbientGhost, callback
 
     self.m_Health = 3
     self.m_Alpha = 255
+    self.m_AlwaysDamagable = false
     nextframe(
         function()
             self.m_MoveObject:setPosition(self.m_SpawnPosition)
@@ -142,7 +143,7 @@ end
 
 function HalloweenGhost:onDamage(attacker, weapon)
     if attacker == localPlayer then
-        if weapon == 27 then
+        if self.m_AlwaysDamagable or weapon == 27 then
             self.m_Health = self.m_Health - 1
             if self.m_Health == 0 then
                 self:kill()
@@ -251,4 +252,8 @@ end
 
 function HalloweenGhost:setHealth(health)
     self.m_Health = health
+end
+
+function HalloweenGhost:setAlwaysDamagable(state)
+    self.m_AlwaysDamagable = state
 end

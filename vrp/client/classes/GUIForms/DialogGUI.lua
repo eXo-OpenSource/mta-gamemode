@@ -15,7 +15,7 @@ function DialogGUI:constructor(callback, ...)
 
     self.m_Rectangle = GUIRectangle:new(0, self.m_Height, self.m_Width, self.m_Height, Color.Black, self)
     self.m_Text = GUILabel:new(0, 100, self.m_Width, self.m_Height-200, "", self):setAlignX("center")
-
+    self.m_HelpText = GUILabel:new(0, 210, self.m_Width, self.m_Height-250, "", self):setAlignX("center")
     Animation.Move:new(self.m_Rectangle, 1000, 0, 0)
     setTimer(bind(self.fillLabel, self, self.m_StringTable[1]), 1000, 1)
 end
@@ -35,12 +35,28 @@ function DialogGUI:fillLabel(text)
         function()
             int = int + 1
             self.m_Text:setText(string.sub(text, 1, int))
+            if int == #text then
+                self.m_HelpText:setText("↓ Drücke Leertaste ↓")
+                self.m_Down = Animation.Move:new(self.m_HelpText, 225, 0, 215)
+                self.m_Down.onFinish = function() Animation.Move:new(self.m_HelpText, 225, 0, 210) end
+                self.m_AdviceTimer = setTimer(
+	            	function()
+                        self.m_Down = Animation.Move:new(self.m_HelpText, 225, 0, 215)
+                        self.m_Down.onFinish = function() Animation.Move:new(self.m_HelpText, 225, 0, 210) end
+	            	end
+                , 500, 0)
+            end
         end
     , 20, #text)
 end
 
 function DialogGUI:nextText()
     if not isTimer(self.m_WriteTimer) then
+        self.m_HelpText:setText("")
+        if self.m_AdviceTimer and isTimer(self.m_AdviceTimer) then
+            killTimer(self.m_AdviceTimer)
+        end
+
         if self.m_LastText then
             self:endDialog()
             return
