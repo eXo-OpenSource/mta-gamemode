@@ -55,7 +55,7 @@ function VehicleCustomTextureShop:constructor()
 	addEventHandler("texturePreviewStartPreview", root, bind(self.Event_texPreviewStartPreview, self))
 	addEventHandler("texturePreviewUpdateStatus", root, bind(self.Event_texPreviewUpdateStatus, self))
 	addEventHandler("texturePreviewClose", root, bind(self.Event_texPreviewClose, self))
-	
+
 	addEventHandler("vehicleCustomTextureRemove", root, bind(self.Event_texRemove, self))
 end
 
@@ -218,7 +218,7 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 		source:setData("TextureCount", 1, true)
 		if price == 120000 then
 			client:sendInfo("Textur erstmalig gekauft!")
-		else 
+		else
 			client:sendInfo("Textur gekauft!")
 		end
 	else
@@ -245,7 +245,7 @@ function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp, isPrev
 	end
 end
 
-function VehicleCustomTextureShop:Event_texRemove() 
+function VehicleCustomTextureShop:Event_texRemove()
 	if client and client.vehicle and client.vehicle:getOwner() == client:getId() then
 		client.vehicle:removeTexture()
 		client.vehicle.OldTexture = {}
@@ -284,6 +284,8 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 
 	client.TempTexVehicle = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
 	local veh = client.TempTexVehicle
+	veh.setLocked(true)
+	client.setFrozen(true)
 	veh:setDimension(client:getId()+1000)
 	client:setDimension(client:getId()+1000)
 
@@ -330,6 +332,7 @@ function VehicleCustomTextureShop:Event_texPreviewClose()
 	if client.TempTexVehicle then
 		if client.TempTexVehicle and isElement(client.TempTexVehicle) then client.TempTexVehicle:destroy() end
 	end
+	client.setFrozen(false)
 	client:setDimension(0)
 	client.texturePreviewActive = false
 end
