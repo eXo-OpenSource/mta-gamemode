@@ -83,7 +83,6 @@ function Core:constructor()
 		--WhiteList:new()
 		PhoneInteraction:new()
 		PlayerManager:new()
-		InteriorManager:new()
 		JobManager:new()
 		BankManager:new()
 		BankServer:new()
@@ -206,6 +205,12 @@ function Core:constructor()
 		MapLoader:new()
 		MapEditor:new()
 		DamageManager:new()
+
+		CustomInteriorManager:new()
+		if CustomInteriorManager:getSingleton():isReady() then 
+			CustomInteriorManager:getSingleton():load()
+		end
+
 		--AmmunationEvaluation:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)

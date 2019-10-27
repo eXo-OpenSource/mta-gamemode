@@ -241,7 +241,7 @@
 	<script src="server/constants/planes.lua" type="server"/>
 
 	<!-- Interiors -->
-	<script src="server/classes/Gameplay/Interior/InteriorManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Interior/CustomInteriorManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Interior/Interior.lua" type="server"/>
 
 	<!-- Minigames -->

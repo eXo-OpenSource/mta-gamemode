@@ -193,5 +193,12 @@ DYNAMIC_INTERIOR_GRID_START_X = -3000
 DYNAMIC_INTERIOR_GRID_START_Y = -3000
 DYNAMIC_INTERIOR_GRID_END_X = 3000
 DYNAMIC_INTERIOR_GRID_END_Y = 3000
-
 DYNAMIC_INTERIOR_MAX_DIMENSION = DYNAMIC_INTERIOR_DUMMY_DIMENSION - 1
+DYNAMIC_INTERIOR_ENTRANCE_OBJECT = "marker"
+DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE = "cylinder"
+DYANMIC_INTERIOR_PLACE_MODES = 
+{
+	FIND_BEST_PLACE = 1,  -- this mode moves the interior to the best place position
+	KEEP_POSITION = 2,  -- this mode keeps the interiors position but finds a free dimension/interior
+	USE_DATA = 3, -- this is the mode used when we already found a place prior and can use the saved-data
+}
