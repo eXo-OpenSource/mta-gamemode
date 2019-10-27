@@ -284,8 +284,8 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 
 	client.TempTexVehicle = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
 	local veh = client.TempTexVehicle
-	veh.setLocked(true)
-	client.setFrozen(true)
+	veh:setLocked(true)
+	client:setFrozen(true)
 	veh:setDimension(client:getId()+1000)
 	client:setDimension(client:getId()+1000)
 
@@ -332,7 +332,7 @@ function VehicleCustomTextureShop:Event_texPreviewClose()
 	if client.TempTexVehicle then
 		if client.TempTexVehicle and isElement(client.TempTexVehicle) then client.TempTexVehicle:destroy() end
 	end
-	client.setFrozen(false)
+	client:setFrozen(false)
 	client:setDimension(0)
 	client.texturePreviewActive = false
 end
