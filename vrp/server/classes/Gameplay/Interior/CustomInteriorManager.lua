@@ -26,10 +26,12 @@ function CustomInteriorManager:constructor()
 	else 
 		self.m_Ready = true
 	end
+	if self:isReady() then
+		self:getLastGridPoint()
+	end
 end
 
-function CustomInteriorManager:load() 
-	print("HI")
+function CustomInteriorManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_interiors", sql:getPrefix())
 	if result then 
 		for index, row in pairs(result) do 
@@ -59,6 +61,20 @@ function CustomInteriorManager:save(instance)
 	instance:getEntrance():getPosition().x, instance:getEntrance():getPosition().y, instance:getEntrance():getPosition().z,
 	instance:getEntrance():getInterior(), instance:getEntrance():getDimension(),
 	instance:getPlaceMode(), instance:getOwner(), instance:getOwnerType(), instance:getOwner(), instance:getOwnerType())
+end
+
+function CustomInteriorManager:getLastGridPoint()
+	local query = [[
+		SELECT PosX, PosY, PosZ, Interior, Dimension FROM ??_interiors
+		WHERE Mode = ? GROUP BY Id DESC LIMIT 1;
+	]]
+	local row = sql:queryFetchSingle(query, sql:getPrefix(), DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE)
+	if row then 
+		self.m_MaxX = row.PosX 
+		self.m_MaxY = row.PosY 
+		self.m_CurrentInterior = row.Interior 
+		self.m_CurrentDimension = row.Dimension
+	end
 end
 
 function CustomInteriorManager:assertRow(row) 
@@ -123,6 +139,34 @@ function CustomInteriorManager:findPlace(instance)
 	self.m_MaxY = math.floor(self.m_MaxY)
 
 	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
+end
+
+function CustomInteriorManager:findDimension(instance) 
+	if not CustomInteriorManager.MapByName[instance:getName()] then 
+		instance:setDimension(1)
+		instance:setInterior(instance:getEntrance():getInterior())
+	else 
+		instance:setDimension(self:getHighestDimensionByName(instance:getName())+1)
+		instance:setInterior(instance:getEntrance():getInterior())
+	end 
+end
+
+function CustomInteriorManager:getHighestDimensionByName(name) 
+	local lastInstance
+	if CustomInteriorManager.MapByName[name] then
+		for index, instance in pairs(CustomInteriorManager.MapByName[name]) do 
+			if instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
+				lastInstance = instance
+			end
+		end
+		if lastInstance then 
+			return lastInstance:getEntrance():getDimension()
+		else 
+			return 1
+		end
+	else 
+		return 1
+	end
 end
 
 function CustomInteriorManager:isReady() return self.m_Ready end

@@ -56,6 +56,9 @@ function Interior:searchEntrance()
 	for index, object in pairs(self:getMap():getElements()) do 
 		if object:getType() == DYNAMIC_INTERIOR_ENTRANCE_OBJECT and object:getMarkerType() == DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE then 
 			self:setEntrance(object)
+			if not DEBUG then
+				self:getEntrance():setVisibleTo(root, false)
+			end
 		end
 	end
 	if not self:getEntrance() then 
@@ -154,7 +157,7 @@ function Interior:setOwner(owner, type)
 end
 
 function Interior:setName(name) 
-	self.m_Name = name:gsub("%.map", "") 
+	self.m_Name = name:gsub("(.*[/\\])", ""):gsub("%.map", "") 
 	return self
 end
 
