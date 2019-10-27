@@ -586,7 +586,7 @@ function Player:dropReviveWeapons()
 				dim = getElementDimension(self)
 				weapon =  self.m_ReviveWeaponsInfo[i][1]
 				ammo = self.m_ReviveWeaponsInfo[i][2]
-				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 and weapon ~= 9 then
+				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and weapon ~= 27 and weapon ~= 9 then
 					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self, false, true, x-px, y-py)
 					if pickupWeapon then
 						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon

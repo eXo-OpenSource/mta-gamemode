@@ -367,6 +367,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotY = rotY or 0
 	local rotZ = rotZ or 0
 	local premium = premium or 0
+	local price = price or 0
 	local shopIndex = shopIndex or 1
 
 	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
