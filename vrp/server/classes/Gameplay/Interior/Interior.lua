@@ -12,6 +12,7 @@ function Interior:constructor(path, row, loadOnly, placeMode)
 	self:setId(DYNAMIC_INTERIOR_TEMPORARY_ID)
 	self:setPath(path)
 	self:setName(path)
+	self:setTemporary(not row)
 	self:setPlaceData(row) -- if we got already existing coordinates on this map use them
 	self:setPlaceMode(placeMode or DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE) -- either if a best place should be found / or we shuld prioritize keeping the position that originally came with the interior
 	self:setLoadOnly(loadOnly) -- in case the map has to/can be created later
@@ -135,13 +136,13 @@ function Interior:Event_OnElementLeave(element)
 end
 
 function Interior:destructor()
-	self:getMap():delete()
-	CustomInteriorManager:getSingleton():remove(self)
 	if not self:isTemporary() then
 		if self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.USE_DATA then
-			InteriorManager:getSingleton():save(self)
+			CustomInteriorManager:getSingleton():save(self)
 		end
 	end
+	self:getMap():delete()
+	CustomInteriorManager:getSingleton():remove(self)
 end
 
 function Interior:setStatus(status) 

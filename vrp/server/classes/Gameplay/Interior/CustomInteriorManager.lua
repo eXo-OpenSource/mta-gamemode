@@ -29,6 +29,12 @@ function CustomInteriorManager:constructor()
 	end
 end
 
+function CustomInteriorManager:destructor()
+	for instance, bool in pairs(CustomInteriorManager.Map) do 
+		instance:delete()
+	end
+end
+
 function CustomInteriorManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_interiors", sql:getPrefix())
 	if result then 
@@ -58,6 +64,7 @@ function CustomInteriorManager:save(instance)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
 		ON DUPLICATE KEY UPDATE Owner=?, OwnerType=?;
 	]]
+	
 	sql:queryExec(query, sql:getPrefix(), instance:getName(), instance:getPath(), 
 	instance:getEntrance():getPosition().x, instance:getEntrance():getPosition().y, instance:getEntrance():getPosition().z,
 	instance:getEntrance():getInterior(), instance:getEntrance():getDimension(),
@@ -240,10 +247,4 @@ function CustomInteriorManager:createDatabase()
 		return true
 	end
 	return false
-end
-
-
-
-function CustomInteriorManager:destructor()
- 
 end

@@ -301,6 +301,9 @@ function Core:destructor()
 		ItemManager:updateOnQuit()
 		delete(BlackJackManager:getSingleton())
 		delete(CasinoWheelManager:getSingleton())
+		if CustomInteriorManager:getSingleton():isReady() then 
+			delete(CustomInteriorManager:getSingleton())
+		end
 		delete(sql) -- Very slow
 	end
 end
