@@ -9,6 +9,7 @@ Interior = inherit(Object)
 Interior.Map = {}
 
 function Interior:constructor(path, row, loadOnly, placeMode)
+	self:setId(DYNAMIC_INTERIOR_TEMPORARY_ID)
 	self:setPath(path)
 	self:setName(path)
 	self:setPlaceData(row) -- if we got already existing coordinates on this map use them
@@ -50,6 +51,7 @@ function Interior:create()
 	elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.USE_DATA then
 		self:setPlace(self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension)
 	end
+	self:setCreated(true)
 end
 
 function Interior:searchEntrance() 
@@ -80,6 +82,8 @@ function Interior:createSphereOfInfluence() -- the hypothetical bounds (includin
 		DYNAMIC_INTERIOR_HEIGHT_TOLERANCE+(max.z - min.z))
 		self:getSphereOfInfluence():setDimension(self:getEntrance():getDimension())
 		self:getSphereOfInfluence():setInterior(self:getEntrance():getInterior())
+		addEventHandler("onColShapeHit", self:getSphereOfInfluence(), bind(self.Event_OnElementEnter, self))
+		addEventHandler("onColShapeLeave", self:getSphereOfInfluence(), bind(self.Event_OnElementLeave, self))
 	end
 end
 
@@ -108,6 +112,26 @@ end
 function Interior:forceSave() 
 	CustomInteriorManager:getSingleton():save(self)
 	self:setPlaceMode(DYANMIC_INTERIOR_PLACE_MODES.USE_DATA)
+end
+
+function Interior:serialize(player) 
+	if not self:isTemporary() then
+		return toJSON({name = self:getName(), id = self:getId()})
+	else 
+		return ""
+	end
+end
+
+function Interior:Event_OnElementEnter(element) 
+	if self:getEntrance():getDimension() == element:getDimension() then 
+		if self:getEntrance():getInterior() == element:getInterior() then 
+			CustomInteriorManager:getSingleton():onEnterInterior(element, self)
+		end
+	end
+end
+
+function Interior:Event_OnElementLeave(element) 
+	CustomInteriorManager:getSingleton():onLeaveInterior(element, self)
 end
 
 function Interior:destructor()
@@ -189,8 +213,17 @@ function Interior:setPlaceMode(mode)
 	return self
 end
 
+function Interior:setCreated(bool) 
+	self.m_IsCreated = bool
+end
+
 function Interior:setTemporary(bool) 
 	self.m_IsTemporary = bool
+	return self
+end
+
+function Interior:setId(id)
+	self.m_Id = id
 	return self
 end
 
@@ -208,3 +241,6 @@ function Interior:isLoadOnly() return self.m_LoadOnly end
 function Interior:getPlaceMode() return self.m_PlaceMode end
 function Interior:getOwner() return self.m_Owner end 
 function Interior:getOwnerType() return self.m_OwnerType end
+function Interior:isCreated() return self.m_IsCreated end
+function Interior:getId() return self.m_Id end
+function Interior:isTemporary() return self.m_IsTemporary end

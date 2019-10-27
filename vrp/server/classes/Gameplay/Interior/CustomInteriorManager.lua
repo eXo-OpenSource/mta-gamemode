@@ -9,9 +9,6 @@ CustomInteriorManager = inherit(Singleton)
 CustomInteriorManager.Map = {}
 CustomInteriorManager.MapByName = {}
 
-addRemoteEvents {"CustomInteriorManager:enter", "CustomInteriorManager:exit"}
-
-
 function CustomInteriorManager:constructor() 
 	self.m_CurrentDimension = 1
 	self.m_CurrentInterior = 20
@@ -28,6 +25,7 @@ function CustomInteriorManager:constructor()
 	end
 	if self:isReady() then
 		self:getLastGridPoint()
+		PlayerManager:getSingleton():getQuitHook():register(bind(self.onQuit, self))
 	end
 end
 
@@ -43,11 +41,14 @@ function CustomInteriorManager:load()
 					interior = row.Interior, 
 					dimension = row.Dimension,
 				}
-				Interior:new(row.Path, packData, self:isLoadOnly(row), DYANMIC_INTERIOR_PLACE_MODES.USE_DATA):setOwner(row.Owner, row.OwnerType)
+				Interior:new(row.Path, packData, self:isLoadOnly(row), DYANMIC_INTERIOR_PLACE_MODES.USE_DATA):setOwner(row.Owner, row.OwnerType):setId(row.Id)
 			else 
 				self.m_FailLoads[row.Id] = true
 			end
 		end 
+	end
+	for k, player in pairs(Element.getAllByType("player")) do 
+		self:onLogin(player)
 	end
 end
 
@@ -149,6 +150,47 @@ function CustomInteriorManager:findDimension(instance)
 		instance:setDimension(self:getHighestDimensionByName(instance:getName())+1)
 		instance:setInterior(instance:getEntrance():getInterior())
 	end 
+end
+
+function CustomInteriorManager:onEnterInterior(element, instance) 
+	if element:getType() == "player" then 
+		element:setCustomInterior(instance)
+	end
+end
+
+
+function CustomInteriorManager:onLeaveInterior(element, instance, quit) 
+	if element:getType() == "player" then 
+		if element:getCustomInterior() == instance then
+			if not quit then
+				element:setCustomInterior()
+			end
+		end
+	end
+end
+
+function CustomInteriorManager:onLogin(player) 
+	if player.m_LogoutInterior then 
+		local data = fromJSON(player.m_LogoutInterior)
+		if data and table.size(data) > 0 then 
+			if CustomInteriorManager.MapByName[data.name] then 
+				for index, instance in ipairs(CustomInteriorManager.MapByName[data.name]) do 
+					if instance:getId() == data.id then 
+						if not instance:isCreated() then 
+							instance:create()
+						end
+						self:onEnterInterior(player, instance)
+					end
+				end
+			end 
+		end
+	end
+end
+
+function CustomInteriorManager:onQuit(player) 
+	if player:getCustomInterior() then 
+		self:onLeaveInterior(player, player:getCustomInterior(), true)
+	end
 end
 
 function CustomInteriorManager:getHighestDimensionByName(name) 

@@ -202,3 +202,4 @@ DYANMIC_INTERIOR_PLACE_MODES =
 	KEEP_POSITION = 2,  -- this mode keeps the interiors position but finds a free dimension/interior
 	USE_DATA = 3, -- this is the mode used when we already found a place prior and can use the saved-data
 }
+DYNAMIC_INTERIOR_TEMPORARY_ID = 0

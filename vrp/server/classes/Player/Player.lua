@@ -1747,3 +1747,9 @@ function Player:setThrowingObject(object)
 end
 
 function Player:getThrowingObject() return self.m_ThrowingObject end
+
+function Player:setCustomInterior(instance) 
+	self.m_CustomInterior = instance
+end
+
+function Player:getCustomInterior() return self.m_CustomInterior end
