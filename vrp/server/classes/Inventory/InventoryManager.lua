@@ -1026,6 +1026,12 @@ function InventoryManager:migrate()
 		["Clubkarte"] = "clubCard"
 	}
 
+	local items = sql:queryFetch("SELECT * FROM ??_items", sql:getPrefix())
+	local ItemMappingId = {}
+	for _, item in pairs(items) do
+		ItemMappingId[item.TechnicalName] = item.Id
+	end
+
 	-- Step 1 - Create player inventories
 	local players = sql:queryFetch("SELECT * FROM ??_account", sql:getPrefix())
 	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
@@ -1043,9 +1049,48 @@ function InventoryManager:migrate()
 
 	sql:queryExec(query, sql:getPrefix())
 
-	local items = sql:queryFetch("SELECT * FROM ??_inventory_slots", sql:getPrefix())
+	self.itemMigrateThreadFunc = function()
+		local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1", sql:getPrefix())
+		local inventories = {}
+		for _, inventory in pairs(inventoriesDb) do
+			inventories[inventory.ElementId] = inventory.Id
+		end
 
-	for _, item in pairs(items) do
+		local items = sql:queryFetch("SELECT * FROM ??_inventory_slots ORDER BY PlayerId ASC", sql:getPrefix())
+		local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+		local first = true
+		local playerSlot = {}
+		local count = 1
+		local total = table.size(items)
+		for _, item in pairs(items) do
+			if inventories[item.PlayerId] then
+				if ItemMapping[item.Objekt] then
+					local itemTechnicalName = ItemMapping[item.Objekt]
 
+					if not playerSlot[item.PlayerId] then playerSlot[item.PlayerId] = 1 end
+
+					if first then
+						first = false
+					else
+						query = query .. ", "
+					end
+					query = query .. "(\"" .. uuid() .. "\", " .. inventories[item.PlayerId].. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. playerSlot[item.PlayerId] .. ", " .. item.Menge .. ", 0, NULL)"
+					playerSlot[item.PlayerId] = playerSlot[item.PlayerId] + 1
+
+					if count % 2500 == 0 then outputServerLog("[MIGRATION] WAIT " .. tostring(count) .. "/" .. tostring(total)) Thread.pause() end
+				else
+					outputServerLog("[MIGRATION] Found unknown item " .. tostring(item.Objekt) .. " for player " .. tostring(item.PlayerId))
+				end
+			else
+				--outputServerLog("[MIGRATION] Failed to migrate item " .. tostring(item.Objekt) .. " for player " .. tostring(item.PlayerId))
+			end
+			count = count + 1
+		end
+
+		sql:queryExec(query, sql:getPrefix())
+		outputServerLog("[MIGRATION] FINISH " .. tostring(count) .. "/" .. tostring(total))
 	end
+
+	local thread = Thread:new(self.itemMigrateThreadFunc, THREAD_PRIORITY_HIGHEST)
+	thread:start()
 end
