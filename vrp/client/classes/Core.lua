@@ -214,6 +214,9 @@ function Core:afterLogin()
 	WheelOfFortune:new()
 	Atrium:new()
 	ElementInfoManager:new()
+	if EVENT_HALLOWEEN then
+		HalloweenEasterEggs:new()
+	end
 
 	for i = 1,#GUNBOX_CRATES do
 		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)

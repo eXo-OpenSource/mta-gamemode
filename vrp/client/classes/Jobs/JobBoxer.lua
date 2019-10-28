@@ -47,7 +47,7 @@ function JobBoxer:startFight(type, dimension)
     self.m_Boxer:setInterior(5)
     self.m_Boxer:setDimension(dimension)
     self.m_Boxer:setHealth(JobBoxerFights[type][2])
-    self.m_Boxer.m_isBoxer = true
+    self.m_Boxer.m_isClientSided = true
     self.m_BoxLevel = type
 
     self.m_ColShape = ColShape.Cuboid(757.51, 7.76, 999, 7, 7, 5)
