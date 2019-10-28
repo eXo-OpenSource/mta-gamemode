@@ -11,7 +11,7 @@ local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob, assignInterior)
 	if owner == 0 then
 		owner = false
 	end
@@ -25,7 +25,6 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_LockStatus = true
 	self.m_Pos = position
 	self.m_Keys = fromJSON(keys)
-	self.m_InteriorID = interiorID
 	self.m_Owner = owner
 	self.m_Id = id
 	self.m_Elements = fromJSON(elements or "")
@@ -33,7 +32,12 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_IsRob = bIsRob
 	self.m_BankAccountServer = BankServer.get("action.house_rob")
 	self.m_BankAccountServer2 = BankServer.get("server.house")
-
+	self.m_InteriorID = interiorID
+	if not assignInterior then
+		self:setInteriorInstance(CustomInteriorManager.getIdMap(interiorID))
+	else 
+		self:assignInterior(interiorID)
+	end
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.House)
 	if not self.m_BankAccount then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.House, self.m_Id)
@@ -58,6 +62,19 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	--addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
 
 	self:updatePickup()
+end
+
+function House:assignInterior(houseInt) 
+	if STATIC_INTERIOR_ID_TO_PATH[houseInt] then 
+		self:setInteriorInstance(
+			Interior:new(STATIC_INTERIOR_ID_TO_PATH[houseInt], nil, nil, DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT)
+			:setTemporary(false)
+			:setDimension(self:getId())
+			:forceSave()
+		)
+		self.m_InteriorID = self:getInteriorInstance():getId()
+	end
+	return self
 end
 
 function House:updatePickup()
@@ -385,7 +402,8 @@ function House:enterHouse(player)
 		end
 	end
 
-	local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
+	local int = self:getInteriorInstance():getInterior()
+	local x, y, z = self:getInteriorInstance():getPosition()
 	if isRobberEntering  then
 		player:meChat(true, "betritt das Haus an der kaputten Tür vorbei!")
 		if player.m_LastRobHouse then
@@ -582,16 +600,25 @@ function House:buyHouse(player)
 end
 
 function House:refreshInteriorMarker()
-	if not HOUSE_INTERIOR_TABLE[self.m_InteriorID] then
-		outputDebugString(("Error: Invalid InteriorId (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
+	if not self:getInteriorInstance() then
+		outputDebugString(("Error: Invalid Interior (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
 		delete(self)
 		return
 	end
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
-	local int, ix, iy, iz  = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
-	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
+	local int  = self:getInteriorInstance():getInterior()
+	local pos  = self:getInteriorInstance():getPosition()
+	self.m_HouseMarker = createMarker(pos.x, pos.y, pos.z-0.8, "cylinder", 1.2, 255, 255, 255, 125)
 	ElementInfo:new(self.m_HouseMarker, "Ausgang", 1.2, "Walking", true)
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
+end
+
+function House:setInteriorInstance(instance)
+	self.m_InteriorInstance = instance
+end
+
+function House:getInteriorInstance() 
+	return self.m_InteriorInstance
 end

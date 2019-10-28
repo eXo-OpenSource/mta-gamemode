@@ -7,9 +7,11 @@
 -- ****************************************************************************
 CustomInteriorManager = inherit(Singleton)
 CustomInteriorManager.Map = {}
+CustomInteriorManager.IdMap = {}
 CustomInteriorManager.MapByName = {}
 
 function CustomInteriorManager:constructor() 
+	self:houseMigrator()
 	self.m_CurrentDimension = 1
 	self.m_CurrentInterior = 20
 	self.m_LoadedCount = 0
@@ -145,6 +147,16 @@ function CustomInteriorManager:remove(instance)
 		end
 	end
 end
+
+function CustomInteriorManager:addId(instance) 
+	CustomInteriorManager.IdMap[instance:getId()] = instance 
+end
+
+
+function CustomInteriorManager:removeId(instance) 
+	CustomInteriorManager.IdMap[instance:getId()] = nil 
+end
+
 
 function CustomInteriorManager:getMapCount(name) 
 	return (not CustomInteriorManager.MapByName[name] and 0) or #CustomInteriorManager.MapByName[name]
@@ -284,4 +296,36 @@ function CustomInteriorManager:createDatabase()
 		return true
 	end
 	return false
+end
+
+function CustomInteriorManager:houseMigrator() 
+	local probeQuery = [[
+		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "oldHouseID"
+	]]
+	if not sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
+		print (("** [InteriorManager] %s_houses needs to be altered! (Copying %s_houses to %s_houses_old and altering structure!)"):format(sql:getPrefix(), sql:getPrefix(), sql:getPrefix()))
+		local copyQuery = [[
+			CREATE TABLE ??_houses_old AS SELECT * FROM ??_houses
+		]]
+		if sql:queryExec(copyQuery, sql:getPrefix(), sql:getPrefix()) then 
+			local alterQuery = [[
+				ALTER TABLE ??_houses
+				CHANGE COLUMN `interiorID` `oldHouseID` TINYINT(4) NULL DEFAULT NULL AFTER `z`;
+			]]
+			if sql:queryExec(alterQuery, sql:getPrefix()) then 
+				local addQuery = [[
+					ALTER TABLE ??_houses
+					ADD COLUMN `interiorID` INT NULL DEFAULT 0 AFTER `oldHouseID`;
+				]]
+				if sql:queryExec(addQuery, sql:getPrefix()) then
+					print ("** [InteriorManager] Houses-Structure altered!")
+					HouseManager.Migrated = true
+				end
+			end
+		end
+	end 
+end
+
+function CustomInteriorManager.getIdMap(id) 
+	return CustomInteriorManager.IdMap[id]
 end

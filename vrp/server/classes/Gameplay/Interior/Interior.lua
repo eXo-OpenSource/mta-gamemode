@@ -118,6 +118,7 @@ end
 
 function Interior:forceSave() 
 	CustomInteriorManager:getSingleton():save(self)
+	return self
 end
 
 function Interior:rebuild(path, placeMode)
@@ -281,7 +282,13 @@ end
 
 function Interior:setId(id)
 	assert(id and type(id) == "number", "Bad argument @ Interior.setId")
+	if self:getId() and self:getId() > 0 then 
+		CustomInteriorManager:getSingleton():removeId(self)
+	end
 	self.m_Id = id
+	if self:getId() and self:getId() > 0 then 
+		CustomInteriorManager:getSingleton():addId(self)
+	end
 	return self
 end
 

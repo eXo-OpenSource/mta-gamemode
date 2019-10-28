@@ -79,6 +79,10 @@ function Core:constructor()
 		VehicleManager:new()
 		VehicleScrapper:new()
 		Admin:new()
+		CustomInteriorManager:new()
+		if CustomInteriorManager:getSingleton():isReady() then 
+			CustomInteriorManager:getSingleton():load()
+		end
 		StatisticsLogger:new()
 		--WhiteList:new()
 		PhoneInteraction:new()
@@ -205,11 +209,6 @@ function Core:constructor()
 		MapLoader:new()
 		MapEditor:new()
 		DamageManager:new()
-
-		CustomInteriorManager:new()
-		if CustomInteriorManager:getSingleton():isReady() then 
-			CustomInteriorManager:getSingleton():load()
-		end
 
 		--AmmunationEvaluation:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
