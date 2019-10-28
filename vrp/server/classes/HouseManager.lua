@@ -162,7 +162,8 @@ end
 
 function HouseManager:changeInterior(interior)
 	if client:getRank() < ADMIN_RANK_PERMISSION.editHouse then return end
-	self.m_Houses[client.visitingHouse].m_InteriorID = interior
+	self.m_Houses[client.visitingHouse]:getInteriorInstance():rebuild(STATIC_INTERIOR_ID_TO_PATH[interior], DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT)
+	:setDimension(self.m_Houses[client.visitingHouse]:getId())
 	self.m_Houses[client.visitingHouse]:refreshInteriorMarker()
 	client:sendInfo(_("Du hast den Haus-Interior erfolgreich in ID: %d geändert!", client, interior))
 end

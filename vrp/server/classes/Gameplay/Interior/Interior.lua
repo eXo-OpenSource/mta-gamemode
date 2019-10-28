@@ -143,6 +143,7 @@ function Interior:rebuild(path, placeMode)
 	if not self:isTemporary() and self:getStatus() ~= DYNAMIC_INTERIOR_NOT_FOUND then 
 		CustomInteriorManager:getSingleton():override(self, previousName)
 	end
+	return self
 end
 
 function Interior:clean(setLoadOnly) -- incase the map needs to be destroyed
@@ -153,17 +154,30 @@ end
 
 function Interior:enter(player) 
 	if self:isCreated() then 
-		player:setDimension(self:getDimension())
-		player:setInterior(self:getInterior())
-		player:setPosition(self:getPosition())
+		player:fadeCamera(false, .5)
+		setTimer(function() 
+			player:setDimension(self:getDimension())
+			player:setInterior(self:getInterior())
+			player:setPosition(self:getPosition())
+			setTimer(function() 
+				player:fadeCamera(true, .5)
+			end, 500, 1) 
+		end, 1000, 1)
 	end
 end
 
 function Interior:exit(player) 
 	if self:getExit() then 
-		self:setDimension(self:getExit().dimension)
-		self:setInterior(self:getExit().interior)
-		self:setPosition(self:getExit().position)
+
+		player:fadeCamera(false, .5)
+		setTimer(function() 
+			player:setDimension(self:getExit().dimension)
+			player:setInterior(self:getExit().interior)
+			player:setPosition(self:getExit().position)
+			setTimer(function() 
+				player:fadeCamera(true) 
+			end, 500, 1)
+		end, 1000, 1)
 	end
 end
 
@@ -261,7 +275,7 @@ end
 
 function Interior:setExit(position, interior, dimension)
 	assert(position and interior and dimension, "Bad argument @ Interior.setExit")
-	self.m_Exit = {position = position, interior or 0, dimension or 0}
+	self.m_Exit = {position = position, interior = interior or 0, dimension = dimension or 0}
 	return self
 end
 

@@ -1,5 +1,5 @@
 <map edf:definitions="editor_main">
     <object id="object (jet_interior) (1)" breakable="true" interior="0" alpha="255" model="14404" doublesided="false" scale="1" dimension="0" posX="2781.49" posY="-1559.415" posZ="2552.6699" rotX="0" rotY="0" rotZ="0"></object>
-    <marker id="marker (cylinder) (1)" type="cylinder" color="#0000ffff" size="1" interior="0" dimension="0" alpha="255" posX="2782.2041" posY="-1556.701" posZ="2550.97" rotX="0" rotY="0" rotZ="0"></marker>
+    <marker id="marker (cylinder) (1)" type="cylinder" color="#0000ffff" size="1" interior="0" dimension="0" alpha="255" posX="2782.2041" posY="-1556.701" posZ="2551.6" rotX="0" rotY="0" rotZ="0"></marker>
     <object id="object (freezer_door) (1)" breakable="true" interior="0" alpha="255" model="2963" doublesided="false" scale="1" dimension="0" posX="2780.4221" posY="-1555.0341" posZ="2551.9961" rotX="0" rotY="0" rotZ="89.75"></object>
 </map>

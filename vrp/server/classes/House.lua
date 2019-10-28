@@ -48,6 +48,8 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	self:refreshInteriorMarker()
 
+	self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
+	
 	--self.m_ColShape = createColSphere(position, 1)
 
 	if owner == false then
@@ -421,9 +423,7 @@ function House:enterHouse(player)
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")
 	end
 
-	player:setPosition(x, y, z)
-	setElementDimension(player, self.m_Id)
-	setElementInterior(player,int)
+	self:getInteriorInstance():enter(player)
 	player.m_CurrentHouse = self
 	self.m_PlayersInterior[player] = true
 
@@ -506,9 +506,7 @@ function House:leaveHouse(player)
 		player:meChat(true, "öffnet die Tür und verlässt das Haus!")
 	end
 	self:removePlayerFromList(player)
-	player:setPosition(self.m_Pos)
-	setElementInterior(player, 0)
-	setElementDimension(player, 0)
+	self:getInteriorInstance():exit(player)
 	player.m_CurrentHouse = false
 	if self.m_CurrentRobber == player then
 		player:triggerEvent("CountdownStop", "Haus-Raub")
