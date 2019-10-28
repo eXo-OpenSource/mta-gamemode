@@ -169,6 +169,8 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
+		
+		self:allowControl(player, self:getEngineState())
 	end
 
 	if self.m_HasBeenUsed then
@@ -463,12 +465,14 @@ end
 
 
 function Vehicle:allowControl(player, bool)
-	if isValidElement(player) then 
-		player:toggleControl("accelerate", bool)
-		if self:getVehicleType() ~= VehicleType.Bike and not VEHICLE_BIKES[self:getModel()] then
-			player:toggleControl("brake_reverse", bool)
-		end
-	end
+    if isValidElement(player) then
+        player:toggleControl("accelerate", bool)
+        if self:getVehicleType() ~= VehicleType.Bike and not VEHICLE_BIKES[self:getModel()] then
+            player:toggleControl("brake_reverse", bool)
+        else
+            player:toggleControl("brake_reverse", true)
+        end
+    end
 end
 
 function Vehicle:getEngineState()
