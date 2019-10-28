@@ -64,11 +64,31 @@ function CustomInteriorManager:save(instance)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
 		ON DUPLICATE KEY UPDATE Owner=?, OwnerType=?;
 	]]
+
+	local id, name, path, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
+	sql:queryExec(query, sql:getPrefix(), name, path, x, y, z, int, dim, mode, owner, ownerType, owner, ownerType)
+end
+
+function CustomInteriorManager:override(instance, oldname)  -- used when an interior has changed its map
+	local query = [[
+		UPDATE ??_interiors SET Name=?, Path=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Mode=?, Owner=?, OwnerType=?, Date=NOW()
+		WHERE Id=?;
+	]]
+
+	local id, name, path, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
+	sql:queryExec(query, sql:getPrefix(), name, path, x, y, z, int, dim, mode, owner, ownerType, id)
 	
-	sql:queryExec(query, sql:getPrefix(), instance:getName(), instance:getPath(), 
-	instance:getEntrance():getPosition().x, instance:getEntrance():getPosition().y, instance:getEntrance():getPosition().z,
-	instance:getEntrance():getInterior(), instance:getEntrance():getDimension(),
-	instance:getPlaceMode(), instance:getOwner(), instance:getOwnerType(), instance:getOwner(), instance:getOwnerType())
+	if oldname then 
+		if CustomInteriorManager.MapByName[oldname] then 
+			for index, secondInstance in ipairs(CustomInteriorManager.MapByName[oldname]) do 
+				if instance == secondInstance then 
+					table.remove(CustomInteriorManager.MapByName[oldname], index) -- remove old name index
+				end
+			end
+		end
+	end
+
+	self:add(instance)	-- re-add to name index
 end
 
 function CustomInteriorManager:getLastGridPoint()
@@ -82,6 +102,11 @@ function CustomInteriorManager:getLastGridPoint()
 		self.m_MaxY = row.PosY 
 		self.m_CurrentInterior = row.Interior 
 		self.m_CurrentDimension = row.Dimension
+	else 
+		self.m_MaxX = DYNAMIC_INTERIOR_GRID_START_X 
+		self.m_MaxY = DYNAMIC_INTERIOR_GRID_START_Y
+		self.m_CurrentDimension = DYNAMIC_INTERIOR_GRID_START_DIMENSION 
+		self.m_CurrentInterior = DYNAMIC_INTERIOR_GRID_START_INTERIOR
 	end
 end
 
@@ -146,21 +171,21 @@ function CustomInteriorManager:findPlace(instance)
 	self.m_MaxX = math.floor(self.m_MaxX) 
 	self.m_MaxY = math.floor(self.m_MaxY)
 
-	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
+	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_INTERIOR_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
 end
 
 function CustomInteriorManager:findDimension(instance) 
 	if not CustomInteriorManager.MapByName[instance:getName()] then 
 		instance:setDimension(1)
-		instance:setInterior(instance:getEntrance():getInterior())
+		instance:setInterior(instance:getInterior())
 	else 
 		instance:setDimension(self:getHighestDimensionByName(instance:getName())+1)
-		instance:setInterior(instance:getEntrance():getInterior())
+		instance:setInterior(instance:getInterior())
 	end 
 end
 
 function CustomInteriorManager:onEnterInterior(element, instance) 
-	if element:getType() == "player" then 
+	if element:getType() == "player" and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
 		element:setCustomInterior(instance)
 	end
 end
@@ -168,7 +193,7 @@ end
 
 function CustomInteriorManager:onLeaveInterior(element, instance, quit) 
 	if element:getType() == "player" then 
-		if element:getCustomInterior() == instance then
+		if element:getCustomInterior() == instance and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then
 			if not quit then
 				element:setCustomInterior()
 			end
@@ -209,7 +234,7 @@ function CustomInteriorManager:getHighestDimensionByName(name)
 			end
 		end
 		if lastInstance then 
-			return lastInstance:getEntrance():getDimension()
+			return lastInstance:getDimension()
 		else 
 			return 1
 		end
@@ -236,8 +261,8 @@ function CustomInteriorManager:createDatabase()
   		`Interior` int(11) NOT NULL DEFAULT 0,
   		`Dimension` int(11) NOT NULL DEFAULT 0,
   		`Mode` int(11) NOT NULL DEFAULT 0,
-  		`Owner` int(11) DEFAULT 0,
-  		`OwnerType` int(11) DEFAULT 0,
+  		`Owner` int(11) NOT NULL DEFAULT 0,
+  		`OwnerType` int(11) NOT NULL DEFAULT 0,
   		`Date` datetime NOT NULL DEFAULT current_timestamp(),
   		PRIMARY KEY (`Id`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;
