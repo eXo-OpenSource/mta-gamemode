@@ -65,7 +65,7 @@ function CustomInteriorManager:save(instance)
 	local updateId = not self:probe(instance:getId()) 
 
 	local query = [[
-		INSERT INTO ??_interiors (`Id`, `Map`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
+		INSERT INTO ??_interiors (`Id`, `MapId`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
 		ON DUPLICATE KEY UPDATE Interior=?, Dimension=?, Owner=?, OwnerType=?;
 	]]
@@ -86,7 +86,7 @@ end
 
 function CustomInteriorManager:override(instance, oldmap)  -- used when an interior has changed its map
 	local query = [[
-		UPDATE ??_interiors SET Map=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Mode=?, Owner=?, OwnerType=?, Date=NOW()
+		UPDATE ??_interiors SET MapId=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Mode=?, Owner=?, OwnerType=?, Date=NOW()
 		WHERE Id=?;
 	]]
 

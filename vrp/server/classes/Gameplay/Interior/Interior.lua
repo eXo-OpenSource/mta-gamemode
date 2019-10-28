@@ -331,6 +331,6 @@ function Interior:getPlayerSerialize(player)
 	end
 end
 function Interior:getSerializeData()
-	return self:getId(), self:getName(), self:getPath(), self:getPosition():getX(), self:getPosition():getY(), self:getPosition():getZ(), 
+	return self:getId(), self:getMap():getId(), self:getPosition():getX(), self:getPosition():getY(), self:getPosition():getZ(), 
 	self:getInterior(), self:getDimension(), self:getPlaceMode(), self:getOwner() or 0, self:getOwnerType() or 0
 end
