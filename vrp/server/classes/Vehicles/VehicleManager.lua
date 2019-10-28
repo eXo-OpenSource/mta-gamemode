@@ -153,7 +153,6 @@ function VehicleManager:constructor()
 			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
-				source:allowControl(player, false)
 				source.m_LastMileageCheck = getTickCount() -- this is probably close to the enter time at which the client starts measuring the mileage, only for anti-cheat
 				setVehicleEngineState(source, source:getEngineState())
 			end
