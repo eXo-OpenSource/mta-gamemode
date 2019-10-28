@@ -169,8 +169,7 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
-		
-		self:allowControl(player, self:getEngineState())
+		self:allowControl(player, getVehicleEngineState(player.vehicle))
 	end
 
 	if self.m_HasBeenUsed then
@@ -453,7 +452,7 @@ function Vehicle:setEngineState(state)
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
-	if self.controller and self.controller:getType() == "player" then 
+	if self.controller and self.controller:getType() == "player" then
 		self:allowControl(self.controller, state)
 	end
 
