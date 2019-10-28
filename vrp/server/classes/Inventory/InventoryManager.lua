@@ -75,9 +75,9 @@ function InventoryManager:constructor()
 
 	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_items") then
 		-- REDO migration
-		outputDebugString("========================================")
-		outputDebugString("=            RESET INVENTORY           =")
-		outputDebugString("========================================")
+		outputServerLog("========================================")
+		outputServerLog("=            RESET INVENTORY           =")
+		outputServerLog("========================================")
 
 		sql:queryExec("DROP TABLE ??_inventory_items", sql:getPrefix())
 		sql:queryExec("DROP TABLE ??_inventories", sql:getPrefix())
@@ -690,9 +690,9 @@ end
 
 function InventoryManager:migrate()
 	local st = getTickCount()
-	outputDebugString("========================================")
-	outputDebugString("=     STARTING INVENTORY MIGRATION     =")
-	outputDebugString("========================================")
+	outputServerLog("========================================")
+	outputServerLog("=     STARTING INVENTORY MIGRATION     =")
+	outputServerLog("========================================")
 
 	sql:queryExec("RENAME TABLE ??_inventory_items TO ??_inventory_items_old", sql:getPrefix(), sql:getPrefix())
 
@@ -759,6 +759,7 @@ function InventoryManager:migrate()
 			`ElementType` int NOT NULL,
 			`Size` int NOT NULL,
 			`TypeId` int NOT NULL,
+			`Slots` int NOT NULL,
 			`Deleted` datetime NULL DEFAULT NULL,
 			PRIMARY KEY (`Id`),
 			FOREIGN KEY (`TypeId`) REFERENCES ??_inventory_types (`Id`)
@@ -872,7 +873,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (76, 'trashcan', 4, '-', 'Trashcan', 'Deine eigene Mülltonne für dein Haus!', 'Essen/Apfel.png', 1, 1337, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (77, 'taser', 3, 'ItemTaser', 'Taser', 'Haut den gegner mit Stromstößen um', 'Items/Taser.png', 1, 347, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 		INSERT INTO `vrp_items` VALUES (78, 'candyCane', 1, 'ItemFood', 'Zuckerstange', 'Event-Special Zuckerstange', 'Essen/Zuckerstange.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
-		INSERT INTO `vrp_items` VALUES (79, 'medikit', 3, 'ItemHealpack', 'Medikit', 'Medikit zum schnellen selbst heilen', 'Items/Chips.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
+		INSERT INTO `vrp_items` VALUES (79, 'medikit2', 3, 'ItemHealpack', 'Medikit', 'Medikit zum schnellen selbst heilen', 'Items/Chips.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (80, 'keypad', 4, 'ItemKeyPad', 'Keypad', 'Ein Eingabegerät.', 'Objekte/keypad.png', 1, 2886, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (81, 'gate', 4, 'ItemDoor', 'Tor', 'Ein benutzbares Tor zum platzieren.', 'Objekte/door.png', 1, 1493, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (82, 'entrance', 4, 'ItemEntrance', 'Eingang', 'Ein platzierbarer Eingang', 'Objekte/entrance.png', 1, 1318, 0, 0, 0, 1, 0, 0, 1, 0, 0);
@@ -898,6 +899,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (102, 'pilkerBait', 3, 'ItemFishing', 'Pilkerköder', 'Spezieller Köder für Meeresangeln', 'Items/Pilkerbait.png', 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (103, 'swimmer', 3, 'ItemFishing', 'Schwimmer', 'Zubehör. Auf der Wasseroberfläche treibender Bissanzeiger', 'Items/Bobber.png', 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (104, 'spinner', 3, 'ItemFishing', 'Spinner', 'Zubehör. Eine rotierende Metallscheibe für ein einfaches und effektives fangen von kleinen als auch große Fische', 'Items/Spinner.png', 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+		INSERT INTO `vrp_items` VALUES (105, 'clubCard', 3, '-', 'Clubkarte', 'Willkommen im Club der Riskanten.', 'Items/Clubcard.png', 1, 2886, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 	]])
 
 
@@ -916,7 +918,134 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_inventory_type_categories` VALUES (2, 2);
 	]])
 
+	local ItemMapping = {
+		["Weed"] = "weed",
+		["Burger"] = "burger",
+		["Benzinkanister"] = "jerrycan",
+		["Chips"] = "chips",
+		["Fernglas"] = "binoculars",
+		["Medikit"] = "medkit",
+		["Radio"] = "radio",
+		["Wuerfel"] = "dice",
+		["Zigarette"] = "cigarette",
+		["Pfeffermunition"] = "pepperAmunation",
+		["Ausweis"] = "identityCard",
+		["Weed-Samen"] = "weedSeed",
+		["Shrooms"] = "shrooms",
+		["Pommes"] = "fries",
+		["Snack"] = "candyBar",
+		["Bier"] = "beer",
+		["eXoPad"] = "exoPad",
+		["Gameboy"] = "gameBoy",
+		["Mats"] = "materials",
+		["Fische"] = "fish",
+		["Zeitung"] = "newspaper",
+		["Ecstasy"] = "ecstasy",
+		["Heroin"] = "heroin",
+		["Kokain"] = "cocaine",
+		["Reparaturkit"] = "repairKit",
+		["Suessigkeiten"] = "candies",
+		["Kürbis"] = "pumpkin",
+		["Päckchen"] = "packet",
+		["Gluehwein"] = "gluvine",
+		["Kaffee"] = "coffee",
+		["Lebkuchen"] = "gingerbread",
+		["Shot"] = "shot",
+		["Wuerstchen"] = "sousage",
+		["Mautpass"] = "tollticket",
+		["Keks"] = "cookie",
+		["Helm"] = "helmet",
+		["Maske"] = "mask",
+		["Kuheuter mit Pommes"] = "cowUdderWithFries",
+		["Zombie-Burger"] = "zombieBurger",
+		["Weihnachtsmütze"] = "christmasHat",
+		["Barrikade"] = "barricade",
+		["Sprengstoff"] = "explosive",
+		["Pizza"] = "pizza",
+		["Pilz"] = "mushroom",
+		["Kanne"] = "can",
+		["Handelsvertrag"] = "sellContract",
+		["Blitzer"] = "speedCamera",
+		["Nagel-Band"] = "nailStrip",
+		["Whiskey"] = "whiskey",
+		["Sex on the Beach"] = "sexOnTheBeach",
+		["Pina Colada"] = "pinaColada",
+		["Monster"] = "monster",
+		["Cuba-Libre"] = "cubaLibre",
+		["Donutbox"] = "donutBox",
+		["Donut"] = "donut",
+		["Helm"] = "integralHelmet",
+		["Motorcross-Helm"] = "motoHelmet",
+		["Pot-Helm"] = "pothelmet",
+		["Gasmaske"] = "gasmask",
+		["Kevlar"] = "kevlar",
+		["Tragetasche"] = "duffle",
+		["Swatschild"] = "swatshield",
+		["Diebesgut"] = "stolenGoods",
+		["Kleidung"] = "clothing",
+		["Bambusstange"] = "bambooFishingRod",
+		["Kleine Kühltasche"] = "coolingBoxSmall",
+		["Kühltasche"] = "coolingBoxMedium",
+		["Kühlbox"] = "coolingBoxLarge",
+		["Einsatzhelm"] = "swathelmet",
+		["Köder"] = "bait",
+		["Osterei"] = "easterEgg",
+		["Hasenohren"] = "bunnyEars",
+		["Warnkegel"] = "warningCones",
+		["Apfel"] = "apple",
+		["Apfelbaum-Samen"] = "appleSeed",
+		["Trashcan"] = "trashcan",
+		["Taser"] = "taser",
+		["Zuckerstange"] = "candyCane",
+		["Medikit"] = "medikit2",
+		["Keypad"] = "keypad",
+		["Tor"] = "gate",
+		["Eingang"] = "entrance",
+		["Rakete"] = "fireworksRocket",
+		["Rohrbombe"] = "fireworksPipeBomb",
+		["Raketen Batterie"] = "fireworksBattery",
+		["Römische Kerze"] = "fireworksRoman",
+		["Römische Kerzen Batterie"] = "fireworksRomanBattery",
+		["Kugelbombe"] = "fireworksBomb",
+		["Böller"] = "fireworksCracker",
+		["SLAM"] = "slam",
+		["Rauchgranate"] = "smokeGrenade",
+		["Transmitter"] = "transmitter",
+		["Stern"] = "star",
+		["Keycard"] = "keycard",
+		["Blumen-Samen"] = "flowerSeed",
+		["DefuseKit"] = "defuseKit",
+		["Fischlexikon"] = "fishLexicon",
+		["Angelrute"] = "fishingRod",
+		["Profi Angelrute"] = "expertFishingRod",
+		["Legendäre Angelrute"] = "legendaryFishingRod",
+		["Leuchtköder"] = "glowBait",
+		["Pilkerköder"] = "pilkerBait",
+		["Schwimmer"] = "swimmer",
+		["Spinner"] = "spinner",
+		["Clubkarte"] = "clubCard"
+	}
 
+	-- Step 1 - Create player inventories
+	local players = sql:queryFetch("SELECT * FROM ??_account", sql:getPrefix())
+	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
+	local first = true
+	local params = {}
 
+	for _, player in pairs(players) do
+		if first then
+			first = false
+		else
+			query = query .. ", "
+		end
+		query = query .. "(" .. player.Id .. ", 1, 99999, 40, 1)"
+	end
 
+	sql:queryExec(query, sql:getPrefix())
+
+	local items = sql:queryFetch("SELECT * FROM ??_inventory_slots", sql:getPrefix())
+
+	for _, item in pairs(items) do
+
+	end
 end
