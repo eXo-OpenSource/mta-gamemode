@@ -47,7 +47,7 @@ function CustomInteriorManager:load()
 					interior = row.Interior, 
 					dimension = row.Dimension,
 				}
-				Interior:new(row.Path, packData, self:isLoadOnly(row), DYANMIC_INTERIOR_PLACE_MODES.USE_DATA):setOwner(row.Owner, row.OwnerType):setId(row.Id)
+				Interior:new(row.Path, packData, self:isLoadOnly(row), row.Mode):setOwner(row.Owner, row.OwnerType):setId(row.Id)
 			else 
 				self.m_FailLoads[row.Id] = true
 			end
@@ -59,14 +59,26 @@ function CustomInteriorManager:load()
 end
 
 function CustomInteriorManager:save(instance) 
+	local updateId = not self:probe(instance:getId()) 
+
 	local query = [[
-		INSERT INTO ??_interiors (`Name`, `Path`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-		ON DUPLICATE KEY UPDATE Owner=?, OwnerType=?;
+		INSERT INTO ??_interiors (`Id`, `Name`, `Path`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+		ON DUPLICATE KEY UPDATE Interior=?, Dimension=?, Owner=?, OwnerType=?;
 	]]
 
 	local id, name, path, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
-	sql:queryExec(query, sql:getPrefix(), name, path, x, y, z, int, dim, mode, owner, ownerType, owner, ownerType)
+	sql:queryExec(query, sql:getPrefix(), id, name, path, x, y, z, int, dim, mode, owner, ownerType, int, dim, owner, ownerType)
+
+	instance:setId(updateId and sql:lastInsertId() or instance:getId())
+end
+
+function CustomInteriorManager:probe(id) -- probe to see if an id exists
+	local query = [[
+		SELECT Id FROM ??_interiors WHERE Id=?
+	]]
+	local result = sql:queryFetchSingle(query, sql:getPrefix(), id)
+	return result and result.Id
 end
 
 function CustomInteriorManager:override(instance, oldname)  -- used when an interior has changed its map
@@ -179,7 +191,7 @@ function CustomInteriorManager:findDimension(instance)
 		instance:setDimension(1)
 		instance:setInterior(instance:getInterior())
 	else 
-		instance:setDimension(self:getHighestDimensionByName(instance:getName())+1)
+		instance:setDimension(self:getHighestDimensionByName(instance)+1)
 		instance:setInterior(instance:getInterior())
 	end 
 end
@@ -225,21 +237,21 @@ function CustomInteriorManager:onQuit(player)
 	end
 end
 
-function CustomInteriorManager:getHighestDimensionByName(name) 
+function CustomInteriorManager:getHighestDimensionByName(insertInstance) 
 	local lastInstance
-	if CustomInteriorManager.MapByName[name] then
-		for index, instance in pairs(CustomInteriorManager.MapByName[name]) do 
-			if instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
+	if CustomInteriorManager.MapByName[insertInstance:getName()] then
+		for index, instance in pairs(CustomInteriorManager.MapByName[insertInstance:getName()]) do 
+			if instance ~= insertInstance and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
 				lastInstance = instance
 			end
 		end
 		if lastInstance then 
 			return lastInstance:getDimension()
 		else 
-			return 1
+			return 0
 		end
 	else 
-		return 1
+		return 0
 	end
 end
 

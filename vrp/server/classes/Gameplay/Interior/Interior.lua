@@ -47,14 +47,16 @@ function Interior:create()
 	if self:searchEntrance() then 
 		self:createSphereOfInfluence()
 	end
-	if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE then
-		CustomInteriorManager:getSingleton():findPlace(self)
-	elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
-		CustomInteriorManager:getSingleton():findDimension(self)
-	elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.USE_DATA then
+	if self:getPlaceData() then
 		self:setPlace(self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension)
-	elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
-		-- do nothing
+	else 
+		if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE then
+			CustomInteriorManager:getSingleton():findPlace(self)
+		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
+			CustomInteriorManager:getSingleton():findDimension(self)
+		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
+			-- do nothing
+		end
 	end
 	self:setCreated(true)
 end
@@ -116,15 +118,17 @@ end
 
 function Interior:forceSave() 
 	CustomInteriorManager:getSingleton():save(self)
-	self:setPlaceMode(DYANMIC_INTERIOR_PLACE_MODES.USE_DATA)
 end
 
-function Interior:rebuild(path)
+function Interior:rebuild(path, placeMode)
 	assert(path, "Bad argument @ Interior.rebuild")
 	local previousName = self:getName() 
 	self:clean(self:isLoadOnly())
+	self:setCreated(false)
 	self:setPath(path)
 	self:setName(path)
+	self:setPlaceData(nil)
+	self:setPlaceMode(placeMode or self:getPlaceMode())
 	self:setLoaded(false)
 	if File.Exists(self:getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
@@ -135,7 +139,7 @@ function Interior:rebuild(path)
 	else 
 		self:setStatus(DYNAMIC_INTERIOR_NOT_FOUND)
 	end
-	if not self:isTemporary() then 
+	if not self:isTemporary() and self:getStatus() ~= DYNAMIC_INTERIOR_NOT_FOUND then 
 		CustomInteriorManager:getSingleton():override(self, previousName)
 	end
 end
@@ -176,7 +180,7 @@ end
 
 function Interior:destructor()
 	if not self:isTemporary() then
-		if self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.USE_DATA then
+		if not self:getPlaceData() or self:hasAnyChange() then
 			CustomInteriorManager:getSingleton():save(self)
 		end
 	end
@@ -262,11 +266,7 @@ end
 
 function Interior:setPlaceMode(mode) 
 	assert(mode and type(mode) == "number", "Bad argument @ Interior.setPlaceMode")
-	if not self:getPlaceData() then 
-		self.m_PlaceMode = mode
-	else 
-		self.m_PlaceMode  = DYANMIC_INTERIOR_PLACE_MODES.USE_DATA
-	end
+	self.m_PlaceMode = mode
 	return self
 end
 
@@ -284,6 +284,11 @@ function Interior:setId(id)
 	self.m_Id = id
 	return self
 end
+
+function Interior:setAnyChange(bool) 
+	self.m_AnyChange = bool
+	return self
+ end 
 
 function Interior:getStatus() return self.m_Status end
 function Interior:getPath() return self.m_Path end
@@ -306,6 +311,7 @@ function Interior:isCreated() return self.m_IsCreated end
 function Interior:getId() return self.m_Id end
 function Interior:isTemporary() return self.m_IsTemporary end
 function Interior:getExit() return self.m_Exit end
+function Interior:hasAnyChange() return self.m_AnyChange end
 function Interior:getPlayerSerialize(player) 
 	if not self:isTemporary() then
 		return toJSON({name = self:getName(), id = self:getId()})

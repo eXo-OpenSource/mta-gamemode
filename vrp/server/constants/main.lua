@@ -203,8 +203,7 @@ DYANMIC_INTERIOR_PLACE_MODES =
 {
 	FIND_BEST_PLACE = 1,  -- this mode moves the interior to the best place position
 	KEEP_POSITION = 2,  -- this mode keeps the interiors position but finds a free dimension/interior
-	USE_DATA = 3, -- this is the mode used when we already found a place prior and can use the saved-data
-	MANUAL_INPUT = 4 -- this leaves the positioning up to external methods
+	MANUAL_INPUT = 3 -- this leaves the positioning up to external methods
 }
 DYNAMIC_INTERIOR_TEMPORARY_ID = 0
 
