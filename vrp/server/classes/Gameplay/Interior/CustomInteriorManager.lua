@@ -8,9 +8,10 @@
 CustomInteriorManager = inherit(Singleton)
 CustomInteriorManager.Map = {}
 CustomInteriorManager.IdMap = {}
-CustomInteriorManager.MapByName = {}
+CustomInteriorManager.MapByMapId = {}
 
 function CustomInteriorManager:constructor() 
+	InteriorMapManager:new():load()
 	self:houseMigrator()
 	self.m_CurrentDimension = 1
 	self.m_CurrentInterior = 20
@@ -64,13 +65,13 @@ function CustomInteriorManager:save(instance)
 	local updateId = not self:probe(instance:getId()) 
 
 	local query = [[
-		INSERT INTO ??_interiors (`Id`, `Name`, `Path`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+		INSERT INTO ??_interiors (`Id`, `Map`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
 		ON DUPLICATE KEY UPDATE Interior=?, Dimension=?, Owner=?, OwnerType=?;
 	]]
 
-	local id, name, path, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
-	sql:queryExec(query, sql:getPrefix(), id, name, path, x, y, z, int, dim, mode, owner, ownerType, int, dim, owner, ownerType)
+	local id, map, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
+	sql:queryExec(query, sql:getPrefix(), id, map, x, y, z, int, dim, mode, owner, ownerType, int, dim, owner, ownerType)
 
 	instance:setId(updateId and sql:lastInsertId() or instance:getId())
 end
@@ -83,20 +84,20 @@ function CustomInteriorManager:probe(id) -- probe to see if an id exists
 	return result and result.Id
 end
 
-function CustomInteriorManager:override(instance, oldname)  -- used when an interior has changed its map
+function CustomInteriorManager:override(instance, oldmap)  -- used when an interior has changed its map
 	local query = [[
-		UPDATE ??_interiors SET Name=?, Path=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Mode=?, Owner=?, OwnerType=?, Date=NOW()
+		UPDATE ??_interiors SET Map=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Mode=?, Owner=?, OwnerType=?, Date=NOW()
 		WHERE Id=?;
 	]]
 
-	local id, name, path, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
-	sql:queryExec(query, sql:getPrefix(), name, path, x, y, z, int, dim, mode, owner, ownerType, id)
+	local id, map, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
+	sql:queryExec(query, sql:getPrefix(), map, x, y, z, int, dim, mode, owner, ownerType, id)
 	
-	if oldname then 
-		if CustomInteriorManager.MapByName[oldname] then 
-			for index, secondInstance in ipairs(CustomInteriorManager.MapByName[oldname]) do 
+	if oldmap then 
+		if CustomInteriorManager.MapByMapId[oldmap] then 
+			for index, secondInstance in ipairs(CustomInteriorManager.MapByMapId[oldmap]) do 
 				if instance == secondInstance then 
-					table.remove(CustomInteriorManager.MapByName[oldname], index) -- remove old name index
+					table.remove(CustomInteriorManager.MapByMapId[oldmap], index) -- remove old name index
 				end
 			end
 		end
@@ -134,16 +135,16 @@ end
 
 function CustomInteriorManager:add(instance)
 	CustomInteriorManager.Map[instance] = true
-	if not CustomInteriorManager.MapByName[instance:getName()] then CustomInteriorManager.MapByName[instance:getName()] = {} end 
-	table.insert(CustomInteriorManager.MapByName[instance:getName()], instance)
+	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then CustomInteriorManager.MapByMapId[instance:getMap():getId()] = {} end 
+	table.insert(CustomInteriorManager.MapByMapId[instance:getMap():getId()], instance)
 end
 
 function CustomInteriorManager:remove(instance) 
 	CustomInteriorManager.Map[instance] = nil
-	if CustomInteriorManager.MapByName[instance:getName()] then 
-		local found = table.find( CustomInteriorManager.MapByName[instance:getName()], instance)
+	if CustomInteriorManager.MapByMapId[instance:getName()] then 
+		local found = table.find( CustomInteriorManager.MapByMapId[instance:getMap():getId()], instance)
 		if found then 
-			table.remove( CustomInteriorManager.MapByName[instance:getName()], found)
+			table.remove( CustomInteriorManager.MapByMapId[instance:getMap():getId()], found)
 		end
 	end
 end
@@ -158,8 +159,8 @@ function CustomInteriorManager:removeId(instance)
 end
 
 
-function CustomInteriorManager:getMapCount(name) 
-	return (not CustomInteriorManager.MapByName[name] and 0) or #CustomInteriorManager.MapByName[name]
+function CustomInteriorManager:getMapCount(id) 
+	return (not CustomInteriorManager.MapByMapId[id] and 0) or #CustomInteriorManager.MapByMapId[id]
 end
 
 function CustomInteriorManager:findPlace(instance) 
@@ -199,7 +200,7 @@ function CustomInteriorManager:findPlace(instance)
 end
 
 function CustomInteriorManager:findDimension(instance) 
-	if not CustomInteriorManager.MapByName[instance:getName()] then 
+	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then 
 		instance:setDimension(1)
 		instance:setInterior(instance:getInterior())
 	else 
@@ -229,8 +230,8 @@ function CustomInteriorManager:onLogin(player)
 	if player.m_LogoutInterior then 
 		local data = fromJSON(player.m_LogoutInterior)
 		if data and table.size(data) > 0 then 
-			if CustomInteriorManager.MapByName[data.name] then 
-				for index, instance in ipairs(CustomInteriorManager.MapByName[data.name]) do 
+			if CustomInteriorManager.MapByMapId[data.map] then 
+				for index, instance in ipairs(CustomInteriorManager.MapByMapId[data.map]) do 
 					if instance:getId() == data.id then 
 						if not instance:isCreated() then 
 							instance:create()
@@ -251,8 +252,8 @@ end
 
 function CustomInteriorManager:getHighestDimensionByName(insertInstance) 
 	local lastInstance
-	if CustomInteriorManager.MapByName[insertInstance:getName()] then
-		for index, instance in pairs(CustomInteriorManager.MapByName[insertInstance:getName()]) do 
+	if CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()] then
+		for index, instance in pairs(CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()]) do 
 			if instance ~= insertInstance and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
 				lastInstance = instance
 			end
@@ -275,10 +276,9 @@ end
 
 function CustomInteriorManager:createDatabase() 
 	local query = [[
-	CREATE TABLE IF NOT EXISTS `vrp_interiors` (
+	CREATE TABLE IF NOT EXISTS ??_interiors (
 	 	`Id` int(11) NOT NULL AUTO_INCREMENT,
-		`Name` VARCHAR(50) NOT NULL,	
-  		`Path` VARCHAR(75) NOT NULL,	
+		`MapId` INT(11) NULL,
   		`PosX` float NOT NULL DEFAULT 0,
   		`PosY` float NOT NULL DEFAULT 0,
   		`PosZ` float NOT NULL DEFAULT 0,
@@ -288,11 +288,23 @@ function CustomInteriorManager:createDatabase()
   		`Owner` int(11) NOT NULL DEFAULT 0,
   		`OwnerType` int(11) NOT NULL DEFAULT 0,
   		`Date` datetime NOT NULL DEFAULT current_timestamp(),
-  		PRIMARY KEY (`Id`)
+  		PRIMARY KEY (`Id`),
+		INDEX `MapId_FK` (`MapId`),
+		CONSTRAINT `MapId_FK` FOREIGN KEY (`MapId`) REFERENCES ??_interiors_maps (`Id`) ON UPDATE CASCADE ON DELETE SET NULL
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	]]
-	if sql:queryExec(query) then 
-		print("** [CustomInteriorManager] Database for Interiors was created **")
+
+	local queryMap = [[
+		CREATE TABLE IF NOT EXISTS ??_interiors_maps (
+		`Id` INT(11) NOT NULL AUTO_INCREMENT,
+		`Path` VARCHAR(256) NOT NULL,
+		PRIMARY KEY (`Id`),
+		UNIQUE INDEX `Path` (`Path`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	]]
+
+	if sql:queryExec(queryMap, sql:getPrefix()) and sql:queryExec(query, sql:getPrefix(), sql:getPrefix()) then 
+		print("** [CustomInteriorManager] Database for Interiors and InteriorsMap was created **")
 		return true
 	end
 	return false

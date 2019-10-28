@@ -244,6 +244,9 @@
 	<script src="server/classes/Gameplay/Interior/CustomInteriorManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Interior/Interior.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Interior/InteriorMapManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Interior/InteriorMap.lua" type="server"/>
+
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>

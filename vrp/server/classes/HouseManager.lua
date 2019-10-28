@@ -22,7 +22,7 @@ function HouseManager:constructor()
 	self.m_Houses = {}
 
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
-
+	
 	for key, value in pairs(query) do
 		if not HouseManager.Migrated then
 			self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])

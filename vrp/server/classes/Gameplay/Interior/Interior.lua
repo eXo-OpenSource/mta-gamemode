@@ -8,17 +8,16 @@
 Interior = inherit(Object)
 Interior.Map = {}
 
-function Interior:constructor(path, row, loadOnly, placeMode)
-	assert(path, "Bad argument @ Interior.constructor")
+function Interior:constructor(map, row, loadOnly, placeMode)
+	assert(map, "Bad argument @ Interior.constructor")
+	self:setMap(map)
 	self:setId(DYNAMIC_INTERIOR_TEMPORARY_ID)
 	self:setOwner(DYANMIC_INTERIOR_SERVER_OWNER, DYNAMIC_INTERIOR_SERVER_OWNER_TYPE)
-	self:setPath(path)
-	self:setName(path)
 	self:setTemporary(not row)
 	self:setPlaceData(row) -- if we got already existing coordinates on this map use them
 	self:setPlaceMode(placeMode or DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE) -- either if a best place should be found / or we shuld prioritize keeping the position that originally came with the interior
 	self:setLoadOnly(loadOnly) -- in case the map has to/can be created later
-	if File.Exists(self:getPath()) then 
+	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
 			if not self:isLoadOnly() then
 				self:create()
@@ -32,7 +31,7 @@ end
 
 function Interior:load() 
 	if self:isLoaded() then return end
-	self.m_Map = MapParser:new(self:getPath())
+	self.m_Map = MapParser:new(self:getMap():getPath())
 	if self.m_Map then 
 		self:setStatus(DYNAMIC_INTERIOR_SUCCESS)
 		self:setLoaded(true)
@@ -43,7 +42,7 @@ function Interior:load()
 end
 
 function Interior:create() 
-	self:getMap():create(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
+	self:getMapNode():create(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
 	if self:searchEntrance() then 
 		self:createSphereOfInfluence()
 	end
@@ -62,7 +61,7 @@ function Interior:create()
 end
 
 function Interior:searchEntrance() 
-	for index, object in pairs(self:getMap():getElements()) do 
+	for index, object in pairs(self:getMapNode():getElements()) do 
 		if object:getType() == DYNAMIC_INTERIOR_ENTRANCE_OBJECT and object:getMarkerType() == DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE then 
 			self:setEntrance(object)
 			if not DEBUG then
@@ -100,7 +99,7 @@ function Interior:move(pos)
 	parentClone:setDimension(self:getDimension())
 	parentClone:setAlpha(0)
 	parentClone:setCollisionsEnabled(false)
-	self:getMap():move(parentClone, pos)
+	self:getMapNode():move(parentClone, pos)
 	parentClone:destroy()
 	self:updateSphereOfInfluence()
 end
@@ -121,17 +120,16 @@ function Interior:forceSave()
 	return self
 end
 
-function Interior:rebuild(path, placeMode)
+function Interior:rebuild(map, placeMode)
 	assert(path, "Bad argument @ Interior.rebuild")
-	local previousName = self:getName() 
+	local previousMap = self:getMap():getId() 
 	self:clean(self:isLoadOnly())
 	self:setCreated(false)
-	self:setPath(path)
-	self:setName(path)
+	self:setMap(map)
 	self:setPlaceData(nil)
 	self:setPlaceMode(placeMode or self:getPlaceMode())
 	self:setLoaded(false)
-	if File.Exists(self:getPath()) then 
+	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
 			if not self:isLoadOnly() then
 				self:create()
@@ -147,7 +145,7 @@ function Interior:rebuild(path, placeMode)
 end
 
 function Interior:clean(setLoadOnly) -- incase the map needs to be destroyed
-	self:getMap():delete()
+	self:getMapNode():delete()
 	if isValidElement(self:getSphereOfInfluence()) then self:getSphereOfInfluence():destroy() end
 	self:setLoadOnly(setBackToLoad)
 end
@@ -199,7 +197,7 @@ function Interior:destructor()
 			CustomInteriorManager:getSingleton():save(self)
 		end
 	end
-	self:getMap():delete()
+	self:getMapNode():delete()
 	if isValidElement(self:getSphereOfInfluence()) then self:getSphereOfInfluence():destroy() end
 	CustomInteriorManager:getSingleton():remove(self)
 end
@@ -216,9 +214,9 @@ function Interior:setEntrance(entrance)
 	return self
 end 
 
-function Interior:setPath(path) 
-	assert(path, "Bad argument @ Interior.setPath")
-	self.m_Path = path 
+function Interior:setMap(map) 
+	assert(map, "Bad argument @ Interior.setMap")
+	self.m_InteriorMap = map 
 	return self
 end
 
@@ -245,22 +243,16 @@ function Interior:setOwner(owner, ownerType)
 	return self
 end
 
-function Interior:setName(name) 
-	assert(name, "Bad argument @ Interior.setName")
-	self.m_Name = name:gsub("(.*[/\\])", ""):gsub("%.map", "") 
-	return self
-end
-
 function Interior:setDimension(dimension)
 	assert(dimension, "Bad argument @ Interior.setDimension")
-	self:getMap():setDimension(dimension)
+	self:getMapNode():setDimension(dimension)
 	self:getSphereOfInfluence():setDimension(self:getDimension())
 	return self
 end
 
 function Interior:setInterior(interior)
 	assert(interior, "Bad argument @ Interior.setInterior")
-	self:getMap():setInterior(interior)
+	self:getMapNode():setInterior(interior)
 	self:getSphereOfInfluence():setInterior(self:getInterior())
 	return self
 end
@@ -312,15 +304,13 @@ function Interior:setAnyChange(bool)
  end 
 
 function Interior:getStatus() return self.m_Status end
-function Interior:getPath() return self.m_Path end
-function Interior:getMap() return self.m_Map end
+function Interior:getMap() return self.m_InteriorMap end
 function Interior:getEntrance() return self.m_Entrance end
 function Interior:getInterior() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getInterior() end 
 function Interior:getDimension() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getDimension() end 
 function Interior:getPosition() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getPosition() end 
-function Interior:getName() return self.m_Name end
-function Interior:getPath() return self.m_Path end
-function Interior:getBounding() return self:getMap():getBoundingBox() end
+function Interior:getMapNode() return self.m_Map end
+function Interior:getBounding() return self:getMapNode():getBoundingBox() end
 function Interior:getSphereOfInfluence() return self.m_SphereOfInfluence end
 function Interior:getPlaceData() return self.m_PlaceData end
 function Interior:isLoaded() return self.m_Loaded end
@@ -335,7 +325,7 @@ function Interior:getExit() return self.m_Exit end
 function Interior:hasAnyChange() return self.m_AnyChange end
 function Interior:getPlayerSerialize(player) 
 	if not self:isTemporary() then
-		return toJSON({name = self:getName(), id = self:getId()})
+		return toJSON({map = self:getMap():getId(), id = self:getId()})
 	else 
 		return ""
 	end

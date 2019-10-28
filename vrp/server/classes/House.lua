@@ -48,7 +48,9 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	self:refreshInteriorMarker()
 
-	self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
+	if self:getInteriorInstance() then
+		self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
+	end
 	
 	--self.m_ColShape = createColSphere(position, 1)
 
