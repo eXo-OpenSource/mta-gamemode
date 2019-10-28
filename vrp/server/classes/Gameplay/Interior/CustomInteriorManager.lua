@@ -300,10 +300,10 @@ end
 
 function CustomInteriorManager:houseMigrator() 
 	local probeQuery = [[
-		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "oldHouseID"
+		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "interiorID" AND Type LIKE "%tiny%"
 	]]
-	if not sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
-		print (("** [InteriorManager] %s_houses needs to be altered! (Copying %s_houses to %s_houses_old and altering structure!)"):format(sql:getPrefix(), sql:getPrefix(), sql:getPrefix()))
+	if sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
+		print (("** [InteriorManager] %s_houses needs to be altered! (Copying %s_houses to %s_houses_old and altering structure!) **"):format(sql:getPrefix(), sql:getPrefix(), sql:getPrefix()))
 		local copyQuery = [[
 			CREATE TABLE ??_houses_old AS SELECT * FROM ??_houses
 		]]
@@ -318,12 +318,26 @@ function CustomInteriorManager:houseMigrator()
 					ADD COLUMN `interiorID` INT NULL DEFAULT 0 AFTER `oldHouseID`;
 				]]
 				if sql:queryExec(addQuery, sql:getPrefix()) then
-					print ("** [InteriorManager] Houses-Structure altered!")
+					print ("** [InteriorManager] Houses-Structure altered! **")
 					HouseManager.Migrated = true
 				end
 			end
 		end
 	end 
+end
+
+function CustomInteriorManager:endHouseMigration() 
+	local probeQuery = [[
+		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "oldHouseID"
+	]]	
+	if sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
+		local dropQuery = [[
+			ALTER TABLE ??_houses
+  				DROP COLUMN `oldHouseID`;
+		]]
+		sql:queryExec(dropQuery, sql:getPrefix())
+	end
+	print("** [InteriorManager] House-Migration is done! **")
 end
 
 function CustomInteriorManager.getIdMap(id) 

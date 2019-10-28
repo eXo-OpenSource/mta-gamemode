@@ -32,6 +32,10 @@ function HouseManager:constructor()
 		count = count + 1
 	end
 
+	if HouseManager.Migrated then 
+		CustomInteriorManager:getSingleton():endHouseMigration() 
+	end
+	
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
 	addEventHandler("rentHouse",root,bind(self.rentHouse,self))
 	addEventHandler("unrentHouse",root,bind(self.unrentHouse,self))
