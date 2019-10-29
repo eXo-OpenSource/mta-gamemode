@@ -59,6 +59,8 @@ function Interior:create(allDimension)
 	else 
 		if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE then
 			CustomInteriorManager:getSingleton():findPlace(self)
+		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
+			CustomInteriorManager:getSingleton():findDimension(self)
 		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
 
 		end

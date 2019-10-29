@@ -203,7 +203,7 @@ function CustomInteriorManager:getHighestDimensionByName(insertInstance)
 	local lastInstance
 	if CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()] then
 		for index, instance in pairs(CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()]) do 
-			if instance ~= insertInstance and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
+			if instance ~= insertInstance and (instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION or instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION) then 
 				lastInstance = instance
 			end
 		end

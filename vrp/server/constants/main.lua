@@ -203,7 +203,8 @@ DYANMIC_INTERIOR_PLACE_MODES =
 {
 	FIND_BEST_PLACE = 1,  -- this mode moves the interior to the best place position
 	KEEP_POSITION = 2,  -- this mode keeps the interiors position and generates one map in every dimension
-	MANUAL_INPUT = 3 -- this leaves the positioning up to external methods
+	KEEP_POSITION_ONE_DIMENSION = 3,  -- this mode keeps the interiors position but only generates it for one dimension
+	MANUAL_INPUT = 4 -- this leaves the positioning up to external methods
 }
 DYNAMIC_INTERIOR_TEMPORARY_ID = 0
 
