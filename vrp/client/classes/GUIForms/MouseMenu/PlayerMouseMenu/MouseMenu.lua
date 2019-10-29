@@ -107,18 +107,6 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Star)
 	end
 
-	
-	if localPlayer:getRank() >= RANK.Moderator then
-		self:addItem(_"Admin: Wegschmeißen",
-		function()
-			if self:getElement() then
-				triggerServerEvent("adminPlayerFunction", localPlayer, "throwaway", self:getElement())
-			end
-		end
-		):setIcon(FontAwesomeSymbols.Star)
-	end
-
-	
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Admin: Wegschmeißen",
 		function()
