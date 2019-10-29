@@ -522,11 +522,10 @@ function PlayerManager:playerChat(message, messageType)
 			for index = 1, #playersToSend do
 				if playersToSend[index] ~= source then
 					if not source:getPublicSync("supportMode") then
-						outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+						outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 					else
-						outputChatBox(("(%s) %s sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
+						outputChatBox(("(%s) %s (Handy) sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
 					end
-					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 					--if not playersToSend[index] == source then
 						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 					--end
