@@ -202,7 +202,7 @@ DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE = "cylinder"
 DYANMIC_INTERIOR_PLACE_MODES = 
 {
 	FIND_BEST_PLACE = 1,  -- this mode moves the interior to the best place position
-	KEEP_POSITION = 2,  -- this mode keeps the interiors position but finds a free dimension/interior
+	KEEP_POSITION = 2,  -- this mode keeps the interiors position and generates one map in every dimension
 	MANUAL_INPUT = 3 -- this leaves the positioning up to external methods
 }
 DYNAMIC_INTERIOR_TEMPORARY_ID = 0

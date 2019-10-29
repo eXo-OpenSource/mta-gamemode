@@ -111,7 +111,7 @@ function MapParser:destructor()
 	end
 end
 
-function MapParser:create(dimension)
+function MapParser:create(dimension, output)
 	dimension = dimension or 0
 
 	local map = {}
@@ -119,8 +119,8 @@ function MapParser:create(dimension)
 		local element = createFuncs[info.type](info)
 		if isElement(element) then
 			element._type = info.type
-			dimension = dimension < 0 and element:getType() == "marker" and 0 or dimension
-			setElementDimension(element, dimension)
+			local correctDimension = (dimension < 0 and element:getType() == "marker" and 0) or dimension
+			setElementDimension(element, correctDimension)
 		end
 		table.insert(map, element)
 	end

@@ -41,23 +41,30 @@ function Interior:load()
 	return self:getStatus()
 end
 
-function Interior:create() 
-	self:getMapNode():create(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
-	if self:searchEntrance() then 
-		self:createSphereOfInfluence()
+function Interior:create(allDimension) 
+	if allDimension or self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
+		self:getMapNode():create(not allDimension and DYNAMIC_INTERIOR_DUMMY_DIMENSION or -1, true)
+		self:searchEntrance()  
+		if not allDimension then 
+			self:createSphereOfInfluence()
+		end
+	else 
+		CustomInteriorManager:getSingleton():createMapInAllDimensions(self)
 	end
 	if self:getPlaceData() then
-		self:setPlace(self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension)
+		if not allDimension then
+			self:setPlace(self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension)
+			self:createSphereOfInfluence()
+		end
 	else 
 		if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE then
 			CustomInteriorManager:getSingleton():findPlace(self)
-		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
-			CustomInteriorManager:getSingleton():findDimension(self)
 		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
-			-- do nothing
+
 		end
 	end
-	self:setCreated(true)
+	self:setCreated(not allDimension and true)
+	return self
 end
 
 function Interior:searchEntrance() 
@@ -67,12 +74,24 @@ function Interior:searchEntrance()
 			if not DEBUG then
 				self:getEntrance():setVisibleTo(root, false)
 			end
+			if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
+				self:getEntrance():setColor(200, 0, 0, 200)
+			end
 		end
 	end
 	if not self:getEntrance() then 
 		self:setStatus(DYNAMIC_INTERIOR_INFO_ENTRANCE)
 	end 
 	return self:getEntrance()
+end
+
+function Interior:cloneEntrance(entrance) 
+	local assignDimension = CustomInteriorManager:getSingleton():getHighestDimensionByName(self)
+	local clone = cloneElement(entrance)
+	clone:setColor(0, 0, 200, 200)
+	clone:setDimension(assignDimension+1)
+	self:setEntrance(clone)
+	self:createSphereOfInfluence()
 end
 
 function Interior:createSphereOfInfluence() -- the hypothetical bounds (including tolerance) of the custom interior
@@ -121,7 +140,7 @@ function Interior:forceSave()
 end
 
 function Interior:rebuild(map, placeMode)
-	assert(path, "Bad argument @ Interior.rebuild")
+	assert(map, "Bad argument @ Interior.rebuild")
 	local previousMap = self:getMap():getId() 
 	self:clean(self:isLoadOnly())
 	self:setCreated(false)
@@ -135,7 +154,7 @@ function Interior:rebuild(map, placeMode)
 				self:create()
 			end
 		end
-	else 
+	else
 		self:setStatus(DYNAMIC_INTERIOR_NOT_FOUND)
 	end
 	if not self:isTemporary() and self:getStatus() ~= DYNAMIC_INTERIOR_NOT_FOUND then 
@@ -145,7 +164,11 @@ function Interior:rebuild(map, placeMode)
 end
 
 function Interior:clean(setLoadOnly) -- incase the map needs to be destroyed
-	self:getMapNode():delete()
+	if self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
+		self:getMapNode():delete()
+		if isValidElement(self:getEntrance()) then self:getEntrance():destroy() end 
+	end
+	if isValidElement(self:getEntrance()) then self:getEntrance():destroy() end 
 	if isValidElement(self:getSphereOfInfluence()) then self:getSphereOfInfluence():destroy() end
 	self:setLoadOnly(setBackToLoad)
 end
@@ -198,6 +221,7 @@ function Interior:destructor()
 		end
 	end
 	self:getMapNode():delete()
+	if isValidElement(self:getEntrance()) then self:getEntrance():destroy() end 
 	if isValidElement(self:getSphereOfInfluence()) then self:getSphereOfInfluence():destroy() end
 	CustomInteriorManager:getSingleton():remove(self)
 end
@@ -259,9 +283,14 @@ end
 
 function Interior:setPlace(position, interior, dimension)
 	assert(position and interior and dimension, "Bad argument @ Interior.setPlace")
-	self:move(position)
-	self:setDimension(dimension)
-	self:setInterior(interior)
+	if self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
+		self:setDimension(dimension):setInterior(interior):move(position)
+	else 
+		outputChatBox(dimension)
+		self:getEntrance():setDimension(dimension)
+		self:getEntrance():setInterior(interior)
+		self:getEntrance():setPosition(position)
+	end
 	return self
 end
 
@@ -298,6 +327,10 @@ function Interior:setId(id)
 	return self
 end
 
+function Interior:setMapNode(map)
+	self.m_Map = map
+end
+
 function Interior:setAnyChange(bool) 
 	self.m_AnyChange = bool
 	return self
@@ -310,7 +343,7 @@ function Interior:getInterior() return self:getEntrance() and isValidElement(sel
 function Interior:getDimension() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getDimension() end 
 function Interior:getPosition() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getPosition() end 
 function Interior:getMapNode() return self.m_Map end
-function Interior:getBounding() return self:getMapNode():getBoundingBox() end
+function Interior:getBounding() return  self:getMapNode():getBoundingBox() end
 function Interior:getSphereOfInfluence() return self.m_SphereOfInfluence end
 function Interior:getPlaceData() return self.m_PlaceData end
 function Interior:isLoaded() return self.m_Loaded end

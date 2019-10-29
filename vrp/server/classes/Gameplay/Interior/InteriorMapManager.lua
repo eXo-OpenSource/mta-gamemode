@@ -10,6 +10,14 @@ InteriorMapManager.Map = {}
 InteriorMapManager.PathMap = {}
 
 function InteriorMapManager:constructor() 
+	if not self:isTableAvailable() then 
+		print(("** [InteriorMapManager] Checking if %s_interiors_maps exists! Creating otherwise... **"):format(sql:getPrefix()))
+		if self:createTable() then 
+			self.m_Ready = true
+		end
+	else 
+		self.m_Ready = true
+	end
 end
 
 function InteriorMapManager:destructor()
@@ -45,8 +53,8 @@ function InteriorMapManager:remove(instance)
 	InteriorMapManager.PathMap[instance:getPath()] = nil
 end
 
-function InteriorMapManager:get(id)
-	return InteriorMapManager.IdMap[id]
+function InteriorMapManager.get(id)
+	return InteriorMapManager.Map[id]
 end
 
 function InteriorMapManager:getByPath(path, createNotExists)
@@ -57,6 +65,43 @@ function InteriorMapManager:getByPath(path, createNotExists)
 			return self:insert(path)
 		else 
 			return InteriorMapManager.PathMap[path]
+		end
+	end
+end
+
+
+function InteriorMapManager:isTableAvailable()
+	return sql:queryFetch("SELECT 1 FROM ??_interiors_maps;", sql:getPrefix())
+end
+
+function InteriorMapManager:createTable() 
+	local queryMap = [[
+		CREATE TABLE IF NOT EXISTS ??_interiors_maps (
+		`Id` INT(11) NOT NULL AUTO_INCREMENT,
+		`Path` VARCHAR(256) NOT NULL,
+		`Category` INT(11) NOT NULL DEFAULT 0, 
+		PRIMARY KEY (`Id`),
+		UNIQUE INDEX `Path` (`Path`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	]]
+
+	if sql:queryExec(queryMap, sql:getPrefix()) then 
+		print ("*** [InteriorMapManager] Table for Interior-Maps was created! ***")
+		return true
+	end
+end
+
+function InteriorMapManager:rebuild(map, newmap)
+	if InteriorMapManager.Map[map:getId()] then 
+		if CustomInteriorManager.MapByMapId[map:getId()] then 
+			for index, instance in ipairs(CustomInteriorManager.MapByMapId[map:getId()]) do 
+				instance:rebuild(newmap)
+			end
+			if CustomInteriorManager.KeepPositionMaps[map:getId()] then 
+				CustomInteriorManager.KeepPositionMaps[map:getId()].mapNode:delete() 
+				CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:destroy()
+				CustomInteriorManager.KeepPositionMaps[map:getId()] = nil
+			end
 		end
 	end
 end

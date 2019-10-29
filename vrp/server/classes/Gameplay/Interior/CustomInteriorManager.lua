@@ -9,7 +9,7 @@ CustomInteriorManager = inherit(Singleton)
 CustomInteriorManager.Map = {}
 CustomInteriorManager.IdMap = {}
 CustomInteriorManager.MapByMapId = {}
-
+CustomInteriorManager.KeepPositionMaps = {}
 function CustomInteriorManager:constructor() 
 	InteriorMapManager:new():load()
 	self:houseMigrator()
@@ -18,9 +18,9 @@ function CustomInteriorManager:constructor()
 	self.m_LoadedCount = 0
 	self.m_FailLoads = {}
 	self.m_Ready = false
-	if not self:isDatabaseAvaialble() then 
-		print(("** [CustomInteriorManager] Checking if %s_interiors exists! If not it will be created... **"):format(sql:getPrefix()))
-		if self:createDatabase() then 
+	if not self:isTableAvailable() then 
+		print(("** [CustomInteriorManager] Checking if %s_interiors exists! Creating otherwise... **"):format(sql:getPrefix()))
+		if self:createTable() then 
 			self.m_Ready = true
 		end
 	else 
@@ -50,7 +50,7 @@ function CustomInteriorManager:load()
 					interior = row.Interior, 
 					dimension = row.Dimension,
 				}
-				Interior:new(row.Path, packData, self:isLoadOnly(row), row.Mode):setOwner(row.Owner, row.OwnerType):setId(row.Id)
+				Interior:new(InteriorMapManager.get(row.MapId), packData, self:isLoadOnly(row), row.Mode):setOwner(row.Owner, row.OwnerType):setId(row.Id)
 			else 
 				self.m_FailLoads[row.Id] = true
 			end
@@ -126,7 +126,7 @@ function CustomInteriorManager:getLastGridPoint()
 end
 
 function CustomInteriorManager:assertRow(row) 
-	return row and row.Name and row.Path and row.PosX and row.PosY and row.PosZ and row.Interior and row.Dimension and row.Mode
+	return row and row.MapId and row.PosX and row.PosY and row.PosZ and row.Interior and row.Dimension and row.Mode
 end
 
 function CustomInteriorManager:isLoadOnly(row) 
@@ -141,7 +141,7 @@ end
 
 function CustomInteriorManager:remove(instance) 
 	CustomInteriorManager.Map[instance] = nil
-	if CustomInteriorManager.MapByMapId[instance:getName()] then 
+	if CustomInteriorManager.MapByMapId[instance:getMap():getId()] then 
 		local found = table.find( CustomInteriorManager.MapByMapId[instance:getMap():getId()], instance)
 		if found then 
 			table.remove( CustomInteriorManager.MapByMapId[instance:getMap():getId()], found)
@@ -199,6 +199,24 @@ function CustomInteriorManager:findPlace(instance)
 	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_INTERIOR_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
 end
 
+function CustomInteriorManager:getHighestDimensionByName(insertInstance) 
+	local lastInstance
+	if CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()] then
+		for index, instance in pairs(CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()]) do 
+			if instance ~= insertInstance and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
+				lastInstance = instance
+			end
+		end
+		if lastInstance then 
+			return lastInstance:getDimension()
+		else 
+			return 0
+		end
+	else 
+		return 0
+	end
+end
+
 function CustomInteriorManager:findDimension(instance) 
 	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then 
 		instance:setDimension(1)
@@ -207,6 +225,18 @@ function CustomInteriorManager:findDimension(instance)
 		instance:setDimension(self:getHighestDimensionByName(instance)+1)
 		instance:setInterior(instance:getInterior())
 	end 
+end
+
+function CustomInteriorManager:createMapInAllDimensions(instance) 
+	if instance:getMap() then
+		if not CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] then 
+			CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] = {mapNode = instance:create(true):getMapNode(), entrance = instance:getEntrance()}
+			instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+		else 
+			instance:setMapNode(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].mapNode)
+			instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+		end
+	end
 end
 
 function CustomInteriorManager:onEnterInterior(element, instance) 
@@ -250,31 +280,13 @@ function CustomInteriorManager:onQuit(player)
 	end
 end
 
-function CustomInteriorManager:getHighestDimensionByName(insertInstance) 
-	local lastInstance
-	if CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()] then
-		for index, instance in pairs(CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()]) do 
-			if instance ~= insertInstance and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then 
-				lastInstance = instance
-			end
-		end
-		if lastInstance then 
-			return lastInstance:getDimension()
-		else 
-			return 0
-		end
-	else 
-		return 0
-	end
-end
-
 function CustomInteriorManager:isReady() return self.m_Ready end
 
-function CustomInteriorManager:isDatabaseAvaialble()
-	return sql:queryFetch("SELECT 1 FROM ??_Interiors;", sql:getPrefix())
+function CustomInteriorManager:isTableAvailable()
+	return sql:queryFetch("SELECT 1 FROM ??_interiors;", sql:getPrefix())
 end
 
-function CustomInteriorManager:createDatabase() 
+function CustomInteriorManager:createTable() 
 	local query = [[
 	CREATE TABLE IF NOT EXISTS ??_interiors (
 	 	`Id` int(11) NOT NULL AUTO_INCREMENT,
@@ -294,17 +306,8 @@ function CustomInteriorManager:createDatabase()
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	]]
 
-	local queryMap = [[
-		CREATE TABLE IF NOT EXISTS ??_interiors_maps (
-		`Id` INT(11) NOT NULL AUTO_INCREMENT,
-		`Path` VARCHAR(256) NOT NULL,
-		PRIMARY KEY (`Id`),
-		UNIQUE INDEX `Path` (`Path`)
-		) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-	]]
-
-	if sql:queryExec(queryMap, sql:getPrefix()) and sql:queryExec(query, sql:getPrefix(), sql:getPrefix()) then 
-		print("** [CustomInteriorManager] Database for Interiors and InteriorsMap was created **")
+	if sql:queryExec(query, sql:getPrefix(), sql:getPrefix()) then 
+		print("** [CustomInteriorManager] Database for Interiors  was created **")
 		return true
 	end
 	return false

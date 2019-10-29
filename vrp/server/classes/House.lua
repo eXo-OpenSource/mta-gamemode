@@ -601,7 +601,7 @@ end
 
 function House:refreshInteriorMarker()
 	if not self:getInteriorInstance() then
-		outputDebugString(("Error: Invalid Interior (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
+		--outputDebugString(("Error: Invalid Interior (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
 		delete(self)
 		return
 	end
