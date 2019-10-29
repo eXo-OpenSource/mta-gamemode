@@ -633,7 +633,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 	elseif func == "spect" then
 		if not target then return end
 		--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
-		if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
+		if admin:getPrivateSync("isSpecting") then 
+			if (type(admin.m_SpectStop) == "function") then 
+				admin.m_SpectStop() 
+			else 
+				admin:sendError("Beende das spectaten zuerst!") 
+				return 
+			end 
+		end
 
 		admin.m_IsSpecting = true
 		admin:setPrivateSync("isSpecting", target)
@@ -668,7 +675,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) --trig
+				if (admin ~= target) then removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) end
 
 			end
 
@@ -689,7 +696,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 		addEventHandler("onPlayerQuit", admin, admin.m_SpectStop)
-		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+		if (admin ~= target) then addEventHandler("onPlayerQuit", target, admin.m_SpectStop) end
 		bindKey(admin, "space", "down", admin.m_SpectStop)
 
 		admin:setFrozen(true)
