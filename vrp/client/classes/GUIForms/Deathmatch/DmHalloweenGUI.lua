@@ -53,26 +53,20 @@ function DmHalloweenGUI:constructor(playerData, roundData)
 	DeathmatchManager.CurrentGUI = self
 
 	self.m_DamageBind = bind(self.onPedDamage, self)
-
-	addEventHandler("dmHalloweenToggleDamageEvent", root, function(state)
-		if state == true then
-			addEventHandler("onClientPlayerDamage", localPlayer, self.m_DamageBind)
-		else
-			removeEventHandler("onClientPlayerDamage", localPlayer, self.m_DamageBind)
-		end
-	end)
-
+	addEventHandler("onClientPlayerDamage", root, self.m_DamageBind)
 end
 
 function DmHalloweenGUI:destructor()
 	GUIForm.destructor(self)
 	DeathmatchManager.CurrentGUI = false
-	removeEventHandler("onClientPlayerDamage", localPlayer, self.m_DamageBind)
+	removeEventHandler("onClientPlayerDamage", root, self.m_DamageBind)
 end
 
 function DmHalloweenGUI:onPedDamage(attacker, weapon)
 	if NO_MUNITION_WEAPONS[weapon] then cancelEvent() end
-	triggerServerEvent("dmHalloweenOnDamage", source, attacker, weapon)
+	if attacker == localPlayer then
+		triggerServerEvent("dmHalloweenOnDamage", source, attacker, weapon)
+	end
 end
 
 function DmHalloweenGUI:leaveLobby()
