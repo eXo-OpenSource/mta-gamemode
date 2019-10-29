@@ -768,7 +768,7 @@ function InventoryManager:migrate()
 
 	sql:queryExec([[
 		CREATE TABLE ??_inventory_items  (
-			`Id` varchar(36) NOT NULL,
+			`Id` int NOT NULL,
 			`InventoryId` int(0) NOT NULL,
 			`ItemId` int(0) NOT NULL,
 			`Slot` int(0) NOT NULL,
@@ -828,7 +828,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (31, 'gingerbread', 1, 'ItemFood', 'Lebkuchen', 'Nette Jause zwischendurch in den kalten Monaten', 'Essen/Lebkuchen.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (32, 'shot', 1, 'ItemAlcohol', 'Shot', 'alkoholhaltiges Getraenk, das in 2-cl- oder 4-cl-Glaesern serviert und zumeist in einem Zug getrunken wird', 'Essen/Shot.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (33, 'sousage', 1, 'ItemFood', 'Würstchen', 'Lecker Wuerstchen mit Senf!', 'Essen/Wuerstchen.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0);
-		INSERT INTO `vrp_items` VALUES (34, 'tollticket', 3, '-', 'Mautpass', 'Damit kommst du kostenlos durch Mautstellen. 1 Woche gueltig!', 'Items/Mautpass.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1);
+		INSERT INTO `vrp_items` VALUES (34, 'tollTicket', 3, '-', 'Mautpass', 'Damit kommst du kostenlos durch Mautstellen. 1 Woche gueltig!', 'Items/Mautpass.png', 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1);
 		INSERT INTO `vrp_items` VALUES (35, 'cookie', 1, 'ItemFood', 'Keks', 'Verliehen von Entwicklern für besondere Verdienste', 'Items/Keks.png', 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (36, 'helmet', 3, 'WearableHelmet', 'Helm', 'Safty First! Setze ihn auf wann immer du möchtest!', 'Items/Helm.png', 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1);
 		INSERT INTO `vrp_items` VALUES (37, 'mask', 3, '-', 'Maske', 'Verleihe dir ein nie dargewesenes Aussehen mit einer tollen Maske!', 'Items/Maske.png', 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1);
@@ -952,7 +952,7 @@ function InventoryManager:migrate()
 		["Lebkuchen"] = "gingerbread",
 		["Shot"] = "shot",
 		["Wuerstchen"] = "sousage",
-		["Mautpass"] = "tollticket",
+		["Mautpass"] = "tollTicket",
 		["Keks"] = "cookie",
 		["Helm"] = "helmet",
 		["Maske"] = "mask",
@@ -1048,49 +1048,85 @@ function InventoryManager:migrate()
 	end
 
 	sql:queryExec(query, sql:getPrefix())
+	local nextId = 1
 
-	self.itemMigrateThreadFunc = function()
-		local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1", sql:getPrefix())
-		local inventories = {}
-		for _, inventory in pairs(inventoriesDb) do
-			inventories[inventory.ElementId] = inventory.Id
-		end
-
-		local items = sql:queryFetch("SELECT * FROM ??_inventory_slots ORDER BY PlayerId ASC", sql:getPrefix())
-		local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
-		local first = true
-		local playerSlot = {}
-		local count = 1
-		local total = table.size(items)
-		for _, item in pairs(items) do
-			if inventories[item.PlayerId] then
-				if ItemMapping[item.Objekt] then
-					local itemTechnicalName = ItemMapping[item.Objekt]
-
-					if not playerSlot[item.PlayerId] then playerSlot[item.PlayerId] = 1 end
-
-					if first then
-						first = false
-					else
-						query = query .. ", "
-					end
-					query = query .. "(\"" .. uuid() .. "\", " .. inventories[item.PlayerId].. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. playerSlot[item.PlayerId] .. ", " .. item.Menge .. ", 0, NULL)"
-					playerSlot[item.PlayerId] = playerSlot[item.PlayerId] + 1
-
-					if count % 2500 == 0 then outputServerLog("[MIGRATION] WAIT " .. tostring(count) .. "/" .. tostring(total)) Thread.pause() end
-				else
-					outputServerLog("[MIGRATION] Found unknown item " .. tostring(item.Objekt) .. " for player " .. tostring(item.PlayerId))
-				end
-			else
-				--outputServerLog("[MIGRATION] Failed to migrate item " .. tostring(item.Objekt) .. " for player " .. tostring(item.PlayerId))
-			end
-			count = count + 1
-		end
-
-		sql:queryExec(query, sql:getPrefix())
-		outputServerLog("[MIGRATION] FINISH " .. tostring(count) .. "/" .. tostring(total))
+	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1", sql:getPrefix())
+	local inventories = {}
+	for _, inventory in pairs(inventoriesDb) do
+		inventories[inventory.ElementId] = inventory.Id
 	end
 
-	local thread = Thread:new(self.itemMigrateThreadFunc, THREAD_PRIORITY_HIGHEST)
-	thread:start()
+	local items = sql:queryFetch("SELECT * FROM ??_inventory_slots ORDER BY PlayerId ASC", sql:getPrefix())
+	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+	local first = true
+	local playerSlot = {}
+	local count = 1
+	local total = table.size(items)
+
+	for _, item in pairs(items) do
+		if inventories[item.PlayerId] then
+			if ItemMapping[item.Objekt] then
+				local itemTechnicalName = ItemMapping[item.Objekt]
+				local metadata = "NULL"
+				local durability = 0
+
+				if not playerSlot[item.PlayerId] then playerSlot[item.PlayerId] = 1 end
+
+				if first then
+					first = false
+				else
+					query = query .. ", "
+				end
+
+				--[[
+					Kleine Kühltasche
+					Kühlbox
+					Kühltasche
+				]]
+				if itemTechnicalName == "clothing" then
+					metadata = "\"[".. item.Value .."]\""
+				elseif itemTechnicalName == "can" then
+					durability = item.Value
+				elseif itemTechnicalName == "donutBox" then
+					durability = item.Value
+				elseif itemTechnicalName == "bambooFishingRod" or itemTechnicalName == "fishingRod" or itemTechnicalName == "expertFishingRod" or itemTechnicalName == "legendaryFishingRod" then
+					durability = item.Value
+				elseif itemTechnicalName == "swimmer" or itemTechnicalName == "spinner" then
+					durability = item.Value
+				elseif itemTechnicalName == "clubCard" then
+					metadata = "\"[".. item.Value .."]\""
+				elseif itemTechnicalName == "tollTicket" then
+					metadata = "\"[".. item.Value .."]\""
+				end
+
+				query = query .. "(" .. nextId .. ", " .. inventories[item.PlayerId].. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. playerSlot[item.PlayerId] .. ", " .. item.Menge .. ", " .. durability .. ", " .. metadata .. ")"
+				playerSlot[item.PlayerId] = playerSlot[item.PlayerId] + 1
+				nextId = nextId + 1
+			else
+				outputServerLog("[MIGRATION] Found unknown item " .. tostring(item.Objekt) .. " for player " .. tostring(item.PlayerId))
+			end
+		else
+			--outputServerLog("[MIGRATION] Failed to migrate item " .. tostring(item.Objekt) .. " for player " .. tostring(item.PlayerId))
+		end
+
+		if count % 5000 == 0 then
+			outputServerLog("[MIGRATION] WAIT PLAYER ITEMS " .. tostring(count) .. "/" .. tostring(total))
+			if not first then
+				first = true
+				sql:queryExec(query, sql:getPrefix())
+				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			end
+		end
+		count = count + 1
+	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
+	outputServerLog("[MIGRATION] FINISH PLAYER ITEMS " .. tostring(count) .. "/" .. tostring(total))
+
+	local items = sql:queryFetch("SELECT Id, Weapons, GunBox FROM ??_character", sql:getPrefix())
+
+	for _, item in pairs(items) do
+
+	end
+
 end
