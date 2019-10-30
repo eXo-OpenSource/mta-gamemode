@@ -159,7 +159,7 @@ function FireManager:stopCurrentFire(stats)
 		local playersByID = {}
 		local moneyForFaction = 0
 		for player, score in pairs(stats.pointsByPlayer) do
-			if isElement(player) then
+			if isElement(player) and player:getFaction() and player:getFaction():isRescueFaction() then
 				player:giveCombinedReward("Feuer gelöscht", {
 					money = {
 						mode = "give",
