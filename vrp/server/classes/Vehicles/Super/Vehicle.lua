@@ -92,15 +92,24 @@ function Vehicle:getOwner()
 	return self.m_Owner
 end
 
-function Vehicle:getOccupantsCount()
-	if not self:getOccupants() then return 0 end
-
+function Vehicle:getOccupantsCount(countAttachedPlayers)
 	local i = 0
-	for seat, player in pairs(self:getOccupants()) do
+	for seat, player in pairs(self:getOccupants(countAttachedPlayers)) do
 		i = i+1
 	end
 	return i
 end
+
+function Vehicle:getOccupants(countAttachedPlayers) -- wrapper for occupant table check and to return attached players
+	local occs = getVehicleOccupants(self) or 0
+	if countAttachedPlayers then
+		for i, player in pairs(self:getAttachedPlayers()) do
+			occs[3+i] = player -- 3+i -> 3 - amount of seats in gta vehicle, i - index 1-x where x #players attached to veh
+		end
+	end
+	return occs
+end
+
 
 function Vehicle:hasKey(player)
 	if type(player) == "userdata" then
@@ -242,6 +251,16 @@ function Vehicle:removeAttachedPlayers()
 			v:attachToVehicle(true)
 		end
 	end
+end
+
+function Vehicle:getAttachedPlayers()
+	local tbl = {}
+	for i,v in pairs(getAttachedElements(self)) do
+		if v and getElementType(v) == "player" then -- I really don't know why we have to check if there even is a 'v'... but there were warnings with some async stuff - MasterM
+			table.insert(tbl, v)
+		end
+	end
+	return tbl
 end
 
 function Vehicle:playCustomHorn(player)

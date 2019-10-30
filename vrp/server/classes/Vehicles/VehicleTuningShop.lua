@@ -182,11 +182,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
 			return
         end
 
-        -- Remove occupants
-        for seat, player in pairs(vehicle:getOccupants() or {}) do
-            if seat ~= 0 then
-                player:removeFromVehicle()
-            end
+        -- removing occupants via removeFromVehicle() is not save as laggs can delay removal and the occupants end up in the interior
+        if vehicle:getOccupantsCount(true) > 1 then 
+            hitElement:sendError(_("Lasse deine Mitfahrer zuerst aussteigen!", hitElement))
+            return
         end
 
         local vehicleType = vehicle:getVehicleType()
