@@ -36,6 +36,7 @@ function CustomInteriorManager:destructor()
 	for instance, bool in pairs(CustomInteriorManager.Map) do 
 		instance:delete()
 	end
+	delete(InteriorMapManager)
 end
 
 function CustomInteriorManager:load()
@@ -50,7 +51,7 @@ function CustomInteriorManager:load()
 					interior = row.Interior, 
 					dimension = row.Dimension,
 				}
-				Interior:new(InteriorMapManager.get(row.MapId), packData, self:isLoadOnly(row), row.Mode):setOwner(row.Owner, row.OwnerType):setId(row.Id)
+				Interior:new(InteriorMapManager.get(row.MapId), packData, true or self:isLoadOnly(row)):setOwner(row.Owner, row.OwnerType):setId(row.Id)
 			else 
 				self.m_FailLoads[row.Id] = true
 			end
@@ -65,13 +66,13 @@ function CustomInteriorManager:save(instance)
 	local updateId = not self:probe(instance:getId()) 
 
 	local query = [[
-		INSERT INTO ??_interiors (`Id`, `MapId`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Mode`, `Owner`, `OwnerType`) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+		INSERT INTO ??_interiors (`Id`, `MapId`, `PosX`, `PosY`, `PosZ`, `Interior`, `Dimension`, `Owner`, `OwnerType`) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
 		ON DUPLICATE KEY UPDATE Interior=?, Dimension=?, Owner=?, OwnerType=?;
 	]]
 
-	local id, map, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
-	sql:queryExec(query, sql:getPrefix(), id, map, x, y, z, int, dim, mode, owner, ownerType, int, dim, owner, ownerType)
+	local id, map, x, y, z, int, dim, owner, ownerType = instance:getSerializeData()
+	sql:queryExec(query, sql:getPrefix(), id, map, x, y, z, int, dim, owner, ownerType, int, dim, owner, ownerType)
 
 	instance:setId(updateId and sql:lastInsertId() or instance:getId())
 end
@@ -86,12 +87,12 @@ end
 
 function CustomInteriorManager:override(instance, oldmap)  -- used when an interior has changed its map
 	local query = [[
-		UPDATE ??_interiors SET MapId=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Mode=?, Owner=?, OwnerType=?, Date=NOW()
+		UPDATE ??_interiors SET MapId=?, PosX=?, PosY=?, PosZ=?, Interior=?, Dimension=?, Owner=?, OwnerType=?, Date=NOW()
 		WHERE Id=?;
 	]]
 
-	local id, map, x, y, z, int, dim, mode, owner, ownerType = instance:getSerializeData()
-	sql:queryExec(query, sql:getPrefix(), map, x, y, z, int, dim, mode, owner, ownerType, id)
+	local id, map, x, y, z, int, dim, owner, ownerType = instance:getSerializeData()
+	sql:queryExec(query, sql:getPrefix(), map, x, y, z, int, dim, owner, ownerType, id)
 	
 	if oldmap then 
 		if CustomInteriorManager.MapByMapId[oldmap] then 
@@ -108,10 +109,16 @@ end
 
 function CustomInteriorManager:getLastGridPoint()
 	local query = [[
-		SELECT PosX, PosY, PosZ, Interior, Dimension FROM ??_interiors
-		WHERE Mode = ? GROUP BY Id DESC LIMIT 1;
+		SELECT
+			PosX, PosY, PosZ, Dimension, Interior, Mode 
+		FROM
+			??_interiors
+		INNER JOIN ??_interiors_maps ON
+			??_interiors.MapId = ??_interiors_maps.Id AND ??_interiors_maps.Mode = ?
+		GROUP BY ??_interiors.Id DESC Limit 1;
 	]]
-	local row = sql:queryFetchSingle(query, sql:getPrefix(), DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE)
+	local row = sql:queryFetchSingle(query, sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), 
+										DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE, sql:getPrefix())
 	if row then 
 		self.m_MaxX = row.PosX 
 		self.m_MaxY = row.PosY 
@@ -126,7 +133,7 @@ function CustomInteriorManager:getLastGridPoint()
 end
 
 function CustomInteriorManager:assertRow(row) 
-	return row and row.MapId and row.PosX and row.PosY and row.PosZ and row.Interior and row.Dimension and row.Mode
+	return row and row.MapId and row.PosX and row.PosY and row.PosZ and row.Interior and row.Dimension
 end
 
 function CustomInteriorManager:isLoadOnly(row) 
@@ -199,6 +206,16 @@ function CustomInteriorManager:findPlace(instance)
 	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_INTERIOR_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
 end
 
+
+function CustomInteriorManager:getHighestDimensionByName(map) 
+	if map and map:getId() then 
+		if map:getLastDimension() then 
+			return (map:getLastDimension() and map:getLastDimension()) or 0
+		end
+	end
+end
+
+--[[
 function CustomInteriorManager:getHighestDimensionByName(insertInstance) 
 	local lastInstance
 	if CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()] then
@@ -216,14 +233,16 @@ function CustomInteriorManager:getHighestDimensionByName(insertInstance)
 		return 0
 	end
 end
-
+]]
 function CustomInteriorManager:findDimension(instance) 
 	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then 
 		instance:setDimension(1)
 		instance:setInterior(instance:getInterior())
+		instance:getMap():setLastDimension(instance:getDimension())
 	else 
-		instance:setDimension(self:getHighestDimensionByName(instance)+1)
+		instance:setDimension(self:getHighestDimensionByName(instance:getMap())+1)
 		instance:setInterior(instance:getInterior())
+		instance:getMap():setLastDimension(instance:getDimension())
 	end 
 end
 
@@ -234,7 +253,11 @@ function CustomInteriorManager:createMapInAllDimensions(instance)
 			instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
 		else 
 			instance:setMapNode(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].mapNode)
-			instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+			if not instance:getPlaceData() then
+				instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+			else 
+				instance:cloneEntranceAtPlace(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+			end
 		end
 	end
 end
@@ -296,7 +319,6 @@ function CustomInteriorManager:createTable()
   		`PosZ` float NOT NULL DEFAULT 0,
   		`Interior` int(11) NOT NULL DEFAULT 0,
   		`Dimension` int(11) NOT NULL DEFAULT 0,
-  		`Mode` int(11) NOT NULL DEFAULT 0,
   		`Owner` int(11) NOT NULL DEFAULT 0,
   		`OwnerType` int(11) NOT NULL DEFAULT 0,
   		`Date` datetime NOT NULL DEFAULT current_timestamp(),

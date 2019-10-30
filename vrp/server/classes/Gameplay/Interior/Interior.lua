@@ -6,16 +6,21 @@
 -- *
 -- ****************************************************************************
 Interior = inherit(Object)
+
+local LOCAL_DYNAMIC_INTERIOR_ENTRANCE_CREATE_FUNC = DYNAMIC_INTERIOR_ENTRANCE_CREATE_FUNC -- since we will call the function for creating entrances a lot we can assign it locally to save some time
 Interior.Map = {}
 
-function Interior:constructor(map, row, loadOnly, placeMode)
+TIME_CREATE = 0
+TIME_SEARCH = 0
+TIME_CLONE = 0
+TIME_LOAD = 0
+function Interior:constructor(map, row, loadOnly)
 	assert(map, "Bad argument @ Interior.constructor")
 	self:setMap(map)
 	self:setId(DYNAMIC_INTERIOR_TEMPORARY_ID)
 	self:setOwner(DYANMIC_INTERIOR_SERVER_OWNER, DYNAMIC_INTERIOR_SERVER_OWNER_TYPE)
 	self:setTemporary(not row)
 	self:setPlaceData(row) -- if we got already existing coordinates on this map use them
-	self:setPlaceMode(placeMode or DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE) -- either if a best place should be found / or we shuld prioritize keeping the position that originally came with the interior
 	self:setLoadOnly(loadOnly) -- in case the map has to/can be created later
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
@@ -30,6 +35,7 @@ function Interior:constructor(map, row, loadOnly, placeMode)
 end
 
 function Interior:load() 
+	local now = getTickCount()
 	if self:isLoaded() then return end
 	self.m_Map = MapParser:new(self:getMap():getPath())
 	if self.m_Map then 
@@ -38,23 +44,28 @@ function Interior:load()
 	else 
 		self:setStatus(DYNAMIC_INTERIOR_ERROR_MAP)
 	end
+	TIME_LOAD = TIME_LOAD + (getTickCount() - now)
 	return self:getStatus()
 end
 
 function Interior:create(allDimension) 
+	local now = getTickCount()
 	if allDimension or self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
-		self:getMapNode():create(not allDimension and DYNAMIC_INTERIOR_DUMMY_DIMENSION or -1, true)
+		self:getMapNode():create(not allDimension and DYNAMIC_INTERIOR_DUMMY_DIMENSION or -1)
 		self:searchEntrance()  
 		if not allDimension then 
 			self:createSphereOfInfluence()
 		end
 	else 
 		CustomInteriorManager:getSingleton():createMapInAllDimensions(self)
+		return self
 	end
 	if self:getPlaceData() then
 		if not allDimension then
 			self:setPlace(self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension)
-			self:createSphereOfInfluence()
+			if self:getMap():getMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
+				self:createSphereOfInfluence()
+			end
 		end
 	else 
 		if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE then
@@ -62,14 +73,16 @@ function Interior:create(allDimension)
 		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
 			CustomInteriorManager:getSingleton():findDimension(self)
 		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
-
+			-- do nothing
 		end
 	end
 	self:setCreated(not allDimension and true)
+	TIME_CREATE = TIME_CREATE + (getTickCount() - now)
 	return self
 end
 
 function Interior:searchEntrance() 
+	local now = getTickCount()
 	for index, object in pairs(self:getMapNode():getElements()) do 
 		if object:getType() == DYNAMIC_INTERIOR_ENTRANCE_OBJECT and object:getMarkerType() == DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE then 
 			self:setEntrance(object)
@@ -84,17 +97,36 @@ function Interior:searchEntrance()
 	if not self:getEntrance() then 
 		self:setStatus(DYNAMIC_INTERIOR_INFO_ENTRANCE)
 	end 
+	TIME_SEARCH = TIME_SEARCH + (getTickCount() - now)
 	return self:getEntrance()
 end
 
 function Interior:cloneEntrance(entrance) 
-	local assignDimension = CustomInteriorManager:getSingleton():getHighestDimensionByName(self)
+	local now = getTickCount()
+	local assignDimension = CustomInteriorManager:getSingleton():getHighestDimensionByName(self:getMap()) + 1
+	self:getMap():setLastDimension(assignDimension)
 	local clone = cloneElement(entrance)
 	clone:setColor(0, 0, 200, 200)
-	clone:setDimension(assignDimension+1)
+	clone:setDimension(assignDimension)
 	self:setEntrance(clone)
-	self:createSphereOfInfluence()
+	self:setCreated(true)
+	TIME_CLONE = TIME_CLONE + (getTickCount() - now)
 end
+
+function Interior:cloneEntranceAtPlace(entrance) -- do not use clone element when we can use create since cloneElement was somewhat very slow 
+	local now = getTickCount()
+	local clone = LOCAL_DYNAMIC_INTERIOR_ENTRANCE_CREATE_FUNC(self:getPlaceData().position, DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE, 1)
+	clone:setInterior(self:getPlaceData().interior)
+	clone:setColor(0, 0, 200, 200)
+	clone:setDimension(self:getPlaceData().dimension)
+	self:setEntrance(clone)
+	if not DEBUG then
+		self:getEntrance():setVisibleTo(root, false)
+	end
+	self:setCreated(true)
+	TIME_CLONE = TIME_CLONE + (getTickCount() - now)
+end
+
 
 function Interior:createSphereOfInfluence() -- the hypothetical bounds (including tolerance) of the custom interior
 	if self:getEntrance() then 
@@ -141,14 +173,13 @@ function Interior:forceSave()
 	return self
 end
 
-function Interior:rebuild(map, placeMode)
+function Interior:rebuild(map)
 	assert(map, "Bad argument @ Interior.rebuild")
 	local previousMap = self:getMap():getId() 
 	self:clean(self:isLoadOnly())
 	self:setCreated(false)
 	self:setMap(map)
 	self:setPlaceData(nil)
-	self:setPlaceMode(placeMode or self:getPlaceMode())
 	self:setLoaded(false)
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
@@ -161,6 +192,9 @@ function Interior:rebuild(map, placeMode)
 	end
 	if not self:isTemporary() and self:getStatus() ~= DYNAMIC_INTERIOR_NOT_FOUND then 
 		CustomInteriorManager:getSingleton():override(self, previousName)
+	end
+	if self:getRebuildCallback() then 
+		self:getRebuildCallback()(previousMap, map)
 	end
 	return self
 end
@@ -176,22 +210,24 @@ function Interior:clean(setLoadOnly) -- incase the map needs to be destroyed
 end
 
 function Interior:enter(player) 
-	if self:isCreated() then 
-		player:fadeCamera(false, .5)
-		setTimer(function() 
-			player:setDimension(self:getDimension())
-			player:setInterior(self:getInterior())
-			player:setPosition(self:getPosition())
-			setTimer(function() 
-				player:fadeCamera(true, .5)
-			end, 500, 1) 
-		end, 1000, 1)
+	if not self:isCreated() then 
+		self:create()
 	end
+	CustomInteriorManager:getSingleton():onEnterInterior(player, self) 
+	player:fadeCamera(false, .5)
+	setTimer(function() 
+		player:setDimension(self:getDimension())
+		player:setInterior(self:getInterior())
+		player:setPosition(self:getPosition())
+		setTimer(function() 
+			player:fadeCamera(true, .5)
+		end, 500, 1) 
+	end, 1000, 1)
 end
 
 function Interior:exit(player) 
 	if self:getExit() then 
-
+		CustomInteriorManager:getSingleton():onLeaveInterior(player, self) 
 		player:fadeCamera(false, .5)
 		setTimer(function() 
 			player:setDimension(self:getExit().dimension)
@@ -288,7 +324,6 @@ function Interior:setPlace(position, interior, dimension)
 	if self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
 		self:setDimension(dimension):setInterior(interior):move(position)
 	else 
-		outputChatBox(dimension)
 		self:getEntrance():setDimension(dimension)
 		self:getEntrance():setInterior(interior)
 		self:getEntrance():setPosition(position)
@@ -299,12 +334,6 @@ end
 function Interior:setExit(position, interior, dimension)
 	assert(position and interior and dimension, "Bad argument @ Interior.setExit")
 	self.m_Exit = {position = position, interior = interior or 0, dimension = dimension or 0}
-	return self
-end
-
-function Interior:setPlaceMode(mode) 
-	assert(mode and type(mode) == "number", "Bad argument @ Interior.setPlaceMode")
-	self.m_PlaceMode = mode
 	return self
 end
 
@@ -336,21 +365,45 @@ end
 function Interior:setAnyChange(bool) 
 	self.m_AnyChange = bool
 	return self
- end 
+end 
+
+function Interior:setRebuildCallback(callback) 
+	assert(callback and type(callback) == "function", "Bad argument @ Interior.setRebuildCallback")
+	self.m_RebuildCallback = callback
+	return self
+end
 
 function Interior:getStatus() return self.m_Status end
 function Interior:getMap() return self.m_InteriorMap end
 function Interior:getEntrance() return self.m_Entrance end
-function Interior:getInterior() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getInterior() end 
-function Interior:getDimension() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getDimension() end 
-function Interior:getPosition() return self:getEntrance() and isValidElement(self:getEntrance()) and self:getEntrance():getPosition() end 
+function Interior:getInterior() 
+	if self:getEntrance() and isValidElement(self:getEntrance()) then
+		return self:getEntrance():getInterior() 
+	elseif self:getPlaceData() then 
+		return self:getPlaceData().interior
+	end
+end
+function Interior:getDimension() 
+	if self:getEntrance() and isValidElement(self:getEntrance()) then
+		return self:getEntrance():getDimension() 
+	elseif self:getPlaceData() then 
+		return self:getPlaceData().dimension
+	end
+end
+function Interior:getPosition() 
+	if self:getEntrance() and isValidElement(self:getEntrance()) then
+		return self:getEntrance():getPosition() 
+	elseif self:getPlaceData() then 
+		return self:getPlaceData().position
+	end
+end
 function Interior:getMapNode() return self.m_Map end
 function Interior:getBounding() return  self:getMapNode():getBoundingBox() end
 function Interior:getSphereOfInfluence() return self.m_SphereOfInfluence end
 function Interior:getPlaceData() return self.m_PlaceData end
 function Interior:isLoaded() return self.m_Loaded end
 function Interior:isLoadOnly() return self.m_LoadOnly end
-function Interior:getPlaceMode() return self.m_PlaceMode end
+function Interior:getPlaceMode() return self:getMap():getMode() end
 function Interior:getOwner() return self.m_Owner end 
 function Interior:getOwnerType() return self.m_OwnerType end
 function Interior:isCreated() return self.m_IsCreated end
@@ -367,5 +420,6 @@ function Interior:getPlayerSerialize(player)
 end
 function Interior:getSerializeData()
 	return self:getId(), self:getMap():getId(), self:getPosition():getX(), self:getPosition():getY(), self:getPosition():getZ(), 
-	self:getInterior(), self:getDimension(), self:getPlaceMode(), self:getOwner() or 0, self:getOwnerType() or 0
+	self:getInterior(), self:getDimension(), self:getOwner() or 0, self:getOwnerType() or 0
 end
+function Interior:getRebuildCallback() return self.m_RebuildCallback end

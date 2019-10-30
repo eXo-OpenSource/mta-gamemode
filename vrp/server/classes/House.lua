@@ -50,6 +50,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	if self:getInteriorInstance() then
 		self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
+		self:getInteriorInstance():setRebuildCallback(bind(self.Event_onInteriorRebuild, self))
 	end
 	
 	--self.m_ColShape = createColSphere(position, 1)
@@ -71,7 +72,7 @@ end
 function House:assignInterior(houseInt) 
 	if STATIC_INTERIOR_ID_TO_PATH[houseInt] then 
 		self:setInteriorInstance(
-			Interior:new(STATIC_INTERIOR_ID_TO_PATH[houseInt], nil, nil, DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT)
+			Interior:new(InteriorMapManager:getSingleton():getByPath(STATIC_INTERIOR_ID_TO_PATH[houseInt], true), nil, nil, DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT)
 			:setTemporary(false)
 			:setDimension(self:getId())
 			:forceSave()
@@ -599,18 +600,23 @@ function House:buyHouse(player)
 	end
 end
 
+function House:Event_onInteriorRebuild()
+	self:refreshInteriorMarker()
+end
+
 function House:refreshInteriorMarker()
 	if not self:getInteriorInstance() then
-		--outputDebugString(("Error: Invalid Interior (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
+		outputDebugString(("Error: Invalid Interior (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
 		delete(self)
 		return
 	end
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
 	local int  = self:getInteriorInstance():getInterior()
+	local dim  = self:getInteriorInstance():getDimension()
 	local pos  = self:getInteriorInstance():getPosition()
 	self.m_HouseMarker = createMarker(pos.x, pos.y, pos.z-0.8, "cylinder", 1.2, 255, 255, 255, 125)
 	ElementInfo:new(self.m_HouseMarker, "Ausgang", 1.2, "Walking", true)
-	self.m_HouseMarker:setDimension(self.m_Id)
+	self.m_HouseMarker:setDimension(dim)
 	self.m_HouseMarker:setInterior(int)
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
 end

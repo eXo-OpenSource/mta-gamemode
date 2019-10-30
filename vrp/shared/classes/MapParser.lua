@@ -111,7 +111,7 @@ function MapParser:destructor()
 	end
 end
 
-function MapParser:create(dimension, output)
+function MapParser:create(dimension)
 	dimension = dimension or 0
 
 	local map = {}
