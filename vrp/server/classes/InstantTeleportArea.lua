@@ -1,6 +1,6 @@
 InstantTeleportArea = inherit(Object)
 
-function InstantTeleportArea:constructor(col, int, dim, pos)
+function InstantTeleportArea:constructor(col, int, dim, pos, elementTypeOnly)
     self.m_Colshape = col
     self.m_DestinationDim = dim or 0
     self.m_DestinationInt = int or 0
@@ -62,4 +62,3 @@ end
 function InstantTeleportArea:addExitEvent(event)
 	self.m_ExitEvent = event
 end
-

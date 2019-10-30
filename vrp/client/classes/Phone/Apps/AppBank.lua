@@ -93,9 +93,11 @@ function AppBank:LocateATMsClick()
 
 		for i = 1, 3 do
 			local obj = AppBank.ATMs[i]
-			local blip = Blip:new("Bank.png", obj.position.x, obj.position.y, 9999, BLIP_COLOR_CONSTANTS.Green)
-			blip:setDisplayText("Bankautomat")
-			table.insert(self.m_ATMBlips, blip)
+			if obj:getInterior() == 0 and obj:getDimension() == 0 then 
+				local blip = Blip:new("Bank.png", obj.position.x, obj.position.y, 9999, BLIP_COLOR_CONSTANTS.Green)
+				blip:setDisplayText("Bankautomat")
+				table.insert(self.m_ATMBlips, blip)
+			end
 		end
 		InfoBox:new(_"Bankautomaten in der Nähe von dir wurden auf der Karte markiert.")
 	end
