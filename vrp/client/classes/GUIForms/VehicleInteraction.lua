@@ -197,7 +197,7 @@ function VehicleInteraction:action()
                         end
                     end
                 end
-			elseif (door == 4 or door == 5) and (vehicleModel == 416 or vehicleModel == 596 or vehicleModel == 598 or vehicleModel == 599) then
+			elseif (door == 4 or door == 5) and (vehicleModel == 416) then
                 if doorRatio > 0 and localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
 					self.m_LastInteraction = getTickCount()
 					triggerServerEvent("factionRescueToggleStretcher", localPlayer, self.m_lookAtVehicle)
