@@ -871,7 +871,8 @@ function PlayerManager:Event_passwordChange(old, new1, new2)
 	end
 end
 
-function PlayerManager:Event_requestGunBoxData()
+function PlayerManager:Event_requestGunBoxData(gunBoxX, gunBoxY, gunBoxZ)
+	client.m_CurrentGunBoxPosition = Vector3(gunBoxX, gunBoxY, gunBoxZ)
 	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 end
 
@@ -880,6 +881,8 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+
+	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
 
@@ -929,6 +932,8 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
+
+	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
 
