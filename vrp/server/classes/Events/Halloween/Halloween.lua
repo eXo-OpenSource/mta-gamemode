@@ -94,6 +94,10 @@ Halloween.ms_QuestRewards = {
 	{pumpkins=5, sweets=15},
 	{pumpkins=2, sweets=10},
 	{pumpkins=10, sweets=25},
+	{pumpkins=2, sweets=10},
+	{pumpkins=2, sweets=10},
+	{pumpkins=10, sweets=25},
+	{pumpkins=25, sweets=50},
 }
 
 function Halloween:constructor()
