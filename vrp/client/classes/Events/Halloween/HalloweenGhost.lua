@@ -171,7 +171,7 @@ end
 function HalloweenGhost:preRender()
     local x1, y1, z1 = getElementPosition(self.m_Ped)
     local x2, y2, z2 = getElementPosition(localPlayer)
-    if getDistanceBetweenPoints3D(x1, y1, z1, x2, y2, z2) > 50 then
+    if getDistanceBetweenPoints3D(x1, y1, z1, x2, y2, z2) > 100 then
         return
     end
 

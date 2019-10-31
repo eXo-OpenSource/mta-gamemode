@@ -96,6 +96,10 @@ function Halloween:constructor()
 		GhostKillerQuest,
 		BigSmokeQuest,
 		KillBigSmokeQuest,
+		GhostMeetingQuest,
+		TotemQuest,
+		TotemCleanseQuest,
+		PriestQuest,
 	}
 	self.m_QuestPed = Ped.create(148, 930.69, -1123.8, 23.98)
 	self.m_QuestPed:setData("NPC:Immortal", true)
