@@ -475,6 +475,7 @@ DbElementType = {
 	House = 6;
 	Property = 7;
 	WeaponBox = 8;
+	CoolingBox = 9;
 }
 
 DbElementTypeName = {
