@@ -8,7 +8,7 @@
 InteriorMapManager = inherit(Singleton)
 InteriorMapManager.Map = {}
 InteriorMapManager.PathMap = {}
-
+InteriorMapManager.Cache = {}
 function InteriorMapManager:constructor() 
 	if not self:isTableAvailable() then 
 		print(("** [InteriorMapManager] Checking if %s_interiors_maps exists! Creating otherwise... **"):format(sql:getPrefix()))
@@ -63,10 +63,6 @@ function InteriorMapManager:remove(instance)
 	if InteriorMapManager.PathMap[instance:getPath()] then
 		InteriorMapManager.PathMap[instance:getPath()][instance:getMode()] = nil
 	end
-end
-
-function InteriorMapManager.get(id)
-	return InteriorMapManager.Map[id]
 end
 
 function InteriorMapManager:getByPath(path, createNotExists, mode)
@@ -127,3 +123,17 @@ function InteriorMapManager:rebuild(map, newmap)
 		end
 	end
 end
+
+function InteriorMapManager.get(id)
+	return InteriorMapManager.Map[id]
+end
+
+function InteriorMapManager.getCached(path)
+	if not InteriorMapManager.Cache[path] then 
+		InteriorMapManager.Cache[path] = MapParser:new(path)
+		return InteriorMapManager.Cache[path]
+	else 
+		return InteriorMapManager.Cache[path]
+	end
+end
+

@@ -250,7 +250,11 @@ function CustomInteriorManager:createMapInAllDimensions(instance)
 	if instance:getMap() then
 		if not CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] then 
 			CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] = {mapNode = instance:create(true):getMapNode(), entrance = instance:getEntrance()}
-			instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+			if not instance:getPlaceData() then
+				instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+			else 
+				instance:cloneEntranceAtPlace(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+			end
 		else 
 			instance:setMapNode(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].mapNode)
 			if not instance:getPlaceData() then
@@ -280,19 +284,13 @@ function CustomInteriorManager:onLeaveInterior(element, instance, quit)
 end
 
 function CustomInteriorManager:onLogin(player) 
-	if player.m_LogoutInterior then 
-		local data = fromJSON(player.m_LogoutInterior)
-		if data and table.size(data) > 0 then 
-			if CustomInteriorManager.MapByMapId[data.map] then 
-				for index, instance in ipairs(CustomInteriorManager.MapByMapId[data.map]) do 
-					if instance:getId() == data.id then 
-						if not instance:isCreated() then 
-							instance:create()
-						end
-						self:onEnterInterior(player, instance)
-					end
-				end
-			end 
+	if player.m_LogoutInterior and tonumber(player.m_LogoutInterior)  then 
+		local instance = CustomInteriorManager.getIdMap(player.m_LogoutInterior)
+		if instance then 
+			if not instance:isCreated() then 
+				instance:create()
+			end
+			self:onEnterInterior(player, instance)
 		end
 	end
 end

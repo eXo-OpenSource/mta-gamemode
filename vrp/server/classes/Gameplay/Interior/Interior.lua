@@ -37,7 +37,7 @@ end
 function Interior:load() 
 	local now = getTickCount()
 	if self:isLoaded() then return end
-	self.m_Map = MapParser:new(self:getMap():getPath())
+	self:setMapNode(InteriorMapManager.getCached(self:getMap():getPath()))
 	if self.m_Map then 
 		self:setStatus(DYNAMIC_INTERIOR_SUCCESS)
 		self:setLoaded(true)
@@ -413,9 +413,9 @@ function Interior:getExit() return self.m_Exit end
 function Interior:hasAnyChange() return self.m_AnyChange end
 function Interior:getPlayerSerialize(player) 
 	if not self:isTemporary() then
-		return toJSON({map = self:getMap():getId(), id = self:getId()})
+		return self:getId()
 	else 
-		return ""
+		return 0
 	end
 end
 function Interior:getSerializeData()
