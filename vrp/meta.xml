@@ -1085,6 +1085,7 @@
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/HalloweenSign.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/HalloweenGhost.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenTotem.lua" type="client"/>
 
 	<script src="client/classes/Events/Halloween/EasterEggs.lua" type="client"/>
 
@@ -1093,6 +1094,10 @@
 	<script src="client/classes/Events/Halloween/Quests/GhostKillerQuest.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/Quests/BigSmokeQuest.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/Quests/KillBigSmokeQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/GhostMeetingQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/TotemQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/TotemCleanseQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/PriestQuest.lua" type="client"/>
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
@@ -3305,9 +3310,10 @@
 	<vrpfile src="files/shader/mapeditorColorize.fx"/>
 	<vrpfile src="files/shader/vignette.fx"/>
 	<file src="files/shader/cylinder.fx"/>
-
-
 	<vrpfile src="files/shader/zoomBlur.fx"/>
+	<vrpfile src="files/shader/pedSize.fx"/>
+	<vrpfile src="files/shader/pedWall.fx"/>
+
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
