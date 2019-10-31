@@ -1024,24 +1024,25 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (220, 'parachute', 7, 'ItemWeapon', 'Fallschirm', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (221, 'satchelDetonator', 7, 'ItemWeapon', 'Fernzünder', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (222, 'colt45Bullet', 8, 'ItemWeapon', 'Colt 45 Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (223, 'deagleBullet', 8, 'ItemWeapon', 'Deagle Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (224, 'shotgunPallet', 8, 'ItemWeapon', 'Schrotpatrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (225, 'sawedOffPallet', 8, 'ItemWeapon', 'Abgesägte Schrotflintenpatrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (226, 'combatShotgunPallet', 8, 'ItemWeapon', 'SPAZ-12 Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (227, 'uziBullet', 8, 'ItemWeapon', 'Uzi Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (228, 'tec9Bullet', 8, 'ItemWeapon', 'Tec-9 Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (229, 'mp5Bullet', 8, 'ItemWeapon', 'MP5 Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (230, 'ak47Bullet', 8, 'ItemWeapon', 'AK-47 Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (231, 'm4Bullet', 8, 'ItemWeapon', 'M4 Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (232, 'rifleBullet', 8, 'ItemWeapon', 'Flintenmunition', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (233, 'sniperBullet', 8, 'ItemWeapon', 'Scharfschützengewehrkugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (234, 'rocketLauncherRocket', 8, 'ItemWeapon', 'Rakete', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (235, 'rocketLauncherHSRocket', 8, 'ItemWeapon', 'Rakete', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (236, 'flamethrowerGas', 8, 'ItemWeapon', 'Flammenwerfergas', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (237, 'minigunBullet', 8, 'ItemWeapon', 'Minigunkugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (238, 'spraycanGas', 8, 'ItemWeapon', 'Spraydosengas', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (239, 'fireExtinguisherGas', 8, 'ItemWeapon', 'Feuerlöschergas', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (240, 'cameraFilm', 8, 'ItemWeapon', 'Kamerafilm', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (223, 'taserBullet', 8, 'ItemWeapon', 'Taser Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (224, 'deagleBullet', 8, 'ItemWeapon', 'Deagle Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (225, 'shotgunPallet', 8, 'ItemWeapon', 'Schrotpatrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (226, 'sawedOffPallet', 8, 'ItemWeapon', 'Abgesägte Schrotflintenpatrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (227, 'combatShotgunPallet', 8, 'ItemWeapon', 'SPAZ-12 Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (228, 'uziBullet', 8, 'ItemWeapon', 'Uzi Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (229, 'tec9Bullet', 8, 'ItemWeapon', 'Tec-9 Patrone', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (230, 'mp5Bullet', 8, 'ItemWeapon', 'MP5 Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (231, 'ak47Bullet', 8, 'ItemWeapon', 'AK-47 Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (232, 'm4Bullet', 8, 'ItemWeapon', 'M4 Kugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (233, 'rifleBullet', 8, 'ItemWeapon', 'Flintenmunition', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (234, 'sniperBullet', 8, 'ItemWeapon', 'Scharfschützengewehrkugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (235, 'rocketLauncherRocket', 8, 'ItemWeapon', 'Rakete', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (236, 'rocketLauncherHSRocket', 8, 'ItemWeapon', 'Rakete', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (237, 'flamethrowerGas', 8, 'ItemWeapon', 'Flammenwerfergas', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (238, 'minigunBullet', 8, 'ItemWeapon', 'Minigunkugel', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (239, 'spraycanGas', 8, 'ItemWeapon', 'Spraydosengas', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (240, 'fireExtinguisherGas', 8, 'ItemWeapon', 'Feuerlöschergas', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (241, 'cameraFilm', 8, 'ItemWeapon', 'Kamerafilm', '', 'Items/1.png', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	]])
 
 
@@ -1059,6 +1060,8 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_inventory_type_categories` VALUES (1, 3);
 		INSERT INTO `vrp_inventory_type_categories` VALUES (1, 4);
 		INSERT INTO `vrp_inventory_type_categories` VALUES (1, 5);
+		INSERT INTO `vrp_inventory_type_categories` VALUES (1, 7);
+		INSERT INTO `vrp_inventory_type_categories` VALUES (1, 8);
 		INSERT INTO `vrp_inventory_type_categories` VALUES (2, 2);
 		INSERT INTO `vrp_inventory_type_categories` VALUES (3, 6);
 		INSERT INTO `vrp_inventory_type_categories` VALUES (4, 1);
@@ -1103,10 +1106,13 @@ function InventoryManager:migrate()
 	}
 
 	local WeaponMappingAmmunition = {
-		[22] = "colt45Bullet", [23] = "taser", [24] = "deagleBullet", [25] = "shotgunPallet", [26] = "sawedOffPallet", [27] = "combatShotgunPallet", [28] = "uzi", [29] = "mp5", [30] = "ak47",
-		[31] = "m4", [32] = "tec9", [33] = "rifle", [34] = "sniper", [35] = "rocketLauncher", [36] = "rocketLauncherHS", [37] = "flamethrower", [38] = "minigun",
-		[39] = "satchel", [40] = "satchelDetonator", [41] = "spraycan", [42] = "fireExtinguisher", [43] = "camera", [44] = "nightvision", [45] = "infrared",
-		[46] = "parachute"
+		[22] = "colt45Bullet", [23] = "taserBullet", [24] = "deagleBullet", [25] = "shotgunPallet", [26] = "sawedOffPallet", [27] = "combatShotgunPallet",
+		[28] = "uziBullet", [29] = "mp5Bullet", [30] = "ak47Bullet", [31] = "m4Bullet", [32] = "tec9Bullet", [33] = "rifleBullet", [34] = "sniperBullet",
+		[35] = "rocketLauncherRocket", [36] = "rocketLauncherHSRocket", [37] = "flamethrowerGas", [38] = "minigunBullet"
+	}
+
+	local WeaponAmmoIsDurability = {
+		[41] = "spraycan", [42] = "fireExtinguisher", [43] = "camera"
 	}
 
 	local items = sql:queryFetch("SELECT * FROM ??_items", sql:getPrefix())
@@ -1119,7 +1125,6 @@ function InventoryManager:migrate()
 	local players = sql:queryFetch("SELECT * FROM ??_account", sql:getPrefix())
 	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
 	local first = true
-	local params = {}
 
 	for _, player in pairs(players) do
 		if first then
@@ -1131,12 +1136,33 @@ function InventoryManager:migrate()
 	end
 
 	sql:queryExec(query, sql:getPrefix())
+
+	-- Step 1 - Create player weapon box
+	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
+	local first = true
+
+	for _, player in pairs(players) do
+		if first then
+			first = false
+		else
+			query = query .. ", "
+		end
+		query = query .. "(" .. player.Id .. ", 1, 99999, 8, 2)"
+	end
+
+	sql:queryExec(query, sql:getPrefix())
+
 	local nextId = 1
 
 	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1", sql:getPrefix())
 	local inventories = {}
+	local inventoriesWeapon = {}
 	for _, inventory in pairs(inventoriesDb) do
-		inventories[inventory.ElementId] = inventory.Id
+		if inventory.TypeId == 1 then
+			inventories[inventory.ElementId] = inventory.Id
+		elseif inventory.TypeId == 2 then
+			inventoriesWeapon[inventory.ElementId] = inventory.Id
+		end
 	end
 
 	local items = sql:queryFetch("SELECT * FROM ??_inventory_slots ORDER BY PlayerId ASC", sql:getPrefix())
@@ -1209,11 +1235,118 @@ function InventoryManager:migrate()
 	outputServerLog("[MIGRATION] FINISH PLAYER ITEMS " .. tostring(count) .. "/" .. tostring(total))
 
 	local items = sql:queryFetch("SELECT Id, Weapons, GunBox FROM ??_character", sql:getPrefix())
+	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+	local first = true
+	local count = 1
+	local total = table.size(items)
+	local weaponBoxSlot = {}
 
 	for _, item in pairs(items) do
 		-- Do some magic for weapons
+		if item.Weapons then
+			local weapons = fromJSON(item.Weapons)
+			if weapons then
+				for _, weapon in pairs(weapons) do
+					if weapon[1] ~= 0 and WeaponMapping[weapon[1]] and inventories[item.Id] then
+						if not playerSlot[item.Id] then playerSlot[item.Id] = 1 end
+						local menge = 1
+						local durability = 0
+						local metadata = "NULL"
+
+						if first then
+							first = false
+						else
+							query = query .. ", "
+						end
+
+						if not WeaponMappingAmmunition[weapon[1]] then
+							if WeaponAmmoIsDurability[weapon[1]] then
+								durability = weapon[2]
+							else
+								menge = weapon[2]
+							end
+						end
+
+						query = query .. "(" .. nextId .. ", " .. inventories[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon[1]]] .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						playerSlot[item.Id] = playerSlot[item.Id] + 1
+						nextId = nextId + 1
+
+
+						if WeaponMappingAmmunition[weapon[1]] then
+							query = query .. ", "
+
+							menge = weapon[2]
+							durability = 0
+							metadata = "NULL"
+							query = query .. "(" .. nextId .. ", " .. inventories[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon[1]]] .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+							playerSlot[item.Id] = playerSlot[item.Id] + 1
+							nextId = nextId + 1
+						end
+					end
+				end
+			end
+		end
+
+
+
+		if item.GunBox then
+			local weapons = fromJSON(item.GunBox)
+			if weapons then
+				for _, weapon in pairs(weapons) do
+					if weapon.WeaponId ~= 0 and WeaponMapping[weapon.WeaponId] and inventoriesWeapon[item.Id] then
+						if not weaponBoxSlot[item.Id] then weaponBoxSlot[item.Id] = 1 end
+						local menge = 1
+						local durability = 0
+						local metadata = "NULL"
+
+						if first then
+							first = false
+						else
+							query = query .. ", "
+						end
+
+						if not WeaponMappingAmmunition[weapon.WeaponId] then
+							if WeaponAmmoIsDurability[weapon.WeaponId] then
+								durability = weapon.Amount
+							else
+								menge = weapon.Amount
+							end
+						end
+
+						query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
+						nextId = nextId + 1
+
+
+						if WeaponMappingAmmunition[weapon.WeaponId] then
+							query = query .. ", "
+
+							menge = weapon.Amount
+							durability = 0
+							metadata = "NULL"
+							query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+							weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
+							nextId = nextId + 1
+						end
+					end
+				end
+			end
+		end
+
+		if count % 500 == 0 then
+			outputServerLog("[MIGRATION] WAIT PLAYER WEAPONS " .. tostring(count) .. "/" .. tostring(total))
+			if not first then
+				first = true
+				sql:queryExec(query, sql:getPrefix())
+				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			end
+		end
+		count = count + 1
 		-- [[[0,1],[38,90]]]
 	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
+	outputServerLog("[MIGRATION] FINISH PLAYER WEAPONS " .. tostring(count) .. "/" .. tostring(total))
 
 	local vehicles = sql:queryFetch("SELECT Id, TrunkId FROM ??_vehicles", sql:getPrefix())
 	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "

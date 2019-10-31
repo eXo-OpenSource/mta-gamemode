@@ -472,6 +472,9 @@ DbElementType = {
 	Company = 3;
 	Group = 4;
 	Vehicle = 5;
+	House = 6;
+	Property = 7;
+	WeaponBox = 8;
 }
 
 DbElementTypeName = {
