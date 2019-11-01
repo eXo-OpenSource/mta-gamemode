@@ -50,7 +50,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	if self:getInteriorInstance() then
 		self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
-		self:getInteriorInstance():setRebuildCallback(bind(self.Event_onInteriorRebuild, self))
+		self:getInteriorInstance():setCreateCallback(bind(self.refreshInteriorMarker, self))
 	end
 	
 	--self.m_ColShape = createColSphere(position, 1)
@@ -611,9 +611,9 @@ function House:refreshInteriorMarker()
 		return
 	end
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
-	local int  = self:getInteriorInstance():getInterior()
-	local dim  = self:getInteriorInstance():getDimension()
-	local pos  = self:getInteriorInstance():getPosition()
+	local int  = self:getInteriorInstance():getInterior() or 0
+	local dim  = self:getInteriorInstance():getDimension() or 0
+	local pos  = self:getInteriorInstance():getPosition() or Vector3(0, 0, 0)
 	self.m_HouseMarker = createMarker(pos.x, pos.y, pos.z-0.8, "cylinder", 1.2, 255, 255, 255, 125)
 	ElementInfo:new(self.m_HouseMarker, "Ausgang", 1.2, "Walking", true)
 	self.m_HouseMarker:setDimension(dim)

@@ -51,7 +51,7 @@ function CustomInteriorManager:load()
 					interior = row.Interior, 
 					dimension = row.Dimension,
 				}
-				Interior:new(InteriorMapManager.get(row.MapId), packData, true or self:isLoadOnly(row)):setOwner(row.Owner, row.OwnerType):setId(row.Id)
+				Interior:new(InteriorMapManager.get(row.MapId), packData, true):setOwner(row.Owner, row.OwnerType):setId(row.Id)
 			else 
 				self.m_FailLoads[row.Id] = true
 			end
@@ -120,15 +120,15 @@ function CustomInteriorManager:getLastGridPoint()
 	local row = sql:queryFetchSingle(query, sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), 
 										DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE, sql:getPrefix())
 	if row then 
-		self.m_MaxX = row.PosX 
-		self.m_MaxY = row.PosY 
-		self.m_CurrentInterior = row.Interior 
-		self.m_CurrentDimension = row.Dimension
+		self:setMaxX(row.PosX) 
+		self:setMaxY(row.PosY) 
+		self:setCurrentInterior(row.Interior) 
+		self:setCurrentDimension(row.Dimension)
 	else 
-		self.m_MaxX = DYNAMIC_INTERIOR_GRID_START_X 
-		self.m_MaxY = DYNAMIC_INTERIOR_GRID_START_Y
-		self.m_CurrentDimension = DYNAMIC_INTERIOR_GRID_START_DIMENSION 
-		self.m_CurrentInterior = DYNAMIC_INTERIOR_GRID_START_INTERIOR
+		self:setMaxX(DYNAMIC_INTERIOR_GRID_START_X) 
+		self:setMaxY(DYNAMIC_INTERIOR_GRID_START_Y)
+		self:setCurrentDimension(DYNAMIC_INTERIOR_GRID_START_DIMENSION) 
+		self:setCurrentInterior(DYNAMIC_INTERIOR_GRID_START_INTERIOR)
 	end
 end
 
@@ -172,40 +172,66 @@ end
 
 function CustomInteriorManager:findPlace(instance) 
 	local min, max = instance:getBounding()
-	if not self.m_MaxX then 
-		self.m_MaxX = DYNAMIC_INTERIOR_GRID_START_X
+	if not self:getMaxX() then 
+		self:setMaxX(DYNAMIC_INTERIOR_GRID_START_X)
 	end
-	if not self.m_CurrentY then 
-		self.m_CurrentY = DYNAMIC_INTERIOR_GRID_START_Y 
-		self.m_MaxY = self.m_CurrentY + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE
+	if not self:getCurrentY() then 
+		self:setCurrentY(DYNAMIC_INTERIOR_GRID_START_Y) 
+		self:setMaxY(self:getCurrentY() + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE)
 	end
-	if self.m_MaxY < (self.m_CurrentY + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE) then 
-		self.m_MaxY = self.m_CurrentY + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE
+	if self:getMaxY() < (self:getCurrentY() + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE) then 
+		self:setMaxY(self:getCurrentY() + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE)
 	end
-	local nextMaxX = self.m_MaxX + (max.x - min.x)  + DYNAMIC_INTERIOR_EDGE_TOLERANCE
+	local nextMaxX = self:getMaxX() + (max.x - min.x)  + DYNAMIC_INTERIOR_EDGE_TOLERANCE
 	if nextMaxX > DYNAMIC_INTERIOR_GRID_END_X then 
-		self.m_MaxX = DYNAMIC_INTERIOR_GRID_START_X 
-		self.m_CurrentY = self.m_MaxY
-		if self.m_MaxY > DYNAMIC_INTERIOR_GRID_END_Y then 
-			self.m_MaxX = DYNAMIC_INTERIOR_GRID_START_X 
-			self.m_CurrentY = DYNAMIC_INTERIOR_GRID_START_Y 
-			self.m_MaxY = self.m_CurrentY + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE
-			self.m_CurrentDimension = self.m_CurrentDimension + 1
-			if self.m_CurrentDimension > DYNAMIC_INTERIOR_MAX_DIMENSION then 
-				self.m_CurrentDimension = 1
-				self.m_CurrentInterior = self.m_CurrentInterior + 1
+		self:setMaxX(DYNAMIC_INTERIOR_GRID_START_X)
+		self:setCurrentY(self:getMaxY())
+		if self:getMaxY() > DYNAMIC_INTERIOR_GRID_END_Y then 
+			self:setMaxX(DYNAMIC_INTERIOR_GRID_START_X) 
+			self:setCurrentY(DYNAMIC_INTERIOR_GRID_START_Y) 
+			self:setMaxY(self:getCurrentY() + (max.y-min.y) + DYNAMIC_INTERIOR_EDGE_TOLERANCE)
+			self:setCurrentDimension(self:getCurrentDimension() + 1)
+			if self:getCurrentDimension() > DYNAMIC_INTERIOR_MAX_DIMENSION then 
+				self:setCurrentDimension(1)
+				self:setCurrentInterior(self:getCurrentInterior() + 1)
 			end
 		end
 	else 
-		self.m_MaxX = nextMaxX
+		self:setMaxX(nextMaxX)
 	end
-
-	self.m_MaxX = math.floor(self.m_MaxX) 
-	self.m_MaxY = math.floor(self.m_MaxY)
-
-	instance:setPlace(Vector3(self.m_MaxX, self.m_MaxY, DYNAMIC_INTERIOR_GRID_START_Z), self.m_CurrentInterior, self.m_CurrentDimension)
+	instance:setPlace(Vector3(self:getMaxX(), self:getMaxY(), DYNAMIC_INTERIOR_GRID_START_Z), self:getCurrentInterior(), self:getCurrentDimension())
 end
 
+function CustomInteriorManager:setMaxX(value)
+	self.m_MaxX = math.floor(value)
+end
+
+function CustomInteriorManager:setMaxY(value) 
+	self.m_MaxY = math.floor(value)
+end
+
+function CustomInteriorManager:setCurrentX(value)
+	self.m_CurrentX = math.floor(value) 
+end
+
+function CustomInteriorManager:setCurrentY(value)
+	self.m_CurrentY = math.floor(value) 
+end
+
+function CustomInteriorManager:setCurrentDimension(value)
+	self.m_CurrentDimension = value
+end
+
+function CustomInteriorManager:setCurrentInterior(value) 
+	self.m_CurrentInterior = value
+end
+
+function CustomInteriorManager:getMaxX() return self.m_MaxX end
+function CustomInteriorManager:getMaxY() return self.m_MaxY end
+function CustomInteriorManager:getCurrentX() return self.m_CurrentX end
+function CustomInteriorManager:getCurrentY() return self.m_CurrentY end
+function CustomInteriorManager:getCurrentDimension() return self.m_CurrentDimension end
+function CustomInteriorManager:getCurrentInterior() return self.m_CurrentInterior end
 
 function CustomInteriorManager:getHighestDimensionByName(map) 
 	if map and map:getId() then 
@@ -215,53 +241,29 @@ function CustomInteriorManager:getHighestDimensionByName(map)
 	end
 end
 
---[[
-function CustomInteriorManager:getHighestDimensionByName(insertInstance) 
-	local lastInstance
-	if CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()] then
-		for index, instance in pairs(CustomInteriorManager.MapByMapId[insertInstance:getMap():getId()]) do 
-			if instance ~= insertInstance and (instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION or instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION) then 
-				lastInstance = instance
-			end
-		end
-		if lastInstance then 
-			return lastInstance:getDimension()
-		else 
-			return 0
-		end
-	else 
-		return 0
-	end
-end
-]]
 function CustomInteriorManager:findDimension(instance) 
 	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then 
 		instance:setDimension(1)
 		instance:setInterior(instance:getInterior())
 		instance:getMap():setLastDimension(instance:getDimension())
-	else 
+	else
 		instance:setDimension(self:getHighestDimensionByName(instance:getMap())+1)
 		instance:setInterior(instance:getInterior())
 		instance:getMap():setLastDimension(instance:getDimension())
 	end 
+	instance:updatePlace()
 end
 
 function CustomInteriorManager:createMapInAllDimensions(instance) 
 	if instance:getMap() then
-		if not CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] then 
-			CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] = {mapNode = instance:create(true):getMapNode(), entrance = instance:getEntrance()}
-			if not instance:getPlaceData() then
-				instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
-			else 
-				instance:cloneEntranceAtPlace(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
-			end
+		if not CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] then
+			instance:create(true) 
+			CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] = {entrance = instance:getEntrance()}
+		end
+		if not instance:getPlaceData() then
+			instance:clone(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
 		else 
-			instance:setMapNode(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].mapNode)
-			if not instance:getPlaceData() then
-				instance:cloneEntrance(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
-			else 
-				instance:cloneEntranceAtPlace(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
-			end
+			instance:place(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
 		end
 	end
 end
@@ -271,7 +273,6 @@ function CustomInteriorManager:onEnterInterior(element, instance)
 		element:setCustomInterior(instance)
 	end
 end
-
 
 function CustomInteriorManager:onLeaveInterior(element, instance, quit) 
 	if element:getType() == "player" then 

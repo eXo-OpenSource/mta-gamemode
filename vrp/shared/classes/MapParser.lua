@@ -83,26 +83,28 @@ local createFuncs = {
 	end;
 }
 
-function MapParser:constructor(path)
+function MapParser:constructor(path, data)
 	self.m_MapData = {}
 	self.m_Maps = {}
+	if not data then
+		local xmlRoot = xmlLoadFile(path)
 
-	local xmlRoot = xmlLoadFile(path)
-
-	local infoNode = xmlRoot:findChild("info", 0)
-	if infoNode then
-		self.m_Mapname = infoNode:getAttribute("Mapname")
-		self.m_Author = infoNode:getAttribute("Author")
-	end
-
-	for k, node in pairs(xmlNodeGetChildren(xmlRoot)) do
-		local nodeName = xmlNodeGetName(node)
-		if readFuncs[nodeName] then
-			table.insert(self.m_MapData, readFuncs[nodeName](xmlNodeGetAttributes(node)))
+		local infoNode = xmlRoot:findChild("info", 0)
+		if infoNode then
+			self.m_Mapname = infoNode:getAttribute("Mapname")
+			self.m_Author = infoNode:getAttribute("Author")
 		end
-	end
 
-	xmlUnloadFile(xmlRoot)
+		for k, node in pairs(xmlNodeGetChildren(xmlRoot)) do
+			local nodeName = xmlNodeGetName(node)
+			if readFuncs[nodeName] then
+				table.insert(self.m_MapData, readFuncs[nodeName](xmlNodeGetAttributes(node)))
+			end
+		end
+		xmlUnloadFile(xmlRoot)
+	else 
+		self.m_MapData = data
+	end 
 end
 
 function MapParser:destructor()
@@ -113,7 +115,6 @@ end
 
 function MapParser:create(dimension)
 	dimension = dimension or 0
-
 	local map = {}
 	for k, info in pairs(self.m_MapData) do
 		local element = createFuncs[info.type](info)
@@ -129,9 +130,21 @@ function MapParser:create(dimension)
 	return #self.m_Maps
 end
 
+function MapParser:createSingle(data, dimension, index)
+	if not self:getElements(index or 1) then 
+		self.m_Maps[index or 1] = {}
+	end
+	local element = createFuncs[data.type](data)
+	if isElement(element) then
+		element._type = data.type
+		local correctDimension = (dimension < 0 and element:getType() == "marker" and 0) or dimension
+		setElementDimension(element, correctDimension)
+	end
+	table.insert(self:getElements(1), element)
+end
+
 function MapParser:destroy(index)
 	assert(self.m_Maps[index], "No Map with index "..index)
-
 	for k, element in pairs(self.m_Maps[index]) do
 		if isElement(element) then
 			destroyElement(element)
@@ -146,6 +159,10 @@ end
 
 function MapParser:getElements(mapIndex)
 	return self.m_Maps[mapIndex or 1]
+end
+
+function MapParser:getData() 
+	return self.m_MapData
 end
 
 function MapParser:getElementsByType(elementType, mapIndex)
@@ -171,7 +188,7 @@ function MapParser:move(parent, position, index)
 	if self:getElements(index) then 
 		if isValidElement(parent) then 
 			for indx, object in pairs(self:getElements(index)) do 
-				attachRotationAdjusted ( object, parent)
+				attachRotationAdjusted ( object, parent, true)
 			end
 			parent:setPosition(position)
 			for indx, object in pairs(self:getElements(index)) do 
@@ -197,17 +214,17 @@ function MapParser:setInterior(interior, index)
 	end
 end
 
-function MapParser:getBoundingBox(index)  
-	if self:getElements(index) then 
+function MapParser:getBoundingBox()  
+	if self:getData() then 
 		local minX, minY, maxX, maxY, minZ, maxZ = 8000, 8000, -8000, -8000, 36000, 0
-		for indx, obj in pairs(self:getElements(index)) do 
-    		if obj.position.x < minX then minX = obj.position.x end
-   			if obj.position.y < minY then minY = obj.position.y end
-			if obj.position.z < minZ then minZ = obj.position.z end
-    		if obj.position.x > maxX then maxX = obj.position.x end
-    		if obj.position.y > maxY then maxY = obj.position.y end
-    		if obj.position.y > maxY then maxY = obj.position.y end
-			if obj.position.z > maxZ then maxZ = obj.position.z end
+		for indx, obj in pairs(self:getData()) do 
+    		if obj.x < minX then minX = obj.x end
+   			if obj.y < minY then minY = obj.y end
+			if obj.z < minZ then minZ = obj.z end
+    		if obj.x > maxX then maxX = obj.x end
+    		if obj.y > maxY then maxY = obj.y end
+    		if obj.y > maxY then maxY = obj.y end
+			if obj.z > maxZ then maxZ = obj.z end
 		end
 		return Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ)
 	end

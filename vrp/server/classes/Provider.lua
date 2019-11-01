@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Provider = inherit(Singleton)
 addEvent("onClientRequestFile", true)
-local DOWNLOAD_SPEED = 8 * 1024 * 1024 -- 8MiB/s
+DOWNLOAD_SPEED = 8 * 1024 * 1024 -- 8MiB/s
 
 function Provider:constructor()
 	addEventHandler("onClientRequestFile", resourceRoot, bind(Provider.onClientRequestFile, self))

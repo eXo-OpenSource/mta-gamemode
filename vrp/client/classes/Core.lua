@@ -104,6 +104,7 @@ function Core:ready() --onClientResourceStart
 	RadioStationManager:new()
 	DimensionManager:new()
 	Inventory:new()
+	InteriorManager:new()
 	Guns:new()
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))

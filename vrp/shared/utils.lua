@@ -791,7 +791,7 @@ function getColorNameFromVehicle(c1, c2)
 	end
 end
 
-function attachRotationAdjusted ( from, to )
+function attachRotationAdjusted ( from, to, output )
 	--// to should have a 0-rotation vector
     local frPosX, frPosY, frPosZ = getElementPosition( from )
     local frRotX, frRotY, frRotZ = getElementRotation( from )
@@ -809,7 +809,7 @@ function attachRotationAdjusted ( from, to )
 
     offsetPosX, offsetPosY, offsetPosZ = applyInverseRotation ( offsetPosX, offsetPosY, offsetPosZ, toRotX, toRotY, toRotZ )
 
-    attachElements( from, to, offsetPosX, offsetPosY, offsetPosZ, offsetRotX, offsetRotY, offsetRotZ )
+    local b = attachElements( from, to, offsetPosX, offsetPosY, offsetPosZ, offsetRotX, offsetRotY, offsetRotZ )
 end
 
 function applyInverseRotation ( x,y,z, rx,ry,rz )
