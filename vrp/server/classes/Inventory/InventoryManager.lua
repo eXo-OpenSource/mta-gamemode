@@ -1051,6 +1051,8 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_inventory_types` VALUES (2, 'weaponbox', 'Waffenbox', '[ [\"faction\": [1, 2, 3] ] ]');
 		INSERT INTO `vrp_inventory_types` VALUES (3, 'coolingBox', 'Kühlbox', '');
 		INSERT INTO `vrp_inventory_types` VALUES (4, 'trunk', 'Kofferaum', '');
+		INSERT INTO `vrp_inventory_types` VALUES (5, 'factionDepot', 'Fraktions Depot', '');
+		INSERT INTO `vrp_inventory_types` VALUES (6, 'property', 'Immobilie', '');
 	]])
 
 
@@ -1350,7 +1352,6 @@ function InventoryManager:migrate()
 	local vehicles = sql:queryFetch("SELECT Id, TrunkId FROM ??_vehicles", sql:getPrefix())
 	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
 	local first = true
-	local params = {}
 
 	for _, vehicle in pairs(vehicles) do
 		if first then
@@ -1495,5 +1496,120 @@ function InventoryManager:migrate()
 	outputServerLog("[MIGRATION] FINISH VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
 
 
+	local items = sql:queryFetch("SELECT * FROM ??_depot", sql:getPrefix())
+	local factions = sql:queryFetch("SELECT * FROM ??_factions", sql:getPrefix())
+	local properties = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
+	-- Id	OwnerType	Weapons	Items	Equipments
+	-- 1	faction	[ [ { "Munition": 0, "Id": 1, "Waffe": 0 }, { "Munition": 0, "Id": 2, "Waffe": 2 }, { "Munition": 0, "Id": 3, "Waffe": 33 }, { "Munition": 0, "Id": 4, "Waffe": 0 }, { "Munition": 0, "Id": 5, "Waffe": 1 }, { "Munition": 0, "Id": 6, "Waffe": 40 }, { "Munition": 0, "Id": 7, "Waffe": 0 }, { "Munition": 0, "Id": 8, "Waffe": 1 }, { "Munition": 0, "Id": 9, "Waffe": 0 }, { "Munition": 0, "Id": 10, "Waffe": 0 }, { "Munition": 0, "Id": 11, "Waffe": 0 }, { "Munition": 0, "Id": 12, "Waffe": 0 }, { "Munition": 0, "Id": 13, "Waffe": 0 }, { "Munition": 0, "Id": 14, "Waffe": 0 }, { "Munition": 0, "Id": 15, "Waffe": 0 }, { "Munition": 0, "Id": 16, "Waffe": 39 }, { "Munition": 0, "Id": 17, "Waffe": 37 }, { "Munition": 0, "Id": 18, "Waffe": 0 }, { "Munition": 0, "Id": 19, "Waffe": 0 }, { "Munition": 0, "Id": 20, "Waffe": 0 }, { "Munition": 0, "Id": 21, "Waffe": 0 }, { "Munition": 196, "Id": 22, "Waffe": 118 }, { "Munition": 160, "Id": 23, "Waffe": 8 }, { "Munition": 216, "Id": 24, "Waffe": 117 }, { "Munition": 799, "Id": 25, "Waffe": 136 }, { "Munition": 81, "Id": 26, "Waffe": 2 }, { "Munition": 0, "Id": 27, "Waffe": 0 }, { "Munition": 8, "Id": 28, "Waffe": 1 }, { "Munition": 456, "Id": 29, "Waffe": 157 }, { "Munition": 341, "Id": 30, "Waffe": 47 }, { "Munition": 239, "Id": 31, "Waffe": 101 }, { "Munition": 2, "Id": 32, "Waffe": 1 }, { "Munition": 480, "Id": 33, "Waffe": 37 }, { "Munition": 13, "Id": 34, "Waffe": 2 }, { "Munition": 0, "Id": 35, "Waffe": 0 }, { "Munition": 0, "Id": 36, "Waffe": 1 }, { "Munition": 0, "Id": 37, "Waffe": 0 }, { "Munition": 0, "Id": 38, "Waffe": 0 }, { "Munition": 0, "Id": 39, "Waffe": 0 }, { "Munition": 0, "Id": 40, "Waffe": 0 }, { "Munition": 0, "Id": 41, "Waffe": 0 }, { "Munition": 0, "Id": 42, "Waffe": 0 }, { "Munition": 0, "Id": 43, "Waffe": 0 }, { "Munition": 0, "Id": 44, "Waffe": 0 }, { "Munition": 0, "Id": 45, "Waffe": 76 } ] ]	[ [ { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 } ] ]	[ { "Rauchgranate": 0, "Gasgranate": 0, "Granate": 0, "Gasmaske": 0, "Fallschirm": 0, "SLAM": 0, "DefuseKit": 0, "RPG-7": 0, "Scharfschützengewehr": 0 } ]
+	-- faction, GroupProperty
 	-- depots next?
+	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
+	local first = true
+	local depotOwners = {}
+	for _, item in pairs(items) do
+		if item.OwnerType == "faction" then
+			for _, v in pairs(factions) do
+				if item.Id == v.Depot then
+					if first then first = false else query = query .. ", " end
+					depotOwners[item.Id] = {ElementId = v.Id, ElementType = 2}
+					query = query .. "(" .. v.Id .. ", 2, 99999, 10000, 5)"
+					break
+				end
+			end
+		elseif item.OwnerType == "GroupProperty" then
+			for _, v in pairs(properties) do
+				if item.Id == v.DepotId then
+					if first then first = false else query = query .. ", " end
+					depotOwners[item.Id] = {ElementId = v.Id, ElementType = 7}
+					query = query .. "(" .. v.Id .. ", 7, 99999, 40, 6)" -- well
+					break
+				end
+			end
+		end
+	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
+
+	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 2 OR ElementType = 7", sql:getPrefix())
+	local inventories = {}
+
+	for _, inventory in pairs(inventoriesDb) do
+		for depot, v in pairs(depotOwners) do
+			if v.ElementType == inventory.ElementType and v.ElementId == inventory.ElementId then
+				inventories[depot] = inventory.Id
+				break
+			end
+		end
+	end
+
+
+	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+	local first = true
+	local total = table.size(items)
+	local count = 1
+	local depotSlot = {}
+
+	for _, item in pairs(items) do
+		local inventoryId = inventories[item.Id]
+		local weapons = fromJSON(item.Weapons)
+		local items2 = fromJSON(item.Items)
+		local equipments = item.Equipments and fromJSON(item.Equipments) or false
+
+		if weapons then
+			-- [ [ { "Id": 1, "Waffe": 0, "Munition": 0 }, { "Id": 2, "Waffe": 0, "Munition": 0 }, { "Id": 3, "Waffe": 10, "Munition": 0 }, { "Id": 4, "Waffe": 0, "Munition": 0 }, { "Id": 5, "Waffe": 7, "Munition": 0 }, { "Id": 6, "Waffe": 8, "Munition": 0 }, { "Id": 7, "Waffe": 0, "Munition": 0 }, { "Id": 8, "Waffe": 0, "Munition": 0 }, { "Id": 9, "Waffe": 0, "Munition": 0 }, { "Id": 10, "Waffe": 0, "Munition": 0 }, { "Id": 11, "Waffe": 0, "Munition": 0 }, { "Id": 12, "Waffe": 0, "Munition": 0 }, { "Id": 13, "Waffe": 0, "Munition": 0 }, { "Id": 14, "Waffe": 0, "Munition": 0 }, { "Id": 15, "Waffe": 0, "Munition": 0 }, { "Id": 16, "Waffe": 10, "Munition": 20 }, { "Id": 17, "Waffe": 0, "Munition": 0 }, { "Id": 18, "Waffe": 0, "Munition": 0 }, { "Id": 19, "Waffe": 0, "Munition": 0 }, { "Id": 20, "Waffe": 0, "Munition": 0 }, { "Id": 21, "Waffe": 0, "Munition": 0 }, { "Id": 22, "Waffe": 27, "Munition": 47 }, { "Id": 23, "Waffe": 0, "Munition": 0 }, { "Id": 24, "Waffe": 8, "Munition": 0 }, { "Id": 25, "Waffe": 31, "Munition": 168 }, { "Id": 26, "Waffe": 0, "Munition": 40 }, { "Id": 27, "Waffe": 0, "Munition": 0 }, { "Id": 28, "Waffe": 22, "Munition": 40 }, { "Id": 29, "Waffe": 0, "Munition": 0 }, { "Id": 30, "Waffe": 22, "Munition": 11 }, { "Id": 31, "Waffe": 4, "Munition": 0 }, { "Id": 32, "Waffe": 18, "Munition": 0 }, { "Id": 33, "Waffe": 0, "Munition": 10 }, { "Id": 34, "Waffe": 5, "Munition": 6 }, { "Id": 35, "Waffe": 3, "Munition": 0 }, { "Id": 36, "Waffe": 0, "Munition": 0 }, { "Id": 37, "Waffe": 0, "Munition": 0 }, { "Id": 38, "Waffe": 0, "Munition": 0 }, { "Id": 39, "Waffe": 0, "Munition": 0 }, { "Id": 40, "Waffe": 0, "Munition": 0 }, { "Id": 41, "Waffe": 0, "Munition": 0 }, { "Id": 42, "Waffe": 0, "Munition": 0 }, { "Id": 43, "Waffe": 0, "Munition": 0 }, { "Id": 44, "Waffe": 0, "Munition": 0 }, { "Id": 45, "Waffe": 10, "Munition": 0 } ] ]
+			for _, weapon in pairs(weapons) do
+				if weapon.Id ~= 0 and (weapon.Waffe ~= 0 or weapon.Munition ~= 0) and WeaponMapping[weapon.Id] then
+					if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
+
+					for i = 1, weapon.Waffe, 1 do
+						if first then first = false else query = query .. ", " end
+						local menge = 1
+						local durability = 0
+						local metadata = "NULL"
+
+						if not WeaponMappingAmmunition[weapon.Id] then
+							--[[
+							if WeaponAmmoIsDurability[weapon.Id] then
+								durability = weapon.Munition
+							else
+								menge = weapon.Munition
+							end
+							]]
+							-- TODO well fucked?
+						end
+
+						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[WeaponMapping[weapon.Id]] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						depotSlot[inventoryId] = depotSlot[inventoryId] + 1
+						nextId = nextId + 1
+					end
+
+
+					if WeaponMappingAmmunition[weapon.Id] and weapon.Munition ~= 0 then
+						if first then first = false else query = query .. ", " end
+
+						menge = weapon.Munition
+						durability = 0
+						metadata = "NULL"
+						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.Id]] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						depotSlot[inventoryId] = depotSlot[inventoryId] + 1
+						nextId = nextId + 1
+					end
+				end
+			end
+		end
+
+
+
+		if count % 500 == 0 then
+			outputServerLog("[MIGRATION] WAIT VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
+			if not first then
+				first = true
+				sql:queryExec(query, sql:getPrefix())
+				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			end
+		end
+		count = count + 1
+	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
 end
