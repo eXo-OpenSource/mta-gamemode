@@ -10,6 +10,7 @@ InteriorMapManager.Map = {}
 InteriorMapManager.PathMap = {}
 InteriorMapManager.Cache = {}
 InteriorMapManager.Interior = {}
+InteriorMapManager.MapToInterior = {}
 function InteriorMapManager:constructor() 
 	if not self:isTableAvailable() then 
 		print(("** [InteriorMapManager] Checking if %s_interiors_maps exists! Creating otherwise... **"):format(sql:getPrefix()))
@@ -97,7 +98,6 @@ function InteriorMapManager:createTable()
 		`Id` INT(11) NOT NULL AUTO_INCREMENT,
 		`Path` VARCHAR(256) NOT NULL,
 		`Mode` TINYINT NOT NULL DEFAULT 3,
-		`Interior` INT(11) NULL DEFAULT '0',
 		`Category` INT(11) NOT NULL DEFAULT 0, 
 		PRIMARY KEY (`Id`),
 		UNIQUE INDEX `Path` (`Path`, `Mode`)
@@ -138,3 +138,19 @@ function InteriorMapManager.getCached(path)
 	end
 end
 
+
+function InteriorMapManager:getInterior(map)
+	for k, info in pairs(map:getData()) do
+		if info.markertype == DYNAMIC_INTERIOR_ENTRANCE_OBJECT_TYPE then
+			return info.interior
+		end
+	end
+end
+
+function InteriorMapManager:getMapInterior(path) 
+	if not InteriorMapManager.MapToInterior[path] then 
+		InteriorMapManager.MapToInterior[path] = self:getInterior(InteriorMapManager.getCached(path)) or 0
+	else 
+		return InteriorMapManager.MapToInterior[path]
+	end
+end

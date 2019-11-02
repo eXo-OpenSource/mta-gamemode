@@ -8,14 +8,15 @@
 Interior = inherit(Object)
 Interior.Map = {}
 
-function Interior:constructor(map, row)
+function Interior:constructor(map, row, generated)
 	assert(map, "Bad argument @ Interior.constructor")
 	self.m_Clients = {} -- all clients currently using this 
 	self:setMap(map)
 	self:setId(DYNAMIC_INTERIOR_TEMPORARY_ID)
 	self:setOwner(DYANMIC_INTERIOR_SERVER_OWNER, DYNAMIC_INTERIOR_SERVER_OWNER_TYPE)
 	self:setTemporary(not row)
-	self:setPlaceData(row) -- if we got already existing coordinates on this map use them
+	self:setGenerated(toboolean(generated), true)
+	self:setPlaceData(self:isGenerated() and row) -- if we got already existing coordinates on this map use them
 	self:setLoadOnly(true) -- every instance is load only and will only be created when someone enters it
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
@@ -41,10 +42,11 @@ function Interior:load()
 	else 
 		self:setStatus(DYNAMIC_INTERIOR_ERROR_MAP)
 	end
+	CustomInteriorManager:getSingleton():onInteriorLoad(self)
 	return self:getStatus()
 end
 
-function Interior:create(allDimension) 
+function Interior:create(allDimension) -- allDimensions means that a root-map is created and we dont want to list this root map since its only for copying its mapdata
 	if allDimension or self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
 		self:search()  
 	else 
@@ -57,14 +59,17 @@ function Interior:create(allDimension)
 		end
 	else 
 		if self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
-			CustomInteriorManager:getSingleton():findDimension(self)
+			CustomInteriorManager:getSingleton():onInteriorCreate(self) 
+			self:setEntrance(InteriorEntrance:new(self, self:getPosition(), self:getInterior(), CustomInteriorManager:getSingleton():getHighestDimensionByInterior(self)))
+			self:updatePlace()
 		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.FIND_BEST_PLACE then 
 			CustomInteriorManager:getSingleton():findPlace(self)
 		elseif self:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
 			-- do nothing
 		end
 	end
-	self:setCreated(not allDimension and true)
+	self:setCreated(not allDimension)
+	self:setGenerated(not allDimension)
 	return self
 end
 
@@ -82,15 +87,18 @@ function Interior:search()
 end
 
 function Interior:clone(entrance) 
-	local assignDimension = CustomInteriorManager:getSingleton():getHighestDimensionByName(self:getMap()) + 1
-	self:getMap():setLastDimension(assignDimension)
-	self:setEntrance(InteriorEntrance:new(self, entrance:getPosition(), entrance:getInterior(), assignDimension))
+	CustomInteriorManager:getSingleton():onInteriorCreate(self) 
+	local dimension = CustomInteriorManager:getSingleton():getHighestDimensionByInterior(self, entrance:getInterior())
+	self:setEntrance(InteriorEntrance:new(self, entrance:getPosition(), entrance:getInterior(), dimension))
 	self:updatePlace()
+	self:setGenerated(true)
 end
 
-function Interior:place(entrance)
+function Interior:place(entrance)	
+	CustomInteriorManager:getSingleton():onInteriorCreate(self) 
 	self:setEntrance(InteriorEntrance:new(self, self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension))
 	self:updatePlace()
+	self:setGenerated(true)
 end
 
 function Interior:forceSave() 
@@ -100,10 +108,12 @@ end
 
 function Interior:rebuild(map)
 	assert(map, "Bad argument @ Interior.rebuild")
-	local previousMap = self:getMap():getId() 
+	local previousMap = self:getMap():getId()  
+	CustomInteriorManager:getSingleton():onInteriorRebuild(self)
 	self:setCreated(false)
 	self:setMap(map)
 	self:setPlaceData(nil)
+	self:setGenerated(false)
 	self:setLoaded(false)
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
@@ -176,7 +186,7 @@ end
 
 function Interior:destructor()
 	if not self:isTemporary() then
-		if not self:getPlaceData() or self:hasAnyChange() then
+		if self:getId() == DYNAMIC_INTERIOR_TEMPORARY_ID or self:hasAnyChange() then
 			CustomInteriorManager:getSingleton():save(self)
 		end
 	end
@@ -256,8 +266,8 @@ function Interior:setExit(position, interior, dimension)
 	return self
 end
 
-function Interior:setCreated(bool) 
-	self.m_IsCreated = bool
+function Interior:setCreated(bool)  -- sets wether the map has been created in generally (note the difference between creation and generation is that creation is called each time a user creates the map for the first time ingame where as generation only applies once when the right coortdinates have been found)
+	self.m_Created = bool
 end
 
 function Interior:setTemporary(bool) 
@@ -285,6 +295,12 @@ function Interior:setAnyChange(bool)
 	self.m_AnyChange = bool
 	return self
 end 
+
+function Interior:setGenerated(bool, initial) -- sets wether the entrance-coordinates have been already generated
+	self.m_Generated = bool 
+	self:setAnyChange(not initial)
+	return self
+end
 
 function Interior:setRebuildCallback(callback) 
 	assert(callback and type(callback) == "function", "Bad argument @ Interior.setRebuildCallback")
@@ -319,7 +335,8 @@ function Interior:isLoadOnly() return self.m_LoadOnly end
 function Interior:getPlaceMode() return self:getMap():getMode() end
 function Interior:getOwner() return self.m_Owner end 
 function Interior:getOwnerType() return self.m_OwnerType end
-function Interior:isCreated() return self.m_IsCreated end
+function Interior:isCreated() return self.m_Created end
+function Interior:isGenerated() return self.m_Generated end
 function Interior:getId() return self.m_Id end
 function Interior:isTemporary() return self.m_IsTemporary end
 function Interior:getExit() return self.m_Exit end
@@ -332,8 +349,11 @@ function Interior:getPlayerSerialize(player)
 	end
 end
 function Interior:getSerializeData()
-	return self:getId(), self:getMap():getId(), self:getPosition():getX(), self:getPosition():getY(), self:getPosition():getZ(), 
-	self:getInterior(), self:getDimension(), self:getOwner() or 0, self:getOwnerType() or 0
+	return self:getId(), self:getMap():getId(),
+	(self:isCreated() and self:getPosition():getX()) or 0, 
+	(self:isCreated() and self:getPosition():getY()) or 0, 
+	(self:isCreated() and self:getPosition():getZ()) or 0, 
+	(self:isCreated() and self:getInterior()) or InteriorMapManager:getSingleton():getMapInterior(self:getMap():getPath()), (self:isCreated() and self:getDimension()) or 0, self:getOwner() or 0, self:getOwnerType() or 0, toboolean(self:isGenerated())
 end
 function Interior:getRebuildCallback() return self.m_RebuildCallback end
 function Interior:getCreateCallback() return self.m_CreateCallback end
