@@ -11,7 +11,7 @@
 - [ ] Replace all old giveItem & takeItem
 - [ ] Look for hardcoded item ids
 - [ ] Write testing list
-- [ ] Implement inventory change events
+- [x] Implement inventory change events
 - [ ] Write inventory migration
 - [ ] Write world items migration
 - [ ] Replace vehicle trunk, property inventory, weapon depot with new inventory

@@ -1432,7 +1432,7 @@ function InventoryManager:migrate()
 							end
 						end
 
-						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. trunkSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
 						trunkSlot[item.Id] = trunkSlot[item.Id] + 1
 						nextId = nextId + 1
 					end
@@ -1499,10 +1499,7 @@ function InventoryManager:migrate()
 	local items = sql:queryFetch("SELECT * FROM ??_depot", sql:getPrefix())
 	local factions = sql:queryFetch("SELECT * FROM ??_factions", sql:getPrefix())
 	local properties = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
-	-- Id	OwnerType	Weapons	Items	Equipments
-	-- 1	faction	[ [ { "Munition": 0, "Id": 1, "Waffe": 0 }, { "Munition": 0, "Id": 2, "Waffe": 2 }, { "Munition": 0, "Id": 3, "Waffe": 33 }, { "Munition": 0, "Id": 4, "Waffe": 0 }, { "Munition": 0, "Id": 5, "Waffe": 1 }, { "Munition": 0, "Id": 6, "Waffe": 40 }, { "Munition": 0, "Id": 7, "Waffe": 0 }, { "Munition": 0, "Id": 8, "Waffe": 1 }, { "Munition": 0, "Id": 9, "Waffe": 0 }, { "Munition": 0, "Id": 10, "Waffe": 0 }, { "Munition": 0, "Id": 11, "Waffe": 0 }, { "Munition": 0, "Id": 12, "Waffe": 0 }, { "Munition": 0, "Id": 13, "Waffe": 0 }, { "Munition": 0, "Id": 14, "Waffe": 0 }, { "Munition": 0, "Id": 15, "Waffe": 0 }, { "Munition": 0, "Id": 16, "Waffe": 39 }, { "Munition": 0, "Id": 17, "Waffe": 37 }, { "Munition": 0, "Id": 18, "Waffe": 0 }, { "Munition": 0, "Id": 19, "Waffe": 0 }, { "Munition": 0, "Id": 20, "Waffe": 0 }, { "Munition": 0, "Id": 21, "Waffe": 0 }, { "Munition": 196, "Id": 22, "Waffe": 118 }, { "Munition": 160, "Id": 23, "Waffe": 8 }, { "Munition": 216, "Id": 24, "Waffe": 117 }, { "Munition": 799, "Id": 25, "Waffe": 136 }, { "Munition": 81, "Id": 26, "Waffe": 2 }, { "Munition": 0, "Id": 27, "Waffe": 0 }, { "Munition": 8, "Id": 28, "Waffe": 1 }, { "Munition": 456, "Id": 29, "Waffe": 157 }, { "Munition": 341, "Id": 30, "Waffe": 47 }, { "Munition": 239, "Id": 31, "Waffe": 101 }, { "Munition": 2, "Id": 32, "Waffe": 1 }, { "Munition": 480, "Id": 33, "Waffe": 37 }, { "Munition": 13, "Id": 34, "Waffe": 2 }, { "Munition": 0, "Id": 35, "Waffe": 0 }, { "Munition": 0, "Id": 36, "Waffe": 1 }, { "Munition": 0, "Id": 37, "Waffe": 0 }, { "Munition": 0, "Id": 38, "Waffe": 0 }, { "Munition": 0, "Id": 39, "Waffe": 0 }, { "Munition": 0, "Id": 40, "Waffe": 0 }, { "Munition": 0, "Id": 41, "Waffe": 0 }, { "Munition": 0, "Id": 42, "Waffe": 0 }, { "Munition": 0, "Id": 43, "Waffe": 0 }, { "Munition": 0, "Id": 44, "Waffe": 0 }, { "Munition": 0, "Id": 45, "Waffe": 76 } ] ]	[ [ { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 }, { "Item": 0, "Amount": 0 } ] ]	[ { "Rauchgranate": 0, "Gasgranate": 0, "Granate": 0, "Gasmaske": 0, "Fallschirm": 0, "SLAM": 0, "DefuseKit": 0, "RPG-7": 0, "Scharfschützengewehr": 0 } ]
-	-- faction, GroupProperty
-	-- depots next?
+
 	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Size, Slots, TypeId) VALUES "
 	local first = true
 	local depotOwners = {}
@@ -1556,7 +1553,6 @@ function InventoryManager:migrate()
 		local equipments = item.Equipments and fromJSON(item.Equipments) or false
 
 		if weapons then
-			-- [ [ { "Id": 1, "Waffe": 0, "Munition": 0 }, { "Id": 2, "Waffe": 0, "Munition": 0 }, { "Id": 3, "Waffe": 10, "Munition": 0 }, { "Id": 4, "Waffe": 0, "Munition": 0 }, { "Id": 5, "Waffe": 7, "Munition": 0 }, { "Id": 6, "Waffe": 8, "Munition": 0 }, { "Id": 7, "Waffe": 0, "Munition": 0 }, { "Id": 8, "Waffe": 0, "Munition": 0 }, { "Id": 9, "Waffe": 0, "Munition": 0 }, { "Id": 10, "Waffe": 0, "Munition": 0 }, { "Id": 11, "Waffe": 0, "Munition": 0 }, { "Id": 12, "Waffe": 0, "Munition": 0 }, { "Id": 13, "Waffe": 0, "Munition": 0 }, { "Id": 14, "Waffe": 0, "Munition": 0 }, { "Id": 15, "Waffe": 0, "Munition": 0 }, { "Id": 16, "Waffe": 10, "Munition": 20 }, { "Id": 17, "Waffe": 0, "Munition": 0 }, { "Id": 18, "Waffe": 0, "Munition": 0 }, { "Id": 19, "Waffe": 0, "Munition": 0 }, { "Id": 20, "Waffe": 0, "Munition": 0 }, { "Id": 21, "Waffe": 0, "Munition": 0 }, { "Id": 22, "Waffe": 27, "Munition": 47 }, { "Id": 23, "Waffe": 0, "Munition": 0 }, { "Id": 24, "Waffe": 8, "Munition": 0 }, { "Id": 25, "Waffe": 31, "Munition": 168 }, { "Id": 26, "Waffe": 0, "Munition": 40 }, { "Id": 27, "Waffe": 0, "Munition": 0 }, { "Id": 28, "Waffe": 22, "Munition": 40 }, { "Id": 29, "Waffe": 0, "Munition": 0 }, { "Id": 30, "Waffe": 22, "Munition": 11 }, { "Id": 31, "Waffe": 4, "Munition": 0 }, { "Id": 32, "Waffe": 18, "Munition": 0 }, { "Id": 33, "Waffe": 0, "Munition": 10 }, { "Id": 34, "Waffe": 5, "Munition": 6 }, { "Id": 35, "Waffe": 3, "Munition": 0 }, { "Id": 36, "Waffe": 0, "Munition": 0 }, { "Id": 37, "Waffe": 0, "Munition": 0 }, { "Id": 38, "Waffe": 0, "Munition": 0 }, { "Id": 39, "Waffe": 0, "Munition": 0 }, { "Id": 40, "Waffe": 0, "Munition": 0 }, { "Id": 41, "Waffe": 0, "Munition": 0 }, { "Id": 42, "Waffe": 0, "Munition": 0 }, { "Id": 43, "Waffe": 0, "Munition": 0 }, { "Id": 44, "Waffe": 0, "Munition": 0 }, { "Id": 45, "Waffe": 10, "Munition": 0 } ] ]
 			for _, weapon in pairs(weapons) do
 				if weapon.Id ~= 0 and (weapon.Waffe ~= 0 or weapon.Munition ~= 0) and WeaponMapping[weapon.Id] then
 					if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
@@ -1598,7 +1594,64 @@ function InventoryManager:migrate()
 			end
 		end
 
+		if items2 then
+			for _, v in pairs(items2) do
+				if ItemMapping[v.Item] then
+					local itemTechnicalName = ItemMapping[v.Item]
+					if first then first = false else query = query .. ", " end
+					if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
 
+					local menge = v.Amount
+					local durability = 0
+					local metadata = "NULL"
+
+					--[[
+						Kleine Kühltasche
+						Kühlbox
+						Kühltasche
+					]]
+					if v.Value and v.Value ~= "" then
+						if itemTechnicalName == "clothing" then
+							metadata = "\"[".. v.Value .."]\""
+						elseif itemTechnicalName == "can" then
+							durability = v.Value
+						elseif itemTechnicalName == "donutBox" then
+							durability = v.Value
+						elseif itemTechnicalName == "bambooFishingRod" or itemTechnicalName == "fishingRod" or itemTechnicalName == "expertFishingRod" or itemTechnicalName == "legendaryFishingRod" then
+						--	durability = v.WearLevel
+						elseif itemTechnicalName == "swimmer" or itemTechnicalName == "spinner" then
+						--	durability = v.WearLevel
+						elseif itemTechnicalName == "clubCard" then
+							metadata = "\"[".. v.Value .."]\""
+						elseif itemTechnicalName == "tollTicket" then
+							metadata = "\"[".. v.Value .."]\""
+						end
+					end
+
+					query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+					depotSlot[inventoryId] = depotSlot[inventoryId] + 1
+					nextId = nextId + 1
+				end
+			end
+		end
+
+		--[[
+			[ {
+				"Rauchgranate": 0,
+				"Gasgranate": 0,
+				"Granate": 0,
+				"Gasmaske": 0,
+				"Fallschirm": 0,
+				"SLAM": 0,
+				"DefuseKit": 0,
+				"RPG-7": 0,
+				"Scharfschützengewehr": 0
+			} ]
+		]]
+
+		if equipments then
+
+		end
 
 		if count % 500 == 0 then
 			outputServerLog("[MIGRATION] WAIT VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
