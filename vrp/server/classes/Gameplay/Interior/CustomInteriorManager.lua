@@ -51,7 +51,7 @@ function CustomInteriorManager:load()
 					interior = row.Interior, 
 					dimension = row.Dimension,
 				}
-				Interior:new(InteriorMapManager.get(row.MapId), packData, true):setOwner(row.Owner, row.OwnerType):setId(row.Id)
+				Interior:new(InteriorMapManager.get(row.MapId), packData):setOwner(row.Owner, row.OwnerType):setId(row.Id)
 			else 
 				self.m_FailLoads[row.Id] = true
 			end

@@ -9,6 +9,7 @@ InteriorMapManager = inherit(Singleton)
 InteriorMapManager.Map = {}
 InteriorMapManager.PathMap = {}
 InteriorMapManager.Cache = {}
+InteriorMapManager.Interior = {}
 function InteriorMapManager:constructor() 
 	if not self:isTableAvailable() then 
 		print(("** [InteriorMapManager] Checking if %s_interiors_maps exists! Creating otherwise... **"):format(sql:getPrefix()))
@@ -29,7 +30,7 @@ end
 function InteriorMapManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_interiors_maps", sql:getPrefix())
 	for index, row in pairs(result) do 
-		InteriorMap:new(row.Id, row.Path, row.Mode, row.LastDimension)
+		InteriorMap:new(row.Id, row.Path, row.Mode, row.Interior)
 	end
 end
 
@@ -96,7 +97,7 @@ function InteriorMapManager:createTable()
 		`Id` INT(11) NOT NULL AUTO_INCREMENT,
 		`Path` VARCHAR(256) NOT NULL,
 		`Mode` TINYINT NOT NULL DEFAULT 3,
-		`LastDimension` INT(11) NULL DEFAULT '0',
+		`Interior` INT(11) NULL DEFAULT '0',
 		`Category` INT(11) NOT NULL DEFAULT 0, 
 		PRIMARY KEY (`Id`),
 		UNIQUE INDEX `Path` (`Path`, `Mode`)

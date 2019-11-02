@@ -8,7 +8,7 @@
 Interior = inherit(Object)
 Interior.Map = {}
 
-function Interior:constructor(map, row, loadOnly)
+function Interior:constructor(map, row)
 	assert(map, "Bad argument @ Interior.constructor")
 	self.m_Clients = {} -- all clients currently using this 
 	self:setMap(map)
@@ -16,7 +16,7 @@ function Interior:constructor(map, row, loadOnly)
 	self:setOwner(DYANMIC_INTERIOR_SERVER_OWNER, DYNAMIC_INTERIOR_SERVER_OWNER_TYPE)
 	self:setTemporary(not row)
 	self:setPlaceData(row) -- if we got already existing coordinates on this map use them
-	self:setLoadOnly(loadOnly) -- in case the map has to/can be created later
+	self:setLoadOnly(true) -- every instance is load only and will only be created when someone enters it
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
 			if not self:isLoadOnly() then
@@ -43,7 +43,6 @@ function Interior:load()
 	end
 	return self:getStatus()
 end
-
 
 function Interior:create(allDimension) 
 	if allDimension or self:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION then
@@ -94,7 +93,6 @@ function Interior:place(entrance)
 	self:updatePlace()
 end
 
-
 function Interior:forceSave() 
 	CustomInteriorManager:getSingleton():save(self)
 	return self
@@ -132,7 +130,25 @@ function Interior:enter(player)
 			self:getCreateCallback()()
 		end
 	end
+	self:send(player)
+	player:setDimension(self:getDimension())
+	player:setInterior(self:getInterior())
+	player:setPosition(self:getPosition())
 	self.m_Clients[player] = true
+	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
+end
+
+function Interior:exit(player) 
+	if self:getExit() then 
+		player:setDimension(self:getExit().dimension)
+		player:setInterior(self:getExit().interior)
+		player:setPosition(self:getExit().position)
+		self.m_Clients[player] = nil
+		CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
+	end
+end
+
+function Interior:send(player)
 	player:triggerEvent("InteriorManager:onStartMap", #self:getMapNode():getData())
 	triggerLatentClientEvent(player, "InteriorManager:onEnter",
 		DOWNLOAD_SPEED, false, root,		
@@ -143,34 +159,8 @@ function Interior:enter(player)
 			dimension = self:getPlaceData().dimension
 		}
 	)
-
-	CustomInteriorManager:getSingleton():onEnterInterior(player, self) 
-	player:fadeCamera(false, .5)
-	setTimer(function() 
-		player:setDimension(self:getDimension())
-		player:setInterior(self:getInterior())
-		player:setPosition(self:getPosition())
-		setTimer(function() 
-			player:fadeCamera(true, .5)
-		end, 500, 1) 
-	end, 1000, 1)
 end
 
-function Interior:exit(player) 
-	if self:getExit() then 
-		CustomInteriorManager:getSingleton():onLeaveInterior(player, self) 
-		self.m_Clients[player] = nil
-		player:fadeCamera(false, .5)
-		setTimer(function() 
-			player:setDimension(self:getExit().dimension)
-			player:setInterior(self:getExit().interior)
-			player:setPosition(self:getExit().position)
-			setTimer(function() 
-				player:fadeCamera(true) 
-			end, 500, 1)
-		end, 1000, 1)
-	end
-end
 
 function Interior:Event_OnElementEnter(element) 
 	if self:getDimension() == element:getDimension() then 
