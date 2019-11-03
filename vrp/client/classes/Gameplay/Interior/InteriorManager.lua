@@ -17,6 +17,7 @@ function InteriorManager:constructor()
 	self.m_UpdateBind = bind(self.check, self)
 end
 
+
 function InteriorManager:Event_onStartMap(mapSize) 
 	self.m_MapSize = mapSize
 end
@@ -39,6 +40,7 @@ function InteriorManager:initialise(data)
 	self.m_Interior = data.interior
 	self.m_Count = 0
 	self:create(map, self:getDimension())
+	self.m_WaitForSpawn = self:getDimension() ~= localPlayer:getDimension() or self:getInterior() ~= localPlayer:getInterior()
 end
 
 function InteriorManager:create(map, dimension) 
@@ -56,6 +58,8 @@ function InteriorManager:onMapComplete()
 	self:getMap():setInterior(self:getInterior(), 1)
 	self:getMap():setDimension(self:getDimension(), 1)
 	removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
+	self.m_StartInterior = localPlayer:getInterior() 
+	self.m_StartDimension = localPlayer:getDimension()
 	addEventHandler("onClientPreRender", root, self.m_UpdateBind)
 end
 
@@ -101,7 +105,13 @@ end
 
 
 function InteriorManager:check() 
-	if localPlayer:getDimension() ~= self:getDimension() or localPlayer:getInterior() ~= self:getInterior() then 
+	if self.m_WaitForSpawn then 
+		local isSpawned = self:getInterior() == localPlayer:getInterior() and self:getDimension() == localPlayer:getDimension()
+		if isSpawned then 
+			self.m_WaitForSpawn = false
+		end
+	end
+	if not self.m_WaitForSpawn and  (localPlayer:getDimension() ~= self:getDimension() or localPlayer:getInterior() ~= self:getInterior()) then
 		removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
 		triggerServerEvent("InteriorManager:onDetectLeave", localPlayer, self:getInterior(), self:getDimension())
 	end

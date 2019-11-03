@@ -10,7 +10,7 @@ Interior.Map = {}
 
 function Interior:constructor(map, row, generated)
 	assert(map, "Bad argument @ Interior.constructor")
-	self.m_Clients = {} -- all clients currently using this 
+	self.m_Clients = {} -- all clients currently using this interior 
 	self:setMap(map)
 	self:setId(DYNAMIC_INTERIOR_TEMPORARY_ID)
 	self:setOwner(DYANMIC_INTERIOR_SERVER_OWNER, DYNAMIC_INTERIOR_SERVER_OWNER_TYPE)
@@ -155,7 +155,6 @@ function Interior:enter(player, noWarp)
 	player:setPrivateSync("inInterior", true)
 	player.m_Interior = self 
 	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
-
 end
 
 function Interior:exit(player, noWarp) 
@@ -184,9 +183,11 @@ function Interior:forceExit()
 end
 
 function Interior:antifall(player)
-	player:setDimension(self:getDimension())
-	player:setInterior(self:getInterior())
-	player:setPosition(self:getPosition())
+	if player.m_Interior == self then
+		player:setDimension(self:getDimension())
+		player:setInterior(self:getInterior())
+		player:setPosition(self:getPosition())
+	end
 end
 
 function Interior:send(player)

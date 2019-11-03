@@ -7,7 +7,6 @@
 -- ****************************************************************************
 InteriorEntrance = inherit(Object) 
 
-
 function InteriorEntrance:constructor(super, position, interior, dimension) 
 	self:setSuper(super)
 	self:setPosition(position)

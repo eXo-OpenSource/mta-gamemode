@@ -33,7 +33,7 @@ function CustomInteriorManager:constructor()
 	end
 	if self:isReady() then
 		self:getLastGridPoint()
-		PlayerManager:getSingleton():getQuitHook():register(bind(self.onQuit, self))
+		PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 	end
 end
 
@@ -91,7 +91,6 @@ function CustomInteriorManager:probe(id) -- probe to see if an id exists
 	local result = sql:queryFetchSingle(query, sql:getPrefix(), id)
 	return result and result.Id
 end
-
 
 function CustomInteriorManager:getInteriorDimensionCount(interior) -- probe to get the highest dimension for any given gta-sa interior
 	local query = [[
@@ -152,48 +151,10 @@ function CustomInteriorManager:assertRow(row)
 	return row and row.MapId and row.PosX and row.PosY and row.PosZ and row.Interior and row.Dimension
 end
 
-function CustomInteriorManager:isLoadOnly(row) 
-	return row.OwnerType and row.Owner == 1
-end
-
 function CustomInteriorManager:add(instance)
 	CustomInteriorManager.Map[instance] = true
 	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then CustomInteriorManager.MapByMapId[instance:getMap():getId()] = {} end 
 	CustomInteriorManager.MapByMapId[instance:getMap():getId()][instance] = true
-end
-
-function CustomInteriorManager:onInteriorLoad(instance)
-	if not instance:isGenerated() and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION or instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
-		local findInterior = InteriorMapManager:getSingleton():getMapInterior(instance:getMap():getPath())
-		if not CustomInteriorManager.MapByInterior[tostring(findInterior)] then 
-			CustomInteriorManager.MapByInterior[tostring(findInterior)] = self:getInteriorDimensionCount(findInterior) + 1 
-		else 
-			CustomInteriorManager.MapByInterior[tostring(findInterior)] = CustomInteriorManager.MapByInterior[tostring(findInterior)] + 1
-		end
-	end 
-end
-
-function CustomInteriorManager:onInteriorRebuild(instance, previousMap, newMap)
-	local newInterior =  InteriorMapManager:getSingleton():getMapInterior(newMap:getPath()) 
-	if instance:getPlaceMode() ~= previousMap:getMode() or InteriorMapManager:getSingleton():getMapInterior(previousMap:getPath()) ~= newInterior then
-		if instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION or instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
-			if not CustomInteriorManager.MapByInterior[tostring(newInterior)] then 
-				CustomInteriorManager.MapByInterior[tostring(newInterior)] = self:getInteriorDimensionCount(newInterior) + 1 
-			else 
-				CustomInteriorManager.MapByInterior[tostring(newInterior)] = CustomInteriorManager.MapByInterior[tostring(newInterior)] + 1
-			end
-			if CustomInteriorManager.MapByInterior[tostring(newInterior)] then 
-				CustomInteriorManager.MapByInterior[tostring(newInterior)] = CustomInteriorManager.MapByInterior[tostring(newInterior)] - 1
-				if CustomInteriorManager.MapByInterior[tostring(newInterior)] < 0 then 
-					CustomInteriorManager.MapByInterior[tostring(newInterior)] = 0
-				end
-			end
-		end
-	end
-end
-
-function CustomInteriorManager:onInteriorCreate(instance) 
-
 end
 
 function CustomInteriorManager:remove(instance) 
@@ -210,11 +171,6 @@ end
 
 function CustomInteriorManager:removeId(instance) 
 	CustomInteriorManager.IdMap[instance:getId()] = nil 
-end
-
-
-function CustomInteriorManager:getMapCount(id) 
-	return (not CustomInteriorManager.MapByMapId[id] and 0) or table.size(CustomInteriorManager.MapByMapId[id])
 end
 
 function CustomInteriorManager:findPlace(instance) 
@@ -249,6 +205,98 @@ function CustomInteriorManager:findPlace(instance)
 	instance:setPlace(Vector3(self:getMaxX(), self:getMaxY(), DYNAMIC_INTERIOR_GRID_START_Z), self:getCurrentInterior(), self:getCurrentDimension())
 end
 
+
+function CustomInteriorManager:onInteriorLoad(instance)
+	if not instance:isGenerated() and instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION or instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
+		local findInterior = InteriorMapManager:getSingleton():getMapInterior(instance:getMap():getPath())
+		if not CustomInteriorManager.MapByInterior[tostring(findInterior)] then 
+			CustomInteriorManager.MapByInterior[tostring(findInterior)] = self:getInteriorDimensionCount(findInterior) + 1 
+		else 
+			CustomInteriorManager.MapByInterior[tostring(findInterior)] = CustomInteriorManager.MapByInterior[tostring(findInterior)] + 1
+		end
+	end 
+end
+
+function CustomInteriorManager:onInteriorRebuild(instance, previousMap, newMap)
+	local newInterior =  InteriorMapManager:getSingleton():getMapInterior(newMap:getPath()) 
+	if instance:getPlaceMode() ~= previousMap:getMode() or InteriorMapManager:getSingleton():getMapInterior(previousMap:getPath()) ~= newInterior then
+		if instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION or instance:getPlaceMode() == DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION_ONE_DIMENSION then 
+			if not CustomInteriorManager.MapByInterior[tostring(newInterior)] then 
+				CustomInteriorManager.MapByInterior[tostring(newInterior)] = self:getInteriorDimensionCount(newInterior) + 1 
+			else 
+				CustomInteriorManager.MapByInterior[tostring(newInterior)] = CustomInteriorManager.MapByInterior[tostring(newInterior)] + 1
+			end
+			if CustomInteriorManager.MapByInterior[tostring(newInterior)] then 
+				CustomInteriorManager.MapByInterior[tostring(newInterior)] = CustomInteriorManager.MapByInterior[tostring(newInterior)] - 1
+				if CustomInteriorManager.MapByInterior[tostring(newInterior)] < 0 then 
+					CustomInteriorManager.MapByInterior[tostring(newInterior)] = 0
+				end
+			end
+		end
+	end
+end
+
+function CustomInteriorManager:createMapInAllDimensions(instance) 
+	if instance:getMap() then
+		if not CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] then
+			instance:create(true) 
+			CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] = {entrance = instance:getEntrance()}
+		end
+		if not instance:getPlaceData() then
+			instance:clone(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+		else 
+			instance:place(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
+		end
+	end
+end
+
+function CustomInteriorManager:onInteriorCreate(instance) 
+
+end
+
+function CustomInteriorManager:onEnterInterior(element, instance) 
+	if element:getType() == "player" and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
+		element:setCustomInterior(instance)
+	end
+end
+
+function CustomInteriorManager:onLeaveInterior(element, instance, quit) 
+	if element:getType() == "player" then 
+		if element:getCustomInterior() == instance and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then
+			if not quit then
+				element:setCustomInterior()
+			end
+		end
+	end
+end
+
+function CustomInteriorManager:onPlayerLogin(player) 
+	if player.m_LogoutInterior and tonumber(player.m_LogoutInterior)  then 
+		local instance = CustomInteriorManager.getIdMap(player.m_LogoutInterior, true)
+		if instance then 
+			instance:enter(player, true)
+		end
+	end
+end
+
+function CustomInteriorManager:onPlayerQuit(player) 
+	if player:getCustomInterior() then 
+		self:onLeaveInterior(player, player:getCustomInterior(), true)
+	end
+end
+
+function CustomInteriorManager:Event_onAntiFall() 
+	if client.m_Interior then 
+		client.m_Interior:antifall(client)
+	end
+end
+
+function CustomInteriorManager:Event_onDetectLeave(interior, dimension) 
+	if client.m_Interior and client.m_Interior:getInterior() == interior and client.m_Interior:getDimension() == dimension then 
+		client.m_Interior:exit(client, true)
+	end
+end
+
 function CustomInteriorManager:setMaxX(value)
 	self.m_MaxX = math.floor(value)
 end
@@ -280,6 +328,10 @@ function CustomInteriorManager:getCurrentY() return self.m_CurrentY end
 function CustomInteriorManager:getCurrentDimension() return self.m_CurrentDimension end
 function CustomInteriorManager:getCurrentInterior() return self.m_CurrentInterior end
 
+function CustomInteriorManager:getMapCount(id) 
+	return (not CustomInteriorManager.MapByMapId[id] and 0) or table.size(CustomInteriorManager.MapByMapId[id])
+end
+
 function CustomInteriorManager:getHighestDimensionByInterior(instance)
 	local findInterior =  InteriorMapManager:getSingleton():getMapInterior(instance:getMap():getPath()) 
 	if not CustomInteriorManager.MapByInterior[tostring(findInterior)] then 
@@ -289,64 +341,6 @@ function CustomInteriorManager:getHighestDimensionByInterior(instance)
 	instance:updatePlace()
 	return CustomInteriorManager.MapByInterior[tostring(findInterior)]
 end
-
-function CustomInteriorManager:createMapInAllDimensions(instance) 
-	if instance:getMap() then
-		if not CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] then
-			instance:create(true) 
-			CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()] = {entrance = instance:getEntrance()}
-		end
-		if not instance:getPlaceData() then
-			instance:clone(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
-		else 
-			instance:place(CustomInteriorManager.KeepPositionMaps[instance:getMap():getId()].entrance)
-		end
-	end
-end
-
-function CustomInteriorManager:onEnterInterior(element, instance) 
-	if element:getType() == "player" and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
-		element:setCustomInterior(instance)
-	end
-end
-
-function CustomInteriorManager:onLeaveInterior(element, instance, quit) 
-	if element:getType() == "player" then 
-		if element:getCustomInterior() == instance and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then
-			if not quit then
-				element:setCustomInterior()
-			end
-		end
-	end
-end
-
-function CustomInteriorManager:onLogin(player) 
-	if player.m_LogoutInterior and tonumber(player.m_LogoutInterior)  then 
-		local instance = CustomInteriorManager.getIdMap(player.m_LogoutInterior, true)
-		if instance then 
-			instance:enter(player, true)
-		end
-	end
-end
-
-function CustomInteriorManager:onQuit(player) 
-	if player:getCustomInterior() then 
-		self:onLeaveInterior(player, player:getCustomInterior(), true)
-	end
-end
-
-function CustomInteriorManager:Event_onAntiFall() 
-	if client.m_Interior then 
-		client.m_Interior:antifall(client)
-	end
-end
-
-function CustomInteriorManager:Event_onDetectLeave(interior, dimension) 
-	if client.m_Interior and client.m_Interior:getInterior() == interior and client.m_Interior:getDimension() == dimension then 
-		client.m_Interior:exit(client, true)
-	end
-end
-
 
 function CustomInteriorManager:isReady() return self.m_Ready end
 

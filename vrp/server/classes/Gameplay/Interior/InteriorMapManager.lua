@@ -115,12 +115,11 @@ end
 function InteriorMapManager:rebuild(map, newmap)
 	if InteriorMapManager.Map[map:getId()] then 
 		if CustomInteriorManager.MapByMapId[map:getId()] then 
-			for index, instance in ipairs(CustomInteriorManager.MapByMapId[map:getId()]) do 
+			for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
 				instance:rebuild(newmap)
 			end
 			if CustomInteriorManager.KeepPositionMaps[map:getId()] then 
-				CustomInteriorManager.KeepPositionMaps[map:getId()].mapNode:delete() 
-				CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:destroy()
+				CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:delete()
 				CustomInteriorManager.KeepPositionMaps[map:getId()] = nil
 			end
 		end
@@ -139,7 +138,6 @@ function InteriorMapManager.getCached(path)
 		return InteriorMapManager.Cache[path]
 	end
 end
-
 
 function InteriorMapManager:getInterior(map)
 	for k, info in pairs(map:getData()) do

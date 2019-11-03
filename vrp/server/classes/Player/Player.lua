@@ -454,8 +454,6 @@ function Player:spawn()
 		self.m_UniqueInterior = 0
 	end
 
-	CustomInteriorManager:getSingleton():onLogin(self)
-
 	-- Apply and delete health data
 	self:setHealth(math.max(self.m_Health, 1))
 	self:setArmor(self.m_Armor)
@@ -510,6 +508,8 @@ function Player:spawn()
 	triggerEvent("WeaponAttach:onInititate", self)
 
 	VehicleTexture.requestTextures(self)
+
+	CustomInteriorManager:getSingleton():onPlayerLogin(self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
