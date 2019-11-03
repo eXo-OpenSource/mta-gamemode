@@ -80,10 +80,12 @@ function InteriorMapManager:getByPath(path, createNotExists, mode)
 end
 
 function InteriorMapManager:getPathWithMode(path, searchMode) 
-	for mode, instance in pairs(InteriorMapManager.PathMap[path]) do 
-		if not searchMode then return instance end -- get the first instance if no mode is provided
-		if instance:getMode() == searchMode then 
-			return instance
+	if InteriorMapManager.PathMap[path] then
+		for mode, instance in pairs(InteriorMapManager.PathMap[path]) do 
+			if not searchMode then return instance end -- get the first instance if no mode is provided
+			if instance:getMode() == searchMode then 
+				return instance
+			end
 		end
 	end
 end
@@ -150,6 +152,7 @@ end
 function InteriorMapManager:getMapInterior(path) 
 	if not InteriorMapManager.MapToInterior[path] then 
 		InteriorMapManager.MapToInterior[path] = self:getInterior(InteriorMapManager.getCached(path)) or 0
+		return InteriorMapManager.MapToInterior[path]
 	else 
 		return InteriorMapManager.MapToInterior[path]
 	end

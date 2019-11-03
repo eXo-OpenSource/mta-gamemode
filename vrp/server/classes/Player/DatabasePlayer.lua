@@ -158,7 +158,6 @@ function DatabasePlayer:load(sync)
 		self.m_RadioFrequency = fromJSON(row.RadioCommunication or "") or {}
 		RadioCommunication:getSingleton():loadPlayer(self)
 		DamageManager:getSingleton():loadPlayer(self, row.Injury)
-		CustomInteriorManager:getSingleton():onLogin(self)
 	end
 
 	self:setSpawnLocation(row.SpawnLocation)

@@ -241,6 +241,7 @@
 	<script src="server/constants/planes.lua" type="server"/>
 
 	<!-- Interiors -->
+	<script src="server/classes/Gameplay/Interior/InteriorLoadManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Interior/CustomInteriorManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Interior/Interior.lua" type="server"/>
 	<script src="server/classes/Gameplay/Interior/InteriorEntrance.lua" type="server"/>
@@ -1165,6 +1166,7 @@
 	<script src="client/classes/Gameplay/ThrowObject.lua" type="client"/>
 
 	<!-- Interior -->
+	<script src="client/classes/Gameplay/Interior/Antifall.lua" type="client"/>
 	<script src="client/classes/Gameplay/Interior/InteriorManager.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/InjurySystem/Damage.lua" type="client"/>

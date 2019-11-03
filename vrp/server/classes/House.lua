@@ -33,9 +33,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_BankAccountServer = BankServer.get("action.house_rob")
 	self.m_BankAccountServer2 = BankServer.get("server.house")
 	self.m_InteriorID = interiorID
-	if not assignInterior then
-		self:setInteriorInstance(CustomInteriorManager.getIdMap(interiorID))
-	else 
+	if assignInterior then -- only for migration
 		self:assignInterior(interiorID)
 	end
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.House)
@@ -46,38 +44,36 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 		self.m_BankAccount:save()
 	end
 
-	self:refreshInteriorMarker()
-
-	if self:getInteriorInstance() then
-		self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
-		self:getInteriorInstance():setCreateCallback(bind(self.refreshInteriorMarker, self))
-	end
-	
-	--self.m_ColShape = createColSphere(position, 1)
-
 	if owner == false then
 		self.m_Keys = {}
 	else
 		self.m_Keys = table.setIndexToInteger(self.m_Keys)
 	end
 
-	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
-	--addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
-
 	self:updatePickup()
+	InteriorLoadManager.add(self.m_InteriorID, bind(self.loadInterior, self))
+end
+
+function House:loadInterior() 
+	self:setInteriorInstance(CustomInteriorManager.getIdMap(self.m_InteriorID))
+
+	if self:getInteriorInstance() then
+		self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
+		self:getInteriorInstance():setCreateCallback(bind(self.refreshInteriorMarker, self))
+	end
+
+	self:refreshInteriorMarker()
+
 end
 
 function House:assignInterior(houseInt) 
 	if STATIC_INTERIOR_ID_TO_PATH[houseInt] then 
-		self:setInteriorInstance(
-			Interior:new(InteriorMapManager:getSingleton():getByPath(STATIC_INTERIOR_ID_TO_PATH[houseInt], true), nil, nil, DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT)
-			:setTemporary(false)
-			:setDimension(self:getId())
-			:forceSave()
-		)
-		self.m_InteriorID = self:getInteriorInstance():getId()
+		local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(STATIC_INTERIOR_ID_TO_PATH[houseInt], true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION), nil, nil, DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION)
+				:setTemporary(false)
+				:forceSave()
+		self.m_InteriorID = instance:getId()
 	end
 	return self
 end
@@ -400,7 +396,11 @@ end
 function House:enterHouse(player)
 	if not self:isPlayerNearby(player) then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	local isRobberEntering = false
-
+	
+	if not self:getInteriorInstance() then 
+		CustomInteriorManager:getSingleton():load(self.m_InteriorID)
+	end
+	
 	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self and self:isValidRob(player) and not self.hasRobbedHouse[player:getId()] then
 			isRobberEntering = true
@@ -611,9 +611,9 @@ function House:refreshInteriorMarker()
 		return
 	end
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
-	local int  = self:getInteriorInstance():getInterior() or 0
-	local dim  = self:getInteriorInstance():getDimension() or 0
-	local pos  = self:getInteriorInstance():getPosition() or Vector3(0, 0, 0)
+	local int  = self:getInteriorInstance():getInterior() or 1
+	local dim  = self:getInteriorInstance():getDimension() or 1
+	local pos  = self:getInteriorInstance():getPosition() or Vector3(0, 0, 9999)
 	self.m_HouseMarker = createMarker(pos.x, pos.y, pos.z-0.8, "cylinder", 1.2, 255, 255, 255, 125)
 	ElementInfo:new(self.m_HouseMarker, "Ausgang", 1.2, "Walking", true)
 	self.m_HouseMarker:setDimension(dim)

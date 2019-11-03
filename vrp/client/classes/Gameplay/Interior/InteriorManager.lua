@@ -13,6 +13,8 @@ function InteriorManager:constructor()
 	addEventHandler("InteriorManager:onStartMap", root, bind(self.Event_onStartMap, self))
 	addEventHandler("InteriorManager:onEnter", root, bind(self.Event_onEnter, self))
 	addEventHandler("InteriorManager:onExit", root, bind(self.Event_onExit, self))
+
+	self.m_UpdateBind = bind(self.check, self)
 end
 
 function InteriorManager:Event_onStartMap(mapSize) 
@@ -21,11 +23,13 @@ end
 
 function InteriorManager:Event_onEnter(data)
 	self:clean()
+	self.m_AntiFall = Antifall:new()
 	self:initialise(data)
 end 
 
-function InteriorManager:Event_onExit(data) 
+function InteriorManager:Event_onExit() 
 	self:clean()
+	removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
 end
 
 function InteriorManager:initialise(data) 
@@ -51,6 +55,8 @@ end
 function InteriorManager:onMapComplete()
 	self:getMap():setInterior(self:getInterior(), 1)
 	self:getMap():setDimension(self:getDimension(), 1)
+	removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
+	addEventHandler("onClientPreRender", root, self.m_UpdateBind)
 end
 
 function InteriorManager:find()
@@ -87,6 +93,17 @@ end
 function InteriorManager:clean() 
 	if self:getMap() then 
 		self:getMap():delete()
+	end
+	if self.m_AntiFall then 
+		self.m_AntiFall:delete()
+	end
+end
+
+
+function InteriorManager:check() 
+	if localPlayer:getDimension() ~= self:getDimension() or localPlayer:getInterior() ~= self:getInterior() then 
+		removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
+		triggerServerEvent("InteriorManager:onDetectLeave", localPlayer, self:getInterior(), self:getDimension())
 	end
 end
 

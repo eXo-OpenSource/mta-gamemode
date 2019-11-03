@@ -454,6 +454,8 @@ function Player:spawn()
 		self.m_UniqueInterior = 0
 	end
 
+	CustomInteriorManager:getSingleton():onLogin(self)
+
 	-- Apply and delete health data
 	self:setHealth(math.max(self.m_Health, 1))
 	self:setArmor(self.m_Armor)

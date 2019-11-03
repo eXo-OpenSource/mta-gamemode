@@ -50,11 +50,8 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 					end
 				elseif item.id >= 321 and item.id <= 372 then -- Weapons
 					--Allow Weapon Mods
-				else
-					difCondition = divResult <= 1 and divResult < (1-ModdingCheck.OTHER_MAX_DIF)  or divResult > (1+ModdingCheck.OTHER_MAX_DIF)
-					if difCondition then
-						tNames[#tNames+1] = item.id.." - "..item.name
-					end
+				else -- any other object is prohibited!
+					tNames[#tNames+1] = item.id.." - "..item.name
 				end
 			end
 		end

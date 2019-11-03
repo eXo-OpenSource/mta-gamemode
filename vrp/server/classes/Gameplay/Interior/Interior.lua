@@ -68,8 +68,11 @@ function Interior:create(allDimension) -- allDimensions means that a root-map is
 			-- do nothing
 		end
 	end
-	self:setCreated(not allDimension)
-	self:setGenerated(not allDimension)
+
+	if not allDimension then
+		self:setCreated(true)
+		self:setGenerated(true)
+	end
 	return self
 end
 
@@ -92,6 +95,7 @@ function Interior:clone(entrance)
 	self:setEntrance(InteriorEntrance:new(self, entrance:getPosition(), entrance:getInterior(), dimension))
 	self:updatePlace()
 	self:setGenerated(true)
+	self:setCreated(true)
 end
 
 function Interior:place(entrance)	
@@ -99,6 +103,7 @@ function Interior:place(entrance)
 	self:setEntrance(InteriorEntrance:new(self, self:getPlaceData().position, self:getPlaceData().interior, self:getPlaceData().dimension))
 	self:updatePlace()
 	self:setGenerated(true)
+	self:setCreated(true)
 end
 
 function Interior:forceSave() 
@@ -108,13 +113,16 @@ end
 
 function Interior:rebuild(map)
 	assert(map, "Bad argument @ Interior.rebuild")
-	local previousMap = self:getMap():getId()  
-	CustomInteriorManager:getSingleton():onInteriorRebuild(self)
+	self:forceExit()
+	local previousMap = self:getMap()
+	local previousMode = self:getPlaceMode()
 	self:setCreated(false)
 	self:setMap(map)
 	self:setPlaceData(nil)
 	self:setGenerated(false)
 	self:setLoaded(false)
+	self:clearEntrance()
+	CustomInteriorManager:getSingleton():onInteriorRebuild(self, previousMap, map)
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
 			if not self:isLoadOnly() then
@@ -127,13 +135,10 @@ function Interior:rebuild(map)
 	else
 		self:setStatus(DYNAMIC_INTERIOR_NOT_FOUND)
 	end
-	if not self:isTemporary() and self:getStatus() ~= DYNAMIC_INTERIOR_NOT_FOUND then 
-		CustomInteriorManager:getSingleton():override(self, previousName)
-	end
 	return self
 end
 
-function Interior:enter(player) 
+function Interior:enter(player, noWarp) 
 	if not self:isCreated() then 
 		self:create()
 		if self:getCreateCallback() then 
@@ -141,21 +146,47 @@ function Interior:enter(player)
 		end
 	end
 	self:send(player)
+	if not noWarp then
+		player:setDimension(self:getDimension())
+		player:setInterior(self:getInterior())
+		player:setPosition(self:getPosition())
+	end
+	self.m_Clients[player] = true
+	player:setPrivateSync("inInterior", true)
+	player.m_Interior = self 
+	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
+
+end
+
+function Interior:exit(player, noWarp) 
+	if self:getExit() then 
+		if not noWarp then
+			player:setDimension(self:getExit().dimension)
+			player:setInterior(self:getExit().interior)
+			player:setPosition(self:getExit().position)
+		end
+		self.m_Clients[player] = nil
+		player.m_Interior = nil
+		CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
+		player:setPrivateSync("inInterior", false)
+		player:triggerEvent("InteriorManager:onExit")
+	end
+end
+
+function Interior:forceExit() 
+	for player, b in pairs(self.m_Clients) do 
+		if isValidElement(player, "player") and player.m_Interior == self then 
+			self:exit(player)
+		else 
+			self.m_Clients[player] = nil
+		end
+	end
+end
+
+function Interior:antifall(player)
 	player:setDimension(self:getDimension())
 	player:setInterior(self:getInterior())
 	player:setPosition(self:getPosition())
-	self.m_Clients[player] = true
-	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
-end
-
-function Interior:exit(player) 
-	if self:getExit() then 
-		player:setDimension(self:getExit().dimension)
-		player:setInterior(self:getExit().interior)
-		player:setPosition(self:getExit().position)
-		self.m_Clients[player] = nil
-		CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
-	end
 end
 
 function Interior:send(player)
@@ -170,7 +201,6 @@ function Interior:send(player)
 		}
 	)
 end
-
 
 function Interior:Event_OnElementEnter(element) 
 	if self:getDimension() == element:getDimension() then 
@@ -312,6 +342,10 @@ function Interior:setCreateCallback(callback)
 	assert(callback and type(callback) == "function", "Bad argument @ Interior.setCreateCallback")
 	self.m_CreateCallback = callback
 	return self
+end
+
+function Interior:clearEntrance() 
+	self.m_Entrance = nil
 end
 
 function Interior:getStatus() return self.m_Status end
