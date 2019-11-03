@@ -54,7 +54,7 @@ companyRankNames[2] = {
 [5] = "Geschäftsführer"
 }
 companyColors[2] = {["r"] = 0,["g"] = 150,["b"] = 140}
-companySkins[2] = {[36]=true, [44]=true, [50]=true,[192]=true,[268]=true}
+companySkins[2] = {[44]=true, [50]=true,[192]=true,[268]=true, [309]=true}
 companyDutyMarker[2] = Vector3(2455.18, -2103.97, 13.55)
 companySpawnpoint[2] = {Vector3(2453.93, -2107.24, 13.55), 0, 0}
 
