@@ -29,6 +29,11 @@ companyVehicleShaders = {
 	};
 }
 
+taxiSignOffsets = {
+	[418] = {0, -0.55, 1.12}, --Moonbeam
+	[560] = {0, -0.23, 0.9175} --Sultan
+}
+
 -- ID 1 = Fahrschule:
 companyRankNames[1] = {
 [0] = "Praktikant",
