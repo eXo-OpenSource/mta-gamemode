@@ -773,6 +773,13 @@ function Vehicle:addMagnet()
 	setElementData(self, "Magnet", self.m_Magnet)
 end
 
+local magnetPlanes = {
+	[511] = true,
+	[513] = true,
+	[519] = true,
+	[593] = true
+}
+
 function Vehicle:magnetVehicleCheck(groundPosition)
 	if self.m_MagnetActivated then
 		local groundDiff = self.m_GrabbedVehicle.position.z - groundPosition
@@ -800,7 +807,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 
 		for _, vehicle in pairs(vehicles) do
 			if vehicle ~= self then
-				if vehicle:isRespawnAllowed() and (vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike) then
+				if vehicle:isRespawnAllowed() and (vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike or vehicle:getVehicleType() == VehicleType.Helicopter or magnetPlanes[vehicle:getModel()]) then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
 						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
 					else
