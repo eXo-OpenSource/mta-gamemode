@@ -73,7 +73,7 @@ function InventoryManager:constructor()
 		WearableClothes = WearableClothes;
 	}
 
-	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_items") then
+	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_items") and false then -- skip it for now
 		-- REDO migration
 		outputServerLog("========================================")
 		outputServerLog("=            RESET INVENTORY           =")
@@ -93,6 +93,9 @@ function InventoryManager:constructor()
 		self:migrate()
 	end
 
+	local result = sql:queryFetch("SELECT MAX(Id) AS NextId FROM ??_inventory_items", sql:getPrefix())
+
+	self.m_NextItemId = result.NextId + 1
 	self.m_Inventories = {}
 	self.m_InventoryTypes = {}
 	self.m_InventoryTypesIdToName = {}
@@ -506,13 +509,14 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 
 		local data = table.copy(itemData)
 
-		-- data.DatabaseId = uuid()
-		data.Id = uuid()
+		data.Id = self.m_NextItemId
 		data.ItemId = item
 		data.Slot = slot
 		data.Amount = amount
 		data.Durability = durability or itemData.MaxDurability
 		data.Metadata = metadata
+
+		self.m_NextItemId = self.m_NextItemId + 1
 
 		for k, v in pairs(itemData) do
 			if k ~= "Id" then

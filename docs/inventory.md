@@ -1,24 +1,27 @@
 # TODO
 
-- [x] Rework WorldItems
+- [ ] Rewrite all ItemClasses for new Inventory
 - [ ] Rework StatisticsLogger:getSingleton():worldItemLog
 - [ ] Fix StaticWorldItems
 - [ ] Rewrite WorldItem GUI for Admins
-- [ ] Rewrite all ItemClasses for new Inventory
-- [ ] Implement invetory storing & and auto cleanup
+- [ ] Implement inventory storing & and auto cleanup
 - [ ] Implement inventory interactions (player inventory -> vehicle inventory)
 - [ ] Reimplement trading
 - [ ] Replace all old giveItem & takeItem
 - [ ] Look for hardcoded item ids
 - [ ] Write testing list
-- [x] Implement inventory change events
 - [ ] Write inventory migration
 - [ ] Write world items migration
 - [ ] Replace vehicle trunk, property inventory, weapon depot with new inventory
 - [ ] Implement new weapon handling with inventory
-- [ ] Create new GUI for inventory, inventory interaction and trading
+- [ ] Create new GUI for inventory interaction
+- [ ] Create new GUI for trading
 - [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
-- [ ] Rework WorldItem & Item IDs!!
+
+- [x] Create new GUI for inventory - needs more love
+- [x] Rework WorldItem & Item IDs!!
+- [x] Rework WorldItems
+- [x] Implement inventory change events
 
 ## Items
 
