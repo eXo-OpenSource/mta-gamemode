@@ -12,8 +12,9 @@ CustomInteriorManager.MapByMapId = {}
 CustomInteriorManager.KeepPositionMaps = {}
 CustomInteriorManager.MapByInterior = {}
 function CustomInteriorManager:constructor()
-	addRemoteEvents{"InteriorManager:onFall", "InteriorManager:onDetectLeave"}
+	addRemoteEvents{"InteriorManager:onFall", "InteriorManager:onDetectLeave", "InteriorManager:onInteriorReady"}
 	addEventHandler("InteriorManager:onFall", root, bind(self.Event_onAntiFall, self))
+	addEventHandler("InteriorManager:onInteriorReady", root, bind(self.Event_onInteriorReady, self))
 	addEventHandler("InteriorManager:onDetectLeave", root, bind(self.Event_onDetectLeave, self))
 	InteriorLoadManager:new()
 	InteriorMapManager:new():load()
@@ -23,6 +24,12 @@ function CustomInteriorManager:constructor()
 	self.m_LoadedCount = 0
 	self.m_FailLoads = {}
 	self.m_Ready = false
+	if not self:isShopColumn() then 
+		self:shopMigrator()
+	end
+	if not self:isPlayerColumnAvailable() then 
+		self:createLogoutColumn()
+	end
 	if not self:isTableAvailable() then 
 		print(("** [CustomInteriorManager] Checking if %s_interiors exists! Creating otherwise... **"):format(sql:getPrefix()))
 		if self:createTable() then 
@@ -297,6 +304,13 @@ function CustomInteriorManager:Event_onDetectLeave(interior, dimension)
 	end
 end
 
+function CustomInteriorManager:Event_onInteriorReady() 
+	if client.m_Interior then 
+		client.m_Interior:warp(client)
+	end
+end
+
+
 function CustomInteriorManager:setMaxX(value)
 	self.m_MaxX = math.floor(value)
 end
@@ -348,6 +362,23 @@ function CustomInteriorManager:isTableAvailable()
 	return sql:queryFetch("SELECT 1 FROM ??_interiors;", sql:getPrefix())
 end
 
+function CustomInteriorManager:isPlayerColumnAvailable() 
+	local query = 
+	[[
+		SHOW COLUMNS FROM ??_character WHERE Field LIKE "LogoutInterior"
+	]]
+	return sql:queryFetchSingle(query, sql:getPrefix())
+end
+
+function CustomInteriorManager:isShopColumn() 
+	local query = 
+	[[
+		SHOW COLUMNS FROM ??_shops WHERE Field LIKE "Interior"
+	]]
+	return sql:queryFetchSingle(query, sql:getPrefix())
+end
+
+
 function CustomInteriorManager:createTable() 
 	local query = [[
 	CREATE TABLE IF NOT EXISTS ??_interiors (
@@ -375,6 +406,38 @@ function CustomInteriorManager:createTable()
 	return false
 end
 
+function CustomInteriorManager:createLogoutColumn() 
+	local query = 
+	[[
+		ALTER TABLE ??_character
+		ADD COLUMN `LogoutInterior` INT NULL;
+	]]
+
+	if sql:queryExec(query, sql:getPrefix()) then 
+		print("** [CustomInteriorManager] Player-Field LogoutInterior was created! **")
+		return true
+	end
+	return false
+end
+
+function CustomInteriorManager:shopMigrator() 
+	local probeQuery = [[
+		SHOW COLUMNS FROM ??_shops WHERE Field LIKE "Interior"
+	]]
+	if not sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
+		print ("** [InteriorManager] Shops-Table needs to be changed! **")
+		local addQuery = [[
+			ALTER TABLE ??_shops
+			ADD COLUMN `Interior` INT NULL DEFAULT 0;
+		]]
+		if sql:queryExec(addQuery, sql:getPrefix()) then 
+			print ("** [InteriorManager] Shops-Structure altered! **")
+			SHOP_MIGRATION = true
+		end
+	end
+end
+
+
 function CustomInteriorManager:houseMigrator() 
 	local probeQuery = [[
 		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "interiorID" AND Type LIKE "%tiny%"
@@ -396,7 +459,7 @@ function CustomInteriorManager:houseMigrator()
 				]]
 				if sql:queryExec(addQuery, sql:getPrefix()) then
 					print ("** [InteriorManager] Houses-Structure altered! **")
-					HouseManager.Migrated = true
+					HOUSE_MIGRATION = true
 				end
 			end
 		end

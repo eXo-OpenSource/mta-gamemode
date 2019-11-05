@@ -209,8 +209,13 @@ DYANMIC_INTERIOR_PLACE_MODES =
 }
 DYNAMIC_INTERIOR_TEMPORARY_ID = 0
 STATIC_INTERIOR_ID_TO_PATH = {}
+STATIC_INTERIOR_SHOP_ID_TO_PATH = {}
+DYANMIC_INTERIOR_SERVER_OWNER = 0
+DYNAMIC_INTERIOR_SERVER_OWNER_TYPE = 0
+
+
 for index, data in ipairs(HOUSE_INTERIOR_TABLE) do 
-	local path = ("%sinterior-%s%s"):format(STATIC_INTERIOR_MAP_PATH, index, ".map")
+	local path = ("%s/house/interior-%s%s"):format(STATIC_INTERIOR_MAP_PATH, index, ".map")
 	local rootNode = xmlCreateFile(path,"map")
 	local childNode = xmlCreateChild(rootNode, "marker")
 	xmlNodeSetAttribute(childNode, "type", "cylinder")
@@ -227,5 +232,4 @@ for index, data in ipairs(HOUSE_INTERIOR_TABLE) do
 	xmlUnloadFile(rootNode)
 	STATIC_INTERIOR_ID_TO_PATH[index] = path
 end
-DYANMIC_INTERIOR_SERVER_OWNER = 0
-DYNAMIC_INTERIOR_SERVER_OWNER_TYPE = 0
+

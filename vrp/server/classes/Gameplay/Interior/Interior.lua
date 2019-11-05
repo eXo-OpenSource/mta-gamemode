@@ -117,11 +117,13 @@ function Interior:rebuild(map)
 	local previousMap = self:getMap()
 	local previousMode = self:getPlaceMode()
 	self:setCreated(false)
+	CustomInteriorManager:getSingleton():remove(self)
 	self:setMap(map)
 	self:setPlaceData(nil)
 	self:setGenerated(false)
 	self:setLoaded(false)
 	self:clearEntrance()
+	CustomInteriorManager:getSingleton():add(self)
 	CustomInteriorManager:getSingleton():onInteriorRebuild(self, previousMap, map)
 	if File.Exists(self:getMap():getPath()) then 
 		if self:load() == DYNAMIC_INTERIOR_SUCCESS then 
@@ -146,15 +148,24 @@ function Interior:enter(player, noWarp)
 		end
 	end
 	self:send(player)
+	self.m_Clients[player] = true
+	player:setPrivateSync("inInterior", true)
 	if not noWarp then
+		player:setDimension(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
+		player:setPosition(self:getPosition().x, self:getPosition().y, self:getPosition().z+10)
+		player:setInterior(self:getInterior())
+	end
+	player.m_Interior = self 
+	player.m_InteriorNoWarp = noWarp
+	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
+end
+
+function Interior:warp(player) 
+	if not player.m_InteriorNoWarp then
 		player:setDimension(self:getDimension())
 		player:setInterior(self:getInterior())
 		player:setPosition(self:getPosition())
 	end
-	self.m_Clients[player] = true
-	player:setPrivateSync("inInterior", true)
-	player.m_Interior = self 
-	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
 end
 
 function Interior:exit(player, noWarp) 

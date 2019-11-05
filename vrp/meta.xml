@@ -768,6 +768,9 @@
 
 	<script src="client/classes/GUI/Elements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUI/Elements/BusRoutePlan.lua" type="client"/>
+	<script src="client/classes/GUI/Elements/LoadingCube.lua" type="client"/>
+
+
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
@@ -799,6 +802,9 @@
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
+	<!-- MapLoad -->
+	<script src="client/classes/GUIForms/MapLoadGUI.lua" type="client" />
+	
 	<script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminPedGUI.lua" type="client"/>
@@ -1482,6 +1488,12 @@
 	<vrpfile src="files/images/GUI/HelpIcon.png"/>
 	<vrpfile src="files/images/GUI/Triangle.png"/>
 	<vrpfile src="files/images/GUI/Star.png"/>
+
+
+	<!-- GUI Loading -->
+	<vrpfile src="files/images/GUI/Loading/cube-top.png" />
+	<vrpfile src="files/images/GUI/Loading/cube-right.png" />
+	<vrpfile src="files/images/GUI/Loading/cube-left.png" />
 
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>
 	<vrpfile src="files/images/Colorpicker/hueBar.png"/>

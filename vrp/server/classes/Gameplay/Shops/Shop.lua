@@ -11,7 +11,7 @@ function Shop:constructor()
 	self.m_BankAccountServer = BankServer.get("server.shop")
 end
 
-function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interiorId)
 	self.m_Id = id
 	self.m_Name = name
 	self.m_BuyAble = price > 0 and true or false
@@ -40,15 +40,20 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		self:loadOwner()
 	end
 
+	self.m_InteriorId = interiorId
+	if interiorId == 0 then 
+		self:assignInterior()
+	end
+	
+
 	local interior, intPosition = unpack(typeData["Interior"])
 
-	self.m_Interior = interior
-	self.m_Dimension = dimension
 
 	if interior > 0 then
 		local teleporter = InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
 		teleporter:addEnterEvent(bind(self.onEnter, self))
 		teleporter:addExitEvent(bind(self.onExit, self))
+		self.m_Teleporter = teleporter
 	else
 		if self.m_BuyAble then
 			self.m_Colshape = createColSphere(self.m_Position, 3)
@@ -94,6 +99,37 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
 	end
+
+	InteriorLoadManager.add(self.m_InteriorId, bind(self.loadInterior, self))
+end
+
+function Shop:assignInterior() 
+	if SHOPS_NAME_TO_INTERIOR_PATH[self.m_TypeDataName] then 
+		local instance = Interior:new(InteriorMapManager:getSingleton():getByPath( SHOPS_NAME_TO_INTERIOR_PATH[self.m_TypeDataName], true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
+				:setTemporary(false)
+				:forceSave()
+		self.m_InteriorId = instance:getId()
+		if self.m_InteriorId then 
+			sql:queryExec("UPDATE ??_shops SET Interior = ? WHERE Id = ?", sql:getPrefix(), self.m_InteriorId, self.m_Id)
+		end
+	end
+	return self
+end
+
+function Shop:refreshInteriorEntrance() 
+	if self.m_Interior then 
+		self.m_Teleporter.m_ExitMarker:setInterior(self.m_Interior:getInterior())
+		self.m_Teleporter.m_ExitMarker:setDimension(self.m_Interior:getDimension())
+	end
+end
+
+function Shop:loadInterior() 
+	self.m_Interior = CustomInteriorManager.getIdMap(self.m_InteriorId)
+	if self.m_Interior then 
+		self.m_Interior:setExit(self.m_Position, 0, 0)
+		self.m_Teleporter:setInterior(self.m_Interior)
+		self.m_Interior:setCreateCallback(bind(self.refreshInteriorEntrance, self))
+	end
 end
 
 function Shop:loadOwner()
@@ -112,6 +148,10 @@ function Shop:loadOwner()
 end
 
 function Shop:onEnter(player)
+	if not self.m_Interior then 
+		CustomInteriorManager:getSingleton():load(self.m_InteriorId)
+		return self.m_Teleporter:enter(player)	
+	end
 	if self.m_BuyAble then
 		player:sendInfo(_("Drücke 'F6' um das %s-Menü zu öffnen!", player, self.m_TypeName))
 		bindKey(player, "f6", "down", self.m_ShopGUIBind)

@@ -7,8 +7,8 @@
 -- ****************************************************************************
 ItemShop = inherit(Shop)
 
-function ItemShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
-	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+function ItemShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
+	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
 
 	self.m_Type = "ItemShop"
 	self.m_Items = SHOP_ITEMS[typeData["Name"]]

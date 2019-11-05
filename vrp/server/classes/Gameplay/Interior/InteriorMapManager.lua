@@ -115,14 +115,27 @@ end
 function InteriorMapManager:rebuild(map, newmap)
 	if InteriorMapManager.Map[map:getId()] then 
 		if CustomInteriorManager.MapByMapId[map:getId()] then 
-			for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
-				instance:rebuild(newmap)
-			end
 			if CustomInteriorManager.KeepPositionMaps[map:getId()] then 
 				CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:delete()
 				CustomInteriorManager.KeepPositionMaps[map:getId()] = nil
 			end
+			for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
+				instance:rebuild(newmap)
+			end
 		end
+		self:changeQuery(map, newmap)
+	end
+end
+
+function InteriorMapManager:changeQuery(map, new) 
+	local query = 
+	[[
+		UPDATE ??_interiors SET MapId = ?, Generated=0 
+		WHERE MapId = ?
+	]]
+	
+	if sql:queryExec(query, sql:getPrefix(), new:getId(), map:getId()) then 
+		outputDebugString(("[InteriorMapManager] %s was rebuild to %s!"):format(map:getId(), new:getId()))
 	end
 end
 

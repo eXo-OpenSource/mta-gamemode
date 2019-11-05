@@ -67,7 +67,12 @@ end
 
 function InteriorEnterExit:enter(player)
 	if self.m_Locked == 0 or self.m_Locked == 2 then
-		self:teleport(player, "enter", unpack(self.m_EntranceData))
+		if not self:getInterior() then
+			self:teleport(player, "enter", unpack(self.m_EntranceData))
+		else 
+			self:getInterior():enter(player)
+		end
+		if self.m_EnterEvent then self.m_EnterEvent(player) end
 	else 
 		player:sendInfo(_("Der Eingang ist verschlossen!", client))
 	end
@@ -75,7 +80,12 @@ end
 
 function InteriorEnterExit:exit(player)
 	if self.m_Locked == 0  or self.m_Locked == 1 then
-		self:teleport(player, "exit", unpack(self.m_ExitData))
+		if not self:getInterior() then
+			self:teleport(player, "exit", unpack(self.m_ExitData))
+		else 
+			self:getInterior():exit(player)
+		end
+		if self.m_ExitEvent then self.m_ExitEvent(player) end
 	else 
 		player:sendInfo(_("Der Ausgang ist verschlossen!", client))
 	end
@@ -84,6 +94,10 @@ end
 function InteriorEnterExit:setEntryLocked() self.m_Locked = 1 end
 function InteriorEnterExit:setExitLocked() self.m_Locked = 2 end
 function InteriorEnterExit:setLocked(bool) self.m_Locked = bool and -1 or 0 end
+function InteriorEnterExit:setInterior(instance)
+	assert(instance and type(instance) == "table", "Bad argument #1 @InteriorEnterExit.setInterior")
+	self.m_Interior = instance
+end
 
 function InteriorEnterExit:setMarkerType(type)
 	self.m_ExitMarker:setType(type)
@@ -120,11 +134,6 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 				player:triggerEvent("checkNoDm")
 			end, 1000, 1)
 
-			if type == "enter" then
-				if self.m_EnterEvent then self.m_EnterEvent(player) end
-			elseif type == "exit" then
-				if self.m_ExitEvent then self.m_ExitEvent(player) end
-			end
 		end, 1500, 1
 	)
 
@@ -138,6 +147,10 @@ end
 
 function InteriorEnterExit:getExitMarker()
   return self.m_ExitMarker
+end
+
+function InteriorEnterExit:getInterior() 
+	return self.m_Interior
 end
 
 function InteriorEnterExit:addEnterEvent(event)

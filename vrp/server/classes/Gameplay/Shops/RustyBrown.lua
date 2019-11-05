@@ -7,8 +7,8 @@
 -- ****************************************************************************
 RustyBrown = inherit(Shop)
 
-function RustyBrown:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
-	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+function RustyBrown:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
+	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
 
 	self.m_Type = "RustyBrown"
 	self.m_Menues = {

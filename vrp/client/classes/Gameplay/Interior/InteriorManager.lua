@@ -20,12 +20,17 @@ end
 
 function InteriorManager:Event_onStartMap(mapSize) 
 	self.m_MapSize = mapSize
+	if MapLoadGUI:isInstantiated() then 
+		delete(MapLoadGUI:getSingleton())
+	end
+	MapLoadGUI:getSingleton():setStatus(_("Lade Interior herunter..."))
 end
 
 function InteriorManager:Event_onEnter(data)
 	self:clean()
 	self.m_AntiFall = Antifall:new()
-	self:initialise(data)
+	MapLoadGUI:getSingleton():setStatus(_("Erstelle Interior..."))
+	setTimer(function() self:initialise(data) end, 1000, 1)
 end 
 
 function InteriorManager:Event_onExit() 
@@ -61,6 +66,10 @@ function InteriorManager:onMapComplete()
 	self.m_StartInterior = localPlayer:getInterior() 
 	self.m_StartDimension = localPlayer:getDimension()
 	addEventHandler("onClientPreRender", root, self.m_UpdateBind)
+	if MapLoadGUI:isInstantiated() then 
+		delete(MapLoadGUI:getSingleton()) 
+		triggerServerEvent("InteriorManager:onInteriorReady", localPlayer)
+	end
 end
 
 function InteriorManager:find()
@@ -76,8 +85,10 @@ function InteriorManager:thread()
 		self:getMap():createSingle(info, self.m_Dimension)
 		self:increaseIterateCount()
 		Thread.pause()
+		MapLoadGUI:getSingleton():setStatus(_("Erstelle Objekte (%d von %d)", self:getIterateCount(), self.m_MapSize))
+		MapLoadGUI:getSingleton():setProgress(self:getIterateCount() /self.m_MapSize)
 		if self:getIterateCount() == table.size(self:getMap():getData()) then 
-			self:onMapComplete()
+			setTimer(function() self:onMapComplete() end, 2000, 1)
 		end
 	end
 end

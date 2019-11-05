@@ -793,3 +793,26 @@ CJ_CLOTHES = {
 	},
 	["Extra"] = {},
 }
+
+SHOPS_NAME_TO_INTERIOR_PATH = {}
+for index, data in ipairs(SHOP_TYPES) do 
+	if data["Interior"] then
+		local path = ("%s/shops/interior-%s%s"):format(STATIC_INTERIOR_MAP_PATH, index, ".map")
+		local rootNode = xmlCreateFile(path,"map")
+		local childNode = xmlCreateChild(rootNode, "marker")
+		xmlNodeSetAttribute(childNode, "type", "cylinder")
+		xmlNodeSetAttribute(childNode, "id", "entrance")
+		xmlNodeSetAttribute(childNode, "color", "#0000ffff") 
+		xmlNodeSetAttribute(childNode, "size", "1")
+		xmlNodeSetAttribute(childNode, "dimension", "0") 
+		xmlNodeSetAttribute(childNode, "alpha", "255")
+		xmlNodeSetAttribute(childNode, "interior", data["Interior"][1]) 	
+		xmlNodeSetAttribute(childNode, "posX", data["Interior"][2].x) 
+		xmlNodeSetAttribute(childNode, "posY", data["Interior"][2].y)
+		xmlNodeSetAttribute(childNode, "posZ", data["Interior"][2].z) 	
+		xmlSaveFile(rootNode)
+		xmlUnloadFile(rootNode)
+		STATIC_INTERIOR_SHOP_ID_TO_PATH[index] = path
+		SHOPS_NAME_TO_INTERIOR_PATH[data["Name"]] = path
+	end
+end

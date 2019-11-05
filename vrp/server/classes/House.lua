@@ -70,7 +70,7 @@ end
 
 function House:assignInterior(houseInt) 
 	if STATIC_INTERIOR_ID_TO_PATH[houseInt] then 
-		local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(STATIC_INTERIOR_ID_TO_PATH[houseInt], true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION), nil, nil, DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION)
+		local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(STATIC_INTERIOR_ID_TO_PATH[houseInt], true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
 				:setTemporary(false)
 				:forceSave()
 		self.m_InteriorID = instance:getId()

@@ -7,8 +7,8 @@
 -- ****************************************************************************
 BarShop = inherit(Shop)
 
-function BarShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
-	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+function BarShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
+	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
 
 	self.m_Type = "Bar"
 	self.m_TypeName = "Bar"
