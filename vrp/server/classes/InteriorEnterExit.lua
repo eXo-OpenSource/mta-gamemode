@@ -68,7 +68,9 @@ end
 function InteriorEnterExit:enter(player)
 	if self.m_Locked == 0 or self.m_Locked == 2 then
 		if not self:getInterior() then
-			self:teleport(player, "enter", unpack(self.m_EntranceData))
+			if not self.m_HasInterior then
+				self:teleport(player, "enter", unpack(self.m_EntranceData))
+			end
 		else 
 			self:getInterior():enter(player)
 		end
@@ -81,7 +83,9 @@ end
 function InteriorEnterExit:exit(player)
 	if self.m_Locked == 0  or self.m_Locked == 1 then
 		if not self:getInterior() then
-			self:teleport(player, "exit", unpack(self.m_ExitData))
+			if not self.m_HasInterior then
+				self:teleport(player, "exit", unpack(self.m_ExitData))
+			end
 		else 
 			self:getInterior():exit(player)
 		end

@@ -47,10 +47,9 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	
 
 	local interior, intPosition = unpack(typeData["Interior"])
-
-
 	if interior > 0 then
-		local teleporter = InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
+		local teleporter = InteriorEnterExit:new(position, intPosition, 0, rotation, interior, DYNAMIC_INTERIOR_DUMMY_DIMENSION)
+		teleporter.m_HasInterior = true
 		teleporter:addEnterEvent(bind(self.onEnter, self))
 		teleporter:addExitEvent(bind(self.onExit, self))
 		self.m_Teleporter = teleporter
@@ -86,10 +85,6 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		end
 	end
 
-	if self.m_Ped then
-		ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
-	end
-
 	if typeData["Marker"] then
 		if typeData["Marker"] == "blip_position" then
 			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 0)
@@ -120,6 +115,22 @@ function Shop:refreshInteriorEntrance()
 	if self.m_Interior then 
 		self.m_Teleporter.m_ExitMarker:setInterior(self.m_Interior:getInterior())
 		self.m_Teleporter.m_ExitMarker:setDimension(self.m_Interior:getDimension())
+		if instanceof(self, BarShop) or instanceof(self, CJClothes) then 
+			self:onInternalEntranceUpdate(self.m_Interior:getInterior(), self.m_Interior:getDimension())
+		end
+		if self.m_Ped then
+			self.m_Ped:setInterior(self.m_Interior:getInterior())
+			self.m_Ped:setDimension(self.m_Interior:getDimension())
+			ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
+		end
+		if self.m_Marker then 
+			self.m_Marker:setInterior(self.m_Interior:getInterior())
+			self.m_Marker:setDimension(self.m_Interior:getDimension())
+		end
+		if self.m_Colshape then 
+			self.m_Colshape:setInterior(self.m_Interior:getInterior())
+			self.m_Colshape:setDimension(self.m_Interior:getDimension())
+		end
 	end
 end
 

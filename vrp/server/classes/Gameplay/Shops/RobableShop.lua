@@ -37,11 +37,10 @@ function RobableShop:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorI
 	end
 
 	self.m_Ped = ShopNPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
-	self.m_Ped:setInterior(interiorId)
-	self.m_Ped:setDimension(dimension)
+	self.m_Ped:setInterior((self.m_Interior and self.m_Interior:getInterior()) or interiorId)
+	self.m_Ped:setDimension((self.m_Interior and self.m_Interior:getDimension()) or DYNAMIC_INTERIOR_DUMMY_DIMENSION)
 	self.m_Ped.Shop = shop
 	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
-
 end
 
 function RobableShop:Ped_Targetted(ped, attacker)

@@ -23,10 +23,6 @@ function MapLoadGUI:constructor()
 	addEventHandler("onClientRender", root, self.m_Render)
 end
 
-function MapLoadGUI:destructor() 
-	GUIForm.destructor(self)
-end
-
 function MapLoadGUI:setProgress(prog) -- 0 to 1
 	local width, height = self:getSize() 
 	local currentProgress = width / self.m_MaxProgress
@@ -49,7 +45,6 @@ end
 
 function MapLoadGUI:destructor() 
 	self.m_Loading:delete()
-	GUIForm.destructor(self) 
+	GUIForm.destructor(self)
 	removeEventHandler("onClientRender", root, self.m_Render)
-	fadeCamera(true)
 end

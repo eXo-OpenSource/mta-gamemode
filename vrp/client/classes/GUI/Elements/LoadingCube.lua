@@ -16,50 +16,57 @@ function LoadingCube:constructor(posX, posY, width, height, parent)
 	self.m_StartX = posX
 	self.m_StartY = posY
 
-	self.m_Start = getTickCount()
-	
-
 	self.m_CubeTop = GUIImage:new(posX, posY, width, height, "files/images/GUI/Loading/cube-top.png", parent)
-	self.m_CubeLeft = GUIImage:new(posX, posY, width, height, "files/images/GUI/Loading/cube-left.png", parent)
-	self.m_CubeRight = GUIImage:new(posX, posY, width, height, "files/images/GUI/Loading/cube-right.png", parent)
+	self.m_CubeTop.m_Direction = "up"
+	self.m_CubeTop.m_Start = getTickCount()
+	self.m_CubeTop.m_Pause = self:getSpeed()*.25
 
-	self.m_AnimationFrame = bind(self.onFrame, self)
+	self.m_CubeLeft = GUIImage:new(posX, posY, width, height, "files/images/GUI/Loading/cube-left.png", parent)
+	self.m_CubeLeft.m_Direction = "left"
+	self.m_CubeLeft.m_Start = getTickCount()
+	self.m_CubeLeft.m_Pause = self:getSpeed()*.25
+
+	self.m_CubeRight = GUIImage:new(posX, posY, width, height, "files/images/GUI/Loading/cube-right.png", parent)
+	self.m_CubeRight.m_Direction = "right"
+	self.m_CubeRight.m_Start = getTickCount()
+	self.m_CubeRight.m_Pause = self:getSpeed()*.25
+
+	
+	self.m_AnimationFrame = bind(self.update, self)
 	addEventHandler("onClientRender", root, self.m_AnimationFrame)
 end
 
 
-function LoadingCube:onFrame() 
-	if not self:isPaused() then
-		local progress = (getTickCount() - self.m_Start) / self:getSpeed() 
+function LoadingCube:update() 
+	self:move(self.m_CubeTop)
+	self:move(self.m_CubeLeft)
+	self:move(self.m_CubeRight)
+end
 
-		local width, height = self:getSize() 
-		width, height = width*.5, height*.5
-
-
-		local ease = getEasingValue(progress, "SineCurve")
-		self:setPosition(self.m_StartX, self.m_StartY - height *ease)
-		local x, y = self:getPosition()
-
-		self.m_CubeTop:setPosition(x, y - height*ease)
-		self.m_CubeTop:setColor(tocolor(255, 255, 255, (1-ease)*255))
-
-		self.m_CubeLeft:setPosition(x - width * ease, y)
-		self.m_CubeLeft:setColor(tocolor(255, 255, 255, (1-ease)*255))
-
-		self.m_CubeRight:setPosition(x + width * ease, y)
-		self.m_CubeRight:setColor(tocolor(255, 255, 255, (1-ease)*255))
-
-		if progress >= 1 then 
-			self:setPaused(true)
-			self.m_CubeTop:setColor(Color.White)
-			self.m_CubeLeft:setColor(Color.White)
-			self.m_CubeRight:setColor(Color.White)
-			setTimer(function() 
-				self:setPaused(false)
-				self.m_Start = getTickCount()
-			end, self:getSpeed()/4, 1)
+function LoadingCube:move(element) 
+	local now = getTickCount()
+	if element.m_Start <= now then
+		if element.m_Paused then 
+			element.m_Start = now
+			element.m_Paused = false
 		end
-		self:anyChange() 
+		local progress = (getTickCount() - element.m_Start) / self:getSpeed()
+		local x, y = self.m_StartX, self.m_StartY
+		local width, height = element:getSize() 
+		width, height = width*.5, height*.5
+		local ease = getEasingValue(progress, "SineCurve")
+		if element.m_Direction == "up" then 
+			element:setPosition(x, y - height * ease)
+		elseif element.m_Direction == "right" then 
+			element:setPosition(x + width * ease, y)
+		elseif element.m_Direction == "left" then 
+			element:setPosition(x - width * ease, y)
+		end
+		element:setColor(tocolor(255, 255, 255, (1-ease)*255))
+		if progress >= 1 then
+			element.m_Start = now + element.m_Pause
+			element.m_Paused = true
+		end
 	end
 end
 

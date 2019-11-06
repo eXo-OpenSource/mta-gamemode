@@ -35,7 +35,7 @@ end
 function ElementInfoManager:addEventToElement(element) 
 	addEventHandler("onClientElementStreamIn", element, self.m_StreamInBind)
 	addEventHandler("onClientElementStreamOut", element, self.m_StreamOutBind)
-	if isElementStreamedIn(element) then 
+	if isElementStreamedIn(element) then
 		self.m_ActiveInfos[element] = self.m_Infos[element] 
 	end
 end
@@ -46,7 +46,7 @@ function ElementInfoManager:removeEventFromElement(element)
 	self.m_ActiveInfos[element] = nil
 end
 
-function ElementInfoManager:onStreamIn() 
+function ElementInfoManager:onStreamIn()
 	self.m_ActiveInfos[source] = self.m_Infos[source] 
 end
 

@@ -17,12 +17,18 @@ function InteriorManager:constructor()
 	self.m_UpdateBind = bind(self.check, self)
 end
 
+function InteriorManager:fadeOutLoading()
+	if MapLoadGUI:isInstantiated() then 
+		fadeCamera(true, .5)
+		setTimer(function()
+			delete(MapLoadGUI:getSingleton())
+		end, 600, 1)
+	end	
+end
 
 function InteriorManager:Event_onStartMap(mapSize) 
 	self.m_MapSize = mapSize
-	if MapLoadGUI:isInstantiated() then 
-		delete(MapLoadGUI:getSingleton())
-	end
+	self:fadeOutLoading()
 	MapLoadGUI:getSingleton():setStatus(_("Lade Interior herunter..."))
 end
 
@@ -48,7 +54,7 @@ function InteriorManager:initialise(data)
 	self.m_WaitForSpawn = self:getDimension() ~= localPlayer:getDimension() or self:getInterior() ~= localPlayer:getInterior()
 end
 
-function InteriorManager:create(map, dimension) 
+function InteriorManager:create(map, dimension)
 	if map then  
 		self.m_Map = MapParser:new(nil, map) 
 		if self:getMap() then 
@@ -66,10 +72,8 @@ function InteriorManager:onMapComplete()
 	self.m_StartInterior = localPlayer:getInterior() 
 	self.m_StartDimension = localPlayer:getDimension()
 	addEventHandler("onClientPreRender", root, self.m_UpdateBind)
-	if MapLoadGUI:isInstantiated() then 
-		delete(MapLoadGUI:getSingleton()) 
-		triggerServerEvent("InteriorManager:onInteriorReady", localPlayer)
-	end
+	self:fadeOutLoading()
+	triggerServerEvent("InteriorManager:onInteriorReady", localPlayer)
 end
 
 function InteriorManager:find()
