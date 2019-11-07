@@ -188,18 +188,18 @@ function Interior:exit(player, position)
 		end
 		self.m_Clients[player] = nil
 		player.m_Interior = nil
-		CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
 		player:setPrivateSync("inInterior", false)
 		player:triggerEvent("InteriorManager:onExit")
+		CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
 	end
 end
 
 function Interior:remove(player) 
 	self.m_Clients[player] = nil
 	player.m_Interior = nil
-	CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
 	player:setPrivateSync("inInterior", false)
 	player:triggerEvent("InteriorManager:onExit")
+	CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
 end
 
 function Interior:forceExit() 

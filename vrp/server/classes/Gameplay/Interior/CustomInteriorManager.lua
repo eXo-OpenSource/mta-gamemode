@@ -14,6 +14,7 @@ CustomInteriorManager.MapByInterior = {}
 CustomInteriorManager.OwnerMap = {}
 function CustomInteriorManager:constructor()
 	addRemoteEvents{"InteriorManager:onFall", "InteriorManager:onDetectLeave", "InteriorManager:onInteriorReady"}
+	addRemoteEvents{"onCustomInteriorEnter", "onCustomInteriorLeave"}
 	addEventHandler("InteriorManager:onFall", root, bind(self.Event_onAntiFall, self))
 	addEventHandler("InteriorManager:onInteriorReady", root, bind(self.Event_onInteriorReady, self))
 	addEventHandler("InteriorManager:onDetectLeave", root, bind(self.Event_onDetectLeave, self))
@@ -296,6 +297,7 @@ end
 function CustomInteriorManager:onEnterInterior(element, instance) 
 	if element:getType() == "player" and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then 
 		element:setCustomInterior(instance)
+		triggerEvent("onCustomInteriorEnter", element, instance:getId())
 	end
 end
 
@@ -304,6 +306,7 @@ function CustomInteriorManager:onLeaveInterior(element, instance, quit)
 		if element:getCustomInterior() == instance and instance:getPlaceMode() ~= DYANMIC_INTERIOR_PLACE_MODES.MANUAL_INPUT then
 			if not quit then
 				element:setCustomInterior()
+				triggerEvent("onCustomInteriorLeave", element, instance:getId())
 			end
 		end
 	end

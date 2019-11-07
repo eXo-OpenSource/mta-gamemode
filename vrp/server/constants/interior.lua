@@ -51,6 +51,25 @@ for index, data in ipairs(HOUSE_INTERIOR_TABLE) do
 	STATIC_INTERIOR_ID_TO_PATH[index] = path
 end
 
+function coordinateToMap(path, data) 
+
+	local rootNode = xmlCreateFile(path,"map")
+	local childNode = xmlCreateChild(rootNode, "marker")
+	xmlNodeSetAttribute(childNode, "type", "cylinder")
+	xmlNodeSetAttribute(childNode, "id", "entrance")
+	xmlNodeSetAttribute(childNode, "color", "#0000ffff") 
+	xmlNodeSetAttribute(childNode, "size", "1")
+	xmlNodeSetAttribute(childNode, "dimension", "0") 
+	xmlNodeSetAttribute(childNode, "alpha", "255")
+	xmlNodeSetAttribute(childNode, "interior", data.interior) 	
+	xmlNodeSetAttribute(childNode, "posX", data.position.x) 
+	xmlNodeSetAttribute(childNode, "posY", data.position.y)
+	xmlNodeSetAttribute(childNode, "posZ", data.position.z) 	
+	xmlSaveFile(rootNode)
+	xmlUnloadFile(rootNode)
+	return path
+end
+
 INTERIOR_OWNER_TYPES = 
 {
 	SERVER = 0,
@@ -58,4 +77,5 @@ INTERIOR_OWNER_TYPES =
 	SHOP = 2,
 	FACTION = 3, 
 	COMPANY = 4,
+	GROUP = 5, 
 }

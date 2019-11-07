@@ -21,9 +21,9 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	end
 	self.m_Open = Open
 	self.m_Position = Pickup
-	self.m_Interior = InteriorId
+	self.m_InteriorId = InteriorId
 	self.m_InteriorPosition = InteriorSpawn
-	self.m_Dimension = Id+1000
+	self.m_Dimension = DYNAMIC_INTERIOR_DUMMY_DIMENSION
 	self.m_CamMatrix = {tonumber(gettok(Cam,1,",")), tonumber(gettok(Cam,2,",")), tonumber(gettok(Cam,3,",")), Pickup.x, Pickup.y, Pickup.z}
 
 	self.m_Pickup = createPickup(Pickup, 3, PICKUP_FOR_SALE, 0)
@@ -34,23 +34,15 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
-
-	if elevatorData then
-		local elevatorData = fromJSON(elevatorData)
-		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
-			local elevator = Elevator:new()
-			for i, station in ipairs(elevatorData.stations) do
-				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
-			end
-		end
-	end
+	
+	self.m_ElevatorData = elevatorData
 
 	self:getKeysFromSQL()
 
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
 
 	self.m_ExitMarker = createMarker(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z-1), "cylinder", 1, 255, 255, 255, 200)
-	ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
+	self.m_ElementInfo = ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
 	local colshape = createColSphere(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z-1), 3)
 	colshape:setInterior(InteriorId)
 	colshape:setDimension(self.m_Dimension)
@@ -58,7 +50,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_ExitMarker:setDimension(self.m_Dimension)
 	addEventHandler("onColShapeHit", colshape,
 		function(hitElement, matchingDimension)
-			if hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() then
+			if hitElement:getType() == "player" and hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() then
 				hitElement.m_LastGroupPropertyInside = true
 				hitElement.m_LastPropertyPickup = self
 				hitElement:triggerEvent("onTryEnterExit", source, "Ausgang")
@@ -67,16 +59,72 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 		end
 	)
 
+	self.m_ColShape = colshape
+
 	--Liberty City Mapfix
-	if self.m_Interior == 1 then
+	if self.m_InteriorId == 1 then
 		local door1 = createObject ( 3089, -792.09998, 497.20001, 1367.9 )
 		local door2 = createObject ( 3089, -790.59998, 497.20001, 1365.3, 0, 180, 0 )
-		door1:setInterior(self.m_Interior)
+		door1:setInterior(self.m_InteriorId)
 		door1:setDimension(self.m_Dimension)
-		door2:setInterior(self.m_Interior)
+		door2:setInterior(self.m_InteriorId)
 		door2:setDimension(self.m_Dimension)
 	end
 
+	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.GROUP, Id, bind(self.onInteriorLoad, self))
+	
+	if INTERIOR_MIGRATION then 
+		self:assignInterior(InteriorSpawn, InteriorId)
+	end
+end
+
+function GroupProperty:onInteriorLoad(interior) 
+	self:setInterior(interior)
+	if self:getInterior() then
+		self:getInterior():setExit(self.m_Pickup:getPosition(), 0, 0)
+		self:getInterior():setCreateCallback(bind(self.refreshInteriorMarker, self))
+	end
+end
+
+
+function GroupProperty:refreshInteriorMarker()
+	local int  = self:getInterior():getInterior()
+	local dim  = self:getInterior():getDimension()
+	local pos  = self:getInterior():getPosition() 
+	if self.m_Elevator then 
+		self.m_Elevator:delete()
+		self.m_Elevator = nil
+	end
+	if self.m_ElevatorData then
+		local elevatorData = fromJSON(self.m_ElevatorData)
+		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
+			self.m_Elevator = Elevator:new()
+			for i, station in ipairs(elevatorData.stations) do
+				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
+			end
+		end
+	end
+	if self.m_ExitMarker then 
+		self.m_ExitMarker:setDimension(dim)
+		self.m_ExitMarker:setInterior(int)
+		self.m_ExitMarker:setPosition(pos)
+	end
+	if self.m_ColShape then 
+		self.m_ColShape:setDimension(dim)
+		self.m_ColShape:setInterior(int)
+		self.m_ColShape:setPosition(pos)
+	end
+end
+
+function GroupProperty:assignInterior(pos, int)
+	local path = ("%s/groups/interior-%s%s"):format(STATIC_INTERIOR_MAP_PATH, ("x_%s_y_%s_z_%s@%s"):format(pos.x, pos.y, pos.z, int), ".map")
+	local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(coordinateToMap(path, {position=Vector3(pos.x, pos.y, pos.z-.5), interior=int}), true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
+		:setTemporary(false)
+		:setOwner(INTERIOR_OWNER_TYPES.GROUP, self.m_Id)
+		:forceSave()
+	CustomInteriorManager:getSingleton():add(instance)
+	self.m_InteriorInstanceId = instance:getId()
+	return self
 end
 
 function GroupProperty:destructor()
@@ -233,24 +281,28 @@ end
 
 function GroupProperty:setInside( player )
 	if isElement(player) and not player.vehicle then
-		setElementInterior(player,self.m_Interior, self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z)
-		setElementDimension(player,self.m_Dimension)
+		if not self:getInterior() then 
+			CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.GROUP, self.m_Id)
+		end
+		self:getInterior():enter(player)
 		player:setRotation(0, 0, 0)
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
-		setTimer(function() --map glitch fix
-			setElementFrozen( player, false)
-		end, 1000, 1)
 		player.justEntered = true
 		setTimer(function() player.justEntered = false end, 2000,1)
 		player.m_LastPropertyPickup = nil
 	end
 end
 
+function GroupProperty:setInterior(instance)
+	self.m_Interior = instance
+end
+
 function GroupProperty:setOutside( player )
 	if isElement(player) then
-		setElementInterior(player,0, self.m_Position.x, self.m_Position.y, self.m_Position.z)
-		setElementDimension(player,0)
+		if self:getInterior() then 
+			self:getInterior():exit(player)
+		end
 		player:setRotation(0, 0, 0)
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
@@ -375,3 +427,4 @@ function GroupProperty:getName() return self.m_Name end
 function GroupProperty:getPrice() return self.m_Price end
 function GroupProperty:hasOwner() return self.m_Owner ~= false end
 function GroupProperty:getOwner() return self:hasOwner() and self.m_Owner or false end
+function GroupProperty:getInterior() return self.m_Interior end

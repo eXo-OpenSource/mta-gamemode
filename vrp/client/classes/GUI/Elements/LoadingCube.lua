@@ -53,7 +53,7 @@ function LoadingCube:move(element)
 		local progress = (getTickCount() - element.m_Start) / self:getSpeed()
 		local x, y = self.m_StartX, self.m_StartY
 		local width, height = element:getSize() 
-		width, height = width*.5, height*.5
+		width, height = width*.25, height*.25
 		local ease = getEasingValue(progress, "SineCurve")
 		if element.m_Direction == "up" then 
 			element:setPosition(x, y - height * ease)

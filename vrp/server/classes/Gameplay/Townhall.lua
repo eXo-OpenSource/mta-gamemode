@@ -12,6 +12,9 @@ function Townhall:constructor()
 	self.m_EnterExit:addEnterEvent(bind(self.onEnter, self))
 	self.m_EnterExit:addExitEvent(bind(self.onExit, self))
 
+	addEventHandler("onCustomInteriorEnter", root, bind(self.Event_onEnter, self))
+	addEventHandler("onCustomInteriorLeave", root, bind(self.Event_onExit, self))
+
 	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SERVER, 2, bind(self.onInteriorLoad, self))
 	if INTERIOR_MIGRATION then 
 		self:assignInterior()
@@ -19,6 +22,22 @@ function Townhall:constructor()
 
 end
 
+
+function Townhall:Event_onEnter(id) 
+	if self.m_Interior then 
+		if self.m_Interior:getId() == id then 
+			source:triggerEvent("Townhall:applyTexture") 
+		end
+	end
+end
+
+function Townhall:Event_onExit(id) 
+	if self.m_Interior then 
+		if self.m_Interior:getId() == id then 
+			source:triggerEvent("Townhall:removeTexture") 
+		end
+	end
+end
 
 function Townhall:assignInterior() 
 	local path = ("%s/public/%s%s"):format(STATIC_INTERIOR_MAP_PATH, "townhall", ".map")
@@ -44,7 +63,7 @@ function Townhall:onInteriorLoad(instance)
 end
 
 function Townhall:onEnter(player, teleporter) 
-	player:triggerEvent("Townhall:applyTexture") 
+	
 	if not self.m_Interior then 
 		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 2)
 		return teleporter:enter(player)
@@ -52,7 +71,6 @@ function Townhall:onEnter(player, teleporter)
 end
 
 function Townhall:onExit(player, teleporter) 
-	player:triggerEvent("Townhall:removeTexture") 
 	if not self.m_Interior then 
 		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 2)
 		return teleporter:exit(player)	

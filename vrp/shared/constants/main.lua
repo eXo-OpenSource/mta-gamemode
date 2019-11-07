@@ -515,6 +515,7 @@ THREAD_PRIORITY_MIDDLE = 250
 THREAD_PRIORITY_HIGH = 150
 THREAD_PRIORITY_HIGHEST = 50
 THREAD_PRIORITY_SUPER = 5 -- since we can use timers that are below 50 ms now
+THREAD_PRIORITY_REALTIME = 1 -- since we can use timers that are below 50 ms now
 
 AD_COST = 30
 AD_COST_PER_CHAR = 3
