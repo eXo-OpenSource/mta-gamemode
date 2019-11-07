@@ -30,7 +30,6 @@ function Interior:constructor(map, row, generated)
 	else 
 		self:setStatus(DYNAMIC_INTERIOR_NOT_FOUND)
 	end
-	CustomInteriorManager:getSingleton():add(self)
 end
 
 function Interior:load() 
@@ -140,7 +139,7 @@ function Interior:rebuild(map)
 	return self
 end
 
-function Interior:enter(player, noWarp) 
+function Interior:enter(player, noWarp, position) 
 	if not self:isCreated() then 
 		self:create()
 		if self:getCreateCallback() then 
@@ -151,11 +150,13 @@ function Interior:enter(player, noWarp)
 	self.m_Clients[player] = true
 	player:setPrivateSync("inInterior", true)
 	if not noWarp then
+		player:setFrozen(true)
 		player:setDimension(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
 		player:setPosition(self:getPosition().x, self:getPosition().y, self:getPosition().z+10)
 		player:setInterior(self:getInterior())
 	end
 	player.m_Interior = self 
+	player.m_InteriorCustomPosition = position
 	player.m_InteriorNoWarp = noWarp
 	CustomInteriorManager:getSingleton():onEnterInterior(player, self)
 end
@@ -164,7 +165,13 @@ function Interior:warp(player)
 	if not player.m_InteriorNoWarp then
 		player:setDimension(self:getDimension())
 		player:setInterior(self:getInterior())
-		player:setPosition(self:getPosition())
+		if not player.m_InteriorCustomPosition then
+			player:setPosition(self:getPosition())
+		else 
+			player:setPosition(player.m_InteriorCustomPosition)
+		end
+		player:setFrozen(false)
+		player:setVelocity(Vector3(0, 0, 0))
 	end
 end
 
@@ -183,6 +190,14 @@ function Interior:exit(player, noWarp)
 	end
 end
 
+function Interior:remove(player) 
+	self.m_Clients[player] = nil
+	player.m_Interior = nil
+	CustomInteriorManager:getSingleton():onLeaveInterior(player, self)
+	player:setPrivateSync("inInterior", false)
+	player:triggerEvent("InteriorManager:onExit")
+end
+
 function Interior:forceExit() 
 	for player, b in pairs(self.m_Clients) do 
 		if isValidElement(player, "player") and player.m_Interior == self then 
@@ -195,9 +210,12 @@ end
 
 function Interior:antifall(player)
 	if player.m_Interior == self then
+		player:setFrozen(true)
+		player:setVelocity(Vector3(0, 0, 0))
 		player:setDimension(self:getDimension())
 		player:setInterior(self:getInterior())
 		player:setPosition(self:getPosition())
+		setTimer(function() player:setFrozen(false) end, 500, 1)
 	end
 end
 
@@ -269,7 +287,7 @@ function Interior:setLoaded(bool)
 	return self	
 end 
 
-function Interior:setOwner(owner, ownerType) 
+function Interior:setOwner(ownerType, owner) 
 	assert(owner and ownerType, "Bad argument @ Interior.setOwner")
 	self.m_Owner = owner
 	self.m_OwnerType = ownerType 

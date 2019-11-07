@@ -7,8 +7,8 @@
 -- ****************************************************************************
 BarShop = inherit(Shop)
 
-function BarShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
-	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, interior)
+function BarShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 
 	self.m_Type = "Bar"
 	self.m_TypeName = "Bar"
@@ -23,8 +23,8 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 
 	if self.m_Marker then
 		self.m_SoundCol = createColSphere(self.m_Marker:getPosition(), 50)
-		self.m_SoundCol:setDimension(self.m_Dimension or DYNAMIC_INTERIOR_DUMMY_DIMENSION)
-		self.m_SoundCol:setInterior(self.m_Interior or 0)
+		self.m_SoundCol:setDimension(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
+		self.m_SoundCol:setInterior(0)
 		--addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self)) this is not used anymore since we use the click-system on peds
 	end
 

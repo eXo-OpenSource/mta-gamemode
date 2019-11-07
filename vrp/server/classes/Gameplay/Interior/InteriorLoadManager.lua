@@ -8,16 +8,18 @@
 InteriorLoadManager = inherit(Singleton)
 InteriorLoadManager.Map = {}
 
-function InteriorLoadManager.add(id, callback)
-	if not CustomInteriorManager.IdMap[id] or type(InteriorLoadManager.Map[id]) ~= "function" then 
-		InteriorLoadManager.Map[id] = callback
+function InteriorLoadManager.add(ownerType, owner, callback)
+	if (not CustomInteriorManager.OwnerMap[ownerType] or not CustomInteriorManager.OwnerMap[ownerType][owner]) 
+	or (InteriorLoadManager.Map[ownerType] and InteriorLoadManager.Map[ownerType][owner] and type(InteriorLoadManager.Map[ownerType][owner]) ~= "function") then 
+		if not InteriorLoadManager.Map[ownerType] then InteriorLoadManager.Map[ownerType] = {} end 
+		InteriorLoadManager.Map[ownerType][owner] = callback
 	else
-		InteriorLoadManager.Map[id](CustomInteriorManager.IdMap[id])
+		InteriorLoadManager.Map[ownerType][owner](CustomInteriorManager.OwnerMap[ownerType][owner])
 	end
 end
 
-function InteriorLoadManager.call(instance)
-	if InteriorLoadManager.Map[instance:getId()] and type(InteriorLoadManager.Map[instance:getId()]) == "function" then 
-		InteriorLoadManager.Map[instance:getId()](instance)
+function InteriorLoadManager.call(ownerType, owner, instance)
+	if InteriorLoadManager.Map[ownerType] and InteriorLoadManager.Map[ownerType][owner] and type(InteriorLoadManager.Map[ownerType][owner]) == "function" then
+		InteriorLoadManager.Map[ownerType][owner](instance)
 	end 
 end

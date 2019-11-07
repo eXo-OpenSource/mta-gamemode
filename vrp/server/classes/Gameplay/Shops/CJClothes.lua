@@ -20,8 +20,8 @@ function CJClothes:constructor(id, name, position, rotation, typeData, dimension
 			self.m_ClothesMarker[type] = createMarker(pos, "cylinder", 1, 255, 255, 0, 120)
 			self.m_ClothesMarker[type].typeId = CJ_CLOTHE_TYPES[type]
 			self.m_ClothesMarker[type].clothes = CJ_CLOTHES[type]
-			self.m_ClothesMarker[type]:setInterior(self.m_Interior or 0)
-			self.m_ClothesMarker[type]:setDimension(self.m_Dimension or DYNAMIC_INTERIOR_DUMMY_DIMENSION)
+			self.m_ClothesMarker[type]:setInterior(0)
+			self.m_ClothesMarker[type]:setDimension(DYNAMIC_INTERIOR_DUMMY_DIMENSION)
 			if type == "Tattoos" then
 				addEventHandler("onMarkerHit", self.m_ClothesMarker[type], bind(self.onTattooMarkerHit, self))
 			else

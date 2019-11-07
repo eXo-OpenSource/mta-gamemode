@@ -39,6 +39,9 @@ end
 addEvent("onElementInteriorChange", true )
 _setElementInterior = setElementInterior
 function setElementInterior(element, interior, x, y, z)
+	if type(interior) == "table" then 
+		print(debug.traceback())
+	end
 	if isElement(element) then
 		_setElementInterior(element, interior, x, y, z)
 		triggerEvent("onElementInteriorChange", element, interior)

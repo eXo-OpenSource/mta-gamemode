@@ -11,7 +11,7 @@ local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob, assignInterior)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
 	if owner == 0 then
 		owner = false
 	end
@@ -33,9 +33,13 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_BankAccountServer = BankServer.get("action.house_rob")
 	self.m_BankAccountServer2 = BankServer.get("server.house")
 	self.m_InteriorID = interiorID
-	if assignInterior then -- only for migration
+	
+	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.HOUSE, id, bind(self.loadInterior, self))
+	
+	if INTERIOR_HOUSE_MIGRATION then 
 		self:assignInterior(interiorID)
 	end
+
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.House)
 	if not self.m_BankAccount then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.House, self.m_Id)
@@ -53,12 +57,10 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
 	self:updatePickup()
-	InteriorLoadManager.add(self.m_InteriorID, bind(self.loadInterior, self))
 end
 
-function House:loadInterior() 
-	self:setInteriorInstance(CustomInteriorManager.getIdMap(self.m_InteriorID))
-
+function House:loadInterior(interior) 
+	self:setInteriorInstance(interior)
 	if self:getInteriorInstance() then
 		self:getInteriorInstance():setExit(self:getPosition(), 0, 0)
 		self:getInteriorInstance():setCreateCallback(bind(self.refreshInteriorMarker, self))
@@ -68,12 +70,14 @@ function House:loadInterior()
 
 end
 
-function House:assignInterior(houseInt) 
+function House:assignInterior(houseInt)
 	if STATIC_INTERIOR_ID_TO_PATH[houseInt] then 
 		local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(STATIC_INTERIOR_ID_TO_PATH[houseInt], true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
-				:setTemporary(false)
-				:forceSave()
-		self.m_InteriorID = instance:getId()
+			:setTemporary(false)
+			:setOwner(INTERIOR_OWNER_TYPES.HOUSE, self.m_Id)
+			:forceSave()
+		CustomInteriorManager:getSingleton():add(instance)
+		self.m_InteriorInstanceId = instance:getId()
 	end
 	return self
 end
@@ -397,10 +401,10 @@ function House:enterHouse(player)
 	if not self:isPlayerNearby(player) then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	local isRobberEntering = false
 	
-	if not self:getInteriorInstance() then 
-		CustomInteriorManager:getSingleton():load(self.m_InteriorID)
+	if not self:getInteriorInstance() then
+		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.HOUSE, self.m_Id)
 	end
-	
+
 	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self and self:isValidRob(player) and not self.hasRobbedHouse[player:getId()] then
 			isRobberEntering = true

@@ -35,7 +35,7 @@ end
 function InteriorManager:Event_onEnter(data)
 	self:clean()
 	self.m_AntiFall = Antifall:new()
-	MapLoadGUI:getSingleton():setStatus(_("Erstelle Interior..."))
+	MapLoadGUI:getSingleton():setStatus(_("Bereite Interior vor..."))
 	setTimer(function() self:initialise(data) end, 1000, 1)
 end 
 
@@ -92,7 +92,7 @@ function InteriorManager:thread()
 		MapLoadGUI:getSingleton():setStatus(_("Erstelle Objekte (%d von %d)", self:getIterateCount(), self.m_MapSize))
 		MapLoadGUI:getSingleton():setProgress(self:getIterateCount() /self.m_MapSize)
 		if self:getIterateCount() == table.size(self:getMap():getData()) then 
-			setTimer(function() self:onMapComplete() end, 2000, 1)
+			setTimer(function() self:onMapComplete() end, 500, 1)
 		end
 	end
 end

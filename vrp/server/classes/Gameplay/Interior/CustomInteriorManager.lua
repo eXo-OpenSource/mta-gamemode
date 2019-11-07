@@ -11,6 +11,7 @@ CustomInteriorManager.IdMap = {}
 CustomInteriorManager.MapByMapId = {}
 CustomInteriorManager.KeepPositionMaps = {}
 CustomInteriorManager.MapByInterior = {}
+CustomInteriorManager.OwnerMap = {}
 function CustomInteriorManager:constructor()
 	addRemoteEvents{"InteriorManager:onFall", "InteriorManager:onDetectLeave", "InteriorManager:onInteriorReady"}
 	addEventHandler("InteriorManager:onFall", root, bind(self.Event_onAntiFall, self))
@@ -18,15 +19,11 @@ function CustomInteriorManager:constructor()
 	addEventHandler("InteriorManager:onDetectLeave", root, bind(self.Event_onDetectLeave, self))
 	InteriorLoadManager:new()
 	InteriorMapManager:new():load()
-	self:houseMigrator()
 	self.m_CurrentDimension = 1
 	self.m_CurrentInterior = 20
 	self.m_LoadedCount = 0
 	self.m_FailLoads = {}
 	self.m_Ready = false
-	if not self:isShopColumn() then 
-		self:shopMigrator()
-	end
 	if not self:isPlayerColumnAvailable() then 
 		self:createLogoutColumn()
 	end
@@ -34,6 +31,12 @@ function CustomInteriorManager:constructor()
 		print(("** [CustomInteriorManager] Checking if %s_interiors exists! Creating otherwise... **"):format(sql:getPrefix()))
 		if self:createTable() then 
 			self.m_Ready = true
+			INTERIOR_HOUSE_MIGRATION = true 
+			INTERIOR_SHOP_MIGRATION = true
+			INTERIOR_COMPANY_MIGRATION = true
+			print(("***************************************************"):format(sql:getPrefix())) 
+			print(("** [CustomInteriorManager] Starting Migration... **"):format(sql:getPrefix())) 
+			print(("***************************************************"):format(sql:getPrefix())) 
 		end
 	else 
 		self.m_Ready = true
@@ -41,6 +44,13 @@ function CustomInteriorManager:constructor()
 	if self:isReady() then
 		self:getLastGridPoint()
 		PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
+		PlayerManager:getSingleton():getWastedHook():register(
+			function(player)
+				if player.m_Interior then
+					player.m_Interior:remove(player)
+				end
+			end
+		)
 	end
 end
 
@@ -62,7 +72,20 @@ function CustomInteriorManager:load(id)
 				interior = row.Interior, 
 				dimension = row.Dimension,
 			}
-			InteriorLoadManager.call(Interior:new(InteriorMapManager.get(row.MapId), packData, row.Generated):setOwner(row.Owner, row.OwnerType):setId(row.Id))
+			local instance = Interior:new(InteriorMapManager.get(row.MapId), packData, row.Generated):setOwner(row.OwnerType, row.Owner):setId(row.Id)
+			CustomInteriorManager:getSingleton():add(instance)
+			return self
+		else 
+			self.m_FailLoads[row.Id] = true
+		end
+	end
+end
+
+function CustomInteriorManager:loadFromOwner(ownerType, owner)
+	local row = sql:queryFetchSingle("SELECT * FROM ??_interiors WHERE OwnerType=? AND Owner=?", sql:getPrefix(), ownerType, owner)
+	if row then 
+		if row.Id then
+			return CustomInteriorManager.getIdMap(row.Id, true)
 		else 
 			self.m_FailLoads[row.Id] = true
 		end
@@ -162,12 +185,20 @@ function CustomInteriorManager:add(instance)
 	CustomInteriorManager.Map[instance] = true
 	if not CustomInteriorManager.MapByMapId[instance:getMap():getId()] then CustomInteriorManager.MapByMapId[instance:getMap():getId()] = {} end 
 	CustomInteriorManager.MapByMapId[instance:getMap():getId()][instance] = true
+	if instance:getOwner() > 0 then
+		InteriorLoadManager.call(instance:getOwnerType(), instance:getOwner(), instance)
+		if not CustomInteriorManager.OwnerMap[instance:getOwnerType()] then 
+			CustomInteriorManager.OwnerMap[instance:getOwnerType()]  = {}
+		end
+		CustomInteriorManager.OwnerMap[instance:getOwnerType()][instance:getOwner()] = instance
+	end
 end
 
 function CustomInteriorManager:remove(instance) 
 	CustomInteriorManager.Map[instance] = nil
 	if CustomInteriorManager.MapByMapId[instance:getMap():getId()] then 
 		CustomInteriorManager.MapByMapId[instance:getMap():getId()][instance] = nil
+		CustomInteriorManager.OwnerMap[instance:getOwnerType()][instance:getOwner()] = nil
 	end
 end
 
@@ -370,15 +401,6 @@ function CustomInteriorManager:isPlayerColumnAvailable()
 	return sql:queryFetchSingle(query, sql:getPrefix())
 end
 
-function CustomInteriorManager:isShopColumn() 
-	local query = 
-	[[
-		SHOW COLUMNS FROM ??_shops WHERE Field LIKE "Interior"
-	]]
-	return sql:queryFetchSingle(query, sql:getPrefix())
-end
-
-
 function CustomInteriorManager:createTable() 
 	local query = [[
 	CREATE TABLE IF NOT EXISTS ??_interiors (
@@ -389,7 +411,7 @@ function CustomInteriorManager:createTable()
   		`PosZ` float NOT NULL DEFAULT 0,
   		`Interior` int(11) NOT NULL DEFAULT 0,
   		`Dimension` int(11) NOT NULL DEFAULT 0,
-		`Generated` INT(1) NOT NULL DEFAULT '0'
+		`Generated` INT(1) NOT NULL DEFAULT '0',
   		`Owner` int(11) NOT NULL DEFAULT 0,
   		`OwnerType` int(11) NOT NULL DEFAULT 0,
   		`Date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -418,66 +440,6 @@ function CustomInteriorManager:createLogoutColumn()
 		return true
 	end
 	return false
-end
-
-function CustomInteriorManager:shopMigrator() 
-	local probeQuery = [[
-		SHOW COLUMNS FROM ??_shops WHERE Field LIKE "Interior"
-	]]
-	if not sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
-		print ("** [InteriorManager] Shops-Table needs to be changed! **")
-		local addQuery = [[
-			ALTER TABLE ??_shops
-			ADD COLUMN `Interior` INT NULL DEFAULT 0;
-		]]
-		if sql:queryExec(addQuery, sql:getPrefix()) then 
-			print ("** [InteriorManager] Shops-Structure altered! **")
-			SHOP_MIGRATION = true
-		end
-	end
-end
-
-
-function CustomInteriorManager:houseMigrator() 
-	local probeQuery = [[
-		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "interiorID" AND Type LIKE "%tiny%"
-	]]
-	if sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
-		print (("** [InteriorManager] %s_houses needs to be altered! (Copying %s_houses to %s_houses_old and altering structure!) **"):format(sql:getPrefix(), sql:getPrefix(), sql:getPrefix()))
-		local copyQuery = [[
-			CREATE TABLE ??_houses_old AS SELECT * FROM ??_houses
-		]]
-		if sql:queryExec(copyQuery, sql:getPrefix(), sql:getPrefix()) then 
-			local alterQuery = [[
-				ALTER TABLE ??_houses
-				CHANGE COLUMN `interiorID` `oldHouseID` TINYINT(4) NULL DEFAULT NULL AFTER `z`;
-			]]
-			if sql:queryExec(alterQuery, sql:getPrefix()) then 
-				local addQuery = [[
-					ALTER TABLE ??_houses
-					ADD COLUMN `interiorID` INT NULL DEFAULT 0 AFTER `oldHouseID`;
-				]]
-				if sql:queryExec(addQuery, sql:getPrefix()) then
-					print ("** [InteriorManager] Houses-Structure altered! **")
-					HOUSE_MIGRATION = true
-				end
-			end
-		end
-	end 
-end
-
-function CustomInteriorManager:endHouseMigration() 
-	local probeQuery = [[
-		SHOW COLUMNS FROM ??_houses WHERE Field LIKE "oldHouseID"
-	]]	
-	if sql:queryFetchSingle(probeQuery, sql:getPrefix()) then 
-		local dropQuery = [[
-			ALTER TABLE ??_houses
-  				DROP COLUMN `oldHouseID`;
-		]]
-		sql:queryExec(dropQuery, sql:getPrefix())
-	end
-	print("** [InteriorManager] House-Migration is done! **")
 end
 
 function CustomInteriorManager.getIdMap(id, load) 

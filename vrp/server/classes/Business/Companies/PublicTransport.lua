@@ -29,15 +29,15 @@ function PublicTransport:constructor()
 
 	Gate:new(968, Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), Vector3(1811.2,-1893,13.2,0), Vector3(0, 5, 90), false).onGateHit = bind(self.onBarrierHit, self)
 
-	InteriorEnterExit:new(Vector3(1743.05, -1864.12, 13.59), Vector3(1225.84, -68.98, 1011.33), 0, 0, 12, 4) --front door
-	InteriorEnterExit:new(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, 4) --parking lot
-	InteriorEnterExit:new(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 4) --side
+	InteriorEnterExit:new(Vector3(1743.05, -1864.12, 13.59), Vector3(1225.84, -68.98, 1011.33), 0, 0, 12, 0) --front door
+	InteriorEnterExit:new(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, 0) --parking lot
+	InteriorEnterExit:new(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 0) --side
 
 
 	self.m_BankAccountServer = BankServer.get("company.public_transport")
 	local safe = createObject(2332, 1236, -62.10, 1011.8, 0, 0, -90)
 	safe:setInterior(12)
-	safe:setDimension(4)
+	safe:setDimension(0)
 	self:setSafe(safe)
 	self:addBusStops()
 end

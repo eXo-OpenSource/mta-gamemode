@@ -41,10 +41,6 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	end
 
 	self.m_InteriorId = interiorId
-	if interiorId == 0 then 
-		self:assignInterior()
-	end
-	
 
 	local interior, intPosition = unpack(typeData["Interior"])
 	if interior > 0 then
@@ -94,19 +90,24 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
 	end
+	
+	if interior > 0 then
+		InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SHOP, id, bind(self.loadInterior, self))	
 
-	InteriorLoadManager.add(self.m_InteriorId, bind(self.loadInterior, self))
+		if INTERIOR_SHOP_MIGRATION then 
+			self:assignInterior()
+		end
+	end
 end
 
 function Shop:assignInterior() 
 	if SHOPS_NAME_TO_INTERIOR_PATH[self.m_TypeDataName] then 
 		local instance = Interior:new(InteriorMapManager:getSingleton():getByPath( SHOPS_NAME_TO_INTERIOR_PATH[self.m_TypeDataName], true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
 				:setTemporary(false)
+				:setOwner(INTERIOR_OWNER_TYPES.SHOP, self.m_Id)
 				:forceSave()
+		CustomInteriorManager:getSingleton():add(instance)
 		self.m_InteriorId = instance:getId()
-		if self.m_InteriorId then 
-			sql:queryExec("UPDATE ??_shops SET Interior = ? WHERE Id = ?", sql:getPrefix(), self.m_InteriorId, self.m_Id)
-		end
 	end
 	return self
 end
@@ -134,9 +135,10 @@ function Shop:refreshInteriorEntrance()
 	end
 end
 
-function Shop:loadInterior() 
-	self.m_Interior = CustomInteriorManager.getIdMap(self.m_InteriorId)
+function Shop:loadInterior(instance)
+	self.m_Interior = instance
 	if self.m_Interior then 
+		self.m_InteriorId = self.m_Interior:getId()
 		self.m_Interior:setExit(self.m_Position, 0, 0)
 		self.m_Teleporter:setInterior(self.m_Interior)
 		self.m_Interior:setCreateCallback(bind(self.refreshInteriorEntrance, self))
@@ -160,7 +162,7 @@ end
 
 function Shop:onEnter(player)
 	if not self.m_Interior then 
-		CustomInteriorManager:getSingleton():load(self.m_InteriorId)
+		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SHOP, self.m_Id)
 		return self.m_Teleporter:enter(player)	
 	end
 	if self.m_BuyAble then

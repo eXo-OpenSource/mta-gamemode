@@ -80,9 +80,6 @@ function Core:constructor()
 		VehicleScrapper:new()
 		Admin:new()
 		CustomInteriorManager:new()
-		if CustomInteriorManager:getSingleton():isReady() then 
-			CustomInteriorManager:getSingleton():load()
-		end
 		StatisticsLogger:new()
 		--WhiteList:new()
 		PhoneInteraction:new()

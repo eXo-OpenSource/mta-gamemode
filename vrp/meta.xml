@@ -58,6 +58,7 @@
 	<script src="server/utils.lua" type="server"/>
 	<script src="server/mapEditorScriptingExtension_s.lua" type="server"/>
 	<script src="server/constants/main.lua" type="server"/>
+	<script src="server/constants/interior.lua" type="server"/>
 	<script src="server/constants/factions.lua" type="server"/>
 	<script src="server/constants/companies.lua" type="server"/>
 	<script src="server/constants/beggar.lua" type="server"/>
