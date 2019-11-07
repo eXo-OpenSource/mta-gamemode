@@ -31,6 +31,7 @@ function CustomInteriorManager:constructor()
 		print(("** [CustomInteriorManager] Checking if %s_interiors exists! Creating otherwise... **"):format(sql:getPrefix()))
 		if self:createTable() then 
 			self.m_Ready = true
+			INTERIOR_MIGRATION = true
 			INTERIOR_HOUSE_MIGRATION = true 
 			INTERIOR_SHOP_MIGRATION = true
 			INTERIOR_COMPANY_MIGRATION = true

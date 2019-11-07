@@ -175,12 +175,16 @@ function Interior:warp(player)
 	end
 end
 
-function Interior:exit(player, noWarp) 
+function Interior:exit(player, position) 
 	if self:getExit() then 
-		if not noWarp then
+		if not position or type(position) ~= "table" then
 			player:setDimension(self:getExit().dimension)
 			player:setInterior(self:getExit().interior)
 			player:setPosition(self:getExit().position)
+		else 
+			player:setDimension(position.dimension)
+			player:setInterior(position.interior)
+			player:setPosition(position.position)
 		end
 		self.m_Clients[player] = nil
 		player.m_Interior = nil

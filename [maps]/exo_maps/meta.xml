@@ -56,7 +56,7 @@
 	<map src="unternehmen/mechanic.map" />
 	<!-- <map src="unternehmen/mechanic_miami.map" /> -->
 	<map src="unternehmen/ltr.map" />
-	<map src="unternehmen/public_transport.map" />
+	<!--map src="unternehmen/public_transport.map" /-->
 
 	<map src="fishing/location_desert.map" />
 	<map src="fishing/location_cave.map" />
@@ -113,7 +113,7 @@
 	<map src="shop/Tankstellen.map"/>
 	<map src="shop/tankstellen_removals.map" />
 
-	<map src="stadthalle.map" />
+	<!--map src="stadthalle.map" /-->
 	<map src="Kartbahn.map" />
 	<map src="gasstation.map" />
 	<map src="atrium_outside.map" />

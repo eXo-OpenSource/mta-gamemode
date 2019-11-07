@@ -72,9 +72,9 @@ function InteriorEnterExit:enter(player)
 				self:teleport(player, "enter", unpack(self.m_EntranceData))
 			end
 		else 
-			self:getInterior():enter(player)
+			self:getInterior():enter(player, nil, self.m_EntranceData[1])
 		end
-		if self.m_EnterEvent then self.m_EnterEvent(player) end
+		if self.m_EnterEvent then self.m_EnterEvent(player, self) end
 	else 
 		player:sendInfo(_("Der Eingang ist verschlossen!", client))
 	end
@@ -87,9 +87,9 @@ function InteriorEnterExit:exit(player)
 				self:teleport(player, "exit", unpack(self.m_ExitData))
 			end
 		else 
-			self:getInterior():exit(player)
+			self:getInterior():exit(player, {position = self.m_ExitData[1], interior = self.m_ExitData[3], dimension = self.m_ExitData[4]})
 		end
-		if self.m_ExitEvent then self.m_ExitEvent(player) end
+		if self.m_ExitEvent then self.m_ExitEvent(player, self) end
 	else 
 		player:sendInfo(_("Der Ausgang ist verschlossen!", client))
 	end

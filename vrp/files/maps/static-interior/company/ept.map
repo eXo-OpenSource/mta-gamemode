@@ -1,10 +1,4 @@
 <map edf:definitions="editor_main">
-    <removeWorldObject id="removeWorldObject (lamppost3) (2)" radius="6.6149273" interior="0" model="1226" lodModel="0" posX="1807.3684" posY="-1902.1345" posZ="18.67805" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    <removeWorldObject id="removeWorldObject (lamppost3) (3)" radius="6.6149273" interior="0" model="1226" lodModel="0" posX="1807.5637" posY="-1931.2766" posZ="15.1121" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    <removeWorldObject id="removeWorldObject (parkbench1) (1)" radius="3.6262574" interior="0" model="1280" lodModel="0" posX="1714.7467" posY="-1909.4376" posZ="13.1134" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    <removeWorldObject id="removeWorldObject (parkbench1) (2)" radius="3.6262574" interior="0" model="1280" lodModel="0" posX="1715.0432" posY="-1914.5969" posZ="13.32995" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    <removeWorldObject id="removeWorldObject (lamppost3) (4)" radius="6.6149273" interior="0" model="1226" lodModel="0" posX="1773.9951" posY="-1901.7228" posZ="18.98605" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    <removeWorldObject id="removeWorldObject (lamppost3) (5)" radius="6.6149273" interior="0" model="1226" lodModel="0" posX="1773.6838" posY="-1931.3" posZ="13.84764" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (bar_gatebar01) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="966" doublesided="false" scale="1" dimension="0" posX="1811.2002" posY="-1892.9004" posZ="12.4" rotX="0" rotY="0" rotZ="270"></object>
     <object id="object (helipad01) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="3934" doublesided="false" scale="1.2" dimension="0" posX="1769.7871" posY="-1992.1989" posZ="13.12418" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (kmb_cam) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="2921" doublesided="false" scale="1" dimension="0" posX="1751.2" posY="-1884.4" posZ="26.7" rotX="0" rotY="0" rotZ="180"></object>
@@ -21,7 +15,6 @@
     <object id="object (parkbench1) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="1280" doublesided="false" scale="1" dimension="0" posX="1757.7" posY="-1924.4" posZ="13" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (parkbench1) (3)" breakable="true" interior="0" collisions="true" alpha="255" model="1280" doublesided="false" scale="1" dimension="0" posX="1757.8" posY="-1931.7" posZ="13" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (ferspaces) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="10183" doublesided="false" scale="1" dimension="0" posX="1802.8252" posY="-1920.375" posZ="12.425" rotX="0" rotY="0" rotZ="315.5"></object>
-    <removeWorldObject id="removeWorldObject (lamppost2) (1)" radius="8.8853035" interior="0" model="1290" lodModel="0" posX="1780.9492" posY="-2000.5856" posZ="17.32418" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (vegasairportlight) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="3526" doublesided="false" scale="1" dimension="0" posX="1765.3317" posY="-1987.2107" posZ="13.19259" rotX="0" rotY="0" rotZ="135"></object>
     <object id="object (vegasairportlight) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="3526" doublesided="false" scale="1" dimension="0" posX="1774.4799" posY="-1997.394" posZ="13.19259" rotX="0" rotY="0" rotZ="315"></object>
     <object id="object (vegasairportlight) (3)" breakable="true" interior="0" collisions="true" alpha="255" model="3526" doublesided="false" scale="1" dimension="0" posX="1774.4404" posY="-1987.2646" posZ="13.18561" rotX="0" rotY="0" rotZ="45"></object>
@@ -89,6 +82,6 @@
     <object id="object (kb_chair03) (9)" breakable="true" interior="12" collisions="true" alpha="255" model="1704" doublesided="false" scale="1" dimension="0" posX="1221.9661" posY="-48.10683" posZ="1011.7317" rotX="0" rotY="0" rotZ="93.318"></object>
     <object id="object (kb_chair03) (10)" breakable="true" interior="12" collisions="true" alpha="255" model="1704" doublesided="false" scale="1" dimension="0" posX="1214.1594" posY="-48.12949" posZ="1011.7317" rotX="0" rotY="0" rotZ="93.318"></object>
 	
-	<marker type="cylinder" id="entrance" color="#0000ffff" size="1" dimension="0" alpha="255" interior="5" posX="1225.84" posY="-68.98" posZ="1011.33"></marker>
+	<marker type="cylinder" id="entrance" color="#0000ffff" size="1" dimension="0" alpha="255" interior="12" posX="1225.84" posY="-68.98" posZ="1011.33"></marker>
 
 </map>

@@ -29,18 +29,72 @@ function PublicTransport:constructor()
 
 	Gate:new(968, Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), Vector3(1811.2,-1893,13.2,0), Vector3(0, 5, 90), false).onGateHit = bind(self.onBarrierHit, self)
 
-	InteriorEnterExit:new(Vector3(1743.05, -1864.12, 13.59), Vector3(1225.84, -68.98, 1011.33), 0, 0, 12, 0) --front door
-	InteriorEnterExit:new(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, 0) --parking lot
-	InteriorEnterExit:new(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 0) --side
-
+	local teleporters = {}
+	teleporters[1] = InteriorEnterExit:new(Vector3(1743.05, -1864.12, 13.59), Vector3(1225.84, -68.98, 1011.33), 0, 0, 12, DYNAMIC_INTERIOR_DUMMY_DIMENSION) --front door
+	teleporters[2] = InteriorEnterExit:new(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, DYNAMIC_INTERIOR_DUMMY_DIMENSION) --parking lot
+	teleporters[3] = InteriorEnterExit:new(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, DYNAMIC_INTERIOR_DUMMY_DIMENSION) --side
+	self.m_Teleporters = teleporters
+	
+	for i = 1, #self.m_Teleporters do 
+		self.m_Teleporters[i]:addEnterEvent(bind(self.onEnter, self))
+		self.m_Teleporters[i]:addExitEvent(bind(self.onExit, self))
+	end
 
 	self.m_BankAccountServer = BankServer.get("company.public_transport")
 	local safe = createObject(2332, 1236, -62.10, 1011.8, 0, 0, -90)
-	safe:setInterior(12)
-	safe:setDimension(0)
 	self:setSafe(safe)
 	self:addBusStops()
+	self.m_Safe = safe 
+	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SERVER, 1, bind(self.onInteriorLoad, self))
+
+	if INTERIOR_COMPANY_MIGRATION then 
+		self:assignInterior()
+	end
 end
+
+function PublicTransport:assignInterior() 
+	local path = ("%s/company/%s%s"):format(STATIC_INTERIOR_MAP_PATH, "ept", ".map")
+	local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(path, true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
+			:setTemporary(false)
+			:setOwner(INTERIOR_OWNER_TYPES.SERVER, 1)
+			:forceSave()
+	CustomInteriorManager:getSingleton():add(instance)
+	self.m_InteriorId = instance:getId()
+	return self
+end
+
+function PublicTransport:onInteriorCreate()
+	for i = 1, #self.m_Teleporters do 
+		self.m_Teleporters[i].m_ExitMarker:setInterior(self.m_Interior:getInterior())
+		self.m_Teleporters[i].m_ExitMarker:setDimension(self.m_Interior:getDimension())
+	end
+	self.m_Safe:setInterior(self.m_Interior:getInterior())
+	self.m_Safe:setDimension(self.m_Interior:getDimension())
+end
+
+function PublicTransport:onInteriorLoad(instance) 
+	self.m_Interior = instance 
+	for i = 1, #self.m_Teleporters do 
+		self.m_Teleporters[i]:setInterior(instance)
+	end
+	self.m_Interior:setExit(self.m_Teleporters[1].m_EnterMarker:getPosition(), self.m_Teleporters[1].m_EnterMarker:getInterior(), self.m_Teleporters[1].m_EnterMarker:getDimension())
+	self.m_Interior:setCreateCallback(bind(self.onInteriorCreate, self))
+end
+
+function PublicTransport:onEnter(player, teleporter) 
+	if not self.m_Interior then 
+		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 1)
+		return teleporter:enter(player)	
+	end
+end
+
+function PublicTransport:onExit(player, teleporter) 
+	if not self.m_Interior then 
+		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 1)
+		return teleporter:exit(player)	
+	end
+end
+
 
 function PublicTransport:destuctor()
 	for k, info in pairs(self.m_BusStops) do

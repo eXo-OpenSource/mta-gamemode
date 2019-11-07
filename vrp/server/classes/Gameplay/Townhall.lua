@@ -8,14 +8,55 @@ function Townhall:constructor()
 	--elevator:addStation("Ausgang", Vector3(1788.389, -1297.811, 13.375))
 	--elevator:addStation("Stadthalle", Vector3(1786.800, -1301.099, 120.300), 120)
 	self:createGarage()
-	self.m_EnterExit = InteriorEnterExit:new(Vector3(1481.09, -1770.12, 18.80), Vector3(2758.5, -2422.8994140625, 816), 0, 0, 5)
+	self.m_EnterExit = InteriorEnterExit:new(Vector3(1481.09, -1770.12, 18.80), Vector3(2758.5, -2422.8994140625, 816), 0, 0, DYNAMIC_INTERIOR_DUMMY_DIMENSION)
+	self.m_EnterExit:addEnterEvent(bind(self.onEnter, self))
+	self.m_EnterExit:addExitEvent(bind(self.onExit, self))
 
-	self.m_EnterExit:addEnterEvent(function( player ) player:triggerEvent("Townhall:applyTexture") end)
-	self.m_EnterExit:addExitEvent(function( player ) player:triggerEvent("Townhall:removeTexture") end)
+	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SERVER, 2, bind(self.onInteriorLoad, self))
+	if INTERIOR_MIGRATION then 
+		self:assignInterior()
+	end
 
-	local townhallAntiFall = createColCuboid(2730.97, -2422.92, 809.44, 100, 100, 5.5)
-	townhallAntiFall:setInterior(5)
-	InstantTeleportArea:new( townhallAntiFall, 5, 0, Vector3(2758.77, -2419.45, 816.3))
+end
+
+
+function Townhall:assignInterior() 
+	local path = ("%s/public/%s%s"):format(STATIC_INTERIOR_MAP_PATH, "townhall", ".map")
+	local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(path, true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
+			:setTemporary(false)
+			:setOwner(INTERIOR_OWNER_TYPES.SERVER, 2)
+			:forceSave()
+	CustomInteriorManager:getSingleton():add(instance)
+	self.m_InteriorId = instance:getId()
+	return self
+end
+
+function Townhall:onInteriorCreate()
+	self.m_EnterExit.m_ExitMarker:setInterior(self.m_Interior:getInterior())
+	self.m_EnterExit.m_ExitMarker:setDimension(self.m_Interior:getDimension())
+end
+
+function Townhall:onInteriorLoad(instance) 
+	self.m_Interior = instance 
+	self.m_EnterExit:setInterior(instance)
+	self.m_Interior:setExit(self.m_EnterExit.m_EnterMarker:getPosition(), self.m_EnterExit.m_EnterMarker:getInterior(), self.m_EnterExit.m_EnterMarker:getDimension())
+	self.m_Interior:setCreateCallback(bind(self.onInteriorCreate, self))
+end
+
+function Townhall:onEnter(player, teleporter) 
+	player:triggerEvent("Townhall:applyTexture") 
+	if not self.m_Interior then 
+		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 2)
+		return teleporter:enter(player)
+	end
+end
+
+function Townhall:onExit(player, teleporter) 
+	player:triggerEvent("Townhall:removeTexture") 
+	if not self.m_Interior then 
+		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 2)
+		return teleporter:exit(player)	
+	end
 end
 
 function Townhall:createGarage()

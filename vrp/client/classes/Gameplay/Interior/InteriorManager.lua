@@ -59,7 +59,7 @@ function InteriorManager:create(map, dimension)
 		self.m_Map = MapParser:new(nil, map) 
 		if self:getMap() then 
 			self:shift(self:getPosition())
-			local thread = Thread:new(bind(self.thread, self), THREAD_PRIORITY_HIGHEST)
+			local thread = Thread:new(bind(self.thread, self), THREAD_PRIORITY_SUPER)
 			nextframe(function() thread:start() end)
 		end
 	end

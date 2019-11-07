@@ -53,7 +53,7 @@ end
 
 INTERIOR_OWNER_TYPES = 
 {
-	GENERAL = 0,
+	SERVER = 0,
 	HOUSE = 1,
 	SHOP = 2,
 	FACTION = 3, 
