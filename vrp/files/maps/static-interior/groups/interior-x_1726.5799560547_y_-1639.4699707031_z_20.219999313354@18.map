@@ -1,3 +1,3 @@
 <map>
-    <marker type="cylinder" id="entrance" color="#0000ffff" size="1" dimension="0" alpha="255" interior="18" posX="1726.5799560547" posY="-1639.4699707031" posZ="19.719999313354"></marker>
+    <marker type="cylinder" id="entrance" color="#0000ffff" size="1" dimension="0" alpha="255" interior="18" posX="1726.5799560547" posY="-1639.4699707031" posZ="20.219999313354"></marker>
 </map>

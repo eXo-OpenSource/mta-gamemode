@@ -41,7 +41,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
 
-	self.m_ExitMarker = createMarker(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z-1), "cylinder", 1, 255, 255, 255, 200)
+	self.m_ExitMarker = createPickup(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z), 3, 1318, 0)
 	self.m_ElementInfo = ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
 	local colshape = createColSphere(Vector3(InteriorSpawn.x, InteriorSpawn.y, InteriorSpawn.z-1), 3)
 	colshape:setInterior(InteriorId)
@@ -100,7 +100,7 @@ function GroupProperty:refreshInteriorMarker()
 		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
 			self.m_Elevator = Elevator:new()
 			for i, station in ipairs(elevatorData.stations) do
-				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
+				self.m_Elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
 			end
 		end
 	end
@@ -118,7 +118,7 @@ end
 
 function GroupProperty:assignInterior(pos, int)
 	local path = ("%s/groups/interior-%s%s"):format(STATIC_INTERIOR_MAP_PATH, ("x_%s_y_%s_z_%s@%s"):format(pos.x, pos.y, pos.z, int), ".map")
-	local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(coordinateToMap(path, {position=Vector3(pos.x, pos.y, pos.z-.5), interior=int}), true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
+	local instance = Interior:new(InteriorMapManager:getSingleton():getByPath(coordinateToMap(path, {position=Vector3(pos.x, pos.y, pos.z), interior=int}), true,  DYANMIC_INTERIOR_PLACE_MODES.KEEP_POSITION))
 		:setTemporary(false)
 		:setOwner(INTERIOR_OWNER_TYPES.GROUP, self.m_Id)
 		:forceSave()
