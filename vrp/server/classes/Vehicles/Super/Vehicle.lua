@@ -101,7 +101,7 @@ function Vehicle:getOccupantsCount(countAttachedPlayers)
 end
 
 function Vehicle:getOccupants(countAttachedPlayers) -- wrapper for occupant table check and to return attached players
-	local occs = getVehicleOccupants(self) or 0
+	local occs = getVehicleOccupants(self) or {}
 	if countAttachedPlayers then
 		for i, player in pairs(self:getAttachedPlayers()) do
 			occs[3+i] = player -- 3+i -> 3 - amount of seats in gta vehicle, i - index 1-x where x #players attached to veh
