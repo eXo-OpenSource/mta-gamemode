@@ -485,6 +485,11 @@ DbElementTypeName = {
 	[DbElementType.Company] = "company";
 	[DbElementType.Group] = "group";
 	[DbElementType.Vehicle] = "vehicle";
+	[DbElementType.House] = "house";
+	[DbElementType.Property] = "property";
+	[DbElementType.WeaponBox] = "weaponBox";
+	[DbElementType.CoolingBox] = "coolingBox";
+	[DbElementType.FactionDepot] = "factionDepot";
 }
 
 

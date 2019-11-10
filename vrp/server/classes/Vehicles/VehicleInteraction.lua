@@ -105,9 +105,10 @@ function VehicleInteraction:doAction(door)
 			if door == 1 then
 				if instanceof(veh, GroupVehicle) or instanceof(veh, PermanentVehicle, true) then
 					if veh:hasKey(client) or client:getRank() >= RANK.Moderator or (not isVehicleLocked(veh) and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then
-						if veh.getTrunk and veh:getTrunk() and veh:getTrunk().open then
+						client:triggerEvent("openInventory", _("Kofferraum: %s", client, veh:getName()), DbElementType.Vehicle, veh:getId())
+						--[[if veh.getTrunk and veh:getTrunk() and veh:getTrunk().open then
 							veh:getTrunk():open(client)
-						end
+						end]]
 					else
 						client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
 					end

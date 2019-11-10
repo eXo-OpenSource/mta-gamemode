@@ -7,26 +7,37 @@
 -- ****************************************************************************
 InventoryManager = inherit(Singleton)
 
-addRemoteEvents{"onInventorySync"}
+addRemoteEvents{"onInventorySync", "openInventory"}
 
 function InventoryManager:constructor()
-	self.m_OnInventorySync = bind(self.Event_onInventorySync, self)
 	self.m_SyncHookPlayer = Hook:new()
 	self.m_SyncHook = Hook:new()
 	self.m_CachedInventories = {}
 	self.m_PlayerInventoryId = 0
+	self.m_OpenInventoryGUIs = {}
 
 	setTimer(function(self)
-		self.m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, 4123) -- because fuck it
-		self.m_PlayerInventoryGUI:hide()
+		localPlayer:setPrivateSyncChangeHandler("Id", bind(function()
+			local id = localPlayer:getPrivateSync("Id")
+			if id and id ~= 0 then
+				localPlayer:setPrivateSyncChangeHandler("Id", nil)
+				self.m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, id)
+				self.m_PlayerInventoryGUI:hide()
 
-		bindKey("k", "up", bind(function()
-			self.m_PlayerInventoryGUI:toggle()
+
+				bindKey("i", "up", bind(function()
+					self.m_PlayerInventoryGUI:toggle()
+				end, self))
+			end
 		end, self))
 	end, 100, 1, self)
 
+	addEventHandler("onInventorySync", root, bind(self.Event_onInventorySync, self))
+	addEventHandler("openInventory", root, bind(self.Event_openInventory, self))
+end
 
-	addEventHandler("onInventorySync", root, self.m_OnInventorySync)
+function InventoryManager:Event_openInventory(title, elementType, elementId)
+	local inventory = InventoryGUI:new(title, elementType, elementId)
 end
 
 function InventoryManager:Event_onInventorySync(inventoryData, items)

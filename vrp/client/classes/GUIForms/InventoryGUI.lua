@@ -25,6 +25,10 @@ function InventoryGUI:constructor(title, elementType, elementId)
 	self.m_InventorySync = bind(self.Event_syncInventory, self)
 	InventoryManager:getSingleton():getHook():register(self.m_InventorySync)
 
+
+	self.m_CloseButton = GUIButton:new(self.m_Window.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self.m_Window):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBarEnabled(false):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+	self.m_CloseButton.onLeftClick = bind(self.destructor, self)
+
 	triggerServerEvent("subscribeToInventory", localPlayer, elementType, elementId)
 end
 
@@ -43,6 +47,6 @@ function InventoryGUI:Event_syncInventory(data, items)
 end
 
 function InventoryGUI:destructor()
-	triggerServerEvent("unsubscribeFromInventory", localPlayer, elementType, elementId)
+	triggerServerEvent("unsubscribeFromInventory", localPlayer, self.m_ElementType, self.m_ElementId)
 	GUIForm.destructor(self)
 end

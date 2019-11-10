@@ -93,7 +93,7 @@ function InventoryManager:constructor()
 		self:migrate()
 	end
 
-	local result = sql:queryFetch("SELECT MAX(Id) AS NextId FROM ??_inventory_items", sql:getPrefix())
+	local result = sql:queryFetchSingle("SELECT MAX(Id) AS NextId FROM ??_inventory_items", sql:getPrefix())
 
 	self.m_NextItemId = result.NextId + 1
 	self.m_Inventories = {}
@@ -214,7 +214,6 @@ function InventoryManager:Event_subscribeToInventory(elementType, elementId)
 		end
 
 		local inventory = self:getInventory(elementType, elementId)
-		outputChatBox(tostring(inventory))
 
 		self.m_InventorySubscriptions[elementType][elementId][player.m_Id] = true
 
@@ -222,7 +221,7 @@ function InventoryManager:Event_subscribeToInventory(elementType, elementId)
 	end
 end
 
-function InventoryManager:Event_sunsubscribeFromInventory(elementType, elementId)
+function InventoryManager:Event_unsubscribeFromInventory(elementType, elementId)
 	local player = client
 	if DbElementTypeName[elementType] then
 		if not self.m_InventorySubscriptions[elementType][elementId] then
@@ -279,7 +278,7 @@ function InventoryManager:getInventory(inventoryIdOrElementType, elementId, sync
 	local elementType = inventoryId
 
 	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId, sync)
-	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId)
+	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId, sync)
 
 	if player then
 		inventory.m_Player = player
@@ -697,6 +696,11 @@ function InventoryManager:migrate()
 	outputServerLog("========================================")
 	outputServerLog("=     STARTING INVENTORY MIGRATION     =")
 	outputServerLog("========================================")
+
+	setServerPassword(math.random() * 123456789) -- No player should be on the server while the migration runs
+	for _, v in pairs(getElementsByType("player")) do
+		v:kick("Migration")
+	end
 
 	sql:queryExec("RENAME TABLE ??_inventory_items TO ??_inventory_items_old", sql:getPrefix(), sql:getPrefix())
 
@@ -1423,7 +1427,7 @@ function InventoryManager:migrate()
 			else
 				query = query .. ", "
 			end
-			query = query .. "(" .. vehicle.Id .. ", 5, 99999, 8, 4)" -- TODO add logic for different trunk sizes
+			query = query .. "(" .. vehicle.Id .. ", 5, 99999, 30, 4)" -- TODO add logic for different trunk sizes
 		end
 
 		sql:queryExec(query, sql:getPrefix())
@@ -1464,7 +1468,7 @@ function InventoryManager:migrate()
 				local weaponsNew = {weaponSlot1, weaponSlot2}
 
 				for _, v in pairs(itemsNew) do
-					if v.Item == "none" then
+					if v.Item ~= "none" and v.Item ~= "" then
 						if ItemMapping[v.Item] then
 							local itemTechnicalName = ItemMapping[v.Item]
 
@@ -1748,5 +1752,10 @@ function InventoryManager:migrate()
 		end
 
 		if not first then sql:queryExec(query, sql:getPrefix()) end
+
+		outputServerLog("========================================")
+		outputServerLog("=     INVENTORY MIGRATION FINISHED     =")
+		outputServerLog("========================================")
+		setServerPassword()
 	end, 1, 1)
 end
