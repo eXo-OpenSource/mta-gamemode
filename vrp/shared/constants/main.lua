@@ -26,7 +26,7 @@ MAX_WANTED_LEVEL = 12
 -- EVENTS:
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
-EVENT_HALLOWEEN = true
+EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
 EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
 SNOW_SHADERS_ENABLED = false -- disable them during summer time

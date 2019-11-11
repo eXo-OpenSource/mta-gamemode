@@ -80,6 +80,7 @@ function Guns:Event_onTaser(target)
 	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
 	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle then return end
+	if target:getPublicSync("supportMode") then return end
 
 	client:giveAchievement(65)
 

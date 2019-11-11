@@ -441,7 +441,7 @@ GAS_STATIONS = {
 		accessible =  {1, 0},
 		nonInterior = true,
 		serviceStation = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Rescue Service Station",
