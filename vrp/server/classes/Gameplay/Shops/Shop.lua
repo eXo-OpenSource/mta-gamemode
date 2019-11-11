@@ -81,6 +81,10 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		end
 	end
 
+	if self.m_Ped then 
+		ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
+	end
+	
 	if typeData["Marker"] then
 		if typeData["Marker"] == "blip_position" then
 			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 0)
@@ -91,12 +95,10 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		self.m_Marker:setDimension(dimension)
 	end
 	
-	if interior > 0 then
-		InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SHOP, id, bind(self.loadInterior, self))	
+	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SHOP, id, bind(self.loadInterior, self))	
 
-		if INTERIOR_SHOP_MIGRATION then 
-			self:assignInterior()
-		end
+	if INTERIOR_SHOP_MIGRATION then 
+		self:assignInterior()
 	end
 end
 
@@ -122,7 +124,6 @@ function Shop:refreshInteriorEntrance()
 		if self.m_Ped then
 			self.m_Ped:setInterior(self.m_Interior:getInterior())
 			self.m_Ped:setDimension(self.m_Interior:getDimension())
-			ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
 		end
 		if self.m_Marker then 
 			self.m_Marker:setInterior(self.m_Interior:getInterior())

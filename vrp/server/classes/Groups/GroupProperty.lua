@@ -317,7 +317,6 @@ function GroupProperty:outputEntry( client )
 		if not self.m_Message or self.m_Message == "" or #self.m_Message < 1 then
 			self.m_Message = self.m_Name
 		end
-		client:triggerEvent("groupEntryMessage",self.m_Message)
 	end
 end
 
@@ -339,6 +338,26 @@ function GroupProperty:closeForPlayer(player)
 		end
 	end
 end
+
+function GroupProperty:reloadElevator() 
+	local data = sql:queryFetchSingle("SELECT ElevatorData FROM ??_group_property WHERE Id=?", sql:getPrefix(), self.m_Id)
+	if data then 
+		if self.m_Elevator then 
+			self.m_Elevator:delete() 
+		end
+		self.m_ElevatorData = data.ElevatorData
+		if self.m_ElevatorData then
+			local elevatorData = fromJSON(self.m_ElevatorData)
+			if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
+				self.m_Elevator = Elevator:new()
+				for i, station in ipairs(elevatorData.stations) do
+					self.m_Elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
+				end
+			end
+		end
+	end
+end
+
 
 function GroupProperty:addLog(player, category, text)
 	if self.m_Owner then

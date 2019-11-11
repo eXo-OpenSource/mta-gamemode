@@ -25,7 +25,16 @@ function ItemShop:constructor(id, name, position, rotation, typeData, dimension,
 			end
 		)
 	end
+
 	if self.m_Ped then
 		self.m_Ped:setImmortal(true)
+		if self.m_Ped:getInterior() == 0 then
+			self.m_Ped:setDimension(0)
+		end
+	end
+	if self.m_Marker then
+		if self.m_Marker:getInterior() == 0 then
+			self.m_Marker:setDimension(0)
+		end
 	end
 end
