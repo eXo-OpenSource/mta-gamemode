@@ -216,7 +216,7 @@ function TurtleRace:checkWinner()
 				if isOffline then player:load() end
 
 				local win = tonumber(row["Bet"]) * 6
-				self.m_BankAccountServer:transferMoney(player, win, "Schildkrötenrennen", "Gameplay", "TurtleRace")
+				self.m_BankAccountServer:transferMoney({player, true}, win, "Schildkrötenrennen", "Gameplay", "TurtleRace")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
 				if not isOffline then

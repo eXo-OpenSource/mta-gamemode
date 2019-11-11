@@ -62,8 +62,10 @@ function PoliceAnnouncements:triggerChaseSound(vehicle)
 end
 
 function PoliceAnnouncements:isValidVehicle(vehicle)
-    if getElementData(vehicle, "StateVehicle") and vehicle:getVehicleType() ~= "Helicopter" and vehicle:getVehicleType() ~= "Plane" and vehicle:getModel() ~= 432 then
-        return true
+    if instanceof(vehicle, FactionVehicle) and (vehicle:isStateVehicle() or vehicle:isRescueVehicle()) then 
+        if vehicle:getVehicleType() ~= VehicleType.Helicopter and vehicle:getVehicleType() ~= VehicleType.Plance and vehicle:getModel() ~= 432 then
+            return true
+        end
     end
 end
 

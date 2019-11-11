@@ -18,6 +18,10 @@ function DrugsWeed:destructor()
 end
 
 function DrugsWeed:use( player )
+  if player:getPublicSync("gangwarParticipant") then
+    player:sendError("Du darfst im Gangwar kein Weed rauchen!")
+    return
+  end
 	ItemDrugs.use(self, player)
 
   	player:triggerEvent("onClientItemUse", "Weed", DrugsWeed.m_ExpireTime )

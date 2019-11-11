@@ -164,7 +164,7 @@ end
 function PublicTransport:createTaxiSign(veh)
 	if veh then
 		self.m_TaxiSigns[veh] = createObject(1853, veh:getPosition())
-		self.m_TaxiSigns[veh]:attach(veh, 0, -0.23, 0.9175)
+		self.m_TaxiSigns[veh]:attach(veh, unpack(taxiSignOffsets[veh:getModel()]))
 	end
 end
 

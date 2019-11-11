@@ -493,38 +493,42 @@ function FactionState:Command_cuff(source, cmd, target)
 		if type(target) == "string" then
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
 			if targetPlayer then
-				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
-					local faction = source:getFaction()
-					if faction then
-						if faction:isStateFaction() then
-							if source ~= targetPlayer then
-								if source:isFactionDuty() then
-									if not targetPlayer.vehicle then
-										if not targetPlayer:isStateCuffed() then
-											source.m_CurrentCuff = targetPlayer
-											source:triggerEvent("factionStateStartCuff", targetPlayer)
-											targetPlayer:triggerEvent("CountdownStop", "Gefesselt in")
-											targetPlayer:triggerEvent("Countdown", 10, "Gefesselt in")
-											source:triggerEvent("CountdownStop", "Gefesselt in")
-											source:triggerEvent("Countdown", 10, "Gefesselt in")
+				if targetPlayer:getPublicSync("supportMode") then
+					if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
+						local faction = source:getFaction()
+						if faction then
+							if faction:isStateFaction() then
+								if source ~= targetPlayer then
+									if source:isFactionDuty() then
+										if not targetPlayer.vehicle then
+											if not targetPlayer:isStateCuffed() then
+												source.m_CurrentCuff = targetPlayer
+												source:triggerEvent("factionStateStartCuff", targetPlayer)
+												targetPlayer:triggerEvent("CountdownStop", "Gefesselt in")
+												targetPlayer:triggerEvent("Countdown", 10, "Gefesselt in")
+												source:triggerEvent("CountdownStop", "Gefesselt in")
+												source:triggerEvent("Countdown", 10, "Gefesselt in")
+											else
+												source:sendError("Der Spieler ist bereits gefesselt!")
+											end
 										else
-											source:sendError("Der Spieler ist bereits gefesselt!")
+											source:sendError("Du kommst nicht an den Spieler heran!")
 										end
 									else
-										source:sendError("Du kommst nicht an den Spieler heran!")
+										source:sendError("Du bist nicht im Dienst!")
 									end
 								else
-									source:sendError("Du bist nicht im Dienst!")
+									source:sendError("Du kannst dich nicht selbst fesseln!")
 								end
 							else
-								source:sendError("Du kannst dich nicht selbst fesseln!")
+								source:sendError("Du hast keine Handschellen dabei!")
 							end
-						else
-							source:sendError("Du hast keine Handschellen dabei!")
 						end
+					else
+						source:sendError("Du bist zu weit weg!")
 					end
 				else
-					source:sendError("Du bist zu weit weg!")
+					source:sendError("Du kannst keinen Admin im Support Modus fesseln!")
 				end
 			else
 				source:sendError("Ziel nicht gefunden!")
