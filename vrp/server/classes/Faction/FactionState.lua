@@ -493,7 +493,7 @@ function FactionState:Command_cuff(source, cmd, target)
 		if type(target) == "string" then
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
 			if targetPlayer then
-				if targetPlayer:getPublicSync("supportMode") then
+				if not targetPlayer:getPublicSync("supportMode") then
 					if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
 						local faction = source:getFaction()
 						if faction then
