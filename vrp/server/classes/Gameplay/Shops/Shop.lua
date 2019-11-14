@@ -141,7 +141,9 @@ function Shop:loadInterior(instance)
 	if self.m_Interior then 
 		self.m_InteriorId = self.m_Interior:getId()
 		self.m_Interior:setExit(self.m_Position, 0, 0)
-		self.m_Teleporter:setInterior(self.m_Interior)
+		if self.m_Teleporter then
+			self.m_Teleporter:setInterior(self.m_Interior)
+		end
 		self.m_Interior:setCreateCallback(bind(self.refreshInteriorEntrance, self))
 	end
 end

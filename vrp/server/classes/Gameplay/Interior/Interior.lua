@@ -32,7 +32,7 @@ function Interior:constructor(map, row, generated)
 	end
 end
 
-function Interior:load() 
+function Interior:load(post) 
 	if self:isLoaded() then return end
 	self:setMapNode(InteriorMapManager.getCached(self:getMap():getPath()))
 	if self:getMapNode() then 
@@ -41,7 +41,9 @@ function Interior:load()
 	else 
 		self:setStatus(DYNAMIC_INTERIOR_ERROR_MAP)
 	end
-	CustomInteriorManager:getSingleton():onInteriorLoad(self)
+	if not post then
+		CustomInteriorManager:getSingleton():onInteriorLoad(self)
+	end
 	return self:getStatus()
 end
 
@@ -235,6 +237,7 @@ function Interior:send(player)
 		}
 	)
 end
+
 
 function Interior:Event_OnElementEnter(element) 
 	if self:getDimension() == element:getDimension() then 

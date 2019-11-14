@@ -48,9 +48,6 @@ end
 addEvent("onElementDimensionChange", true )
 _setElementDimension = setElementDimension
 function setElementDimension(element, dimension)
-	if not dimension then 
-		print(debug.traceback())
-	end
 	if isElement(element) then
 		_setElementDimension(element, dimension)
 		triggerEvent("onElementDimensionChange", element, dimension)

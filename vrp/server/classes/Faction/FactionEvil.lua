@@ -11,6 +11,7 @@ FactionEvil = inherit(Singleton)
 
 function FactionEvil:constructor()
 	self.InteriorEnterExit = {}
+	self.m_Interiors = {}
 	self.m_WeaponPed = {}
 	self.m_ItemDepot = {}
 	self.m_EquipmentDepot = {}
@@ -49,6 +50,8 @@ function FactionEvil:destructor()
 end
 
 function FactionEvil:createInterior(Id, faction)
+	self.m_Interiors[Id] = FactionInterior:new(faction)
+	--[[
 	self.InteriorEnterExit[Id] = InteriorEnterExit:new(evilFactionInteriorEnter[Id], Vector3(2807.32, -1173.92, 1025.57), 0, 0, 8, Id)
 	self.m_WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
 	self.m_WeaponPed[Id]:setDimension(Id)
@@ -107,7 +110,7 @@ function FactionEvil:createInterior(Id, faction)
 			faction:setSafe(v)
 		end
 	end
-
+	]]
 end
 
 function FactionEvil:getFactions()

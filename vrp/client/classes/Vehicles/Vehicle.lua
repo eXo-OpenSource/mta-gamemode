@@ -460,9 +460,6 @@ addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
 			toggleControl("vehicle_secondary_fire", true)
 		end
 	end
-	if player == localPlayer and not isEventHandlerAdded("onClientElementDataChange", source, onSyncEngineChange) then
-		addEventHandler("onClientElementDataChange", source, onSyncEngineChange)
-	end
 end)
 
 addEventHandler("onClientVehicleExit", root, function(player, seat)
@@ -471,8 +468,5 @@ addEventHandler("onClientVehicleExit", root, function(player, seat)
 			removeEventHandler("onClientRender", root, disableShootingOfVehicles)
 			toggleControl("vehicle_secondary_fire", true)
 		end
-	end
-	if player == localPlayer and isEventHandlerAdded("onClientElementDataChange", source, onSyncEngineChange) then
-		removeEventHandler("onClientElementDataChange", source, onSyncEngineChange)
 	end
 end)

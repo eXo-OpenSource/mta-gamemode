@@ -327,6 +327,10 @@ function CustomInteriorManager:onPlayerQuit(player)
 	end
 end
 
+function CustomInteriorManager:onAdminCommand(player) 
+
+end
+
 function CustomInteriorManager:Event_onAntiFall() 
 	if client.m_Interior then 
 		client.m_Interior:antifall(client)
@@ -344,7 +348,6 @@ function CustomInteriorManager:Event_onInteriorReady()
 		client.m_Interior:warp(client)
 	end
 end
-
 
 function CustomInteriorManager:setMaxX(value)
 	self.m_MaxX = math.floor(value)
@@ -377,6 +380,19 @@ function CustomInteriorManager:getCurrentY() return self.m_CurrentY end
 function CustomInteriorManager:getCurrentDimension() return self.m_CurrentDimension end
 function CustomInteriorManager:getCurrentInterior() return self.m_CurrentInterior end
 
+function CustomInteriorManager.getIdMap(id, load) 
+	if not load then
+		return CustomInteriorManager.IdMap[id]
+	else 
+		if CustomInteriorManager.IdMap[id] then 
+			return CustomInteriorManager.IdMap[id]
+		else 
+			CustomInteriorManager:getSingleton():load(id)
+			return CustomInteriorManager.IdMap[id]
+		end
+	end
+end
+
 function CustomInteriorManager:getMapCount(id) 
 	return (not CustomInteriorManager.MapByMapId[id] and 0) or table.size(CustomInteriorManager.MapByMapId[id])
 end
@@ -404,6 +420,14 @@ function CustomInteriorManager:isPlayerColumnAvailable()
 	]]
 	return sql:queryFetchSingle(query, sql:getPrefix())
 end
+
+--[[
+	*****************************************************
+	*****************************************************
+	*****			MIGRATION-RELATED				*****
+	*****************************************************
+	*****************************************************
+]]
 
 function CustomInteriorManager:createTable() 
 	local query = [[
@@ -446,15 +470,3 @@ function CustomInteriorManager:createLogoutColumn()
 	return false
 end
 
-function CustomInteriorManager.getIdMap(id, load) 
-	if not load then
-		return CustomInteriorManager.IdMap[id]
-	else 
-		if CustomInteriorManager.IdMap[id] then 
-			return CustomInteriorManager.IdMap[id]
-		else 
-			CustomInteriorManager:getSingleton():load(id)
-			return CustomInteriorManager.IdMap[id]
-		end
-	end
-end

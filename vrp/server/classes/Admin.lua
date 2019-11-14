@@ -62,6 +62,7 @@ function Admin:constructor()
     addCommandHandler("unprison", adminCommandBind)
     addCommandHandler("aduty", adminCommandBind)
     addCommandHandler("smode", adminCommandBind)
+    addCommandHandler("interior", adminCommandBind)
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
     addCommandHandler("spect", adminCommandBind)
@@ -395,6 +396,10 @@ function Admin:command(admin, cmd, targetName, ...)
 		if admin:getRank() >= ADMIN_RANK_PERMISSION["disablereg"] then
 			self:sendShortMessage(_("%s hat die Registration aktiviert!", admin, admin:getName()))
 			StatisticsLogger:getSingleton():addAdminAction(admin, "register", "Register enabled")
+		end
+	elseif cmd == "interior" then 
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["interiorEdit"] then
+			
 		end
     else
 		if targetName then

@@ -423,6 +423,7 @@
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
 	<script src="server/classes/Faction/FactionRescue.lua" type="server"/>
 	<script src="server/classes/Faction/FactionEvil.lua" type="server"/>
+	<script src="server/classes/Faction/FactionInterior.lua" type="server"/>
 	<script src="server/classes/Faction/FactionInsurgent.lua" type="server"/>
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 	<script src="server/classes/HistoryPlayer.lua" type="server"/>

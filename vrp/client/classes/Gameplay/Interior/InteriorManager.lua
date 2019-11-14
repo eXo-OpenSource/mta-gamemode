@@ -27,8 +27,10 @@ function InteriorManager:fadeOutLoading()
 end
 
 function InteriorManager:Event_onStartMap(mapSize) 
+	if MapLoadGUI:isInstantiated() then 
+		delete(MapLoadGUI:getSingleton())
+	end
 	self.m_MapSize = mapSize
-	self:fadeOutLoading()
 	MapLoadGUI:getSingleton():setStatus(_("Lade Interior herunter..."))
 end
 
@@ -59,8 +61,7 @@ function InteriorManager:create(map, dimension)
 		self.m_Map = MapParser:new(nil, map) 
 		if self:getMap() then 
 			self:shift(self:getPosition())
-			local thread = Thread:new(bind(self.thread, self), THREAD_PRIORITY_REALTIME)
-			nextframe(function() thread:start() end)
+			self:thread()
 		end
 	end
 end
@@ -88,8 +89,7 @@ function InteriorManager:thread()
 	for k, info in pairs(self:getMap():getData()) do
 		self:getMap():createSingle(info, self.m_Dimension)
 		self:increaseIterateCount()
-		Thread.pause()
-		MapLoadGUI:getSingleton():setStatus(_("Erstelle Objekte (%d von %d)", self:getIterateCount(), self.m_MapSize))
+		MapLoadGUI:getSingleton():setStatus(_("Erstelle Objekte...", self:getIterateCount(), self.m_MapSize))
 		MapLoadGUI:getSingleton():setProgress(self:getIterateCount() /self.m_MapSize)
 		if self:getIterateCount() == table.size(self:getMap():getData()) then 
 			setTimer(function() self:onMapComplete() end, 500, 1)
@@ -102,9 +102,11 @@ function InteriorManager:shift(position)
 		local start =  self:getVirtualEntrance().position 
 		local move = (position - start)
 		for k, info in pairs(self:getMap():getData()) do
-			info.x = info.x + move.x
-			info.y = info.y + move.y 
-			info.z = info.z + move.z  
+			if info.x then
+				info.x = info.x + move.x
+				info.y = info.y + move.y 
+				info.z = info.z + move.z
+			end  
 		end
 	end
 end

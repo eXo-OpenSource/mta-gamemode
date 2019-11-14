@@ -378,3 +378,7 @@ for index, key in pairs(factionWeaponDepotInfo) do
 		["MagazinPreis"] = key["MagazinPreis"]
 		}
 end
+
+FACTION_INTERIOR_ITEM_DEPOT_MODEL = 2972 
+FACTION_INTERIOR_EQUIPMENT_MODEL = 964 
+FACTION_INTERIOR_SAFE_MODEL = 2332 

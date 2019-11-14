@@ -230,6 +230,7 @@ ADMIN_RANK_PERMISSION = {
 	["createNewMap"] = RANK.Administrator,
 	["setMapStatus"] = RANK.Administrator,
 
+	["interiorEdit"] = RANK.Moderator,
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
 

@@ -6,6 +6,11 @@ local readFuncs = {
 			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided),
 			alpha = tonumber(attributes.alpha), scale = tonumber(attributes.scale), collisions = attributes.collisions}
 	end;
+	ped = function(attributes)
+		return {type = "ped", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior),
+			alpha = tonumber(attributes.alpha)}
+	end;
 	marker = function(attributes)
 		return {type = "marker", markertype = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
 			size = tonumber(attributes.size), color = attributes.color,  interior = tonumber(attributes.interior)}
@@ -41,6 +46,12 @@ local createFuncs = {
 		setObjectScale(o, info.scale or 1)
 		setElementInterior(o, info.interior or 0)
 		setElementCollisionsEnabled(o, info.collisions ~= "false")
+		return o
+	end;
+	ped = function(info)
+		local o = createPed(info.model, info.x, info.y, info.z, info.rz)
+		setElementAlpha(o, info.alpha or 255)
+		setElementInterior(o, info.interior or 0)
 		return o
 	end;
 	marker = function(info)
@@ -201,15 +212,19 @@ end
 function MapParser:setDimension(dimension, index) 
 	if self:getElements(index) then 
 		for indx, object in pairs(self:getElements(index)) do 
-			object:setDimension(dimension)
+			if object.setDimension then
+				object:setDimension(dimension)
+			end
 		end
 	end
 end
 
 function MapParser:setInterior(interior, index) 
 	if self:getElements(index) then 
-		for indx, object in pairs(self:getElements(index)) do 
-			object:setInterior(interior)
+		for indx, object in pairs(self:getElements(index)) do
+			if object.setInterior then
+				object:setInterior(interior)
+			end
 		end
 	end
 end

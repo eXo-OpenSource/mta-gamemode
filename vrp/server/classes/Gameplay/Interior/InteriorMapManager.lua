@@ -112,20 +112,42 @@ function InteriorMapManager:createTable()
 	end
 end
 
-function InteriorMapManager:rebuild(map, newmap)
-	if InteriorMapManager.Map[map:getId()] then 
-		if CustomInteriorManager.MapByMapId[map:getId()] then 
-			if CustomInteriorManager.KeepPositionMaps[map:getId()] then 
-				CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:delete()
-				CustomInteriorManager.KeepPositionMaps[map:getId()] = nil
-			end
-			for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
-				instance:rebuild(newmap)
-			end
+function InteriorMapManager:change(map, newmap)
+	assert(map and type(map) == "table" and map.getId and InteriorMapManager.Map[map:getId()], "Bad argument #1 @ InteriorMapManager.change")
+	assert(newmap and type(newmap) == "table" and newmap.getId and InteriorMapManager.Map[newmap:getId()], "Bad argument #2 @ InteriorMapManager.change")
+	if CustomInteriorManager.MapByMapId[map:getId()] then 
+		if CustomInteriorManager.KeepPositionMaps[map:getId()] then 
+			CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:delete()
+			CustomInteriorManager.KeepPositionMaps[map:getId()] = nil
+		end
+		for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
+			instance:rebuild(newmap)
+			instance:forceSave()
 		end
 		self:changeQuery(map, newmap)
 	end
 end
+
+function InteriorMapManager:rebuild(map)
+	assert(map and type(map) == "table" and map.getId and InteriorMapManager.Map[map:getId()], "Bad argument #1 @ InteriorMapManager.rebuild")
+	if CustomInteriorManager.MapByMapId[map:getId()] then 
+		if CustomInteriorManager.KeepPositionMaps[map:getId()] then 
+			CustomInteriorManager.KeepPositionMaps[map:getId()].entrance:delete()
+			CustomInteriorManager.KeepPositionMaps[map:getId()] = nil
+		end
+		InteriorMapManager.Cache[map:getPath()] = MapParser:new(map:getPath()) -- wipe cache
+		for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
+			instance:forceExit()
+			instance:setCreated(false)
+			instance:clearEntrance()
+			instance:setLoaded(false)
+			instance:load(true)
+			instance:forceSave()
+		end
+		outputDebugString(("[InteriorMapManager] %s was rebuild!"):format(map:getId()))
+	end
+end
+
 
 function InteriorMapManager:changeQuery(map, new) 
 	local query = 
@@ -135,7 +157,7 @@ function InteriorMapManager:changeQuery(map, new)
 	]]
 	
 	if sql:queryExec(query, sql:getPrefix(), new:getId(), map:getId()) then 
-		outputDebugString(("[InteriorMapManager] %s was rebuild to %s!"):format(map:getId(), new:getId()))
+		outputDebugString(("[InteriorMapManager] %s was changed to %s!"):format(map:getId(), new:getId()))
 	end
 end
 

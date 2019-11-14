@@ -1,0 +1,27 @@
+<map>
+    <object id="object 1" dimension="0" model="351" posX="2818" posY="-1173.6" posZ="1025.6" rotX="80" rotY="340" rotZ="0" interior="8"></object>
+    <object id="object 2" dimension="0" model="348" posX="2813.6001" posY="-1166.8" posZ="1025.64" rotX="90" rotY="0" rotZ="332" interior="8"></object>
+    <object id="object 3" dimension="0" model="3016" posX="2820.3999" posY="-1167.7" posZ="1025.7" rotX="0" rotY="0" rotZ="18" interior="8"></object>
+    <object id="object 4" dimension="0" model="1271" posX="2818.69995" posY="-1167.30005" posZ="1025.4" rotX="0" rotY="0" rotZ="314" interior="8"></object>
+    <object id="object 5" dimension="0" model="1271" posX="2818.19995" posY="-1166.80005" posZ="1024.699" rotX="0" rotY="0" rotZ="314" interior="8"></object>
+    <object id="object 6" dimension="0" model="1271" posX="2818.2" posY="-1166.8" posZ="1025.4" rotX="0" rotY="0" rotZ="312" interior="8"></object>
+    <object id="object 7" dimension="0" model="1271" posX="2818.7" posY="-1167.3" posZ="1024.7" rotX="0" rotY="0" rotZ="313.995" interior="8"></object>
+    <object id="object 8" dimension="0" model="1271" posX="2819.2" posY="-1167.8" posZ="1024.7" rotX="0" rotY="0" rotZ="314.495" interior="8"></object>
+    <object id="object 9" dimension="0" model="1271" posX="2819.2" posY="-1167.8" posZ="1025.4" rotX="0" rotY="0" rotZ="315.25" interior="8"></object>
+    <object id="object 10" dimension="0" model="2041" posX="2819.1001" posY="-1165.2" posZ="1025.9" rotX="0" rotY="0" rotZ="10" interior="8"></object>
+    <object id="object 11" dimension="0" model="2042" posX="2818.3" posY="-1166.8" posZ="1025.8" interior="8"></object>
+    <object id="object 12" dimension="0" model="2359" posX="2817.7" posY="-1165.1" posZ="1025.9" rotX="0" rotY="0" rotZ="348" interior="8"></object>
+    <object id="object 13" dimension="0" model="2358" posX="2820.2" posY="-1165.1" posZ="1024.7" interior="8"></object>
+    <object id="object 14" dimension="0" model="2358" posX="2820.19995" posY="-1165.09998" posZ="1024.9" rotX="0" rotY="0" rotZ="354" interior="8"></object>
+    <object id="object 15" dimension="0" model="2358" posX="2820.2" posY="-1165.1" posZ="1025.1" rotX="0" rotY="0" rotZ="10" interior="8"></object>
+    <object id="object 16" dimension="0" model="2358" posX="2820.2" posY="-1165.1" posZ="1025.3" interior="8"></object>
+    <object id="object 17" dimension="0" model="2358" posX="2820.2" posY="-1165.1" posZ="1025.5" rotX="0" rotY="0" rotZ="348" interior="8"></object>
+    <object id="object 18" dimension="0" model="349" posX="2818.8999" posY="-1167.7" posZ="1025.8" rotX="90" rotY="0" rotZ="0" interior="8"></object>
+    <object id="object 19" dimension="0" model="349" posX="2818.8999" posY="-1167.7" posZ="1025.8" rotX="90" rotY="0" rotZ="0" interior="8"></object>
+    <object id="object 20" dimension="0" model="2977" posX="2819.3" posY="-1170.6" posZ="1024.4" rotX="0" rotY="0" rotZ="30.5" interior="8"></object>
+    <object id="object 21" dimension="0" model="2332" posX="2814.6001" posY="-1173.8" posZ="1026.6" rotX="0" rotY="0" rotZ="180" interior="8"></object>
+    <marker type="cylinder" id="entrance" color="#0000ffff" size="1" dimension="0" alpha="255" interior="8" posX="2807.66" posY="-1174.34" posZ="1026.07"></marker>
+    <ped model="200" id="faction-ped" dimension="0" interior="8" posX="2819.2" posY="-1166.77" posZ="1025.58" rotX="0" rotY="0" rotZ="133.63"></ped>
+    <object id="item-depot" model="2972" dimension="0" interior="8" posX="2816.8" posY="-1173.5" posZ="1024.4" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="item-equipment" dimension="0" model="964" interior="8" posX="2819.84" posY="-1173.51" posZ="1024.4" rotX="0" rotY="0" rotZ="0"></object>
+</map>

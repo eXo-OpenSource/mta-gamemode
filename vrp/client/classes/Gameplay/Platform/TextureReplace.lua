@@ -56,7 +56,6 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 end
 
 function TextureReplace:destructor()
-	outputChatBox("DOCH NICH SO")
 	if self.m_Texture and isElement(self.m_Texture) then
 		if self.m_IsRenderTarget then
 			destroyElement(self.m_Texture)
