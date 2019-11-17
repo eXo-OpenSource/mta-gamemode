@@ -97,7 +97,7 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	
 	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SHOP, id, bind(self.loadInterior, self))	
 
-	if INTERIOR_SHOP_MIGRATION then 
+	if INTERIOR_MIGRATION then 
 		self:assignInterior()
 	end
 end

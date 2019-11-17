@@ -1012,15 +1012,19 @@ function Admin:goToPlayer(player,cmd,target)
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
                 self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), target:getName()))
-                local dim,int = target:getDimension(), target:getInterior()
+            	if target.m_Interior and (not player.m_Interior or (target.m_Interior and player.m_Interior ~= target.m_Interior)) then 
+					target.m_Interior:enter(player, nil, target:getPosition())
+					StatisticsLogger:getSingleton():addAdminAction( player, "goto", target:getName())
+					return
+				end
+				local dim,int = target:getDimension(), target:getInterior()
 				local pos = target:getPosition()
 				pos.x = pos.x + 0.01
-				local player2 = player
 				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
 				setElementDimension(player, dim)
 				setElementInterior(player,int)
-				StatisticsLogger:getSingleton():addAdminAction( player2, "goto", target:getName())
+				StatisticsLogger:getSingleton():addAdminAction(player, "goto", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
@@ -1035,16 +1039,21 @@ function Admin:getHerePlayer(player, cmd, target)
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
-                self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
+                if player.m_Interior and (not target.m_Interior or (player.m_Interior and target.m_Interior ~= player.m_Interior)) then 
+					player.m_Interior:enter(target, nil, player:getPosition())
+					self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
+					StatisticsLogger:getSingleton():addAdminAction(player, "gethere", target:getName())
+					return 
+				end
+				self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
                 local dim,int = player:getDimension(), player:getInterior()
 				local pos = player:getPosition()
 				pos.x = pos.x + 0.1
-				local target2 = target
 				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
 				setElementDimension(target,dim)
 				setElementInterior(target,int)
-				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target2:getName())
+				StatisticsLogger:getSingleton():addAdminAction(player, "gethere", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))

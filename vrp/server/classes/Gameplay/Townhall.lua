@@ -73,7 +73,10 @@ end
 function Townhall:onExit(player, teleporter) 
 	if not self.m_Interior then 
 		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 2)
-		return teleporter:exit(player)	
+		return teleporter:exit(player)
+	end
+	if self.m_Interior then
+		self.m_Interior:exit(player)	
 	end
 end
 

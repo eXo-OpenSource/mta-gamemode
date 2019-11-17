@@ -47,7 +47,7 @@ function PublicTransport:constructor()
 	self.m_Safe = safe 
 	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.SERVER, 1, bind(self.onInteriorLoad, self))
 
-	if INTERIOR_COMPANY_MIGRATION then 
+	if INTERIOR_MIGRATION then 
 		self:assignInterior()
 	end
 end
@@ -92,6 +92,9 @@ function PublicTransport:onExit(player, teleporter)
 	if not self.m_Interior then 
 		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.SERVER, 1)
 		return teleporter:exit(player)	
+	end
+	if self.m_Interior then 
+		self.m_Interior:exit(player)
 	end
 end
 

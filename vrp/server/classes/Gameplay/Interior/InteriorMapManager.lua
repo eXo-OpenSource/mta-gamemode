@@ -139,6 +139,8 @@ function InteriorMapManager:rebuild(map)
 		for instance, bool in pairs(CustomInteriorManager.MapByMapId[map:getId()]) do
 			instance:forceExit()
 			instance:setCreated(false)
+			instance:setPlaceData()
+			instance:setGenerated(false)
 			instance:clearEntrance()
 			instance:setLoaded(false)
 			instance:load(true)

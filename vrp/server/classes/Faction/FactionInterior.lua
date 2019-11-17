@@ -56,9 +56,7 @@ function FactionInterior:onInteriorLoad(instance)
 	self.m_Interior:setCreateCallback(bind(self.onInteriorCreate, self))
 end
 
-
 function FactionInterior:onEnter(player, teleporter) 
-	
 	if not self.m_Interior then 
 		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.FACTION, self.m_Id)
 		return teleporter:enter(player)
@@ -71,7 +69,6 @@ function FactionInterior:onExit(player, teleporter)
 		return teleporter:exit(player)	
 	end
 end
-
 
 function FactionInterior:clean() 
 	if isValidElement(self.m_Safe) then 

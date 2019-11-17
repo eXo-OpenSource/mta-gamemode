@@ -6,12 +6,12 @@
 -- *
 -- ****************************************************************************
 CustomInteriorManager = inherit(Singleton)
-CustomInteriorManager.Map = {}
-CustomInteriorManager.IdMap = {}
-CustomInteriorManager.MapByMapId = {}
-CustomInteriorManager.KeepPositionMaps = {}
-CustomInteriorManager.MapByInterior = {}
-CustomInteriorManager.OwnerMap = {}
+CustomInteriorManager.Map = {} -- keeps track of every instance: Map[instance] = true
+CustomInteriorManager.IdMap = {} -- keeps track of every Instance with an assigned Id: IdMap[Id] = instance
+CustomInteriorManager.MapByMapId = {} -- keeps track of every instance with the index mapId: MapByMapId[MapId][instance] = true
+CustomInteriorManager.KeepPositionMaps = {} -- keeps track of every entrance that can be duplicated in another dimension: KeepPositionMaps[MapId] = {entrance}
+CustomInteriorManager.MapByInterior = {} -- keeps track of how many instances are in a specific gta-sa interior (note the index is not an int but a string): MapByInterior["interior"] = Number of instances in that int
+CustomInteriorManager.OwnerMap = {} -- keeps track of the owner of a specific instance: OwnerMap[OwnerType][Owner] = instance
 function CustomInteriorManager:constructor()
 	addRemoteEvents{"InteriorManager:onFall", "InteriorManager:onDetectLeave", "InteriorManager:onInteriorReady"}
 	addRemoteEvents{"onCustomInteriorEnter", "onCustomInteriorLeave"}
@@ -28,14 +28,13 @@ function CustomInteriorManager:constructor()
 	if not self:isPlayerColumnAvailable() then 
 		self:createLogoutColumn()
 	end
+	print(("***************************************************"):format(sql:getPrefix())) 
+	print(("** Checking if %s_interiors exists! Else create..**"):format(sql:getPrefix()))
+	print(("***************************************************"):format(sql:getPrefix())) 
 	if not self:isTableAvailable() then 
-		print(("** [CustomInteriorManager] Checking if %s_interiors exists! Creating otherwise... **"):format(sql:getPrefix()))
 		if self:createTable() then 
 			self.m_Ready = true
 			INTERIOR_MIGRATION = true
-			INTERIOR_HOUSE_MIGRATION = true 
-			INTERIOR_SHOP_MIGRATION = true
-			INTERIOR_COMPANY_MIGRATION = true
 			print(("***************************************************"):format(sql:getPrefix())) 
 			print(("** [CustomInteriorManager] Starting Migration... **"):format(sql:getPrefix())) 
 			print(("***************************************************"):format(sql:getPrefix())) 
@@ -450,7 +449,6 @@ function CustomInteriorManager:createTable()
 	]]
 
 	if sql:queryExec(query, sql:getPrefix(), sql:getPrefix()) then 
-		print("** [CustomInteriorManager] Database for Interiors  was created **")
 		return true
 	end
 	return false
@@ -464,7 +462,9 @@ function CustomInteriorManager:createLogoutColumn()
 	]]
 
 	if sql:queryExec(query, sql:getPrefix()) then 
-		print("** [CustomInteriorManager] Player-Field LogoutInterior was created! **")
+		print("***************************************************")
+		print("*** [CustomInteriorManager] Logout-Col created! ***")
+		print("***************************************************")
 		return true
 	end
 	return false

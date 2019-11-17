@@ -36,7 +36,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	
 	InteriorLoadManager.add(INTERIOR_OWNER_TYPES.HOUSE, id, bind(self.loadInterior, self))
 	
-	if INTERIOR_HOUSE_MIGRATION then 
+	if INTERIOR_MIGRATION then 
 		self:assignInterior(interiorID)
 	end
 
