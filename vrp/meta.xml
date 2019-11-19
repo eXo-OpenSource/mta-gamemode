@@ -1064,6 +1064,7 @@
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
@@ -1382,6 +1383,8 @@
 	<file src="files/images/Logo.png"/>
 
 	<file src="files/images/turbo.png"/>
+	<file src="files/images/static.png"/>
+	
 	<file src="files/images/bullethitsmoke_original.png"/>
 
 	<!-- Needs to be file against manipulation -->
@@ -3296,6 +3299,9 @@
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
+	<vrpfile src="files/shader/thermal.fx"/>
+	<vrpfile src="files/shader/thermal-anti.fx"/>
+	<vrpfile src="files/shader/thermal-ped.fx"/>
 	<vrpfile src="files/shader/texreplace.fx"/>
 	<vrpfile src="files/shader/shell_layer.fx"/>
 	<vrpfile src="files/shader/cuttexture.fx"/>
