@@ -797,6 +797,7 @@ function LocalPlayer:getWorldObject()
 end
 
 function LocalPlayer:getWorldVehicle()
+	if VehicleInfrared:isInstantiated() then return end
 	local x, y, z, lx, ly, lz = getCameraMatrix()
 	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
 	local px, py, pz = getElementPosition(localPlayer)
