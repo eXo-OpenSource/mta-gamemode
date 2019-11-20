@@ -1342,6 +1342,20 @@ function SelfGUI:onSettingChange(setting)
 		--		core:set("HUD", "startScreen", state)
 		--	end
 
+		self.m_InfraredSensitivty = GUISlider:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
+		self.m_InfraredSensitivty:setRange(0.5, 3)
+		self.m_InfraredSensitivty:setValue(core:get("Vehicles", "InfraredSensitivity", 2))
+
+		self.m_InfraredSensitivty.onUpdate = function( value )
+			core:set("Vehicles","InfraredSensitivity", math.floor(value*100)/100)
+			self.m_InfraredSensitivtyLabel:setText(_("Thermal-Maussensitivität: %.2f", core:get("Vehicles", "InfraredSensitivity", 2)))
+			if VehicleInfrared:isInstantiated() then 
+				VehicleInfrared:getSingleton():updateSensitivity()
+			end
+		end
+		self.m_InfraredSensitivtyLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.84, self.m_Width*0.9, self.m_Height*0.06, _("Thermal Maussensitivität: %s", core:get("Vehicles", "InfraredSensitivity", 2)), self.m_SettingBG)
+		self.m_InfraredSensitivtyLabel:setAlignX("center")
+
 	elseif setting == "Waffen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
 

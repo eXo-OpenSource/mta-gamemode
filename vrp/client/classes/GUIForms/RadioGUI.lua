@@ -48,9 +48,11 @@ function RadioGUI:constructor()
 
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(veh)
-			self:setRadioStation(self.m_CurrentStation)
-			addEventHandler("onClientElementDestroy", veh, self.m_OnVehicleDestroyOrExplodeBind, false)
-			addEventHandler("onClientVehicleExplode", veh, self.m_OnVehicleDestroyOrExplodeBind)
+			if veh:getVehicleType() ~= VehicleType.Helicopter and veh:getVehicleType() ~= VehicleType.Plane then
+				self:setRadioStation(self.m_CurrentStation)
+				addEventHandler("onClientElementDestroy", veh, self.m_OnVehicleDestroyOrExplodeBind, false)
+				addEventHandler("onClientVehicleExplode", veh, self.m_OnVehicleDestroyOrExplodeBind)
+			end
 		end
 	)
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
@@ -151,45 +153,50 @@ function RadioGUI:getVolume()
 end
 
 function RadioGUI:nextStation()
-	-- Don't do anything if the controls have been disabled
-	if not self.m_ControlEnabled then
-		return
-	end
+	if localPlayer.vehicle:getVehicleType() ~= VehicleType.Helicopter and localPlayer.vehicle:getVehicleType() ~= VehicleType.Plane then
+	
+		-- Don't do anything if the controls have been disabled
+		if not self.m_ControlEnabled then
+			return
+		end
+	
+		if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
 
-	if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
+		self.m_CurrentStation = self.m_CurrentStation + 1
+		if self.m_CurrentStation > #RadioStationManager:getSingleton():getStations() then
+			self.m_CurrentStation = 0
+		end
+		self:setRadioStation(self.m_CurrentStation)
 
-	self.m_CurrentStation = self.m_CurrentStation + 1
-	if self.m_CurrentStation > #RadioStationManager:getSingleton():getStations() then
-		self.m_CurrentStation = 0
+		if not self:isVisible() then
+			self:fadeIn(1000)
+		end
+		self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 	end
-	self:setRadioStation(self.m_CurrentStation)
-
-	if not self:isVisible() then
-		self:fadeIn(1000)
-	end
-	self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 end
 
 function RadioGUI:previousStation()
-	-- Don't do anything if the controls have been disabled
-	if not self.m_ControlEnabled then
-		return
-	end
+	if localPlayer.vehicle:getVehicleType() ~= VehicleType.Helicopter and localPlayer.vehicle:getVehicleType() ~= VehicleType.Plane then
+		-- Don't do anything if the controls have been disabled
+		if not self.m_ControlEnabled then
+			return
+		end
 
-	if isTimer(self.m_FadeOutTimer) then
-		killTimer(self.m_FadeOutTimer)
-	end
+		if isTimer(self.m_FadeOutTimer) then
+			killTimer(self.m_FadeOutTimer)
+		end
 
-	self.m_CurrentStation = self.m_CurrentStation - 1
-	if self.m_CurrentStation < 0 then
-		self.m_CurrentStation = #RadioStationManager:getSingleton():getStations()
-	end
-	self:setRadioStation(self.m_CurrentStation)
+		self.m_CurrentStation = self.m_CurrentStation - 1
+		if self.m_CurrentStation < 0 then
+			self.m_CurrentStation = #RadioStationManager:getSingleton():getStations()
+		end
+		self:setRadioStation(self.m_CurrentStation)
 
-	if not self:isVisible() then
-		self:fadeIn(1000)
+		if not self:isVisible() then
+			self:fadeIn(1000)
+		end
+		self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 	end
-	self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 end
 
 function RadioGUI:getStation()
