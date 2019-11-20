@@ -81,7 +81,7 @@ function LocalPlayer:constructor()
 	local col2 = createColRectangle(2401.71, -2190.33, 210, 150) -- mech and tow
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col2)
 
-	local col3 =  createColRectangle( 1837.515,  902.93, 160, 120) -- triad base
+	local col3 =  createColCuboid(972.42, -1131.07, 12.07, 52, 52, 30) -- yakuza base
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col3)
 
 	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 ) -- palo bank

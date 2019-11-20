@@ -1907,6 +1907,8 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
 
+	<vrpfile src="files/images/Textures/Faction/Yakuza/comptwall3.png"/>
+
 	<vrpfile src="files/images/Textures/Turtles/1.png"/>
 	<vrpfile src="files/images/Textures/Turtles/2.png"/>
 	<vrpfile src="files/images/Textures/Turtles/3.png"/>
