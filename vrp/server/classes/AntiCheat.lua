@@ -45,6 +45,7 @@ AntiCheat.AllowedDataChange = {
 	["AllianceChatEnabled"] = true, 
 	["StateChatEnabled"] = true,
 	["GroupChatEnabled"] = true,
+	["HeliGlue"] = true,
 }
 
 function AntiCheat:constructor()

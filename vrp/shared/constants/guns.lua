@@ -34,7 +34,6 @@ DAMAGE_MULTIPLIER = {
 	[9] = 2 -- Head
 }
 
-
 WEAPON_MODELS_WORLD = 
 {
 	[2] = 333, 

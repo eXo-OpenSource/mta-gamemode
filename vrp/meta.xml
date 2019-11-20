@@ -1383,8 +1383,7 @@
 	<file src="files/images/Logo.png"/>
 
 	<file src="files/images/turbo.png"/>
-	<file src="files/images/static.png"/>
-	
+
 	<file src="files/images/bullethitsmoke_original.png"/>
 
 	<!-- Needs to be file against manipulation -->
@@ -1560,6 +1559,11 @@
 	<vrpfile src="files/images/Weapons/44.png"/>
 	<vrpfile src="files/images/Weapons/45.png"/>
 	<vrpfile src="files/images/Weapons/46.png"/>
+
+	<vrpfile src="files/images/HUD/infrared/static.png"/>
+	<vrpfile src="files/images/HUD/infrared/lock.png"/>
+	<vrpfile src="files/images/HUD/infrared/light.png"/>
+	<vrpfile src="files/images/HUD/infrared/infrared.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/Treatment.png"/>
@@ -2916,6 +2920,8 @@
 	<vrpfile src="files/audio/Ambient/sewer.mp3" />
 	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
 	<vrpfile src="files/audio/Ambient/BENITRATOR.mp3" />
+	<vrpfile src="files/audio/Ambient/helicopter_internal.ogg" />
+
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
@@ -3356,6 +3362,7 @@
 	<!-- Includes -->
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
+	<include resource="helicopterdriveby" />
 	<include resource="reload"/>
 	<include resource="helicopterrope" />
 	<include resource="heligrab" />
