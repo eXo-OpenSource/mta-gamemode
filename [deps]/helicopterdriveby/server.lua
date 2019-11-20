@@ -49,6 +49,7 @@ function glueToHeli(player)
 							attachElements(player, vehicle, 1.2, 0, 0)
 						end
 						setElementData(player, "HeliGlue", true)
+						toggleControl(player, "enter_exit", false)
 						playerVehicle[player] = {}
 						playerVehicle[player] = {vehicle, seat, player}
 						triggerClientEvent(player, "HDB:Camera", player, true)
@@ -69,6 +70,7 @@ function unglueFromHeli(player)
 					detachElements(player)
 					warpPedIntoVehicle(player, vehicle, seat-1)
 					setElementData(player, "HeliGlue", false)
+					toggleControl(player, "enter_exit", true)
 					playerVehicle[player] = {}
 					setPedWeaponSlot(player, 0)
 					triggerClientEvent(player, "HDB:Camera", player, false)
@@ -109,11 +111,9 @@ addEvent("HelicopterDriveBy:toggle", true)
 addEventHandler("HelicopterDriveBy:toggle", root, function() 
 	if client then 
 		if not getElementData(client, "HeliGlue") then
-			toggleControl(client, "enter_exit", false)
 			glueToHeli(client)
 		else 
 			unglueFromHeli(client)
-			toggleControl(client, "enter_exit", true)
 		end
 	end
 end)
