@@ -21,12 +21,8 @@ VehicleInfrared.AntiTextures =
 
 VehicleInfrared.Keys = 
 {
-	w = "y+", 
-	s = "y-", 
-	a = "x-", 
-	d = "x+", 
-	lshift = "s+",
-	lctrl = "s-",
+	mouse_wheel_up = "s+",
+	mouse_wheel_down = "s-",
 	lalt = "v+", 
 	mouse1 = "l",
 	h = "light",
@@ -50,9 +46,12 @@ VehicleInfrared.InvertColor = tocolor(0, 0, 0, 255)
 VehicleInfrared.InvertColorSecondary = tocolor(255, 255, 255, 255)
 
 function VehicleInfrared:constructor(vehicle) 
+	VehicleInfrared.Sensitivity = core:get("Vehicles", "InfraredSensitivity", 2)
 	self.m_State = false
 	self.m_Yaw = 0
 	self.m_Pitch = 0
+	self.m_MouseX = 0
+	self.m_MouseY = 0
 	self.m_X = 0 
 	self.m_Mode = 0
 	self.m_Color = VehicleInfrared.DefaultColor 
@@ -67,30 +66,16 @@ function VehicleInfrared:constructor(vehicle)
 	self.m_Modificator = false
 	self.m_Light = false
 	self.m_ControlLocked = false
-	self.m_Retarget = true
 	self.m_Update = bind(self.update, self)
 	self.m_Render = bind(self.render, self)
+	self.m_Cursor = bind(self.cursor, self)
 	self.m_Key = bind(self.onKey, self)
 	self:sound()
-	self:info()
 	self:start(vehicle)
 end
 
 function VehicleInfrared:destructor() 
 	self:restore()
-end
-
-function VehicleInfrared:info() 
-	local infoText = 
-	[[
-		• Zur Ausrichtung [W/A/S/D]
-		• Zum Zoom [SHIFT/STEURUNG]
-		• Sensitivität langsamer: ALT
-		• Licht: H
-		• Modus-Umschalten: M 
-		• Kontrollmodus: Linke Maustaste
-	]]
-	ShortMessage:new(infoText, "Thermalkamera", Color.Black, 10000)
 end
 
 function VehicleInfrared:resume() 
@@ -101,6 +86,10 @@ function VehicleInfrared:resume()
 		self.m_Mode = localPlayer.m_PreviousInfrared.mode
 	end
 	self:mode()
+end
+
+function VehicleInfrared:updateSensitivity() 
+	VehicleInfrared.Sensitivity = core:get("Vehicles", "InfraredSensitivity", 2)
 end
 
 function VehicleInfrared:start(vehicle) 
@@ -120,10 +109,12 @@ function VehicleInfrared:start(vehicle)
 	removeEventHandler("onClientPreRender", root, self.m_Update)
 	removeEventHandler("onClientKey", root, self.m_Key)
 	removeEventHandler("onClientRender", root, self.m_Render)
+	removeEventHandler( "onClientCursorMove", root, self.m_Cursor)
 
 	addEventHandler("onClientKey", root, self.m_Key)
 	addEventHandler("onClientPreRender", root, self.m_Update)
 	addEventHandler("onClientRender", root, self.m_Render, true, "high+9999")
+	addEventHandler( "onClientCursorMove", root, self.m_Cursor) 
 
 	if self.m_ThermalShaderVehicle then
 		for index, textures in pairs(VehicleInfrared.Textures) do
@@ -148,6 +139,7 @@ function VehicleInfrared:restore()
 	removeEventHandler("onClientPreRender", root, self.m_Update)
 	removeEventHandler("onClientKey", root, self.m_Key)
 	removeEventHandler("onClientRender", root, self.m_Render, true, "low+999")
+	removeEventHandler( "onClientCursorMove", root, self.m_Cursor)
 
 	toggleAllControls(true)
 	setCameraTarget(localPlayer)
@@ -208,31 +200,33 @@ function VehicleInfrared:key(button)
 		local previousKeyState = VehicleInfrared.KeyState[button]
 		VehicleInfrared.KeyState[button] = getKeyState(button) 
 		if VehicleInfrared.KeyState[button] then
-			if direction == "y+" then 
-				self.m_Pitch = (self.m_Pitch + (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-			elseif direction == "y-" then 
-				self.m_Pitch = (self.m_Pitch - (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-			elseif direction == "x+" then 
-				self.m_Yaw = (self.m_Yaw - (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-				self.m_Retarget = true
-			elseif direction == "x-" then 
-				self.m_Yaw = (self.m_Yaw + (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-				self.m_Retarget = true
-			elseif direction == "s+" then 
+			if direction == "s+" then 
 				self.m_Zoom = self.m_Zoom + 1
 			elseif direction == "s-" then
 				self.m_Zoom = self.m_Zoom - 1
 			end
-			self:yaw()
 			self:zoom()
-			self:pitch()
 		end
-		self:evaluateKeyState(previousKeyState, VehicleInfrared.KeyState[button])
+	end
+end
+
+function VehicleInfrared:cursor(x, y, aX, aY) 
+	if not self.m_ControlLocked then
+		if not isCursorShowing() then
+			aX = aX - screenWidth / 2
+			aY = aY - screenHeight / 2
+
+			self.m_Yaw = self.m_Yaw - aX * self.m_Sensitivity * 0.01745
+			self.m_Pitch = self.m_Pitch - aY * self.m_Sensitivity * 0.01745
+			
+			self.m_MouseLastMovement = getTickCount()+100
+			self.m_MouseMoveEvent = true
+		end
 	end
 end
 
 function VehicleInfrared:onKey(button, state)
-	if not state then 
+	if state then 
 		if VehicleInfrared.Keys[button] then
 			if VehicleInfrared.Keys[button] == "v+" then 
 				self.m_Modificator = not self.m_Modificator
@@ -248,16 +242,17 @@ function VehicleInfrared:onKey(button, state)
 					self.m_Mode = (self.m_Mode + 1) % 2
 				end
 				self:mode()
+			elseif VehicleInfrared.Keys[button] == "s+" then 
+				self.m_Zoom = self.m_Zoom + 1
+				self:zoom()
+			elseif VehicleInfrared.Keys[button] == "s-" then 
+				self.m_Zoom = self.m_Zoom - 1
+				self:zoom()
 			end
 		end
 	end
 end
 
-function VehicleInfrared:evaluateKeyState(previous, current) 
-	if previous and not current then 
-		self.m_KeyPressEvent = true
-	end
-end
 
 function VehicleInfrared:yaw() 
 	self.m_X, self.m_Y = getPointFromDistanceRotation(self.m_Start.x, self.m_Start.y, self.m_ExtendX, self.m_Yaw*-1)
@@ -319,16 +314,18 @@ function VehicleInfrared:update()
 
 	setCameraMatrix(self.m_Origin, self.m_Origin + (self.m_Spot - self.m_Start):getNormalized()*2000, 0, 70)
 
-	self.m_KeyPressEvent = false
 	if not self.m_ControlLocked then
 		for button, i in pairs(VehicleInfrared.Keys) do 
 			self:key(button)
 		end
 	end
 
-	if self.m_KeyPressEvent then 
-		self:onSpotMove()
-	end
+	if self.m_MouseLastMovement and self.m_MouseLastMovement < getTickCount() then
+		if self.m_MouseMoveEvent then 
+			self:onSpotMove()
+			self.m_MouseMoveEvent = false
+		end
+	end 
 
 	self:laser()
 	
