@@ -25,6 +25,7 @@ function KeyBinds:constructor()
 	self.m_PoliceMegaphone = bind(self.usePoliceMegaphone, self)
 	self.m_InfraredVehicle = bind(self.toggleInfrared, self)
 	self.m_ToggleDisplays = bind(self.toggleDisplay, self)
+	self.m_ToggleHeliDriveBy = bind(self.toggleHelicopterDriveBy, self)
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
@@ -56,6 +57,7 @@ function KeyBinds:constructor()
 		["KeyToggleTaser"]			= {["defaultKey"] = "o", ["name"] = "Taser ziehen", ["func"] = function() if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then triggerServerEvent("onPlayerItemUseServer", localPlayer, false, false, "Taser") end end, ["trigger"] = "down"};
 		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
 		["KeyToggleInfrared"]		= {["defaultKey"] = "mouse2", ["name"] = "Infrarot-Kamera", ["func"] = self.m_InfraredVehicle, ["trigger"] = "down"};
+		["KeyToggleHeliDriveby"] 	= {["defaultKey"] = "rshift", ["name"] = "Helikopter-Driveby", ["func"] = self.m_ToggleHeliDriveBy, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
@@ -193,10 +195,17 @@ end
 function KeyBinds:toggleInfrared() 
 	if localPlayer.vehicle then
 		if not VehicleInfrared:isInstantiated() then 
-			VehicleInfrared:new(localPlayer.vehicle)
+			triggerServerEvent("VehicleInfrared:onUse", localPlayer)
 		else 
-			delete(VehicleInfrared:getSingleton())
+			triggerServerEvent("VehicleInfrared:onStop", localPlayer)
 		end
+	end
+end
+
+function KeyBinds:toggleHelicopterDriveBy() 
+	if not VehicleInfrared:isInstantiated() and (not self.m_LastHeliTrigger or getTickCount() > self.m_LastHeliTrigger) then 
+		self.m_LastHeliTrigger = getTickCount() + 200
+		triggerServerEvent("HelicopterDriveBy:toggle", localPlayer) 
 	end
 end
 

@@ -9,6 +9,7 @@ float luminanceFloat = 2;
 float alpha = 1;
 float Center = 0;
 float BlurAmount = 0;
+float negative = 0;
 
 float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 {
@@ -25,7 +26,16 @@ float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 	float4 luminance = srcColor.r*0.45 + srcColor.g*0.45 + srcColor.b;
 	luminance.a = luminanceFloat;
 	
+	if (negative == 1)
+	{
+		float4 invertColor = 1 - luminance;
+		invertColor.a = luminance.a;
+		invertColor.rgb *= invertColor.a;
+		return invertColor * filterColor;
+	}
+
 	return luminance * filterColor;
+	
 }
 
 technique Technique1

@@ -31,7 +31,8 @@ function VehicleManager:constructor()
 	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleBlow",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
-	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks"}
+	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks",
+	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -155,6 +156,68 @@ function VehicleManager:constructor()
 				self:checkVehicle(source)
 				source.m_LastMileageCheck = getTickCount() -- this is probably close to the enter time at which the client starts measuring the mileage, only for anti-cheat
 				setVehicleEngineState(source, source:getEngineState())
+			end
+		end
+	)
+
+	addEventHandler("VehicleInfrared:onUse", root, function()
+		if client and client.vehicle then 
+			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then 
+				if not isValidElement(client.vehicle.m_InfraredUsedBy, "player") then
+					client.vehicle.m_InfraredUsedBy = client
+					client:setData("inInfraredVehicle", true, true)
+					client:triggerEvent("VehicleInfrared:start", client.vehicle)
+				else 
+					if not client.vehicle.m_InfraredUsedBy.vehicle or client.vehicle.m_InfraredUsedBy.vehicle ~= client.vehicle then 
+						client.vehicle.m_InfraredUsedBy:setData("inInfraredVehicle", false, true)
+						client.vehicle.m_InfraredUsedBy = client
+						client:setData("inInfraredVehicle", true, true)
+						client:triggerEvent("VehicleInfrared:start", client.vehicle)
+					else 
+						if client.vehicle.m_InfraredUsedBy ~= client then
+							client:sendError(_("Die Kamera wird zurzeit von %s bedient!", client, client.vehicle.m_InfraredUsedBy:getName()))
+						end
+					end
+				end
+			end
+		end
+	end)
+	
+	addEventHandler("VehicleInfrared:onStop", root, function(vehicle)
+		if client and client.vehicle then 
+			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then 
+				client:setData("inInfraredVehicle", false, true)
+				client.vehicle.m_InfraredUsedBy = nil
+			end
+			client:triggerEvent("VehicleInfrared:stop")
+		end
+	end)
+
+
+	addEventHandler("VehicleInfrared:onSyncLight", root, function(vehicle, data)
+		for k, player in pairs(getElementsByType("player")) do 
+			player:triggerLatentEvent("VehicleInfrared:updateLight", vehicle, data[1], data[2])
+		end
+	end)
+
+	addEventHandler("VehicleInfrared:onCreateLight", root, function(vehicle, data)
+		for k, player in pairs(getElementsByType("player")) do 
+			player:triggerLatentEvent("VehicleInfrared:createLight", vehicle, data[1], data[2])
+		end
+	end)
+
+
+	addEventHandler("VehicleInfrared:onStopLight", root, function(vehicle)
+		for k, player in pairs(getElementsByType("player")) do 
+			player:triggerLatentEvent("VehicleInfrared:stopLight", vehicle)
+		end
+	end)
+
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player) 
+			if player:getData("inInfraredVehicle") then 
+				player:setData("inInfraredVehicle", false, true)
+				player:triggerEvent("VehicleInfrared:onWasted")
 			end
 		end
 	)
