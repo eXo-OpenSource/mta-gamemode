@@ -585,6 +585,7 @@
 	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
 	<script src="client/classes/Guns.lua" type="client"/>
+	<script src="client/classes/RocketLauncher.lua" type="client"/>
 	<script src="client/classes/Help.lua" type="client"/>
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
@@ -1283,6 +1284,8 @@
 
 	<vrpfile src="files/audio/Items/slam_arm.ogg" />
 
+	<vrpfile src="files/audio/weapon/rocket-effect.ogg" />
+	
 	<vrpfile src="files/images/warning.png" />
 
 	<vrpfile src="files/images/hit.png" />
@@ -1601,6 +1604,8 @@
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
 	<vrpfile src="files/images/Other/PewPew/hit.png"/>
+
+	<vrpfile src="files/images/Other/Weapon/ironsight-rpg.png"/>
 
 	<vrpfile src="files/images/Roulette/table.png" />
 	<vrpfile src="files/images/Roulette/circle.png" />
@@ -3328,10 +3333,11 @@
 	<vrpfile src="files/shader/monochrome.fx"/>
 	<vrpfile src="files/shader/mapeditorColorize.fx"/>
 	<vrpfile src="files/shader/vignette.fx"/>
-	<file src="files/shader/cylinder.fx"/>
+	<vrpfile src="files/shader/cylinder.fx"/>
 	<vrpfile src="files/shader/zoomBlur.fx"/>
 	<vrpfile src="files/shader/pedSize.fx"/>
 	<vrpfile src="files/shader/pedWall.fx"/>
+	<vrpfile src="files/shader/passin.fx"/>
 
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->

@@ -47,10 +47,11 @@ function Guns:constructor()
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage", "startGrenadeThrow", "disableGrenadeAimLeave"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage", "startGrenadeThrow", "disableGrenadeAimLeave", "Guns:onClientRocketLauncherFire"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
+	addEventHandler("Guns:onClientRocketLauncherFire", root, bind(self.Event_syncRocketLauncherEffect, self))
 
 	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
@@ -414,6 +415,14 @@ function Guns:Event_onGunLogCacheTick()
 	for id, cacheObj in pairs(self.m_DamageLogCache) do
 		if now >= cacheObj["CacheTime"] + GUN_CACHE_EMPTY_INTERVAL then
 			self:forceDamageLogCache(  id )
+		end
+	end
+end
+
+function Guns:Event_syncRocketLauncherEffect(start, stop)
+	for key, player in pairs(getElementsByType("player")) do 
+		if player ~= client and player:getInterior() == client:getInterior() and player:getDimension() == client:getDimension() then 
+			player:triggerEvent("RocketLauncher:syncRocketEffect", start, stop)
 		end
 	end
 end
