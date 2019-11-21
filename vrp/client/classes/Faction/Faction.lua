@@ -32,10 +32,12 @@ function FactionManager:constructor()
 	self.m_RaidBind = bind(self.endEvilFactionRaidOnDeath, self)
 
 	for key, element in pairs(getElementsByType("object")) do
-		if element:getModel() == 16500 then
-			local x, y, z = getElementPosition(element)
-			if getDistanceBetweenPoints3D(985.142, -1123.313, 23.818, x, y, z) < 100 then
+		local x, y, z = getElementPosition(element)
+		if getDistanceBetweenPoints3D(985.142, -1123.313, 23.818, x, y, z) < 100 then
+			if element:getModel() == 16500 then
 				self:loadYakuzaTexture(element)
+			elseif element:getModel() == 3531 then 
+				self:loadYakuzaSign(element)
 			end
 		end
 	end
@@ -314,7 +316,11 @@ function FactionManager:stopAreaAlert()
 end
 
 function FactionManager:loadYakuzaTexture(element)
-	self.m_YakuzaTextures[element] = FileTextureReplacer:new(element, "Faction/Yakuza/comptwall3.png", "drvin_back", {}, true, true)
+	self.m_YakuzaTextures[element] = FileTextureReplacer:new(element, "Faction/Yakuza/comptwall3.jpg", "drvin_back", {}, true, true)
+end
+
+function FactionManager:loadYakuzaSign(element)
+	self.m_YakuzaTextures[element] = FileTextureReplacer:new(element, "Faction/Yakuza/FourDragons01_256.jpg", "FourDragons01_256", {}, true, true)
 end
 
 function FactionManager:unloadYakuzaTextures()

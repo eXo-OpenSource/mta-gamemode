@@ -217,7 +217,7 @@ factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [
 factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3(1028.83, -1102.81, 23.83)
 factionWTDestination[6] = Vector3(962.57, -1102.63, 23.69)
-factionSpawnpoint[6] = {Vector3(980.07, -1124.94, 23.82), 0, 0}
+factionSpawnpoint[6] = {Vector3(1003.01, -1105.58, 23.83), 0, 0}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
 factionAirDropPoint[6] = Vector3(997.42, -1089.35, 23.83)
 
@@ -273,7 +273,7 @@ factionRankNames[9] = {
 }
 factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
 factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
-factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
+factionSkins[9] = {[44]=true, [100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [291]=true,[298]=true,[299]=true}
 factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[9] =  Vector3(681.44, -444.98, 16.34)
 factionWTDestination[9] =   Vector3(659.08, -455.65, 16.34)
