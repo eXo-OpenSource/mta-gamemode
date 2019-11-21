@@ -21,12 +21,8 @@ VehicleInfrared.AntiTextures =
 
 VehicleInfrared.Keys = 
 {
-	w = "y+", 
-	s = "y-", 
-	a = "x-", 
-	d = "x+", 
-	lshift = "s+",
-	lctrl = "s-",
+	mouse_wheel_up = "s+",
+	mouse_wheel_down = "s-",
 	lalt = "v+", 
 	mouse1 = "l",
 	h = "light",
@@ -42,6 +38,7 @@ VehicleInfrared.MaxZoom = 500
 VehicleInfrared.FontHeight = dxGetFontHeight(2, "clear")
 
 VehicleInfrared.SpotLight = {}
+VehicleInfrared.Interpolation = {}
 
 VehicleInfrared.DefaultColor = tocolor(250, 250, 250, 100)
 VehicleInfrared.DefaultColorSecondary = tocolor(0, 0, 0, 255)
@@ -50,9 +47,12 @@ VehicleInfrared.InvertColor = tocolor(0, 0, 0, 255)
 VehicleInfrared.InvertColorSecondary = tocolor(255, 255, 255, 255)
 
 function VehicleInfrared:constructor(vehicle) 
+	VehicleInfrared.Sensitivity = core:get("Vehicles", "InfraredSensitivity", 2)
 	self.m_State = false
 	self.m_Yaw = 0
 	self.m_Pitch = 0
+	self.m_MouseX = 0
+	self.m_MouseY = 0
 	self.m_X = 0 
 	self.m_Mode = 0
 	self.m_Color = VehicleInfrared.DefaultColor 
@@ -67,30 +67,16 @@ function VehicleInfrared:constructor(vehicle)
 	self.m_Modificator = false
 	self.m_Light = false
 	self.m_ControlLocked = false
-	self.m_Retarget = true
 	self.m_Update = bind(self.update, self)
 	self.m_Render = bind(self.render, self)
+	self.m_Cursor = bind(self.cursor, self)
 	self.m_Key = bind(self.onKey, self)
 	self:sound()
-	self:info()
 	self:start(vehicle)
 end
 
 function VehicleInfrared:destructor() 
 	self:restore()
-end
-
-function VehicleInfrared:info() 
-	local infoText = 
-	[[
-		• Zur Ausrichtung [W/A/S/D]
-		• Zum Zoom [SHIFT/STEURUNG]
-		• Sensitivität langsamer: ALT
-		• Licht: H
-		• Modus-Umschalten: M 
-		• Kontrollmodus: Linke Maustaste
-	]]
-	ShortMessage:new(infoText, "Thermalkamera", Color.Black, 10000)
 end
 
 function VehicleInfrared:resume() 
@@ -101,6 +87,10 @@ function VehicleInfrared:resume()
 		self.m_Mode = localPlayer.m_PreviousInfrared.mode
 	end
 	self:mode()
+end
+
+function VehicleInfrared:updateSensitivity() 
+	VehicleInfrared.Sensitivity = core:get("Vehicles", "InfraredSensitivity", 2)
 end
 
 function VehicleInfrared:start(vehicle) 
@@ -120,10 +110,12 @@ function VehicleInfrared:start(vehicle)
 	removeEventHandler("onClientPreRender", root, self.m_Update)
 	removeEventHandler("onClientKey", root, self.m_Key)
 	removeEventHandler("onClientRender", root, self.m_Render)
+	removeEventHandler( "onClientCursorMove", root, self.m_Cursor)
 
 	addEventHandler("onClientKey", root, self.m_Key)
 	addEventHandler("onClientPreRender", root, self.m_Update)
 	addEventHandler("onClientRender", root, self.m_Render, true, "high+9999")
+	addEventHandler( "onClientCursorMove", root, self.m_Cursor) 
 
 	if self.m_ThermalShaderVehicle then
 		for index, textures in pairs(VehicleInfrared.Textures) do
@@ -148,6 +140,7 @@ function VehicleInfrared:restore()
 	removeEventHandler("onClientPreRender", root, self.m_Update)
 	removeEventHandler("onClientKey", root, self.m_Key)
 	removeEventHandler("onClientRender", root, self.m_Render, true, "low+999")
+	removeEventHandler( "onClientCursorMove", root, self.m_Cursor)
 
 	toggleAllControls(true)
 	setCameraTarget(localPlayer)
@@ -202,62 +195,55 @@ function VehicleInfrared:sound()
 	self.m_Sound:fadeIn(1)
 end
 
-function VehicleInfrared:key(button) 
-	if VehicleInfrared.Keys[button] then 
-		local direction =  VehicleInfrared.Keys[button]
-		local previousKeyState = VehicleInfrared.KeyState[button]
-		VehicleInfrared.KeyState[button] = getKeyState(button) 
-		if VehicleInfrared.KeyState[button] then
-			if direction == "y+" then 
-				self.m_Pitch = (self.m_Pitch + (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-			elseif direction == "y-" then 
-				self.m_Pitch = (self.m_Pitch - (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-			elseif direction == "x+" then 
-				self.m_Yaw = (self.m_Yaw - (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-				self.m_Retarget = true
-			elseif direction == "x-" then 
-				self.m_Yaw = (self.m_Yaw + (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity)) % 360
-				self.m_Retarget = true
-			elseif direction == "s+" then 
-				self.m_Zoom = self.m_Zoom + 1
-			elseif direction == "s-" then
-				self.m_Zoom = self.m_Zoom - 1
+function VehicleInfrared:key(input) 
+	if not self.m_ControlLocked or input == "control" then
+		if input == "slow" then 
+			self.m_Modificator = not self.m_Modificator
+		elseif input == "control" then 
+			self.m_ControlLocked = not self.m_ControlLocked 
+			toggleAllControls(self.m_ControlLocked)
+		elseif input == "light" then 
+			if not self.m_ControlLocked then 
+				self:light()
 			end
-			self:yaw()
-			self:zoom()
-			self:pitch()
+		elseif input == "mode" then 
+			if self.m_Shader and self.m_Shader:getSource() then 
+				self.m_Mode = (self.m_Mode + 1) % 2
+			end
+			self:mode()
 		end
-		self:evaluateKeyState(previousKeyState, VehicleInfrared.KeyState[button])
+	end
+end
+
+function VehicleInfrared:cursor(x, y, aX, aY) 
+	if not self.m_ControlLocked then
+		if not isCursorShowing() then
+			aX = aX - screenWidth / 2
+			aY = aY - screenHeight / 2
+
+			self.m_Yaw = self.m_Yaw - aX * self.m_Sensitivity * 0.01745
+			self.m_Pitch = self.m_Pitch - aY * self.m_Sensitivity * 0.01745
+			
+			self.m_MouseLastMovement = getTickCount()+100
+			self.m_MouseMoveEvent = true
+		end
 	end
 end
 
 function VehicleInfrared:onKey(button, state)
-	if not state then 
+	if state then 
 		if VehicleInfrared.Keys[button] then
-			if VehicleInfrared.Keys[button] == "v+" then 
-				self.m_Modificator = not self.m_Modificator
-			elseif VehicleInfrared.Keys[button] == "l" then 
-				self.m_ControlLocked = not self.m_ControlLocked 
-				toggleAllControls(self.m_ControlLocked)
-			elseif VehicleInfrared.Keys[button] == "light" then 
-				if not self.m_ControlLocked then 
-					self:light()
-				end
-			elseif VehicleInfrared.Keys[button] == "mode" then 
-				if self.m_Shader and self.m_Shader:getSource() then 
-					self.m_Mode = (self.m_Mode + 1) % 2
-				end
-				self:mode()
+			if VehicleInfrared.Keys[button] == "s+" then 
+				self.m_Zoom = self.m_Zoom + 1
+				self:zoom()
+			elseif VehicleInfrared.Keys[button] == "s-" then 
+				self.m_Zoom = self.m_Zoom - 1
+				self:zoom()
 			end
 		end
 	end
 end
 
-function VehicleInfrared:evaluateKeyState(previous, current) 
-	if previous and not current then 
-		self.m_KeyPressEvent = true
-	end
-end
 
 function VehicleInfrared:yaw() 
 	self.m_X, self.m_Y = getPointFromDistanceRotation(self.m_Start.x, self.m_Start.y, self.m_ExtendX, self.m_Yaw*-1)
@@ -319,16 +305,12 @@ function VehicleInfrared:update()
 
 	setCameraMatrix(self.m_Origin, self.m_Origin + (self.m_Spot - self.m_Start):getNormalized()*2000, 0, 70)
 
-	self.m_KeyPressEvent = false
-	if not self.m_ControlLocked then
-		for button, i in pairs(VehicleInfrared.Keys) do 
-			self:key(button)
+	if self.m_MouseLastMovement and self.m_MouseLastMovement < getTickCount() then
+		if self.m_MouseMoveEvent then 
+			self:onSpotMove()
+			self.m_MouseMoveEvent = false
 		end
-	end
-
-	if self.m_KeyPressEvent then 
-		self:onSpotMove()
-	end
+	end 
 
 	self:laser()
 	
@@ -481,7 +463,7 @@ function VehicleInfrared:updateLight()
 	if self.m_Light then
 		local length = self.m_LaserDistance or 400 
 		local start =  (self.m_Vehicle.position + self.m_Vehicle.matrix.right*-.5) + self.m_Vehicle.matrix.up*-.5
-		VehicleInfrared.moveLight(self.m_Vehicle, start, self.m_Start + (self.m_Spot - self.m_Start):getNormalized()*length)
+		VehicleInfrared.moveLight(self.m_Vehicle, start, self.m_Start + (self.m_Spot - self.m_Start):getNormalized()*length, true)
 	end
 end
 
@@ -563,6 +545,16 @@ addEventHandler("onClientPreRender", root, function()
 				if not currentVehicle or currentVehicle ~= vehicle then
 					local start =  (vehicle.position + vehicle.matrix.right*-.5) + vehicle.matrix.up*-.5 
 					spotlight:setStartPosition(start)
+					if VehicleInfrared.Interpolation[spotlight] then 
+						local prog = (getTickCount() - VehicleInfrared.Interpolation[spotlight].time) / 500 
+						local previousStart = VehicleInfrared.Interpolation[spotlight].start
+						local endPosition = VehicleInfrared.Interpolation[spotlight].stop 
+						local mx, my, mz = interpolateBetween(previousStart.x, previousStart.y, previousStart.z, endPosition.x, endPosition.y, endPosition.z, prog, "OutQuad")
+						VehicleInfrared.SpotLight[vehicle]:setEndPosition(Vector3(mx, my, mz))
+						if prog >= 1 then 
+							VehicleInfrared.Interpolation[spotlight] = nil
+						end
+					end
 				end
 			else 
 				VehicleInfrared.SpotLight[vehicle] = nil
@@ -582,10 +574,14 @@ function VehicleInfrared.stopLight(vehicle)
 	end
 end
 
-function VehicleInfrared.moveLight(vehicle, start, stop)
+function VehicleInfrared.moveLight(vehicle, start, stop, instant)
 	if VehicleInfrared.SpotLight[vehicle] and isElement(VehicleInfrared.SpotLight[vehicle]) then 
 		VehicleInfrared.SpotLight[vehicle]:setStartPosition(Vector3(start.x, start.y, start.z))
-		VehicleInfrared.SpotLight[vehicle]:setEndPosition(Vector3(stop.x, stop.y, stop.z))
+		if instant then
+			VehicleInfrared.SpotLight[vehicle]:setEndPosition(Vector3(stop.x, stop.y, stop.z))
+		else 
+			VehicleInfrared.Interpolation[VehicleInfrared.SpotLight[vehicle]] = {time = getTickCount(), start = VehicleInfrared.SpotLight[vehicle]:getEndPosition(), stop = Vector3(stop.x, stop.y, stop.z)}
+		end
 	end
 end
 
