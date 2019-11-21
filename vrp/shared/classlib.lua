@@ -66,10 +66,12 @@ function enew(element, class, ...)
 
 	-- Add the destruction handler
 	if isElement(element) then
-		addEventHandler(
-			triggerClientEvent ~= nil and
-			"onElementDestroy" or
-			"onClientElementDestroy", element, __removeElementIndex, false, "low-999999")
+		if not isEventHandlerAdded(triggerClientEvent ~= nil and "onElementDestroy" or "onClientElementDestroy", element, __removeElementIndex) then
+			addEventHandler(
+				triggerClientEvent ~= nil and
+				"onElementDestroy" or
+				"onClientElementDestroy", element, __removeElementIndex, false, "low-999999")
+		end
 	end
 
 	return element

@@ -1,5 +1,10 @@
 local weaponsTable = {0 ,22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39}
 
+
+addEventHandler("onClientPlayerWasted", localPlayer, function() 
+	triggerServerEvent("HelicopterDriveBy:onClientWasted", localPlayer)
+end)
+
 function switchNextWeapon()
 	progress = 1
 	if not getElementData(localPlayer, "HeliGlue") then return end
