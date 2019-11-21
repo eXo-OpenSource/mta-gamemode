@@ -1564,6 +1564,9 @@
 	<vrpfile src="files/images/HUD/infrared/lock.png"/>
 	<vrpfile src="files/images/HUD/infrared/light.png"/>
 	<vrpfile src="files/images/HUD/infrared/infrared.png"/>
+	<vrpfile src="files/images/HUD/infrared/focus.png"/>
+	<vrpfile src="files/images/HUD/infrared/slow.png"/>
+
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/Treatment.png"/>
