@@ -125,6 +125,14 @@ addEventHandler("onPlayerLogin", root,
 	end
 )
 
+addEvent("HelicopterDriveBy:onClientWasted", true)
+addEventHandler("HelicopterDriveBy:onClientWasted", root,
+	function()
+		unglueFromHeli(client)
+	end
+)
+
+
 addEventHandler("onVehicleExplode", root,
 	function()
 		for _,player in ipairs(getElementsByType("player")) do

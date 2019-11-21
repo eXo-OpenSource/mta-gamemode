@@ -34,7 +34,7 @@ VehicleInfrared.KeyState = {}
 VehicleInfrared.Sensitivity = 2
 
 VehicleInfrared.MaxZoom = 500
-
+VehicleInfrared.ZoomSpeed = 200
 VehicleInfrared.FontHeight = dxGetFontHeight(2, "clear")
 
 VehicleInfrared.SpotLight = {}
@@ -221,8 +221,9 @@ function VehicleInfrared:cursor(x, y, aX, aY)
 			aX = aX - screenWidth / 2
 			aY = aY - screenHeight / 2
 
-			self.m_Yaw = self.m_Yaw - aX * self.m_Sensitivity * 0.01745
-			self.m_Pitch = self.m_Pitch - aY * self.m_Sensitivity * 0.01745
+
+			self.m_Yaw = self.m_Yaw - aX * (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity) * 0.01745
+			self.m_Pitch = self.m_Pitch - aY * (self.m_Modificator and self.m_SensitivitySlow or self.m_Sensitivity) * 0.01745
 			
 			self.m_MouseLastMovement = getTickCount()+100
 			self.m_MouseMoveEvent = true
@@ -234,11 +235,13 @@ function VehicleInfrared:onKey(button, state)
 	if state then 
 		if VehicleInfrared.Keys[button] then
 			if VehicleInfrared.Keys[button] == "s+" then 
-				self.m_Zoom = self.m_Zoom + 1
-				self:zoom()
+				local previous = self.m_InterpolateZoom and self.m_InterpolateZoom.to - self.m_Zoom or 0
+				if previous < 0 then previous = 0 end
+				self.m_InterpolateZoom = {start = self.m_Zoom, to = self.m_Zoom+1 + previous, time = getTickCount()}
 			elseif VehicleInfrared.Keys[button] == "s-" then 
-				self.m_Zoom = self.m_Zoom - 1
-				self:zoom()
+				local previous = self.m_InterpolateZoom and self.m_InterpolateZoom.to - self.m_Zoom or 0
+				if previous > 0 then previous = 0 end
+				self.m_InterpolateZoom = {start = self.m_Zoom, to = self.m_Zoom-1 + previous, time = getTickCount()}
 			end
 		end
 	end
@@ -260,6 +263,16 @@ function VehicleInfrared:pitch()
 end
 
 function VehicleInfrared:zoom() 
+	if self.m_InterpolateZoom then 
+		local progress = (getTickCount() - self.m_InterpolateZoom.time) / VehicleInfrared.ZoomSpeed
+		local ease = getEasingValue(progress, "OutQuad")
+		local to = self.m_InterpolateZoom.to
+		local start = self.m_InterpolateZoom.start
+		self.m_Zoom = self.m_Zoom + (to - start)*ease
+		if progress > 1 then 
+			self.m_InterpolateZoom = nil
+		end
+	end
 	if self.m_Zoom < 0 then 
 		self.m_Zoom = 0
 	end
@@ -283,6 +296,7 @@ function VehicleInfrared:intersect()
 		if hit then 
 			self.m_Zoom = Vector3(self.m_Start - Vector3(hitX, hitY, hitZ)):getLength()-1
 			self.m_Blur = getTickCount() + 100
+			self.m_Shaky = getTickCount() + 2000
 		end
 	end
 end
@@ -356,12 +370,14 @@ function VehicleInfrared:render()
 			if self.m_BlurUp + .05 < .5 then 
 				self.m_BlurUp = self.m_BlurUp + .05
 			end
+			self.m_Shader:getSource():setValue("Center", 0.5)
 			self.m_Shader:getSource():setValue("BlurAmount", self.m_BlurUp)
 			dxDrawImage(0, 0, screenWidth, screenHeight, "files/images/HUD/infrared/static.png", 0, 0, 0, tocolor(255, 255, 255, 100*(self.m_BlurUp/.5)))
 		else 
 			self.m_Blur = nil 
 			self.m_BlurUp = nil
 			self.m_Shader:getSource():setValue("BlurAmount", 0)
+			self.m_Shader:getSource():setValue("Center", 0)
 		end
 	end	
 	self:hud()
@@ -413,6 +429,17 @@ function VehicleInfrared:hud()
 	if self.m_Light then 
 		dxDrawImage(screenWidth*.4-16, screenHeight - VehicleInfrared.FontHeight*3, 32, 32, "files/images/HUD/infrared/light.png", 0, 0, 0, self.m_Color)
 	end
+
+	if self.m_Shaky and getTickCount() < self.m_Shaky then 
+		dxDrawImage(screenWidth*.8, screenHeight*.5, 64, 64, "files/images/HUD/infrared/focus.png", 0, 0, 0, self.m_Color)
+	else 
+		self.m_Shaky = nil
+	end
+
+	if self.m_Modificator then 
+		dxDrawImage(screenWidth*.3-16, screenHeight - VehicleInfrared.FontHeight*3, 32, 32, "files/images/HUD/infrared/slow.png", 0, 0, 0, self.m_Color)
+	end
+	
 	dxDrawImage(screenWidth*.5-16, VehicleInfrared.FontHeight*1, 32, 16, "files/images/HUD/infrared/infrared.png", 0, 0, 0, self.m_Color)
 end
 
