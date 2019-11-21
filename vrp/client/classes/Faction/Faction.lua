@@ -12,6 +12,7 @@ function FactionManager:constructor()
 	triggerServerEvent("getFactions", localPlayer)
 
 	self.m_NeedHelpBlip = {}
+	self.m_YakuzaTextures = {}
 
 	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder", "factionForceOffduty", "startAreaAlert", "stopAreaAlert", "playAreaAlertMessage"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
@@ -29,6 +30,17 @@ function FactionManager:constructor()
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 	self.m_RaidBind = bind(self.endEvilFactionRaidOnDeath, self)
+
+	for key, element in pairs(getElementsByType("object")) do
+		local x, y, z = getElementPosition(element)
+		if getDistanceBetweenPoints3D(985.142, -1123.313, 23.818, x, y, z) < 100 then
+			if element:getModel() == 16500 then
+				self:loadYakuzaTexture(element)
+			elseif element:getModel() == 3531 then 
+				self:loadYakuzaSign(element)
+			end
+		end
+	end
 end
 
 function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color, navigationPosition)
@@ -301,6 +313,20 @@ function FactionManager:stopAreaAlert()
 			self:playAreaAlertMessage("normalized", 6)
 		end
 	, 7500, 1)
+end
+
+function FactionManager:loadYakuzaTexture(element)
+	self.m_YakuzaTextures[element] = FileTextureReplacer:new(element, "Faction/Yakuza/comptwall3.jpg", "drvin_back", {}, true, true)
+end
+
+function FactionManager:loadYakuzaSign(element)
+	self.m_YakuzaTextures[element] = FileTextureReplacer:new(element, "Faction/Yakuza/FourDragons01_256.jpg", "FourDragons01_256", {}, true, true)
+end
+
+function FactionManager:unloadYakuzaTextures()
+	for key, texture in pairs(self.m_YakuzaTextures) do
+		delete(texture)
+	end
 end
 
 Faction = inherit(Object)

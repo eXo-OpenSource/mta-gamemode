@@ -19,8 +19,8 @@ function FactionEvil:constructor()
 	nextframe(function()
 		--self:loadLCNGates(5)
 		--self:loadCartelGates(11)
-		--self:loadYakGates(6)
-		self:loadTriadGates(11)
+		self:loadYakGates(6)
+		--self:loadTriadGates(11)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -241,19 +241,12 @@ end
 
 function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.3))
+	lcnGates[1] = Gate:new(2930, Vector3(972.72802734375, -1101.2399902344, 25.445999145508), Vector3(0, 0, 0), Vector3(972.72802734375, -1101.2399902344, 25.445999145508), Vector3(0, 0, 270))
+	lcnGates[1]:addGate(2930, Vector3(972.65802001953, -1104.6719970703, 25.445999145508), Vector3(0, 0, 180), Vector3(972.65802001953, -1104.6719970703, 25.445999145508), Vector3(0, 0, 270), false)
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
-	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
-	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
-	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
-	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.422))
-	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
-
 end
 
 function FactionEvil:loadTriadGates(factionId)
