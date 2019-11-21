@@ -389,5 +389,4 @@
     <object id="object (gen_roofbit2) (9)" breakable="true" interior="0" collisions="true" alpha="255" model="1688" doublesided="false" scale="1" dimension="0" posX="983.82397" posY="-1124.696" posZ="33.593" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (gen_roofbit1) (5)" breakable="true" interior="0" collisions="true" alpha="255" model="1687" doublesided="false" scale="1" dimension="0" posX="981.60699" posY="-1114.4041" posZ="33.347" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (Sfse_hublockup) (1)" breakable="true" interior="0" alpha="255" model="11326" doublesided="false" scale="0.89999998" dimension="0" posX="974.64899" posY="-1127.995" posZ="24.225" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="object (BinNt07_LA) (1)" breakable="true" interior="0" alpha="255" model="1337" doublesided="false" scale="1" dimension="0" posX="967.25293" posY="-1116.0508" posZ="33.09675" rotX="0" rotY="0" rotZ="0"></object>
 </map>
