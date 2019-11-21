@@ -431,7 +431,7 @@ function VehicleInfrared:hud()
 	end
 
 	if self.m_Shaky and getTickCount() < self.m_Shaky then 
-		dxDrawImage(screenWidth*.8, screenHeight*.5, 64, 64, "files/images/HUD/infrared/focus.png", 0, 0, 0, self.m_Color)
+		dxDrawImage(screenWidth*.8, screenHeight*.5, 32, 32, "files/images/HUD/infrared/focus.png", 0, 0, 0, self.m_Color)
 	else 
 		self.m_Shaky = nil
 	end
