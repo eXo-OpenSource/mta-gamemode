@@ -38,6 +38,7 @@ VehicleInfrared.MaxZoom = 500
 VehicleInfrared.FontHeight = dxGetFontHeight(2, "clear")
 
 VehicleInfrared.SpotLight = {}
+VehicleInfrared.Interpolation = {}
 
 VehicleInfrared.DefaultColor = tocolor(250, 250, 250, 100)
 VehicleInfrared.DefaultColorSecondary = tocolor(0, 0, 0, 255)
@@ -194,18 +195,22 @@ function VehicleInfrared:sound()
 	self.m_Sound:fadeIn(1)
 end
 
-function VehicleInfrared:key(button) 
-	if VehicleInfrared.Keys[button] then 
-		local direction =  VehicleInfrared.Keys[button]
-		local previousKeyState = VehicleInfrared.KeyState[button]
-		VehicleInfrared.KeyState[button] = getKeyState(button) 
-		if VehicleInfrared.KeyState[button] then
-			if direction == "s+" then 
-				self.m_Zoom = self.m_Zoom + 1
-			elseif direction == "s-" then
-				self.m_Zoom = self.m_Zoom - 1
+function VehicleInfrared:key(input) 
+	if not self.m_ControlLocked or input == "control" then
+		if input == "slow" then 
+			self.m_Modificator = not self.m_Modificator
+		elseif input == "control" then 
+			self.m_ControlLocked = not self.m_ControlLocked 
+			toggleAllControls(self.m_ControlLocked)
+		elseif input == "light" then 
+			if not self.m_ControlLocked then 
+				self:light()
 			end
-			self:zoom()
+		elseif input == "mode" then 
+			if self.m_Shader and self.m_Shader:getSource() then 
+				self.m_Mode = (self.m_Mode + 1) % 2
+			end
+			self:mode()
 		end
 	end
 end
@@ -228,21 +233,7 @@ end
 function VehicleInfrared:onKey(button, state)
 	if state then 
 		if VehicleInfrared.Keys[button] then
-			if VehicleInfrared.Keys[button] == "v+" then 
-				self.m_Modificator = not self.m_Modificator
-			elseif VehicleInfrared.Keys[button] == "l" then 
-				self.m_ControlLocked = not self.m_ControlLocked 
-				toggleAllControls(self.m_ControlLocked)
-			elseif VehicleInfrared.Keys[button] == "light" then 
-				if not self.m_ControlLocked then 
-					self:light()
-				end
-			elseif VehicleInfrared.Keys[button] == "mode" then 
-				if self.m_Shader and self.m_Shader:getSource() then 
-					self.m_Mode = (self.m_Mode + 1) % 2
-				end
-				self:mode()
-			elseif VehicleInfrared.Keys[button] == "s+" then 
+			if VehicleInfrared.Keys[button] == "s+" then 
 				self.m_Zoom = self.m_Zoom + 1
 				self:zoom()
 			elseif VehicleInfrared.Keys[button] == "s-" then 
@@ -313,12 +304,6 @@ function VehicleInfrared:update()
 	self:intersect()
 
 	setCameraMatrix(self.m_Origin, self.m_Origin + (self.m_Spot - self.m_Start):getNormalized()*2000, 0, 70)
-
-	if not self.m_ControlLocked then
-		for button, i in pairs(VehicleInfrared.Keys) do 
-			self:key(button)
-		end
-	end
 
 	if self.m_MouseLastMovement and self.m_MouseLastMovement < getTickCount() then
 		if self.m_MouseMoveEvent then 
@@ -478,7 +463,7 @@ function VehicleInfrared:updateLight()
 	if self.m_Light then
 		local length = self.m_LaserDistance or 400 
 		local start =  (self.m_Vehicle.position + self.m_Vehicle.matrix.right*-.5) + self.m_Vehicle.matrix.up*-.5
-		VehicleInfrared.moveLight(self.m_Vehicle, start, self.m_Start + (self.m_Spot - self.m_Start):getNormalized()*length)
+		VehicleInfrared.moveLight(self.m_Vehicle, start, self.m_Start + (self.m_Spot - self.m_Start):getNormalized()*length, true)
 	end
 end
 
@@ -560,6 +545,16 @@ addEventHandler("onClientPreRender", root, function()
 				if not currentVehicle or currentVehicle ~= vehicle then
 					local start =  (vehicle.position + vehicle.matrix.right*-.5) + vehicle.matrix.up*-.5 
 					spotlight:setStartPosition(start)
+					if VehicleInfrared.Interpolation[spotlight] then 
+						local prog = (getTickCount() - VehicleInfrared.Interpolation[spotlight].time) / 500 
+						local previousStart = VehicleInfrared.Interpolation[spotlight].start
+						local endPosition = VehicleInfrared.Interpolation[spotlight].stop 
+						local mx, my, mz = interpolateBetween(previousStart.x, previousStart.y, previousStart.z, endPosition.x, endPosition.y, endPosition.z, prog, "OutQuad")
+						VehicleInfrared.SpotLight[vehicle]:setEndPosition(Vector3(mx, my, mz))
+						if prog >= 1 then 
+							VehicleInfrared.Interpolation[spotlight] = nil
+						end
+					end
 				end
 			else 
 				VehicleInfrared.SpotLight[vehicle] = nil
@@ -579,10 +574,14 @@ function VehicleInfrared.stopLight(vehicle)
 	end
 end
 
-function VehicleInfrared.moveLight(vehicle, start, stop)
+function VehicleInfrared.moveLight(vehicle, start, stop, instant)
 	if VehicleInfrared.SpotLight[vehicle] and isElement(VehicleInfrared.SpotLight[vehicle]) then 
 		VehicleInfrared.SpotLight[vehicle]:setStartPosition(Vector3(start.x, start.y, start.z))
-		VehicleInfrared.SpotLight[vehicle]:setEndPosition(Vector3(stop.x, stop.y, stop.z))
+		if instant then
+			VehicleInfrared.SpotLight[vehicle]:setEndPosition(Vector3(stop.x, stop.y, stop.z))
+		else 
+			VehicleInfrared.Interpolation[VehicleInfrared.SpotLight[vehicle]] = {time = getTickCount(), start = VehicleInfrared.SpotLight[vehicle]:getEndPosition(), stop = Vector3(stop.x, stop.y, stop.z)}
+		end
 	end
 end
 

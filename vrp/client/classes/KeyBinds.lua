@@ -26,6 +26,12 @@ function KeyBinds:constructor()
 	self.m_InfraredVehicle = bind(self.toggleInfrared, self)
 	self.m_ToggleDisplays = bind(self.toggleDisplay, self)
 	self.m_ToggleHeliDriveBy = bind(self.toggleHelicopterDriveBy, self)
+	
+	self.m_ThermalLightKey = bind(self.thermalLightKey, self)
+	self.m_ThermaControlModeKey = bind(self.thermalControlKey, self)
+	self.m_ThermalModeKey = bind(self.thermalModeKey, self)
+	self.m_ThermalSpeedKey = bind(self.thermalSpeedKey, self)
+
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
@@ -58,6 +64,10 @@ function KeyBinds:constructor()
 		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
 		["KeyToggleInfrared"]		= {["defaultKey"] = "mouse2", ["name"] = "Infrarot-Kamera", ["func"] = self.m_InfraredVehicle, ["trigger"] = "down"};
 		["KeyToggleHeliDriveby"] 	= {["defaultKey"] = "rshift", ["name"] = "Helikopter-Driveby", ["func"] = self.m_ToggleHeliDriveBy, ["trigger"] = "down"};
+		["KeyToggleThermalLight"] 	= {["defaultKey"] = "h", ["name"] = "TH-Scheinwerfer", ["func"] = self.m_ThermalLightKey, ["trigger"] = "down"};
+		["KeyToggleThermalLock"] 	= {["defaultKey"] = "mouse1", ["name"] = "TH-Kontrollmodus", ["func"] = self.m_ThermaControlModeKey, ["trigger"] = "down"};
+		["KeyToggleThermalMode"] 	= {["defaultKey"] = "m", ["name"] = "TH-Suchmodus", ["func"] = self.m_ThermalModeKey, ["trigger"] = "down"};
+		["KeyToggleThermalSpeed"] 	= {["defaultKey"] = "lalt", ["name"] = "TH umschalten", ["func"] = self.m_ThermalSpeedKey, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
@@ -206,6 +216,30 @@ function KeyBinds:toggleHelicopterDriveBy()
 	if not VehicleInfrared:isInstantiated() and (not self.m_LastHeliTrigger or getTickCount() > self.m_LastHeliTrigger) then 
 		self.m_LastHeliTrigger = getTickCount() + 200
 		triggerServerEvent("HelicopterDriveBy:toggle", localPlayer) 
+	end
+end
+
+function KeyBinds:thermalLightKey() 
+	if VehicleInfrared:isInstantiated() then
+		VehicleInfrared:getSingleton():key("light")
+	end
+end
+
+function KeyBinds:thermalControlKey() 
+	if VehicleInfrared:isInstantiated() then
+		VehicleInfrared:getSingleton():key("control")
+	end
+end
+
+function KeyBinds:thermalModeKey() 
+	if VehicleInfrared:isInstantiated() then
+		VehicleInfrared:getSingleton():key("mode")
+	end
+end
+
+function KeyBinds:thermalSpeedKey() 
+	if VehicleInfrared:isInstantiated() then
+		VehicleInfrared:getSingleton():key("slow")
 	end
 end
 

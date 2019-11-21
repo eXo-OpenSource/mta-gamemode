@@ -1343,7 +1343,7 @@ function SelfGUI:onSettingChange(setting)
 		--	end
 
 		self.m_InfraredSensitivty = GUISlider:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
-		self.m_InfraredSensitivty:setRange(0.5, 3)
+		self.m_InfraredSensitivty:setRange(0.5, 4)
 		self.m_InfraredSensitivty:setValue(core:get("Vehicles", "InfraredSensitivity", 2))
 
 		self.m_InfraredSensitivty.onUpdate = function( value )
