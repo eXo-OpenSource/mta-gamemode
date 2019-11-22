@@ -12,18 +12,18 @@ ArmsDealer.Data =
     ["Waffen"] = AmmuNationInfo,
     ["Spezial"] = 
     {
-        ["Gasmaske"] = {50, 50000},
-        ["Gasgranate"] = {10, 50000, 17},
-        ["Rauchgranate"] = {10, 50000},
+        ["Gasmaske"] = {100, 50000},
+        ["Gasgranate"] = {20, 50000, 17},
+        ["Rauchgranate"] = {20, 50000},
         ["Scharfschützengewehr"] = {5, 60000, 34},
         ["Fallschirm"] = {20, 5000, 46},
         ["DefuseKit"] = {20, 5000},
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {5, 100000, 35}, 
+        ["RPG-7"] = {10, 100000, 35}, 
         ["Granate"] = {10, 80000, 16},
-        ["SLAM"] = {2, 40000}
+        ["SLAM"] = {4, 40000}
     }
 }
 
