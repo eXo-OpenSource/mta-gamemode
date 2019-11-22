@@ -225,3 +225,14 @@ EXPLOSIVE_DAMAGE_MULTIPLIER = {
 	[51] = 2,
 	[59] = 3
 }
+
+WEAPON_RELOAD_TIME = -- how much time a weapon should need to reload 
+{
+	[35] = 5000,
+	[34] = 4000,
+}
+
+WEAPON_READY_TIME = -- how much time a weapon should need before beeing able to be fired
+{
+	[34] = 1500 
+}

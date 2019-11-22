@@ -853,6 +853,20 @@ function LocalPlayer:isWorldLoaded()
 	return not (getGroundPosition(x, y, z) == 0 and isLineOfSightClear(x, y, z, x, y, z-3, true, false, false, true, false, false, false, localPlayer))
 end
 
+function LocalPlayer:isControlEnabled(control) 
+	if control then 
+		return isControlEnabled(control)
+	else 
+		local all = false
+		for k, control in pairs(CONTROL_NAMES) do 
+			if isControlEnabled(control) then 
+				return true
+			end
+		end
+		return false
+	end
+end
+
 function LocalPlayer:startAnimation(_, ...)
 	if localPlayer:getData("isTasered") then return end
 	if localPlayer.vehicle then return end
