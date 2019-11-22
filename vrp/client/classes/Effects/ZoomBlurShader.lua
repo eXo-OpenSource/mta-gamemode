@@ -26,7 +26,7 @@ function ZoomBlurShader:update()
 	end
 end
 
-function ZoomBlurShader:setBlurOption( c, b) 
+function ZoomBlurShader:setBlurOption(c, b) 
 	if self.m_ZoomBlurShader and self.m_ScreenSource then
 		if self.m_Ready then
 			self.m_ZoomBlurShader:setValue("Center", c)
@@ -49,3 +49,5 @@ end
 function ZoomBlurShader:setValue(iValue)
 	self.m_ZoomBlurShader:setValue("BlurAmount", iValue)
 end
+
+function ZoomBlurShader:getSource() return self.m_ZoomBlurShader end
