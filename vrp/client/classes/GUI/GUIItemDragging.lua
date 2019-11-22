@@ -30,7 +30,13 @@ function GUIItemDragging:render()
 			return
 		end
 
-		dxDrawImage(self.m_PositionX, self.m_PositionY, 40, 40, "files/images/Inventory/items/" .. self.m_Item.Icon)
+		local icon = "files/images/Inventory/items/" .. self.m_Item.Icon
+
+		if not fileExists(icon) then
+			icon = "files/images/Inventory/items/missing.png"
+		end
+
+		dxDrawImage(self.m_PositionX, self.m_PositionY, 40, 40, icon)
 	end
 end
 

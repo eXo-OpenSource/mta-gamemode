@@ -1968,6 +1968,7 @@
 	<vrpfile src="files/images/Inventory/waterdrop.png" />
 	<vrpfile src="files/images/Inventory/resetS.png" />
 	<vrpfile src="files/images/Inventory/infoblubf.png" />
+	<vrpfile src="files/images/Inventory/items/missing.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Weed.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Shroom.png" />

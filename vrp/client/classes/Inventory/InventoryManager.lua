@@ -16,21 +16,21 @@ function InventoryManager:constructor()
 	self.m_PlayerInventoryId = 0
 	self.m_OpenInventoryGUIs = {}
 
-	setTimer(function(self)
-		localPlayer:setPrivateSyncChangeHandler("Id", bind(function()
+	setTimer(function()
+		localPlayer:setPrivateSyncChangeHandler("Id", function()
 			local id = localPlayer:getPrivateSync("Id")
 			if id and id ~= 0 then
 				localPlayer:setPrivateSyncChangeHandler("Id", nil)
-				self.m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, id)
-				self.m_PlayerInventoryGUI:hide()
+				InventoryManager:getSingleton().m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, id)
+				InventoryManager:getSingleton().m_PlayerInventoryGUI:hide()
 
 
 				bindKey("i", "up", bind(function()
 					self.m_PlayerInventoryGUI:toggle()
-				end, self))
+				end, InventoryManager:getSingleton()))
 			end
-		end, self))
-	end, 100, 1, self)
+		end)
+	end, 100, 1)
 
 	addEventHandler("onInventorySync", root, bind(self.Event_onInventorySync, self))
 	addEventHandler("openInventory", root, bind(self.Event_openInventory, self))
@@ -38,6 +38,7 @@ end
 
 function InventoryManager:Event_openInventory(title, elementType, elementId)
 	local inventory = InventoryGUI:new(title, elementType, elementId)
+	self.m_PlayerInventoryGUI:open()
 end
 
 function InventoryManager:Event_onInventorySync(inventoryData, items)

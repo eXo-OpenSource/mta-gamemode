@@ -62,7 +62,13 @@ function GUIItemSlot:drawThis(incache)
 	if self.m_ItemData ~= nil then
 		local alpha = self.m_IsMoving and 100 or 255
 
-		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/Inventory/items/" .. self.m_ItemData.Icon, 0, 0, 0, tocolor(255, 255, 255, 255))
+		local icon = "files/images/Inventory/items/" .. self.m_ItemData.Icon
+
+		if not fileExists(icon) then
+			icon = "files/images/Inventory/items/missing.png"
+		end
+
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, icon, 0, 0, 0, tocolor(255, 255, 255, 255))
 
 		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and not (self.m_ItemData.MaxDurability > 0) then
 			local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
