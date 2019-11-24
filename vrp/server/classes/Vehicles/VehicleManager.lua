@@ -32,7 +32,7 @@ function VehicleManager:constructor()
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks",
-	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight"}
+	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -159,6 +159,17 @@ function VehicleManager:constructor()
 			end
 		end
 	)
+
+	addEventHandler("VehicleInfrared:onPlayerExit", root, function(vehicle)
+		if client then 
+			if vehicle and isValidElement(vehicle, "vehicle") and vehicle ~= client.vehicle then 
+				if vehicle.m_InfraredUsedBy and vehicle.m_InfraredUsedBy == client then 
+					vehicle.m_InfraredUsedBy = nil
+				end	
+			end
+			client:setData("inInfraredVehicle", false, true)
+		end
+	end)
 
 	addEventHandler("VehicleInfrared:onUse", root, function()
 		if client and client.vehicle then 
