@@ -25,29 +25,33 @@ function RocketLauncher:update()
 			self:onUse()
 		end
 		self.m_Aiming = true
-		self.m_Object:setPosition(getCamera():getPosition() + getCamera().matrix.forward*.2 + getCamera().matrix.up * -.3 + getCamera().matrix.right*.15)
-		local rot = getCamera():getRotation()
-		rot:setZ(rot:getZ() - 268)
-		rot:setY(rot:getX()*-1+self.m_Tilt)
-		rot:setX(0)
+		if isValidElement(self.m_Object) then
+			self.m_Object:setPosition(getCamera():getPosition() + getCamera().matrix.forward*.2 + getCamera().matrix.up * -.3 + getCamera().matrix.right*.15)
+			local rot = getCamera():getRotation()
+			rot:setZ(rot:getZ() - 268)
+			rot:setY(rot:getX()*-1+self.m_Tilt)
+			rot:setX(0)
 
-		if self.m_Fired then 
-			local progress = (getTickCount() - self.m_Fired) / 300
-			local ease = getEasingValue(progress, "SineCurve")
-			self.m_Tilt = ease * -30 
-			if self.m_BlurShader and isValidElement(self.m_BlurShader:getSource()) then
-				self.m_BlurShader:setBlurOption(0.5, ease*.005)
-			end
-			if progress > 1 then 
-				self.m_Fired = false 
-				self.m_Tilt = 0
-				if self.m_BlurShader then
-					self.m_BlurShader:delete() 
-					self.m_BlurShader = nil
+			if self.m_Fired then 
+				local progress = (getTickCount() - self.m_Fired) / 300
+				local ease = getEasingValue(progress, "SineCurve")
+				self.m_Tilt = ease * -30 
+				if self.m_BlurShader and isValidElement(self.m_BlurShader:getSource()) then
+					self.m_BlurShader:setBlurOption(0.5, ease*.005)
+				end
+				if progress > 1 then 
+					self.m_Fired = false 
+					self.m_Tilt = 0
+					if self.m_BlurShader then
+						self.m_BlurShader:delete() 
+						self.m_BlurShader = nil
+					end
 				end
 			end
+			self.m_Object:setRotation(rot)
+			self.m_Object:setInterior(localPlayer:getInterior())
+			self.m_Object:setDimension(localPlayer:getDimension())
 		end
-		self.m_Object:setRotation(rot)
 	else 
 		if self.m_Aiming then 
 			self.m_Aiming = false
