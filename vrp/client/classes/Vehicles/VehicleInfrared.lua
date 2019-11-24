@@ -48,6 +48,7 @@ VehicleInfrared.InvertColorSecondary = tocolor(255, 255, 255, 255)
 
 function VehicleInfrared:constructor(vehicle) 
 	VehicleInfrared.Sensitivity = core:get("Vehicles", "InfraredSensitivity", 2)
+	self.m_Deleted = false
 	self.m_State = false
 	self.m_Yaw = 0
 	self.m_Pitch = 0
@@ -76,6 +77,7 @@ function VehicleInfrared:constructor(vehicle)
 end
 
 function VehicleInfrared:destructor() 
+	self:notify()
 	self:restore()
 end
 
@@ -95,6 +97,7 @@ end
 
 function VehicleInfrared:start(vehicle) 
 	toggleAllControls(false)
+	Nametag:getSingleton():setDisabled(true)
 	self.m_Shader = MonochromeShader:new(true)
 	self.m_ThermalShaderVehicle = DxShader("files/shader/thermal.fx", 9999, 0, true)
 	self.m_ThermalShaderPed = DxShader("files/shader/thermal-ped.fx", 9999, 0, false, "ped")
@@ -132,7 +135,7 @@ function VehicleInfrared:start(vehicle)
 	end
 end
 
-function VehicleInfrared:stop() 
+function VehicleInfrared:stop() 	
 	delete(self)
 end
 
@@ -143,7 +146,6 @@ function VehicleInfrared:restore()
 	removeEventHandler( "onClientCursorMove", root, self.m_Cursor)
 
 	toggleAllControls(true)
-	setCameraTarget(localPlayer)
 	if isValidElement(self.m_Vehicle, "vehicle") then 
 		localPlayer.m_PreviousInfrared = 
 		{
@@ -184,10 +186,16 @@ function VehicleInfrared:restore()
 	if self.m_ThermalShaderVehicle then 
 		self.m_ThermalShaderVehicle:destroy()
 	end
+	if self.m_Light then 
+		VehicleInfrared.stopLight(self.m_Vehicle)
+		triggerLatentServerEvent("VehicleInfrared:onStopLight", 5000, false, localPlayer, self.m_Vehicle)
+	end
 	self.m_Sound:delete()
+	Nametag:getSingleton():setDisabled(false)
 
 	resetSkyGradient()
 	setNearClipDistance(.3)
+	setCameraTarget(localPlayer)
 end
 
 function VehicleInfrared:sound() 
@@ -232,6 +240,7 @@ function VehicleInfrared:cursor(x, y, aX, aY)
 end
 
 function VehicleInfrared:onKey(button, state)
+	if self.m_Deleted then return end
 	if state then 
 		if VehicleInfrared.Keys[button] then
 			if VehicleInfrared.Keys[button] == "s+" then 
@@ -302,9 +311,17 @@ function VehicleInfrared:intersect()
 end
 
 function VehicleInfrared:update()	
+	if self.m_Deleted then return end
 	if isValidElement(self.m_Vehicle, "vehicle") then 
+		if self.m_Vehicle ~= localPlayer.vehicle then 
+			self:notify()
+			self:stop()
+			return
+		end
 	else 
+		self:notify()
 		self:stop()
+		return
 	end
 
 	self.m_Start = self.m_Vehicle.position + self.m_Vehicle.matrix.up*-0.8
@@ -328,7 +345,9 @@ function VehicleInfrared:update()
 
 	self:laser()
 	
-	self.m_Shader:update()
+	if self.m_Shader and isValidElement(self.m_Shader:getSource()) then
+		self.m_Shader:update()
+	end 
 
 	self:updateLight()
 end
@@ -358,7 +377,8 @@ function VehicleInfrared:syncLight()
 	end
 end
 
-function VehicleInfrared:render() 
+function VehicleInfrared:render() 	
+	if self.m_Deleted then return end
 	if self.m_Shader then
 		local scale = self.m_Zoom/500
 		if scale > 1 then scale = 1 end
@@ -370,14 +390,18 @@ function VehicleInfrared:render()
 			if self.m_BlurUp + .05 < .5 then 
 				self.m_BlurUp = self.m_BlurUp + .05
 			end
-			self.m_Shader:getSource():setValue("Center", 0.5)
-			self.m_Shader:getSource():setValue("BlurAmount", self.m_BlurUp)
+			if isValidElement(self.m_Shader:getSource()) then
+				self.m_Shader:getSource():setValue("Center", 0.5)
+				self.m_Shader:getSource():setValue("BlurAmount", self.m_BlurUp)
+			end
 			dxDrawImage(0, 0, screenWidth, screenHeight, "files/images/HUD/infrared/static.png", 0, 0, 0, tocolor(255, 255, 255, 100*(self.m_BlurUp/.5)))
 		else 
 			self.m_Blur = nil 
 			self.m_BlurUp = nil
-			self.m_Shader:getSource():setValue("BlurAmount", 0)
-			self.m_Shader:getSource():setValue("Center", 0)
+			if isValidElement(self.m_Shader:getSource()) then
+				self.m_Shader:getSource():setValue("BlurAmount", 0)
+				self.m_Shader:getSource():setValue("Center", 0)
+			end
 		end
 	end	
 	self:hud()
@@ -494,6 +518,12 @@ function VehicleInfrared:updateLight()
 	end
 end
 
+function VehicleInfrared:notify() 
+	if localPlayer.vehicle ~= self.m_Vehicle then 
+		triggerServerEvent("VehicleInfrared:onPlayerExit", localPlayer, isValidElement(self.m_Vehicle) and self.m_Vehicle or nil) -- oddly we need this check at argument 3 because triggerServerEven throws an error for userdata
+	end
+end
+
 function VehicleInfrared:debug() 
 	dxDrawText(("%.2f"):format(self.m_Yaw), 200, 300)
 	dxDrawText(("%.2f"):format(self.m_Pitch), 200, 300)
@@ -548,6 +578,10 @@ end)
 addEvent("VehicleInfrared:start", true)
 addEventHandler("VehicleInfrared:start", root, function(vehicle) 
 	if localPlayer:getData("inInfraredVehicle") and vehicle:getData("isInfraredVehicle") then 
+		if VehicleInfrared:isInstantiated() then 
+			delete(VehicleInfrared:getSingleton())
+			localPlayer.m_PreviousInfrared = nil
+		end
 		VehicleInfrared:new(vehicle)
 	end
 end)
@@ -584,6 +618,9 @@ addEventHandler("onClientPreRender", root, function()
 					end
 				end
 			else 
+				if isValidElement(spotlight) then 
+					spotlight:destroy()
+				end
 				VehicleInfrared.SpotLight[vehicle] = nil
 			end
 		end
@@ -616,6 +653,9 @@ function VehicleInfrared.get(vehicle)
 	if VehicleInfrared.SpotLight[vehicle] and isElement(VehicleInfrared.SpotLight[vehicle]) then
 		return VehicleInfrared.SpotLight[vehicle]
 	else 
+		if isValidElement(VehicleInfrared.SpotLight[vehicle]) then 
+			VehicleInfrared.SpotLight[vehicle]:destroy()
+		end
 		VehicleInfrared.SpotLight[vehicle] = nil
 	end
 end
