@@ -119,6 +119,12 @@ function InventoryManager:constructor()
 	addEventHandler("onItemMove", root, bind(self.Event_onItemMove, self))
 end
 
+function InventoryManager:destructor()
+	for k, v in pairs(self.m_Inventories) do
+		v:save(true)
+	end
+end
+
 function InventoryManager:Event_onItemUse(inventoryId, itemId)
 	if client ~= source then return end
 	if client:getInventory() and client:getInventory().m_Id == inventoryId then

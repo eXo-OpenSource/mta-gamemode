@@ -277,6 +277,7 @@ function Core:destructor()
 			removeAccount(self.m_ACLAccount)
 		end
 
+		delete(InventoryManager:getSingleton())
 		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
 		delete(GroupManager:getSingleton())

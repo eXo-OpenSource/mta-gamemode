@@ -38,7 +38,12 @@ end
 
 function InventoryManager:Event_openInventory(title, elementType, elementId)
 	local inventory = InventoryGUI:new(title, elementType, elementId)
+	--[[
+		screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2
+	]]
 	self.m_PlayerInventoryGUI:open()
+	self.m_PlayerInventoryGUI:setAbsolutePosition(screenWidth/2-self.m_PlayerInventoryGUI.m_Width - 5, screenHeight/2-self.m_PlayerInventoryGUI.m_Height/2)
+	inventory:setAbsolutePosition(screenWidth/2 + 5, screenHeight/2-inventory.m_Height/2)
 end
 
 function InventoryManager:Event_onInventorySync(inventoryData, items)

@@ -64,13 +64,7 @@ function Inventory:constructor(inventory, items, persistent, player)
 end
 
 function Inventory:destructor()
-	self:save()
-end
-
-function Inventory:save(force)
-	if self.m_IsDirty then
-
-	end
+	self:save(true)
 end
 
 function Inventory:getPlayer()
@@ -368,12 +362,9 @@ function Inventory:save(sync)
 
 	if #changes.insert > 0 then
 		if queries ~= "" then queries = queries .. " " end
-		queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
-		local first = true
-		table.insert(queriesParams, sql:getPrefix())
 		for k, v in pairs(changes.insert) do
-			if not first then queries = queries .. ", " end
-			if first then first = false end
+			queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			table.insert(queriesParams, sql:getPrefix())
 			queries = queries .. "(?, ?, ?, ?, ?, ?, "
 
 			table.insert(queriesParams, v.Id)				-- 1 - Id
@@ -383,11 +374,17 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.Amount)			-- 5 - Amount
 			table.insert(queriesParams, v.Durability)		-- 6 - Durability
 			if not v.Metadata then
-				queries = queries .. "NULL)"
+				queries = queries .. "NULL) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, Slot = ?, Amount = ?, Durability = ?, Metadata = NULL;"
 			else
-				queries = queries .. "?)"
+				queries = queries .. "?) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, Slot = ?, Amount = ?, Durability = ?, Metadata = ?;"
 				table.insert(queriesParams, v.Metadata or nil)	-- 7 - Metadata
 			end
+
+			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
+			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
+			table.insert(queriesParams, v.Slot)				-- 4 - Slot
+			table.insert(queriesParams, v.Amount)			-- 5 - Amount
+			table.insert(queriesParams, v.Durability)		-- 6 - Durability
 		end
 		queries = queries .. ";"
 	end
