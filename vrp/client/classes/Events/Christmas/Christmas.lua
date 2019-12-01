@@ -13,6 +13,10 @@ function Christmas:constructor()
 		self.m_Music:setVolume(1)
 		self.m_Music:setMaxDistance(50)
 
+		if not core:get("Event", "ChristmasMarketMusic", EVENT_CHRISTMAS) then
+			self.m_Music:setVolume(0)
+		end
+
 		--Bubble for Wheel of Fortune
 		local wheelDummy = createElement("d") -- this element is only available serverside as its rotation is synced
 		wheelDummy:setPosition(1479, -1700.3, 14.2)
@@ -65,14 +69,14 @@ function Christmas:constructor()
 	if ped then
 		ped:setData("NPC:Immortal", true)
 		ped:setFrozen(true)
-		ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Quest-Adventskalender", 0, 1.3)
+		ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Adventskalender", 0, 1.3)
 		ped.SpeakBubble:setBorderColor(Color.LightRed)
 		ped.SpeakBubble:setTextColor(Color.LightRed)
 		setElementData(ped, "clickable", true)
 
 		ped:setData("onClickEvent",
 			function()
-				triggerServerEvent("questOnPedClick", localPlayer)
+				AdventCalenderGUI:new()
 			end
 		)
 		local blip = Blip:new("Calendar.png", ped.position.x, ped.position.y, 100, nil, {244, 73, 85})
