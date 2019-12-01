@@ -1101,14 +1101,15 @@
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
-	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
+	<!--<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>-->
 
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
-	<!-- <script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/> -->
+	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/AdventCalenderGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestSantaKill.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestDraw.lua" type="client"/>
@@ -1347,12 +1348,15 @@
 	<vrpfile src="files/images/Events/Bonus/Bonus_Radio.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Remington.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_FCR.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Whoopee.png" />
 
 
 
 	<vrpfile src="files/images/Events/Christmas/Quest.png" />
 	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />
 	<vrpfile src="files/images/Events/Christmas/QuestGray.png" />
+	<vrpfile src="files/images/Events/Christmas/Door.png" />
+	<vrpfile src="files/images/Events/Christmas/DoorGray.png" />
 
 	<vrpfile src="files/images/Events/BattleRoyaleBorder.png" />
 	<!-- Events End -->
@@ -3250,8 +3254,8 @@
 	<vrpfile src="files/models/objects/XmasBox.txd" />
 	<vrpfile src="files/models/objects/XmasBox.dff" />
 	<vrpfile src="files/models/objects/XmasBox.col" />
-	<vrpfile src="files/models/skins/snowman.txd" />
-	<vrpfile src="files/models/skins/snowman.dff" />
+	<vrpfile src="files/models/skins/santaThin.txd" />
+	<vrpfile src="files/models/skins/santaThin.dff" />
 	<!-- Christmas Event End-->
 
 	<!--Skins-->
