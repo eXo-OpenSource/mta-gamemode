@@ -94,7 +94,12 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 	Admin:getSingleton():sendShortMessage(_("%s hat %s gekickt! Grund: %s", nil, adminName, targetName, reason))
 	outputChatBox("Der Spieler "..targetName.." wurde von "..adminName.." gekickt!",root, 200, 0, 0)
 	outputChatBox("Grund: "..reason,root, 200, 0, 0)
-	kickPlayer(target, admin, reason)
+
+	if isElement(admin) then
+		kickPlayer(target, admin, reason)
+	else
+		kickPlayer(target, reason)
+	end
 
 	if aCreated then
 		delete(admin)
