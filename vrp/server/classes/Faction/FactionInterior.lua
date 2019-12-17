@@ -66,7 +66,7 @@ end
 function FactionInterior:onExit(player, teleporter) 
 	if not self.m_Interior then 
 		CustomInteriorManager:getSingleton():loadFromOwner(INTERIOR_OWNER_TYPES.FACTION, self.m_Id)
-		return teleporter:exit(player)	
+		return teleporter:exit(player)
 	end
 end
 
