@@ -15,6 +15,7 @@ addRemoteEvents{
 function FactionRescue:constructor()
 	-- Duty Pickup
 	self:createDutyPickup(1076.30, -1374.01, 13.65, 0) -- Garage
+	self:createDutyPickup(132.562, 163.525, 1186.05, 3) -- Garage
 
 	self.m_VehicleFires = {}
 

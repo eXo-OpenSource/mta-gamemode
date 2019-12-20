@@ -71,7 +71,8 @@ function SniperRifle:onUse()
 end
 
 function SniperRifle:onStop() 
-
+	setPlayerHudComponentVisible("crosshair", true)
+	Nametag:getSingleton():setDisabled(true)
 end
 
 function SniperRifle:fire(weapon, ammo, ammoClip, hitX, hitY, hitZ, hitElement, startX, startY, startZ) 

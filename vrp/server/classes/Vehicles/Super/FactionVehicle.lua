@@ -45,7 +45,7 @@ function FactionVehicle:constructor(data)
 		end)
 	end
 
-	if self.getFaction and self:isStateVehicle() and self:getModel() == 497 then 
+	if (self.getFaction and self:isStateVehicle() and self:getModel() == 497) or (self.getFaction and (self:isRescueVehicle() and (self:getModel() == 417 or self:getModel() == 487)))  then 
 		self:setInfrared(true)
 	end
 

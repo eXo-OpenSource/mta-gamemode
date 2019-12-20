@@ -42,9 +42,11 @@ function WeaponManager:update()
 		local now = getTickCount() 
 		if WeaponManager.Weapon[weapon].ready and WeaponManager.Weapon[weapon].ready > now then 
 			toggleControl("fire", false)
+			toggleControl("action", false)
 		else 
 			if not NoDm:getSingleton():isInNoDmZone() and localPlayer:isControlEnabled() then
 				toggleControl("fire", true)
+				toggleControl("action", true)
 			end
 		end
 	end
