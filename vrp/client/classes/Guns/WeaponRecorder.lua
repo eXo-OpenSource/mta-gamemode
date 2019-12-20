@@ -1,3 +1,11 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/Guns/WeaponRecorder.lua
+-- *  PURPOSE:     Manages weapon fire visualisation 
+-- *
+-- ****************************************************************************
+
 WeaponRecorder = inherit(Singleton)
 WeaponRecorder.MAX_PER_PLAYER = 50
 WeaponRecorder.MAX_DISPLAY_TIME = 30 * 1000

@@ -143,7 +143,7 @@ end
 
 function Vehicle:onPlayerEnter(player, seat)
 	if player:getType() ~= "player" then return end
-
+	if self:hasInfrared() then player:sendInfo(_("Dieses Fahrzeug verfügt über eine Wärmesichtkamera!", player)) end
 	if self.onEnter and self:onEnter(player, seat) then
 		if seat == 0 then
 			self:setDriver(player)
@@ -929,6 +929,13 @@ end
 function Vehicle:getTemplateName()
 	return self.m_TemplateName
 end
+
+function Vehicle:setInfrared(value)
+	self.m_HasInfrared = value
+	self:setData("isInfraredVehicle", value, true)
+end
+
+function Vehicle:hasInfrared() return self.m_HasInfrared end
 
 Vehicle.isPermanent = pure_virtual
 Vehicle.respawn = pure_virtual

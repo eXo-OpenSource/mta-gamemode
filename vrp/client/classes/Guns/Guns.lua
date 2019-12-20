@@ -87,6 +87,9 @@ function Guns:constructor()
 	self.m_HitMark = false
 	self.m_TracerEnabled = false
 	self.m_hitpath = fileExists("_custom/files/audio/hitsound.wav") and "_custom/files/audio/hitsound.wav" or "files/audio/hitsound.wav"
+
+	WeaponManager:new() 
+
 end
 
 function Guns:destructor()
@@ -410,19 +413,6 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 	end
 
 	if source == localPlayer then
-		if weapon == 34 then
-			if not localPlayer.m_FireToggleOff then
-				localPlayer.m_LastSniperShot = getTickCount()
-				localPlayer.m_FireToggleOff = true
-				toggleControl("fire",false)
-				toggleControl("action",false)
-				setTimer(function()
-					localPlayer.m_FireToggleOff = false
-					toggleControl("fire",true)
-					toggleControl("action",true)
-				end, 4000,1)
-			end
-		end
 		if self.m_TracerEnabled then
 			if not THROWABLE_WEAPONS[weapon] then
 				local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)

@@ -26,6 +26,7 @@ function Nametag:destructor()
 end
 
 function Nametag:draw()
+	if self:isDisabled() then return end 
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/Nametag") end
 	local cx,cy,cz = getCameraMatrix()
 	local bRifleCheck = self:_weaponCheck()
@@ -268,3 +269,9 @@ function isPedAiming ( thePedToCheck )
 	end
 	return false
 end
+
+function Nametag:setDisabled(bool) 
+	self.m_Disabled = bool
+end
+
+function Nametag:isDisabled() return self.m_Disabled end

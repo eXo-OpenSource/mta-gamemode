@@ -584,7 +584,7 @@
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
-	<script src="client/classes/Guns.lua" type="client"/>
+
 	<script src="client/classes/Help.lua" type="client"/>
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
@@ -592,9 +592,15 @@
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
-	<script src="client/classes/WeaponRecorder.lua" type="client"/>
 	<script src="client/classes/InfluxLogging.lua" type="client"/>
 	<script src="client/classes/Time.lua" type="client"/>
+
+
+	<script src="client/classes/Guns/Guns.lua" type="client"/>
+	<script src="client/classes/Guns/WeaponRecorder.lua" type="client"/>
+	<script src="client/classes/Guns/WeaponManager.lua" type="client"/>
+	<script src="client/classes/Guns/RocketLauncher.lua" type="client"/>
+	<script src="client/classes/Guns/SniperRifle.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
@@ -1064,6 +1070,7 @@
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
@@ -1283,6 +1290,8 @@
 
 	<vrpfile src="files/audio/Items/slam_arm.ogg" />
 
+	<vrpfile src="files/audio/weapon/rocket-effect.ogg" />
+	
 	<vrpfile src="files/images/warning.png" />
 
 	<vrpfile src="files/images/hit.png" />
@@ -1386,6 +1395,7 @@
 	<file src="files/images/Logo.png"/>
 
 	<file src="files/images/turbo.png"/>
+
 	<file src="files/images/bullethitsmoke_original.png"/>
 
 	<!-- Needs to be file against manipulation -->
@@ -1561,6 +1571,14 @@
 	<vrpfile src="files/images/Weapons/44.png"/>
 	<vrpfile src="files/images/Weapons/45.png"/>
 	<vrpfile src="files/images/Weapons/46.png"/>
+
+	<vrpfile src="files/images/HUD/infrared/static.png"/>
+	<vrpfile src="files/images/HUD/infrared/lock.png"/>
+	<vrpfile src="files/images/HUD/infrared/light.png"/>
+	<vrpfile src="files/images/HUD/infrared/infrared.png"/>
+	<vrpfile src="files/images/HUD/infrared/focus.png"/>
+	<vrpfile src="files/images/HUD/infrared/slow.png"/>
+
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/Treatment.png"/>
@@ -2921,6 +2939,8 @@
 	<vrpfile src="files/audio/Ambient/sewer.mp3" />
 	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
 	<vrpfile src="files/audio/Ambient/BENITRATOR.mp3" />
+	<vrpfile src="files/audio/Ambient/helicopter_internal.ogg" />
+
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
@@ -3304,6 +3324,9 @@
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
+	<vrpfile src="files/shader/thermal.fx"/>
+	<vrpfile src="files/shader/thermal-anti.fx"/>
+	<vrpfile src="files/shader/thermal-ped.fx"/>
 	<vrpfile src="files/shader/texreplace.fx"/>
 	<vrpfile src="files/shader/shell_layer.fx"/>
 	<vrpfile src="files/shader/cuttexture.fx"/>
@@ -3317,7 +3340,7 @@
 	<vrpfile src="files/shader/monochrome.fx"/>
 	<vrpfile src="files/shader/mapeditorColorize.fx"/>
 	<vrpfile src="files/shader/vignette.fx"/>
-	<file src="files/shader/cylinder.fx"/>
+	<vrpfile src="files/shader/cylinder.fx"/>
 	<vrpfile src="files/shader/zoomBlur.fx"/>
 	<vrpfile src="files/shader/pedSize.fx"/>
 	<vrpfile src="files/shader/pedWall.fx"/>
@@ -3358,6 +3381,7 @@
 	<!-- Includes -->
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
+	<include resource="helicopterdriveby" />
 	<include resource="reload"/>
 	<include resource="helicopterrope" />
 	<include resource="heligrab" />
