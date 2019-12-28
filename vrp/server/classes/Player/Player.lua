@@ -38,6 +38,14 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(Player.detachPlayerObjectBind, self)
 	self.m_detachPlayerObjectFunc = bind(Player.detachPlayerObject, self)
+
+
+	setElementData(self, "playingTimeFaction", 0)
+	setElementData(self, "playingTimeCompany", 0)
+	setElementData(self, "playingTimeGroup", 0)
+	setElementData(self, "dutyTimeFaction", 0)
+	setElementData(self, "dutyTimeCompany", 0)
+	setElementData(self, "dutyTime", 0)
 end
 
 function Player:destructor()
@@ -1742,7 +1750,7 @@ function Player:setBadge(badgeTitle, badgeId, badgeImage)
 	setElementData(self, "BadgeImage", badgeImage, true)
 end
 
-function Player:setThrowingObject(object) 
+function Player:setThrowingObject(object)
 	self.m_ThrowingObject = object
 end
 

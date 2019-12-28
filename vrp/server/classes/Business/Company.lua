@@ -212,6 +212,9 @@ function Company:removePlayer(playerId)
 	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
+		player:saveAccountActivity()
+		setElementData(player, "playingTimeCompany", 0)
+		setElementData(player, "dutyTimeCompany", 0)
 		player:setCompany(nil)
 		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deinem Unternehmen entlassen!", player))
@@ -334,7 +337,7 @@ function Company:getActivity(force)
 		table.insert(playerIds, playerId)
 	end
 
-	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+	local query = "SELECT UserId, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_account_activity WHERE UserId IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserId"
 
 	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
 
@@ -352,7 +355,7 @@ function Company:getActivity(force)
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[row.UserID] = activity
+		self.m_PlayerActivity[row.UserId] = activity
 	end
 end
 

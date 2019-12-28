@@ -248,6 +248,30 @@ end
 
 function LocalPlayer:setPlayTime()
 	setElementData(self, "playingTime", self:getPlayTime())
+
+	if self.m_CurrentAFKTime == 0 then
+		if (self:getPublicSync("Faction:Duty") and self:getFaction()) or (self:getPublicSync("Company:Duty") and self:getCompany()) then
+			setElementData(self, "dutyTime", getElementData(self, "dutyTime") + 1)
+		end
+
+		if self:getFaction() then
+			setElementData(self, "playingTimeFaction", getElementData(self, "playingTimeFaction") + 1)
+			if self:getPublicSync("Faction:Duty") then
+				setElementData(self, "dutyTimeFaction", getElementData(self, "dutyTimeFaction") + 1)
+			end
+		end
+
+		if self:getCompany() then
+			setElementData(self, "playingTimeCompany", getElementData(self, "playingTimeCompany") + 1)
+			if self:getPublicSync("Company:Duty") then
+				setElementData(self, "dutyTimeCompany", getElementData(self, "dutyTimeCompany") + 1)
+			end
+		end
+
+		if self:getGroupId() > 0 then
+			setElementData(self, "playingTimeGroup", getElementData(self, "playingTimeGroup") + 1)
+		end
+	end
 end
 
 function LocalPlayer:isLoggedIn()
@@ -854,13 +878,13 @@ function LocalPlayer:isWorldLoaded()
 	return not (getGroundPosition(x, y, z) == 0 and isLineOfSightClear(x, y, z, x, y, z-3, true, false, false, true, false, false, false, localPlayer))
 end
 
-function LocalPlayer:isControlEnabled(control) 
-	if control then 
+function LocalPlayer:isControlEnabled(control)
+	if control then
 		return isControlEnabled(control)
-	else 
+	else
 		local all = false
-		for k, control in pairs(CONTROL_NAMES) do 
-			if isControlEnabled(control) then 
+		for k, control in pairs(CONTROL_NAMES) do
+			if isControlEnabled(control) then
 				return true
 			end
 		end

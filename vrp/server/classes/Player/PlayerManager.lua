@@ -89,6 +89,27 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+
+	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_accountActivity") then
+		sql:queryExec("RENAME TABLE ??_accountActivity TO ??_account_activity", sql:getPrefix(), sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity ADD COLUMN `DurationDuty` int(11) NULL DEFAULT NULL AFTER `Duration`;]], sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity ADD COLUMN `DurationAFK` int(11) NULL DEFAULT NULL AFTER `DurationDuty`;]], sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity CHANGE COLUMN `UserID` `UserId` int(11) NOT NULL AFTER `Date`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			CREATE TABLE ??_account_activity_group  (
+				`Date` date NOT NULL,
+				`UserId` int NOT NULL,
+				`ElementId` int NOT NULL,
+				`ElementType` tinyint NOT NULL,
+				`Duration` int(11) NULL DEFAULT NULL COMMENT 'Duration in Minutes',
+				`DurationDuty` int(11) NULL DEFAULT NULL COMMENT 'DurationDuty in Minutes',
+				PRIMARY KEY (`Date`, `ElementType`, `ElementId`, `UserId`) USING BTREE,
+				INDEX `Date_UserID`(`Date`, `UserID`) USING BTREE,
+				INDEX `UserID_Date`(`UserID`, `Date`) USING BTREE
+			);
+		]], sql:getPrefix())
+	end
 end
 
 function PlayerManager:destructor()
@@ -1058,7 +1079,7 @@ function PlayerManager:Event_AttachToVehicle()
 end
 
 function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
-	if not client or not isElement(client) then return end 
+	if not client or not isElement(client) then return end
 	if not target or not isElement(target) then return end
 	if not client:isLoggedIn() then return end
 	if not target:isLoggedIn() then return end
@@ -1066,16 +1087,16 @@ function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
 	if target:isDead() then return end
 	if client.deathmatchLobby then return end
 	if target.deathmatchLobby then return end
-	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then 
-		if not target.getFaction or not target:getFaction() then 
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		if not target.getFaction or not target:getFaction() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
-		if target:getFaction():isStateFaction() and not target:isFactionDuty() then 
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
 	end
 	if target:getDimension() ~= client:getDimension() then return end
@@ -1092,7 +1113,7 @@ end
 
 
 function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
-	if not client or not isElement(client) then return end 
+	if not client or not isElement(client) then return end
 	if not target or not isElement(target) then return end
 	if not client:isLoggedIn() then return end
 	if not target:isLoggedIn() then return end
@@ -1105,16 +1126,16 @@ function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
 	if Vector3(target.position - client.position):getLength() > 5 then
 		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
 	end
-	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then 
-		if not target.getFaction or not target:getFaction() then 
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		if not target.getFaction or not target:getFaction() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
-		if target:getFaction():isStateFaction() and not target:isFactionDuty() then 
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
 	end
 	if bArmor then
