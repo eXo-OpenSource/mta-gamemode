@@ -79,6 +79,8 @@ function InventoryManager:constructor()
 		outputServerLog("=            RESET INVENTORY           =")
 		outputServerLog("========================================")
 
+		sqlLogs:queryExec("DROP TABLE ??_ItemTransaction", sqlLogs:getPrefix())
+
 		sql:queryExec("DROP TABLE ??_inventory_items", sql:getPrefix())
 		sql:queryExec("DROP TABLE ??_inventories", sql:getPrefix())
 		sql:queryExec("DROP TABLE ??_inventory_type_categories", sql:getPrefix())
@@ -1202,20 +1204,20 @@ function InventoryManager:migrate()
 		else
 			query = query .. ", "
 		end
-		query = query .. "(" .. player.Id .. ", 1, 99999, 8, 2)"
+		query = query .. "(" .. player.Id .. ", 8, 99999, 8, 2)"
 	end
 
 	sql:queryExec(query, sql:getPrefix())
 
 	local nextId = 1
 
-	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1", sql:getPrefix())
+	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1 OR ElementType = 8", sql:getPrefix())
 	local inventories = {}
 	local inventoriesWeapon = {}
 	for _, inventory in pairs(inventoriesDb) do
-		if inventory.TypeId == 1 then
+		if inventory.ElementType == 1 then
 			inventories[inventory.ElementId] = inventory.Id
-		elseif inventory.TypeId == 2 then
+		elseif inventory.ElementType == 8 then
 			inventoriesWeapon[inventory.ElementId] = inventory.Id
 		end
 	end

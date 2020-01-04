@@ -11,7 +11,8 @@ addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPoin
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
 "premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
-"attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle"}
+"attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle",
+"requestGunBox"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -42,6 +43,7 @@ function PlayerManager:constructor()
 	addEventHandler("changeWalkingstyle", root, bind(self.Event_changeWalkingstyle, self))
 	addEventHandler("passwordChange", root, bind(self.Event_passwordChange, self))
 	addEventHandler("requestGunBoxData", root, bind(self.Event_requestGunBoxData, self))
+	addEventHandler("requestGunBox", root, bind(self.Event_requestGunBox, self))
 	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
 	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
 	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
@@ -875,6 +877,10 @@ function PlayerManager:Event_requestGunBoxData()
 	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 end
 
+function PlayerManager:Event_requestGunBox()
+	client:triggerEvent("openInventory", _("Waffenbox", client), DbElementType.WeaponBox, client:getId())
+end
+
 function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
@@ -1053,7 +1059,7 @@ function PlayerManager:Event_AttachToVehicle()
 end
 
 function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
-	if not client or not isElement(client) then return end 
+	if not client or not isElement(client) then return end
 	if not target or not isElement(target) then return end
 	if not client:isLoggedIn() then return end
 	if not target:isLoggedIn() then return end
@@ -1061,16 +1067,16 @@ function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
 	if target:isDead() then return end
 	if client.deathmatchLobby then return end
 	if target.deathmatchLobby then return end
-	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then 
-		if not target.getFaction or not target:getFaction() then 
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		if not target.getFaction or not target:getFaction() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
-		if target:getFaction():isStateFaction() and not target:isFactionDuty() then 
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
 	end
 	if target:getDimension() ~= client:getDimension() then return end
@@ -1087,7 +1093,7 @@ end
 
 
 function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
-	if not client or not isElement(client) then return end 
+	if not client or not isElement(client) then return end
 	if not target or not isElement(target) then return end
 	if not client:isLoggedIn() then return end
 	if not target:isLoggedIn() then return end
@@ -1100,16 +1106,16 @@ function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
 	if Vector3(target.position - client.position):getLength() > 5 then
 		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
 	end
-	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then 
-		if not target.getFaction or not target:getFaction() then 
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		if not target.getFaction or not target:getFaction() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
-		if target:getFaction():isStateFaction() and not target:isFactionDuty() then 
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then
 			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
 			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
-			return 
+			return
 		end
 	end
 	if bArmor then

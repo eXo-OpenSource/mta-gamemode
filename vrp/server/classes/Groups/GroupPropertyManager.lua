@@ -58,7 +58,8 @@ end
 function GroupPropertyManager:OnRequestPropertyItemDepot(id)
 	if client then
 		if client.m_LastPropertyPickup then
-			client.m_LastPropertyPickup:getDepot():showItemDepot(client)
+			-- client.m_LastPropertyPickup:getDepot():showItemDepot(client)
+			client:triggerEvent("openInventory", _("Immobilien Depot", client), DbElementType.Property, client.m_LastPropertyPickup.m_Id)
 		end
 	end
 end
@@ -235,7 +236,7 @@ function GroupPropertyManager:takePropsFromGroup(group) --in case the group gets
 end
 
 function GroupPropertyManager:clearProperty(id, groupId, price)
-	local property = self.Map[id]			
+	local property = self.Map[id]
 	property.m_Owner = false
 	property.m_OwnerID = 0
 	sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)

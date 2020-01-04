@@ -552,7 +552,7 @@ function StatisticsLogger:addItemTrancactionLog(player, fromInventory, toInvento
 	local userId = 0
 
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	outputChatBox(inspect(item.Metadata))
+
 	sqlLogs:queryExec("INSERT INTO ??_ItemTransaction (UserId, FromInventory, ToInventory, FromSlot, ToSlot, InventoryItemId, ItemId, Amount, Durability, Metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		sqlLogs:getPrefix(), userId, fromInventory, toInventory, fromSlot, toSlot, item.Id, item.ItemId, item.Amount, item.Durability, item.Metadata or nil)
 end

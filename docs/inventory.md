@@ -1,7 +1,7 @@
-# TODO
+# Inventory Rewrite
 
-- [ ] Replace property inventory with new inventory
-- [ ] Replace weapon depot with new inventory
+## TODO
+
 - [ ] Replace all old giveItem & takeItem
 
 - [ ] Add item owner (only change if item has been traded by the owner?)
@@ -20,9 +20,12 @@
 - [ ] Rework StatisticsLogger:getSingleton():worldItemLog
 - [ ] Fix StaticWorldItems
 - [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
+- [ ] Add weapon box logic for slots (limit 4 slots only for premium?)
 
 - [o] Create new GUI for inventory interaction <- partialy __needs__ better GUI?
 
+- [x] Replace property inventory with new inventory
+- [x] Replace weapon depot with new inventory
 - [x] Write inventory migration
 - [x] Implement inventory interactions (player inventory -> vehicle inventory)
 - [x] Implement inventory storing
@@ -31,6 +34,10 @@
 - [x] Rework WorldItem & Item IDs!!
 - [x] Rework WorldItems
 - [x] Implement inventory change events
+
+## Bug List
+
+- [ ] Depot with item amount zero?
 
 ## Items
 
