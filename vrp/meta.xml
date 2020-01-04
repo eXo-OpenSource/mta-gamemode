@@ -1968,7 +1968,6 @@
 	<vrpfile src="files/images/Inventory/waterdrop.png" />
 	<vrpfile src="files/images/Inventory/resetS.png" />
 	<vrpfile src="files/images/Inventory/infoblubf.png" />
-	<vrpfile src="files/images/Inventory/items/missing.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Weed.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Shroom.png" />
@@ -2066,6 +2065,78 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/Weihnachtsmuetze.png" />
 
 	<vrpfile src="files/images/Inventory/items/Items/Kleidung.png" />
+
+
+	<vrpfile src="files/images/Inventory/items/missing.png" />
+	<!-- Fish -->
+	<vrpfile src="files/images/Inventory/items/albacore.png" />
+	<vrpfile src="files/images/Inventory/items/anchovy.png" />
+	<vrpfile src="files/images/Inventory/items/asp.png" />
+	<vrpfile src="files/images/Inventory/items/blackSeabream.png" />
+	<vrpfile src="files/images/Inventory/items/blobfisch.png" />
+	<vrpfile src="files/images/Inventory/items/bream.png" />
+	<vrpfile src="files/images/Inventory/items/bullhead.png" />
+	<vrpfile src="files/images/Inventory/items/burbot.png" />
+	<vrpfile src="files/images/Inventory/items/carp.png" />
+	<vrpfile src="files/images/Inventory/items/catfish.png" />
+	<vrpfile src="files/images/Inventory/items/chub.png" />
+	<vrpfile src="files/images/Inventory/items/cod.png" />
+	<vrpfile src="files/images/Inventory/items/dorado.png" />
+	<vrpfile src="files/images/Inventory/items/duskyGrouper.png" />
+	<vrpfile src="files/images/Inventory/items/eaglefish.png" />
+	<vrpfile src="files/images/Inventory/items/eel.png" />
+	<vrpfile src="files/images/Inventory/items/forestJumper.png" />
+	<vrpfile src="files/images/Inventory/items/ghostFish.png" />
+	<vrpfile src="files/images/Inventory/items/halibut.png" />
+	<vrpfile src="files/images/Inventory/items/hammerheadJawfish.png" />
+	<vrpfile src="files/images/Inventory/items/herring.png" />
+	<vrpfile src="files/images/Inventory/items/indianGlassCatfish.png" />
+	<vrpfile src="files/images/Inventory/items/lakeTrout.png" />
+	<vrpfile src="files/images/Inventory/items/largemouthBass.png" />
+	<vrpfile src="files/images/Inventory/items/lingcod.png" />
+	<vrpfile src="files/images/Inventory/items/longTailedHake.png" />
+	<vrpfile src="files/images/Inventory/items/luminousHerring.png" />
+	<vrpfile src="files/images/Inventory/items/mudWhipper.png" />
+	<vrpfile src="files/images/Inventory/items/mutantCarp.png" />
+	<vrpfile src="files/images/Inventory/items/mutantSardine.png" />
+	<vrpfile src="files/images/Inventory/items/oarfish.png" />
+	<vrpfile src="files/images/Inventory/items/octopus.png" />
+	<vrpfile src="files/images/Inventory/items/pearlFish.png" />
+	<vrpfile src="files/images/Inventory/items/perch.png" />
+	<vrpfile src="files/images/Inventory/items/pike.png" />
+	<vrpfile src="files/images/Inventory/items/pufferfish.png" />
+	<vrpfile src="files/images/Inventory/items/rainbowTrout.png" />
+	<vrpfile src="files/images/Inventory/items/redMullet.png" />
+	<vrpfile src="files/images/Inventory/items/redSnapper.png" />
+	<vrpfile src="files/images/Inventory/items/roach.png" />
+	<vrpfile src="files/images/Inventory/items/rudd.png" />
+	<vrpfile src="files/images/Inventory/items/sableFish.png" />
+	<vrpfile src="files/images/Inventory/items/sabreToothedFish.png" />
+	<vrpfile src="files/images/Inventory/items/salmon.png" />
+	<vrpfile src="files/images/Inventory/items/salmonHerring.png" />
+	<vrpfile src="files/images/Inventory/items/sandfish.png" />
+	<vrpfile src="files/images/Inventory/items/sardine.png" />
+	<vrpfile src="files/images/Inventory/items/sawBelly.png" />
+	<vrpfile src="files/images/Inventory/items/scaledFish.png" />
+	<vrpfile src="files/images/Inventory/items/scorpionCarp.png" />
+	<vrpfile src="files/images/Inventory/items/shad.png" />
+	<vrpfile src="files/images/Inventory/items/slimejack.png" />
+	<vrpfile src="files/images/Inventory/items/smallmouthBass.png" />
+	<vrpfile src="files/images/Inventory/items/snailfish.png" />
+	<vrpfile src="files/images/Inventory/items/sootyNose.png" />
+	<vrpfile src="files/images/Inventory/items/squid.png" />
+	<vrpfile src="files/images/Inventory/items/stonefish.png" />
+	<vrpfile src="files/images/Inventory/items/sturgeon.png" />
+	<vrpfile src="files/images/Inventory/items/sunfish.png" />
+	<vrpfile src="files/images/Inventory/items/swordfish.png" />
+	<vrpfile src="files/images/Inventory/items/threeSpinedStrickleback.png" />
+	<vrpfile src="files/images/Inventory/items/tigerTrout.png" />
+	<vrpfile src="files/images/Inventory/items/tilapia.png" />
+	<vrpfile src="files/images/Inventory/items/tripod.png" />
+	<vrpfile src="files/images/Inventory/items/tuna.png" />
+	<vrpfile src="files/images/Inventory/items/voidSalmon.png" />
+	<vrpfile src="files/images/Inventory/items/walleye.png" />
+	<vrpfile src="files/images/Inventory/items/zander.png" />
 
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />

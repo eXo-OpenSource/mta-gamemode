@@ -4,6 +4,7 @@
 - [ ] Rework StatisticsLogger:getSingleton():worldItemLog
 - [ ] Fix StaticWorldItems
 - [ ] Rewrite WorldItem GUI for Admins
+- [ ] Add item owner (only change if item has been traded by the owner?)
 - [ ] Implement inventory auto cleanup
 - [ ] Reimplement trading
 - [ ] Replace all old giveItem & takeItem
@@ -66,6 +67,15 @@
 * ~~ItemSkyBeam = ItemSkyBeam;~~ - remove
 
 ## Notes
+
+### Fishes without Icons
+{ 31, "superCucumber" }
+{ 38, "barbeledDragonfish" }
+{ 15, "perch" }
+{ 62, "deepSeaDevil" }
+{ 70, "rodAngler" }
+{ 24, "seaCucumber" }
+{ 63, "viperFish" }
 
 ### Sky Beam
 Object ID: 2887
