@@ -19,15 +19,11 @@ function InventoryGUI:constructor(title, elementType, elementId)
 	self.m_ElementId = elementId
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, title, true, false, self) -- temporarly disable close button as it breaks the closing of the gui
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, title, true, true, self)
 
 	self.m_ItemList = GUIGridItemSlotList:new(1, 1, 14, 9, self.m_Window)
 	self.m_InventorySync = bind(self.Event_syncInventory, self)
 	InventoryManager:getSingleton():getHook():register(self.m_InventorySync)
-
-
-	self.m_CloseButton = GUIButton:new(self.m_Window.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self.m_Window):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBarEnabled(false):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
-	self.m_CloseButton.onLeftClick = bind(self.destructor, self)
 
 	triggerServerEvent("subscribeToInventory", localPlayer, elementType, elementId)
 end
