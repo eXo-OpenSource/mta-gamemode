@@ -535,3 +535,24 @@ function StatisticsLogger:addRouletteLog(player, bet, bets, winningNumber, wonAm
 	sqlLogs:queryExec("INSERT INTO ??_Roulette (UserId, Bet, Bets, WinningNumber, WonAmount, HighStake, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())",
 		sqlLogs:getPrefix(), userId, bet, toJSON(betsInfo, true):sub(2, -2), winningNumber, wonAmount, highStake and 1 or 0)
 end
+
+function StatisticsLogger:addItemTrancactionLog(player, fromInventory, toInventory, fromSlot, toSlot, item)
+	--[[
+		`UserId` int NOT NULL,
+		`FromInventory` int NULL,
+		`ToInventory` int NOT NULL,
+		`FromSlot` int NULL,
+		`ToSlot` int NOT NULL,
+		`InventoryItemId` int NOT NULL,
+		`ItemId` int NOT NULL,
+		`Amount` int NOT NULL DEFAULT 1,
+		`Durability` int NOT NULL DEFAULT 0,
+		`Metadata` text NULL,
+	]]
+	local userId = 0
+
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	outputChatBox(inspect(item.Metadata))
+	sqlLogs:queryExec("INSERT INTO ??_ItemTransaction (UserId, FromInventory, ToInventory, FromSlot, ToSlot, InventoryItemId, ItemId, Amount, Durability, Metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		sqlLogs:getPrefix(), userId, fromInventory, toInventory, fromSlot, toSlot, item.Id, item.ItemId, item.Amount, item.Durability, item.Metadata or nil)
+end

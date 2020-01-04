@@ -157,6 +157,8 @@ function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInvent
 		end
 		fromInventory:onInventoryChanged()
 	else
+		-- Event_onItemMove
+		local fromSlot = fromItem.Slot
 		fromItem.Slot = toSlot
 
 		for k, v in pairs(fromInventory.m_Items) do
@@ -175,6 +177,12 @@ function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInvent
 
 		toInventory:onInventoryChanged()
 		fromInventory:onInventoryChanged()
+
+		StatisticsLogger:getSingleton():addItemTrancactionLog(client, fromInventory.m_Id, toInventory.m_Id, fromSlot, toSlot, fromItem)
+
+		if toItem then
+			StatisticsLogger:getSingleton():addItemTrancactionLog(client, toInventory.m_Id, fromInventory.m_Id, toSlot, fromSlot, toItem)
+		end
 	end
 end
 
@@ -799,6 +807,24 @@ function InventoryManager:migrate()
 		);
 	]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
 
+
+	sqlLogs:queryExec([[
+		CREATE TABLE ??_ItemTransaction  (
+			`Id` int NOT NULL AUTO_INCREMENT,
+			`Date` datetime NOT NULL DEFAULT NOW(),
+			`UserId` int NOT NULL,
+			`FromInventory` int NULL,
+			`ToInventory` int NOT NULL,
+			`FromSlot` int NULL,
+			`ToSlot` int NOT NULL,
+			`InventoryItemId` int NOT NULL,
+			`ItemId` int NOT NULL,
+			`Amount` int NOT NULL DEFAULT 1,
+			`Durability` int NOT NULL DEFAULT 0,
+			`Metadata` text NULL,
+			PRIMARY KEY (`Id`)
+		);
+	]], sqlLogs:getPrefix())
 
 	-- Insert data
 

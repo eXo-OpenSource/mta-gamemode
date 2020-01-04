@@ -1,20 +1,24 @@
 # TODO
 
-- [ ] Rewrite all ItemClasses for new Inventory
-- [ ] Rework StatisticsLogger:getSingleton():worldItemLog
-- [ ] Fix StaticWorldItems
-- [ ] Rewrite WorldItem GUI for Admins
-- [ ] Add item owner (only change if item has been traded by the owner?)
-- [ ] Implement inventory auto cleanup
-- [ ] Reimplement trading
-- [ ] Replace all old giveItem & takeItem
-- [ ] Look for hardcoded item ids
-- [ ] Write testing list
-- [ ] Write world items migration
 - [ ] Replace property inventory with new inventory
 - [ ] Replace weapon depot with new inventory
-- [ ] Implement new weapon handling with inventory
+- [ ] Replace all old giveItem & takeItem
+
+- [ ] Add item owner (only change if item has been traded by the owner?)
+- [ ] Implement inventory auto cleanup
+
 - [ ] Create new GUI for trading
+- [ ] Reimplement trading
+
+- [ ] Write testing list
+- [ ] Implement new weapon handling with inventory
+- [ ] Rewrite all ItemClasses for new Inventory
+- [ ] Look for hardcoded item ids
+
+- [ ] Write world items migration
+- [ ] Rewrite WorldItem GUI for Admins
+- [ ] Rework StatisticsLogger:getSingleton():worldItemLog
+- [ ] Fix StaticWorldItems
 - [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
 
 - [o] Create new GUI for inventory interaction <- partialy __needs__ better GUI?
@@ -345,6 +349,24 @@ DROP TABLE vrp_inventory_type_categories;
 DROP TABLE vrp_inventory_types;
 DROP TABLE vrp_items;
 DROP TABLE vrp_item_categories;
+```
+
+```sql
+CREATE TABLE `vrpLogs_ItemTransaction`  (
+  `Id` int NOT NULL AUTO_INCREMENT,
+  `Date` datetime NOT NULL DEFAULT NOW(),
+  `UserId` int NOT NULL,
+  `FromInventory` int NULL,
+  `ToInventory` int NOT NULL,
+  `FromSlot` int NULL,
+  `ToSlot` int NOT NULL,
+  `InventoryItemId` int NOT NULL,
+  `ItemId` int NOT NULL,
+  `Amount` int NOT NULL DEFAULT 1,
+  `Durability` int NOT NULL DEFAULT 0,
+  `Metadata` text NULL,
+  PRIMARY KEY (`Id`)
+);
 ```
 
 # Inventartypen
