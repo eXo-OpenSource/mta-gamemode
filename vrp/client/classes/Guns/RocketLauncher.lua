@@ -69,6 +69,7 @@ function RocketLauncher:onUse()
 	self.m_Tilt = 0 
 	self.m_Fired = false
 	self.m_Object = createObject(359, localPlayer:getPosition())
+	self.m_Object:setCollisionsEnabled(false)
 end
 
 function RocketLauncher:onStop() 
