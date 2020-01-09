@@ -16,7 +16,6 @@ function WeaponManager:constructor()
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.render, self))
 	addEventHandler("onClientPlayerWeaponFire", localPlayer, bind(self.fire, self))
-
 end
 
 function WeaponManager:destructor() 
@@ -37,10 +36,16 @@ function WeaponManager:update()
 	SniperRifle:getSingleton():update()
 
 	local weapon = localPlayer:getWeapon() 
+	local now = getTickCount() 
+	
+	if WEAPON_READY_TIME[weapon] then
+		if getKeyState("mouse1") and not getKeyState("mouse2") then
+			WeaponManager.Weapon[weapon] = {ready = now + WEAPON_READY_TIME[weapon]}
+		end
+	end
 
 	if WeaponManager.Weapon[weapon] then 
-		local now = getTickCount() 
-		if WeaponManager.Weapon[weapon].ready and WeaponManager.Weapon[weapon].ready > now then 
+		if WeaponManager.Weapon[weapon].ready and WeaponManager.Weapon[weapon].ready >= now then 
 			toggleControl("fire", false)
 			toggleControl("action", false)
 		else 

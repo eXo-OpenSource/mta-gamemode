@@ -50,7 +50,6 @@ function SniperRifle:render()
 			dxDrawRectangle(0, 0, screenWidth, screenHeight, Color.Black) -- fallback
 		end
 
-
 		setPlayerHudComponentVisible("crosshair", false)
 
 		if progress > 1 then 
