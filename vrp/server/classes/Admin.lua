@@ -707,7 +707,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		end
 	elseif func == "cookie" then
 		local reason = reason:gsub("_", " ")
-		if target:getInventoryOld():giveItem("Keks", 1) then
+		if target:getInventory():giveItem("cookie", 1) then
 			target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
 			self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
 		else

@@ -7,6 +7,8 @@
 - [ ] Add item owner (only change if item has been traded by the owner?)
 - [ ] Implement inventory auto cleanup
 
+- [ ] Faction - Equipment & Item storage
+
 - [ ] Create new GUI for trading
 - [ ] Reimplement trading
 
@@ -38,6 +40,10 @@
 ## Bug List
 
 - [ ] Depot with item amount zero?
+
+## Needs checking
+
+* FactionRescue Traffic cones
 
 ## Items
 

@@ -1759,7 +1759,7 @@ function InventoryManager:migrate()
 			if equipments then
 				for name, amount in pairs(equipments) do
 					local itemTechnicalName = ItemMapping[name]
-					if itemTechnicalName then
+					if itemTechnicalName and amount > 0 then
 						if first then first = false else query = query .. ", " end
 						if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
 

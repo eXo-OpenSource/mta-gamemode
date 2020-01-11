@@ -132,7 +132,7 @@ function WeedTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 				Discord:getSingleton():outputBreakingNews("Der Weed-Transport wurde erfolgreich abgeschlossen!")
 				hitElement:sendInfo(_("Weed-Truck abgegeben! Du erhälst %d Gramm Weed!", hitElement, WeedTruck.Weed))
 				faction:giveKarmaToOnlineMembers(-10, "Weed-Truck abgegeben!")
-				hitElement:getInventoryOld():giveItem("Weed", WeedTruck.Weed)
+				hitElement:getInventory():giveItem("weed", WeedTruck.Weed)
 				self:Event_OnWeedTruckExit(hitElement,0)
 				delete(self)
 			end

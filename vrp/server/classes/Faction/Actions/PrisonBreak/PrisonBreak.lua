@@ -57,7 +57,7 @@ end
 function PrisonBreak:PedTargetRefresh(count, startingPlayer)
 	if count == 0 then return false end
 	local attackers = self.m_Officer:getAttackers()
-	
+
 	for attacker in pairs(attackers) do
 		if self.m_OfficerCountdown > 0 then
 			attacker:sendShortMessage("Bedrohung zu " .. math.round((self.m_OfficerCountdown / PrisonBreak.OfficerCountdown) * 100, 1) .. " % abgeschlossen.")
@@ -70,7 +70,7 @@ function PrisonBreak:PedTargetRefresh(count, startingPlayer)
 		for attacker in pairs(attackers) do
 			if isElement(attacker) then
 				attacker:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
-				attacker:getInventoryOld():giveItem("Keycard", 1)
+				attacker:getInventory():giveItem("keycard", 1)
 				attacker:sendSuccess("Du hast eine Keycard erhalten!")
 				table.insert(self.m_KeycardPlayers, attacker)
 			end

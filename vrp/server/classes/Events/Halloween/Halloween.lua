@@ -255,7 +255,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 								elseif pl:getModel() == 310 then --zombie skin bonus
 									rnd = rnd + (chance(15) and 1 or 0)
 								end
-								pl:getInventoryOld():giveItem("Suessigkeiten", rnd)
+								pl:getInventory():giveItem("candies", rnd)
 								pl:sendSuccess(_("Du hast %d %s bekommen!", pl, rnd, rnd > 1 and "Süßigkeiten" or "Süßigkeit"))
 								pl:sendMessage(("Bewohner sagt: %s"):format(rndPhrase), 200, 200, 200)
 							else

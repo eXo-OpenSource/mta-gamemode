@@ -45,7 +45,7 @@ function Quest:success(player)
 		outputDebug("success")
 		player:sendSuccess(_("Quest bestanden! Du erhälst %d Päckchen!", player, self.m_Packages))
 		sql:queryExec("INSERT INTO ??_quest (UserId, QuestId, Date) VALUES(?, ?, NOW())", sql:getPrefix(), player:getId(), self.m_QuestId)
-		player:getInventoryOld():giveItem("Päckchen", self.m_Packages)
+		player:getInventory():giveItem("packet", self.m_Packages)
 		self:removePlayer(player)
 		outputDebug(self.m_Players)
 	end
