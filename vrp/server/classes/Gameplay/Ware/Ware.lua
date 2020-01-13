@@ -82,7 +82,7 @@ function Ware:startRound()
 			setPedOnFire(player, false)
 			setElementHealth(player, 100)
 		end
-	else 
+	else
 		for k, player in ipairs( self.m_Players ) do
 			self:leavePlayer(player)
 		end
@@ -138,7 +138,7 @@ function Ware:afterRound()
 		endGame = true
 		if not self.m_WarmUpState then
 			self.m_MatchCount = self.m_MatchCount + 1
-		else 
+		else
 			self.m_WarmUpState = false
 		end
 	end
@@ -154,7 +154,7 @@ function Ware:afterRound()
 					if #self.m_Players > Ware.Min_Players or DEBUG then
 						if not self.m_WarmUpState then
 							player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
-						else 
+						else
 							player:sendInfo(_("Da dies eine Aufwärmrunde ist, wird nichts gewertet!", player))
 						end
 					else
@@ -192,7 +192,7 @@ function Ware:resetRound()
 	for k, player in ipairs( self.m_Players ) do
 		pumpkinsEarned = math.ceil((player:getData("Ware:pumpkinsEarned") or 0) / 10)
 		if pumpkinsEarned > 0 then
-			player:getInventoryOld():giveItem("Kürbis", pumpkinsEarned)
+			player:getInventory():giveItem("pumpkin", pumpkinsEarned)
 			player:sendInfo(_("Du erhälst "..pumpkinsEarned.. " Kürbisse als Belohnung!", player))
 		end
 		player:setData("Ware:roundsWon",  0	)
@@ -203,11 +203,11 @@ end
 function Ware:sweepPeds()
 	local x, y, z, width, height = unpack(self.m_Arena)
 	local px, py, pz
-	for k, p in ipairs(getElementsByType("ped")) do 
+	for k, p in ipairs(getElementsByType("ped")) do
 		px, py, pz = getElementPosition(p)
-		if (px >= x and px <= x+width) and py >= y and (py < y+height) and pz >= z then 
-			if p:getDimension() == self.m_Dimension then 
-				if getElementData(p,"NPC:namePed") then 
+		if (px >= x and px <= x+width) and py >= y and (py < y+height) and pz >= z then
+			if p:getDimension() == self.m_Dimension then
+				if getElementData(p,"NPC:namePed") then
 					p:destroy()
 				end
 			end

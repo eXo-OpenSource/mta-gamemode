@@ -367,7 +367,7 @@ function House:enterHouseTry(player)
 	if not self.m_Owner or (self.m_Keys[player:getId()] or player:getId() == self.m_Owner or self.m_CurrentRobber == player) or not self.m_LockStatus then
 		if not player:isInGangwar() then
 			self:enterHouse(player)
-		else 
+		else
 			player:sendError(_("Du darfst dieses Haus nicht betreten (Gangwar) !", player))
 		end
 	else
@@ -416,7 +416,7 @@ function House:ringDoorBell(player)
 	if not self:isPlayerNearby(player) then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if player.m_HouseDoorBellCooldown then return end
 	local playersOnRing = {}
-	for pInside in pairs(self.m_PlayersInterior) do 
+	for pInside in pairs(self.m_PlayersInterior) do
 		if isElement(pInside) then
 			pInside:playSound("files/audio/door_bell.wav")
 			pInside:sendInfo(_("Es klingelt an der Haustür!", player))
@@ -428,13 +428,13 @@ function House:ringDoorBell(player)
 	player.m_HouseDoorBellCooldown = true
 	local timeForResponse = EVENT_HALLOWEEN and math.random(15000, 25000) or 5000
 	local playerId = player:getId()
-	if EVENT_HALLOWEEN then 
+	if EVENT_HALLOWEEN then
 		Halloween:getSingleton():registerTrickOrTreat(playerId, self.m_Id, timeForResponse)
 	end
 
 	setTimer(function(player)
-		if EVENT_HALLOWEEN then 
-			Halloween:getSingleton():finishTrickOrTreat(playerId, self.m_Id)		
+		if EVENT_HALLOWEEN then
+			Halloween:getSingleton():finishTrickOrTreat(playerId, self.m_Id)
 		elseif isElement(player) then
 			if self:isPlayerNearby(player) then
 				local pCount = table.size(self.m_PlayersInterior)
@@ -459,8 +459,8 @@ function House:ringDoorBell(player)
 				else
 					player:sendShortMessage(_("Es scheint niemand zu Hause zu sein.", player))
 				end
-			end	
-			player.m_HouseDoorBellCooldown = false		
+			end
+			player.m_HouseDoorBellCooldown = false
 		end
 	end, timeForResponse, 1, player)
 end
@@ -519,7 +519,7 @@ function House:giveRobItem( player )
 			if group == self.m_RobGroup then
 				local item = GroupHouseRob:getSingleton():getRandomItem()
 				player:meChat(true, "entdeckt etwas und versucht es einzustecken. (("..item.."))")
-				player:getInventoryOld():giveItem("Diebesgut",1)
+				player:getInventory():giveItem("stolenGoods",1)
 			end
 		end
 	end

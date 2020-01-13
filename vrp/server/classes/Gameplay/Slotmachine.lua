@@ -40,7 +40,7 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	-- {iWeaponID, iWeaponAmmo}
 
 	self.ms_Settings = {}
-	self.m_BankAccountServer = BankServer.get("gameplay.slotmachine")	
+	self.m_BankAccountServer = BankServer.get("gameplay.slotmachine")
 
 	-- Methods
 	self.m_ResultFunc = bind(self.doResult, self)
@@ -293,12 +293,12 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 		StatisticsLogger:addCasino( player, name, self.m_Prices.rareJackpot)
 	elseif name == "drogen" then
 		player:sendInfo(_("Du hast 5 Gramm Weed gewonnen!", player))
-		player:getInventoryOld():giveItem("Weed", 5)
+		player:getInventory():giveItem("weed", 5)
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		StatisticsLogger:addCasino( player, name, 5)
 	elseif name == "drogenselten" then
 		player:sendInfo(_("Du hast einen Magic Mushroom gewonnen!", player))
-		player:getInventoryOld():giveItem("Shroom", 1)
+		player:getInventory():giveItem("shrooms", 1)
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		StatisticsLogger:addCasino( player, name, 1)
 	end
