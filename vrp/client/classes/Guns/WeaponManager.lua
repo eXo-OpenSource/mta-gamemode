@@ -39,7 +39,7 @@ function WeaponManager:update()
 	local now = getTickCount() 
 	
 	if WEAPON_READY_TIME[weapon] then
-		if getKeyState("mouse1") and not getKeyState("mouse2") then
+		if (getPedControlState(localPlayer, "fire") or getPedControlState(localPlayer, "action")) and not getPedControlState("aim_weapon") then
 			WeaponManager.Weapon[weapon] = {ready = now + WEAPON_READY_TIME[weapon]}
 		end
 	end
