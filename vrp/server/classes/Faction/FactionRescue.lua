@@ -205,6 +205,10 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				faction:changeSkin(client, prefSkin)
 				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
 				RadioCommunication:getSingleton():allowPlayer(client, true)
+				client:setHealth(100)
+				client:setArmor(100)
+				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
+				client:checkLastDamaged() 
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
