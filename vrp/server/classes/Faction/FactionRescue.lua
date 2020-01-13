@@ -194,7 +194,7 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				end
 				takeAllWeapons(client)
 				if type == "fire" then
-					giveWeapon(client, 42, 10000, true)
+					setTimer(giveWeapon, 100, 5, client, 42, 10000, true) -- Don't ask, it doesn't work otherwise...
 				end
 				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
