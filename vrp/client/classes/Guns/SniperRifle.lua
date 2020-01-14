@@ -78,7 +78,10 @@ function SniperRifle:fire(weapon, ammo, ammoClip, hitX, hitY, hitZ, hitElement, 
 
 end
 
-
 function SniperRifle:isAiming() 
 	return isPedAiming(localPlayer) and localPlayer:getWeapon() == 34
+end
+
+function SniperRifle:inUse() 
+	return self.m_Use
 end

@@ -9,9 +9,16 @@
 WeaponManager = inherit(Singleton)
 WeaponManager.Weapon = {}
 
+
 function WeaponManager:constructor() 
-	RocketLauncher:new()
-	SniperRifle:new()
+	
+	
+
+	WeaponManager.WeaponToClass = 
+	{
+		[34] = SniperRifle:new(), 
+		[35] = RocketLauncher:new()
+	}
 
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.render, self))
@@ -38,9 +45,14 @@ function WeaponManager:update()
 	local weapon = localPlayer:getWeapon() 
 	local now = getTickCount() 
 	
-	if WEAPON_READY_TIME[weapon] then
-		if (getPedControlState(localPlayer, "fire") or getPedControlState(localPlayer, "action")) and not getPedControlState("aim_weapon") then
-			WeaponManager.Weapon[weapon] = {ready = now + WEAPON_READY_TIME[weapon]}
+	if WEAPON_READY_TIME[weapon] then -- both of the following bugs work due to the script beeing latent when detecting wether a player is aiming or not, hence why the fixes for them are connected with confusing checks
+		if (getPedControlState(localPlayer, "fire") or getPedControlState(localPlayer, "action")) and not getPedControlState("aim_weapon") then --bug#1 prevent player pressing fire then aiming to override cooldown
+			WeaponManager.Weapon[weapon] = {ready = now + WEAPON_READY_TIME[weapon]+700}
+		end
+		if WeaponManager.WeaponToClass[weapon] and WeaponManager.WeaponToClass[weapon]:getSingleton() then -- bug#2 prevent player pressing both buttons to override cooldown
+			if not WeaponManager.WeaponToClass[weapon]:getSingleton():isAiming() then
+				WeaponManager.Weapon[weapon] = {ready = now + WEAPON_READY_TIME[weapon]+700}
+			end
 		end
 	end
 
@@ -49,7 +61,7 @@ function WeaponManager:update()
 			toggleControl("fire", false)
 			toggleControl("action", false)
 		else 
-			if not NoDm:getSingleton():isInNoDmZone() and localPlayer:isControlEnabled() then
+			if (WeaponManager.Weapon[weapon].ready and (WeaponManager.Weapon[weapon].ready <= now)) and not NoDm:getSingleton():isInNoDmZone() and localPlayer:isControlEnabled() then
 				toggleControl("fire", true)
 				toggleControl("action", true)
 			end
