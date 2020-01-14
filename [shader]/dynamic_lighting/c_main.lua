@@ -18,7 +18,7 @@ local isEffectForcedOn = false -- set true to force the effects to stay on despi
 								-- (useful if changed shaderSettings.gBrightness)
 local effectTimeOut = 4 -- how much time does the effect turn off after 0 lights synced (in seconds)
 local shaderSettings = {
-				gIsLayered = {false, false, false}, -- set world, vehicle and ped effect layered
+				gIsLayered = {true, true, true}, -- set world, vehicle and ped effect layered
 				gNormalShading = {false, true, true}, -- enables world,vehicle,ped self shadowing ( may be bugged for rotated objects on a custom map)
 				gGenerateBumpNormals = false, -- generate bump normals from color texture (hogs few fps)
 				gTextureSize = 512.0, -- generated normat texture size (256 or 512 recomended)
@@ -27,7 +27,7 @@ local shaderSettings = {
 				gMaxLights = 8, -- how many light effects can be streamed in at once (max 15)
 				gVertexLights = 4, -- how many of that lights will be vertex lights
 				gForceVertexLights = {false, true, true}, -- force world, vehicle and ped to get vertex lighting only
-				gBrightness = 1, -- modify texture brightness 0 - fully obscured 1 - normal brightness
+				gBrightness = 0, -- modify texture brightness 0 - fully obscured 1 - normal brightness
 				gNightMod = false, -- enable nightMod effect - requires proper manipulation of setTextureBrightness and SetShaderDayTime, 
 									-- also some additional shaders.
 				gDayTime = 1, -- another additional variable to control texture colors - requires setShaderNightMod(true)
@@ -623,9 +623,9 @@ function funcTable.createWorldLightShader(ligNumber,vertLigNumber,isLayer,isWrdS
 		end
 	end
 	shaderTable.isConfigChanged = false
-	shaderTable.worldShader[1] = dxCreateShader ( "shaders/dynamic_wrd.fx",1,effectRange,isLayer[1],"world,object")
-	shaderTable.worldShader[2] = dxCreateShader ( "shaders/dynamic_veh.fx",1,effectRange,isLayer[2],"vehicle")
-	shaderTable.worldShader[3] = dxCreateShader ( "shaders/dynamic_ped.fx",1,effectRange,isLayer[3],"ped")
+	shaderTable.worldShader[1] = dxCreateShader ( "shaders/dynamic_wrd.fx",0,0,true,"world,object")
+	shaderTable.worldShader[2] = dxCreateShader ( "shaders/dynamic_veh.fx",0,0,true,"vehicle")
+	shaderTable.worldShader[3] = dxCreateShader ( "shaders/dynamic_ped.fx",0,0,true,"ped")
 	shaderTable.isStarted = shaderTable.worldShader[1] and shaderTable.worldShader[2] and shaderTable.worldShader[3]
 	if not shaderTable.isStarted then 
 		return false 

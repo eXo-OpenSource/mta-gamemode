@@ -3390,7 +3390,7 @@
 	<include resource="Contrast" />
 	<include resource="Detail" />
 	<include resource="RoadShine" />
-	<!--include resource="dynamic_lighting" /-->
+	<include resource="dynamic_lighting" />
 	<include resource="SkyBox" />
 	<include resource="DoF" />
 	<include resource="VehicleReflections" />

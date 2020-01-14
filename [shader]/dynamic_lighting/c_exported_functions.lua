@@ -693,3 +693,8 @@ function setNightSpotPosition(posX,posY,posZ)
 		return false
 	end
 end
+
+
+function forceRefresh() 
+	funcTable.refreshSettings()
+end

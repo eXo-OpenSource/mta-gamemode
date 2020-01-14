@@ -175,6 +175,7 @@ end
 
 function createEffectFile(filePath, lightNr, verLightNr, isLayer, isSobel, isNightMod, isGTADiffuse, isShading, isDirLight, isDiffuse, isVehicle, isTex1, isNightSpot, isVertexForced)
 	local theFile = fileCreate(filePath)
+
 	if (theFile) then
 		writeFileLine( theFile, ' float2 gDistFade = float2(250, 150);\n float gBrightness = 1;\n float gDayTime = 1;\n float gTextureSize = 512.0;\n float3 gNormalStrength = float3(1,1,1);\n ')
 		for lID=0,lightNr do
@@ -191,11 +192,11 @@ function createEffectFile(filePath, lightNr, verLightNr, isLayer, isSobel, isNig
 			writeFileLine( theFile, ' bool gNightSpotEnable = false;\n float3 gNightSpotPosition = float3(0,0,0);\n float gNightSpotRadius = 0; ')
 		end		
 		writeFileLine( theFile, ' float4x4 gWorld : WORLD;\n float4x4 gView : VIEW;\n float4x4 gProjection : PROJECTION;\n float4x4 gWorldViewProjection : WORLDVIEWPROJECTION;\n float4x4 gWorldInverseTranspose : WORLDINVERSETRANSPOSE;\n float3 gCameraPosition : CAMERAPOSITION; ')
-		writeFileLine( theFile, ' #include \"common.txt\" ')
+		writeFileLine( theFile, ' #include \"common.fx\" ')
 		if isShading then
-			writeFileLine( theFile, ' #include \"light1.txt\" ')
+			writeFileLine( theFile, ' #include \"light1.fx\" ')
 		else
-			writeFileLine( theFile, ' #include \"light0.txt\" ')
+			writeFileLine( theFile, ' #include \"light0.fx\" ')
 		end
 		writeFileLine( theFile, ' texture gTexture0 < string textureState="0,Texture"; >;\n sampler Sampler0 = sampler_state\n {\n Texture = (gTexture0);\n };\n  texture gTexture1 < string textureState="1,Texture"; >;\n sampler Sampler1 = sampler_state\n {\n Texture = (gTexture1);\n }; ')
 		writeFileLine( theFile, ' struct VSInput{\n float4 Position : POSITION0;\n float3 TexCoord : TEXCOORD0;\n float2 TexCoord1 : TEXCOORD1;\n float4 Normal : NORMAL0;\n float4 Diffuse : COLOR0;\n }; ')
@@ -374,6 +375,7 @@ function createEffectFile(filePath, lightNr, verLightNr, isLayer, isSobel, isNig
 		else
 			writeFileLine( theFile, ' AlphaBlendEnable = TRUE;\n VertexShader = compile vs_3_0 VertexShaderSB();\n PixelShader = compile ps_3_0 PixelShaderSB();\n }\n }\n technique fallback \n {\n pass P0 \n { }\n } ')
 		end
+		fileFlush(theFile)
 		fileClose ( theFile )
 		return true
 	else

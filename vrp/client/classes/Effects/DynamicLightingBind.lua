@@ -7,6 +7,8 @@
 -- ****************************************************************************
 DynamicLightingBind = inherit(Singleton)
 DynamicLightingBind.Map = {}
+
+
 function DynamicLightingBind:constructor() 
 	DynamicLightingBind:new()
 	Light = DynamicLightingBind:getSingleton()
@@ -17,6 +19,7 @@ function DynamicLightingBind:getExport()
 end
 
 function DynamicLightingBind:createPointLight(posX, posY, posZ, colorR, colorG, colorB, colorA, attenuation,...)
+	if not core:get("Shaders", "DynamicLighting") then return end
 	local light = self:getExport():createPointLight(posX, posY, posZ, colorR, colorG, colorB, colorA, attenuation, unpack(arg))
 	if light then
 		self:register(light)
@@ -25,6 +28,7 @@ function DynamicLightingBind:createPointLight(posX, posY, posZ, colorR, colorG, 
 end
 
 function DynamicLightingBind:createSpotLight(posX,posY,posZ,colorR,colorG,colorB,colorA,dirX,dirY,dirZ,isEuler,falloff,theta,phi,attenuation,...)
+	if not core:get("Shaders", "DynamicLighting") then return end
 	local light = self:getExport():createSpotLight(posX, posY, posZ, colorR, colorG, colorB, colorA, dirX, dirY, dirZ, isEuler, falloff, theta, phi, attenuation, unpack(arg))
 	if light then
 		self:register(light)
@@ -275,8 +279,21 @@ function DynamicLightingBind:unregister(element)
 	end
 end
 
-function DynamicLightingBind:destructor() 
+function DynamicLightingBind:purge() 
 	for element, _ in pairs(DynamicLightingBind.Map) do 
 		self:destroyLight(element)
 	end
 end
+
+function DynamicLightingBind:destructor() 
+	self:purge()
+end
+
+
+addEvent("switchDynamicLighting")
+addEventHandler("switchDynamicLighting", root, 
+	function()
+		if core:get("Shaders", "DynamicLighting") then
+			DynamicLightingBind:getSingleton():purge()
+		end
+	end)
