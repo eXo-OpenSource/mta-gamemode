@@ -7,20 +7,20 @@
 -- ****************************************************************************
 FireManager = inherit(Singleton)
 
-local FIRE_TIME_MIN = 30 -- in minutes
-local FIRE_TIME_MAX = 45 -- in minutes
+local FIRE_TIME_MIN = 15 -- in minutes
+local FIRE_TIME_MAX = 30 -- in minutes
 
 function FireManager:constructor()
 	self.m_CurrentFire = nil
 	self.m_Fires = {}
 	self.m_EnabledFires = {} -- just enabled fires which should be switched out randomly
-	
+
 	self.m_FireUpdateBind = bind(FireManager.checkFire ,self)
 	self.m_BankAccountServer = BankServer.get("action.fire")
 	self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1)
 
 	self.m_RandomFireStrings = { -- blablabla [...]
-		"steht in Flammen", 
+		"steht in Flammen",
 		"meldet einen Brand",
 		"ist in Flammen ausgebrochen",
 		"wurde wegen eines Rauchalarms geräumt",
@@ -155,7 +155,7 @@ function FireManager:getCurrentFire()
 end
 
 function FireManager:stopCurrentFire(stats)
-	if stats then 
+	if stats then
 		local playersByID = {}
 		local moneyForFaction = 0
 		for player, score in pairs(stats.pointsByPlayer) do
@@ -220,7 +220,7 @@ function FireManager:Event_toggleFire(id)
 	if self:getCurrentFire() then
 		if self:getCurrentFire().m_Id == id then
 			self:stopCurrentFire()
-		else 
+		else
 			self:startFire(id)
 		end
 	else
@@ -263,7 +263,7 @@ function FireManager:Event_editFire(id, tblArgs)
 		tblArgs.message = self:generateMessage(tblArgs.position, tblArgs.width, tblArgs.height)
 	end
 	--update db
-	sql:queryExec("UPDATE ??_fires SET Name = ?, Message = ?, Enabled = ?, PosX = ?, PosY = ?, PosZ = ?, Width = ?, Height = ? WHERE Id = ?;", sql:getPrefix(), 
+	sql:queryExec("UPDATE ??_fires SET Name = ?, Message = ?, Enabled = ?, PosX = ?, PosY = ?, PosZ = ?, Width = ?, Height = ? WHERE Id = ?;", sql:getPrefix(),
 		tostring(tblArgs.name) or "name failed to save",
 		tostring(tblArgs.message) or "msg failed to save",
 		tblArgs.enabled and 1 or 0,
@@ -276,7 +276,7 @@ function FireManager:Event_editFire(id, tblArgs)
 	)
 
 
-	--update InGame fire cache 
+	--update InGame fire cache
 	self.m_Fires[id]["name"] = tblArgs.name
 	self.m_Fires[id]["message"] = tblArgs.message
 	self.m_Fires[id]["enabled"] = tblArgs.enabled
@@ -304,12 +304,12 @@ function FireManager:generateMessage(position, width, height)
 		if v.m_PickupType == "House" then -- TODO: add more types
 			return ("%s in %s %s"):format(
 				((zoneName == "Mulholland" or zoneName == "Richman") and ("Eine Villa" or "Ein Haus")),
-				zoneName, 
+				zoneName,
 				self.m_RandomFireStrings[math.random(1, #self.m_RandomFireStrings)])
-		elseif v.m_PickupType == "GroupProperty" then 
+		elseif v.m_PickupType == "GroupProperty" then
 			return ("Die Immobilie '%s' in %s %s"):format(
 				v.m_PickupName,
-				zoneName, 
+				zoneName,
 				self.m_RandomFireStrings[math.random(1, #self.m_RandomFireStrings)])
 		end
 	end
@@ -322,7 +322,7 @@ function FireManager:Event_deleteFire(id)
 		return
 	end
 	sql:queryExec("DELETE FROM ??_fires  WHERE Id = ?;", sql:getPrefix(), id)
-	if self:getCurrentFire() and self:getCurrentFire().m_Id == id then 
+	if self:getCurrentFire() and self:getCurrentFire().m_Id == id then
 		self:stopCurrentFire()
 	end
 	self.m_Fires[id] = nil
