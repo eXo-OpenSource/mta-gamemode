@@ -175,7 +175,7 @@ end
 function VehicleInteraction:action()
 	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
 		local vehicleModel = self.m_lookAtVehicle:getModel()
-        if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
+		if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
             local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
 			local door = tonumber(self:getDoor())
 			local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, door)
@@ -197,7 +197,7 @@ function VehicleInteraction:action()
                         end
                     end
                 end
-			elseif (door == 4 or door == 5) and (vehicleModel == 416) then
+			elseif ((door == 4 or door == 5) and (vehicleModel == 416 or vehicleModel == 497)) or (door == 3 and vehicleModel == 417) then
                 if doorRatio > 0 and localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
 					self.m_LastInteraction = getTickCount()
 					triggerServerEvent("factionRescueToggleStretcher", localPlayer, self.m_lookAtVehicle)

@@ -208,7 +208,7 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				client:setHealth(100)
 				client:setArmor(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
-				client:checkLastDamaged() 
+				client:checkLastDamaged()
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
@@ -224,7 +224,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 	if client:getFaction() == self.m_Faction then
 		if client:isFactionDuty() and client:getPublicSync("Rescue:Type") == "medic" then
 			if not client.m_RescueDefibrillator then
-				if not self.m_LastStrecher[client] or timestampCoolDown(self.m_LastStrecher[client], 6) then
+				if not self.m_LastStrecher[client] or timestampCoolDown(self.m_LastStrecher[client], 1) then
 					if client.m_RescueStretcher then
 						self:removeStretcher(client, vehicle)
 					else
@@ -630,7 +630,7 @@ function FactionRescue:Event_healPlayer(medic, target)
 				target:sendInfo(_("Du wurdest vom Medic %s für %d$ geheilt!", target, medic.name, costs ))
 				target:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
-				client:checkLastDamaged() 
+				client:checkLastDamaged()
 				target:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
 
 				self.m_Faction:addLog(medic, "Heilung", ("hat %s geheilt!"):format(target.name))
@@ -654,7 +654,7 @@ function FactionRescue:Event_healPlayerHospital()
 			if client:getMoney() >= costs then
 				client:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team [Heal-Bot]")
-				client:checkLastDamaged() 
+				client:checkLastDamaged()
 				client:sendInfo(_("Du wurdest für %s$ von dem Arzt geheilt!", client, costs))
 
 				client:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
