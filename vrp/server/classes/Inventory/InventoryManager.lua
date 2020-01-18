@@ -169,20 +169,25 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	local money = player.sendRequest.money
 	local value = player.sendRequest.itemValue
 
+	if item == "Kleidung" then
+		player:sendError(_("Du kannst dieses Item nicht handeln!", player))
+		return false
+	end
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
+	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 		if (not player:getFaction():isStateFaction()) or (not player:isFactionDuty()) then
-			if ArmsDealer:getSingleton():getItemData(item) then 
+			if ArmsDealer:getSingleton():getItemData(item) then
 				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
 				return false
 			end
 		end
 	end
-	if player:getInventory():getItemAmount(item) >= amount then 
+	if player:getInventory():getItemAmount(item) >= amount then
 		if target:getMoney() >= money then
 			if target:getInventory():giveItem(item, amount, value) then
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
@@ -202,11 +207,11 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 				if item == "Osterei" and money == 0 then
 					target:giveAchievement(91) -- Verschenke ein Osterei
 				end
-				if item == "Clubkarte" then 
+				if item == "Clubkarte" then
 					player:setData("PlayHouse:clubcard", false, true)
 					target:setData("PlayHouse:clubcard", true, true)
 				end
-				if player:getThrowingObject() then 
+				if player:getThrowingObject() then
 					player:getThrowingObject():delete()
 					player:setThrowingObject(nil)
 				end

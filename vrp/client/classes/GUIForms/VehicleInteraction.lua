@@ -97,11 +97,9 @@ function VehicleInteraction:render()
 								end
                             elseif doorId == 0 then
                                 self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
-                            elseif ((vehicleModel == 416 or vehicleModel == 497) and (doorId == 4 or doorId == 5)) or (vehicleModel == 563 and door == 3) then
-                                if doorId == 4 or doorId == 5 then
-									if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
-										self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
-                                    end
+							elseif ((vehicleModel == 416 or vehicleModel == 497) and (doorId == 4 or doorId == 5)) or (vehicleModel == 563 and doorId == 3) then
+								if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+									self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
 								end
 							end
                         end

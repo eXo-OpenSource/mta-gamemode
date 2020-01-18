@@ -102,9 +102,9 @@ function Trunk:save()
 end
 
 function Trunk:checkDistance(player)
-	if isValidElement(self.m_Vehicle, "vehicle") then 
-		if Vector3(self.m_Vehicle:getPosition() - player:getPosition()):getLength() < 5 then 
-			if self.m_Vehicle:getDimension() == player:getDimension() and player:getInterior() == self.m_Vehicle:getInterior() then 
+	if isValidElement(self.m_Vehicle, "vehicle") then
+		if Vector3(self.m_Vehicle:getPosition() - player:getPosition()):getLength() < 5 then
+			if self.m_Vehicle:getDimension() == player:getDimension() and player:getInterior() == self.m_Vehicle:getInterior() then
 				return true
 			end
 		end
@@ -117,6 +117,11 @@ function Trunk:addItem(player, item, amount, value)
 	if not self:checkDistance(player) then return end
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
+			if item == "Kleidung" then
+				player:sendError(_("Du kannst dieses Item in den Kofferraum legen!", player))
+				return false
+			end
+
 			if player:getInventory():removeItem(item, amount, value) then
 				slot["Item"] = item
 				slot["Amount"] = amount
@@ -135,15 +140,24 @@ end
 
 function Trunk:takeItem(player, slot)
 	if not self:checkDistance(player) then return end
-	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() 
+	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
 			local item = self.m_ItemSlot[slot]["Item"]
 			local amount = self.m_ItemSlot[slot]["Amount"]
 
+			if item == "Kleidung" then
+				local value = self.m_ItemSlot[slot]["Value"]
+
+				if not SkinInfo[tonumber(value)] then
+					player:sendError(_("Du kannst dieses Item aus dem Kofferraum entfernen!", player))
+					return false
+				end
+			end
+
 			local success = false
 			if isCopSeizing then
-				if FactionState:getSingleton():isItemIllegal(item) then 
+				if FactionState:getSingleton():isItemIllegal(item) then
 					success = StateEvidence:getSingleton():addItemToEvidence(player, item, amount)
 					if success then self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName())) end
 				else
