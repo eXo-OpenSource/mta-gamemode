@@ -54,7 +54,13 @@ function Inventory:constructor(inventory, items, persistent, player)
 		local itemData = ItemManager.get(item.ItemId)
 		for k, v in pairs(itemData) do
 			if not item[k] then
-				item[k] = v
+				if k == "Tradeable" then
+					if item[k] == 1 and v == 0 then
+						item[k] = v
+					end
+				else
+					item[k] = v
+				end
 			end
 		end
 		--item.DatabaseId = item.Id
@@ -272,6 +278,24 @@ function Inventory:save(sync)
 				update.Durability = v.Durability
 			end
 
+			-- Check OwnerId
+			if dbItem.OwnerId ~= v.OwnerId then
+				needsUpdate = true
+				update.OwnerId = v.OwnerId
+			end
+
+			-- Check Tradeable
+			if dbItem.Tradeable ~= v.Tradeable then
+				needsUpdate = true
+				update.Tradeable = v.Tradeable
+			end
+
+			-- Check ExpireTime
+			if dbItem.ExpireTime ~= v.ExpireTime then
+				needsUpdate = true
+				update.ExpireTime = v.ExpireTime
+			end
+
 			-- Check slot
 			if dbItem.Slot ~= v.Slot then
 				needsUpdate = true
@@ -344,6 +368,24 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.Metadata)
 		end
 
+		if v.OwnerId then
+			if params ~= "" then params = params .. ", " end
+			params = params .. "OwnerId = ?"
+			table.insert(queriesParams, v.OwnerId)
+		end
+
+		if v.Tradeable then
+			if params ~= "" then params = params .. ", " end
+			params = params .. "Tradeable = ?"
+			table.insert(queriesParams, v.Tradeable)
+		end
+
+		if v.ExpireTime then
+			if params ~= "" then params = params .. ", " end
+			params = params .. "ExpireTime = ?"
+			table.insert(queriesParams, v.ExpireTime)
+		end
+
 		query = query .. params .. " WHERE Id = ?;"
 		table.insert(queriesParams, v.Id)
 
@@ -363,28 +405,34 @@ function Inventory:save(sync)
 	if #changes.insert > 0 then
 		if queries ~= "" then queries = queries .. " " end
 		for k, v in pairs(changes.insert) do
-			queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, OwnerId, Tradeable, Slot, Amount, Durability, ExpireTime, Metadata) VALUES "
 			table.insert(queriesParams, sql:getPrefix())
 			queries = queries .. "(?, ?, ?, ?, ?, ?, "
 
 			table.insert(queriesParams, v.Id)				-- 1 - Id
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
 			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
-			table.insert(queriesParams, v.Slot)				-- 4 - Slot
-			table.insert(queriesParams, v.Amount)			-- 5 - Amount
-			table.insert(queriesParams, v.Durability)		-- 6 - Durability
+			table.insert(queriesParams, v.OwnerId)			-- 4 - OwnerId
+			table.insert(queriesParams, v.Tradeable)		-- 5 - Tradeable
+			table.insert(queriesParams, v.Slot)				-- 6 - Slot
+			table.insert(queriesParams, v.Amount)			-- 7 - Amount
+			table.insert(queriesParams, v.Durability)		-- 8 - Durability
+			table.insert(queriesParams, v.ExpireTime)		-- 9 - ExpireTime
 			if not v.Metadata then
-				queries = queries .. "NULL) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, Slot = ?, Amount = ?, Durability = ?, Metadata = NULL;"
+				queries = queries .. "NULL) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, Metadata = NULL;"
 			else
-				queries = queries .. "?) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, Slot = ?, Amount = ?, Durability = ?, Metadata = ?;"
+				queries = queries .. "?) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, Metadata = ?;"
 				table.insert(queriesParams, v.Metadata or nil)	-- 7 - Metadata
 			end
 
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
 			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
-			table.insert(queriesParams, v.Slot)				-- 4 - Slot
-			table.insert(queriesParams, v.Amount)			-- 5 - Amount
-			table.insert(queriesParams, v.Durability)		-- 6 - Durability
+			table.insert(queriesParams, v.OwnerId)			-- 4 - OwnerId
+			table.insert(queriesParams, v.Tradeable)		-- 5 - Tradeable
+			table.insert(queriesParams, v.Slot)				-- 6 - Slot
+			table.insert(queriesParams, v.Amount)			-- 7 - Amount
+			table.insert(queriesParams, v.Durability)		-- 8 - Durability
+			table.insert(queriesParams, v.ExpireTime)		-- 9 - ExpireTime
 		end
 		queries = queries .. ";"
 	end
