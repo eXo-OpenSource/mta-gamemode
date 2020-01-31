@@ -394,7 +394,7 @@ end
 
 function FactionRescue:useDefibrillator(player, target)
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-		rescuePlayer:sendShortMessage(_("%s versucht %s vor dem verbluten zu Retten, ein RTW wird drigend benötigt!\nPosition: %s - %s", rescuePlayer, player:getName(), target:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
+		rescuePlayer:sendShortMessage(_("%s versucht, %s vor dem Verbluten zu retten, ein RTW wird dringend benötigt!\nPosition: %s - %s", rescuePlayer, player:getName(), target:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 	end
 
 	local abort = function()

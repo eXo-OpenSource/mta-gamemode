@@ -154,8 +154,8 @@ end
 function InventoryManager:Event_declineTrade(player, target)
 	if not self:validateTrading(player, target, client) then return end -- Todo: Report possible cheat attempt
 
-	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
-	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+	target:sendError(_("Du hast das Angebot von %s abgelehnt!", target, player:getName()))
+	player:sendError(_("%s hat den Handel abgelehnt!", player, target:getName()))
 
 	player.sendRequest = nil
 	target.receiveRequest = nil

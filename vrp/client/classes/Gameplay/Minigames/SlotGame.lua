@@ -253,7 +253,7 @@ function SlotGame:showWin()
 			self.m_WinSound = playSound("files/audio/arcade-sfx/win.ogg")
 		end
 		setSoundEffectEnabled(self.m_WinSound, "reverb", true)
-		outputChatBox(("#FFFF00[Spielothekok]#FFFFFF Du hast #00FF00$%s#FFFFFF gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
+		outputChatBox(("#FFFF00[Spielothek]#FFFFFF Du hast #00FF00$%s#FFFFFF gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
 	else 
 		self.m_StopDisable = setTimer(function() self.m_Disable = false; self.m_Play:setColor(tocolor(244, 206, 66, 100)) end, 1000, 1)
 	end

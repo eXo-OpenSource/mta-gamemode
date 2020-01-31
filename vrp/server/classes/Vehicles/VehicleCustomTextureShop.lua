@@ -221,7 +221,7 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 			client:sendInfo("Textur gekauft!")
 		end
 	else
-		client:sendError(_("Du hast nicht genug Geld dabei! ($120000)", client))
+		client:sendError(_("Du hast nicht genug Geld dabei! (%s)", client, toMoneyString(price)))
 	end
 end
 

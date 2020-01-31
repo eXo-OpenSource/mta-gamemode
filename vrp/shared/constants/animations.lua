@@ -15,7 +15,7 @@ ANIMATIONS = {
 	["Handstand"] =				{["group"] = "Standard", ["block"] = "dam_jump", ["animation"] = "DAM_Dive_Loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Waffe beidhändig"] =		{["group"] = "Standard", ["block"] = "ped", ["animation"] = "arrestgun", ["loop"] = false, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Waffe Gangster"] =		{["group"] = "Standard", ["block"] = "ped", ["animation"] = "gang_gunstand", ["loop"] = false, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["Bombe plazieren"] =		{["group"] = "Standard", ["block"] = "bomber", ["animation"] = "bom_plant", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Bombe platzieren"] =		{["group"] = "Standard", ["block"] = "bomber", ["animation"] = "bom_plant", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Tanz Wave"] = 			{["group"] = "Tänze", ["block"] = "DANCING", ["animation"] = "dnce_M_a", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Tanz Chill"] = 			{["group"] = "Tänze", ["block"] = "DANCING", ["animation"] = "dnce_M_b", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Tanz Ruhig"] = 			{["group"] = "Tänze", ["block"] = "DANCING", ["animation"] = "dnce_M_d", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},

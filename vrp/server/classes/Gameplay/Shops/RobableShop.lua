@@ -220,8 +220,8 @@ function RobableShop:m_onExpire()
 
 	self.m_Gang:removePlayerMarkers()
 	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
-	self.m_Gang:sendMessage("[Shop-Rob] Die Zeit für den Rob ist ausgelaufen!",200,0,0,true)
-	FactionManager:getSingleton():getFromId(1):sendMessage("[Shop-Rob] #EEEEEEDie Zeit für den Rob ist ausgelaufen!",200,200,0,true)
+	self.m_Gang:sendMessage("[Shop-Rob] Die Zeit für den Rob ist abgelaufen!",200,0,0,true)
+	FactionManager:getSingleton():getFromId(1):sendMessage("[Shop-Rob] #EEEEEEDie Zeit für den Rob ist abgelaufen!",200,200,0,true)
 
 	if self.m_Attacker and isElement(self.m_Attacker) then
 		self.m_Attacker:triggerEvent("CountdownStop", "Shop Überfall")
