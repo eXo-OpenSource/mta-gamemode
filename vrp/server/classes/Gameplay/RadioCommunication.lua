@@ -25,9 +25,11 @@ function RadioCommunication:allowPlayer(player, bool)
 end
 
 function RadioCommunication:Event_OnMessageCommand(send, cmd, ... )
-	local argTable = { ... }
-	local text = table.concat(argTable , " ")
-    self:sendMessage(send, text)
+    if send.m_RadioCommunication then
+        local argTable = { ... }
+        local text = table.concat(argTable , " ")
+        self:sendMessage(send, text)
+    end
 end
 
 function RadioCommunication:sendMessage(sender, message, channel)
