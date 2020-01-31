@@ -389,6 +389,10 @@ function Vehicle:toggleEngine(player)
 						setTimer(
 							function()
 								if not isElement(self) then return end
+								if self:isBroken() then
+									player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
+									return
+								end
 								self:setEngineState(true)
 								local occs = self:getOccupants()
 								if occs then
