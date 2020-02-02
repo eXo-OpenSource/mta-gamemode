@@ -17,7 +17,7 @@ function FactionEvil:constructor()
 	self.m_Raids = {}
 
 	nextframe(function()
-		--self:loadLCNGates(5)
+		self:loadLCNGates(5)
 		--self:loadCartelGates(11)
 		self:loadYakGates(6)
 		--self:loadTriadGates(11)
@@ -286,9 +286,17 @@ end
 function FactionEvil:loadLCNGates(factionId)
 
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(980, Vector3(784.56561, -1152.40520, 24.93374), Vector3(0, 0, 275), Vector3(784.56561, -1152.40520, 18.53374))
-	lcnGates[2] = Gate:new(980, Vector3(659.12753, -1227.00923, 17.42981), Vector3(0, 0, 64), Vector3(659.12753, -1227.00923, 11.92981))
-	lcnGates[3] = Gate:new(980, Vector3(664.99264, -1309.83203, 15.06094), Vector3(0, 0, 182), Vector3(664.99264, -1309.83203, 8.46094))
+	lcnGates[1] = Gate:new(16637, Vector3(322.2619934082, -1185.9060058594, 76.84700012207), Vector3(0, 0, 307.24), Vector3(324.21200561523, -1184.4310302734, 76.84700012207))
+	
+	local colFix = createObject(16637, lcnGates[1].m_Gates[1].position)
+	attachElements(colFix, lcnGates[1].m_Gates[1], 0, 0, 1)
+	colFix:setAlpha(0) 
+
+	lcnGates[1]:addGate(16637, Vector3(319.23699951172, -1188.1810302734, 76.84700012207), Vector3(0, 0, 306.99), Vector3(317.53698730469, -1189.4310302734, 76.84700012207))
+
+	local colFix = createObject(16637, lcnGates[1].m_Gates[1].position)
+	attachElements(colFix, lcnGates[1].m_Gates[2], 0, 0, 1)
+	colFix:setAlpha(0)
 
 	--setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
