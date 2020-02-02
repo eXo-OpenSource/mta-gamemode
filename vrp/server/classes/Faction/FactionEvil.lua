@@ -17,7 +17,7 @@ function FactionEvil:constructor()
 	self.m_Raids = {}
 
 	nextframe(function()
-		self:loadLCNGates(5)
+		self:loadLCNGates(12)
 		--self:loadCartelGates(11)
 		self:loadYakGates(6)
 		--self:loadTriadGates(11)

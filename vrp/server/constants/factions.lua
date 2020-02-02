@@ -180,25 +180,26 @@ factionWeapons[4] = {[9]=true}
 factionSpawnpoint[4] = {Vector3(1076.01, -1380.27, 13.71), 0, 0}
 factionNavigationpoint[4] = Vector3(1095.01, -1337.27, 13.71)
 
--- ID 5 = Brigada:
+
+-- ID 5 = La Cosa Nostra:
 factionRankNames[5] = {
-[0] = "Pakhan",
-[1] = "Obshchak",
+[0] = "Giovane D'Honore",
+[1] = "Picciotto",
 [2] = "Sgarrista",
-[3] = "Brigadier ",
-[4] = "Bratok ",
-[5] = "Shestyorka",
-[6] = "Vor"
+[3] = "Caporegime",
+[4] = "Consigliere",
+[5] = "Capo Bastone",
+[6] = "Capo Crimini"
 }
-factionColors[5] = {["r"] = 150,["g"] = 150,["b"] = 150}
+factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
 factionCarColors[5] = {["r"] = 10,["g"] = 10,["b"] = 10, ["r1"] = 10,["g1"] = 10,["b1"] = 10}
-factionSkins[5] = {[111]=true, [112]=true, [113]=true, [125]=true, [126]=true, [127]=true,[226]=true,[272]=true, [290] = true}
-factionWeapons[5] = {[4]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[5] = Vector3(283.75, -1181.02, 81.00)
-factionWTDestination[5] = Vector3(371.22, -1154.53, 78)
+factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
+factionWeapons[5] = {[2]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
+factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,17.8)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
-factionSpawnpoint[5] = {Vector3(297.88, -1156.61, 80.91), 0, 0}
-factionAirDropPoint[5] = Vector3(280.24, -1230.52, 74.74)
+factionSpawnpoint[5] = {Vector3(728.03, -1203.80, 19.06), 0, 0}
+factionAirDropPoint[5] = Vector3(806.26, -1145.07, 24.02)
 factionNavigationpoint[5] = evilFactionInteriorEnter[5]
 
 -- ID 6 = Yakuza
@@ -320,6 +321,30 @@ factionWTDestination[11] = Vector3(1912.89, 935.21, 9.7)
 factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.1), 0, 0}
 factionNavigationpoint[11] = evilFactionInteriorEnter[11]
 factionAirDropPoint[11] = Vector3(1877.10, 934.00, 9.67)
+
+
+
+-- ID 12 = Brigada:
+factionRankNames[12] = {
+	[0] = "Vor",
+	[1] = "Shestyorka",
+	[2] = "Bratok ",
+	[3] = "Brigadier ",
+	[4] = "Boyevik",
+	[5] = "Sovietnik",
+	[6] = "Pakhan",
+}
+factionColors[12] = {["r"] = 150,["g"] = 150,["b"] = 150}
+factionCarColors[12] = {["r"] = 10,["g"] = 10,["b"] = 10, ["r1"] = 10,["g1"] = 10,["b1"] = 10}
+factionSkins[12] = {[111]=true, [112]=true, [113]=true, [125]=true, [126]=true, [127]=true,[226]=true,[272]=true, [290] = true}
+factionWeapons[12] = {[4]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[12] = Vector3(283.75, -1181.02, 81.00)
+factionWTDestination[12] = Vector3(371.22, -1154.53, 78)
+--factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
+factionSpawnpoint[12] = {Vector3(297.88, -1156.61, 80.91), 0, 0}
+factionAirDropPoint[12] = Vector3(280.24, -1230.52, 74.74)
+factionNavigationpoint[12] = evilFactionInteriorEnter[12]
+
 
 -- General:
 factionWeaponDepotInfo = {
