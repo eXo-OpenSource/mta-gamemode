@@ -36,9 +36,8 @@ function ItemPumpkin:onPumpkinClick(button, state, player)
     if source.Type ~= "Pumpkin" then return end
 	if button == "left" and state == "down" then
         if source:getModel() == self.m_Model then
-            if player:getInventoryOld():getFreePlacesForItem("Kürbis") >= 1 then
+            if player:getInventory():giveItem("pumpkin", 1) then
                 source:destroy()
-                player:getInventoryOld():giveItem("Kürbis", 1)
                 player:sendInfo(_("Du hast einen Kürbis gesammelt!", player))
 
 				player:giveAchievement(88) -- Finde dein erstes Kürbis

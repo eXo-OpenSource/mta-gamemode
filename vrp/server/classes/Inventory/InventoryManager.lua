@@ -73,7 +73,7 @@ function InventoryManager:constructor()
 		WearableClothes = WearableClothes;
 	}
 
-	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_items") and true then -- skip it for now
+	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_items") and false then -- skip it for now
 		-- REDO migration
 		outputServerLog("========================================")
 		outputServerLog("=            RESET INVENTORY           =")

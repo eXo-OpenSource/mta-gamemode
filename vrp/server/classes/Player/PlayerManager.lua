@@ -133,7 +133,7 @@ end
 
 function PlayerManager:Event_onPlayerFinishArcadeEasterEgg()
 	if client then
-		client:getInventoryOld():giveItem("Stern", 1)
+		client:getInventory():giveItem("star", 1)
 		client:giveAchievement(100)
 		client:sendInfo(_("Braboy: Du hast einen Stern erhalten!", client))
 	end

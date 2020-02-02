@@ -2,7 +2,7 @@
 
 ## TODO
 
-- [ ] Replace all old giveItem & takeItem
+- [p] Replace all old giveItem & takeItem - giveItem has been finished partially.
 
 - [ ] Add item owner (only change if item has been traded by the owner?)
 - [ ] Implement inventory auto cleanup

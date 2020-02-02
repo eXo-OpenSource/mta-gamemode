@@ -2,7 +2,7 @@ Christmas = inherit(Singleton)
 
 Christmas.ms_Bonus = {
 	{
-		["Text"] = "Radio",
+		["Text"] = "radio",
 		["Image"] = "Bonus_Radio.png",
 		["Packages"] = 1,
 		["CandyCane"] = 5,
@@ -16,7 +16,7 @@ Christmas.ms_Bonus = {
 		["Packages"] = 3,
 		["CandyCane"] = 7,
 		["Type"] = "Item",
-		["ItemName"] = "Weed",
+		["ItemName"] = "weed",
 		["ItemAmount"] = 250
 	},
 	{
@@ -144,9 +144,7 @@ function Christmas:Event_buyBonus(bonusId)
 	if bonus["Type"] == "Weapon" then
 		client:giveWeapon(bonus["WeaponId"], bonus["Ammo"])
 	elseif bonus["Type"] == "Item" then
-		if client:getInventoryOld():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
-			client:getInventoryOld():giveItem(bonus["ItemName"], bonus["ItemAmount"])
-		else
+		if not client:getInventory():giveItem(bonus["ItemName"], bonus["ItemAmount"]) then
 			client:sendError(_("Du hast nicht genug Platz in deinem Inventar!", client))
 			return
 		end

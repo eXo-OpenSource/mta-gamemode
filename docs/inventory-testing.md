@@ -14,3 +14,9 @@ Slotmachine - Weed, Shrooms
 Gameplay Ware - Kürbis
 Hausraub - Diebesgut
 Osterei (in der Welt) - Osterei
+Deathmatch Halloween - Kürbis (beim gewinnen + beim leaven), Süßigkeiten (beim leaven)
+Payday Ostern - Osterei
+Payday Weihnachten - Zuckerstangen
+Kürbis World Item - Kürbis
+Weihnachtsmarkt - TODO
+Arcade Easteregg - Stern
