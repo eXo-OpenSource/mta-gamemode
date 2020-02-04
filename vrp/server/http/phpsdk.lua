@@ -80,12 +80,16 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 	local target = DatabasePlayer.Map[targetId]
 
 	if not isElement(target) or target:getType() ~= "player" then
-		return "Der Spieler ist nicht online!"
+		local data = toJSON({status = "ERROR", error = "TARGET_OFFLINE"}, true)
+		outputServerLog(data:sub(2, #data-1))
+		return data:sub(2, #data-1)
 	end
 
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		outputServerLog(data:sub(2, #data-1))
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -109,18 +113,22 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich gekickt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	outputServerLog(data:sub(2, #data-1))
+	return data:sub(2, #data-1)
 end
 
 function phpSDKBanPlayer(adminId, targetId, duration, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
-		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -148,18 +156,21 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich gebannt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
 end
 
 function phpSDKUnbanPlayer(adminId, targetId, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
-		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -178,18 +189,21 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich entbannt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
 end
 
 function phpSDKAddWarn(adminId, targetId, duration, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
-		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -211,18 +225,21 @@ function phpSDKAddWarn(adminId, targetId, duration, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich verwarnt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
 end
 
 function phpSDKRemoveWarn(adminId, targetId, warnId)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
-		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -240,5 +257,6 @@ function phpSDKRemoveWarn(adminId, targetId, warnId)
 		delete(target)
 	end
 
-	return targetName .. " Warn wurde erfolgreich gelöscht!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
 end
