@@ -531,11 +531,11 @@ GAS_STATIONS = {
 	},
 	]]
 	{
-		name = "Aztecas",
+		name = "Brigada",
 		stations = {
-			{Vector3(1829.04, -2018.95, 13.85), 89, 1},
+			{Vector3(276.35, -1162.10, 81.4), 223, 1},
 		},
-		accessible =  {1, FactionStaticId.VATOS},
+		accessible =  {1, FactionStaticId.BRIGADA},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
