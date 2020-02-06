@@ -659,6 +659,7 @@ FactionStaticId = {
 	OUTLAWS = 9,
 	VATOS = 10,
 	TRIAD = 11,
+	BRIGADA = 12,
 }
 
 SEASONS = {
