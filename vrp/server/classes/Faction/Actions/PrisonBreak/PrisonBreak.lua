@@ -7,13 +7,11 @@
 -- ****************************************************************************
 
 PrisonBreak = inherit(Object)
-PrisonBreak.BombCountdown = 10 * 1000
 PrisonBreak.OfficerCountdown = 7 * 60 * 1000
 PrisonBreak.KeycardsCountdown = 2 * 60 * 1000
 PrisonBreak.DoorsCountdown = 12 * 60 * 1000
-PrisonBreak.OfficerCount = 5
 
-function PrisonBreak:constructor()
+function PrisonBreak:constructor(player)
 	self.m_Entrance = PrisonBreakManager:getSingleton().m_Entrance
 
 	self.m_Officer = PrisonBreakManager:getSingleton().m_Officer
@@ -21,9 +19,11 @@ function PrisonBreak:constructor()
 	self.m_WeaponBoxPlayers = {}
 
 	self.m_OfficerEnemies = {}
-	self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
+	self.m_OfficerCountdown = 0
 
 	self.m_KeycardPlayers = {}
+
+	self.m_Faction = player:getFaction()
 
 	---Binds
 	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
@@ -32,7 +32,11 @@ function PrisonBreak:constructor()
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
 		addEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
-
+	self.m_PlayerQuitOrDieFunc = bind(self.Event_PlayerQuitOrDie, self)
+	PlayerManager:getSingleton():getWastedHook():register(self.m_PlayerQuitOrDieFunc)
+	PlayerManager:getSingleton():getQuitHook():register(self.m_PlayerQuitOrDieFunc)
+	
+	self:start()
 	Jail:getSingleton():setPrisonBreak(true)
 end
 
@@ -42,16 +46,19 @@ function PrisonBreak:destructor()
 	end
 
 	for key, player in pairs(self.m_KeycardPlayers) do
-		PrisonBreak.RemoveKeycard(player)
-		table.remove(self.m_KeycardPlayers, key)
+		PrisonBreak:removeKeycardFromPlayer(player)
 	end
+	self.m_KeycardPlayers = {}
+
+	PlayerManager:getSingleton():getWastedHook():unregister(self.m_PlayerQuitOrDieFunc)
+	PlayerManager:getSingleton():getQuitHook():unregister(self.m_PlayerQuitOrDieFunc)
 
 	Jail:getSingleton():setPrisonBreak(false)
 	PrisonBreakManager:getSingleton():stop()
 end
 
-function PrisonBreak:Ped_Targetted(ped, attacker)
-
+function PrisonBreak:Event_PlayerQuitOrDie(player)
+	PrisonBreak:removeKeycardFromPlayer(player)
 end
 
 function PrisonBreak:PedTargetRefresh(count, startingPlayer)
@@ -59,82 +66,46 @@ function PrisonBreak:PedTargetRefresh(count, startingPlayer)
 	local attackers = self.m_Officer:getAttackers()
 	
 	for attacker in pairs(attackers) do
-		if self.m_OfficerCountdown > 0 then
+		if self.m_OfficerCountdown < PrisonBreak.OfficerCountdown then
 			attacker:sendShortMessage("Bedrohung zu " .. math.round((self.m_OfficerCountdown / PrisonBreak.OfficerCountdown) * 100, 1) .. " % abgeschlossen.")
 		end
 	end
 
-	self.m_OfficerCountdown = self.m_OfficerCountdown - count * 1000
+	self.m_OfficerCountdown = self.m_OfficerCountdown + count * (DEBUG and 100000 or 1000)
 
-	if self.m_OfficerCountdown <= 0 then
-		for attacker in pairs(attackers) do
-			if isElement(attacker) then
-				attacker:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
-				attacker:getInventory():giveItem("Keycard", 1)
-				attacker:sendSuccess("Du hast eine Keycard erhalten!")
-				table.insert(self.m_KeycardPlayers, attacker)
+	if self.m_OfficerCountdown >= PrisonBreak.OfficerCountdown then
+		if not self.m_KeycardsActive then
+			self:setKeycardTimeout()
+		end
+		if isTimer(self.m_KeycardDeactivateTimer) then
+			for attacker in pairs(attackers) do
+				if isElement(attacker) and not table.find(self.m_KeycardPlayers, attacker) then
+					attacker:triggerEvent("Countdown", math.floor( getTimerDetails (self.m_KeycardDeactivateTimer) / 1000), "Keycards")
+					attacker:getInventory():giveItem("Keycard", 1)
+					attacker:sendSuccess("Du hast eine Keycard erhalten!")
+					table.insert(self.m_KeycardPlayers, attacker)
+				end
 			end
 		end
-
-		setTimer(function ()
-			for key, player in pairs(self.m_KeycardPlayers) do
-				PrisonBreak.RemoveKeycard(player)
-				table.remove(self.m_KeycardPlayers, key)
-			end
-		end, PrisonBreak.KeycardsCountdown, 1)
-
 		self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
 	end
 end
 
-function PrisonBreak:placeBomb(player)
-	self.m_Faction = player:getFaction()
-
-	if
-		not self.m_Faction
-		or not self.m_Faction:isEvilFaction()
-		or getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) > 5
-		or not ActionsCheck:getSingleton():isActionAllowed(player)
-	then
-		delete(self)
-
-		return
-	end
-
-	if FactionState:getSingleton():countPlayers() < PrisonBreak.OfficerCount then
-		player:sendError("Es sind nicht genügend Staatsfraktionisten online!")
-
-		delete(self)
-
-		return
-	end
-
-	if not player:getInventory():removeItem("Sprengstoff", 1) then
-		player:sendError("Du hast keine Bombe im Inventar!")
-
-		delete(self)
-
-		return
-	end
-
-	ActionsCheck:getSingleton():setAction("Knastausbruch")
-
-	self.m_Bomb = createObject(1654, self.m_Entrance:getPosition(), Vector3(0, 0, 180))
-
-	for key, player in pairs(self.m_Faction:getOnlinePlayers()) do
-		player:triggerEvent("Countdown", math.floor(PrisonBreak.BombCountdown / 1000), "Explosion")
-	end
-
-	self.m_BombCoutdownTimer = setTimer(bind(self.explodeBomb, self), PrisonBreak.BombCountdown, 1)
+function PrisonBreak:setKeycardTimeout()
+	self.m_KeycardsActive = true
+	self.m_KeycardDeactivateTimer = setTimer(function ()
+		for key, player in pairs(self.m_KeycardPlayers) do
+			PrisonBreak:removeKeycardFromPlayer(player)
+		end
+		self.m_KeycardPlayers = {}
+	end, PrisonBreak.KeycardsCountdown, 1)
 end
 
-function PrisonBreak:explodeBomb()
+function PrisonBreak:start()
 	PlayerManager:getSingleton():breakingNews("Das Gefängnis meldet höchste Sicherheitswarnung. Gefahrenlage unbekannt!")
 	Discord:getSingleton():outputBreakingNews("Das Gefängnis meldet höchste Sicherheitswarnung. Gefahrenlage unbekannt!")
 	FactionState:getSingleton():sendWarning("Das Gefängnis meldet höchste Sicherheitswarnung mit Bitte um Unterstützung!", "Neuer Einsatz", true, {3583, -1614, 23.5})
 
-	createExplosion(self.m_Bomb:getPosition(), 2)
-	self.m_Bomb:destroy()
 	self.m_Entrance:destroy()
 
 	for key, player in pairs(self.m_Faction:getOnlinePlayers()) do
@@ -176,7 +147,7 @@ function PrisonBreak:finish()
 	delete(self)
 end
 
-function PrisonBreak.RemoveKeycard(player)
+function PrisonBreak:removeKeycardFromPlayer(player)
 	if player and isElement(player) and player:getInventory() then
 		if player:getInventory():getItemAmount("Keycard") and player:getInventory():getItemAmount("Keycard") > 0 then
 			player:getInventory():removeAllItem("Keycard")
