@@ -574,8 +574,6 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
-
-	PrisonBreak.RemoveKeycard(self)
 end
 
 function Player:clearReviveWeapons()

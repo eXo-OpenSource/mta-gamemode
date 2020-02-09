@@ -1076,6 +1076,7 @@ local tpTable = {
         ["afk"] =           {["pos"] = Vector3(1567.72, -1886.07, 13.24),  	["typ"] = "Orte"},
         ["drogentruck"] =   {["pos"] = Vector3(-1079.60, -1620.10, 76.19),  ["typ"] = "Orte"},
 		["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
+		["knast"] =   		{["pos"] = Vector3(3543.97, -1608.49, 7.24),  	["typ"] = "Orte"},
 		["kanal"] = 		{["pos"] = Vector3(1483.34, -1760.16, -37.31),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
         --["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
         --["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
