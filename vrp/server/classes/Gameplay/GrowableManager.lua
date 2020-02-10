@@ -147,32 +147,23 @@ function GrowableManager:getPlantNameFromSeed(seed)
 	return false
 end
 
+function GrowableManager:checkPlantConditionsForPlayer(player, seed)
+	local plantName = GrowableManager:getSingleton():getPlantNameFromSeed(seed)
+	if not plantName then player:sendError(_("Internal Error: Invalid Plant", player)) return false end
+	if player:isInWater() then player:sendError(_("Du bist im Wasser! Hier kannst du nichts pflanzen!", player)) return false end
+	if player.vehicle then player:sendError(_("Du sitzt in einem Fahrzeug!", player)) return false end
+	if GrowableManager:getSingleton():getNextPlant(player, GrowableManager.Types[plantName].SizeBetweenPlants) then player:sendError(_("Du bist zu nah an einer anderen Pflanze!", player)) return false end
+	return true
+end
+
 function GrowableManager:getClientCheck(seed, bool, z_pos, isUnderWater)
-	if bool then
-		--if client:isOnGround() then
-			if not client:isInWater() and not isUnderWater then
-				if not client.vehicle then
-					local plantName = self:getPlantNameFromSeed(seed)
-					if plantName then
-						local pos = client:getPosition()
-						client:giveAchievement(61)
-						client:getInventory():removeItem(seed, 1)
-						GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
-					else
-						client:sendError(_("Internal Error: Invalid Plant", client))
-					end
-				else
-					client:sendError(_("Du sitzt in einem Fahrzeug!", client))
-				end
-			else
-				client:sendError(_("Du bist im Wasser! Hier kannst du nichts pflanzen!", client))
-			end
-		--else
-		--	client:sendError(_("Du bist nicht am Boden!", client))
-		--end
-	else
-		client:sendError(_("Dies ist kein guter Untergrund zum Anpflanzen! Suche dir ebene Gras- oder Erdflächen", client))
-	end
+	if not bool or isUnderWater then client:sendError(_("Dies ist kein guter Untergrund zum Anpflanzen! Suche dir ebene Gras- oder Erdflächen", client)) return false end
+	if not self:checkPlantConditionsForPlayer(client, seed) then return false end
+	
+	local pos = client:getPosition()
+	client:giveAchievement(61)
+	client:getInventory():removeItem(seed, 1)
+	GrowableManager:getSingleton():addNewPlant(GrowableManager:getSingleton():getPlantNameFromSeed(seed), Vector3(pos.x, pos.y, z_pos), client)
 end
 
 function GrowableManager:sendGrowablesToClient(player)
