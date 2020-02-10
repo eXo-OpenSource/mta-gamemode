@@ -45,7 +45,7 @@ function ItemCan:action(player, key, state, bag, place)
 				player:triggerEvent("itemCanRefresh", 10)
 				player:sendInfo("Kanne aufgefüllt!")
 			else
-				player:sendError("Sie befinden sich nicht im Wasser!")
+				player:sendError("Du befindest dich nicht im Wasser!")
 			end
 		else
 			local plant = player:getData("Plant:Current")

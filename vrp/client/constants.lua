@@ -91,6 +91,11 @@ MATERIAL_TYPES =
 		145,
 		155,
 		156,
+	},
+	[3] = { -- BUSHY, but not hedge
+		111,
+		112,
+		114,
 	}
 }
 
