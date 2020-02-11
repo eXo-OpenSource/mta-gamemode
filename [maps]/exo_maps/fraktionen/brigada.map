@@ -46,4 +46,10 @@
     <object id="object (DYN_COUP) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="1451" doublesided="false" scale="1" dimension="0" posX="306.508" posY="-1195.694" posZ="80.692" rotX="0" rotY="0" rotZ="227.75"></object>
     <object id="object (DYN_BAR_B_Q) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="1481" doublesided="false" scale="1" dimension="0" posX="294.51199" posY="-1204.111" posZ="80.367" rotX="0" rotY="0" rotZ="210.5"></object>
     <object id="object (DYN_TABLE_2) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="1432" doublesided="false" scale="1" dimension="0" posX="295.07501" posY="-1201.243" posZ="79.839" rotX="0" rotY="0" rotZ="0"></object>
+    <removeWorldObject id="removeWorldObject (bevmangar_LAW2) (1)" radius="11.981899" interior="0" model="706" lodModel="3737" posX="301.0859" posY="-1115.3750" posZ="79.9141" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (laeChicano09) (1)" radius="48.921589" interior="0" model="706" lodModel="5616" posX="252.9063" posY="-1156.1953" posZ="77.7656" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (laeChicano11) (1)" radius="29.98431" interior="0" model="708" lodModel="5613" posX="287.9531" posY="-1206.7266" posZ="79.2891" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (laeChicano10) (1)" radius="45.745647" interior="0" model="13862" lodModel="5615" posX="359.2500" posY="-1125.8281" posZ="80.8516" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (laeChicano10) (1)" radius="45.745647" interior="0" model="762" lodModel="5615" posX="245.1563" posY="-1160.2813" posZ="81.8047" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (laeChicano10) (1)" radius="45.745647" interior="0" model="762" lodModel="5615" posX="337.4141" posY="-1163.7188" posZ="83.8047" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
 </map>
