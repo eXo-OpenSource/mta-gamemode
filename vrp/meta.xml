@@ -53,6 +53,7 @@
 	<script src="shared/classes/Promise.lua" type="shared"/>
 	<script src="shared/classes/MusicAPI.lua" type="shared"/>
 	<script src="shared/classes/InfluxDB.lua" type="shared"/>
+	<script src="shared/classes/Sentry.lua" type="shared"/>
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
@@ -1291,7 +1292,7 @@
 	<vrpfile src="files/audio/Items/slam_arm.ogg" />
 
 	<vrpfile src="files/audio/weapon/rocket-effect.ogg" />
-	
+
 	<vrpfile src="files/images/warning.png" />
 
 	<vrpfile src="files/images/hit.png" />
