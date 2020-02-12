@@ -91,6 +91,27 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+
+	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_accountActivity") then
+		sql:queryExec("RENAME TABLE ??_accountActivity TO ??_account_activity", sql:getPrefix(), sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity ADD COLUMN `DurationDuty` int(11) NULL DEFAULT NULL AFTER `Duration`;]], sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity ADD COLUMN `DurationAFK` int(11) NULL DEFAULT NULL AFTER `DurationDuty`;]], sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity CHANGE COLUMN `UserID` `UserId` int(11) NOT NULL AFTER `Date`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			CREATE TABLE ??_account_activity_group  (
+				`Date` date NOT NULL,
+				`UserId` int NOT NULL,
+				`ElementId` int NOT NULL,
+				`ElementType` tinyint NOT NULL,
+				`Duration` int(11) NULL DEFAULT NULL COMMENT 'Duration in Minutes',
+				`DurationDuty` int(11) NULL DEFAULT NULL COMMENT 'DurationDuty in Minutes',
+				PRIMARY KEY (`Date`, `ElementType`, `ElementId`, `UserId`) USING BTREE,
+				INDEX `Date_UserID`(`Date`, `UserID`) USING BTREE,
+				INDEX `UserID_Date`(`UserID`, `Date`) USING BTREE
+			);
+		]], sql:getPrefix())
+	end
 end
 
 function PlayerManager:destructor()
@@ -404,6 +425,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 	client:setAlcoholLevel(0)
 	client:increaseStatistics("Deaths", 1)
 	client:giveAchievement(37)
+	client.m_LastDamagedBy = {}
 	DamageManager:getSingleton():clearPlayer(client)
 	for key, obj in ipairs(getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then
@@ -412,7 +434,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 		end
 	end
 
-	if killer and killer:getType() == "player" then
+	if killer and isValidElement(killer, "player") then
 		if killer ~= client then
 			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
@@ -523,11 +545,10 @@ function PlayerManager:playerChat(message, messageType)
 			for index = 1, #playersToSend do
 				if playersToSend[index] ~= source then
 					if not source:getPublicSync("supportMode") then
-						outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+						outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 					else
-						outputChatBox(("(%s) %s sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
+						outputChatBox(("(%s) %s (Handy) sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
 					end
-					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 					--if not playersToSend[index] == source then
 						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 					--end
@@ -873,7 +894,8 @@ function PlayerManager:Event_passwordChange(old, new1, new2)
 	end
 end
 
-function PlayerManager:Event_requestGunBoxData()
+function PlayerManager:Event_requestGunBoxData(gunBoxX, gunBoxY, gunBoxZ)
+	client.m_CurrentGunBoxPosition = Vector3(gunBoxX, gunBoxY, gunBoxZ)
 	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 end
 
@@ -886,6 +908,8 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+
+	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
 
@@ -905,7 +929,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		if slot["WeaponId"] == 0 then
 			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
 				local weaponSlot = getSlotFromWeapon(weaponId)
-				if client:getWeapon(weaponSlot) > 0 then
+				if client:getWeapon(weaponSlot) == weaponId then
 					if client:getTotalAmmo(weaponSlot) >= math.abs(muni) then
 						takeWeapon(client, weaponId)
 						slot["WeaponId"] = weaponId
@@ -935,6 +959,8 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
+
+	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
 

@@ -58,7 +58,7 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups WHERE Deleted IS NULL", sql:getPrefix())
 	for k, row in ipairs(result) do
 		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans)
 		GroupManager.Map[row.Id] = group
@@ -82,7 +82,7 @@ end
 
 function GroupManager:loadFromId(Id)
 	if not GroupManager.Map[Id] then
-		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ?", sql:getPrefix(), Id)
+		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), Id)
 		if row then
 			local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 			local players = {}

@@ -228,7 +228,22 @@ function Fishing:FishHit(location, castPower)
 	local fish = self:getFish(location, time, weather, season, playerLevel, {baitName, accessorieName})
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
-		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
+		local randomMessage 
+		if not client:isInSewer() then 
+			randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
+		else 
+			local index = self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES_SEWERS)
+			randomMessage = FISHING_BAD_CATCH_MESSAGES_SEWERS[index]
+			if randomMessage ~= "nichts" then 
+				if math.random(1, 10) < 3 then 
+					if FISHING_BAD_CATCH_ITEMS_SEWERS[index] then 
+						client:getInventory():giveItem(FISHING_BAD_CATCH_ITEMS_SEWERS[index], 1)
+					end
+				else
+					randomMessage = "nichts"
+				end
+			end
+		end
 		client:meChat(true, ("zieht %s aus dem Wasser!"):format(randomMessage))
 		client:increaseStatistics("FishBadCatch")
 		return
@@ -593,6 +608,8 @@ function Fishing:getFishingRodEquipments(player, fishingRodName)
 
 	return equipements
 end
+
+function Fishing:isPlayerFishing(player) return self.m_Players[player] end
 
 function Fishing:addFishingRodEquipment(player, fishingRodName, equipment)
 	local playerInventory = player:getInventoryOld()

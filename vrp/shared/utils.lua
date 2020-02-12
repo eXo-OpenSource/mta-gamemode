@@ -1055,15 +1055,24 @@ end
 
 function getBiggestUnitByBytes(value)
 	if value < 1048576 then
-		return "KB/s"
+		return "KB"
 	end
-	return "MB/s"
+	return "MB"
 end
 
 function convertBytesToUnit(value, unit)
-	if unit == "MB/s" then
+	if unit == "MB" then
 		return value / 1048576
-	elseif unit == "KB/s" then
+	elseif unit == "KB" then
 		return value / 1024
 	end
+end
+
+function isValidPedModel(model)
+	for i, skin in ipairs(getValidPedModels()) do
+		if model == skin then
+			return true
+		end
+	end
+	return false
 end

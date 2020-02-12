@@ -94,6 +94,7 @@ function VehicleTuningShop:openFor(player, vehicle, garageId, specialType, admin
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position + vehicle:getBaseHeight(true))
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
+    player.m_VehicleTuningGarageVehicle = vehicle
     player.m_VehicleTuningGarageId = garageId
     player.m_VehicleTuningAdminMode = adminSession
 	player.m_WasBuckeled = getElementData(player, "isBuckeled")
@@ -181,11 +182,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
 			return
         end
 
-        -- Remove occupants
-        for seat, player in pairs(vehicle:getOccupants() or {}) do
-            if seat ~= 0 then
-                player:removeFromVehicle()
-            end
+        -- removing occupants via removeFromVehicle() is not save as laggs can delay removal and the occupants end up in the interior
+        if vehicle:getOccupantsCount(true) > 1 then 
+            hitElement:sendError(_("Lasse deine Mitfahrer zuerst aussteigen!", hitElement))
+            return
         end
 
         local vehicleType = vehicle:getVehicleType()
@@ -204,7 +204,8 @@ end
 function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
     local vehicle = client:getOccupiedVehicle()
     if not vehicle then return end
-
+    if not client.m_VehicleTuningGarageVehicle then return end 
+    if client.m_VehicleTuningGarageVehicle ~= vehicle then return end
     -- Calculate price
     local overallPrice = 0
     for slot, upgradeId in pairs(cartContent) do

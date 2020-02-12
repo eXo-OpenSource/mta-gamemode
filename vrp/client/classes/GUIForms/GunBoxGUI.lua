@@ -10,7 +10,7 @@ inherit(Singleton, GunBoxGUI)
 
 addRemoteEvents{"openGunBox", "receiveGunBoxData"}
 
-function GunBoxGUI:constructor()
+function GunBoxGUI:constructor(gunBoxObject)
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
 
     self.ms_SlotsSettings = {
@@ -46,7 +46,7 @@ function GunBoxGUI:constructor()
     self.m_ToBox.onLeftClick = function() self:ToBox() end
     self:loadPlayerWeapons()
 
-	triggerServerEvent("requestGunBoxData", localPlayer)
+	triggerServerEvent("requestGunBoxData", localPlayer, gunBoxObject.position.x, gunBoxObject.position.y, gunBoxObject.position.z)
 
 	addEventHandler("receiveGunBoxData", root, bind(self.refreshData, self))
 end

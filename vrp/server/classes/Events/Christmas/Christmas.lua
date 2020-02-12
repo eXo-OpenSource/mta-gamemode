@@ -2,33 +2,6 @@ Christmas = inherit(Singleton)
 
 Christmas.ms_Bonus = {
 	{
-		["Text"] = "radio",
-		["Image"] = "Bonus_Radio.png",
-		["Packages"] = 1,
-		["CandyCane"] = 5,
-		["Type"] = "Item",
-		["ItemName"] = "Radio",
-		["ItemAmount"] = 1
-	},
-	{
-		["Text"] = "250g Weed",
-		["Image"] = "Bonus_Weed.png",
-		["Packages"] = 3,
-		["CandyCane"] = 7,
-		["Type"] = "Item",
-		["ItemName"] = "weed",
-		["ItemAmount"] = 250
-	},
-	{
-		["Text"] = "Messer",
-		["Image"] = "Bonus_Knife.png",
-		["Packages"] = 5,
-		["CandyCane"] = 10,
-		["Type"] = "Weapon",
-		["WeaponId"] = 4,
-		["Ammo"] = 1
-	},
-	{
 		["Text"] = "15.000$",
 		["Image"] = "Bonus_Money.png",
 		["Packages"] = 5,
@@ -74,26 +47,19 @@ Christmas.ms_Bonus = {
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "FCR-900",
-		["Image"] = "Bonus_FCR.png",
-		["Packages"] = 350,
-		["CandyCane"] = 500,
+		["Text"] = "Mr. Whoopee",
+		["Image"] = "Bonus_Whoopee.png",
+		["Packages"] = 550,
+		["CandyCane"] = 850,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 521
-	},
-	{
-		["Text"] = "Remington",
-		["Image"] = "Bonus_Remington.png",
-		["Packages"] = 450,
-		["CandyCane"] = 700,
-		["Type"] = "Vehicle",
-		["VehicleModel"] = 534
+		["VehicleModel"] = 423
 	}
 }
 
 
 function Christmas:constructor()
-	self.m_QuestManager = QuestManager:new()
+	--self.m_QuestManager = QuestManager:new()
+	self.m_AdventCalender = {}
 
 	self.m_BankServerAccount = BankServer.get("event.christmas")
 
@@ -115,9 +81,10 @@ function Christmas:constructor()
 	createObject(3861, 1456.84, -1748.18, 13.72, 0, 0, 170) --QuestShop (before market opens) BonusShop (after Event)
 	createObject(3861, 1453.17, -1744.94, 13.72, 0, 0, 115) --Firework Shop
 
-	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
+	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus", "Christmas:openDoor"}
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
 	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
+	addEventHandler("Christmas:openDoor", root, bind(self.openDoor, self))
 end
 
 function Christmas:Event_requestBonusData()
@@ -189,4 +156,15 @@ function Christmas:Event_buyBonus(bonusId)
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Päckchen und %d Zuckerstange/n gekauft!", client, bonus["Text"], bonus["Packages"], bonus["CandyCane"]))
 	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Packages"], bonus["CandyCane"])
 
+end
+
+function Christmas:openDoor()
+	if not self.m_AdventCalender[client:getId()] then
+		if client:getInventory():giveItem("Päckchen", 5) then
+			client:sendSuccess("Du hast 5 Päckchen erhalten!")
+			self.m_AdventCalender[client:getId()] = true
+		end
+	else
+		client:sendError("Du hast das Türchen bereits geöffnet!")
+	end
 end

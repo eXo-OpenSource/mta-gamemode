@@ -178,6 +178,11 @@
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemPlayHouseCard.lua" type="server"/>
 
+	<!-- throwable -->
+	<script src="server/classes/Inventory/Throwable/ItemThrowShoe.lua" type="server"/>
+	<script src="server/classes/Inventory/Throwable/ItemThrowTrash.lua" type="server"/>
+	<script src="server/classes/Inventory/Throwable/ItemThrowBottle.lua" type="server"/>
+
 	<!-- wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Wearables/WearableHelmet.lua" type="server"/>
@@ -225,6 +230,9 @@
 
 	<!-- Radio Communication (WalkieTalkie) -->
 	<script src="server/classes/Gameplay/RadioCommunication.lua" type="server" />
+
+	<script src="server/classes/Gameplay/ThrowObject/ThrowObjectManager.lua" type="server" />
+	<script src="server/classes/Gameplay/ThrowObject/ThrowObject.lua" type="server" />
 
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
@@ -480,6 +488,7 @@
 	<!-- Halloween -->
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
+	<script src="server/classes/Events/Halloween/EasterEggs.lua" type="server"/>
 
 	<!-- Christmas -->
 	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
@@ -582,7 +591,7 @@
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
-	<script src="client/classes/Guns.lua" type="client"/>
+
 	<script src="client/classes/Help.lua" type="client"/>
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
@@ -590,9 +599,15 @@
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
-	<script src="client/classes/WeaponRecorder.lua" type="client"/>
 	<script src="client/classes/InfluxLogging.lua" type="client"/>
 	<script src="client/classes/Time.lua" type="client"/>
+
+
+	<script src="client/classes/Guns/Guns.lua" type="client"/>
+	<script src="client/classes/Guns/WeaponRecorder.lua" type="client"/>
+	<script src="client/classes/Guns/WeaponManager.lua" type="client"/>
+	<script src="client/classes/Guns/RocketLauncher.lua" type="client"/>
+	<script src="client/classes/Guns/SniperRifle.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
@@ -973,6 +988,8 @@
 
 	<script src="client/classes/GUIForms/PlayHouseShopGUI.lua" type="client"/>
 
+	<script src="client/classes/GUIForms/DialogGUI.lua" type="client"/>
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -1066,6 +1083,7 @@
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
@@ -1085,10 +1103,25 @@
 
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenSign.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenGhost.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/HalloweenTotem.lua" type="client"/>
+
+	<script src="client/classes/Events/Halloween/EasterEggs.lua" type="client"/>
+
+	<script src="client/classes/Events/Halloween/Quests/HalloweenQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/GhostFinderQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/GhostKillerQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/BigSmokeQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/KillBigSmokeQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/GhostMeetingQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/TotemQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/TotemCleanseQuest.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/Quests/PriestQuest.lua" type="client"/>
 
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
-	<!--<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/> -->
+	<!--<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>-->
 
 
 	<!-- Christmas -->
@@ -1096,6 +1129,7 @@
 	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/AdventCalenderGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestSantaKill.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestDraw.lua" type="client"/>
@@ -1147,6 +1181,7 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
+	<script src="client/classes/Gameplay/ThrowObject.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/InjurySystem/Damage.lua" type="client"/>
 	<script src="client/classes/Gameplay/InjurySystem/InjuryVisual.lua" type="client"/>
@@ -1269,6 +1304,8 @@
 
 	<vrpfile src="files/audio/Items/slam_arm.ogg" />
 
+	<vrpfile src="files/audio/weapon/rocket-effect.ogg" />
+	
 	<vrpfile src="files/images/warning.png" />
 
 	<vrpfile src="files/images/hit.png" />
@@ -1318,6 +1355,7 @@
 	<vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
 
 	<vrpfile src="files/images/Events/Bonus/Bonus_Bravura.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Broadway.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Deagle.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Dildo.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Heroin.png" />
@@ -1338,12 +1376,15 @@
 	<vrpfile src="files/images/Events/Bonus/Bonus_Radio.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Remington.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_FCR.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Whoopee.png" />
 
 
 
 	<vrpfile src="files/images/Events/Christmas/Quest.png" />
 	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />
 	<vrpfile src="files/images/Events/Christmas/QuestGray.png" />
+	<vrpfile src="files/images/Events/Christmas/Door.png" />
+	<vrpfile src="files/images/Events/Christmas/DoorGray.png" />
 
 	<vrpfile src="files/images/Events/BattleRoyaleBorder.png" />
 	<!-- Events End -->
@@ -1365,12 +1406,15 @@
 	<export function="phpSDKKickPlayer" type="server" http="true" />
 	<export function="phpSDKBanPlayer" type="server" http="true" />
 	<export function="phpSDKUnbanPlayer" type="server" http="true" />
+	<export function="phpSDKAddWarn" type="server" http="true" />
+	<export function="phpSDKRemoveWarn" type="server" http="true" />
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
 
 	<file src="files/images/turbo.png"/>
+
 	<file src="files/images/bullethitsmoke_original.png"/>
 
 	<!-- Needs to be file against manipulation -->
@@ -1546,6 +1590,14 @@
 	<vrpfile src="files/images/Weapons/44.png"/>
 	<vrpfile src="files/images/Weapons/45.png"/>
 	<vrpfile src="files/images/Weapons/46.png"/>
+
+	<vrpfile src="files/images/HUD/infrared/static.png"/>
+	<vrpfile src="files/images/HUD/infrared/lock.png"/>
+	<vrpfile src="files/images/HUD/infrared/light.png"/>
+	<vrpfile src="files/images/HUD/infrared/infrared.png"/>
+	<vrpfile src="files/images/HUD/infrared/focus.png"/>
+	<vrpfile src="files/images/HUD/infrared/slow.png"/>
+
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/Treatment.png"/>
@@ -1794,7 +1846,9 @@
 	<vrpfile src="files/images/Nametag/premium.png"/>
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
+	<vrpfile src="files/images/Nametag/Brigada.png"/>
 	<vrpfile src="files/images/Nametag/SASF.png"/>
+	<vrpfile src="files/images/Nametag/Brigada.png"/>
 	<vrpfile src="files/images/Nametag/Kartell.png"/>
 	<vrpfile src="files/images/Nametag/EPT.png"/>
 	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
@@ -1895,6 +1949,10 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
+
+	<vrpfile src="files/images/Textures/Faction/Yakuza/comptwall3.jpg"/>
+	<vrpfile src="files/images/Textures/Faction/Yakuza/FourDragons01_256.jpg"/>
+
 
 	<vrpfile src="files/images/Textures/Turtles/1.png"/>
 	<vrpfile src="files/images/Textures/Turtles/2.png"/>
@@ -2022,6 +2080,9 @@
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keycard.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Schuh.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Trash.png" />
+	<vrpfile src="files/images/Inventory/items/Items/EmptyBottle.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
@@ -2971,6 +3032,8 @@
 	<vrpfile src="files/audio/Ambient/sewer.mp3" />
 	<vrpfile src="files/audio/Ambient/serpent_dance.ogg" />
 	<vrpfile src="files/audio/Ambient/BENITRATOR.mp3" />
+	<vrpfile src="files/audio/Ambient/helicopter_internal.ogg" />
+
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
@@ -3149,7 +3212,12 @@
 
 	<vrpfile src="files/audio/sniper.ogg" />
 
-	<vrpfile src="files/audio/battleroyaledeath.ogg" />
+	<vrpfile src="files/audio/halloween/cemetery.mp3" />
+	<vrpfile src="files/audio/halloween/evil_laugh.mp3" />
+	<vrpfile src="files/audio/halloween/evil_lullaby.mp3" />
+	<vrpfile src="files/audio/halloween/laser.mp3" />
+	<vrpfile src="files/audio/halloween/scarymusic.mp3" />
+	<vrpfile src="files/audio/halloween/smokescream.mp3" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/piss.dff" />
@@ -3188,6 +3256,10 @@
 	<vrpfile src="files/models/buildings/kart.txd" />
 	<vrpfile src="files/models/buildings/kart.dff" />
 	<vrpfile src="files/models/buildings/kart.col" />
+
+	<!--Events-->
+	<vrpfile src="files/models/events/halloween/shotgspa.txd"/>
+	<vrpfile src="files/models/events/halloween/shotgspa.dff"/>
 
 	<!--Pickups-->
 	<vrpfile src="files/models/pickups/arrow.txd" />
@@ -3229,6 +3301,8 @@
 	<vrpfile src="files/models/objects/worldItems/mushroom01.col"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom02.dff"/>
 	<vrpfile src="files/models/objects/worldItems/mushroom02.col"/>
+	<vrpfile src="files/models/objects/worldItems/boot.dff"/>
+	<vrpfile src="files/models/objects/worldItems/boot.txd"/>
 	<vrpfile src="files/models/objects/mostWanted.txd" />
 	<vrpfile src="files/models/objects/mostWanted.dff" />
 	<vrpfile src="files/models/objects/mostWanted.col" />
@@ -3293,8 +3367,8 @@
 	<vrpfile src="files/models/objects/XmasBox.txd" />
 	<vrpfile src="files/models/objects/XmasBox.dff" />
 	<vrpfile src="files/models/objects/XmasBox.col" />
-	<vrpfile src="files/models/skins/snowman.txd" />
-	<vrpfile src="files/models/skins/snowman.dff" />
+	<vrpfile src="files/models/skins/santaThin.txd" />
+	<vrpfile src="files/models/skins/santaThin.dff" />
 	<!-- Christmas Event End-->
 
 	<!--Skins-->
@@ -3343,6 +3417,9 @@
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
+	<vrpfile src="files/shader/thermal.fx"/>
+	<vrpfile src="files/shader/thermal-anti.fx"/>
+	<vrpfile src="files/shader/thermal-ped.fx"/>
 	<vrpfile src="files/shader/texreplace.fx"/>
 	<vrpfile src="files/shader/shell_layer.fx"/>
 	<vrpfile src="files/shader/cuttexture.fx"/>
@@ -3356,10 +3433,11 @@
 	<vrpfile src="files/shader/monochrome.fx"/>
 	<vrpfile src="files/shader/mapeditorColorize.fx"/>
 	<vrpfile src="files/shader/vignette.fx"/>
-	<file src="files/shader/cylinder.fx"/>
-
-
+	<vrpfile src="files/shader/cylinder.fx"/>
 	<vrpfile src="files/shader/zoomBlur.fx"/>
+	<vrpfile src="files/shader/pedSize.fx"/>
+	<vrpfile src="files/shader/pedWall.fx"/>
+
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
@@ -3396,6 +3474,7 @@
 	<!-- Includes -->
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
+	<include resource="helicopterdriveby" />
 	<include resource="reload"/>
 	<include resource="helicopterrope" />
 	<include resource="heligrab" />

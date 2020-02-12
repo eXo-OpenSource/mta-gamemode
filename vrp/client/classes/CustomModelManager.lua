@@ -207,12 +207,17 @@ function CustomModelManager:constructor()
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
 
-		self:loadImportTXD("files/models/skins/snowman.txd", 260)
-		self:loadImportDFF("files/models/skins/snowman.dff", 260)
+		self:loadImportTXD("files/models/skins/santaThin.txd", 260)
+		self:loadImportDFF("files/models/skins/santaThin.dff", 260)
 
 		self:loadImportTXD("files/models/vehicles/reindeerSledge.txd", 609)
 		self:loadImportDFF("files/models/vehicles/reindeerSledge.dff", 609)
 	end
+
+	-- SCHUH ZUM WERFEN
+	self:loadImportTXD("files/models/objects/worldItems/boot.txd", 1901)
+	self:loadImportDFF("files/models/objects/worldItems/boot.dff", 1901)
+
 
 	--Easter Event:
 	self:loadImportCOL("files/models/objects/worldItems/easter_egg.col", 1933)
@@ -233,6 +238,8 @@ function CustomModelManager:constructor()
 	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")
 	--self:loadShader("RoadSigns/trans.png", "txgrass0_1")
 	self:loadShader("Other/trans.png", "txgrass1_1")
+
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

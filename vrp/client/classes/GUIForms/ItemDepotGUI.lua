@@ -27,7 +27,7 @@ function ItemDepotGUI:constructor()
     self.m_AmountLabel = GUILabel:new(10, 325, 250, 30, _"Item-Anzahl:", self.m_Window)
     self.m_Amount = GUIEdit:new(10, 355, 250, 30, self.m_Window)
     self.m_AmountLabel:setVisible(false)
-    self.m_Amount:setVisible(false)
+    self.m_Amount:setVisible(false):setNumeric(true, true)
     self.m_Amount.onChange = function()
         self:checkAmount()
     end

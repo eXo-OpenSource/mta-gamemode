@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.8.2"
+PROJECT_VERSION = "1.8.3"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -28,7 +28,7 @@ EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
-EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+EVENT_CHRISTMAS_MARKET = false --(EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
 SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
@@ -233,7 +233,9 @@ ADMIN_RANK_PERMISSION = {
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
 
-	["disablereg"] = RANK.Servermanager --disablereg, enablereg
+	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
+
+	["throwaway"] = RANK.Moderator,
 }
 
 GroupRank = {
@@ -347,19 +349,19 @@ SkinInfo = {
 	[0] = {"CJ", 5000},
 	[2] = {"Weißer Hut", 50},
 	[7] = {"Jeans-Jacke", 50},
-	[14] = { "Hawai-Shirt", 50},
-	[15] = { "Karriertes Hemd", 70},
-	[17] = {"Buisiness", 120},
+	[14] = { "Hawaii-Shirt", 50},
+	[15] = { "Kariertes Hemd", 70},
+	[17] = {"Business", 120},
 	[18] = {"Strandboy",20},
 	[19] = {"Rapper", 50},
 	[20] = {"Gelbes Shirt",90},
-	[21] = {"Blau karriertes Hemd", 80},
+	[21] = {"Blau kariertes Hemd", 80},
 	[22] = {"Rapper 2", 100},
 	[23] = {"Skater", 50},
 	[24] = {"Los Santos Jacke",60},
-	[25] = {"College Jacke", 80},
+	[25] = {"College-Jacke", 80},
 	[26] = {"Camper", 100},
-	[28] = {"Tank top",60},
+	[28] = {"Tank Top",60},
 	[29] = {"Hoodie",50},
 	[30] = {"Tanktop Kreuz", 100},
 	[32] = {"Augenklappe", 80},
@@ -367,39 +369,39 @@ SkinInfo = {
 	[34] = {"Cowboy", 80},
 	[35] = {"Anglerhut", 90},
 	[36] = {"Baseball Cap",100},
-	[37] = {"Baseball Cap2",90},
-	[43] = {"Daddy cool",100},
+	[37] = {"Baseball Cap 2",90},
+	[43] = {"Daddy Cool",100},
 	[46] = {"Weißes Hemd, Kette", 120},
 	[47] = {"Grünes Hemd", 100},
 	[48] = {"Blau weiß gestreift",90},
-	[57] = { "Anzug ( Asiate )", 100},
-	[58] = {"Zinkrot Hemd ( Asiate )", 80},
+	[57] = { "Anzug (Asiate)", 100},
+	[58] = {"Zinkrotes Hemd (Asiate)", 80},
 	[59] = {"Gestreiftes Hemd", 70},
 	[60] = {"Pullover, Jeans", 90},
-	[66] = {"College Jacke2", 80},
-	[73] = {"Army jeans, Sandalen", 100},
-	[94] = {"Golf Outfit", 90},
+	[66] = {"College-Jacke 2", 80},
+	[73] = {"Army Jeans, Sandalen", 100},
+	[94] = {"Golf-Outfit", 90},
 	[97] = {"Strand 2", 40},
-	[98] = {"Polo-Hemd, jeans", 100},
+	[98] = {"Polo-Hemd, Jeans", 100},
 	[100] = {"Biker", 130},
 	[101] = {"Parker-Jacke", 120},
 	[133] = {"Trucker, rote Cap", 140},
 	[136] = {"Ganja-Mütze, rote jeans", 80},
-	[142] = {"Festtagsgewand ( Afrikaner )", 100},
-	[143] = {"Sonnenbrille, blaue jacke", 100},
+	[142] = {"Festtagsgewand (Afrikaner)", 100},
+	[143] = {"Sonnenbrille, blaue Jacke", 100},
 	[144] = {"Maske, Afro", 120},
 	[146] = {"Maske, Sandalen", 130},
 	[147] = {"Business-Anzug, Grau",160},
-	[154] = {"Strand3", 40},
+	[154] = {"Strand 3", 40},
 	[158] = {"Cowboy 2", 60},
 	[161] = {"Cowboy 3", 70},
 	[170] = {"Roter Pullover", 90},
 	[171] = {"Anzug, Fliege", 170},
-	[177] = {"Frasier-Schnitt, blaues shirt", 90},
+	[177] = {"Undercut, blaues Shirt", 90},
 	[176] = {"Blaues Shirt", 120},
-	[179] = {"Army tanktop, Dogtags", 90},
+	[179] = {"Army Tank Top, Dogtags", 90},
 	[180] = {"Basketball-Shirt", 60},
-	[184] = {"Blau weiß Schwarzes Shirt", 90},
+	[184] = {"Blau-Weiß-Schwarzes Shirt", 90},
 	[206] = {"Olives Shirt", 100},
 
 	[1] = {"Offenes Hemd", 50},
@@ -408,22 +410,22 @@ SkinInfo = {
 	[12] = {"Schwarzes Kleid", 120},
 	[31] = {"Farmerin", 70},
 	[38] = {"Golferin", 80},
-	[39] = {"Alte Dame", 60},
+	[39] = {"Alte Dame 2", 60},
 	[40] = {"Roter Rock", 100},
 	[41] = {"Trainingsanzug", 60},
 	[45] = {"Grüne Badehose", 50},
 	[53] = {"Golferin 2", 80},
 	[55] = {"Gestreifter Rock", 80},
-	[56] = {"Rock mit grünes Oberteil", 70},
+	[56] = {"Rock mit grünem Oberteil", 70},
 	[62] = {"Opa in Schlafanzug", 50},
-	[67] = {"Gangster mit weißen Oberteil", 70},
+	[67] = {"Gangster mit weißem Oberteil", 70},
 	[69] = {"Jeanshose, Jeansoberteil", 60},
 	[72] = {"Trucker mit Bart", 60},
 	[76] = {"Business Dame", 130},
 	[88] = {"Alte Dame mit roten Oberteil", 60},
 	[91] = {"Weißer Rock", 80},
 	[95] = {"Armer Rentner", 90},
-	[148] = {"Frau mit blauen Anzug", 120},
+	[148] = {"Frau mit blauem Anzug", 120},
 	[150] = {"Frau mit gestreifter Kleidung", 110},
 	[157] = {"Bauerin", 60},
 	[170] = {"Rotes T-Shirt", 70},
@@ -433,11 +435,11 @@ SkinInfo = {
 	[190] = {"Frau Bauchfrei", 80},
 	[193] = {"Frau Bauchfrei 2", 80},
 	[214] = {"Weißes Kleid", 120},
-	[215] = {"Weiße Rose mit gelben Oberteil", 100},
+	[215] = {"Weiße Hose mit gelbem Oberteil", 100},
 	[223] = {"Gangster mit Goldkette", 120},
 	[241] = {"Afro mit Bierbauch", 100},
 	[249] = {"Zuhälter", 250},
-	[250] = {"Mann mit grünes T-Shirt", 80},
+	[250] = {"Mann mit grünem T-Shirt", 80},
 	[258] = {"Kariertes Hemd", 100},
 	[259] = {"Kariertes Hemd 2", 100},
 	[261] = {"Trucker mit Bart 2", 60},
@@ -685,6 +687,7 @@ FactionStaticId = {
 	OUTLAWS = 9,
 	VATOS = 10,
 	TRIAD = 11,
+	BRIGADA = 12,
 }
 
 SEASONS = {
@@ -695,3 +698,10 @@ SEASONS = {
 }
 
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect
+
+CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwards", "backwards", "left", "right", "zoom_in", "zoom_out",
+ "change_camera", "jump", "sprint", "look_behind", "crouch", "action", "walk", "conversation_yes", "conversation_no",
+ "group_control_forwards", "group_control_back", "enter_exit", "vehicle_fire", "vehicle_secondary_fire", "vehicle_left", "vehicle_right",
+ "steer_forward", "steer_back", "accelerate", "brake_reverse", "radio_next", "radio_previous", "radio_user_track_skip", "horn", "sub_mission",
+ "handbrake", "vehicle_look_left", "vehicle_look_right", "vehicle_look_behind", "vehicle_mouse_look", "special_control_left", "special_control_right",
+ "special_control_down", "special_control_up" }

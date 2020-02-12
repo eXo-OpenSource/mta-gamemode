@@ -79,6 +79,11 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 			self.m_Ped:setDimension(dimension)
 			self.m_Ped:setFrozen(true)
 		end
+		if typeData["PedAnimation"] then
+			self.m_AnimationColShape = createColSphere(pedPosition, 75)
+			self.m_PedAnimationBlock, self.m_PedAnimation = unpack(typeData["PedAnimation"])
+			addEventHandler("onColShapeHit", self.m_AnimationColShape, bind(self.onAnimationColShapeHit, self))
+		end
 	end
 
 	if self.m_Ped then
@@ -280,5 +285,11 @@ function Shop:save()
 	if sql:queryExec("UPDATE ??_shops SET LastRob = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_LastRob, self.m_OwnerId, self.m_Id) then
 	else
 		outputDebug(("Failed to save Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))
+	end
+end
+
+function Shop:onAnimationColShapeHit(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		self.m_Ped:setAnimation(self.m_PedAnimationBlock, self.m_PedAnimation)
 	end
 end

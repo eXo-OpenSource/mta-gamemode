@@ -27,6 +27,7 @@ end
 
 function DatabasePlayer:destructor()
 	self:save()
+	outputServerLog("[DATABASE-PLAYER] Unloaded player with id " .. tostring(self.m_Id))
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -202,15 +203,7 @@ function DatabasePlayer:save()
 			spawnFac = 0
 		end
 
-		local row = sql:queryFetchSingle("SELECT Id FROM ??_accountActivity WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
-		local timeDiff = self:getPlayTime() - self.m_StartTime
-		if not row then
-			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(),
-			self.m_LoginTime, self:getId(), self.m_LoginTime, timeDiff)
-		else
-			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(),
-			timeDiff, row.Id)
-		end
+		self:saveAccountActivity()
 
 		if self:isActive() then
 			return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ?, WalkingStyle = ?, RadioCommunication = ?, Injury = ? WHERE Id=?", sql:getPrefix(),
@@ -221,6 +214,66 @@ function DatabasePlayer:save()
 		end
 	end
 	return false
+end
+
+function DatabasePlayer:saveAccountActivity()
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_account_activity WHERE UserId = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
+	local timeDiff = self:getPlayTime() - self.m_StartTime
+	local dutyMinutes = getElementData(self, "dutyTime") or 0
+
+	if not row then
+		sql:queryExec("INSERT INTO ??_account_activity (Date, UserId, SessionStart, Duration, DurationDuty) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?);", sql:getPrefix(),
+		self.m_LoginTime, self:getId(), self.m_LoginTime, timeDiff, dutyMinutes)
+	else
+		sql:queryExec("UPDATE ??_account_activity SET Duration = ?, DurationDuty = ? WHERE Id = ?;", sql:getPrefix(),
+		timeDiff, dutyMinutes, row.Id)
+	end
+
+	--[[
+		TODO: create rollover logic to new day
+	]]
+	local time = self.m_LastActivitySave or self.m_LoginTime
+
+	local playingTimeFaction = getElementData(self, "playingTimeFaction") or 0
+	local dutyTimeFaction = getElementData(self, "dutyTimeFaction") or 0
+
+	local playingTimeCompany = getElementData(self, "playingTimeCompany") or 0
+	local dutyTimeCompany = getElementData(self, "dutyTimeCompany") or 0
+
+	local playingTimeGroup = getElementData(self, "playingTimeGroup") or 0
+
+	if self:getFaction() then
+		sql:queryExec([[
+			INSERT INTO ??_account_activity_group (Date, UserId, ElementId, ElementType, Duration, DurationDuty) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE Duration = Duration + ?, DurationDuty = DurationDuty + ?
+		]], sql:getPrefix(),
+			time, self:getId(), self:getFaction().m_Id, VehicleTypes.Faction, playingTimeFaction, dutyTimeFaction, playingTimeFaction, dutyTimeFaction)
+
+		setElementData(self, "playingTimeFaction", 0)
+		setElementData(self, "dutyTimeFaction", 0)
+	end
+
+	if self:getCompany() then
+		sql:queryExec([[
+			INSERT INTO ??_account_activity_group (Date, UserId, ElementId, ElementType, Duration, DurationDuty) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE Duration = Duration + ?, DurationDuty = DurationDuty + ?
+		]], sql:getPrefix(),
+		time, self:getId(), self:getCompany().m_Id, VehicleTypes.Company, playingTimeCompany, dutyTimeCompany, playingTimeCompany, dutyTimeCompany)
+
+		setElementData(self, "playingTimeCompany", 0)
+		setElementData(self, "dutyTimeCompany", 0)
+	end
+
+	if self:getGroup() then
+		sql:queryExec([[
+			INSERT INTO ??_account_activity_group (Date, UserId, ElementId, ElementType, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE Duration = Duration + ?
+		]], sql:getPrefix(),
+		time, self:getId(), self:getGroup().m_Id, VehicleTypes.Group, playingTimeGroup, playingTimeGroup)
+		setElementData(self, "playingTimeGroup", 0)
+	end
+
+	self.m_LastActivitySave = getRealTime().timestamp
 end
 
 function DatabasePlayer.getFromId(id)

@@ -48,7 +48,7 @@ function PlayHouse:constructor()
     atm = createObject(2942, 495.604-1, 497.160, 1055.415, 0, 0, 180)
     atm:setInterior(12)
 
-    GlobalTimer:getSingleton():registerEvent(bind(self.open, self), "PlayHouseOpen", nil, 22, 00)
+    --GlobalTimer:getSingleton():registerEvent(bind(self.open, self), "PlayHouseOpen", nil, 22, 00)
 
     local query = "CREATE TABLE IF NOT EXISTS `??_PlayhousePlayers`  (" ..
     "`UserId` INT NOT NULL," ..

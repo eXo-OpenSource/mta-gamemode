@@ -45,6 +45,10 @@ function FactionVehicle:constructor(data)
 		end)
 	end
 
+	if (self.getFaction and self:isStateVehicle() and self:getModel() == 497) or (self.getFaction and (self:isRescueVehicle() and (self:getModel() == 417 or self:getModel() == 487 or self:getModel() == 497)))  then 
+		self:setInfrared(true)
+	end
+
 	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
 		self:setMaxHealth(1500, true)
 		self:setDoorsUndamageable(true)
@@ -236,7 +240,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 				minRank, forFaction = unpack(FACTION_TRUNK_SWAT_ITEM_PERMISSIONS[itemName])
 			end
 			if player:getFaction():getPlayerRank(player) >= minRank then
-				if forFaction == 0 or forFaction == player:getFaction():getId() then
+				if not forFaction or forFaction == 0 or forFaction == player:getFaction():getId() then
 					if not isEquipment then
 						self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
 						player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
@@ -251,7 +255,9 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 						player:getFaction():addLog(player, "Item", ("hat %d %s für $%s gekauft!"):format(amount, itemName, price))
 					end
 				else 
-					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction) and FactionManager:getSingleton():getFromId(forFaction):getName()))
+					if forFaction and forFaction > 0 then
+						player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction) and FactionManager:getSingleton():getFromId(forFaction):getName()))
+					end
 				end
 			else 
 				player:sendError(_("Du kannst dieses Item nicht kaufen!", player))

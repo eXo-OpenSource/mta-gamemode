@@ -247,6 +247,7 @@ end
 function Admin:addAdmin(player,rank)
 	--outputDebug("Added Admin "..player:getName()) (gets outputted already (ACL addObject))
 	self.m_OnlineAdmins[player] = rank
+	player:triggerEvent("setClientAdmin", player, rank)
 	if DEBUG then
     	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
 	end
@@ -258,7 +259,6 @@ function Admin:addAdmin(player,rank)
 		if self.m_MtaAccounts[player] then
 			player:logIn(self.m_MtaAccounts[player], pw)
 			ACLGroup.get("Admin"):addObject("user."..user)
-			player:triggerEvent("setClientAdmin", player, rank)
 		end
     end
 end
@@ -330,7 +330,7 @@ end
 
 function Admin:Event_respawnFactionVehicles(Id)
     local faction = FactionManager:getSingleton():getFromId(Id)
-    if faction then
+    if faction and client:getRank() >= RANK.Supporter then
         faction:respawnVehicles(client)
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
     end
@@ -338,7 +338,7 @@ end
 
 function Admin:Event_respawnCompanyVehicles(Id)
     local company = CompanyManager:getSingleton():getFromId(Id)
-    if company then
+    if company and client:getRank() >= RANK.Supporter then
         company:respawnVehicles(client)
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, company:getName()))
     end
@@ -356,7 +356,9 @@ function Admin:Event_getOfflineWarns(target)
 	end
 end
 
-function Admin:command(admin, cmd, targetName, arg1, arg2)
+function Admin:command(admin, cmd, targetName, ...)
+	local argTable = {...}
+	local arg1, arg2 = argTable[1], argTable[2]
 
 	if cmd == "aduty" or cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
@@ -403,12 +405,15 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                     return
                 else
                     if arg1 then
-                        if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
-                            self:Event_playerFunction(cmd, target, arg1, 0, admin)
+						if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
+							local reason = table.concat(argTable," ")
+                            self:Event_playerFunction(cmd, target, reason, 0, admin)
                             return
                         else
-                            if arg2 then
-                                self:Event_playerFunction(cmd, target, arg2, arg1, admin)
+							if arg2 then
+								table.remove(argTable, 1)
+								local reason = table.concat(argTable," ")
+                                self:Event_playerFunction(cmd, target, reason, arg1, admin)
                                 return
                             else
                                 admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
@@ -628,7 +633,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 	elseif func == "spect" then
 		if not target then return end
 		--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
-		if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
+		if admin:getPrivateSync("isSpecting") then 
+			if (type(admin.m_SpectStop) == "function") then 
+				admin.m_SpectStop() 
+			else 
+				admin:sendError("Beende das spectaten zuerst!") 
+				return 
+			end 
+		end
 
 		admin.m_IsSpecting = true
 		admin:setPrivateSync("isSpecting", target)
@@ -663,7 +675,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) --trig
+				if (admin ~= target) then removeEventHandler("onPlayerQuit", admin, admin.m_SpectStop) end
 
 			end
 
@@ -684,7 +696,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 		addEventHandler("onPlayerQuit", admin, admin.m_SpectStop)
-		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+		if (admin ~= target) then addEventHandler("onPlayerQuit", target, admin.m_SpectStop) end
 		bindKey(admin, "space", "down", admin.m_SpectStop)
 
 		admin:setFrozen(true)
@@ -712,6 +724,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
 		else
 			admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
+		end
+	elseif func == "throwaway" then 
+		if target and isElement(target) then 
+			if target.vehicle then 
+				target:removeFromVehicle()
+			end
+			ThrowObject:new(admin, target:getModel()):replaceEntity(target)
+			StatisticsLogger:getSingleton():addAdminAction(admin, "Spielerwurf", target)
 		end
     end
 end
@@ -1097,7 +1117,8 @@ local tpTable = {
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(2406.46, -2089.79, 13.55),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-		["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
+		["lcn"] =           {["pos"] = Vector3(297.88, -1156.61, 80.9),		["typ"] = "Fraktionen"},
+		["brigada"] =       {["pos"] = Vector3(297.88, -1156.61, 80.9),		["typ"] = "Fraktionen"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
@@ -1106,9 +1127,9 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["vatos"] =         {["pos"] = Vector3(1882.53, -2029.32, 13.39),	["typ"] = "Fraktionen"},
-		["triaden"] =       {["pos"] = Vector3(1900.384, 954.533, 10.820),	["typ"] = "Fraktionen"},
+		["yakuza"] =       	{["pos"] = Vector3(971.63, -1099.07, 23.90),	["typ"] = "Fraktionen"},
 		["kartell"] =       {["pos"] = Vector3(2529.555, -1465.829, 23.94), ["typ"] = "Fraktionen"},
-		["biker"] =         {["pos"] = Vector3(752.73, 326.17, 19.88),  	["typ"] = "Fraktionen"},
+		["biker"] =         {["pos"] = Vector3(681.93, -478.47, 16.34),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
@@ -1747,8 +1768,7 @@ function Admin:Event_adminDeleteAccountFromSerial(userId, serial)
 end
 
 function Admin:toggleInvisible(player)
-	if player:getRank() ~= RANK.Scripter then
-		player:sendError("Du bist nicht berechtigt!")
+	if player:getRank() ~= RANK.Developer then
 		return
 	end
 

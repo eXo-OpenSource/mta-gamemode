@@ -7,13 +7,16 @@
 -- ****************************************************************************
 MonochromeShader = inherit(Object)
 
-function MonochromeShader:constructor()
+function MonochromeShader:constructor(external)
+	self.m_External = external
 	self.m_MonochromeShader = dxCreateShader("files/shader/monochrome.fx")
 	self.m_ScreenSource = dxCreateScreenSource(screenWidth, screenHeight)
     self.m_Active = true
     self.m_Color = tocolor(255, 255, 255, 255)
 	self.m_Update = bind(self.update, self)
-	addEventHandler("onClientPreRender", root, self.m_Update)
+	if not external then
+		addEventHandler("onClientPreRender", root, self.m_Update)
+	end
 end
 
 function MonochromeShader:update()
@@ -23,7 +26,9 @@ function MonochromeShader:update()
 		self.m_MonochromeShader:setValue("ScreenTexture", self.m_ScreenSource)
 		
 		self.m_Ready = true
-		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_MonochromeShader, 0, 0, 0, self.m_Color)
+		if not self.m_External then
+			dxDrawImage(0, 0, screenWidth, screenHeight, self.m_MonochromeShader, 0, 0, 0, self.m_Color)
+		end
 	end
 end
 
@@ -63,3 +68,5 @@ function MonochromeShader:flash()
         Animation.FadeOut:new(self, 500)
     end, 300, 1)
 end
+
+function MonochromeShader:getSource() return self.m_MonochromeShader end

@@ -51,6 +51,7 @@ function phpSDKSendOnlinePlayers()
 				["Faction"] = player:getFaction() and player:getFaction():getId() or 0,
 				["Company"] = player:getCompany() and player:getCompany():getId() or 0,
 				["GroupId"] = player:getGroup() and player:getGroup():getId() or 0,
+				["PlayTime"] = player:getPlayTime() or 0,
 			}
 			i = i+1
 		end
@@ -79,12 +80,16 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 	local target = DatabasePlayer.Map[targetId]
 
 	if not isElement(target) or target:getType() ~= "player" then
-		return "Der Spieler ist nicht online!"
+		local data = toJSON({status = "ERROR", error = "TARGET_OFFLINE"}, true)
+		outputServerLog(data:sub(2, #data-1))
+		return data:sub(2, #data-1)
 	end
 
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		outputServerLog(data:sub(2, #data-1))
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -93,7 +98,12 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 	Admin:getSingleton():sendShortMessage(_("%s hat %s gekickt! Grund: %s", nil, adminName, targetName, reason))
 	outputChatBox("Der Spieler "..targetName.." wurde von "..adminName.." gekickt!",root, 200, 0, 0)
 	outputChatBox("Grund: "..reason,root, 200, 0, 0)
-	kickPlayer(target, admin, reason)
+
+	if isElement(admin) then
+		kickPlayer(target, admin, reason)
+	else
+		kickPlayer(target, reason)
+	end
 
 	if aCreated then
 		delete(admin)
@@ -103,18 +113,22 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich gekickt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	outputServerLog(data:sub(2, #data-1))
+	return data:sub(2, #data-1)
 end
 
 function phpSDKBanPlayer(adminId, targetId, duration, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
-		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
@@ -125,13 +139,13 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 		Admin:getSingleton():addPunishLog(adminId, targetId, "permabanCP", reason, 0)
 		outputChatBox(_("Der Spieler %s  wurde von %s gebannt!", nil, targetName, adminName), root, 200, 0, 0)
 		outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
-		Ban.addBan(targetId, adminId, reason, 0)
+		Ban.addBan(targetId, adminId, reason, 0, adminName)
 	else -- time
 		Admin:getSingleton():sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", nil, adminName, targetName, duration, reason))
 		Admin:getSingleton():addPunishLog(adminId, targetId, "timebanCP", reason, duration * 60 * 60)
 		outputChatBox(_("Der Spieler %s  wurde von %s für %d Stunden gebannt!", nil, targetName, adminName, duration), root, 200, 0, 0)
 		outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
-		Ban.addBan(targetId, adminId, reason, duration * 60 * 60)
+		Ban.addBan(targetId, adminId, reason, duration * 60 * 60, adminName)
 	end
 
 	if aCreated then
@@ -142,25 +156,28 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich gebannt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
 end
 
 function phpSDKUnbanPlayer(adminId, targetId, reason)
 	local admin, aCreated = DatabasePlayer.get(adminId)
 	if not admin then
-		return "Es konnte kein Spieler mit der ID " .. adminId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
-		return "Es konnte kein Spieler mit der ID " .. targetId .. " gefunden werden!"
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
 	local adminName = Account.getNameFromId(adminId)
 	local targetName = Account.getNameFromId(targetId)
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s offline entbannt!", nil, adminName, targetName))
-	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", "", 0)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", nil, 0)
 	sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
 	outputChatBox(_("Der Spieler %s  wurde von %s entbannt!", nil, targetName, adminName), root, 200, 0, 0)
 
@@ -172,5 +189,74 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 		delete(target)
 	end
 
-	return targetName .. " wurde erfolgreich entbannt!"
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
+end
+
+function phpSDKAddWarn(adminId, targetId, duration, reason)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	Warn.addWarn(targetId, adminId, reason, duration*60*60*24)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineWarnCP", reason, duration*60*60*24)
+	Admin:getSingleton():sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", nil, adminName, targetName, duration, reason))
+
+	if target and isElement(target) then
+		target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, adminName, duration, reason), 255, 0, 0)
+	end
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
+end
+
+function phpSDKRemoveWarn(adminId, targetId, warnId)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	Warn.removeWarn(targetId, warnId)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "removeOfflineWarnCP", nil, 0)
+	Admin:getSingleton():sendShortMessage(_("%s hat einen Warn von %s entfernt!", nil, adminName, targetName))
+
+	if aCreated then
+		delete(admin)
+	end
+
+	if tCreated then
+		delete(target)
+	end
+
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
 end

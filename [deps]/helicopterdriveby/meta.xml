@@ -1,0 +1,7 @@
+<meta>
+	<info author="SycroX = #x1AhMeD,-09" version="1.0.1" type="script" name="Helicopter Drive By" />
+	
+	<script src="client.lua" type="client" cache="false"/>	
+	<script src="server.lua" type="server" />
+	<script src="Settings.lua" type="server" />
+</meta>

@@ -112,18 +112,18 @@ Tour.Data = {
 		["Money"] = 10000
 	},
 	{
-		["Title"] = "Fahrzeug verschwunden",
-		["Description"] = "Kommen wir nun zum Unternehmen Mechanic & Tow. Fahre zum Abschlepphof!",
-		["Success"] = "Hier können abgeschleppte oder explodierte Fahrzeuge freigekauft werden. Schaue dazu rechts im Hof ins Glashaus.",
-		["Position"] = Vector3(925.55, -1221.33, 15.98),
-		["Money"] = 500
-	},
-	{
 		["Title"] = "Hier müffelt was",
 		["Description"] = "Riechst du das auch? Du solltest dringend deine Kleidung wechseln!",
 		["Success"] = "Dies ist der billige Kleidungsshop. Wenn du willst kannst natürlich auch gehobene Kleidung im Westen der Stadt kaufen...",
 		["Position"] = Vector3(2245.26, -1662.27, 14.47),
 		["Money"] = 100
+	},
+	{
+		["Title"] = "Fahrzeug verschwunden",
+		["Description"] = "Kommen wir nun zum Unternehmen Mechanic & Tow. Fahre zum Abschlepphof!",
+		["Success"] = "Hier können abgeschleppte oder explodierte Fahrzeuge freigekauft werden. Schaue dazu rechts im Hof ins Glashaus.",
+		["Position"] = Vector3(2468.78, -2092.85, 13),
+		["Money"] = 500
 	},
 	{
 		["Title"] = "Pizza Pizza",

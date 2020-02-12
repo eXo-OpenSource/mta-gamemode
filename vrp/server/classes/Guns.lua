@@ -47,10 +47,11 @@ function Guns:constructor()
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage", "startGrenadeThrow", "disableGrenadeAimLeave"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage", "startGrenadeThrow", "disableGrenadeAimLeave", "Guns:onClientRocketLauncherFire"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
+	addEventHandler("Guns:onClientRocketLauncherFire", root, bind(self.Event_syncRocketLauncherEffect, self))
 
 	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
@@ -80,6 +81,7 @@ function Guns:Event_onTaser(target)
 	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
 	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle then return end
+	if target:getPublicSync("supportMode") then return end
 
 	client:giveAchievement(65)
 
@@ -186,7 +188,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 	if isElement(killer) and getElementType(killer) == "vehicle" then
 		killer = killer.controller
 	end
-	if killer and isElement(killer) and weapon then
+	if killer and isValidElement(killer, "player") and weapon then
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
 		killer:triggerEvent("clientMonochromeFlash")
 	end
@@ -413,6 +415,14 @@ function Guns:Event_onGunLogCacheTick()
 	for id, cacheObj in pairs(self.m_DamageLogCache) do
 		if now >= cacheObj["CacheTime"] + GUN_CACHE_EMPTY_INTERVAL then
 			self:forceDamageLogCache(  id )
+		end
+	end
+end
+
+function Guns:Event_syncRocketLauncherEffect(start, stop, back)
+	for key, player in pairs(getElementsByType("player")) do 
+		if player ~= client and player:getInterior() == client:getInterior() and player:getDimension() == client:getDimension() then 
+			player:triggerEvent("RocketLauncher:syncRocketEffect", start, stop, back)
 		end
 	end
 end

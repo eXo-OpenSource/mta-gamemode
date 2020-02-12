@@ -212,6 +212,9 @@ function Company:removePlayer(playerId)
 	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
+		player:saveAccountActivity()
+		setElementData(player, "playingTimeCompany", 0)
+		setElementData(player, "dutyTimeCompany", 0)
 		player:setCompany(nil)
 		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deinem Unternehmen entlassen!", player))
@@ -334,7 +337,7 @@ function Company:getActivity(force)
 		table.insert(playerIds, playerId)
 	end
 
-	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+	local query = "SELECT UserId, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_account_activity WHERE UserId IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserId"
 
 	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
 
@@ -352,7 +355,7 @@ function Company:getActivity(force)
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[row.UserID] = activity
+		self.m_PlayerActivity[row.UserId] = activity
 	end
 end
 
@@ -487,7 +490,8 @@ function Company:createDutyMarker()
     	)
 end
 
-function Company:respawnVehicles()
+function Company:respawnVehicles(player)
+	local isAdmin = player and player:getRank() >= RANK.Supporter
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min
@@ -496,7 +500,7 @@ function Company:respawnVehicles()
 	end
 	if isAdmin then
 		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
-		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+		player:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
 	end
 	local companyVehicles = VehicleManager:getSingleton():getCompanyVehicles(self.m_Id)
 	local fails = 0
@@ -504,7 +508,7 @@ function Company:respawnVehicles()
 	for companyId, vehicle in pairs(companyVehicles) do
 		if vehicle:getCompany() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn(true, isAdmin and true or false) then
+			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
 				vehicle:setInterior(vehicle.m_SpawnInt or 0)

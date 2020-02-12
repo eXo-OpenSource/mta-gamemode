@@ -331,6 +331,9 @@ function Faction:removePlayer(playerId)
 	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
+		player:saveAccountActivity()
+		setElementData(player, "playingTimeFaction", 0)
+		setElementData(player, "dutyTimeFaction", 0)
 		player:setFaction(nil)
 		player:giveAchievement(67)
 		player:setCorrectSkin()
@@ -468,7 +471,7 @@ function Faction:getActivity(force)
 		table.insert(playerIds, playerId)
 	end
 
-	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+	local query = "SELECT UserId, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_account_activity WHERE UserId IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserId"
 
 	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
 
@@ -486,7 +489,7 @@ function Faction:getActivity(force)
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[row.UserID] = activity
+		self.m_PlayerActivity[row.UserId] = activity
 	end
 end
 
@@ -609,7 +612,8 @@ function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
 	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "factionBnd:"..self.m_Id, message, receivedPlayers)
 end
 
-function Faction:respawnVehicles(isAdmin)
+function Faction:respawnVehicles(player)
+	local isAdmin = player and player:getRank() >= RANK.Supporter
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min
@@ -618,7 +622,7 @@ function Faction:respawnVehicles(isAdmin)
 	end
 	if isAdmin then
 		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
-		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+		player:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
 	end
 	local factionVehicles = VehicleManager:getSingleton():getFactionVehicles(self.m_Id)
 	local fails = 0
@@ -626,7 +630,7 @@ function Faction:respawnVehicles(isAdmin)
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn(true, isAdmin and true or false) then
+			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
 				vehicle:setInterior(vehicle.m_SpawnInt or 0)

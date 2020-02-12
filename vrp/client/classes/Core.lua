@@ -109,6 +109,7 @@ function Core:ready() --onClientResourceStart
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
 	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
 	localPlayer:setChatSettings()
+	ThrowObject:new()
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
@@ -216,6 +217,9 @@ function Core:afterLogin()
 	Atrium:new()
 	ElementInfoManager:new()
 	InventoryManager:new()
+	if EVENT_HALLOWEEN then
+		HalloweenEasterEggs:new()
+	end
 
 	for i = 1,#GUNBOX_CRATES do
 		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)

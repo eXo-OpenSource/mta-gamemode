@@ -101,7 +101,20 @@ function Trunk:save()
 	return sql:queryExec("UPDATE ??_vehicle_trunks SET ItemSlot1 = ?, ItemSlot2 = ?, ItemSlot3 = ?, ItemSlot4 = ?, WeaponSlot1 = ?, WeaponSlot2 = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_ItemSlot[1]), toJSON(self.m_ItemSlot[2]), toJSON(self.m_ItemSlot[3]), toJSON(self.m_ItemSlot[4]), toJSON(self.m_WeaponSlot[1]), toJSON(self.m_WeaponSlot[2]), self.m_Id)
 end
 
+function Trunk:checkDistance(player)
+	if isValidElement(self.m_Vehicle, "vehicle") then
+		if Vector3(self.m_Vehicle:getPosition() - player:getPosition()):getLength() < 5 then
+			if self.m_Vehicle:getDimension() == player:getDimension() and player:getInterior() == self.m_Vehicle:getInterior() then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+
 function Trunk:addItem(player, item, amount, value)
+	if not self:checkDistance(player) then return end
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
 			if player:getInventoryOld():removeItem(item, amount, value) then
@@ -121,11 +134,21 @@ function Trunk:addItem(player, item, amount, value)
 end
 
 function Trunk:takeItem(player, slot)
+	if not self:checkDistance(player) then return end
 	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
 			local item = self.m_ItemSlot[slot]["Item"]
 			local amount = self.m_ItemSlot[slot]["Amount"]
+
+			if item == "Kleidung" then
+				local value = self.m_ItemSlot[slot]["Value"]
+
+				if not SkinInfo[tonumber(value)] then
+					player:sendError(_("Du kannst dieses Item aus dem Kofferraum entfernen!", player))
+					return false
+				end
+			end
 
 			local success = false
 			if isCopSeizing then
@@ -157,6 +180,7 @@ function Trunk:takeItem(player, slot)
 end
 
 function Trunk:takeWeapon(player, slot)
+	if not self:checkDistance(player) then return end
 	if player:hasTemporaryStorage() then player:sendError(_("Du kannst aktuell keine Waffen entnehmen!", player)) return end
 	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() --seize the weapon instead of taking it
 	if self.m_WeaponSlot[slot] then
@@ -226,12 +250,13 @@ function Trunk:addWeapon(player, weaponId, muni)
 end
 
 function Trunk:open(player)
-	player:triggerEvent("openTrunk")
+	if not self:checkDistance(player) then return end
+	player:triggerEvent("openTrunk", self.m_Vehicle)
 	self:refreshClient(player)
 end
 
 function Trunk:refreshClient(player)
-	player:triggerEvent("getTrunkData", self.m_Id, self.m_ItemSlot, self.m_WeaponSlot)
+	player:triggerEvent("getTrunkData", self.m_Id, self.m_ItemSlot, self.m_WeaponSlot, self.m_Vehicle)
 end
 
 function Trunk:getId()

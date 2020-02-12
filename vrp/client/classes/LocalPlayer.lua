@@ -81,7 +81,7 @@ function LocalPlayer:constructor()
 	local col2 = createColRectangle(2401.71, -2190.33, 210, 150) -- mech and tow
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col2)
 
-	local col3 =  createColRectangle( 1837.515,  902.93, 160, 120) -- triad base
+	local col3 =  createColCuboid(972.42, -1131.07, 12.07, 52, 52, 30) -- yakuza base
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col3)
 
 	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 ) -- palo bank
@@ -248,6 +248,30 @@ end
 
 function LocalPlayer:setPlayTime()
 	setElementData(self, "playingTime", self:getPlayTime())
+
+	if self.m_CurrentAFKTime == 0 then
+		if (self:getPublicSync("Faction:Duty") and self:getFaction()) or (self:getPublicSync("Company:Duty") and self:getCompany()) then
+			setElementData(self, "dutyTime", getElementData(self, "dutyTime") + 1)
+		end
+
+		if self:getFaction() then
+			setElementData(self, "playingTimeFaction", getElementData(self, "playingTimeFaction") + 1)
+			if self:getPublicSync("Faction:Duty") then
+				setElementData(self, "dutyTimeFaction", getElementData(self, "dutyTimeFaction") + 1)
+			end
+		end
+
+		if self:getCompany() then
+			setElementData(self, "playingTimeCompany", getElementData(self, "playingTimeCompany") + 1)
+			if self:getPublicSync("Company:Duty") then
+				setElementData(self, "dutyTimeCompany", getElementData(self, "dutyTimeCompany") + 1)
+			end
+		end
+
+		if self:getGroupId() > 0 then
+			setElementData(self, "playingTimeGroup", getElementData(self, "playingTimeGroup") + 1)
+		end
+	end
 end
 
 function LocalPlayer:isLoggedIn()
@@ -690,7 +714,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		bindKey("lshift", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() and not vehicle.m_HasDI then
 						local vx, vy, vz = getElementVelocity(vehicle)
@@ -701,7 +725,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lalt", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*1.2)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -711,7 +735,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lctrl", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*0.8)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -719,25 +743,6 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		)
-
-		self:setPublicSyncChangeHandler("supportMode", function(state)
-			if not state then
-				if self.m_AircarsEnabled then
-					setWorldSpecialPropertyEnabled("aircars", false)
-					self.m_AircarsEnabled = false
-					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
-				end
-			end
-		end)
-
-		self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
-			if state then
-				if ego.Active then
-					delete(ego:getSingleton())
-					ego.Active = false
-				end
-			end
-		end)
 
 		if rank >= ADMIN_RANK_PERMISSION["runString"] then
 			addCommandHandler("dcrun", function(cmd, ...)
@@ -816,6 +821,7 @@ function LocalPlayer:getWorldObject()
 end
 
 function LocalPlayer:getWorldVehicle()
+	if VehicleInfrared:isInstantiated() then return end
 	local x, y, z, lx, ly, lz = getCameraMatrix()
 	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
 	local px, py, pz = getElementPosition(localPlayer)
@@ -870,6 +876,20 @@ end
 function LocalPlayer:isWorldLoaded()
 	local x, y, z = getElementPosition(localPlayer)
 	return not (getGroundPosition(x, y, z) == 0 and isLineOfSightClear(x, y, z, x, y, z-3, true, false, false, true, false, false, false, localPlayer))
+end
+
+function LocalPlayer:isControlEnabled(control)
+	if control then
+		return isControlEnabled(control)
+	else
+		local all = false
+		for k, control in pairs(CONTROL_NAMES) do
+			if isControlEnabled(control) then
+				return true
+			end
+		end
+		return false
+	end
 end
 
 function LocalPlayer:startAnimation(_, ...)
@@ -936,4 +956,15 @@ function LocalPlayer:checkBikeBug()
 			triggerServerEvent("removeMeFromVehicle", localPlayer, distance)
 		end
 	end
+end
+
+function LocalPlayer:addGangwarSyncChangeHandler()
+	self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
+		if state then
+			if ego.Active then
+				delete(ego:getSingleton())
+				ego.Active = false
+			end
+		end
+	end)
 end

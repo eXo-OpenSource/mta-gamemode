@@ -41,7 +41,9 @@ end
 
 function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
-		triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
+		QuestionBox:new(_("Möchtest du das Fahrzeug %s wirklich für %s kaufen?", VehicleCategory:getSingleton():getModelName(item.VehicleId), toMoneyString(item.VehiclePrice)), function()
+			triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
+		end)
 	end
 end
 
@@ -65,9 +67,10 @@ function VehicleShopGUI:setVehicleList(list)
 	for k, v in pairs(list) do
 		for i = 1, #v do
 			vehicleCount = vehicleCount + 1
-			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..tostring(v[i][2])):setColumnAlignX(3, "right")
+			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..toMoneyString(v[i][2])):setColumnAlignX(3, "right")
 			item.VehicleId = k
 			item.VehicleIndex = i
+			item.VehiclePrice = v[i][2]
 			item.onLeftClick = function()
 				self.m_CurrentVehicle = v[i][1]
 				if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end

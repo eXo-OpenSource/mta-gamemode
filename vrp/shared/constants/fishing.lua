@@ -140,3 +140,17 @@ FISHING_BAD_CATCH_MESSAGES = {
 	"einen #PewPorn.com Kugelschreiber",
 	"nichts",
 }
+
+FISHING_BAD_CATCH_MESSAGES_SEWERS = {
+	"einen dreckigen Schuh", 
+	"einen Müllsack",
+	"eine Bierflasche",
+	"nichts",
+}
+
+FISHING_BAD_CATCH_ITEMS_SEWERS = 
+{
+	"Schuh",
+	"Abfall",
+	"Flasche",
+}

@@ -41,7 +41,7 @@ function GUIMiniMap:drawThis()
 			end
 			for index, blip in pairs(self.m_Blips) do
 				if blip then
-					dxDrawImage(blip["posX"]-16, blip["posY"]-16, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
+					dxDrawImage(self.m_AbsoluteX+blip["posX"]-16, self.m_AbsoluteY+blip["posY"]-16, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
 				end
 			end
 		end
@@ -70,8 +70,6 @@ function GUIMiniMap:addBlip(icon, posX, posY) -- todo fix position, its wrong
 	if self:isWithinMapBound( x, y) then
 		local offX = x - self.m_MapX
 		local offY = y - self.m_MapY
-		offX = self.m_AbsoluteX + offX
-		offY = self.m_AbsoluteY + offY
 		self.m_Blips[#self.m_Blips+1] = {["icon"] = icon, ["posX"] =  offX, ["posY"] =  offY}
 		self:anyChange()
 		return self

@@ -17,10 +17,10 @@ function FactionEvil:constructor()
 	self.m_Raids = {}
 
 	nextframe(function()
-		--self:loadLCNGates(5)
+		self:loadLCNGates(12)
 		--self:loadCartelGates(11)
-		--self:loadYakGates(6)
-		self:loadTriadGates(11)
+		self:loadYakGates(6)
+		--self:loadTriadGates(11)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -241,19 +241,12 @@ end
 
 function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.3))
+	lcnGates[1] = Gate:new(2930, Vector3(972.72802734375, -1101.2399902344, 25.445999145508), Vector3(0, 0, 0), Vector3(972.72802734375, -1101.2399902344, 25.445999145508), Vector3(0, 0, 270))
+	lcnGates[1]:addGate(2930, Vector3(972.65802001953, -1104.6719970703, 25.445999145508), Vector3(0, 0, 180), Vector3(972.65802001953, -1104.6719970703, 25.445999145508), Vector3(0, 0, 270), false)
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
-	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
-	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
-	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
-	local pillar = createObject(2774, Vector3(1397.404, -1450.227, -0.422))
-	local pillar2 = createObject(2774, Vector3(1407.404, -1450.227,	 -0.422 ))
-
 end
 
 function FactionEvil:loadTriadGates(factionId)
@@ -293,9 +286,17 @@ end
 function FactionEvil:loadLCNGates(factionId)
 
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(980, Vector3(784.56561, -1152.40520, 24.93374), Vector3(0, 0, 275), Vector3(784.56561, -1152.40520, 18.53374))
-	lcnGates[2] = Gate:new(980, Vector3(659.12753, -1227.00923, 17.42981), Vector3(0, 0, 64), Vector3(659.12753, -1227.00923, 11.92981))
-	lcnGates[3] = Gate:new(980, Vector3(664.99264, -1309.83203, 15.06094), Vector3(0, 0, 182), Vector3(664.99264, -1309.83203, 8.46094))
+	lcnGates[1] = Gate:new(16637, Vector3(322.2619934082, -1185.9060058594, 76.84700012207), Vector3(0, 0, 307.24), Vector3(324.21200561523, -1184.4310302734, 76.84700012207))
+	
+	local colFix = createObject(16637, lcnGates[1].m_Gates[1].position)
+	attachElements(colFix, lcnGates[1].m_Gates[1], 0, 0, 1)
+	colFix:setAlpha(0) 
+
+	lcnGates[1]:addGate(16637, Vector3(319.23699951172, -1188.1810302734, 76.84700012207), Vector3(0, 0, 306.99), Vector3(317.53698730469, -1189.4310302734, 76.84700012207))
+
+	local colFix = createObject(16637, lcnGates[1].m_Gates[1].position)
+	attachElements(colFix, lcnGates[1].m_Gates[2], 0, 0, 1)
+	colFix:setAlpha(0)
 
 	--setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside

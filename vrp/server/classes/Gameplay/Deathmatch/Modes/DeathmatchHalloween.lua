@@ -419,7 +419,7 @@ end
 
 addEvent("dmHalloweenOnDamage", true)
 addEventHandler("dmHalloweenOnDamage", root, function(attacker, weapon)
-	if attacker and client.deathmatchLobby and attacker.deathmatchLobby and client.deathmatchLobby == attacker.deathmatchLobby then
-		client.deathmatchLobby:onMeleeDamage(client, attacker, weapon)
+	if attacker and source and source.deathmatchLobby and attacker.deathmatchLobby and source.deathmatchLobby == attacker.deathmatchLobby then
+		attacker.deathmatchLobby:onMeleeDamage(source, attacker, weapon)
 	end
 end)

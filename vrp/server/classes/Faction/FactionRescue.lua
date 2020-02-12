@@ -15,6 +15,7 @@ addRemoteEvents{
 function FactionRescue:constructor()
 	-- Duty Pickup
 	self:createDutyPickup(1076.30, -1374.01, 13.65, 0) -- Garage
+	self:createDutyPickup(132.562, 163.525, 1186.05, 3) -- Garage
 
 	self.m_VehicleFires = {}
 
@@ -193,7 +194,7 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				end
 				takeAllWeapons(client)
 				if type == "fire" then
-					giveWeapon(client, 42, 10000, true)
+					setTimer(giveWeapon, 100, 5, client, 42, 10000, true) -- Don't ask, it doesn't work otherwise...
 				end
 				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
@@ -204,6 +205,10 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				faction:changeSkin(client, prefSkin)
 				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
 				RadioCommunication:getSingleton():allowPlayer(client, true)
+				client:setHealth(100)
+				client:setArmor(100)
+				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
+				client:checkLastDamaged()
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
@@ -219,7 +224,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 	if client:getFaction() == self.m_Faction then
 		if client:isFactionDuty() and client:getPublicSync("Rescue:Type") == "medic" then
 			if not client.m_RescueDefibrillator then
-				if not self.m_LastStrecher[client] or timestampCoolDown(self.m_LastStrecher[client], 6) then
+				if not self.m_LastStrecher[client] or timestampCoolDown(self.m_LastStrecher[client], 1) then
 					if client.m_RescueStretcher then
 						self:removeStretcher(client, vehicle)
 					else
@@ -389,7 +394,7 @@ end
 
 function FactionRescue:useDefibrillator(player, target)
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-		rescuePlayer:sendShortMessage(_("%s versucht %s vor dem verbluten zu Retten, ein RTW wird drigend benötigt!\nPosition: %s - %s", rescuePlayer, player:getName(), target:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
+		rescuePlayer:sendShortMessage(_("%s versucht, %s vor dem Verbluten zu retten, ein RTW wird dringend benötigt!\nPosition: %s - %s", rescuePlayer, player:getName(), target:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 	end
 
 	local abort = function()

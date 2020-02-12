@@ -74,7 +74,7 @@ function Group.create(name, type)
 end
 
 function Group:purge()
-	if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_groups SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		--remove active props
 		GroupPropertyManager:getSingleton():takePropsFromGroup(self)
 		-- Remove all players
@@ -296,6 +296,8 @@ function Group:removePlayer(playerId)
 		player:triggerEvent("forceGroupPropertyClose")
 	end
 	if player then
+		player:saveAccountActivity()
+		setElementData(player, "playingTimeGroup", 0)
 		player:setGroup(nil)
 		if isElement(player) then
 			player:reloadBlips()
@@ -427,7 +429,7 @@ function Group:getActivity(force)
 		table.insert(playerIds, playerId)
 	end
 
-	local query = "SELECT UserID, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserID"
+	local query = "SELECT UserId, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_account_activity WHERE UserId IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserId"
 
 	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
 
@@ -445,7 +447,7 @@ function Group:getActivity(force)
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[row.UserID] = activity
+		self.m_PlayerActivity[row.UserId] = activity
 	end
 end
 

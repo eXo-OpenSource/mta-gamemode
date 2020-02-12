@@ -448,7 +448,7 @@ function ShopManager:getPlayerWeapons(player)
 end
 
 function ShopManager:onAmmunationAppOrder(weaponTable)
-	if client:getInterior() > 0 or client:getDimension() > 0 or client.m_JailTime > 0 then
+	if client:getInterior() > 0 or client:getDimension() > 0 or client.m_JailTime > 0 or client:getData("inAdminPrison") then
 		client:sendError(_("Du kannst hier nicht bestellen!",client))
 		return
 	end

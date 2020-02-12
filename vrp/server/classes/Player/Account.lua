@@ -29,8 +29,6 @@ function Account.login(player, username, password, pwhash, enableAutologin)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
-	outputServerLog("[ACCOUNT] " .. inspect(player) .. " - "  .. inspect(player.getSerial) .. " - "  .. inspect(player.loadCharacter))
-
 	if not player or not player.loadCharacter or not player.getSerial  then
 		if player then
 			kickPlayer(player)

@@ -97,11 +97,9 @@ function VehicleInteraction:render()
 								end
                             elseif doorId == 0 then
                                 self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
-                            elseif vehicleModel == 416 then
-                                if doorId == 4 or doorId == 5 then
-									if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
-										self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
-                                    end
+							elseif ((vehicleModel == 416 or vehicleModel == 497) and (doorId == 4 or doorId == 5)) or (vehicleModel == 563 and doorId == 3) then
+								if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+									self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
 								end
 							end
                         end
@@ -175,7 +173,7 @@ end
 function VehicleInteraction:action()
 	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
 		local vehicleModel = self.m_lookAtVehicle:getModel()
-        if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
+		if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
             local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
 			local door = tonumber(self:getDoor())
 			local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, door)
@@ -197,7 +195,7 @@ function VehicleInteraction:action()
                         end
                     end
                 end
-			elseif (door == 4 or door == 5) and (vehicleModel == 416 or vehicleModel == 596 or vehicleModel == 598 or vehicleModel == 599) then
+			elseif ((door == 4 or door == 5) and (vehicleModel == 416 or vehicleModel == 497)) or (door == 3 and vehicleModel == 563) then
                 if doorRatio > 0 and localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
 					self.m_LastInteraction = getTickCount()
 					triggerServerEvent("factionRescueToggleStretcher", localPlayer, self.m_lookAtVehicle)

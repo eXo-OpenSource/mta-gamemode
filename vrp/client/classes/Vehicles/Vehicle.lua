@@ -129,6 +129,8 @@ addEventHandler("vehicleEngineStart", root,
 			veh.EngineStart = false
 			if localPlayer.vehicle == veh then
 				HUDSpeedo:playSeatbeltAlarm(true)
+				toggleControl("brake_reverse", true)
+				toggleControl("accelerate", true)
 			end
 		end, 2050 ,1)
 	end
@@ -251,8 +253,8 @@ local totalLossVehicleTypes = {
 
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
-		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
-		if source.isBroken and source:isBroken() then return cancelEvent() end
+		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) and (table.size(source:getOccupants() or {}) < 1 or (source:getVehicleType() == 1 or source:getVehicleType() == 3)) then return cancelEvent() end
+		if not tId and (source.isBroken and source:isBroken()) then return cancelEvent() end
 		--calculate vehicle armor
 		if not tId and weapon and source.getBulletArmorLevel then
 			cancelEvent()
@@ -263,7 +265,7 @@ addEventHandler("onClientVehicleDamage", root,
 			if source:getHealth() < 300 then
 				triggerServerEvent("vehicleBlow", source, weapon)
 				return
-			end
+			end		
 		end
 		if totalLossVehicleTypes[source:getVehicleType()] then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
