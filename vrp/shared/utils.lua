@@ -999,11 +999,22 @@ function convertBytesToUnit(value, unit)
 	end
 end
 
-function isValidPedModel(model) 
-	for i, skin in ipairs(getValidPedModels()) do 
-		if model == skin then 
+function isValidPedModel(model)
+	for i, skin in ipairs(getValidPedModels()) do
+		if model == skin then
 			return true
-		end 
+		end
 	end
 	return false
+end
+
+function lastIndexOf(haystack, needle)
+    local i, j
+    local k = 0
+    repeat
+        i = j
+        j, k = string.find(haystack, needle, k + 1, true)
+    until j == nil
+
+    return i
 end
