@@ -114,9 +114,19 @@ addEventHandler("onDebugMessage", root,
 			Sentry:getSingleton():handleException(msg, sentryLevel, trace)
 
 			if msg:find("dbExec failed;") then
-				msg = string.format("%s \n *Last queries:*\n`%s`", msg, table.concat(SQL.LastExecQuery, "`\n`"))
+				local queries = ""
+				for k, v in pairs(SQL.LastExecQuery) do
+					if queries ~= "" then queries = queries .. "\n" end
+					queries = queries .. v.query
+				end
+				msg = string.format("%s \n *Last queries:*\n`%s`", msg, queries)
 			elseif msg:find("dbPoll failed;") then
-				msg = string.format("%s \n *Last queries:*\n`%s`", msg, table.concat(SQL.LastFetchQuery, "`\n`"))
+				local queries = ""
+				for k, v in pairs(SQL.LastFetchQuery) do
+					if queries ~= "" then queries = queries .. "\n" end
+					queries = queries .. v.query
+				end
+				msg = string.format("%s \n *Last queries:*\n`%s`", msg, queries)
 			end
 
 			stackSlackMessages(msg, level, trace)
