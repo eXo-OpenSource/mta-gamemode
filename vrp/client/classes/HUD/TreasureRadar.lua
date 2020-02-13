@@ -66,7 +66,7 @@ function TreasureRadar:render()
 		end
 
 		local rot = getPedRotation(localPlayer)
-		dxDrawImage(centerX-8, centerY-8, 16, 16, "files/images/Radar_Monochrome/Blips/LocalPlayer.png", self.m_Rotation - rot)
+		dxDrawImage(centerX-8, centerY-8, 16, 16, "files/images/Radar/Blips/LocalPlayer.png", self.m_Rotation - rot)
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/TreasureRadar") end
 end
