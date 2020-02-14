@@ -92,6 +92,16 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 		return data:sub(2, #data-1)
 	end
 
+	if not duration then
+		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not reason or reason == "" then
+		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
 	local adminName = Account.getNameFromId(adminId)
 	local targetName = Account.getNameFromId(targetId)
 
@@ -114,7 +124,6 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 	end
 
 	local data = toJSON({status = "SUCCESS"}, true)
-	outputServerLog(data:sub(2, #data-1))
 	return data:sub(2, #data-1)
 end
 
@@ -128,6 +137,23 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
 		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not duration then
+		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local duration = tonumber(duration)
+
+	if not duration or duration < 0 then
+		local data = toJSON({status = "ERROR", error = "DURATION_INVALID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not reason or reason == "" then
+		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
 
@@ -173,13 +199,18 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 		return data:sub(2, #data-1)
 	end
 
+	if not reason or reason == "" then
+		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
 	local adminName = Account.getNameFromId(adminId)
 	local targetName = Account.getNameFromId(targetId)
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s offline entbannt!", nil, adminName, targetName))
-	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", nil, 0)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", reason, 0)
 	sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
-	outputChatBox(_("Der Spieler %s  wurde von %s entbannt!", nil, targetName, adminName), root, 200, 0, 0)
+	outputChatBox(_("Der Spieler %s wurde von %s entbannt!", nil, targetName, adminName), root, 200, 0, 0)
 
 	if aCreated then
 		delete(admin)
@@ -203,6 +234,23 @@ function phpSDKAddWarn(adminId, targetId, duration, reason)
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
 		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not duration then
+		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local duration = tonumber(duration)
+
+	if not duration or duration < 0 then
+		local data = toJSON({status = "ERROR", error = "DURATION_INVALID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not reason or reason == "" then
+		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
 

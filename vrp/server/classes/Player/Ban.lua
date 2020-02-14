@@ -50,7 +50,7 @@ function Ban.addBan(who, author, reason, duration, adminName)
 	if player then
 		local reasonstr
 		if type(author) == "number" then
-			author, authorOffline = DatabasePlayer.getFromId(author)
+			author, authorOffline = DatabasePlayer.get(author)
 		end
 		if duration > 0 then
 			reasonstr = ("+Timeban: %s von %s (Grund: %s)"):format( string.duration(duration), authorName, reason)

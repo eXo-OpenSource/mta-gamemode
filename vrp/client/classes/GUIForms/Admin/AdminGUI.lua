@@ -398,10 +398,10 @@ function AdminGUI:onOfflineButtonClick(func)
 					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
 				end)
 	elseif func == "offlineUnban" then
-		QuestionBox:new(
+		InputBox:new(
 				_("Spieler %s entbannen", selectedPlayer),
-				function ()
-					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer)
+				function (reason)
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
 				end)
 	elseif func == "offlineNickchange" then
 		InputBox:new(_("Spieler %s umbenennen", selectedPlayer),
