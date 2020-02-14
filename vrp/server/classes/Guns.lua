@@ -352,7 +352,7 @@ end
 
 function Guns:addDamageLog(player, loss, attacker, weapon, bodypart, zone)
 	if self.m_DamageLogCache then
-		local cacheTable = self.m_DamageLogCache[attacker.m_Id]
+		local cacheTable = self.m_DamageLogCache[attacker]
 		if cacheTable then
 			local cacheWeapon = cacheTable["Weapon"]
 			local cacheTarget = cacheTable["Target"]
