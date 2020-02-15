@@ -55,7 +55,7 @@ function Guns:constructor()
 
 	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
-	self.m_DamageLogCache = {}
+	self.m_DamageLogCache = { }
 	setTimer(bind(self.Event_onGunLogCacheTick, self), 5000, 0)
 
 	self.m_GrenadeBind = bind(self.activeGrenadeThrowMode, self)
@@ -66,7 +66,7 @@ end
 
 function Guns:destructor()
 	for id, cacheObj in pairs(self.m_DamageLogCache) do
-		self:forceDamageLogCache(id)
+		self:forceDamageLogCache(  id )
 	end
 end
 
@@ -255,7 +255,7 @@ function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
 			DamageManager:getSingleton():addDamage(bodypart, weapon, loss, target)
 		end
 	end
-	self:addDamageLog(target.m_Id, loss, client.m_Id, weapon, bodypart, StatisticsLogger:getSingleton():getZone(client))
+	self:addDamageLog(target, loss, client, weapon, bodypart)
 end
 
 function Guns:setWeaponInStorage(player, weapon, ammo)
@@ -347,47 +347,53 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	else
 		DamageManager:getSingleton():addDamage(bodypart, weapon, loss, player)
 	end
-	self:addDamageLog(player.m_Id, loss, attacker.m_Id, weapon, bodypart, StatisticsLogger:getSingleton():getZone(attacker))
+	self:addDamageLog(player, loss, attacker, weapon, bodypart)
 end
 
-function Guns:addDamageLog(player, loss, attacker, weapon, bodypart, zone)
+function Guns:addDamageLog( player, loss, attacker, weapon, bodypart)
 	if self.m_DamageLogCache then
-		local cacheTable = self.m_DamageLogCache[attacker]
+		local cacheTable = self.m_DamageLogCache[attacker.m_Id]
 		if cacheTable then
 			local cacheWeapon = cacheTable["Weapon"]
 			local cacheTarget = cacheTable["Target"]
-			if weapon == cacheWeapon and player == cacheTarget then
+			if weapon == cacheWeapon and player.m_Id == cacheTarget then
 				cacheTable["TotalLoss"] = cacheTable["TotalLoss"] + loss
 				cacheTable["HitCount"] = cacheTable["HitCount"] + 1
 			else
-				self:forceDamageLogCache(attacker)
-				self.m_DamageLogCache[attacker] = {}
-				self.m_DamageLogCache[attacker]["CacheTime"] = getTickCount()
-				self.m_DamageLogCache[attacker]["Timestamp"] = getRealTime().timestamp
-				self.m_DamageLogCache[attacker]["Weapon"] = weapon
-				self.m_DamageLogCache[attacker]["Target"] = player
-				self.m_DamageLogCache[attacker]["TotalLoss"] = loss
-				self.m_DamageLogCache[attacker]["HitCount"] = 1
-				self.m_DamageLogCache[attacker]["Zone"] = zone
+				self:forceDamageLogCache( attacker )
+				self.m_DamageLogCache[attacker.m_Id]  = {}
+				self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount()
+				self.m_DamageLogCache[attacker.m_Id]["Timestamp"] = getRealTime().timestamp
+				self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon
+				self.m_DamageLogCache[attacker.m_Id]["Target"] = player.m_Id
+				self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss
+				self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
+				self.m_DamageLogCache[attacker.m_Id]["Zone"] = StatisticsLogger:getSingleton():getZone(attacker)
 			end
 		else
-			self:forceDamageLogCache(attacker)
-			self.m_DamageLogCache[attacker] = {}
-			self.m_DamageLogCache[attacker]["CacheTime"] = getTickCount()
-			self.m_DamageLogCache[attacker]["Timestamp"] = getRealTime().timestamp
-			self.m_DamageLogCache[attacker]["Weapon"] = weapon
-			self.m_DamageLogCache[attacker]["Target"] = player
-			self.m_DamageLogCache[attacker]["TotalLoss"] = loss
-			self.m_DamageLogCache[attacker]["HitCount"] = 1
-			self.m_DamageLogCache[attacker]["Zone"] = zone
+			self:forceDamageLogCache( attacker )
+			self.m_DamageLogCache[attacker.m_Id]  = {}
+			self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount()
+			self.m_DamageLogCache[attacker.m_Id]["Timestamp"] = getRealTime().timestamp
+			self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon
+			self.m_DamageLogCache[attacker.m_Id]["Target"] = player.m_Id
+			self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss
+			self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
+			self.m_DamageLogCache[attacker.m_Id]["Zone"] = StatisticsLogger:getSingleton():getZone(attacker)
 		end
 	end
 end
 
-function Guns:forceDamageLogCache(playerId)
+function Guns:forceDamageLogCache( player )
 	if self.m_DamageLogCache then
-		local cacheTable = self.m_DamageLogCache[player]
-
+		local cacheTable, playerId
+		if type(player) == "userdata" then
+			cacheTable = self.m_DamageLogCache[player.m_Id]
+			playerId = player.m_Id
+		else
+			cacheTable = self.m_DamageLogCache[player]
+			playerId = player
+		end
 		if cacheTable then
 			local cacheWeapon = cacheTable["Weapon"]
 			local totalLoss = cacheTable["TotalLoss"]
@@ -408,7 +414,7 @@ function Guns:Event_onGunLogCacheTick()
 	local cacheObj, cacheTime
 	for id, cacheObj in pairs(self.m_DamageLogCache) do
 		if now >= cacheObj["CacheTime"] + GUN_CACHE_EMPTY_INTERVAL then
-			self:forceDamageLogCache(id)
+			self:forceDamageLogCache(  id )
 		end
 	end
 end
