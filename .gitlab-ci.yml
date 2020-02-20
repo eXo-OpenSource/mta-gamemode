@@ -1,4 +1,4 @@
-image: git.heisi.at:5005/exo/mta-gamemode-build:latest
+image: registry.exo.cool/exo/mta-gamemode-build:latest
 
 stages:
   - build
