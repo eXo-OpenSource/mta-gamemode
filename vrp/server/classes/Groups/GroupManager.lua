@@ -8,7 +8,6 @@
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.ActiveMap = {}
-GroupManager.GroupCosts = 100000
 GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
 	GroupManager.GroupTypes[v] = i
@@ -150,7 +149,7 @@ function GroupManager:Event_RequestMoney()
 end
 
 function GroupManager:Event_Create(name, type)
-	if client:getMoney() < GroupManager.GroupCosts then
+	if client:getMoney() < GROUP_CREATE_COSTS then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
@@ -194,7 +193,7 @@ function GroupManager:Event_Create(name, type)
 		client:giveAchievement(60)
 
 		group:addPlayer(client, GroupRank.Leader)
-		client:transferMoney(self.m_BankAccountServer, GroupManager.GroupCosts, "Firmen/Gang Gründung", "Group", "Creation")
+		client:transferMoney(self.m_BankAccountServer, GROUP_CREATE_COSTS, "Firmen/Gang Gründung", "Group", "Creation")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
 		group:addLog(client, "Gang/Firma", "hat die "..type.." "..name.." erstellt!")
 		self:sendInfosToClient(client)

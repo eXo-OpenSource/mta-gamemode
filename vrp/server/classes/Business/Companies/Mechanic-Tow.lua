@@ -58,8 +58,14 @@ function MechanicTow:respawnVehicle(vehicle)
 			occ:removeFromVehicle()
 		end
 	end
-	vehicle:setPositionType(VehiclePositionType.Mechanic)
-	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
+		vehicle:respawn()
+		vehicle:getFaction():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})
+		vehicle:getFaction():sendShortMessage(("Das Fahrzeug %s (%s) wurde vom M&T abgeschleppt und für %s an eurer Basis respawned!"):format(vehicle:getName(), vehicle:getPlateText(), toMoneyString(500)))
+	else
+		vehicle:setPositionType(VehiclePositionType.Mechanic)
+		vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+	end
 	vehicle:fix()
 end
 
@@ -194,6 +200,10 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	client:sendSuccess(_("Fahrzeug freigekauft, es steht im Hinterhof bereit! Das Geld wurde vom Konto abgezogen.", client))
 end
 
+function MechanicTow:isValidTowableVehicle(veh)
+	return instanceof(veh, PermanentVehicle, true) or instanceof(veh, GroupVehicle, true) or instanceof(veh, FactionVehicle, true) or veh.burned
+end
+
 function MechanicTow:onEnterTowLot(hitElement)
 	if getElementType(hitElement) ~= "player" then return end
 	if hitElement:getCompany() ~= self then return end
@@ -259,7 +269,7 @@ function MechanicTow:onAttachVehicleToTow(towTruck)
 	if driver and getElementType(driver) == "player" then
 		if driver:getCompany() == self and driver:isCompanyDuty() then
 			if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
-				if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
+				if self:isValidTowableVehicle(source) then
 					source:toggleRespawn(false)
 					source.m_HasBeenUsed = 1 --disable despawn on logout
 				else
@@ -278,7 +288,7 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 	if driver and driver.m_InTowLot then
 		if driver:getCompany() == self and driver:isCompanyDuty() then
 			if towTruck.getCompany and towTruck:getCompany() == self then
-				if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
+				if self:isValidTowableVehicle(source) then
 					if not source.burned then
 						self:respawnVehicle(source)
 						driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
@@ -438,7 +448,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 	if client.vehicle:getData("towingBike") then return end
 
 	if vehicle and vehicle:isEmpty() then
-		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or vehicle.burned then
+		if self:isValidTowableVehicle(vehicle) then
 			vehicle:toggleRespawn(false)
 			client.vehicle:setData("towingBike", vehicle, true)
 			vehicle:setData("towedByVehicle", client.vehicle, true)
