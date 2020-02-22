@@ -12,7 +12,7 @@ WeedTruck.Time = 10*60*1000 -- in ms
 WeedTruck.spawnPos = Vector3(-1105.76, -1621.55, 76.54)
 WeedTruck.spawnRot = Vector3(0, 0, 270)
 WeedTruck.Destination = Vector3(2181.59, -2626.35, 11.5)
-WeedTruck.Weed = 1500
+WeedTruck.Weed = 3000
 
 function WeedTruck:constructor(driver)
 	self.m_Truck = TemporaryVehicle.create(456, WeedTruck.spawnPos, WeedTruck.spawnRot)
