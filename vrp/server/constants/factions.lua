@@ -296,10 +296,10 @@ factionColors[10] = {["r"] = 46,["g"] = 169,["b"] = 186}
 factionCarColors[10] = {["r"] = 158,["g"] = 250,["b"] = 255, ["r1"] = 158,["g1"] = 250,["b1"] = 255}
 factionSkins[10] = {[108]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true,[307]=true}
 factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
-evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
-factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
-factionSpawnpoint[10] = {Vector3(1882.94, -2010.87, 13.55), 0, 0}
-factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38+2.71)
+evilFactionInteriorEnter[10] =Vector3(2786.59, -1952.59, 13.55)
+factionWTDestination[10] = Vector3(2768.62, -1944.73, 13.36-0.7)
+factionSpawnpoint[10] = {Vector3(2782.50, -1952.61, 13.55), 0, 0}
+factionAirDropPoint[10] = Vector3(2770.33, -1945.15, 13.35)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
 -- ID 11 = Triads

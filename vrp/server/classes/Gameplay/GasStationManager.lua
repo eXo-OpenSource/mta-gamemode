@@ -472,16 +472,15 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	--[[
 	{
 		name = "Vatos Locos",
 		stations = {
-			{Vector3(2819.12, -2143.39, 11.68), 90, 1},
+			{Vector3(2785.38, -1940.27, 13.55+.3), 90, 1},
 		},
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
-	},]]
+	},
 	{
 		name = "Outlaws MC",
 		stations = {
@@ -500,7 +499,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},]]
-
+	--[[
 	{
 		name = "Grove Street",
 		stations = {
@@ -510,7 +509,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-
+	]]
 	--[[{
 		name = "Ballas",
 		stations = {
