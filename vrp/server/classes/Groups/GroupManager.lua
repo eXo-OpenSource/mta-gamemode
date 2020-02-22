@@ -8,7 +8,7 @@
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.ActiveMap = {}
-GroupManager.GroupCosts = 100000
+GroupManager.GroupCosts = 300000
 GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
 	GroupManager.GroupTypes[v] = i
