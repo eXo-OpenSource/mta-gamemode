@@ -499,7 +499,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},]]
-	--[[
+	--[[ --
 	{
 		name = "Grove Street",
 		stations = {
