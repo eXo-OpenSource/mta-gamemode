@@ -96,7 +96,6 @@ function FactionState:constructor()
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
 	addCommandHandler("tie",bind(self.Command_tie, self))
-	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 	addCommandHandler("bail",bind(self.Command_bail, self))
 	addCommandHandler("cuff",bind(self.Command_cuff, self))
 	addCommandHandler("uncuff",bind(self.Command_uncuff, self))
@@ -1121,41 +1120,6 @@ end
 function FactionState:onTiedExit(exitingPlayer, seat, jacked, door)
 	if exitingPlayer.isGrabbedInVehicle then
 		cancelEvent()
-	end
-end
-
-function FactionState:Command_needhelp(player)
-	local faction = player:getFaction()
-	local player = player
-	if faction and faction:isStateFaction() then
-		if player:isFactionDuty() then
-			if player:getInterior() == 0 and player:getDimension() == 0 then
-				if player.m_ActiveNeedHelp then return false end
-				player.m_ActiveNeedHelp = true
-				local rankName = faction:getRankName(faction:getPlayerRank(player))
-				local color = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-				local blip = Blip:new("Marker.png", player.position.x, player.position.y, {factionType = "State", duty = true}, 9999, color)
-					blip:setDisplayText(player.name)
-					blip:attach(player)
-
-				for k, onlinePlayer in pairs(self:getOnlinePlayers(true, true)) do
-					onlinePlayer:sendShortMessage(_("%s %s benötigt Unterstützung!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
-				end
-
-				setTimer(function()
-					blip:delete()
-					if isElement(player) then
-						player.m_ActiveNeedHelp = false
-					end
-				end, 20000, 1)
-			else
-				player:sendError(_("Du kannst hier keine Hilfe anfordern!", player))
-			end
-		else
-			player:sendError(_("Du bist nicht im Dienst!", player))
-		end
-	else
-		player:sendError(_("Du bist in keiner Staatsfraktion!", player))
 	end
 end
 

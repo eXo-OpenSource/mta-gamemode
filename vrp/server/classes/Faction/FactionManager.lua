@@ -14,7 +14,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -42,6 +42,10 @@ function FactionManager:constructor()
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
 	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
+	addEventHandler("factionPlayerNeedhelp", root, bind(self.Event_playerNeedhelp, self))
+
+	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
+
 	FactionState:new()
 	FactionRescue:new()
 	--FactionInsurgent:new()
@@ -122,6 +126,65 @@ end
 
 function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
+end
+
+function FactionManager:Event_playerNeedhelp()
+	self:Command_needhelp(client)
+end
+
+function FactionManager:Command_needhelp(player)
+	local faction = player:getFaction()
+	local player = player
+	if faction and (faction:isStateFaction() or faction:isEvilFaction()) then
+		if player:isFactionDuty() then
+			if player:getInterior() == 0 and player:getDimension() == 0 then
+				if player.m_ActiveNeedHelp then return false end
+				local rankName = faction:getRankName(faction:getPlayerRank(player))
+				local color = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+				
+				if faction:isStateFaction() then
+					visibility = {factionType = "State", duty = true}
+					for k, onlinePlayer in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
+						onlinePlayer:sendShortMessage(_("%s %s benötigt Unterstützung!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
+					end
+				else
+					if not player:isPhoneEnabled() then player:sendError(_("Dein Handy ist ausgeschaltet!", player)) return false end
+					if faction:getAllianceFaction() then
+						visibility = {faction = {faction:getId(), faction:getAllianceFaction():getId()}, duty = true}
+						--show for alliance only if there is an alliance faction
+						for k, onlinePlayer in pairs(faction:getAllianceFaction():getOnlinePlayers(true, true)) do
+							onlinePlayer:sendShortMessage(_("Bündnispartner %s benötigt Hilfe!", onlinePlayer, player:getName()), "Unterstützung erforderlich", color, 20000)
+						end
+					else
+						visibility = {faction = {faction:getId()}, duty = true}
+					end
+					--show for players of same faction in either case
+					for k, onlinePlayer in pairs(faction:getOnlinePlayers(true, true)) do
+						onlinePlayer:sendShortMessage(_("%s %s benötigt Hilfe!", onlinePlayer, rankName, player:getName()), "Unterstützung erforderlich", color, 20000)
+					end
+				end
+
+				local blip = Blip:new("Marker.png", player.position.x, player.position.y, visibility, 9999, color)
+					blip:setDisplayText(player.name)
+					blip:attach(player)
+
+				player.m_ActiveNeedHelp = true
+
+				setTimer(function()
+					blip:delete()
+					if isElement(player) then
+						player.m_ActiveNeedHelp = false
+					end
+				end, 20000, 1)
+			else
+				player:sendError(_("Du kannst hier keine Hilfe anfordern!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
+	else
+		player:sendError(_("Du bist nicht in der richtigen Fraktion!", player))
+	end
 end
 
 function FactionManager:sendInfosToClient(client)
