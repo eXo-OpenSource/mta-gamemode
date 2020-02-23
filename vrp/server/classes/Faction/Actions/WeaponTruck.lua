@@ -89,6 +89,7 @@ function WeaponTruck:constructor(driver, boxContent, totalAmount, type)
 			-- as of 2/2020 community meeting, state factions should see all blips, but markers should only be created if they have a function
 			-- if this gets reverted to the previous solution (markers and blips are in sync) - and I hope this will be rather sooner than later - 
 			-- just move the three lines below inside of the conditional above - MasterM
+			if not dest then dest = factionWTDestination[faction:getId()] end
 			self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State", faction = EvilBlipVisible, duty = true}, 9999, BLIP_COLOR_CONSTANTS.Red)
 			self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
 			self.m_DestinationBlips[faction:getId()]:setZ(dest.z)
