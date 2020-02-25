@@ -28,7 +28,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	self.m_LeftButton.onUnhover =
 		function()
 			self.m_LeftLabel:setColor(Color.White)
-			self.m_LeftButton:setColor(Color.Accent)
+			self.m_LeftButton:setColor(self.m_AlternateColor or Color.Accent)
 			Animation.Move:new(self.m_LeftButton, 150, 2, 2, "OutQuad")
 			Animation.Size:new(self.m_LeftButton, 150, self.m_Height - 4, self.m_Height - 4, "OutQuad")
 		end
@@ -52,7 +52,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	self.m_RightButton.onUnhover =
 		function()
 			self.m_RightLabel:setColor(Color.White)
-			self.m_RightButton:setColor(Color.Accent)
+			self.m_RightButton:setColor(self.m_AlternateColor or Color.Accent)
 			Animation.Move:new(self.m_RightButton, 150, self.m_Width - self.m_Height + 2, 2, "OutQuad")
 			Animation.Size:new(self.m_RightButton, 150, self.m_Height - 4, self.m_Height - 4, "OutQuad")
 		end
@@ -101,6 +101,12 @@ function GUIChanger:setSelectedItem(item)
 			self:setIndex(k)
 		end
 	end
+end
+
+function GUIChanger:setAlternateColor(color)
+	self.m_AlternateColor = color
+	self:anyChange() 
+	return self
 end
 
 function GUIChanger:getSelectedItem()

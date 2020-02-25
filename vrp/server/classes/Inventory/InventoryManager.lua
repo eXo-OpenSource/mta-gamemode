@@ -113,7 +113,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			if money and money > 0 then
 				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 			end
-			ShortMessageQuestion:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
+			ShortMessageQuestion:new(client, target, text, "acceptItemTrade", "declineTrade", nil, client, target, item, amount, money)
 		else
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
@@ -123,11 +123,6 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 
 		if client:getFaction() and (not client:getFaction():isEvilFaction()) and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
-			return
-		end
-
-		if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-			client:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
 			return
 		end
 
@@ -144,7 +139,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
 		end
-		ShortMessageQuestion:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+		ShortMessageQuestion:new(client, target, text, "acceptWeaponTrade", "declineTrade", nil, client, target, item, amount, money)
 	end
 end
 
@@ -159,8 +154,8 @@ end
 function InventoryManager:Event_declineTrade(player, target)
 	if not self:validateTrading(player, target, client) then return end -- Todo: Report possible cheat attempt
 
-	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
-	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+	target:sendError(_("Du hast das Angebot von %s abgelehnt!", target, player:getName()))
+	player:sendError(_("%s hat den Handel abgelehnt!", player, target:getName()))
 
 	player.sendRequest = nil
 	target.receiveRequest = nil
@@ -174,14 +169,19 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	local money = player.sendRequest.money
 	local value = player.sendRequest.itemValue
 
+	if item == "Kleidung" then
+		player:sendError(_("Du kannst dieses Item nicht handeln!", player))
+		return false
+	end
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
 		return false
 	end
-	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then 
-		if (not player:getFaction():isStateFaction()) or (not player:getFaction():isFactionDuty()) then
-			if ArmsDealer:getSingleton():getItemData(item) then 
+	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
+		if (not player:getFaction():isStateFaction()) or (not player:isFactionDuty()) then
+			if ArmsDealer:getSingleton():getItemData(item) then
 				player:sendError(_("Du kannst dieses Item im Dienst nicht an Zivilisten handeln!", player))
 				return false
 			end
@@ -189,23 +189,35 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	end
 	if player:getInventory():getItemAmount(item) >= amount then
 		if target:getMoney() >= money then
-			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
-			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
-			if amount <= 10 then
-				player:meChat(true, _("übergibt %s eine Tüte!", player, target:getName()))
-			elseif amount <= 25 then
-				player:meChat(true, _("übergibt %s ein Päckchen!", player, target:getName()))
-			else
+			if target:getInventory():giveItem(item, amount, value) then
+				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
+				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
+				if amount <= 10 then
+					player:meChat(true, _("übergibt %s eine Tüte!", player, target:getName()))
+				elseif amount <= 25 then
+					player:meChat(true, _("übergibt %s ein Päckchen!", player, target:getName()))
+				else
 				player:meChat(true, _("übergibt %s ein Paket!", player, target:getName()))
-			end
-			player:getInventory():removeItem(item, amount, value)
-			WearableManager:getSingleton():removeWearable( player, item, value )
-			target:getInventory():giveItem(item, amount, value)
-			target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
-			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
+				end
+				player:getInventory():removeItem(item, amount, value)
+				WearableManager:getSingleton():removeWearable( player, item, value )
+				target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
+				StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
-			if item == "Osterei" and money == 0 then
-				target:giveAchievement(91) -- Verschenke ein Osterei
+				if item == "Osterei" and money == 0 then
+					target:giveAchievement(91) -- Verschenke ein Osterei
+				end
+				if item == "Clubkarte" then
+					player:setData("PlayHouse:clubcard", false, true)
+					target:setData("PlayHouse:clubcard", true, true)
+				end
+				if player:getThrowingObject() then
+					player:getThrowingObject():delete()
+					player:setThrowingObject(nil)
+				end
+			else
+				target:sendError(_("Du hast nicht genug Platz für dieses Item!", player))
+				player:sendError(_("%s hat nicht genug Platz für dieses Item!", player, target:getName()))
 			end
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
@@ -230,12 +242,8 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 		return false
 	end
 
-	if player:getFaction() and (not player:getFaction():isEvilFaction()) and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 		player:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", player))
-		return
-	end
-	if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-		player:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
 		return
 	end
 
@@ -243,14 +251,18 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 	if target:hasTemporaryStorage() then player:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", player)) return end
 
 	local weaponSlot = getSlotFromWeapon(weaponId)
-	if player:getWeapon(weaponSlot) > 0 then
+	if player:getWeapon(weaponSlot) == weaponId then
 		if player:getTotalAmmo(weaponSlot) >= amount then
 			if target:getMoney() >= money then
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
 				takeWeapon(player, weaponId)
-				giveWeapon(target, weaponId, amount)
 				target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
+				if target:getFaction() and target:getFaction():isStateFaction() and target:isFactionDuty() then
+					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(target, weaponId, amount)
+					return
+				end
+				giveWeapon(target, weaponId, amount)
 			else
 				player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 				target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))

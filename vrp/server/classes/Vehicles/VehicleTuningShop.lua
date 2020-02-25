@@ -34,9 +34,9 @@ function VehicleTuningShop:constructor()
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
         },
 		{
-            Vector3(1448.12, -2438.56, 13), -- LS Airport
+            Vector3(1483.14, -2438.56, 13), -- LS Airport
             {Vector3(1494.73, -2455.32, 13), 180},
-            Vector3(1448.12, -2438.56, 13),
+            Vector3(1483.14, -2438.56, 13),
 			"AirportPainter"
         },
 		{
@@ -94,6 +94,7 @@ function VehicleTuningShop:openFor(player, vehicle, garageId, specialType, admin
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position + vehicle:getBaseHeight(true))
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
+    player.m_VehicleTuningGarageVehicle = vehicle
     player.m_VehicleTuningGarageId = garageId
     player.m_VehicleTuningAdminMode = adminSession
 	player.m_WasBuckeled = getElementData(player, "isBuckeled")
@@ -163,6 +164,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
+            if not vehicle:getGroup() == hitElement:getGroup() then
+                hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+                return
+            end
             if not vehicle:canBeModified()  then
                 hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
                 return
@@ -177,11 +182,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
 			return
         end
 
-        -- Remove occupants
-        for seat, player in pairs(vehicle:getOccupants() or {}) do
-            if seat ~= 0 then
-                player:removeFromVehicle()
-            end
+        -- removing occupants via removeFromVehicle() is not save as laggs can delay removal and the occupants end up in the interior
+        if vehicle:getOccupantsCount(true) > 1 then 
+            hitElement:sendError(_("Lasse deine Mitfahrer zuerst aussteigen!", hitElement))
+            return
         end
 
         local vehicleType = vehicle:getVehicleType()
@@ -200,7 +204,8 @@ end
 function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
     local vehicle = client:getOccupiedVehicle()
     if not vehicle then return end
-
+    if not client.m_VehicleTuningGarageVehicle then return end 
+    if client.m_VehicleTuningGarageVehicle ~= vehicle then return end
     -- Calculate price
     local overallPrice = 0
     for slot, upgradeId in pairs(cartContent) do
@@ -233,13 +238,13 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
         end
     end
 
-    if client:getMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
+    if client:getBankMoney() < overallPrice and not client.m_VehicleTuningAdminMode then
         client:sendError(_("Du hast nicht genügend Geld!", client))
         return
     end
 
     if not client.m_VehicleTuningAdminMode then
-        client:transferMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
+        client:transferBankMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
     else
         StatisticsLogger:getSingleton():addAdminVehicleAction(client, "tuningShop", vehicle, toJSON(cartContent))
     end

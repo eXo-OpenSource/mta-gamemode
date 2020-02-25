@@ -41,7 +41,9 @@ end
 
 function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
-		triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
+		QuestionBox:new(_("Möchtest du das Fahrzeug %s wirklich für %s kaufen?", VehicleCategory:getSingleton():getModelName(item.VehicleId), toMoneyString(item.VehiclePrice)), function()
+			triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
+		end)
 	end
 end
 
@@ -65,9 +67,10 @@ function VehicleShopGUI:setVehicleList(list)
 	for k, v in pairs(list) do
 		for i = 1, #v do
 			vehicleCount = vehicleCount + 1
-			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..tostring(v[i][2])):setColumnAlignX(3, "right")
+			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..toMoneyString(v[i][2])):setColumnAlignX(3, "right")
 			item.VehicleId = k
 			item.VehicleIndex = i
+			item.VehiclePrice = v[i][2]
 			item.onLeftClick = function()
 				self.m_CurrentVehicle = v[i][1]
 				if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end
@@ -172,13 +175,13 @@ function VehicleShopInfoGUI:updateVehicle(veh)
 	local driveType = {["fwd"] = _"Front-Antrieb", ["rwd"] = _"Heck-Antrieb", ["awd"] = _"Allrad-Antrieb"}
 	self.m_Veh = veh
 	self.m_Window:setTitleBarText(veh:getName())
-	self.m_Label:setText(("- %s\n- %s%s\n- %s-Gang Getriebe\n- %s kg Leergewicht\n~ %s km/h Höchstgeschw.\n- %s\n- %s Sitzplätze"):format(
+	self.m_Label:setText(("- %s\n- %s%s\n- %s$ Steuern / PayDay\n- %s kg Leergewicht\n~ %s km/h Höchstgeschw.\n- %s\n- %s Sitzplätze"):format(
 		veh:getCategoryName(),
 		(veh:getFuelType() ~= "nofuel" and veh:getFuelTankSize().."-Liter-" or ""),
 		(veh:getFuelType() == "nofuel" and "kein Tank" or "Tank ("..FUEL_NAME[veh:getFuelType()]..")"),
-		handling["numberOfGears"],
+		veh:getTax(),
 		handling["mass"],
-		handling["maxVelocity"],
+		veh:getMaxVelocityShopInfo(),
 		driveType[handling["driveType"]],
 		veh:getMaxPassengers()+1
 	))

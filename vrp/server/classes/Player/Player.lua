@@ -34,8 +34,18 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self.m_LastJobAction = 0
 
+	self.m_LastDamagedBy = {}
+
 	self.m_detachPlayerObjectBindFunc = bind(Player.detachPlayerObjectBind, self)
 	self.m_detachPlayerObjectFunc = bind(Player.detachPlayerObject, self)
+
+
+	setElementData(self, "playingTimeFaction", 0)
+	setElementData(self, "playingTimeCompany", 0)
+	setElementData(self, "playingTimeGroup", 0)
+	setElementData(self, "dutyTimeFaction", 0)
+	setElementData(self, "dutyTimeCompany", 0)
+	setElementData(self, "dutyTime", 0)
 end
 
 function Player:destructor()
@@ -201,6 +211,9 @@ function Player:loadCharacter()
 		self:getFaction():takeEquipment(self)
 	end
 	FactionState:getSingleton():checkInsideGarage(self)
+	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
+	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
+	GrowableManager:getSingleton():sendGrowablesToClient(self)
 end
 
 function Player:createCharacter()
@@ -216,7 +229,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin, RadioCommunication FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -253,6 +266,7 @@ function Player:loadCharacterInfo()
 	VehicleCategory:getSingleton():syncWithClient(self)
 
 	self.m_IsDead = row.IsDead or 0
+	self.m_SpawnedDead = self.m_IsDead
 
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
@@ -280,6 +294,12 @@ function Player:loadCharacterInfo()
 		self:sendShortMessage("Deine Waffen wurden abgenommen, weil du nicht richtig ausgeloggt wurdest!")
 		self:setTakeWeaponsOnLogin(false)
 	end
+
+	setElementData(self, "Badge", nil, true)
+	setElementData(self, "BadgeTitle", nil, true)
+	setElementData(self, "BadgeImage", nil, true)
+	setElementData(self, "Damage:isTreating", nil, true)
+	self:setPublicSync("LastHealTime", 0)
 end
 
 
@@ -287,6 +307,8 @@ function Player:initialiseBinds()
 	if self:getFaction() then
 		bindKey(self, "y", "down", "chatbox", "Fraktion")
 	end
+	bindKey(self, "horn", "both", PoliceAnnouncements:getSingleton().m_BindFunction)
+	bindKey(self, "aim_weapon", "both", Guns:getSingleton().m_GrenadeBind)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -346,10 +368,14 @@ function Player:save()
 		local sSkin = self.m_Skin
 		--if interior > 0 then dimension = self:getDimension() end Needed for places like LSPD-Garage
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
-
+		if not self.m_PlayTimeAtLastSave then
+			outputServerLog("[PLAYER] Player " .. tostring(self.m_Id) .. " has no playTimeSave set - playtime " .. tostring(self:getPlayTime()))
+			self.m_PlayTimeAtLastSave = self:getPlayTime()
+		end
+		local timeDiff = self:getPlayTime() - self.m_PlayTimeAtLastSave
 		DatabasePlayer.save(self)
-		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_IsDead or 0, self.m_Id)
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = PlayTime + ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), timeDiff, spawnWithFac, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 
@@ -360,6 +386,8 @@ function Player:save()
 		if DEBUG_LOAD_SAVE then
 			outputDebugString("Saved Data for Player "..self:getName())
 		end
+
+		self.m_PlayTimeAtLastSave = self:getPlayTime()
 	end
 end
 
@@ -367,6 +395,10 @@ function Player:spawn()
 	local quitTick = PlayerManager:getSingleton().m_QuitPlayers[self:getId()]
 	local spawnSuccess = false
 	local SpawnLocationProperty = self:getSpawnLocationProperty()
+
+	--Increasing the max. oxygen (must be done before the player spawns)
+	self:setStat(22, 1000)
+	self:setStat(225, 1000)
 
 	if not quitTick or (getTickCount() - quitTick > 300000) then
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
@@ -440,7 +472,9 @@ function Player:spawn()
 
 	if self:isPremium() then
 		self:setArmor(100)
-		giveWeapon(self, 24, 35)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
 	end
 
 	if self.m_PrisonTime > 0 then
@@ -460,12 +494,16 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	if self.m_IsDead == 1 then
-		if not self:getData("isInDeathMatch") then
-			self:setReviveWeapons()
+	nextframe(
+		function()
+			if self.m_IsDead == 1 then
+				if not self:getData("isInDeathMatch") then
+					self:setReviveWeapons()
+				end
+				killPed(self)
+			end
 		end
-		killPed(self)
-	end
+	)
 
 	WearableManager:getSingleton():removeAllWearables(self)
 
@@ -495,7 +533,9 @@ function Player:respawn(position, rotation, bJailSpawn)
 		self:setPrison(self.m_PrisonTime, true)
 	end
 
-	if self.m_JailTime == 0 or not self.m_JailTime then
+	PickupWeaponManager:getSingleton():detachWeapons(self)
+
+	if not self.m_JailTime or self.m_JailTime == 0 then
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
@@ -507,16 +547,12 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 	self:setCorrectSkin()
 
-	if self:isPremium() then
-		self:setArmor(100)
-		giveWeapon(self, 24, 35)
-	end
-
 	self:setHeadless(false)
 	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
+	self.m_SpawnedDead = 0
 	FactionState:getSingleton():uncuffPlayer(self)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
@@ -528,10 +564,16 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	if self:isPremium() then
+		self:setArmor(100)
+		if self.m_JailTime == 0 then
+			giveWeapon(self, 24, 35)
+		end
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
-
-	PrisonBreak.RemoveKeycard(self)
 end
 
 function Player:clearReviveWeapons()
@@ -544,20 +586,27 @@ function Player:dropReviveWeapons()
 		local pickupWeapon, weapon, ammo, model, x, y, z, dim, int
 		for i = 1, 12 do
 			if self.m_ReviveWeaponsInfo[i] then
-				x,y,z = getElementPosition(self)
-				x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
+				px,py,z = getElementPosition(self)
+				x,y = getPointFromDistanceRotation(px, py, 3, 360*(i/12))
 				int = getElementInterior(self)
 				dim = getElementDimension(self)
 				weapon =  self.m_ReviveWeaponsInfo[i][1]
 				ammo = self.m_ReviveWeaponsInfo[i][2]
-				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 and weapon ~= 9 then
-					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self)
+				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and weapon ~= 27 and weapon ~= 9 then
+					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self, false, true, x-px, y-py)
 					if pickupWeapon then
 						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon
 					end
 				end
 			end
 		end
+		--[[nextframe( Workaround, Pickups werden erst attached, wenn man den Skin kurz darauf wechselt (Warum auch immer...)
+			function ()
+				local model = self:getModel()
+				self:setModel(0)
+				self:setModel(model)
+			end
+		)]]
 		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end
@@ -652,7 +701,11 @@ end
 
 function Player.staticFactionChatHandler(self, command, ...)
 	if self.m_Faction then
-		self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		if self.m_Faction:getId() >= 1 and self.m_Faction:getId() <= 3 then
+			Player.staticStateFactionChatHandler(self, command, ...)
+		else
+			self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+		end
 	end
 end
 
@@ -788,6 +841,35 @@ end
 
 function Player:removeSyncListener(player)
 	self.m_SyncListener[player] = nil
+end
+
+function Player:addLastDamaged(player)
+	if player and isValidElement(player, "player") then
+		self.m_LastDamagedBy[player] = getRealTime().timestamp
+	end
+end
+
+function Player:removeLastDamaged(player)
+	self.m_LastDamagedBy[player] = nil
+end
+
+function Player:checkLastDamaged()
+	local now = getRealTime().timestamp
+	for player, tick in pairs(self.m_LastDamagedBy) do
+		if player and isValidElement(player, "player") then
+			if now - tick < 60*3 then
+				local secondsMinutes = string.format("%.2d:%.2d", (now - tick)/60%60, (now - tick)%60)
+				player:sendShortMessage(_("Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)", player, self:getName(), secondsMinutes), "Kampfheilung!", nil, -1)
+				self:removeLastDamaged(player)
+			else
+				if now - tick > 60*3 then
+					self:removeLastDamaged(player)
+				end
+			end
+		else
+			self:removeLastDamaged(player)
+		end
+	end
 end
 
 function Player:updateSync()
@@ -1391,6 +1473,12 @@ function Player:getPlayerAttachedObject()
 	return self.m_PlayerAttachedObject
 end
 
+function Player:dropPlayerAttachedObjectOnDamage()
+	if self.m_PlayerAttachedObject and self.m_PlayerAttachedObject:getModel() == 2912 then
+		self:detachPlayerObject(self:getPlayerAttachedObject(), true)
+	end
+end
+
 function Player:attachToVehicle(forceDetach)
 	if self:getPrivateSync("isAttachedToVehicle") then
 		self:setPrivateSync("isAttachedToVehicle", false)
@@ -1521,6 +1609,7 @@ function Player:districtChat(...)
 end
 
 function Player:moveToJail(CUTSCENE, alreadySpawned)
+	if self.m_PrisonTime > 0 then return end
 	if self.m_JailTime > 0 then
 		if not alreadySpawned and not self.m_DeathInJail then
 			self:respawn(false, false, true)
@@ -1652,3 +1741,15 @@ end
 function Player:getWalkingstyle()
 	return self.m_WalkingStyle or 0
 end
+
+function Player:setBadge(badgeTitle, badgeId, badgeImage)
+	setElementData(self, "Badge", badgeId, true)
+	setElementData(self, "BadgeTitle", badgeTitle, true)
+	setElementData(self, "BadgeImage", badgeImage, true)
+end
+
+function Player:setThrowingObject(object)
+	self.m_ThrowingObject = object
+end
+
+function Player:getThrowingObject() return self.m_ThrowingObject end

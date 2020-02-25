@@ -1,6 +1,6 @@
 InstantTeleportArea = inherit(Object)
 
-function InstantTeleportArea:constructor(col, int, dim, pos)
+function InstantTeleportArea:constructor(col, int, dim, pos, elementTypeOnly)
     self.m_Colshape = col
     self.m_DestinationDim = dim or 0
     self.m_DestinationInt = int or 0
@@ -12,8 +12,7 @@ function InstantTeleportArea:constructor(col, int, dim, pos)
 end
 
 function InstantTeleportArea:Event_onColShapeHit( hE, bDim ) 
-    local hE = hE
-    if bDim then 
+    if bDim and hE:getInterior() == self.m_DestinationInt then 
         if hE:getType() ~= "vehicle" or not hE:getTowingVehicle() then  
             setElementDimension(hE, self.m_DestinationDim)
             setElementInterior(hE, self.m_DestinationInt)
@@ -35,7 +34,6 @@ function InstantTeleportArea:Event_onColShapeHit( hE, bDim )
 end
 
 function InstantTeleportArea:Event_onColShapeLeave( hE, bDim )
-    local hE = hE
     if hE:getDimension() == self.m_DestinationDim and hE:getInterior() == self.m_DestinationInt then 
         if hE:getType() ~= "vehicle" or not hE:getTowingVehicle() then
             setElementDimension(hE, self.m_Colshape:getDimension())
@@ -64,4 +62,3 @@ end
 function InstantTeleportArea:addExitEvent(event)
 	self.m_ExitEvent = event
 end
-

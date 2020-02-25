@@ -228,7 +228,22 @@ function Fishing:FishHit(location, castPower)
 	local fish = self:getFish(location, time, weather, season, playerLevel, {baitName, accessorieName})
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
-		local randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
+		local randomMessage 
+		if not client:isInSewer() then 
+			randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
+		else 
+			local index = self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES_SEWERS)
+			randomMessage = FISHING_BAD_CATCH_MESSAGES_SEWERS[index]
+			if randomMessage ~= "nichts" then 
+				if math.random(1, 10) < 3 then 
+					if FISHING_BAD_CATCH_ITEMS_SEWERS[index] then 
+						client:getInventory():giveItem(FISHING_BAD_CATCH_ITEMS_SEWERS[index], 1)
+					end
+				else
+					randomMessage = "nichts"
+				end
+			end
+		end
 		client:meChat(true, ("zieht %s aus dem Wasser!"):format(randomMessage))
 		client:increaseStatistics("FishBadCatch")
 		return
@@ -490,12 +505,13 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		for i = 1, 5000000 do end -- otherwise the script is too fast to create random numbers
-		fish.RareBonus = self.Random:nextDouble() --math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
+		-- for i = 1, 5000000 do end -- otherwise the script is too fast to create random numbers
+		fish.RareBonus = math.random(0, 10^6)/10^6 --math.max(1 - (Fishing.Statistics[fish.Id].SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 
 function Fishing:inventoryUse(player, fishingRodName)
+	if player.isTasered then return end
 	if self.m_Players[player] then
 		local fishingRod = self.m_Players[player].fishingRod
 		if fishingRod then fishingRod:destroy() end
@@ -592,6 +608,8 @@ function Fishing:getFishingRodEquipments(player, fishingRodName)
 
 	return equipements
 end
+
+function Fishing:isPlayerFishing(player) return self.m_Players[player] end
 
 function Fishing:addFishingRodEquipment(player, fishingRodName, equipment)
 	local playerInventory = player:getInventory()

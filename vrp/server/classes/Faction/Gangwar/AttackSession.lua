@@ -7,6 +7,7 @@
 -- ****************************************************************************
 AttackSession = inherit(Object)
 addRemoteEvents{"GangwarPick:submit"}
+GANGWAR_TEAMBLIPS = true
 
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
 function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPlayer )
@@ -19,8 +20,10 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_PickList = { }
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_DamageFunc = bind(self.onGangwarDamage, self)
-	addEventHandler("onClientDamage", root, self.m_DamageFunc)
+
+	--self.m_DamageFunc = bind(self.onGangwarDamage, self)
+	--addEventHandler("onClientDamage", root, self.m_DamageFunc)
+
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
@@ -29,6 +32,8 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self:createWeaponBox()
 	self.m_Active = true
 	self.m_DecisionEnded = false
+	self.m_Blips = {}
+	self:createTeamBlips()
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
@@ -53,7 +58,7 @@ function AttackSession:destructor()
 		killTimer( self.m_NotifiyAgainTimer )
 	end
 	self.m_Active = false
-	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
+	--removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
 function AttackSession:logSession(winner)
@@ -223,10 +228,12 @@ function AttackSession:joinPlayer( player )
 			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
 		end
 	end
+	self:createTeamBlips()
 end
 
 function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
+	self:createTeamBlips()
 end
 
 function AttackSession:onPurposlyDisqualify( player, bAfk, bPick)
@@ -284,32 +291,23 @@ function AttackSession:sessionCheck()
 	end
 end
 
-function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
-	local bParticipant = self:isParticipantInList( player )
-	if bParticipant then
-		if killer then
-			local bParticipant2 = self:isParticipantInList( killer )
-			if bParticipant2 then
-				if player and isElement(player) then 
-					if killer.g_kills then 
-						killer.g_kills = killer.g_kills + 1
-					else 
-						killer.g_kills = 1 
-					end
-					player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
-					killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
-					local loss = player.m_LossBeforeDead or 0
-					triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
-					self:onPlayerLeaveCenter( player ) 
-					killer.g_damage = killer.g_damage + math.floor(loss)
-					self:disqualifyPlayer( player )
+function AttackSession:onPlayerWasted( player, killer, weapon, bodypart )
+	if self:isParticipantInList( player ) then
+		if killer and isElement(killer) then
+			if self:isParticipantInList(killer) and killer:getFaction() ~= player:getFaction() then
+				if killer.g_kills then 
+					killer.g_kills = killer.g_kills + 1
+				else 
+					killer.g_kills = 1 
 				end
+				triggerClientEvent("onGangwarKill", killer)
 			end
-		else
-			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
-			self:disqualifyPlayer( player )
-			self:onPlayerLeaveCenter( player ) 
 		end
+		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
+		local faction = player.m_Faction == self.m_Faction1 and self.m_Faction2 or self.m_Faction1
+		faction:sendMessage(_("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist %s!", player, killer and "getötet worden" or "gestorben"),0,200,0,true)
+		self:onPlayerLeaveCenter( player ) 
+		self:disqualifyPlayer( player )
 	end
 end
 
@@ -420,6 +418,7 @@ end
 
 function AttackSession:stopClients( bNoOutput )
 	local allGangwarPlayers = {}
+	self:destroyTeamBlips()
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
 		allGangwarPlayers[#allGangwarPlayers+1] = v
@@ -536,6 +535,7 @@ function AttackSession:onDecisionTimeEnd()
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
 		v:triggerEvent("GangwarPick:close")
 	end
+	self:createTeamBlips()
 	self.m_DecisionEnded = true
 end
 
@@ -682,5 +682,34 @@ function AttackSession:destroyWeaponBox()
 			self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:forceClose")
 		end
 		self.m_WeaponBoxAttendants = {}
+	end
+end
+
+function AttackSession:destroyTeamBlips()
+	for key, player in pairs(getElementsByType("player")) do
+		player:triggerEvent("Gangwar:destroyTeamBlips")
+	end
+end
+
+function AttackSession:createTeamBlips()
+	if GANGWAR_TEAMBLIPS == false then return end
+	local faction1 = {}
+	local faction2 = {}
+	for key, player in pairs(self.m_Participants) do
+		if not self:isPlayerDisqualified(player) then
+			if player:getFaction() == self.m_Faction1 then
+				faction1[#faction1+1] = player
+			elseif player:getFaction() == self.m_Faction2 then
+				faction2[#faction2+1] = player
+			end
+		end
+	end
+	for key, player in pairs(self.m_Participants) do
+		if player:getFaction() == self.m_Faction1 then
+			playertable = faction1
+		elseif player:getFaction() == self.m_Faction2 then
+			playertable = faction2
+		end
+		player:triggerEvent("Gangwar:createTeamBlips", playertable) 
 	end
 end

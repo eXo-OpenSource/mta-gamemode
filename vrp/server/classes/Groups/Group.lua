@@ -74,7 +74,7 @@ function Group.create(name, type)
 end
 
 function Group:purge()
-	if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_groups SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		--remove active props
 		GroupPropertyManager:getSingleton():takePropsFromGroup(self)
 		-- Remove all players
@@ -275,7 +275,11 @@ function Group:addPlayer(playerId, rank)
 		player:triggerEvent("createGroupBlip", x, y, z, v.m_Id, self.m_Type)
 	end
 
-	self:getActivity(true)
+	Async.create(
+		function(self)
+			self:getActivity(true)
+		end
+	)(self)
 end
 
 function Group:removePlayer(playerId)
@@ -292,6 +296,8 @@ function Group:removePlayer(playerId)
 		player:triggerEvent("forceGroupPropertyClose")
 	end
 	if player then
+		player:saveAccountActivity()
+		setElementData(player, "playingTimeGroup", 0)
 		player:setGroup(nil)
 		if isElement(player) then
 			player:reloadBlips()
@@ -415,18 +421,33 @@ function Group:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
 	end
+
 	self.m_LastActivityUpdate = getRealTime().timestamp
+	local playerIds = {}
 
 	for playerId, rank in pairs(self.m_Players) do
-		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
+		table.insert(playerIds, playerId)
+	end
 
+	local query = "SELECT UserId, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_account_activity WHERE UserId IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserId"
+
+	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
+
+	local rows = Async.wait()
+
+	self.m_PlayerActivity = {}
+	for playerId, rank in pairs(self.m_Players) do
+		self.m_PlayerActivity[playerId] = 0
+	end
+
+	for _, row in ipairs(rows) do
 		local activity = 0
 
 		if row and row.Activity then
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[playerId] = activity
+		self.m_PlayerActivity[row.UserId] = activity
 	end
 end
 
@@ -435,7 +456,11 @@ function Group:getPlayers(getIDsOnly)
 		return self.m_Players
 	end
 
-	self:getActivity()
+	Async.create(
+		function(self)
+			self:getActivity()
+		end
+	)(self)
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
@@ -469,6 +494,7 @@ function Group:getOnlinePlayers()
 end
 
 function Group:sendChatMessage(sourcePlayer, message)
+	if not getElementData(sourcePlayer, "GroupChatEnabled") then return sourcePlayer:sendError(_("Du hast den Gruppenchat deaktiviert!", sourcePlayer)) end
 	local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
 		cancelEvent()
@@ -483,7 +509,9 @@ function Group:sendChatMessage(sourcePlayer, message)
 	message = message:gsub("%%", "%%%%")
 	local text = ("[%s] %s %s: %s"):format(self:getName(), rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, 0, 255, 150)
+		if getElementData(player, "GroupChatEnabled") then
+			player:sendMessage(text, 0, 255, 150)
+		end
 		if player ~= sourcePlayer then
 			receivedPlayers[#receivedPlayers+1] = player
 		end
@@ -623,7 +651,11 @@ end
 
 function Group:initalizePlayers()
 	if not DEBUG then
-		self:getActivity()
+		Async.create(
+			function(self)
+				self:getActivity()
+			end
+		)(self)
 	end
 	self:updateRankNameSync()
 end
@@ -756,7 +788,7 @@ function Group:payDay()
 		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
 	end
 
-	self:sendShortMessage(table.concat(output, "\n"), -1)
+	self:sendShortMessage(table.concat(output, "\n"), 10000)
 
 	self:save()
 

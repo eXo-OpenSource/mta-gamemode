@@ -16,28 +16,7 @@ function Plant.initalize()
 	Plant.WaterDrop =  "files/images/Inventory/waterdrop.png"
 end
 
-function Plant:constructor( )
-	self.m_BindRemoteFunc = bind( Plant.onUse, self )
-	self.m_BindRemoteFunc2 = bind( Plant.onSync, self )
-	self.m_BindRemoteFunc3 = bind( Plant.Render, self )
-	self.m_BindRemoteFunc4 = bind( Plant.onWaterPlant, self )
-	self.m_EntityTable = {	}
-	addEventHandler("Plant:sendClientCheck", localPlayer, self.m_BindRemoteFunc )
-	addEventHandler("Plant:syncPlantMap", localPlayer, self.m_BindRemoteFunc2 )
-	addEventHandler("onClientRender", root, self.m_BindRemoteFunc3 )
-	addEventHandler("Plant:onWaterPlant", localPlayer, self.m_BindRemoteFunc4 )
-end
-
-function Plant:isUnderWater()
-	local pos = localPlayer:getPosition()
-	local waterLevel = getWaterLevel(pos.x, pos.y, pos.z)
-	if waterLevel and pos.z-waterLevel < 0 then
-		return true
-	end
-	return false
-end
-
-function Plant:onUse(plant)
+function Plant.checkGroundInfo()
 	local pos = localPlayer:getPosition()
 	local gz = getGroundPosition(pos)
 	local surfaceClear = true
@@ -71,6 +50,32 @@ function Plant:onUse(plant)
 	else	
 		surfaceClear = false
 	end
+	return surfaceClear, surfaceRightType, gz
+end
+
+function Plant:constructor( )
+	self.m_BindRemoteFunc = bind( Plant.onUse, self )
+	self.m_BindRemoteFunc2 = bind( Plant.onSync, self )
+	self.m_BindRemoteFunc3 = bind( Plant.Render, self )
+	self.m_BindRemoteFunc4 = bind( Plant.onWaterPlant, self )
+	self.m_EntityTable = {	}
+	addEventHandler("Plant:sendClientCheck", localPlayer, self.m_BindRemoteFunc )
+	addEventHandler("Plant:syncPlantMap", localPlayer, self.m_BindRemoteFunc2 )
+	addEventHandler("onClientRender", root, self.m_BindRemoteFunc3 )
+	addEventHandler("Plant:onWaterPlant", localPlayer, self.m_BindRemoteFunc4 )
+end
+
+function Plant:isUnderWater()
+	local pos = localPlayer:getPosition()
+	local waterLevel = getWaterLevel(pos.x, pos.y, pos.z)
+	if waterLevel and pos.z-waterLevel < 0 then
+		return true
+	end
+	return false
+end
+
+function Plant:onUse(plant)
+	local surfaceClear, surfaceRightType, gz = Plant.checkGroundInfo()
 	triggerServerEvent("plant:getClientCheck", localPlayer, plant, surfaceClear and surfaceRightType, gz, self:isUnderWater())
 end
 
@@ -152,3 +157,47 @@ end
 function math.lerp(from,to,alpha)
     return from + (to-from) * alpha
 end
+
+
+--[[addEventHandler("onClientRender", root, function()
+	local pos = localPlayer:getPosition()
+	local gz = getGroundPosition(pos)
+	local surfaceClear = true
+	local surfaceRightType = true 
+	if math.abs(pos.z - gz) < 2 then  
+		local base, __, __, __, __, __, __, __, surface = processLineOfSight(pos.x, pos.y, pos.z, pos.x, pos.y, gz-0.5, true, false, false)
+		if base then
+			local edges = {
+				top = {processLineOfSight(pos.x + 1, pos.y, pos.z, pos.x + 1, pos.y, gz-0.5, true, false, false)},
+				left = {processLineOfSight(pos.x, pos.y + 1, pos.z, pos.x, pos.y + 1, gz-0.5, true, false, false)},
+				bottom = {processLineOfSight(pos.x - 1, pos.y, pos.z, pos.x - 1, pos.y, gz-0.5, true, false, false)},
+				right = {processLineOfSight(pos.x, pos.y - 1, pos.z, pos.x, pos.y - 1, gz-0.5, true, false, false)},
+			}
+			dxDrawLine3D(pos.x + 1, pos.y, pos.z, pos.x + 1, pos.y, gz-0.5, edges.top and tocolor(0, 255, 0) or tocolor(255, 0, 0))
+			dxDrawLine3D(pos.x, pos.y + 1, pos.z, pos.x, pos.y + 1, gz-0.5, edges.left and tocolor(0, 255, 0) or tocolor(255, 0, 0))
+			dxDrawLine3D(pos.x - 1, pos.y, pos.z, pos.x - 1, pos.y, gz-0.5, edges.bottom and tocolor(0, 255, 0) or tocolor(255, 0, 0))
+			dxDrawLine3D(pos.x, pos.y - 1, pos.z, pos.x, pos.y - 1, gz-0.5, edges.right and tocolor(0, 255, 0) or tocolor(255, 0, 0))
+			for i,v in pairs(edges) do
+				if v[1] then 
+					if not IsMatInMaterialType(v[9]) then
+						surfaceRightType = false
+						break
+					end
+				else
+					surfaceClear = false
+					break
+				end
+			end
+			if not IsMatInMaterialType(surface) then
+				surfaceRightType = false
+			end
+			dxDrawText("surface: " .. tostring(edges.top[9]).." - "..tostring(edges.left[9]).." - "..tostring(edges.bottom[9]).." - "..tostring(edges.right[9]).." - "..tostring(surface), 500, 520)
+		else	
+			surfaceClear = false
+		end
+	else	
+		surfaceClear = false
+	end
+	dxDrawText("clear: " .. tostring(surfaceClear), 500, 500)
+	dxDrawText("right type: " .. tostring(surfaceRightType), 500, 510)
+end)]]

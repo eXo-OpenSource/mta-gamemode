@@ -197,7 +197,7 @@ function HUDUI:drawVRP()
 	local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutBack"))
 	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.04*screenHeight,0.05*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
 
-	local weaponIconPath = WeaponIcons[self:getLocalTarget():getWeapon()]
+	local weaponIconPath = FileModdingHelper:getSingleton():getWeaponImage(self:getLocalTarget():getWeapon())
 	if weaponIconPath then
 		if munitionWindowActive then
 			dxDrawImage(f(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)), f(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)), f(0.033*screenWidth), f(0.059*screenHeight), weaponIconPath)
@@ -366,7 +366,7 @@ function HUDUI:drawExo()
 	dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 	dxDrawText ("KARMA: "..math.round(self:getLocalTarget():getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 
-	dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, WeaponIcons[self:getLocalTarget():getWeapon()])
+	dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, FileModdingHelper:getSingleton():getWeaponImage(self:getLocalTarget():getWeapon()))
 	local tAmmo = getPedTotalAmmo( self:getLocalTarget() )
 	local iClip = getPedAmmoInClip( self:getLocalTarget() )
 	local weaponSlot = getPedWeaponSlot(self:getLocalTarget())
@@ -393,30 +393,8 @@ function HUDUI:drawExo()
 
 	if isElementInWater(self:getLocalTarget()) then
 		dxDrawRectangle ((screenWidth-width)*1.05,sx*0.318,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
-		dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+		dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/(1000 + getPedStat(localPlayer, 22)*1.5 + getPedStat(localPlayer, 225)*1.5)).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
 	end
-end
-
-function HUDUI:getSkinBrowserSave(skinid, w, h) -- get the correct skin texture and manage the underlying browser
-	if not self.m_SkinBrowser then
-		self.m_SkinBrowser = createBrowser(w, h, false, true)
-		self.m_SkinID = skinid
-		self.m_BrowserW = w
-		self.m_BrowserH = h
-		addEventHandler("onClientBrowserCreated", self.m_SkinBrowser, function()
-			self.m_SkinBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
-		end)
-	end
-	if skinid ~= self.m_SkinID then
-		self.m_SkinBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
-		self.m_SkinID = skinid
-	end
-	if w ~= self.m_BrowserW or h ~= self.m_BrowserH then
-		resizeBrowser (self.m_SkinBrowser, w, h)
-		self.m_BrowserW = w
-		self.m_BrowserH = h
-	end
-	return self.m_SkinBrowser
 end
 
 function HUDUI:drawChart()
@@ -490,7 +468,7 @@ function HUDUI:drawChart()
 	end
 
 	local health, armor, karma = self:getLocalTarget():getHealth(), self:getLocalTarget():getArmor(), math.round(self:getLocalTarget():getKarma())
-	local oxygen = math.percent(getPedOxygenLevel(self:getLocalTarget()), 1000)
+	local oxygen = math.percent(getPedOxygenLevel(self:getLocalTarget()), (1000 + getPedStat(self:getLocalTarget(), 22)*1.5 + getPedStat(self:getLocalTarget(), 225)*1.5))
 	local dsc = core:get("HUD", "chartLabels", true)
 	local healthColor = Color.HUD_Red
 	if health <= 20 then --quick and dirty flash animation
@@ -508,15 +486,14 @@ function HUDUI:drawChart()
 	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and karma.." Karma" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
 	drawCol(1, 0, Color.Clear, toMoneyString(self:getLocalTarget():getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
 	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(1, 0, Color.Clear, getZoneName(self:getLocalTarget().position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", self:getLocalTarget():getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
+	drawCol(1, 0, Color.Clear, getZoneName(getElementPosition(self:getLocalTarget())), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", self:getLocalTarget():getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
 
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
 	if core:get("HUD", "chartSkinVisible", false) or getProgress("skin", true, true) > 0 then
 		local prog = getProgress("skin", not core:get("HUD", "chartSkinVisible", false))
 
 		dxDrawRectangle(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, tocolor(0, 0, 0, 150*prog)) --skin
-		dxDrawImage(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, self:getSkinBrowserSave(localPlayer:getModel(), col2_w + margin_save*2, w_height), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
-
+		dxDrawImageSection(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, 20, 40, 260, 260, string.format("files/images/Skins/head/%s.png", localPlayer:getModel()), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
 		col2_i = col2_i + prog * 2
 	end
 	drawCol(2, 0, Color.Clear, ("%d-%d"):format(getPlayerPing(self:getLocalTarget()), getNetworkStats().packetlossLastSecond), false, Color.Clear, "net", not DEBUG_NET)
@@ -530,7 +507,7 @@ function HUDUI:drawChart()
 	drawCol(2, 0, Color.Clear, math.min(self.m_FPSLimit, localPlayer.FPS.frames + 1), FontAwesomeSymbols.Desktop, Color.Clear, "fps", not core:get("HUD", "chartFPSVisible", true))
 
 	--weapons
-	local weaponIconPath = WeaponIcons[self:getLocalTarget():getWeapon()]
+	local weaponIconPath = FileModdingHelper:getSingleton():getWeaponImage(self:getLocalTarget():getWeapon())
 	if weaponIconPath and (self:getLocalTarget():getWeapon() ~= 0 or getProgress("weapon", true, true) > 0) then
 		local prog = getProgress("weapon", self:getLocalTarget():getWeapon() == 0)
 		local base_y = border + (height + margin)*col1_i - margin * (1 - prog)
@@ -548,6 +525,7 @@ function HUDUI:drawChart()
 end
 
 function HUDUI:drawRedDot()
+	if localPlayer:getWeapon() == 35 then return end
 	if getPedWeaponSlot(self:getLocalTarget()) >= 2 and getPedWeaponSlot(self:getLocalTarget()) <= 7 then
 		if getPedControlState(self:getLocalTarget(), "aim_weapon" ) then
 			local x1, y1, z1 = getPedWeaponMuzzlePosition(self:getLocalTarget())

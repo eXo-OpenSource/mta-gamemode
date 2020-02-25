@@ -235,7 +235,8 @@ function HUDRadar:draw()
 	end
 
 	if self.m_NorthBlip then
-		self.m_NorthBlip:setPosition(localPlayer.position.x, localPlayer.position.y + 10000, 0) -- update north blip position so it always stays north
+		local x, y = getElementPosition(localPlayer)
+		self.m_NorthBlip:setPosition(x, y + 10000, 0) -- update north blip position so it always stays north
 	end
 
 	local isNotInInterior = getElementInterior(localPlayer) == 0
@@ -307,7 +308,7 @@ function HUDRadar:draw()
 		-- Draw oxygen bar
 		if isInWater then
 			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, self.m_Width/4-9, self.m_Height/20, tocolor(65, 56, 15))
-			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, (self.m_Width/4-9) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
+			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, (self.m_Width/4-9) * (getPedOxygenLevel(localPlayer)/ (1000 + getPedStat(localPlayer, 22)*1.5 + getPedStat(localPlayer, 225)*1.5) ), self.m_Height/20, tocolor(91, 79, 21))
 		end
 	end
 
@@ -318,7 +319,7 @@ function HUDRadar:draw()
 	-- Draw region name (above health bar)
 	if core:get("HUD", "drawZone", false) then
 		dxDrawRectangle(self.m_PosX, self.m_PosY+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
-		dxDrawText(getZoneName(localPlayer.position), self.m_PosX + self.m_Width/2, self.m_PosY+self.m_Height-self.m_Height/20, nil, nil,
+		dxDrawText(getZoneName(getElementPosition(localPlayer)), self.m_PosX + self.m_Width/2, self.m_PosY+self.m_Height-self.m_Height/20, nil, nil,
 			Color.White, 1, getVRPFont(VRPFont(self.m_Height/10)), "center", "center")
 	end
 
@@ -431,7 +432,8 @@ function HUDRadar:getVisibleBlipsForRadar()
 			end
 
 			if blipX and display then
-				if getDistanceBetweenPoints2D(localPlayer.position.x, localPlayer.position.y, blipX, blipY) < blip:getStreamDistance() then
+				local x, y = getElementPosition(localPlayer)
+				if getDistanceBetweenPoints2D(x, y, blipX, blipY) < blip:getStreamDistance() then
 					table.insert(self.ms_CachedRadarBlips, blip)
 				end
 			end

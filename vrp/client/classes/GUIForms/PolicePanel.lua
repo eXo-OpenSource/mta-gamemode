@@ -212,7 +212,7 @@ function PolicePanel:loadPlayers()
 		if self.m_WantedFilter:isChecked() and v:getWanteds() == 0 then skip = true end
 		if self.m_FactionFilter:isChecked() and (not v:getFaction() or not v:getFaction():isEvilFaction()) then skip = true end
 		if self.m_GangFilter:isChecked() and v:getGroupType() ~= "Gang" then skip = true end
-		if #self.m_PlayerSearch:getText() <= 3 or string.find(string.lower(v:getName()), string.lower(self.m_PlayerSearch:getText())) then
+		if #self.m_PlayerSearch:getText() < 1 or string.find(string.lower(v:getName()), string.lower(self.m_PlayerSearch:getText())) then
 			if not skip then
 				table.insert(self.m_Players, {v, v:getWanteds(), v:getFaction() and v:getFaction():getId() or 0, v:getGroupType() == "Gang" and v:getGroupId() or 0})
 			end

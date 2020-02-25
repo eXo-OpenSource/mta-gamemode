@@ -10,7 +10,7 @@ inherit(Singleton, GunBoxGUI)
 
 addRemoteEvents{"openGunBox", "receiveGunBoxData"}
 
-function GunBoxGUI:constructor()
+function GunBoxGUI:constructor(gunBoxObject)
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
 
     self.ms_SlotsSettings = {
@@ -46,7 +46,7 @@ function GunBoxGUI:constructor()
     self.m_ToBox.onLeftClick = function() self:ToBox() end
     self:loadPlayerWeapons()
 
-	triggerServerEvent("requestGunBoxData", localPlayer)
+	triggerServerEvent("requestGunBoxData", localPlayer, gunBoxObject.position.x, gunBoxObject.position.y, gunBoxObject.position.z)
 
 	addEventHandler("receiveGunBoxData", root, bind(self.refreshData, self))
 end
@@ -94,7 +94,7 @@ function GunBoxGUI:refreshData(weapons)
     	            local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
     	            self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
     	            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
-    	            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+    	            self.m_WeaponSlots[index].Image:setImage(FileModdingHelper:getSingleton():getWeaponImage(weapon.WeaponId))
     	            self.m_WeaponSlots[index].TakeButton:setEnabled(true)
     	        else
     	            self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)

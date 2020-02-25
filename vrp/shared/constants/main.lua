@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.8"
+PROJECT_VERSION = "1.8.3"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -11,6 +11,8 @@ PICUPLOAD_PATH = "https://picupload.pewx.de"
 if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
+
+DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "influxdb.merx.dev", "sentry.exo.merx.dev"}
 
 -- LEVELS
 MAX_JOB_LEVEL = 10
@@ -25,9 +27,9 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = false --quests, mostly
-EVENT_CHRISTMAS_MARKET = (EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
-SNOW_SHADERS_ENABLED = true -- disable them during summer time
+EVENT_CHRISTMAS = false --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
+EVENT_CHRISTMAS_MARKET = false --(EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
@@ -107,6 +109,20 @@ RANK[8] = "StellvProjektleiter"
 RANK[9] = "Projektleiter"
 
 
+RANKSCOREBOARD = {}
+RANKSCOREBOARD[-1] = "Banned"
+RANKSCOREBOARD[0] = "User"
+RANKSCOREBOARD[1] = "Ticket"
+RANKSCOREBOARD[2] = "Clan"
+RANKSCOREBOARD[3] = "Support"
+RANKSCOREBOARD[4] = "Moderator"
+RANKSCOREBOARD[5] = "Admin"
+RANKSCOREBOARD[6] = "Admin"
+RANKSCOREBOARD[7] = "Admin"
+RANKSCOREBOARD[8] = "Admin"
+RANKSCOREBOARD[9] = "Admin"
+
+
 local r2 = {}
 for k, v in pairs(RANK) do
 	r2[k] = v
@@ -118,6 +134,7 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
+	["freeVip"] = RANK.Moderator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -142,9 +159,11 @@ ADMIN_RANK_PERMISSION = {
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["vehicleTexture"] = RANK.Moderator,
 	["spect"] = RANK.Supporter,
+	["aduty"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
+	["clearAd"] = RANK.Supporter,
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -203,11 +222,20 @@ ADMIN_RANK_PERMISSION = {
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,
+	["transactionMenu"] = RANK.Administrator,
+	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
+	["serialAccountMenu"] = RANK.Supporter,
+
+	["openMapEditor"] = RANK.Administrator,
+	["createNewMap"] = RANK.Administrator,
+	["setMapStatus"] = RANK.Administrator,
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
 
-	["disablereg"] = RANK.Servermanager --disablereg, enablereg
+	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
+
+	["throwaway"] = RANK.Moderator,
 }
 
 GroupRank = {
@@ -321,19 +349,19 @@ SkinInfo = {
 	[0] = {"CJ", 5000},
 	[2] = {"Weißer Hut", 50},
 	[7] = {"Jeans-Jacke", 50},
-	[14] = { "Hawai-Shirt", 50},
-	[15] = { "Karriertes Hemd", 70},
-	[17] = {"Buisiness", 120},
+	[14] = { "Hawaii-Shirt", 50},
+	[15] = { "Kariertes Hemd", 70},
+	[17] = {"Business", 120},
 	[18] = {"Strandboy",20},
 	[19] = {"Rapper", 50},
 	[20] = {"Gelbes Shirt",90},
-	[21] = {"Blau karriertes Hemd", 80},
+	[21] = {"Blau kariertes Hemd", 80},
 	[22] = {"Rapper 2", 100},
 	[23] = {"Skater", 50},
 	[24] = {"Los Santos Jacke",60},
-	[25] = {"College Jacke", 80},
+	[25] = {"College-Jacke", 80},
 	[26] = {"Camper", 100},
-	[28] = {"Tank top",60},
+	[28] = {"Tank Top",60},
 	[29] = {"Hoodie",50},
 	[30] = {"Tanktop Kreuz", 100},
 	[32] = {"Augenklappe", 80},
@@ -341,39 +369,39 @@ SkinInfo = {
 	[34] = {"Cowboy", 80},
 	[35] = {"Anglerhut", 90},
 	[36] = {"Baseball Cap",100},
-	[37] = {"Baseball Cap2",90},
-	[43] = {"Daddy cool",100},
+	[37] = {"Baseball Cap 2",90},
+	[43] = {"Daddy Cool",100},
 	[46] = {"Weißes Hemd, Kette", 120},
 	[47] = {"Grünes Hemd", 100},
 	[48] = {"Blau weiß gestreift",90},
-	[57] = { "Anzug ( Asiate )", 100},
-	[58] = {"Zinkrot Hemd ( Asiate )", 80},
+	[57] = { "Anzug (Asiate)", 100},
+	[58] = {"Zinkrotes Hemd (Asiate)", 80},
 	[59] = {"Gestreiftes Hemd", 70},
 	[60] = {"Pullover, Jeans", 90},
-	[66] = {"College Jacke2", 80},
-	[73] = {"Army jeans, Sandalen", 100},
-	[94] = {"Golf Outfit", 90},
+	[66] = {"College-Jacke 2", 80},
+	[73] = {"Army Jeans, Sandalen", 100},
+	[94] = {"Golf-Outfit", 90},
 	[97] = {"Strand 2", 40},
-	[98] = {"Polo-Hemd, jeans", 100},
+	[98] = {"Polo-Hemd, Jeans", 100},
 	[100] = {"Biker", 130},
 	[101] = {"Parker-Jacke", 120},
 	[133] = {"Trucker, rote Cap", 140},
 	[136] = {"Ganja-Mütze, rote jeans", 80},
-	[142] = {"Festtagsgewand ( Afrikaner )", 100},
-	[143] = {"Sonnenbrille, blaue jacke", 100},
+	[142] = {"Festtagsgewand (Afrikaner)", 100},
+	[143] = {"Sonnenbrille, blaue Jacke", 100},
 	[144] = {"Maske, Afro", 120},
 	[146] = {"Maske, Sandalen", 130},
 	[147] = {"Business-Anzug, Grau",160},
-	[154] = {"Strand3", 40},
+	[154] = {"Strand 3", 40},
 	[158] = {"Cowboy 2", 60},
 	[161] = {"Cowboy 3", 70},
 	[170] = {"Roter Pullover", 90},
 	[171] = {"Anzug, Fliege", 170},
-	[177] = {"Frasier-Schnitt, blaues shirt", 90},
+	[177] = {"Undercut, blaues Shirt", 90},
 	[176] = {"Blaues Shirt", 120},
-	[179] = {"Army tanktop, Dogtags", 90},
+	[179] = {"Army Tank Top, Dogtags", 90},
 	[180] = {"Basketball-Shirt", 60},
-	[184] = {"Blau weiß Schwarzes Shirt", 90},
+	[184] = {"Blau-Weiß-Schwarzes Shirt", 90},
 	[206] = {"Olives Shirt", 100},
 
 	[1] = {"Offenes Hemd", 50},
@@ -382,22 +410,22 @@ SkinInfo = {
 	[12] = {"Schwarzes Kleid", 120},
 	[31] = {"Farmerin", 70},
 	[38] = {"Golferin", 80},
-	[39] = {"Alte Dame", 60},
+	[39] = {"Alte Dame 2", 60},
 	[40] = {"Roter Rock", 100},
 	[41] = {"Trainingsanzug", 60},
 	[45] = {"Grüne Badehose", 50},
 	[53] = {"Golferin 2", 80},
 	[55] = {"Gestreifter Rock", 80},
-	[56] = {"Rock mit grünes Oberteil", 70},
+	[56] = {"Rock mit grünem Oberteil", 70},
 	[62] = {"Opa in Schlafanzug", 50},
-	[67] = {"Gangster mit weißen Oberteil", 70},
+	[67] = {"Gangster mit weißem Oberteil", 70},
 	[69] = {"Jeanshose, Jeansoberteil", 60},
 	[72] = {"Trucker mit Bart", 60},
 	[76] = {"Business Dame", 130},
 	[88] = {"Alte Dame mit roten Oberteil", 60},
 	[91] = {"Weißer Rock", 80},
 	[95] = {"Armer Rentner", 90},
-	[148] = {"Frau mit blauen Anzug", 120},
+	[148] = {"Frau mit blauem Anzug", 120},
 	[150] = {"Frau mit gestreifter Kleidung", 110},
 	[157] = {"Bauerin", 60},
 	[170] = {"Rotes T-Shirt", 70},
@@ -407,11 +435,11 @@ SkinInfo = {
 	[190] = {"Frau Bauchfrei", 80},
 	[193] = {"Frau Bauchfrei 2", 80},
 	[214] = {"Weißes Kleid", 120},
-	[215] = {"Weiße Rose mit gelben Oberteil", 100},
+	[215] = {"Weiße Hose mit gelbem Oberteil", 100},
 	[223] = {"Gangster mit Goldkette", 120},
 	[241] = {"Afro mit Bierbauch", 100},
 	[249] = {"Zuhälter", 250},
-	[250] = {"Mann mit grünes T-Shirt", 80},
+	[250] = {"Mann mit grünem T-Shirt", 80},
 	[258] = {"Kariertes Hemd", 100},
 	[259] = {"Kariertes Hemd 2", 100},
 	[261] = {"Trucker mit Bart 2", 60},
@@ -446,6 +474,7 @@ VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss
 NO_LICENSE_VEHICLES = {509, 481, 462, 510, 448}
 TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
 
+GROUP_CREATE_COSTS = 300000
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 GROUP_RENAME_COSTS = 10000
 
@@ -458,8 +487,16 @@ HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
 HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hangar", [2] = "Hangar: Unkown Hangar", [3] = "Hangar: Unkown Hangar"}
 
-WEAPONTRUCK_MAX_LOAD = 60000
-WEAPONTRUCK_MAX_LOAD_STATE = 60000
+WEAPONTRUCK_MAX_LOAD = 60000 -- Dollars
+EVIDENCETRUCK_MAX_LOAD = 60000 -- Dollars
+STATE_EVIDENCE_MAX_OBJECTS = 100000 -- dollars
+STATE_EVIDENCE_MAX_CLIPS = 50
+STATE_EVIDENCE_OBJECT_PRICE = {
+	Waffe = 1, -- * weapon cost
+	Munition = 1, -- * munition cost
+	Item = 10
+}
+
 
 PlayerAttachObjects = {
 	[1550] = {model = 1550, name = "Geldsack", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 0, 180), blockJump = true, bone = 3, placeDown = true},
@@ -489,114 +526,9 @@ AD_DURATIONS = {
 	["45 Sekunden"] = 45
 }
 
-WEAPON_NAMES = {
-	[0] = "Faust",
-	[1] = "Schlagring",
-	[2] = "Golfschläger",
-	[3] = "Schlagstock",
-	[4] = "Messer",
-	[5] = "Baseball Schläger",
-	[6] = "Schaufel",
-	[7] = "Billiard Queue",
-	[8] = "Katana",
-	[9] = "Kettensäge",
-	[10] = "Langer Dildo",
-	[11] = "Kurzer Dildo",
-	[12] = "Vibrator",
-	[14] = "Blumen",
-	[15] = "Gehstock",
-	[16] = "Granaten",
-	[17] = "Tränengas",
-	[18] = "Molotov Cocktails",
-	[22] = "9mm Pistole",
-	[23] = "Taser",
-	[24] = "Desert Eagle",
-	[25] = "Schrotflinte",
-	[26] = "Abgesägte Schrot",
-	[27] = "SPAZ-12",
-	[28] = "Uzi",
-	[29] = "MP5",
-	[30] = "AK-47",
-	[31] = "M4",
-	[32] = "TEC-9",
-	[33] = "Jagd Gewehr",
-	[34] = "Sniper",
-	[35] = "Raketenwerfer",
-	[36] = "RPG",
-	[37] = "Flammenwerfer",
-	[38] = "Minigun",
-	[39] = "Rucksack-Bomben",
-	[40] = "Bomben Auslöser",
-	[41] = "Spray-Dose",
-	[42] = "Feuerlöscher",
-	[43] = "Kamera",
-	[44] = "Nachtsicht-Gerät",
-	[45] = "Wärmesicht-Gerät",
-	[46] = "Fallschirm"
-}
-
-WEAPON_PROJECTILE =
-{
-	[17] = true,
-	[18] = true,
-	[39] = true,
-}
-
-WEAPON_CLIPS = {
-	[25] = 6,
-	[33] = 5,
-	[34] = 4
-}
-
-MIN_WEAPON_LEVELS = {
-	[0] = 0, -- Faust
-	[1] = 0, -- Schlagring
-	[2] = 0, -- Golfschläger
-	[3] = 0, -- Schlagstock
-	[4] = 0, -- Messer
-	[5] = 0, -- Baseball Schläger
-	[6] = 0, -- Schaufel
-	[7] = 0, -- Billiard Queue
-	[8] = 1, -- Katana
-	[9] = 1, -- Kettensäge
-	[10] = 0, -- Langer Pinker Dildo
-	[11] = 0, -- Kurzer Dildo
-	[12] = 0, -- Vibrator
-	[14] = 0, -- Blumen
-	[15] = 0, -- Gehstock
-	[16] = 6, -- Granaten
-	[17] = 6, -- Tränengas
-	[18] = 6, -- Molotov Cocktails
-	[22] = 3, -- 9mm Pistole
-	[23] = 3, -- Taser
-	[24] = 4, -- Desert Eagle
-	[25] = 5, -- Schrotflinte
-	[26] = 6, -- Abgesägte Schrotflinte
-	[27] = 7, -- SPAZ-12 Spezialwaffe
-	[28] = 7, -- Uzi
-	[29] = 7, -- MP5
-	[30] = 8, -- AK-47
-	[31] = 8, -- M4
-	[32] = 7, -- TEC-9
-	[33] = 7, -- Jagd Gewehr
-	[34] = 8, -- Sniper
-	[35] = 8, -- Raketenwerfer
-	[36] = 8, -- RPG
-	[37] = 8, -- Flammenwerfer
-	[38] = 10, -- Minigun
-	[39] = 8, -- Rucksack-Bomben
-	[40] = 8, -- Bomben Auslöser
-	[41] = 1, -- Spray-Dose
-	[42] = 0, -- Feuerlöscher
-	[43] = 0, -- Kamera
-	[44] = 0, -- Nachtsicht-Gerät
-	[45] = 0, -- Wärmesicht-Gerät
-	[46] = 0, -- Fallschirm"
-}
-
 BODYPART_NAMES = {
 	[3] = "Körper",
-	[4] =  "Arsch",
+	[4] =  "Hüfte",
 	[5] =  "Linker Arm",
 	[6] =  "Rechter Arm",
 	[7] =  "Linkes Bein",
@@ -604,10 +536,6 @@ BODYPART_NAMES = {
 	[9] =  "Kopf"
 }
 
-WEAPON_IDS = {}
-for id, name in pairs(WEAPON_NAMES) do
-	WEAPON_IDS[name] = id
-end
 
 MEDIC_TIME = 180000
 DEATH_TIME = 30000
@@ -638,16 +566,16 @@ HOSPITAL_POSITION = Vector3(1177.80, -1323.94, 14.09)
 HOSPITAL_ROTATION = Vector3(0, 0, 270)
 
 WEAPON_LEVEL = {
-	[1] = {["costs"] = 500, ["hours"] = 1},
-	[2] = {["costs"] = 750, ["hours"] = 2},
-	[3] = {["costs"] = 1000, ["hours"] = 3},
-	[4] = {["costs"] = 1500, ["hours"] = 6},
-	[5] = {["costs"] = 2000, ["hours"] = 8},
-	[6] = {["costs"] = 2500, ["hours"] = 10},
-	[7] = {["costs"] = 3250, ["hours"] = 14},
-	[8] = {["costs"] = 4000, ["hours"] = 18},
-	[9] = {["costs"] = 4750, ["hours"] = 22},
-	[10] = {["costs"] = 5500, ["hours"] = 30}
+	[1] = {["costs"] = 750},
+	[2] = {["costs"] = 1125},
+	[3] = {["costs"] = 1500},
+	[4] = {["costs"] = 2250},
+	[5] = {["costs"] = 3000},
+	[6] = {["costs"] = 3750},
+	[7] = {["costs"] = 4875},
+	[8] = {["costs"] = 6000},
+	[9] = {["costs"] = 7125},
+	[10] = {["costs"] = 8250}
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
@@ -731,7 +659,8 @@ FactionStaticId = {
 	BALLAS = 8,
 	OUTLAWS = 9,
 	VATOS = 10,
-	TRIAD = 11
+	TRIAD = 11,
+	BRIGADA = 12,
 }
 
 SEASONS = {
@@ -742,3 +671,10 @@ SEASONS = {
 }
 
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect
+
+CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwards", "backwards", "left", "right", "zoom_in", "zoom_out",
+ "change_camera", "jump", "sprint", "look_behind", "crouch", "action", "walk", "conversation_yes", "conversation_no",
+ "group_control_forwards", "group_control_back", "enter_exit", "vehicle_fire", "vehicle_secondary_fire", "vehicle_left", "vehicle_right",
+ "steer_forward", "steer_back", "accelerate", "brake_reverse", "radio_next", "radio_previous", "radio_user_track_skip", "horn", "sub_mission",
+ "handbrake", "vehicle_look_left", "vehicle_look_right", "vehicle_look_behind", "vehicle_mouse_look", "special_control_left", "special_control_right",
+ "special_control_down", "special_control_up" }

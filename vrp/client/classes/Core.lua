@@ -11,8 +11,10 @@ function Core:constructor()
 	Version:new()
 	TinyInfoLabel:new()
 	Provider:new()
-
+	influx = InfluxDB:new("exo_mta_client", "uMZNF3ot6hGvsP_NTggytFveYfUJfWaz", "exo_mta_cperf")
+	InfluxLogging:new()
 	Cursor = GUICursor:new()
+	self.m_WhitelistChecker = setTimer(bind(self.checkDomainsWhitelist, self), 1000, 0)
 
 	if HTTP_DOWNLOAD then -- In debug mode use old Provider
 		showChat(false)
@@ -86,7 +88,7 @@ function Core:ready() --onClientResourceStart
 	})
 
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), "i.imgur.com"}
+	Browser.requestDomains(DOMAINS, false, self.m_BrowserWhitelistResponse)
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
@@ -106,6 +108,8 @@ function Core:ready() --onClientResourceStart
 	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
 	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
 	Guns:getSingleton():toggleMonochromeShader(core:get("HUD", "KillFeedbackShader", false))
+	localPlayer:setChatSettings()
+	ThrowObject:new()
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
@@ -119,7 +123,7 @@ function Core:ready() --onClientResourceStart
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()
-
+	Damage:new()
 	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
 	if core:get("Other", "Movehead", true) then
 		localPlayer:startLookAt()
@@ -129,6 +133,12 @@ function Core:ready() --onClientResourceStart
 	else
 		setFarClipDistance(992)
 	end
+	if not core:get("Sounds", "Interiors", true) then
+		setInteriorSoundsEnabled(false)
+	end
+
+	localPlayer.m_DisplayMode = core:get("HUD", "ToggleQuickDisplay", true)
+	--Light = DynamicLightingBind:getSingleton() | disabled needs to be rewritten for mutliple pass
 
 	NoDm:new()
 	FactionManager:new()
@@ -137,8 +147,10 @@ function Core:ready() --onClientResourceStart
 	HorseRace:new()
 	Townhall:new()
 	Sewers:new()
+	PlayHouse:new()
 	PremiumArea:new()
 
+	ColshapeStreamer:new()
 	Plant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
@@ -161,6 +173,7 @@ function Core:ready() --onClientResourceStart
 	Help:new()
 	ClientStatistics:new()
 	Nametag:new()
+	VehicleMark:new()
 	PickupWeaponManager:new()
 
 	if EVENT_HALLOWEEN then
@@ -177,10 +190,15 @@ function Core:ready() --onClientResourceStart
 	ExplosiveTruckManager:new()
 	VehicleTurbo:new()
 	PlaneManager:new()
+	FileModdingHelper:new()
+	PoliceAnnouncements:new()
+	BlackJackTable:new()
+	CasinoWheel:new()
 end
 
 function Core:afterLogin()
 	Weather:new()
+	Time:new()
 	RadioGUI:new()
 	HUDSpeedo:new()
 	HUDAviation:new()
@@ -197,6 +215,9 @@ function Core:afterLogin()
 	WheelOfFortune:new()
 	Atrium:new()
 	ElementInfoManager:new()
+	if EVENT_HALLOWEEN then
+		HalloweenEasterEggs:new()
+	end
 
 	for i = 1,#GUNBOX_CRATES do
 		ElementInfo:new(GUNBOX_CRATES[i], "Waffenbox", 2)
@@ -262,6 +283,16 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 	showChat(true)
 end
 
+function Core:checkDomainsWhitelist()
+	for k, v in pairs(DOMAINS) do
+		if Browser.isDomainBlocked(v) then
+			Browser.requestDomains(DOMAINS, false, checkRequest)
+			return
+		end
+	end
+	killTimer(self.m_WhitelistChecker)
+end
+
 function Core:destructor()
 	if HUDAviation:isInstantiated() then
 		delete(HUDAviation:getSingleton())
@@ -296,7 +327,7 @@ setTimer(
 	function()
 		local attachedBlips = {}
 		for _, v in pairs(getElementsByType("blip")) do
-			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" then
+			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" and not v:getData("isGangwarBlip") then
 				table.insert(attachedBlips, v)
 			end
 		end

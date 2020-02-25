@@ -7,7 +7,7 @@ sampler implicitInputSampler = sampler_state
 	
 float Center = 0.5;
 float BlurAmount = 0.5;
-	
+
 float4 PixelShaderFunction(float2 TextureCoordinate : TEXCOORD0) : COLOR0
 {
 	float2 uv = TextureCoordinate;			

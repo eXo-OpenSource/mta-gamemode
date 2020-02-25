@@ -121,7 +121,7 @@ function ExplosiveTruck:impoundBox(player)
 
 	self:removeBox(player)
 
-	FactionState:getSingleton():sendShortMessage(player:getName() .. " hat Sprengstoff konfesziert!")
+	FactionState:getSingleton():sendShortMessage(player:getName() .. " hat Sprengstoff konfisziert!")
 
 	delete(self)
 end

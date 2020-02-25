@@ -14,7 +14,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -42,9 +42,13 @@ function FactionManager:constructor()
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
 	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
+	addEventHandler("factionPlayerNeedhelp", root, bind(self.Event_playerNeedhelp, self))
+
+	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
+
 	FactionState:new()
 	FactionRescue:new()
-	FactionInsurgent:new()
+	--FactionInsurgent:new()
 	FactionEvil:new(self.EvilFactions)
 end
 
@@ -124,11 +128,74 @@ function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
 end
 
+function FactionManager:Event_playerNeedhelp()
+	self:Command_needhelp(client)
+end
+
+function FactionManager:Command_needhelp(player)
+	local faction = player:getFaction()
+	local player = player
+	if faction and (faction:isStateFaction() or faction:isEvilFaction()) then
+		if player:isFactionDuty() then
+			if player:getInterior() == 0 and player:getDimension() == 0 then
+				if player.m_ActiveNeedHelp then return false end
+				local rankName = faction:getRankName(faction:getPlayerRank(player))
+				local color = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+				
+				if faction:isStateFaction() then
+					visibility = {factionType = "State", duty = true}
+					for k, onlinePlayer in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
+						onlinePlayer:sendShortMessage(_("%s %s benötigt Unterstützung!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
+					end
+				else
+					if not player:isPhoneEnabled() then player:sendError(_("Dein Handy ist ausgeschaltet!", player)) return false end
+					if faction:getAllianceFaction() then
+						visibility = {faction = {faction:getId(), faction:getAllianceFaction():getId()}, duty = true}
+						--show for alliance only if there is an alliance faction
+						for k, onlinePlayer in pairs(faction:getAllianceFaction():getOnlinePlayers(true, true)) do
+							onlinePlayer:sendShortMessage(_("Bündnispartner %s benötigt Hilfe!", onlinePlayer, player:getName()), "Unterstützung erforderlich", color, 20000)
+						end
+					else
+						visibility = {faction = {faction:getId()}, duty = true}
+					end
+					--show for players of same faction in either case
+					for k, onlinePlayer in pairs(faction:getOnlinePlayers(true, true)) do
+						onlinePlayer:sendShortMessage(_("%s %s benötigt Hilfe!", onlinePlayer, rankName, player:getName()), "Unterstützung erforderlich", color, 20000)
+					end
+				end
+
+				local blip = Blip:new("Marker.png", player.position.x, player.position.y, visibility, 9999, color)
+					blip:setDisplayText(player.name)
+					blip:attach(player)
+
+				player.m_ActiveNeedHelp = true
+
+				setTimer(function()
+					blip:delete()
+					if isElement(player) then
+						player.m_ActiveNeedHelp = false
+					end
+				end, 20000, 1)
+			else
+				player:sendError(_("Du kannst hier keine Hilfe anfordern!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
+	else
+		player:sendError(_("Du bist nicht in der richtigen Fraktion!", player))
+	end
+end
+
 function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then --use triggerLatentEvent to improve serverside performance
-		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
+		if faction:getPlayerRank(client) < FactionRank.Manager then
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames)
+		else
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames, faction.m_RankLoans, faction.m_ValidWeapons, faction.m_RankWeapons)
+		end
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -467,7 +534,7 @@ end
 
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(FactionManager.Map) do -- send the wt destination as point where players can navigate to
-		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()]))
+		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()])) -- navigation point on some instances missing! 
 	end
 end
 
@@ -671,4 +738,43 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
 	end
+end
+
+function FactionManager:getFromName(name)
+	for k, faction in pairs(FactionManager.Map) do
+		if faction:getName() == name then
+			return faction
+		end
+	end
+	return false
+end
+
+function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitchTo)
+	local faction = self:getFromId(factionId)
+	local players = {}
+
+	if not faction then
+		local result = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), factionIdToSwitchTo)
+		for i, factionRow in ipairs(result) do
+			players[factionRow.Id] = factionRow.FactionRank
+		end
+	else
+		admin:sendError(_("Die Fraktion mit der ID %s ist noch geladen!", admin, factionId))
+		return
+	end
+
+	local factionToSwitchTo = self:getFromId(factionIdToSwitchTo)
+	if not factionToSwitchTo then
+		admin:sendError(_("Die Fraktion mit der ID %s ist nicht geladen!", admin, factionIdToSwitchTo))
+		return
+	end
+
+	for playerId, rank in pairs(players) do
+		HistoryPlayer:getSingleton():addLeaveEntry(playerId, admin:getId(), factionId, "faction", rank, "Fraktionstausch", "Fraktionstausch")
+
+		HistoryPlayer:getSingleton():addJoinEntry(playerId, admin:getId(), factionIdToSwitchTo, "faction")
+		factionToSwitchTo:addPlayer(playerId, rank)
+	end
+
+	admin:sendSuccess(_("Die Fraktionsmitglieder der %s wurden erfolgreich in die Fraktion %s transferiert!", admin, faction:getName(), factionToSwitchTo:getName()))
 end

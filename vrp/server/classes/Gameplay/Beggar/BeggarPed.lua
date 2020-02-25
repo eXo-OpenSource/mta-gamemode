@@ -18,7 +18,7 @@ function BeggarPed:virtual_constructor(id, classId)
 	self.m_Id = id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self:setData("Ped:fakeNameTag", self.m_Name, true)
-	self.m_ColShape = createColSphere(self:getPosition(), 10)
+	--self.m_ColShape = createColSphere(self:getPosition(), 10)
 	self.m_Type = classId
 	self.m_RoleName = BeggarTypeNames[self.m_Type]
 
@@ -26,8 +26,8 @@ function BeggarPed:virtual_constructor(id, classId)
 	self.m_BankAccountServer = BankServer.get("gameplay.beggar")
 
 	addEventHandler("onPedWasted", self, bind(self.Event_onPedWasted, self))
-	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
-	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Event_onColShapeLeave, self))
+	--addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
+	--addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Event_onColShapeLeave, self))
 
 	if chance(50) then
 		local animation = Randomizer:getRandomTableValue(BeggarAnimations)
@@ -42,7 +42,7 @@ function BeggarPed:virtual_constructor(id, classId)
 end
 
 function BeggarPed:virtual_destructor()
-	if self.m_ColShape and isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
+	--if self.m_ColShape and isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
 	if self.m_AbortRescueTimer and isTimer(self.m_AbortRescueTimer) then killTimer(self.m_AbortRescueTimer) end
 	if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
 	if self.m_DeathPickup then
@@ -63,6 +63,7 @@ function BeggarPed:despawn()
 			local newAlpha = self:getAlpha() - 10
 			if newAlpha < 10 then newAlpha = 0 end
 			if newAlpha == 0 then
+				triggerClientEvent("ColshapeStreamer:deleteColshape", root, "beggarped", self.m_Id)
 				self:destroy()
 			else
 				self:setAlpha(newAlpha)
@@ -187,7 +188,7 @@ function BeggarPed:createLootPickup()
 end
 
 --function BeggarPed:
-
+--[[
 function BeggarPed:Event_onColShapeHit(hitElement, dim)
     if dim and not self.m_Dead then
         if hitElement:getType() ~= "player" then return end
@@ -199,6 +200,20 @@ end
 function BeggarPed:Event_onColShapeLeave(hitElement, dim)
     if dim and not self.m_Dead then
         if hitElement:getType() ~= "player" then return end
+        self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
+		hitElement:triggerEvent("resetManualHelpBarText")
+    end
+end
+]]
+function BeggarPed:onClientColShapeHit(hitElement, dim)
+    if dim and not self.m_Dead then
+        self:sendMessage(hitElement, BeggarPhraseTypes.Help)
+		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
+    end
+end
+
+function BeggarPed:onClientColShapeLeave(hitElement, dim)
+    if dim and not self.m_Dead then
         self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
 		hitElement:triggerEvent("resetManualHelpBarText")
     end

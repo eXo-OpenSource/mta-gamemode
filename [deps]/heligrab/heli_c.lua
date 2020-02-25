@@ -198,7 +198,7 @@ addEventHandler("onClientResourceStop", resourceRoot,
 
 
 function attemptGrabStart()
-	if not getElementData(localPlayer, "heligrab.vehicle") then
+	if not getElementData(localPlayer, "heligrab.vehicle")  and not getElementData(localPlayer, "HeliGlue") then
 		if isPedDead(localPlayer) or getElementHealth(localPlayer) <= 0.2 then
 			return
 		end

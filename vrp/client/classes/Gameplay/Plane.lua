@@ -22,7 +22,6 @@ function PlaneClient:constructor(plane, pilot, accident)
 end
 
 function PlaneClient:destructor()
-    removeEventHandler("onClientElementStreamIn", plane, self.m_StreamInBind)
     removeEventHandler("triggerClientPlaneDestroySmoke", root, self.m_SmokeBind)
 end
 

@@ -60,9 +60,11 @@ function GrowableManager:constructor()
 	self.m_Timer = setTimer(bind(self.grow, self), 10*60*1000, 0)
 	self:load()
 
-	addRemoteEvents{"plant:harvest", "plant:getClientCheck"}
+	addRemoteEvents{"plant:harvest", "plant:getClientCheck", "plant:onClientColShapeHit", "plant:onClientColShapeLeave"}
 	addEventHandler("plant:harvest", root, bind(self.harvest, self))
 	addEventHandler("plant:getClientCheck",root, bind(self.getClientCheck, self))
+	addEventHandler("plant:onClientColShapeHit", root, bind(self.onClientColShapeHit, self))
+	addEventHandler("plant:onClientColShapeLeave", root, bind(self.onClientColShapeLeave, self))
 
 	--DEBUG
 	addCommandHandler("growPlants", function(player)
@@ -82,7 +84,11 @@ end
 function GrowableManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_plants", sql:getPrefix())
 	for i, row in pairs(result) do
-		GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered, row.times_earned)
+		if getRealTime().timestamp - row.planted < 604800 then
+			GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered, row.times_earned)
+		else
+			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), row.Id)
+		end
 	end
 end
 
@@ -113,6 +119,11 @@ function GrowableManager:addNewPlant(type, position, owner)
 	StatisticsLogger:getSingleton():addPlantLog(owner, type)
 	local id = sql:lastInsertId()
 	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getId(), 0, ts, ts, 0, 0)
+	for key, player in ipairs(getElementsByType("player")) do
+		if player:isLoggedIn() then
+			player:triggerEvent("ColshapeStreamer:registerColshape", {position.x, position.y, position.z+1}, GrowableManager.Map[id].m_Object, "growable", GrowableManager.Map[id].m_Id, 1, "plant:onClientColShapeHit", "plant:onClientColShapeLeave")
+		end
+	end
 	GrowableManager.Map[id]:onColShapeHit(owner, true)
 end
 
@@ -136,30 +147,39 @@ function GrowableManager:getPlantNameFromSeed(seed)
 	return false
 end
 
+function GrowableManager:checkPlantConditionsForPlayer(player, seed)
+	local plantName = GrowableManager:getSingleton():getPlantNameFromSeed(seed)
+	if not plantName then player:sendError(_("Internal Error: Invalid Plant", player)) return false end
+	if player:isInWater() then player:sendError(_("Du bist im Wasser! Hier kannst du nichts pflanzen!", player)) return false end
+	if player.vehicle then player:sendError(_("Du sitzt in einem Fahrzeug!", player)) return false end
+	if GrowableManager:getSingleton():getNextPlant(player, GrowableManager.Types[plantName].SizeBetweenPlants) then player:sendError(_("Du bist zu nah an einer anderen Pflanze!", player)) return false end
+	return true
+end
+
 function GrowableManager:getClientCheck(seed, bool, z_pos, isUnderWater)
-	if bool then
-		--if client:isOnGround() then
-			if not client:isInWater() and not isUnderWater then
-				if not client.vehicle then
-					local plantName = self:getPlantNameFromSeed(seed)
-					if plantName then
-						local pos = client:getPosition()
-						client:giveAchievement(61)
-						client:getInventory():removeItem(seed, 1)
-						GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
-					else
-						client:sendError(_("Internal Error: Invalid Plant", client))
-					end
-				else
-					client:sendError(_("Du sitzt in einem Fahrzeug!", client))
-				end
-			else
-				client:sendError(_("Du bist im Wasser! Hier kannst du nichts pflanzen!", client))
-			end
-		--else
-		--	client:sendError(_("Du bist nicht am Boden!", client))
-		--end
-	else
-		client:sendError(_("Dies ist kein guter Untergrund zum Anpflanzen! Suche dir ebene Gras- oder Erdflächen", client))
+	if not bool or isUnderWater then client:sendError(_("Dies ist kein guter Untergrund zum Anpflanzen! Suche dir ebene Gras- oder Erdflächen", client)) return false end
+	if not self:checkPlantConditionsForPlayer(client, seed) then return false end
+	
+	local pos = client:getPosition()
+	client:giveAchievement(61)
+	client:getInventory():removeItem(seed, 1)
+	GrowableManager:getSingleton():addNewPlant(GrowableManager:getSingleton():getPlantNameFromSeed(seed), Vector3(pos.x, pos.y, z_pos), client)
+end
+
+function GrowableManager:sendGrowablesToClient(player)
+	if not player then player = root end
+	for key, growable in pairs(GrowableManager.Map) do
+		local x, y, z = getElementPosition(growable.m_Object)
+		triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+1}, growable.m_Object, "growable", growable.m_Id, 1, "plant:onClientColShapeHit", "plant:onClientColShapeLeave")
+	end
+end
+
+function GrowableManager:onClientColShapeHit(id)
+	GrowableManager.Map[id]:onColShapeHit(client, true)
+end
+
+function GrowableManager:onClientColShapeLeave(id)
+	if GrowableManager.Map[id] then
+		GrowableManager.Map[id]:onColShapeLeave(client, true)
 	end
 end

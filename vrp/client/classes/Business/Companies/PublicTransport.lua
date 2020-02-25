@@ -37,7 +37,8 @@ function PublicTransport:busStopStreamIn(obj)
 	local source = source -- scope to local
 	if obj then source = obj end
 	if not source.m_BusCol then
-		source.m_BusCol = createColSphere(source.position, 3)
+		local x, y, z = getElementPosition(source)
+		source.m_BusCol = createColSphere(x, y, z, 3)
 		self.m_StreamedInBusObjects[source] = source:getData("EPT_bus_station")
 		addEventHandler("onClientColShapeHit", source.m_BusCol, function(hit, dim)
 			if not dim then return end
@@ -170,7 +171,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 1 nach Downtown bedienen",
+	self:addItem(_"Linie 1 nach Ganton bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1, true)
@@ -178,7 +179,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 2 nach Montgomery bedienen",
+	self:addItem(_"Linie 2 nach Dillimore bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2)
@@ -186,7 +187,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 2 nach East LS bedienen",
+	self:addItem(_"Linie 2 nach Jefferson bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2, true)

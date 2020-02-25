@@ -8,7 +8,7 @@
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"
-,"onTryEnterExit"}
+,"onTryEnterExit", "onAllowRadioCommunication"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -28,6 +28,10 @@ function LocalPlayer:constructor()
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	self.m_FadeOut = bind(self.fadeOutScope, self)
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
+	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
+	self.m_BikeBug = setTimer(bind(self.checkBikeBug, self), 250, 0)
+
+
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -54,7 +58,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
 	addEventHandler("onTryEnterExit", root, bind(self.Event_tryEnterExit, self))
-
+	addEventHandler("onAllowRadioCommunication", root, bind(self.Event_allowRadioCommunication, self))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
 
@@ -71,13 +75,13 @@ function LocalPlayer:constructor()
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
 
-	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37)
+	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37) --hospital
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col)
 
-	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 )
+	local col2 = createColRectangle(2401.71, -2190.33, 210, 150) -- mech and tow
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col2)
 
-	local col3 = createColCuboid(1894.46, 968.18, 9.82, 1920.30-1894.46, 1018.40-968.18, 5) -- triad base
+	local col3 =  createColCuboid(972.42, -1131.07, 12.07, 52, 52, 30) -- yakuza base
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col3)
 
 	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 ) -- palo bank
@@ -86,7 +90,20 @@ function LocalPlayer:constructor()
 	local col5 = createColRectangle(2350.23, -2666.53, 100,  250) -- ls docks
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col5)
 
+	local col6 = createColCuboid( 1367.295,  -1282.958, 12, 30, 20, 10) -- ammunation ls downtown
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col6)
+
 	NetworkMonitor:new()
+
+end
+
+function LocalPlayer:setChatSettings()
+	setElementData(localPlayer, "ChatEnabled", core:get("Chat", "enableChat", true))
+	setElementData(localPlayer, "FactionChatEnabled", core:get("Chat", "enableFactionChat", true))
+	setElementData(localPlayer, "CompanyChatEnabled", core:get("Chat", "enableCompanyChat", true))
+	setElementData(localPlayer, "AllianceChatEnabled", core:get("Chat", "enableAllianceChat", true))
+	setElementData(localPlayer, "StateChatEnabled", core:get("Chat", "enableStateChat", true))
+	setElementData(localPlayer, "GroupChatEnabled", core:get("Chat", "enableGroupChat", true))
 end
 
 function LocalPlayer:startLookAt( )
@@ -149,6 +166,17 @@ function LocalPlayer:Event_OnObjectBrake( attacker )
 		end
 	end
 end
+
+function LocalPlayer:Event_allowRadioCommunication(bool)
+	self.m_AllowRadioCommunication = bool
+	if not bool then
+		if RadioCommunicationGUI:isInstantiated() then
+			delete(RadioCommunicationGUI:getSingleton())
+		end
+	end
+end
+
+function LocalPlayer:isRadioCommunicationAllowed() return self.m_AllowRadioCommunication end
 
 
 function LocalPlayer:onAlcoholLevelChange()
@@ -220,6 +248,30 @@ end
 
 function LocalPlayer:setPlayTime()
 	setElementData(self, "playingTime", self:getPlayTime())
+
+	if self.m_CurrentAFKTime == 0 then
+		if (self:getPublicSync("Faction:Duty") and self:getFaction()) or (self:getPublicSync("Company:Duty") and self:getCompany()) then
+			setElementData(self, "dutyTime", getElementData(self, "dutyTime") + 1)
+		end
+
+		if self:getFaction() then
+			setElementData(self, "playingTimeFaction", getElementData(self, "playingTimeFaction") + 1)
+			if self:getPublicSync("Faction:Duty") then
+				setElementData(self, "dutyTimeFaction", getElementData(self, "dutyTimeFaction") + 1)
+			end
+		end
+
+		if self:getCompany() then
+			setElementData(self, "playingTimeCompany", getElementData(self, "playingTimeCompany") + 1)
+			if self:getPublicSync("Company:Duty") then
+				setElementData(self, "dutyTimeCompany", getElementData(self, "dutyTimeCompany") + 1)
+			end
+		end
+
+		if self:getGroupId() > 0 then
+			setElementData(self, "playingTimeGroup", getElementData(self, "playingTimeGroup") + 1)
+		end
+	end
 end
 
 function LocalPlayer:isLoggedIn()
@@ -280,16 +332,16 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
-				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
+				triggerServerEvent("factionStateToggleDuty", localPlayer, true, false, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true, false, true)
 			elseif localPlayer:getFaction():isEvilFaction() then
-				triggerServerEvent("factionEvilToggleDuty", localPlayer, true)
+				triggerServerEvent("factionEvilToggleDuty", localPlayer, true, false, true)
 			end
 		end
 
 		if localPlayer:getPublicSync("Company:Duty") then
-			triggerServerEvent("companyToggleDuty", localPlayer, true)
+			triggerServerEvent("companyToggleDuty", localPlayer, true, false, true)
 		end
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
@@ -308,7 +360,7 @@ function LocalPlayer:onDeathTimerUp()
 	end
 
 	local soundLength = 20 -- Length of Halleluja in Seconds
-	if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
+	if core:get("Sounds", "Halleluja", true) and fileExists("files/audio/Halleluja.mp3") then
 		self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
 		soundLength = self.m_Halleluja:getLength()
 	end
@@ -316,7 +368,9 @@ function LocalPlayer:onDeathTimerUp()
 	ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
 
 	-- render camera drive
-	self.m_Add = 0
+	resetSkyGradient()
+	removeEventHandler("onClientPreRender", root, self.m_CameraOnTop)
+	self.m_Add = 3
 	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 	fadeCamera(false, soundLength)
 
@@ -365,6 +419,9 @@ function LocalPlayer:createDeathShortMessage()
 			function()
 				if self.m_Death then
 					self.m_OnDeathTimerUp()
+					if isTimer(self.m_CameraTimer) then
+						killTimer(self.m_CameraTimer)
+					end
 				else
 					ErrorBox:new(_"Du bist nicht mehr tot!")
 					return
@@ -388,10 +445,15 @@ function LocalPlayer:Event_playerWasted()
 	setGameSpeed(0.1)
 	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
-	local x,y,z = getPedBonePosition(localPlayer,5)
 	setSkyGradient(10,10,10,30,30,30)
-	setTimer(Camera.setMatrix,5000,1, x, y, z+3, x, y, z)
-	setTimer(setGameSpeed,5000,1,1)
+	setTimer(setGameSpeed, 5000, 1, 1)
+	self.m_CameraTimer = setTimer(
+		function()
+			if localPlayer:getInterior() == 0 then
+				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
+			end
+		end
+	, 4500, 1)
 	setTimer(resetSkyGradient,30000,1)
 	if localPlayer:getInterior() > 0 then
 		self.m_OnDeathTimerUp()
@@ -401,6 +463,17 @@ function LocalPlayer:Event_playerWasted()
 	self.m_CanBeRevived = true
 	self:createDeathShortMessage()
 	self:createWastedTimer()
+end
+
+function LocalPlayer:setCameraOnTop()
+	local x,y,z = getElementPosition(localPlayer)
+	local xr, yr, zr = getElementRotation(localPlayer)
+	if zr <= 180 then
+		roll = zr
+	elseif zr >= 180 then
+		roll = -(360 - zr)
+	end
+	Camera.setMatrix(x, y, z+3, x, y, z, roll)
 end
 
 function LocalPlayer:stopDeathBleeding()
@@ -422,9 +495,15 @@ function LocalPlayer:restartDeathBleeding()
 end
 
 function LocalPlayer:deathRender(deltaTime)
-	local pos = localPlayer.position + localPlayer.matrix.up*11
+	local x, y, z = getElementPosition(localPlayer)
 	self.m_Add = self.m_Add+0.005*deltaTime
-	Camera.setMatrix(Vector3(pos.x, pos.y, pos.z + self.m_Add), pos)
+	local xr, yr, zr = getElementRotation(localPlayer)
+	if zr <= 180 then
+		roll = zr
+	elseif zr >= 180 then
+		roll = -(360 - zr)
+	end
+	Camera.setMatrix(x, y, z + self.m_Add, x, y, z, roll)
 end
 
 function LocalPlayer:abortDeathGUI(force)
@@ -437,6 +516,7 @@ function LocalPlayer:abortDeathGUI(force)
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
 		showChat(true)
+		removeEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 	end
 end
@@ -552,7 +632,7 @@ function LocalPlayer:renderPedNameTags()
 			x,y,z = getElementPosition(ped)
 			local dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz)
 			if dist <= 20 then
-				if isLineOfSightClear( Vector3(px, py, pz), Vector3(x, y, z), true, false, false, true, false, false, false,localPlayer ) then
+				if isLineOfSightClear(px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
 						x,y = getScreenFromWorldPosition(x,y,z+1)
 						if x and y then
@@ -560,7 +640,7 @@ function LocalPlayer:renderPedNameTags()
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
 								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
 								dxDrawText(nameTag, x+1, y+1, nil, nil, tocolor(200, 200, 200, 255), 5/dist, "default-bold", "center", "center")
-							elseif mortemTag then
+							elseif mortemTag and mortemTag ~= localPlayer:getName() then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
 								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
 								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 5/dist, "default-bold", "center", "center")
@@ -634,7 +714,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		bindKey("lshift", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() and not vehicle.m_HasDI then
 						local vx, vy, vz = getElementVelocity(vehicle)
@@ -645,7 +725,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lalt", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*1.2)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -655,7 +735,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lctrl", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Administrator and (self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
 						vehicle:setVelocity((vehicle.matrix.forward*0.8)*math.clamp(0.2, vehicle.velocity.length, 5))
@@ -663,25 +743,6 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		)
-
-		self:setPublicSyncChangeHandler("supportMode", function(state)
-			if not state then
-				if self.m_AircarsEnabled then
-					setWorldSpecialPropertyEnabled("aircars", false)
-					self.m_AircarsEnabled = false
-					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
-				end
-			end
-		end)
-
-		self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
-			if state then
-				if ego.Active then
-					delete(ego:getSingleton())
-					ego.Active = false
-				end
-			end
-		end)
 
 		if rank >= ADMIN_RANK_PERMISSION["runString"] then
 			addCommandHandler("dcrun", function(cmd, ...)
@@ -741,8 +802,12 @@ function LocalPlayer:sendTrayNotification(text, icon, sound)
 end
 
 function LocalPlayer:getWorldObject()
-	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
-	local result = {processLineOfSight(localPlayer.position, lookAt, true, false, false, true, false, false, false, true, localPlayer, true) }
+	local x, y, z, lx, ly, lz = getCameraMatrix()
+	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
+	local px, py, pz = getElementPosition(localPlayer)
+	--local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local lookX, lookY, lookZ = px+(nx*3), py+(ny*3), pz+(nz*3)
+	local result = {processLineOfSight(px, py, pz, lookX, lookY, lookZ, true, false, false, true, false, false, false, true, localPlayer, true) }
 
 	if result[1] then
 		if result[5] then
@@ -756,8 +821,12 @@ function LocalPlayer:getWorldObject()
 end
 
 function LocalPlayer:getWorldVehicle()
-	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
-	local result = {processLineOfSight(localPlayer.position, lookAt, true, true, false, false, false, false, false, true, localPlayer, true) }
+	if VehicleInfrared:isInstantiated() then return end
+	local x, y, z, lx, ly, lz = getCameraMatrix()
+	local nx, ny, nz = normalize(lx-x, ly-y, lz-z)
+	local px, py, pz = getElementPosition(localPlayer)
+	local lookX, lookY, lookZ = px+(nx)*3, py+(ny)*3, pz+(nz)*3
+	local result = {processLineOfSight(px, py, pz, lookX, lookY, lookZ, true, true, false, false, false, false, false, true, localPlayer, true) }
 
 	if result[1] then
 		if result[5] then
@@ -787,6 +856,7 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 		end
 	)
 
+	localPlayer:setOxygenLevel(4000)
 	--[[setTimer(
 		function()
 			outputChatBox("Collision enabled")
@@ -804,13 +874,29 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 end
 
 function LocalPlayer:isWorldLoaded()
-	return not isLineOfSightClear(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -3)), true, false, false, true, false, false, false, localPlayer)
+	local x, y, z = getElementPosition(localPlayer)
+	return not (getGroundPosition(x, y, z) == 0 and isLineOfSightClear(x, y, z, x, y, z-3, true, false, false, true, false, false, false, localPlayer))
+end
+
+function LocalPlayer:isControlEnabled(control)
+	if control then
+		return isControlEnabled(control)
+	else
+		local all = false
+		for k, control in pairs(CONTROL_NAMES) do
+			if isControlEnabled(control) then
+				return true
+			end
+		end
+		return false
+	end
 end
 
 function LocalPlayer:startAnimation(_, ...)
 	if localPlayer:getData("isTasered") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
+	if isPedAiming(localPlayer) then return end
 
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
@@ -854,10 +940,31 @@ function LocalPlayer:deactivateBlur(bool)
 	end
 end
 
-function LocalPlayer:Event_tryEnterExit(object, name, icon)
+function LocalPlayer:Event_tryEnterExit(object, name, icon, checkRange, allowVehicleEnter)
 	if not self.m_LastEntrance or self.m_LastEntrance + 500 < getTickCount() then
-		if self.m_Entrance and self.m_Entrance:isInstantiated() then self.m_Entrance:delete() end
-		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon)
+		if self.m_Entrance and self.m_Entrance:isInstantiated() then delete(self.m_Entrance);self.m_Entrance = nil; end
+		self.m_Entrance = InteriorEnterExitGUI:new(object, name, icon, checkRange, allowVehicleEnter)
 		self.m_LastEntrance = getTickCount()
 	end
+end
+
+function LocalPlayer:checkBikeBug()
+	if localPlayer.vehicle and localPlayer.vehicle.vehicleType == "Bike" then
+		local distance = (localPlayer.position - localPlayer.vehicle.position).length
+
+		if distance > 1.5 then
+			triggerServerEvent("removeMeFromVehicle", localPlayer, distance)
+		end
+	end
+end
+
+function LocalPlayer:addGangwarSyncChangeHandler()
+	self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
+		if state then
+			if ego.Active then
+				delete(ego:getSingleton())
+				ego.Active = false
+			end
+		end
+	end)
 end

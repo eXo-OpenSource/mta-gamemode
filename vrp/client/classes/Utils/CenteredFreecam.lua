@@ -8,7 +8,7 @@
 CenteredFreecam = inherit(Singleton)
 addRemoteEvents{"startCenteredFreecam", "stopCenteredFreecam"}
 
-function CenteredFreecam:constructor(element, maxZoom, noClip)
+function CenteredFreecam:constructor(element, maxZoom, noClip, dontScrollWithCursor)
     local element = isElement(element) and element or localPlayer
     self.m_RenderEvent = bind(CenteredFreecam.render, self)
     self.m_MouseEvent = bind(CenteredFreecam.handleMouse, self)
@@ -20,7 +20,8 @@ function CenteredFreecam:constructor(element, maxZoom, noClip)
     self.m_Zoom = 1
     self.m_NoClip = noClip
     self.m_CheckObjectsOnClip = false
-    self.m_ZoomData = {self.m_MaxZoom * 0.5, self.m_MaxZoom}
+    self.m_DontScrollWithCursor = dontScrollWithCursor
+    self.m_ZoomData = {(self.m_MaxZoom * 0.5) > 25 and 25 or self.m_MaxZoom * 0.5, self.m_MaxZoom}
     addEventHandler("onClientRender", root, self.m_RenderEvent)
     addEventHandler("onClientCursorMove", root, self.m_MouseEvent)
     addEventHandler("onClientKey", root, self.m_ScrollEvent)
@@ -36,6 +37,7 @@ function CenteredFreecam:destructor()
 end
 
 function CenteredFreecam:handleScroll(btn)
+    if self.m_DontScrollWithCursor and isCursorShowing() then return end
     if btn == "mouse_wheel_up" or btn == "mouse_wheel_down" then
         local z = self.m_ZoomData[1]
         local delta = getKeyState("lshift") and 5 or 1

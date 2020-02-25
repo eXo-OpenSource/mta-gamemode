@@ -129,7 +129,9 @@ SHOP_TYPES = {
 	},
 	[18] = {
 		["Name"] = "CJ-Tattoo-Studio",
-		["Marker"] = Vector3(-202.21, -6.92, 1001.6),
+		["ClothesMarker"] = {
+			["Tattoos"] = Vector3(-202.21, -6.92, 1001.6)
+		},
 		["Ped"] = {29, Vector3(-201.49, -4.85, 1002.27), 158},
 		["Interior"] = {17, Vector3(-204.40, -9.08, 1002.27)},
 		["Class"] = CJClothes
@@ -171,7 +173,8 @@ SHOP_TYPES = {
 	[24] = {
 		["Name"] = "Weihnachtsmarkt",
 		["Marker"] = Vector3(1473.05, -1676.86, 13.1),
-		["Ped"] = {205, Vector3(1472.5, -1675, 14.75), 200},
+		["Ped"] = {205, Vector3(1470.76, -1677.19, 14.05), 246.48},
+		["PedAnimation"] = {"MISC", "Plyrlean_loop"},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
 		["disabled"] = not (EVENT_CHRISTMAS and EVENT_CHRISTMAS_MARKET)
@@ -254,7 +257,7 @@ SHOP_ITEMS = {
 	["Weihnachtsmarkt"] = {
 		["Gluehwein"] = 15,
 		["Shot"] = 20,
-		["Lebkuchen"] = 15,
+		--["Lebkuchen"] = 15,
 		["Wuerstchen"] = 25,
 	},
 	["Feuerwerks-Shop"] = {
@@ -662,7 +665,7 @@ CJ_CLOTHES = {
 	},
 	["TattoosST"] = {
 		[-1] = {["Name"] = "Kein Tattoo", ["Price"] = 0},
-		[0] = {["Name"] = "Grove (1)", ["Preis"] = 90},
+		[0] = {["Name"] = "Grove (1)", ["Price"] = 90},
 		[1] = {["Name"] = "Grove (2)", ["Price"] = 100},
 		[2] = {["Name"] = "Grove (3)", ["Price"] = 90},
 		[3] = {["Name"] = "Dice (1)", ["Price"] = 80},

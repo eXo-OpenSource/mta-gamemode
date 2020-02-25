@@ -10,6 +10,12 @@ addRemoteEvents{"AntiCheat:ReportBlip", "AntiCheat:ReportFarmerTeleport"}
 
 AntiCheat.AllowedDataChange = {
 	["playingTime"] = true,
+	["playingTimeFaction"] = true,
+	["playingTimeCompany"] = true,
+	["playingTimeGroup"] = true,
+	["dutyTimeFaction"] = true,
+	["dutyTimeCompany"] = true,
+	["dutyTime"] = true,
 	["writing"] = true,
 	["i:left"] = true,
 	["i:right"] = true,
@@ -39,6 +45,13 @@ AntiCheat.AllowedDataChange = {
 	["lastSync"] = true,
 	["superman:flying"] = true,
 	["isEquipmentGUIOpen"] = true,
+	["clickable"] = true,
+	["FactionChatEnabled"] = true,
+	["CompanyChatEnabled"] = true,
+	["AllianceChatEnabled"] = true,
+	["StateChatEnabled"] = true,
+	["GroupChatEnabled"] = true,
+	["HeliGlue"] = true,
 }
 
 function AntiCheat:constructor()

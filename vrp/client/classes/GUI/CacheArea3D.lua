@@ -144,7 +144,7 @@ function CacheArea3D:drawCached()
 	dxDrawMaterialLine3D(self.m_3DStart.x, self.m_3DStart.y, self.m_3DStart.z,
 						self.m_3DEnd.x, self.m_3DEnd.y, self.m_3DEnd.z,
 						self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255),
-						self.m_Follow and localPlayer.position or Vector3(face.x, face.y, face.z))
+						self.m_Follow and unpack({getElementPosition(localPlayer)}) or face.x, face.y, face.z)
 
 	return true
 end

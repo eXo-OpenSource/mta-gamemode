@@ -41,13 +41,14 @@ function AdminGUI:constructor(money)
 	self.m_RespawnRadius:setText("50")
 
 	self:addAdminButton("adminAnnounce", "senden", self.onGeneralButtonClick, 490, 10, 100, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("smode", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
+	self:addAdminButton("aduty", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", self.onGeneralButtonClick, 10, 100, 250, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", self.onGeneralButtonClick, 10, 140, 250, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", self.onGeneralButtonClick, 75, 180, 185, 30, Color.Accent, tabAllgemein)
-	self:addAdminButton("clearchat", "Chat löschen / Werbung ausblenden", self.onGeneralButtonClick, 10, 230, 250, 30, Color.Red, tabAllgemein)
-	self:addAdminButton("resetAction", "Aktions-Sperre resetten", self.onGeneralButtonClick, 10, 270, 250, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 310, 250, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("clearchat", "Chat löschen", self.onGeneralButtonClick, 10, 220, 250, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("clearAd", "Werbung ausblenden", self.onGeneralButtonClick, 10, 260, 250, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("resetAction", "Aktions-Sperre resetten", self.onGeneralButtonClick, 10, 300, 250, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 340, 250, 30, Color.Accent, tabAllgemein)
 
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.Accent)
 	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
@@ -88,9 +89,12 @@ function AdminGUI:constructor(money)
 
 	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
 	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("syncForum", "Foren-Gruppen", self.onGeneralButtonClick, self.m_Width-225, 305, 200, 30, Color.Orange, tabAllgemein)
 
-	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 345, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("syncForum", "Foren-Gruppen", self.onGeneralButtonClick, self.m_Width-225, 310, 200, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 350, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("transactionMenu", "Transaktions-Menü", self.onGeneralButtonClick, self.m_Width-225, 390, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("multiAccountMenu", "Multi-Accounts", self.onGeneralButtonClick, self.m_Width-225, 430, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("serialAccountMenu", "Serial-Account-Verknüpfungen", self.onGeneralButtonClick, self.m_Width-225, 470, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -394,10 +398,10 @@ function AdminGUI:onOfflineButtonClick(func)
 					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
 				end)
 	elseif func == "offlineUnban" then
-		QuestionBox:new(
+		InputBox:new(
 				_("Spieler %s entbannen", selectedPlayer),
-				function ()
-					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer)
+				function (reason)
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
 				end)
 	elseif func == "offlineNickchange" then
 		InputBox:new(_("Spieler %s umbenennen", selectedPlayer),
@@ -548,13 +552,22 @@ function AdminGUI:onGeneralButtonClick(func)
 				end)
 	elseif func == "syncForum" then
 		ForumPermissionsGUI:new()
-	elseif func == "smode" or func == "clearchat" or func == "resetAction" then
+	elseif func == "aduty" or func == "smode" or func == "clearchat" or func == "clearAd" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "loginFix" then
 		triggerServerEvent("adminLoginFix", localPlayer, self.m_PlayerID:getText())
 	elseif func == "vehicleMenu" then
 		self:close()
 		VehicleTuningTemplateGUI:getSingleton():open()
+	elseif func == "transactionMenu" then
+		self:close()
+		AdminTransactionGUI:new()
+	elseif func == "multiAccountMenu" then
+		self:close()
+		MultiAccountWindow:new()
+	elseif func == "serialAccountMenu" then
+		self:close()
+		SerialAccountsGUI:new()
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()
 		if radius and tonumber(radius) and tonumber(radius) > 0 then

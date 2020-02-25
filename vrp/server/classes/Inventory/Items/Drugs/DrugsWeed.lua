@@ -18,6 +18,10 @@ function DrugsWeed:destructor()
 end
 
 function DrugsWeed:use( player )
+  if player:getPublicSync("gangwarParticipant") then
+    player:sendError("Du darfst im Gangwar kein Weed rauchen!")
+    return
+  end
 	ItemDrugs.use(self, player)
 
   	player:triggerEvent("onClientItemUse", "Weed", DrugsWeed.m_ExpireTime )
@@ -48,5 +52,6 @@ function DrugsWeed:effect( player )
   local health = getElementHealth( player )
   if health < 100 then
     setElementHealth( player, health + DrugsWeed.m_HealValue )
+	player:setPublicSync("LastHealTime", os.time())
   end
 end

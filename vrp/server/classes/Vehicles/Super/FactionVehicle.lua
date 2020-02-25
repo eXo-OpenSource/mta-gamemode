@@ -17,11 +17,13 @@ function FactionVehicle:constructor(data)
 	setElementData(self, "OwnerType", "faction")
 	setElementData(self, "StateVehicle", self.m_Faction:isStateFaction())
 
-    addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+		addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+		addEventHandler("onVehicleExit", self, bind(self.onExit, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-    addEventHandler("onVehicleExplode",self, function()
+    addEventHandler("onVehicleExplode", self, function()
 		setTimer(function(veh)
 			veh:respawn(true)
+			PoliceAnnouncements:getSingleton():setSirenState(veh, "inactive")
 		end, 10000, 1, source)
 	end)
 
@@ -36,13 +38,15 @@ function FactionVehicle:constructor(data)
 	if (self:getModel() == 432 or self:getModel() == 520 or self:getModel() == 425) and self.m_Faction:isStateFaction() then
 		addEventHandler("onVehicleStartEnter", self, function(player, seat)
 			if seat == 0 then
-				if not self:isWithinColShape(FactionState:getSingleton().m_ArmySepcialVehicleCol) then
-					if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
-						cancelEvent()
-					end
+				if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
+					cancelEvent()
 				end
 			end
 		end)
+	end
+
+	if (self.getFaction and self:isStateVehicle() and self:getModel() == 497) or (self.getFaction and (self:isRescueVehicle() and (self:getModel() == 417 or self:getModel() == 487 or self:getModel() == 497)))  then 
+		self:setInfrared(true)
 	end
 
 	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
@@ -55,11 +59,34 @@ function FactionVehicle:constructor(data)
 	self:setLocked(false) -- Unlock faction vehicles
 	self.m_SpawnDim = data.Dimension 
 	self.m_SpawnInt = data.Interior
+
+	if self.getFaction and self:isStateVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
+	if self.getFaction and self:isRescueVehicle() and (getVehicleType(self) == VehicleType.Automobile or getVehicleType(self) == VehicleType.Bike) then 
+		local count = 1 
+		if VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] then 
+			count = #VehicleManager:getSingleton().m_FactionVehicles[self:getFaction():getId()] + 1
+		end
+		VehicleManager:getSingleton():addVehicleMark(self, ("%s-%s"):format(count, FACION_STATE_VEHICLE_MARK[self:getFaction():getId()]))
+	end
+	
+	addEventHandler("onElementDestroy", self, function() 
+		VehicleManager:getSingleton():removeVehicleMark(self)
+	end)
+
 end
 
 function FactionVehicle:destructor()
 	if self.m_VehELSObj then
 		self.m_VehELSObj:delete()
+	end
+	if self:isStateVehicle() then 
+		VehicleManager:getSingleton():removeVehicleMark(self)
 	end
 end
 
@@ -75,10 +102,33 @@ function FactionVehicle:isStateVehicle()
   	return self.m_Faction:isStateFaction()
 end
 
+function FactionVehicle:isRescueVehicle()
+  	return self.m_Faction:isRescueFaction()
+end
+
 function FactionVehicle:onStartEnter(player, seat)
 
 end
 
+function FactionVehicle:onEnter(player, seat)
+	if self:getModel() == 425 or self:getModel() == 520 or self:getModel() == 432 then
+		if not player:getFaction() or not player:isFactionDuty() or (player:getFaction() and player:getFaction():getId() ~= self:getOwner()) then
+			player:sendError(_("Du bist kein Soldat im Dienst!", player))
+			removePedFromVehicle(player)
+			local x,y,z = getElementPosition(player)
+			setElementPosition(player,x,y,z)
+			return false
+		end
+	end
+	return true
+end
+
+function FactionVehicle:onExit(player, seat)
+	if seat == 0 then
+		PoliceAnnouncements:getSingleton():setSirenState(source, "inactive")
+	end
+end
+--[[
 function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
 		if player:getFaction() then
@@ -109,6 +159,7 @@ function FactionVehicle:onEnter(player, seat)
 		setElementPosition(player,x,y,z)
 	end
 end
+]]
 --[[
 function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
@@ -189,7 +240,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 				minRank, forFaction = unpack(FACTION_TRUNK_SWAT_ITEM_PERMISSIONS[itemName])
 			end
 			if player:getFaction():getPlayerRank(player) >= minRank then
-				if forFaction == 0 or forFaction == player:getFaction():getId() then
+				if not forFaction or forFaction == 0 or forFaction == player:getFaction():getId() then
 					if not isEquipment then
 						self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
 						player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
@@ -204,7 +255,9 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 						player:getFaction():addLog(player, "Item", ("hat %d %s für $%s gekauft!"):format(amount, itemName, price))
 					end
 				else 
-					player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction):getName()))
+					if forFaction and forFaction > 0 then
+						player:sendError(_("Nur Mitglieder des %s dürfen dies beladen!", player, FactionManager:getSingleton():getFromId(forFaction) and FactionManager:getSingleton():getFromId(forFaction):getName()))
+					end
 				end
 			else 
 				player:sendError(_("Du kannst dieses Item nicht kaufen!", player))
@@ -233,11 +286,22 @@ function FactionVehicle:takeFactionItem(player, itemName)
 	end
 end
 
-function FactionVehicle:respawn(force)
+function FactionVehicle:respawn(force, ignoreCooldown)
     local vehicleType = self:getVehicleType()
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
+	end
+	
+	if not ignoreCooldown then
+		if self.m_LastDrivers[#self.m_LastDrivers] then
+			local lastDriver = getPlayerFromName(self.m_LastDrivers[#self.m_LastDrivers])
+			if lastDriver and (not lastDriver:getFaction() or lastDriver:getFaction() and lastDriver:getFaction() ~= self:getFaction()) then
+				if self.m_LastUseTime and getTickCount() - self.m_LastUseTime < 300000 then
+					return false
+				end
+			end
+		end
 	end
 
 	-- Teleport to Spawnlocation

@@ -41,3 +41,7 @@ removeWorldModel(1533, 20, 1700.1775, -1667.5017, 20.4211, 0)
 removeWorldModel(1537, 20, 1700.1775, -1669.4219, 20.4211, 0)
 removeWorldModel(1537, 20, 1725.1775, -1637.4219, 20.4211, 0)
 removeWorldModel(643, 20, 1725.1775, -1637.4219, 20.4211, 0)
+
+
+-- explosive stuff that is not synced correctly
+removeWorldModel ( 1370, 9999, 0, 0, 0) 

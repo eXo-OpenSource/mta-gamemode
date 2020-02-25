@@ -6,23 +6,24 @@
 -- *
 -- ****************************************************************************
 ArmsDealer = inherit(Singleton)
+ARMSDEALER_MIN_MEMBERS = 3
 ArmsDealer.Data = 
 { 
     ["Waffen"] = AmmuNationInfo,
     ["Spezial"] = 
     {
-        ["Gasmaske"] = {50, 50000},
-        ["Gasgranate"] = {6, 50000, 17},
-        ["Rauchgranate"] = {3, 100000},
+        ["Gasmaske"] = {100, 50000},
+        ["Gasgranate"] = {20, 50000, 17},
+        ["Rauchgranate"] = {20, 50000},
         ["Scharfschützengewehr"] = {5, 60000, 34},
         ["Fallschirm"] = {20, 5000, 46},
         ["DefuseKit"] = {20, 5000},
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {5, 300000, 35}, 
+        ["RPG-7"] = {10, 100000, 35}, 
         ["Granate"] = {10, 80000, 16},
-        ["SLAM"] = {2, 40000}
+        ["SLAM"] = {4, 40000}
     }
 }
 
@@ -56,6 +57,9 @@ end
 
 function ArmsDealer:checkoutCart(cart)
     if not ActionsCheck:getSingleton():isActionAllowed(client) then return end
+	if FactionState:getSingleton():countPlayers() < ARMSDEALER_MIN_MEMBERS then
+       return client:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",client, ARMSDEALER_MIN_MEMBERS))
+    end
     if client and client.getFaction and client:getFaction() then 
         if cart and not self.m_InAir then
             local faction = client:getFaction()
@@ -93,6 +97,10 @@ function ArmsDealer:checkoutCart(cart)
                     end
                 end
                 self:processCart( self.m_Order[faction], faction)
+                StatisticsLogger:getSingleton():addActionLog("Airdrop", "start", client, faction, "faction")
+                client:getFaction():addLog(client, "Lager", ("Airdrop gestartet für $%s!"):format(self.m_TotalPrice))
+                self.m_LastPlayer = client 
+                self.m_LastFaction = faction
             else 
                 client:sendError("Deine Fraktion hat bereits heute bestellt!")
             end
@@ -125,7 +133,7 @@ function ArmsDealer:processCart( order, faction )
         end
         text = ("%s\n"):format(text) -- add double breakline after each category
     end
-    text = ("%s= Total-Preis:%s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(etaTime+getRealTime().timestamp, true))
+    text = ("%s= Total-Preis: %s\n\nETA: %s"):format(text, self.m_TotalPrice, getOpticalTimestamp(etaTime+getRealTime().timestamp, true))
     faction:sendShortMessage(text, -1)
     faction:transferMoney(self.m_BankAccountServer, self.m_TotalPrice, "Lieferung", "Action", "Blackmarket")
     self.m_Blip =  Blip:new("Marker.png", endPoint.x, endPoint.y, {faction = {faction:getId()}}, 9999, BLIP_COLOR_CONSTANTS.Red)
@@ -208,7 +216,7 @@ function ArmsDealer:sendOperatorMessage(faction, text)
             playSoundFrontEnd(player, 47)
             setTimer(playSoundFrontEnd, 1000, 1, player, 48)
         end
-        faction:sendMessage(("%s %s"):format("[**OPERATOR**]", text), 19, 32, 104)
+        faction:sendMessage(("%s %s"):format("[**OPERATOR**]", text), 23, 143, 255)
     end
 end
 
@@ -235,6 +243,9 @@ function ArmsDealer:clear()
         self.m_DropIndicator = nil
     end
     self.m_InAir = false
+    StatisticsLogger:getSingleton():addActionLog("Airdrop", "stop", self.m_LastPlayer, self.m_LastFaction, "faction")
+    self.m_LastPlayer = nil 
+    self.m_LastFaction = nil
     ActionsCheck:getSingleton():endAction()
 end
 

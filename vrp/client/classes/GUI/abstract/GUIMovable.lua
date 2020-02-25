@@ -35,7 +35,7 @@ function GUIMovable:Event_CursorMove(cursorX, cursorY, absoluteX, absoluteY)
 		end
 
 		-- TODO: Fix moving for noncached windows (disable moving in a hacky way)
-		if instanceof(self.m_Parent, CacheArea) and not self.m_Parent:isCachingEnabled() then
+		if self.m_Parent and instanceof(self.m_Parent, CacheArea) and not self.m_Parent:isCachingEnabled() then
 			return
 		end
 		moveElement:setAbsolutePosition(absoluteX - self.m_CursorOffsetX, absoluteY - self.m_CursorOffsetY)

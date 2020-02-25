@@ -22,15 +22,17 @@ function VehicleManager:constructor()
 	self.m_GroupVehicles = {}
 	self.m_FactionVehicles = {}
 	self.m_VehiclesWithEngineOn = {}
+	self.m_VehicleMarks = {}
 	self.m_BankAccountServer = BankServer.get("server.vehicle")
 	self:setSpeedLimits()
 
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
-	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
+	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleBlow",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
-	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling"}
+	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks",
+	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -48,6 +50,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
+	addEventHandler("vehicleBlow", root, bind(self.Event_vehicleBlow, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
 	addEventHandler("vehiclePark", root, bind(self.Event_vehiclePark, self))
 	addEventHandler("vehicleToggleHandbrake", root, bind(self.Event_toggleHandBrake, self))
@@ -67,7 +70,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSetTuningPropertyTable", root, bind(self.Event_SetPerformanceTuningTable, self))
 	addEventHandler("vehicleRequestHandling", root, bind(self.Event_GetVehicleHandling, self))
 	addEventHandler("vehicleResetHandling", root, bind(self.Event_ResetVehicleHandling, self))
-
+	addEventHandler("requestVehicleMarks", root, bind(self.Event_RequestVehicleMarks, self))
 	addEventHandler("onVehicleExplode", root,
 		function()
 			if source.m_Magnet and source.m_GrabbedVehicle then
@@ -156,6 +159,79 @@ function VehicleManager:constructor()
 			end
 		end
 	)
+
+	addEventHandler("VehicleInfrared:onPlayerExit", root, function(vehicle)
+		if client then 
+			if vehicle and isValidElement(vehicle, "vehicle") and vehicle ~= client.vehicle then 
+				if vehicle.m_InfraredUsedBy and vehicle.m_InfraredUsedBy == client then 
+					vehicle.m_InfraredUsedBy = nil
+				end	
+			end
+			client:setData("inInfraredVehicle", false, true)
+		end
+	end)
+
+	addEventHandler("VehicleInfrared:onUse", root, function()
+		if client and client.vehicle then 
+			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then 
+				if not isValidElement(client.vehicle.m_InfraredUsedBy, "player") then
+					client.vehicle.m_InfraredUsedBy = client
+					client:setData("inInfraredVehicle", true, true)
+					client:triggerEvent("VehicleInfrared:start", client.vehicle)
+				else 
+					if not client.vehicle.m_InfraredUsedBy.vehicle or client.vehicle.m_InfraredUsedBy.vehicle ~= client.vehicle then 
+						client.vehicle.m_InfraredUsedBy:setData("inInfraredVehicle", false, true)
+						client.vehicle.m_InfraredUsedBy = client
+						client:setData("inInfraredVehicle", true, true)
+						client:triggerEvent("VehicleInfrared:start", client.vehicle)
+					else 
+						if client.vehicle.m_InfraredUsedBy ~= client then
+							client:sendError(_("Die Kamera wird zurzeit von %s bedient!", client, client.vehicle.m_InfraredUsedBy:getName()))
+						end
+					end
+				end
+			end
+		end
+	end)
+	
+	addEventHandler("VehicleInfrared:onStop", root, function(vehicle)
+		if client and client.vehicle then 
+			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then 
+				client:setData("inInfraredVehicle", false, true)
+				client.vehicle.m_InfraredUsedBy = nil
+			end
+			client:triggerEvent("VehicleInfrared:stop")
+		end
+	end)
+
+
+	addEventHandler("VehicleInfrared:onSyncLight", root, function(vehicle, data)
+		for k, player in pairs(getElementsByType("player")) do 
+			player:triggerLatentEvent("VehicleInfrared:updateLight", vehicle, data[1], data[2])
+		end
+	end)
+
+	addEventHandler("VehicleInfrared:onCreateLight", root, function(vehicle, data)
+		for k, player in pairs(getElementsByType("player")) do 
+			player:triggerLatentEvent("VehicleInfrared:createLight", vehicle, data[1], data[2])
+		end
+	end)
+
+
+	addEventHandler("VehicleInfrared:onStopLight", root, function(vehicle)
+		for k, player in pairs(getElementsByType("player")) do 
+			player:triggerLatentEvent("VehicleInfrared:stopLight", vehicle)
+		end
+	end)
+
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player) 
+			if player:getData("inInfraredVehicle") then 
+				player:setData("inInfraredVehicle", false, true)
+				player:triggerEvent("VehicleInfrared:onWasted")
+			end
+		end
+	)
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
@@ -179,6 +255,8 @@ function VehicleManager:constructor()
 	end
 
 	TuningTemplateManager:new()
+
+	setTimer(bind(self.destroyInactiveVehicles, bind), 3600000, 0)
 end
 
 function VehicleManager:destructor()
@@ -362,6 +440,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotY = rotY or 0
 	local rotZ = rotZ or 0
 	local premium = premium or 0
+	local price = price or 0
 	local shopIndex = shopIndex or 1
 
 	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
@@ -453,8 +532,12 @@ function VehicleManager:destroyUnusedVehicles( player )
 	if player then
 		local vehTable = self:getPlayerVehicles(player)
 		if vehTable then
+			local tempTable = {}
+			for k, vehicle in ipairs(vehTable) do
+				tempTable[k] = vehicle
+			end
 			local counter = 0
-			for k , vehicle in pairs(vehTable) do
+			for k , vehicle in pairs(tempTable) do
 				if vehicle then
 					if vehicle.m_HasBeenUsed then
 						if vehicle.m_HasBeenUsed == 0 then
@@ -788,6 +871,7 @@ function VehicleManager:Event_toggleHandBrake()
 end
 
 function VehicleManager:setSpeedLimits()
+	setModelHandling(451, "maxVelocity", 260) -- Turismo
 	setModelHandling(462, "maxVelocity", 50) -- Faggio
 	setModelHandling(509, "maxVelocity", 50) -- Bike
 	setModelHandling(481, "maxVelocity", 50) -- BMX
@@ -982,7 +1066,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if instanceof(source, FactionVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
-			source:respawn(true)
+			source:respawn(true, true)
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
@@ -1002,7 +1086,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if instanceof(source, CompanyVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
-			source:respawn( true )
+			source:respawn(true, true)
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
@@ -1362,6 +1446,17 @@ function VehicleManager:Event_vehicleBreak(weapon)
 	end
 end
 
+function VehicleManager:Event_vehicleBlow(weapon)
+	if not source:isBlown() then
+		source:blow(false)
+		for key, player in pairs(getVehicleOccupants(source)) do
+			StatisticsLogger:getSingleton():addKillLog(client, player, weapon)
+			player:removeFromVehicle()
+			player:kill()
+		end
+	end
+end
+
 function VehicleManager:Event_soundvanChangeURL(url)
 	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
 		source.m_SoundURL = url
@@ -1378,8 +1473,8 @@ end
 
 function VehicleManager:Event_TrailerAttach(truck)
 	if not getVehicleOccupant(truck) then return end
-	if not instanceof(truck, PermanentVehicle) then return end
-	if not instanceof(source, PermanentVehicle) then return end
+	if not instanceof(truck, PermanentVehicle) or not instanceof(truck, GroupVehicle) then return end
+	if not instanceof(source, PermanentVehicle) or not instanceof(source, GroupVehicle) then return end
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)
@@ -1486,7 +1581,29 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 end
 
 function VehicleManager:Event_SetVariant(variant1, variant2)
+	local enginestate = source:getEngineState()
 	source:setVariant(variant1, variant2)
+	source:setEngineState(enginestate)
+end
+
+function VehicleManager:destroyInactiveVehicles()
+	local counter = 0
+	local lastUseTimeToBeDestroyed = getTickCount() - 1800000
+	for key, vehicle in ipairs(getElementsByType("vehicle")) do
+		if vehicle.m_OwnerType == 1 then
+			if lastUseTimeToBeDestroyed > vehicle:getLastUseTime() then
+				if vehicle:getOccupantsCount() == 0 then
+					if vehicle.m_Owner then 
+						if not DatabasePlayer.Map[vehicle.m_Owner] then
+							vehicle:destroy()
+							counter = counter + 1
+						end
+					end
+				end
+			end
+		end
+	end
+	outputDebugString("[Vehicle-Manager] Cleaned "..counter.." inactive vehicles!")
 end
 
 function VehicleManager:migrate()
@@ -1694,4 +1811,33 @@ function VehicleManager:migrate()
 			sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
 	end
 
+end
+
+
+function VehicleManager:Event_RequestVehicleMarks() 
+	client:triggerEvent("receiveVehicleMarks", self.m_VehicleMarks)
+end
+
+function VehicleManager:addVehicleMark(vehicle, mark) 
+	if vehicle and isElement(vehicle) and mark ~= "" then
+		self.m_VehicleMarks[vehicle] = mark
+		for k, p in ipairs(getElementsByType("player")) do 
+			p:triggerEvent("addVehicleMark", vehicle, mark)
+		end
+	end
+end
+
+function VehicleManager:removeVehicleMark(vehicle) 
+	if self.m_VehicleMarks[vehicle] then
+		self.m_VehicleMarks[vehicle] = nil
+		for k, p in ipairs(getElementsByType("player")) do 
+			p:triggerEvent("removeVehicleMark", vehicle)
+		end
+	end
+end
+
+function VehicleManager:getStateVehicleCount() 
+	local facVehicles = VehicleManager:getSingleton().m_FactionVehicles
+	local count = (facVehicles[1] and #facVehicles[1] or 0) + (facVehicles[2] and #facVehicles[2] or 0) + (facVehicles[3] and #facVehicles[3] or 0)
+	return count
 end

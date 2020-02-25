@@ -1,9 +1,9 @@
 version: '3'
-services: 
+services:
   exo_mysql:
-    image: mysql/mysql-server
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_HOST: "172.23.0.3"
       MYSQL_ROOT_PASSWORD: passwd
       MYSQL_DATABASE: vrp
       MYSQL_USER: vrp
@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
   exo_phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     depends_on:
       - exo_mysql
     environment:

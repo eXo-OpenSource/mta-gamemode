@@ -17,8 +17,8 @@ function CustomModelManager:constructor()
 	self:createObjectsForMods()
 
 	--world objects
-	self:loadImportCOL("files/models/buildings/mech.col", 7520)
-	self:loadImportDFF("files/models/buildings/mech.dff", 7520)
+	--self:loadImportCOL("files/models/buildings/mech.col", 7520)
+	--self:loadImportDFF("files/models/buildings/mech.dff", 7520)
 
 	--Kart-Track
 	self:loadImportCOL("files/models/buildings/kart.col", 13083)
@@ -39,6 +39,9 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/hedge01_law.col", 6046)
 	self:loadImportDFF("files/models/objects/hedge01_law.dff", 6046)
 	self:setLODDistance(6046, 500)
+	--Ammunation Street hedge gap
+	self:loadImportCOL("files/models/objects/lawroads_law21.col", 6127)
+	self:loadImportDFF("files/models/objects/lawroads_law21.dff", 6127)
 
 	--bank
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)
@@ -160,6 +163,8 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/vehicles/extensions/fire_main.col", 1932)
 	self:loadImportTXD("files/models/vehicles/extensions/fire_main.txd", 1932)
 	self:loadImportDFF("files/models/vehicles/extensions/fire_main.dff", 1932)
+	self:loadImportTXD("files/models/vehicles/extensions/taxi_sign.txd", 1853)
+	self:loadImportDFF("files/models/vehicles/extensions/taxi_sign.dff", 1853)
 
 	self:loadImportDFF("files/models/vehicles/dozer.dff", 486)
 	self:loadImportDFF("files/models/vehicles/dumper.dff", 406)
@@ -202,12 +207,17 @@ function CustomModelManager:constructor()
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
 
-		self:loadImportTXD("files/models/skins/snowman.txd", 260)
-		self:loadImportDFF("files/models/skins/snowman.dff", 260)
+		self:loadImportTXD("files/models/skins/santaThin.txd", 260)
+		self:loadImportDFF("files/models/skins/santaThin.dff", 260)
 
 		self:loadImportTXD("files/models/vehicles/reindeerSledge.txd", 609)
 		self:loadImportDFF("files/models/vehicles/reindeerSledge.dff", 609)
 	end
+
+	-- SCHUH ZUM WERFEN
+	self:loadImportTXD("files/models/objects/worldItems/boot.txd", 1901)
+	self:loadImportDFF("files/models/objects/worldItems/boot.dff", 1901)
+
 
 	--Easter Event:
 	self:loadImportCOL("files/models/objects/worldItems/easter_egg.col", 1933)
@@ -228,6 +238,8 @@ function CustomModelManager:constructor()
 	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")
 	--self:loadShader("RoadSigns/trans.png", "txgrass0_1")
 	self:loadShader("Other/trans.png", "txgrass1_1")
+
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

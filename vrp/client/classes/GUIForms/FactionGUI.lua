@@ -177,7 +177,7 @@ function FactionGUI:refreshLeaderTab()
 		if v == true then
 			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, weaponID == 0 and "Spezial Waffen" or WEAPON_NAMES[weaponID], self.m_TabLeader)
 			self.m_WeaponsName[weaponID]:setAlignX("center")
-			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, weaponID == 0 and WeaponIcons[22] or WeaponIcons[weaponID], self.m_TabLeader)
+			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, weaponID == 0 and FileModdingHelper:getSingleton():getWeaponImage(22) or FileModdingHelper:getSingleton():getWeaponImage(weaponID), self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID]:setFontSize(1)
 			self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
@@ -556,7 +556,7 @@ function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp, localToplist)
 	ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, actionStatus)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, actionStatus, rankNames, rankLoans, validWeapons, rankWeapons)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -596,9 +596,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 			end
 
 			if rank >= FactionRank.Manager then
-				self.m_skins = skins
 				self.m_RankLoans = rankLoans
-				self.m_RankSkins = rankSkins
 				self.m_ValidWeapons = validWeapons
 				self.m_RankWeapons = rankWeapons
 				if localPlayer:getFaction():isEvilFaction() then

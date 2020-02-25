@@ -52,7 +52,11 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_DiplomacyJSON = diplomacy
 
 	if not DEBUG then
-		self:getActivity()
+		Async.create(
+			function(self)
+				self:getActivity()
+			end
+		)(self)
 	end
 	self:checkEquipmentPermissions()
 end
@@ -307,11 +311,15 @@ function Faction:addPlayer(playerId, rank)
 		if self.m_Name_Short == "SAPD" then
 			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
+		bindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
-  	self:getActivity(true)
+	Async.create(
+		function(self)
+			self:getActivity(true)
+		end
+	)(self)
 end
 
 function Faction:removePlayer(playerId)
@@ -323,6 +331,9 @@ function Faction:removePlayer(playerId)
 	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
+		player:saveAccountActivity()
+		setElementData(player, "playingTimeFaction", 0)
+		setElementData(player, "dutyTimeFaction", 0)
 		player:setFaction(nil)
 		player:giveAchievement(67)
 		player:setCorrectSkin()
@@ -452,18 +463,33 @@ function Faction:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
 	end
+
 	self.m_LastActivityUpdate = getRealTime().timestamp
+	local playerIds = {}
 
 	for playerId, rank in pairs(self.m_Players) do
-		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
+		table.insert(playerIds, playerId)
+	end
 
+	local query = "SELECT UserId, FLOOR(SUM(Duration) / 60) AS Activity FROM ??_account_activity WHERE UserId IN (?" .. string.rep(", ?", #playerIds - 1) ..  ") AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW()) GROUP BY UserId"
+
+	sql:queryFetch(Async.waitFor(), query, sql:getPrefix(), unpack(playerIds))
+
+	local rows = Async.wait()
+
+	self.m_PlayerActivity = {}
+	for playerId, rank in pairs(self.m_Players) do
+		self.m_PlayerActivity[playerId] = 0
+	end
+
+	for _, row in ipairs(rows) do
 		local activity = 0
 
 		if row and row.Activity then
 			activity = row.Activity
 		end
 
-		self.m_PlayerActivity[playerId] = activity
+		self.m_PlayerActivity[row.UserId] = activity
 	end
 end
 
@@ -471,10 +497,13 @@ function Faction:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
 	end
-
 	local temp = {}
 
-	self:getActivity()
+	Async.create(
+		function(self)
+			self:getActivity()
+		end
+	)(self)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local loanEnabled = self.m_PlayerLoans[playerId]
@@ -536,6 +565,7 @@ function Faction:sendSuccess(text)
 end
 
 function Faction:sendChatMessage(sourcePlayer, message)
+	if not getElementData(sourcePlayer, "FactionChatEnabled") then return sourcePlayer:sendError(_("Du hast den Fraktionschat deaktiviert!", sourcePlayer)) end
 	--if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
 		local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
 		if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
@@ -552,7 +582,9 @@ function Faction:sendChatMessage(sourcePlayer, message)
 		message = message:gsub("%%", "%%%%")
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in ipairs(self:getOnlinePlayers()) do
-			player:sendMessage(text, r, g, b)
+			if getElementData(player, "FactionChatEnabled") then
+				player:sendMessage(text, r, g, b)
+			end
 			if player ~= sourcePlayer then
 	            receivedPlayers[#receivedPlayers+1] = player
 	        end
@@ -564,12 +596,15 @@ function Faction:sendChatMessage(sourcePlayer, message)
 end
 
 function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
+	if not getElementData(sourcePlayer, "AllianceChatEnabled") then return sourcePlayer:sendError(_("Du hast den Bündnischat deaktiviert!", sourcePlayer)) end
 	local playerId = sourcePlayer:getId()
 	local receivedPlayers = {}
 	local r,g,b = 20, 140, 0
 	local text = ("[Bündnis] %s: %s"):format(getPlayerName(sourcePlayer), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, r, g, b)
+		if getElementData(player, "AllianceChatEnabled") then
+			player:sendMessage(text, r, g, b)
+		end
 		if player ~= sourcePlayer then
 			receivedPlayers[#receivedPlayers+1] = player
 		end
@@ -577,7 +612,8 @@ function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
 	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "factionBnd:"..self.m_Id, message, receivedPlayers)
 end
 
-function Faction:respawnVehicles( isAdmin )
+function Faction:respawnVehicles(player)
+	local isAdmin = player and player:getRank() >= RANK.Supporter
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min
@@ -586,7 +622,7 @@ function Faction:respawnVehicles( isAdmin )
 	end
 	if isAdmin then
 		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
-		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+		player:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
 	end
 	local factionVehicles = VehicleManager:getSingleton():getFactionVehicles(self.m_Id)
 	local fails = 0
@@ -594,7 +630,7 @@ function Faction:respawnVehicles( isAdmin )
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn(true) then
+			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
 				vehicle:setInterior(vehicle.m_SpawnInt or 0)
@@ -876,4 +912,81 @@ function Faction:takeEquipment(player)
 			end
 		end
 	end
+end
+
+
+function Faction:storageWeapons(player)
+	local depot = self:getDepot()
+	local logData = {}
+	for i= 1, 12 do
+		if player:getWeapon(i) > 0 then
+			local weaponId = player:getWeapon(i)
+			local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
+			if WEAPON_CLIPS[weaponId] then
+				clipAmmo = WEAPON_CLIPS[weaponId]
+			end
+
+			local magazines = clipAmmo > 0 and math.floor(player:getTotalAmmo(i)/clipAmmo) or 0
+			if THROWABLE_WEAPONS[weaponId] then -- don't divide by magazine size
+				magazines = player:getTotalAmmo(i)
+			end
+
+			local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
+			local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
+
+			if depotWeapons == -1 then
+				takeWeapon(player, weaponId)
+			else
+
+				if THROWABLE_WEAPONS[weaponId] then -- grenade etc
+					if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
+						depot:addWeaponD(weaponId, magazines)
+						takeWeapon(player, weaponId)
+						logData[WEAPON_NAMES[weaponId]] = magazines
+					elseif magazines > 0 then
+						local weaponsToMax = depotMaxWeapons - depotWeapons
+						depot:addWeaponD(weaponId, weaponsToMax)
+						setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - weaponsToMax)
+						if magsToMax > 0 then
+							logData[WEAPON_NAMES[weaponId]] = weaponsToMax
+							player:sendError(_("Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert.", player, magazines, WEAPON_NAMES[weaponId], weaponsToMax))
+						end
+					end
+				else
+					if depotWeapons+1 <= depotMaxWeapons then
+						if depotMagazines + magazines <= depotMaxMagazines then
+							depot:addWeaponD(weaponId, 1)
+							depot:addMagazineD(weaponId, magazines)
+							takeWeapon(player, weaponId)
+							logData[WEAPON_NAMES[weaponId]] = magazines
+						elseif magazines > 0 then
+							local magsToMax = depotMaxMagazines - depotMagazines
+							depot:addMagazineD(weaponId, magsToMax)
+							setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - magsToMax*clipAmmo)
+							if magsToMax > 0 then
+								logData[WEAPON_NAMES[weaponId]] = magsToMax
+								player:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", player, magazines, WEAPON_NAMES[weaponId], magsToMax))
+							end
+						end
+
+					else
+						player:sendError(_("Im Depot ist nicht Platz für eine/n %s!", player, WEAPON_NAMES[weaponId]))
+					end
+				end
+			end
+		end
+	end
+	local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
+	local wepaponsPut = false
+	for i,v in pairs(logData) do
+		wepaponsPut = true
+		textForPlayer = textForPlayer.."\n"..i
+		if v > 0 then
+			textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
+			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
+		else
+			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
+		end
+	end
+	if wepaponsPut then player:sendInfo(textForPlayer) end
 end

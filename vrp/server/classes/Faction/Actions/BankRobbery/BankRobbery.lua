@@ -226,7 +226,7 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
 				return false
 			end
-			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers then
+			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers and not DEBUG then
 				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, self.ms_MinBankrobStateMembers))
 				return false
 			end
@@ -257,7 +257,7 @@ function BankRobbery:updateBreakingNews()
 	local rnd = math.random(1,4)
 	local type = self.m_Name == "Casino" and "am Casino" or "an der Bank"
 	if rnd == 1 then
-		msg =  "Der Banküberfall ist immer noch im Gange!"
+		msg =  ("Der %s ist immer noch im Gange!"):format(self.m_Name == "Casino" and "Casinoüberfall" or "Banküberfall")
 	elseif rnd == 2 then
 		if not self.m_BrNe_EvilPeople then self.m_BrNe_EvilPeople = 0 end
 		local nowEvilPeople = self:countEvilPeople()

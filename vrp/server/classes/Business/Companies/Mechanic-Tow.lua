@@ -4,18 +4,18 @@ addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel
 function MechanicTow:constructor()
 	self.m_PendingQuestions = {}
 
-	local safe = createObject(2332, 857.594, -1182.628, 17.569, 0, 0, 270)
+	local safe = createObject(2332, 2456.191, -2106.406, 12.9, 0, 0, 270)
 	safe:setScale(0.7)
 	self:setSafe(safe)
 
-	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
+	self.m_TowColShape = createColRectangle(2649.02, -2122.29, 18.5, 10.5)
 
-	local blip = Blip:new("CarLot.png", 913.83, -1234.65, root, 400)
+	local blip = Blip:new("CarLot.png", 2661.91, -2104.90, root, 400)
 	blip:setOptionalColor({150, 150, 150})
 	blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
 
 	local id = self:getId()
-	local blip = Blip:new("House.png", 857.594, -1182.628, {company = id}, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
+	local blip = Blip:new("House.png", 2481.79, -2097.76, {company = id}, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
 	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
 
 	self.m_FillAccept = bind(MechanicTow.FillAccept, self)
@@ -58,8 +58,14 @@ function MechanicTow:respawnVehicle(vehicle)
 			occ:removeFromVehicle()
 		end
 	end
-	vehicle:setPositionType(VehiclePositionType.Mechanic)
-	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
+		vehicle:respawn()
+		vehicle:getFaction():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})
+		vehicle:getFaction():sendShortMessage(("Das Fahrzeug %s (%s) wurde vom M&T abgeschleppt und für %s an eurer Basis respawned!"):format(vehicle:getName(), vehicle:getPlateText(), toMoneyString(500)))
+	else
+		vehicle:setPositionType(VehiclePositionType.Mechanic)
+		vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+	end
 	vehicle:fix()
 end
 
@@ -191,12 +197,17 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	source:setPosition(x, y, z + source:getBaseHeight())
 	source:setRotation(0, 0, rotation)
 
-	client:sendSuccess(_("Fahrzeug freigekauft! Das Geld wurde vom Konto abgezogen.", client))
+	client:sendSuccess(_("Fahrzeug freigekauft, es steht im Hinterhof bereit! Das Geld wurde vom Konto abgezogen.", client))
+end
+
+function MechanicTow:isValidTowableVehicle(veh)
+	return instanceof(veh, PermanentVehicle, true) or instanceof(veh, GroupVehicle, true) or instanceof(veh, FactionVehicle, true) or veh.burned
 end
 
 function MechanicTow:onEnterTowLot(hitElement)
 	if getElementType(hitElement) ~= "player" then return end
 	if hitElement:getCompany() ~= self then return end
+	if hitElement:isCompanyDuty() ~= true then return end
 	if not hitElement.vehicle or not hitElement.vehicle.getCompany or hitElement.vehicle:getCompany() ~= self or (hitElement.vehicle:getModel() ~= 525 and hitElement.vehicle:getModel() ~= 417) then return end
 
 	local towingBike = hitElement.vehicle:getData("towingBike")
@@ -255,13 +266,15 @@ end
 
 function MechanicTow:onAttachVehicleToTow(towTruck)
 	local driver = getVehicleOccupant(towTruck)
-	if driver then
-		if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
-			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
-				source:toggleRespawn(false)
-				source.m_HasBeenUsed = 1 --disable despawn on logout
-			else
-				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+	if driver and getElementType(driver) == "player" then
+		if driver:getCompany() == self and driver:isCompanyDuty() then
+			if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
+				if self:isValidTowableVehicle(source) then
+					source:toggleRespawn(false)
+					source.m_HasBeenUsed = 1 --disable despawn on logout
+				else
+					driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+				end
 			end
 		end
 	end
@@ -273,24 +286,26 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 
 	local driver = getVehicleOccupant(towTruck)
 	if driver and driver.m_InTowLot then
-		if towTruck.getCompany and towTruck:getCompany() == self then
-			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
-				if not source.burned then
-					self:respawnVehicle(source)
-					driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
-					StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
-					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
-				else
-					if source.Blip then
-						source.Blip:delete()
+		if driver:getCompany() == self and driver:isCompanyDuty() then
+			if towTruck.getCompany and towTruck:getCompany() == self then
+				if self:isValidTowableVehicle(source) then
+					if not source.burned then
+						self:respawnVehicle(source)
+						driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+						StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
+						self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+					else
+						if source.Blip then
+							source.Blip:delete()
+						end
+						self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s) abgeschleppt!"):format(source:getName()))
+						source:destroy()
+						driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
+						self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
 					end
-					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s) abgeschleppt!"):format(source:getName()))
-					source:destroy()
-					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
-					self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
+				else
+					driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 				end
-			else
-				driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end
 		end
 	end
@@ -433,7 +448,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 	if client.vehicle:getData("towingBike") then return end
 
 	if vehicle and vehicle:isEmpty() then
-		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or vehicle.burned then
+		if self:isValidTowableVehicle(vehicle) then
 			vehicle:toggleRespawn(false)
 			client.vehicle:setData("towingBike", vehicle, true)
 			vehicle:setData("towedByVehicle", client.vehicle, true)
@@ -497,8 +512,8 @@ function MechanicTow:checkLeviathanTowing(player, vehicle)
 end
 
 MechanicTow.SpawnPositions = {
-	{904.833, -1183.605, 16, 180},
-	{900.833, -1183.605, 16, 180},
+	{2434.95, -2130.05, 12.5, 270},
+	{2434.95,  -2138.81, 12.5, 270},
 	--{833.2, -1198.1, 17.70, 180},
 	--{1091.7, -1198.3, 17.70, 180},
 	--

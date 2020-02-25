@@ -15,9 +15,7 @@ function Plant:destructor()
 end
 
 function Plant:use(player, itemId, bag, place, itemName)
-	if not GrowableManager:getSingleton():getNextPlant(player, GrowableManager.Types[GrowableManager:getSingleton():getPlantNameFromSeed(itemName)].SizeBetweenPlants) then
+	if GrowableManager:getSingleton():checkPlantConditionsForPlayer(player, itemName) then
 		player:triggerEvent("Plant:sendClientCheck", itemName)
-	else
-		player:sendInfo(_("Du bist zu nah an einer anderen Pflanze!", player))
 	end
 end

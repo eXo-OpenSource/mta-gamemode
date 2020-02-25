@@ -62,7 +62,7 @@ end
 
 function BombArea.findAt(targetPosition)
     for k, area in pairs(BombArea.Map) do
-        if (targetPosition - area.m_Position).length < 10 then
+        if (targetPosition - area.m_Position).length < 3 then
             return area
         end
     end

@@ -29,13 +29,18 @@ companyVehicleShaders = {
 	};
 }
 
+taxiSignOffsets = {
+	[418] = {0, -0.55, 1.12}, --Moonbeam
+	[560] = {0, -0.23, 0.9175} --Sultan
+}
+
 -- ID 1 = Fahrschule:
 companyRankNames[1] = {
 [0] = "Praktikant",
 [1] = "Auszubildender",
 [2] = "Fahrlehrer",
 [3] = "Ausbilder",
-[4] = "Geschäftsführer Stellv.",
+[4] = "Stellv. Geschäftsführer",
 [5] = "Geschäftsführer"
 }
 companyColors[1] = {["r"] = 255,["g"] = 255,["b"] = 255}
@@ -54,9 +59,9 @@ companyRankNames[2] = {
 [5] = "Geschäftsführer"
 }
 companyColors[2] = {["r"] = 0,["g"] = 150,["b"] = 140}
-companySkins[2] = {[36]=true, [44]=true, [50]=true,[192]=true,[268]=true}
-companyDutyMarker[2] = Vector3(857.006, -1183.823, 17.269)
-companySpawnpoint[2] = {Vector3(854.230, -1186.297, 17.269), 0, 0}
+companySkins[2] = {[44]=true, [50]=true,[192]=true,[268]=true, [309]=true}
+companyDutyMarker[2] = Vector3(2455.18, -2103.97, 13.55)
+companySpawnpoint[2] = {Vector3(2453.93, -2107.24, 13.55), 0, 0}
 
 -- ID 3 = SAN News:
 companyRankNames[3] = {
@@ -76,8 +81,8 @@ companySpawnpoint[3] = {Vector3(735.97, -1338.20, 13.53), 0, 0}
 companyRankNames[4] = {
 [0] = "Polierer",
 [1] = "Taxifahrer",
-[2] = "Kassierer",
-[3] = "Busfahrer",
+[2] = "Busfahrer",
+[3] = "Schichtleiter",
 [4] = "Fahrzeugverwalter",
 [5] = "Transportmanager"
 }

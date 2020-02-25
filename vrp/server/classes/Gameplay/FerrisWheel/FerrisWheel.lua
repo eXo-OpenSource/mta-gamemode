@@ -58,7 +58,7 @@ function FerrisWheel:update()
 end
 
 function FerrisWheel:setPlayerToExitPosition(player, gondId)
-    player:setPosition(self.m_BaseObj.position + self.m_BaseObj.matrix.right*(gondId % 2 == 0 and -3.5 or 3.5) + self.m_BaseObj.matrix.forward*(5) + self.m_BaseObj.matrix.up*(-13))
+    player:setPosition(self.m_BaseObj.position + self.m_BaseObj.matrix.right*(gondId % 2 == 0 and -3.5 or 3.5) + self.m_BaseObj.matrix.forward*(5) + self.m_BaseObj.matrix.up*(-12))
     player:setRotation(self.m_BaseObj.rotation)
 end
 
@@ -72,7 +72,29 @@ function FerrisWheel:setPaused()
             v:forceRemovePlayers()
         end
     end
-    setTimer(function()
+    if self:isWheelInUse() then
+        self:startMoving()
+    end
+end
+
+function FerrisWheel:startMoving()
+    self.m_PauseTimer = setTimer(function()
         FerrisWheelManager:getSingleton():registerUpdate(self)
     end, FerrisWheelManager.PauseInterval, 1)
+end
+
+function FerrisWheel:abortMovingStart()
+    if isTimer(self.m_PauseTimer) then
+        killTimer(self.m_PauseTimer)
+    end
+end
+
+function FerrisWheel:isWheelInUse()
+    local isWheelInUse = false
+    for k, gond in ipairs(self.m_Gonds) do
+        for k, v in pairs(gond.m_Occupants) do
+            isWheelInUse = true
+        end
+    end
+    return isWheelInUse
 end

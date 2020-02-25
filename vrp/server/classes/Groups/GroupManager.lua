@@ -8,7 +8,6 @@
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.ActiveMap = {}
-GroupManager.GroupCosts = 100000
 GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
 	GroupManager.GroupTypes[v] = i
@@ -58,7 +57,7 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups WHERE Deleted IS NULL", sql:getPrefix())
 	for k, row in ipairs(result) do
 		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans)
 		GroupManager.Map[row.Id] = group
@@ -82,7 +81,7 @@ end
 
 function GroupManager:loadFromId(Id)
 	if not GroupManager.Map[Id] then
-		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ?", sql:getPrefix(), Id)
+		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), Id)
 		if row then
 			local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 			local players = {}
@@ -123,7 +122,11 @@ function GroupManager:sendInfosToClient(player)
 		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
-		player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
+		if group:getPlayerRank(player) < GroupRank.Manager then
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames)
+		else
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames, group.m_RankLoans)
+		end
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
@@ -146,7 +149,7 @@ function GroupManager:Event_RequestMoney()
 end
 
 function GroupManager:Event_Create(name, type)
-	if client:getMoney() < GroupManager.GroupCosts then
+	if client:getMoney() < GROUP_CREATE_COSTS then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
@@ -190,7 +193,7 @@ function GroupManager:Event_Create(name, type)
 		client:giveAchievement(60)
 
 		group:addPlayer(client, GroupRank.Leader)
-		client:transferMoney(self.m_BankAccountServer, GroupManager.GroupCosts, "Firmen/Gang Gründung", "Group", "Creation")
+		client:transferMoney(self.m_BankAccountServer, GROUP_CREATE_COSTS, "Firmen/Gang Gründung", "Group", "Creation")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
 		group:addLog(client, "Gang/Firma", "hat die "..type.." "..name.." erstellt!")
 		self:sendInfosToClient(client)
@@ -735,4 +738,13 @@ end
 
 function GroupManager:removeActiveGroup(group)
 	GroupManager.ActiveMap[group:getId()] = nil
+end
+
+function GroupManager:getFromName(name)
+	for k, group in pairs(GroupManager.Map) do
+		if group:getName() == name then
+			return group
+		end
+	end
+	return false
 end

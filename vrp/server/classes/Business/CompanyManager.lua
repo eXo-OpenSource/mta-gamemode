@@ -83,7 +83,11 @@ function CompanyManager:sendInfosToClient(client)
 	local company = client:getCompany()
 
 	if company then --use triggerLatentEvent to improve serverside performance
-        client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
+		if company:getPlayerRank(client) < CompanyRank.Manager then
+        	client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_RankNames)
+		else
+			client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_RankNames, company.m_RankLoans)
+		end
 	else
 		client:triggerEvent("companyRetrieveInfo")
 	end
@@ -352,7 +356,7 @@ function CompanyManager:Event_changeSkin()
 	end
 end
 
-function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
+function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 	if getPedOccupiedVehicle(client) and not wasted then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
@@ -360,26 +364,31 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 	if company then
 		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 or wasted then
 			if client:isCompanyDuty() then
-				client:setCorrectSkin(true)
+				if not dontChangeSkin then
+					client:setCorrectSkin(true)
+				end
 				client:setCompanyDuty(false)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
 				client:setPublicSync("Company:Duty",false)
 				takeAllWeapons(client)
+				client:restoreStorage()
 				if company.stop then
 					company:stop(client)
 				end
 			else
 				if client:isFactionDuty() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
-					return false
+					--client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
+					--return false
+					client:triggerEvent("factionForceOffduty", true)
 				end
-				company:changeSkin(client, preferredSkin)
+				company:changeSkin(client, preferredSkin) 
 				client:setCompanyDuty(true)
+
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 				client:setPublicSync("Company:Duty",true)
-				takeAllWeapons(client)
+				client:createStorage()
 				if company.m_Id == CompanyStaticId.SANNEWS then
 					giveWeapon(client, 43, 50) -- Camera
 				end
@@ -465,4 +474,13 @@ function CompanyManager:Event_UpdateSkinPermissions(skinTable)
 	local c = client:getCompany()
 	local r = c:getPlayerRank(client)
 	triggerClientEvent(client, "openSkinSelectGUI", client, c:getSkinsForRank(r), c:getId(), "company", r >= CompanyRank.Manager, c:getAllSkins())
+end
+
+function CompanyManager:getFromName(name)
+	for k, company in pairs(CompanyManager.Map) do
+		if company:getName() == name then
+			return company
+		end
+	end
+	return false
 end

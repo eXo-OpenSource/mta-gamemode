@@ -26,6 +26,8 @@ end
 function WearableShirt:use(player, itemId, bag, place, itemName)
 	local inventory = player:getInventory()
 	local value = inventory:getItemValueByBag( bag, place)
+	if player.m_PrisonTime > 0 then player:sendError("Im Prison nicht erlaubt!") return end
+	if player.m_JailTime > 0 then player:sendError("Im Gefängnis nicht erlaubt!") return end
 	if value then --// for texture usage later
 
 	end
@@ -60,7 +62,7 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		player:meChat(true, "zieht "..objName.." an!")
 		setElementData(player,"CanWeaponBeConcealed",bIsConceal)
 		if bConcealOutput then
-			player:meChat(true, "versteckt einige Waffen in seiner "..objName.." !")
+			player:meChat(true, "versteckt einige Waffen in seiner "..objName.."!")
 		end
 		if bIsConceal then
 			triggerEvent("WeaponAttach:concealWeapons", player)

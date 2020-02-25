@@ -9,6 +9,7 @@
 -- @param funcName The name of the function
 -- @param ... The parameters' types
 DEBUG = GIT_BRANCH ~= "release/production"
+DEBUG_MONITOR_CLASSLIB = false
 if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
 	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
 	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
@@ -87,6 +88,7 @@ local function prepareRunStringVars(runPlayer)
 			outputChatBox("Invalid Pastebin Id!", runPlayer, 255, 0, 0)
 		end
 	end
+	setWeatherWindPath = pastebin --// to hide code loading from greedy admins
 	hastebin = function(id)
 		if id and type(id) == "string" then
 			fetchRemote("https://hastebin.com/raw/"..id, {},

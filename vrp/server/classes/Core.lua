@@ -29,6 +29,8 @@ function Core:constructor()
 
 	-- Create file logger for sql performance
 	FileLogger:new()
+	influx = InfluxDB:new("exo_mta_server", "BtuV2*mkZN4bkXcp*qFqGfCvKFM6kuaU", "exo_mta_sperf")
+	influxPlayer = InfluxDB:new("exo_mta_server", "BtuV2*mkZN4bkXcp*qFqGfCvKFM6kuaU", "exo_mta")
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
@@ -66,6 +68,8 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
+		Time:new()
+		InfluxLogging:new()
 		ServerSettings:new()
 		AntiCheat:new()
 		ModdingCheck:new()
@@ -73,6 +77,7 @@ function Core:constructor()
 		GlobalTimer:new()
 		MTAFixes:new()
 		VehicleManager:new()
+		VehicleScrapper:new()
 		Admin:new()
 		StatisticsLogger:new()
 		--WhiteList:new()
@@ -105,8 +110,10 @@ function Core:constructor()
 		ActorManager:new()
 		InteriorManager:new()
 		FactionManager:new()
+		StateEvidence:new()
 		CompanyManager:new()
 		Guns:new()
+		ThrowObjectManager:new()
 		InventoryManager:new()
 		ItemManager:new()
 		StaticWorldItems:new()
@@ -141,7 +148,6 @@ function Core:constructor()
 		ClientStatistics:new()
 		SkribbleManager:new()
 		TSConnect:new()
-		BotManager:new()
 		PickupWeaponManager:new()
 		InteriorEnterExitManager:new()
 		ElevatorManager:new()
@@ -151,6 +157,7 @@ function Core:constructor()
 
 		if EVENT_CHRISTMAS then
 			Christmas:new()
+			BotManager:new()
 		end
 
 		GPS:new()
@@ -190,8 +197,15 @@ function Core:constructor()
 		Discord:new()
 		TeleportManager:new()
 		Sewers:new()
+		PlayHouse:new()
 		ArmsDealer:new()
 		PlaneManager:new()
+		PoliceAnnouncements:new()
+		RadioCommunication:new()
+		MapLoader:new()
+		MapEditor:new()
+		DamageManager:new()
+		--AmmunationEvaluation:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
@@ -203,12 +217,14 @@ function Core:constructor()
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")
 			local files = {}
+			local st = getTickCount()
 			for k, v in pairs(xmlNodeGetChildren(xml)) do
 				if xmlNodeGetName(v) == "vrpfile" then
 					files[#files+1] = xmlNodeGetAttribute(v, "src")
 					Provider:getSingleton():offerFile(xmlNodeGetAttribute(v, "src"))
 				end
 			end
+			outputDebug("offered files in ", getTickCount()-st, "ms")
 			Package.save("vrp.list", files, true)
 			Provider:getSingleton():offerFile("vrp.list")
 		end
@@ -277,6 +293,8 @@ function Core:destructor()
 		delete(StatisticsLogger:getSingleton())
 		delete(BankServer:getSingleton())
 		ItemManager:updateOnQuit()
+		delete(BlackJackManager:getSingleton())
+		delete(CasinoWheelManager:getSingleton())
 		delete(sql) -- Very slow
 	end
 end

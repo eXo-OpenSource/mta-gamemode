@@ -27,6 +27,7 @@ end
 
 function DatabasePlayer:destructor()
 	self:save()
+	outputServerLog("[DATABASE-PLAYER] Unloaded player with id " .. tostring(self.m_Id))
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -78,8 +79,10 @@ function DatabasePlayer:load(sync)
 	end
 
 	if not row then
+		outputServerLog("[DATABASE-PLAYER] Failed to load id " .. tostring(self.m_Id))
 		return false
 	end
+	outputServerLog("[DATABASE-PLAYER] Loaded player with id " .. tostring(self.m_Id))
 
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
 		self:updateAchievements(table.setIndexToInteger(fromJSON(row.Achievements)))
@@ -152,6 +155,9 @@ function DatabasePlayer:load(sync)
 	if self:isActive() then
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 		self:changeWalkingstyle(row.WalkingStyle)
+		self.m_RadioFrequency = fromJSON(row.RadioCommunication or "") or {}
+		RadioCommunication:getSingleton():loadPlayer(self)
+		DamageManager:getSingleton():loadPlayer(self, row.Injury)
 	end
 
 	self:setSpawnLocation(row.SpawnLocation)
@@ -164,11 +170,13 @@ function DatabasePlayer:load(sync)
 	self:setAlcoholLevel(row.AlcoholLevel)
 	self:setPlayTime(row.PlayTime)
 	self.m_StartTime = row.PlayTime
+	self.m_PlayTimeAtLastSave = row.PlayTime
 	self.m_LoginTime = getRealTime().timestamp
 	self:setPrison(0)
 	self:setWarns()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
+
 	self.m_TeamspeakId = Account.getTeamspeakIdFromId(self.m_Id)
 	self.m_LoggedIn = true
 
@@ -194,25 +202,76 @@ function DatabasePlayer:save()
 			spawnFac = 0
 		end
 
-		local row = sql:queryFetchSingle("SELECT Id FROM ??_accountActivity WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
-
-		if not row then
-			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(),
-			self.m_LoginTime, self:getId(), self.m_LoginTime, self:getPlayTime() - self.m_StartTime)
-		else
-			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(),
-			self:getPlayTime() - self.m_StartTime, row.Id)
-		end
-		
 		if self:isActive() then
-			return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ?, WalkingStyle = ? WHERE Id=?", sql:getPrefix(),
-				self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, toJSON(self.m_STVO, true), self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught),  self:getWalkingstyle(), self:getId())
-		else 
+			self:saveAccountActivity()
+			return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ?, WalkingStyle = ?, RadioCommunication = ?, Injury = ? WHERE Id=?", sql:getPrefix(),
+				self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, toJSON(self.m_STVO, true), self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught),  self:getWalkingstyle(), (self.m_RadioFrequency and toJSON(self.m_RadioFrequency)) or "", DamageManager:getSingleton():serializePlayer(self), self:getId())
+		else
 			return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
 				self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, toJSON(self.m_STVO, true), self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
 		end
 	end
 	return false
+end
+
+function DatabasePlayer:saveAccountActivity()
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_account_activity WHERE UserId = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
+	local timeDiff = self:getPlayTime() - self.m_StartTime
+	local dutyMinutes = getElementData(self, "dutyTime") or 0
+
+	if not row then
+		sql:queryExec("INSERT INTO ??_account_activity (Date, UserId, SessionStart, Duration, DurationDuty) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?);", sql:getPrefix(),
+		self.m_LoginTime, self:getId(), self.m_LoginTime, timeDiff, dutyMinutes)
+	else
+		sql:queryExec("UPDATE ??_account_activity SET Duration = ?, DurationDuty = ? WHERE Id = ?;", sql:getPrefix(),
+		timeDiff, dutyMinutes, row.Id)
+	end
+
+	--[[
+		TODO: create rollover logic to new day
+	]]
+	local time = self.m_LastActivitySave or self.m_LoginTime
+
+	local playingTimeFaction = getElementData(self, "playingTimeFaction") or 0
+	local dutyTimeFaction = getElementData(self, "dutyTimeFaction") or 0
+
+	local playingTimeCompany = getElementData(self, "playingTimeCompany") or 0
+	local dutyTimeCompany = getElementData(self, "dutyTimeCompany") or 0
+
+	local playingTimeGroup = getElementData(self, "playingTimeGroup") or 0
+
+	if self:getFaction() then
+		sql:queryExec([[
+			INSERT INTO ??_account_activity_group (Date, UserId, ElementId, ElementType, Duration, DurationDuty) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE Duration = Duration + ?, DurationDuty = DurationDuty + ?
+		]], sql:getPrefix(),
+			time, self:getId(), self:getFaction().m_Id, VehicleTypes.Faction, playingTimeFaction, dutyTimeFaction, playingTimeFaction, dutyTimeFaction)
+
+		setElementData(self, "playingTimeFaction", 0)
+		setElementData(self, "dutyTimeFaction", 0)
+	end
+
+	if self:getCompany() then
+		sql:queryExec([[
+			INSERT INTO ??_account_activity_group (Date, UserId, ElementId, ElementType, Duration, DurationDuty) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE Duration = Duration + ?, DurationDuty = DurationDuty + ?
+		]], sql:getPrefix(),
+		time, self:getId(), self:getCompany().m_Id, VehicleTypes.Company, playingTimeCompany, dutyTimeCompany, playingTimeCompany, dutyTimeCompany)
+
+		setElementData(self, "playingTimeCompany", 0)
+		setElementData(self, "dutyTimeCompany", 0)
+	end
+
+	if self:getGroup() then
+		sql:queryExec([[
+			INSERT INTO ??_account_activity_group (Date, UserId, ElementId, ElementType, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE Duration = Duration + ?
+		]], sql:getPrefix(),
+		time, self:getId(), self:getGroup().m_Id, VehicleTypes.Group, playingTimeGroup, playingTimeGroup)
+		setElementData(self, "playingTimeGroup", 0)
+	end
+
+	self.m_LastActivitySave = getRealTime().timestamp
 end
 
 function DatabasePlayer.getFromId(id)
@@ -949,7 +1008,7 @@ function DatabasePlayer:setNewNick(admin, newNick)
 		return false
 	end
 
-	if not newNick:match("^[a-zA-Z0-9_.%[%]]*$") or #newNick < 3 then
+	if not newNick:match("^[a-zA-Z0-9_.%[%]]*$") or #newNick < 3 or #newNick > 22 then
 		admin:sendError(_("Ungültiger Nickname!", admin))
 		return false
 	end
@@ -963,7 +1022,7 @@ function DatabasePlayer:setNewNick(admin, newNick)
 
 	if data and data.status and data.status == 200 then
 		sql:queryExec("UPDATE ??_account SET Name = ? WHERE Id = ?", sql:getPrefix(), newNick, self.m_Id)
-		StatisticsLogger:getSingleton():addPunishLog(admin, self.m_Id, func, "von "..oldNick.." zu "..newNick, 0)
+		StatisticsLogger:getSingleton():addPunishLog(admin, self.m_Id, "nickchange", "von "..oldNick.." zu "..newNick, 0)
 	else
 		if data and data.status then
 			admin:sendError(_("Nickname bereits vergeben!", admin))

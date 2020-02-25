@@ -10,7 +10,7 @@ inherit(Singleton, TrunkGUI)
 
 addRemoteEvents{"openTrunk", "getTrunkData"}
 
-function TrunkGUI:constructor()
+function TrunkGUI:constructor(vehicle)
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
 
     self.ms_SlotsSettings = {
@@ -27,6 +27,7 @@ function TrunkGUI:constructor()
     self.m_MyItemsGrid:setVisible(false)
     self.m_AmountLabel = GUILabel:new(10, 325, 250, 30, _"Item-Anzahl:", self.m_Window)
     self.m_Amount = GUIEdit:new(10, 355, 250, 30, self.m_Window)
+    self.m_Amount:setNumeric(true, true)
     self.m_AmountLabel:setVisible(false)
     self.m_Amount:setVisible(false)
     self.m_Amount.onChange = function()
@@ -57,8 +58,29 @@ function TrunkGUI:constructor()
     triggerServerEvent("refreshInventory", localPlayer)
     self:loadItems()
 
+    self.m_Vehicle = vehicle
     addEventHandler("getTrunkData", root, bind(self.refreshTrunkData, self))
+
+    self.m_PulseTimer = setTimer(bind(self.checkDistance, self), 1000, 0)
 end
+
+function TrunkGUI:checkDistance() 
+    if isValidElement(self.m_Vehicle, "vehicle") and isElementStreamedIn(self.m_Vehicle) then 
+        local vecX, vecY, vecZ = getVehicleComponentPosition(self.m_Vehicle, "boot_dummy", "world")
+        if (vecX and vecY and vecZ and Vector3(Vector3(vecX, vecY, vecZ) - localPlayer:getPosition()):getLength() < 5) or (vecX and not vecY and not vecZ and Vector3(vecX - localPlayer:getPosition()):getLength() < 5) then 
+            if self.m_Vehicle:getDimension() == localPlayer:getDimension() and self.m_Vehicle:getInterior() == localPlayer:getInterior() then 
+                return true
+            else 
+                delete(self) 
+            end
+        else 
+            delete(self) 
+        end
+    else 
+        delete(self)
+    end
+end
+
 
 function TrunkGUI:addSlot(type, id, posX, posY)
     local tableName
@@ -122,8 +144,9 @@ function TrunkGUI:loadItems()
     self.m_LoadingLabel:setVisible(false)
 end
 
-function TrunkGUI:refreshTrunkData(id, items, weapons)
+function TrunkGUI:refreshTrunkData(id, items, weapons, vehicle)
     self.m_Id = id
+    self.m_Vehicle = vehicle
     for index, item in pairs(items) do
         if item["Item"] ~= "none" then
             self.m_ItemSlots[index].Label:setText(item["Item"])
@@ -142,7 +165,7 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
             local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
             self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
             self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
-            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+            self.m_WeaponSlots[index].Image:setImage(FileModdingHelper:getSingleton():getWeaponImage(weapon.WeaponId))
             self.m_WeaponSlots[index].TakeButton:setEnabled(true)
         else
             self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)
@@ -152,6 +175,7 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
         end
     end
     triggerServerEvent("refreshInventory", localPlayer)
+ 
     setTimer(function()
         self:loadItems()
         self.m_MyItemsGrid:setVisible(true)
@@ -244,10 +268,17 @@ function TrunkGUI:fromTrunk(type, id)
     end
 end
 
-addEventHandler("openTrunk", root, function()
+function TrunkGUI:onClose()
+    if self.m_PulseTimer and isTimer(self.m_PulseTimer) then 
+        killTimer(self.m_PulseTimer)
+    end
+end
+
+
+addEventHandler("openTrunk", root, function(vehicle)
     if TrunkGUI:getSingleton():isInstantiated() then
         TrunkGUI:getSingleton():open()
     else
-        TrunkGUI:getSingleton():new()
+        TrunkGUI:getSingleton():new(vehicle)
     end
 end)

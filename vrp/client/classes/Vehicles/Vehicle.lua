@@ -30,6 +30,7 @@ function Vehicle:constructor()
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
 	end
+	
 end
 
 function Vehicle:getMaxHealth()
@@ -93,7 +94,7 @@ end
 
 function Vehicle:magnetVehicleCheck()
 	local vehicle = self:getData("MagnetGrabbedVehicle")
-	local groundPosition = vehicle and getGroundPosition(vehicle.position)
+	local groundPosition = vehicle and getGroundPosition(getElementPosition(vehicle))
 
 	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
 end
@@ -128,6 +129,8 @@ addEventHandler("vehicleEngineStart", root,
 			veh.EngineStart = false
 			if localPlayer.vehicle == veh then
 				HUDSpeedo:playSeatbeltAlarm(true)
+				toggleControl("brake_reverse", true)
+				toggleControl("accelerate", true)
 			end
 		end, 2050 ,1)
 	end
@@ -250,13 +253,19 @@ local totalLossVehicleTypes = {
 
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
-		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
-		if source.isBroken and source:isBroken() then return cancelEvent() end
+		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) and (table.size(source:getOccupants() or {}) < 1 or (source:getVehicleType() == 1 or source:getVehicleType() == 3)) then return cancelEvent() end
+		if not tId and (source.isBroken and source:isBroken()) then return cancelEvent() end
 		--calculate vehicle armor
 		if not tId and weapon and source.getBulletArmorLevel then
 			cancelEvent()
 			local newLoss = loss / source:getBulletArmorLevel()
 			source:setHealth(math.max(0, source:getHealth()-newLoss))
+		end
+		if weapon == 16 or weapon == 19 or weapon == 35 or weapon == 36 or weapon == 39 or weapon == 51 or weapon == 59 then
+			if source:getHealth() < 300 then
+				triggerServerEvent("vehicleBlow", source, weapon)
+				return
+			end		
 		end
 		if totalLossVehicleTypes[source:getVehicleType()] then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
@@ -405,7 +414,9 @@ addEventHandler("onClientRender", root,
 			local magnet = getElementData(vehicle, "Magnet")
 			if magnet then
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
-				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+				local x, y, z = getElementPosition(vehicle)
+				local mx, my, mz = getElementPosition(magnet)
+				dxDrawLine3D(x, y, z, mx, my, mz, tocolor(100, 100, 100, 255), 10)
 			end
 		end
 		for engine, magnet in pairs(JobTreasureSeeker.Rope) do
@@ -434,8 +445,8 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
-	if localPlayer.m_Entrance then 
-		if localPlayer.m_Entrance:check() then 
+	if localPlayer.m_Entrance and player == localPlayer then 
+		if localPlayer.m_Entrance:check() and localPlayer.m_Entrance:isCancelEnter() then 
 			cancelEvent()
 		end
 	end

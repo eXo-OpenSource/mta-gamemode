@@ -45,7 +45,7 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 					end
 				elseif item.id >= 400 and item.id <= 611 then -- Vehicles
 					difCondition = divResult <= 1 and divResult < (1-ModdingCheck.VEHICLE_MAX_DIF)  or divResult > (1+ModdingCheck.VEHICLE_MAX_DIF)
-					if difCondition then
+					if difCondition or item.id == 482 then
 						tNames[#tNames+1] = item.id.." - "..item.name
 					end
 				elseif item.id >= 321 and item.id <= 372 then -- Weapons

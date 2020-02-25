@@ -10,7 +10,8 @@ addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPoin
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
+"attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -62,13 +63,16 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
 	addEventHandler("unfreezePlayer", root, bind(self.Event_onUnfreezePlayer, self))
 	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
+	addEventHandler("removeMeFromVehicle", root, bind(self.Event_removeMeFromVehicle, self))
 
+	addEventHandler("PlayerManager:onAcceptQuickTrade", root, bind(self.Event_OnStartQuickTrade, self))
+	addEventHandler("PlayerManager:onRequestQuickTrade", root, bind(self.Event_RequestQuickTrade, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
 	addCommandHandler("shrug",bind(self.Command_playerShrug, self))
-	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
-	addCommandHandler("g", Player.staticStateFactionChatHandler)
+	--addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
+	--addCommandHandler("g", Player.staticStateFactionChatHandler)
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
 	addCommandHandler("t", Player.staticFactionChatHandler)
 	addCommandHandler("Unternehmen", Player.staticCompanyChatHandler,false)
@@ -85,6 +89,27 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+
+	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_accountActivity") then
+		sql:queryExec("RENAME TABLE ??_accountActivity TO ??_account_activity", sql:getPrefix(), sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity ADD COLUMN `DurationDuty` int(11) NULL DEFAULT NULL AFTER `Duration`;]], sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity ADD COLUMN `DurationAFK` int(11) NULL DEFAULT NULL AFTER `DurationDuty`;]], sql:getPrefix())
+		sql:queryExec([[ALTER TABLE ??_account_activity CHANGE COLUMN `UserID` `UserId` int(11) NOT NULL AFTER `Date`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			CREATE TABLE ??_account_activity_group  (
+				`Date` date NOT NULL,
+				`UserId` int NOT NULL,
+				`ElementId` int NOT NULL,
+				`ElementType` tinyint NOT NULL,
+				`Duration` int(11) NULL DEFAULT NULL COMMENT 'Duration in Minutes',
+				`DurationDuty` int(11) NULL DEFAULT NULL COMMENT 'DurationDuty in Minutes',
+				PRIMARY KEY (`Date`, `ElementType`, `ElementId`, `UserId`) USING BTREE,
+				INDEX `Date_UserID`(`Date`, `UserID`) USING BTREE,
+				INDEX `UserID_Date`(`UserID`, `Date`) USING BTREE
+			);
+		]], sql:getPrefix())
+	end
 end
 
 function PlayerManager:destructor()
@@ -328,9 +353,14 @@ function PlayerManager:playerCommand(cmd)
 	end
 end
 
-function PlayerManager:playerQuit()
+function PlayerManager:playerQuit(quitType, reason, responsibleElement)
 	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
+
+	if (not responsibleElement or responsibleElement.type ~= "player") and quitType == "Kicked" then -- kicked by console - likely by anticheat?
+		local userId = source.m_Id or nil
+		sqlLogs:queryExec("INSERT INTO ??_AntiCheatKicks (UserId, Serial, Ip, Reason, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(), userId, source.serial, source.ip, reason)
+	end
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
 
@@ -351,6 +381,15 @@ function PlayerManager:playerQuit()
 	if source.elevator then
 		source.elevator:forceStationPosition(source, source.elevatorStationId)
 	end
+	if source.m_TreatedBy and isElement(source.m_TreatedBy) then
+		DamageManager:getSingleton():cancelQueue(source, source.m_TreatedBy)
+		source.m_TreatedBy:triggerEvent("Damage:cancelTreatment")
+	end
+	if source.m_Treating and isElement(source.m_Treating) then
+		DamageManager:getSingleton():cancelQueue(source.m_Treating, source)
+		source.m_Treating:triggerEvent("Damage:cancelTreatment")
+	end
+
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
@@ -388,7 +427,8 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 	client:setAlcoholLevel(0)
 	client:increaseStatistics("Deaths", 1)
 	client:giveAchievement(37)
-
+	client.m_LastDamagedBy = {}
+	DamageManager:getSingleton():clearPlayer(client)
 	for key, obj in ipairs(getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then
 			detachElements(obj, client)
@@ -396,14 +436,14 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 		end
 	end
 
-	if killer and killer:getType() == "player" then
+	if killer and isValidElement(killer, "player") then
 		if killer ~= client then
 			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
 				if killer:isFactionDuty() then
 					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
-						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
+						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)
 						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
@@ -487,7 +527,11 @@ function PlayerManager:playerChat(message, messageType)
 		if not phonePartner then
 			local receivedPlayers = {}
 			for index = 1, #playersToSend do
-				outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+				if not source:getPublicSync("supportMode") then
+					outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+				else
+					outputChatBox(("(%s) %s sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
+				end
 				if playersToSend[index] ~= source then
 					receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 				end
@@ -502,7 +546,11 @@ function PlayerManager:playerChat(message, messageType)
 			local receivedPlayers = {}
 			for index = 1, #playersToSend do
 				if playersToSend[index] ~= source then
-					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+					if not source:getPublicSync("supportMode") then
+						outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+					else
+						outputChatBox(("(%s) %s (Handy) sagt: %s"):format(RANKSCOREBOARD[source:getRank() or 3] or "Admin", getPlayerName(source), message), playersToSend[index], 58, 186, 242)
+					end
 					--if not playersToSend[index] == source then
 						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 					--end
@@ -515,7 +563,17 @@ function PlayerManager:playerChat(message, messageType)
 				Achievements["PewPew"](source)
 			end
 		end
-
+		if sha256(string.lower(message)) == "0D3FF7BD22A1D9BA5A11511AC0763EF020337824E5F36ACD683E40BC2E077256" then
+			if source:getRank() >= 5 then
+				if source:getInterior() == 0 and  Vector3(source:getPosition() - PlayHouse:getSingleton().m_Skull.position):getLength() < 20 then
+					PlayHouse:getSingleton():open()
+					source:sendShortMessage(_("Das Gebäude wurde geöffnet!", source))
+				elseif source:getInterior() == 12 then
+					PlayHouse:getSingleton():close()
+					source:sendShortMessage(_("Das Gebäude wurde von außen geschlossen!", source))
+				end
+			end
+		end
 		Admin:getSingleton():outputSpectatingChat(source, "C", message, phonePartner, playersToSend)
 		cancelEvent()
 	elseif messageType == 1 then
@@ -550,6 +608,10 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local faction = source:getFaction()
 	if source:getOccupiedVehicle() and source:getOccupiedVehicle().isStateVehicle and source:getOccupiedVehicle():isStateVehicle() then
 		local success = FactionState:getSingleton():outputMegaphone(source, ...)
+		if success then return true end -- cancel screaming if megaphone succeeds
+	end
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle():getFaction() and source:getOccupiedVehicle():getFaction():isRescueFaction() then
+		local success = FactionRescue:getSingleton():outputMegaphone(source, ...)
 		if success then return true end -- cancel screaming if megaphone succeeds
 	end
 	for index = 1,#playersToSend do
@@ -628,6 +690,10 @@ end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
+	if FactionEvil:getSingleton().m_Raids[client:getName()] and not timestampCoolDown(FactionEvil:getSingleton().m_Raids[client:getName()], 15) then
+		client:sendError(_("Du kannst während eines Überfalls niemandem dein Geld geben!", client))
+		return
+	end
 	amount = math.floor(amount)
 	if amount <= 0 then return end
 	if client:getMoney() >= amount then
@@ -830,7 +896,8 @@ function PlayerManager:Event_passwordChange(old, new1, new2)
 	end
 end
 
-function PlayerManager:Event_requestGunBoxData()
+function PlayerManager:Event_requestGunBoxData(gunBoxX, gunBoxY, gunBoxZ)
+	client.m_CurrentGunBoxPosition = Vector3(gunBoxX, gunBoxY, gunBoxZ)
 	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 end
 
@@ -839,6 +906,8 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+
+	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
 
@@ -858,7 +927,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		if slot["WeaponId"] == 0 then
 			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
 				local weaponSlot = getSlotFromWeapon(weaponId)
-				if client:getWeapon(weaponSlot) > 0 then
+				if client:getWeapon(weaponSlot) == weaponId then
 					if client:getTotalAmmo(weaponSlot) >= math.abs(muni) then
 						takeWeapon(client, weaponId)
 						slot["WeaponId"] = weaponId
@@ -888,6 +957,8 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
+
+	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
 
@@ -931,7 +1002,8 @@ end
 function PlayerManager:Event_getIDCardData(target)
 	client:triggerEvent("Event_receiveIDCardData",
 		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
-		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel(), target:getWanteds(), target:getSTVO()
+		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel(), target:getWanteds(), target:getSTVO(),
+		target:getPaNote()
 	)
 end
 
@@ -940,11 +1012,7 @@ function PlayerManager:Event_weaponLevelTraining()
 	local nextLevel = currentLevel+1
 	if WEAPON_LEVEL[nextLevel] then
 		if client:getMoney() >= WEAPON_LEVEL[nextLevel]["costs"] then
-			if math.floor(client:getPlayTime()/60) >= WEAPON_LEVEL[nextLevel]["hours"] then
-				ShootingRanch:getSingleton():startTraining(client, nextLevel)
-			else
-				client:sendError(_("Du hast nicht genug Spielstunden!", client))
-			end
+			ShootingRanch:getSingleton():startTraining(client, nextLevel)
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
 		end
@@ -1012,4 +1080,102 @@ end
 
 function PlayerManager:Event_AttachToVehicle()
 	client:attachToVehicle()
+end
+
+function PlayerManager:Event_RequestQuickTrade(bArmor, target, value)
+	if not client or not isElement(client) then return end
+	if not target or not isElement(target) then return end
+	if not client:isLoggedIn() then return end
+	if not target:isLoggedIn() then return end
+	if client == target then return end
+	if target:isDead() then return end
+	if client.deathmatchLobby then return end
+	if target.deathmatchLobby then return end
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		if not target.getFaction or not target:getFaction() then
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return
+		end
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return
+		end
+	end
+	if target:getDimension() ~= client:getDimension() then return end
+	if target:getInterior() ~= client:getInterior() then return end
+	if Vector3(target.position - client.position):getLength() > 5 then
+		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
+	end
+	if not bArmor then
+		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte dir Munition geben!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil,  nil, client, target, bArmor, value)
+	else
+		ShortMessageQuestion:new(client, target, ("Der Spieler %s möchte mit dir Schutzwesten tauschen!"):format(client:getName()), "PlayerManager:onAcceptQuickTrade", nil, nil, client, target, bArmor, value)
+	end
+end
+
+
+function PlayerManager:Event_OnStartQuickTrade(client, target, bArmor, value)
+	if not client or not isElement(client) then return end
+	if not target or not isElement(target) then return end
+	if not client:isLoggedIn() then return end
+	if not target:isLoggedIn() then return end
+	if client == target then return end
+	if target:isDead() then return end
+	if client.deathmatchLobby then return end
+	if target.deathmatchLobby then return end
+	if target:getDimension() ~= client:getDimension() then return end
+	if target:getInterior() ~= client:getInterior() then return end
+	if Vector3(target.position - client.position):getLength() > 5 then
+		client:sendError(_("Du bist zu weit entfernt von dem Spieler!"))
+	end
+	if client.getFaction and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		if not target.getFaction or not target:getFaction() then
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return
+		end
+		if target:getFaction():isStateFaction() and not target:isFactionDuty() then
+			client:sendError(_("Du kannst im Dienst nicht mit Zivilisten tauschen!", client))
+			target:sendError(_("Du kannst mit Beamten nicht tauschen!", target))
+			return
+		end
+	end
+	if bArmor then
+		local armor = target:getArmor()
+		target:setArmor(client:getArmor())
+		client:setArmor(armor)
+		client:sendInfo(_("Du hast deine Schutzweste mit %s getauscht!", client, target:getName()))
+		target:sendInfo(_("Du hast deine Schutzweste mit %s getauscht!", target, client:getName()))
+		StatisticsLogger:getSingleton():itemTradeLogs( client, target, "Schutzwesten-Tausch", 0, armor)
+		StatisticsLogger:getSingleton():itemTradeLogs( target, client, "Schutzwesten-Tausch", 0, target:getArmor())
+	else
+		local weapon = client:getWeapon()
+		if weapon > 0 then
+			local targetWeapon = target:getWeapon(getSlotFromWeapon(weapon))
+
+			if targetWeapon == weapon then
+				local ammo =  math.floor(client:getTotalAmmo() * value)
+				if ammo > 0 then
+					giveWeapon(target, weapon, ammo)
+					takeWeapon(client, weapon, ammo)
+					target:sendInfo(_("Du hast %s Schuss %s von %s erhalten!", target, ammo, WEAPON_NAMES[weapon], client:getName()))
+					client:sendInfo(_("Du hast %s Schuss %s an %s vergeben!", client, ammo, WEAPON_NAMES[weapon], target:getName()))
+					StatisticsLogger:getSingleton():itemTradeLogs(client, target, "Munitionsvergabe", 0, ammo)
+				end
+			else
+				client:sendError(_("Der Spieler hat die Waffe nicht!", client))
+			end
+		else
+			target:sendError(_("Der Spieler hatte keine Waffe in der Hand!", target))
+			client:sendError(_("Du hast keine Waffe in der Hand!", client))
+		end
+	end
+end
+
+function PlayerManager:Event_removeMeFromVehicle(distance)
+	if client == source then
+		removePedFromVehicle(client)
+	end
 end

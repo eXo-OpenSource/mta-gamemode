@@ -22,7 +22,7 @@ function Gate:addGate(model, pos, rot, openPos, openRot, playSound, interior, di
     Gate.Map[#Gate.Map+1] = self.m_Gates[id]
 end
 
-function Gate:triggerMovement(hitEle)
+function Gate:triggerMovement(hitEle, force)
     if not timestampCoolDown(self.m_LastInteraction or 0, 1) then return false end 
     local function rotationDifference(isRotation, targetRotation)
         if math.round(isRotation) == math.round(targetRotation) then return 0 end
@@ -31,13 +31,13 @@ function Gate:triggerMovement(hitEle)
         if math.abs(math.round(diff)) == 180 then return 0 end
         return diff
     end
-    if not hitEle or not isElement(hitEle) then return false end
-    if hitEle:getType() == "player" then
+    if (not hitEle or not isElement(hitEle)) and not force then return false end
+    if force or hitEle:getType() == "player" then
         local player = hitEle
         if self.m_Timer and isTimer(self.m_Timer) then
             killTimer(self.m_Timer)
         end
-        if self.onGateHit and self.onGateHit(player, self) == false then
+        if not force and self.onGateHit and self.onGateHit(player, self) == false then
             return
         end
         
@@ -53,8 +53,10 @@ function Gate:triggerMovement(hitEle)
                 if gate.playSound then triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3") end
 			end
 
-			self.m_Closed = false
-            self.m_Timer = setTimer(bind(self.triggerMovement, self, player, true), 22000, 1)
+            self.m_Closed = false
+            if player then
+                self.m_Timer = setTimer(bind(self.triggerMovement, self, player), 22000, 1)
+            end
         else
            for index, gate in pairs(self.m_Gates) do
                 gate:stop()

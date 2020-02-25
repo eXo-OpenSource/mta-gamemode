@@ -80,10 +80,6 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 					local speed = math.floor(element:getSpeed())
 					local costs = (speed-80)*COST_FACTOR
 
-					if player:getBankMoney() < costs then
-						costs = player:getBankMoney()
-					end
-
 					player:transferBankMoney({FactionManager:getSingleton():getFromId(1), nil, true}, costs, "Blitzer-Strafe", "Gameplay", "Speedcam")
 					player:sendShortMessage(_("Du wurdest mit %d km/h geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
 

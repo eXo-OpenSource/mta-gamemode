@@ -13,6 +13,9 @@ function JobBoxer:constructor()
     self.m_Pickup = Pickup(773.99, 5.475, 1000.78, 3, 1239, 1500)
     self.m_Pickup:setInterior(5)
 
+    self.m_PickupMarker = Marker(774.016, 5.358, 1000, "cylinder", 2.2, 0, 0, 0, 0)
+    self.m_PickupMarker:setInterior(5)
+
     self.m_Marker = Marker(773.99, -0.6, 999.8, "cylinder", 1.0, 0, 0, 255, 255)
     self.m_Marker:setInterior(5)
 
@@ -20,7 +23,7 @@ function JobBoxer:constructor()
     self.m_PlayerLevelCache = {}
     self.m_BankAccountServer = BankServer.get("job.boxer")
 
-    addEventHandler("onPickupHit", self.m_Pickup, 
+    addEventHandler("onMarkerHit", self.m_PickupMarker, 
         function(player)
             if player:getJob() == self then
                 triggerClientEvent(player, "boxerJobFightList", player)

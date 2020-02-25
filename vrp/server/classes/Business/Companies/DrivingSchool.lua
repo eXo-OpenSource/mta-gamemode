@@ -1,5 +1,5 @@
 DrivingSchool = inherit(Company)
-DrivingSchool.LicenseCosts = {["car"] = 1500, ["bike"] = 750, ["truck"] = 4000, ["heli"] = 15000, ["plane"] = 20000 }
+DrivingSchool.LicenseCosts = {["car"] = 4500, ["bike"] = 2000, ["truck"] = 10000, ["heli"] = 50000, ["plane"] = 50000 }
 DrivingSchool.TypeNames = {["car"] = "Autoführerschein", ["bike"] = "Motorradschein", ["truck"] = "LKW-Schein", ["heli"] = "Helikopterschein", ["plane"] = "Flugschein"}
 DrivingSchool.m_LessonVehicles = {}
 DrivingSchool.testRoute =
@@ -249,6 +249,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 
 					setTimer(outputChatBox, 2000, 1, _("%s sagt: Anschließend mit 'L' die Lichter.", player, name) , player, 200, 200, 200)
 					setTimer(outputChatBox, 8000, 1, _("%s sagt: Und abgeht es! Vergiss nicht den Limiter mit der Taste 'K' anzuschalten.", player, name) , player, 200, 200, 200)
+					setTimer(outputChatBox, 12000, 1, _("%s sagt: Die Schranke öffnest du mit #C8C800'H'#C8C8C8. Bitte schließe diese nachher wieder.", player, name) , player, 200, 200, 200, true)
 
 					if player.m_AutoTestMode == "car" then
 						setTimer(outputChatBox, 4000, 1, _("%s sagt: Nun Anschnallen mit 'M'", player, name) , player, 200, 200, 200)

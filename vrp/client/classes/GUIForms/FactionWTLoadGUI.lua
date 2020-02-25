@@ -28,7 +28,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_WaffenColumn = 0
 	self.m_TotalCosts = 0
 
-	self.m_MaxLoad = localPlayer:getFaction():isStateFaction() and WEAPONTRUCK_MAX_LOAD_STATE or WEAPONTRUCK_MAX_LOAD
+	self.m_MaxLoad = WEAPONTRUCK_MAX_LOAD
 	self.m_MaxLoadPerBox = math.floor(self.m_MaxLoad/8)
 
 	self.m_BoxContent = {}
@@ -91,7 +91,7 @@ function FactionWTLoadGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 	local magazinePrice = self.m_DepotWeaponsMax[weaponID]["MagazinPreis"]
 	self.m_WeaponsName[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 35+self.m_WaffenColumn*200, 105, 25, WEAPON_NAMES[weaponID], self.m_Window)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
-	self.m_WeaponsImage[weaponID] = GUIImage:new(45+self.m_WaffenRow*125, 70+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_Window)
+	self.m_WeaponsImage[weaponID] = GUIImage:new(45+self.m_WaffenRow*125, 70+self.m_WaffenColumn*200, 60, 60, FileModdingHelper:getSingleton():getWeaponImage(weaponID), self.m_Window)
 	self.m_WeaponsMenge[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 135+self.m_WaffenColumn*200, 105, 20, "Waffen: "..Waffen.."/"..maxWeapon, self.m_Window)
 	self.m_WeaponsMenge[weaponID]:setAlignX("center")
 	self.m_WeaponsBuyGun[weaponID] = GUIButton:new(25+self.m_WaffenRow*125, 170+self.m_WaffenColumn*200, 105, 20,"+Waffe ("..weaponPrice.."$)", self)
@@ -300,7 +300,7 @@ function FactionWTLoadGUI:factionReceiveWeaponShopInfos()
 end
 
 function FactionWTLoadGUI:factionWeaponTruckLoad()
-	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
+	triggerServerEvent("onWeaponTruckLoad",root,self.m_BoxContent)
 	delete(self)
 end
 

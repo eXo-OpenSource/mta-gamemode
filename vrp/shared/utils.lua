@@ -582,6 +582,17 @@ function convertNumber ( number )
 	return formatted
 end
 
+function convertFrequency ( number )
+	local formatted = number
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d)", '%2.%1')
+		if ( k==0 ) then
+			break
+		end
+	end
+	return formatted
+end
+
 function toMoneyString(money)
 	if tonumber(money) then
 		return convertNumber(math.floor(money)).."$"
@@ -920,4 +931,90 @@ end
 
 function isValidElement(data, type)
     return isElement(data) and (not type or (getElementType(data) == type))
+end
+
+function normalize(x, y, z)
+	local len = (x^2+y^2+z^2)^0.5
+	x = x / len
+	y = y / len
+	z = z / len
+	return x,y,z
+end
+
+function addComas(str)
+	return #str % 3 == 0 and str:reverse():gsub("(%d%d%d)", "%1."):reverse():sub(2) or str:reverse():gsub("(%d%d%d)", "%1."):reverse()
+end
+
+URLEncoder = {
+    encode = function(str)
+            if (not str) then
+                return str
+            end
+
+            str = string.gsub (str, "\n", "\r\n")
+            str = string.gsub (str, "[^%w.%-_~]",
+                function (c) return string.format ("%%%02X", string.byte(c)) end)
+
+            return str
+        end,
+    decode = function(str)
+            str = string.gsub(str, "%%([0-9a-fA-F][0-9a-fA-F])",
+                function (c) return string.char(tonumber("0x" .. c)) end)
+            str = string.gsub (str, "\n", "\r\n")
+            return str
+        end,
+}
+
+function fisherYatesShuffle( input ) -- https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+    local output = {}
+    for i = #input, 1, -1 do
+        local j = math.random(i)
+        input[i], input[j] = input[j], input[i]
+        table.insert(output, input[i])
+    end
+    return output
+end
+
+function math.randomchoice(t) --Selects a random item from a table
+    local keys = {}
+    for key, value in pairs(t) do
+        keys[#keys+1] = key --Store keys in another table
+    end
+    index = keys[math.random(1, #keys)]
+    return t[index], index
+end
+
+function getBiggestUnitByBytes(value)
+	if value < 1048576 then
+		return "KB"
+	end
+	return "MB"
+end
+
+function convertBytesToUnit(value, unit)
+	if unit == "MB" then
+		return value / 1048576
+	elseif unit == "KB" then
+		return value / 1024
+	end
+end
+
+function isValidPedModel(model)
+	for i, skin in ipairs(getValidPedModels()) do
+		if model == skin then
+			return true
+		end
+	end
+	return false
+end
+
+function lastIndexOf(haystack, needle)
+    local i, j
+    local k = 0
+    repeat
+        i = j
+        j, k = string.find(haystack, needle, k + 1, true)
+    until j == nil
+
+    return i
 end

@@ -215,7 +215,7 @@ function HorseRace:checkWinner(winningHorse)
 				if isOffline then player:load() end
 
 				local win = tonumber(row["Bet"])*3
-				self.m_BankAccountServer:transferMoney(player, win, "Pferde-Wetten", "Event", "HorseRace")
+				self.m_BankAccountServer:transferMoney({player, true}, win, "Pferde-Wetten", "Event", "HorseRace")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
 				if not isOffline then
