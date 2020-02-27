@@ -297,7 +297,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.9, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Chat", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event"}
+	local SettingsTable = {"HUD", "Radar", "Chat", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event", "Wetter"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -1298,11 +1298,6 @@ function SelfGUI:onSettingChange(setting)
 		self.m_GangwarTabView.onChange = function (state)
 			core:set("Other", "GangwarTabView", state)
 		end
-		if core:get("Other","RenderDistance", 922) then
-			setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-		else
-			setFarClipDistance(992)
-		end
 
 		self.m_SmokeMode = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.9, self.m_Height*0.04, _"Low-Modus für Rauch", self.m_SettingBG)
 		self.m_SmokeMode:setFont(VRPFont(25))
@@ -1316,31 +1311,6 @@ function SelfGUI:onSettingChange(setting)
 				ItemSmokeGrenade:getSingleton():disableLowMode()
 			end
 		end
-
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
-
-		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
-		self.m_RenderDistance:setRange(250, 9000)
-		self.m_RenderDistance:setValue( getFarClipDistance())
-		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.64, self.m_Width*0.9, self.m_Height*0.06, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
-		self.m_RenderDistanceLabel:setText("Sichtweite: "..math.floor(getFarClipDistance()))
-		self.m_RenderDistanceLabel:setAlignX("center")
-
-
-		self.m_RenderDistance.onUpdate = function( dist )
-			setFarClipDistance(dist)
-			self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
-			core:set("Other","RenderDistance", math.floor(dist))
-		end
-		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.06, _"Sichtweite zurücksetzen!", self.m_SettingBG)
-		self.m_RenderDistanceReset.onLeftClick  = function() setFarClipDistance(992); core:set("Other","RenderDistance",992);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()));self.m_RenderDistance:setValue( getFarClipDistance()) end
-		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
-		--	self.m_StartIntro:setFont(VRPFont(25))
-		--	self.m_StartIntro:setFontSize(1)
-		--	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
-		--	self.m_StartIntro.onChange = function (state)
-		--		core:set("HUD", "startScreen", state)
-		--	end
 
 		self.m_InfraredSensitivty = GUISlider:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
 		self.m_InfraredSensitivty:setRange(0.5, 4)
@@ -1735,6 +1705,27 @@ function SelfGUI:onSettingChange(setting)
 
 		if not EVENT_CHRISTMAS_MARKET then
 			self.m_ChristmasMarketMusic:setEnabled(false)
+		end
+	elseif setting == "Wetter" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Wetter", self.m_SettingBG)
+
+		self.m_RainCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.5, self.m_Height*0.04, _"GTA-Regen (ToDo)", self.m_SettingBG)
+		self.m_RainCheckBox:setFont(VRPFont(25))
+		self.m_RainCheckBox:setFontSize(1)
+		self.m_RainCheckBox:setEnabled(false)
+		self.m_RainCheckBox:setChecked(core:get("Weather", "GTARainEnabled", true))
+		self.m_RainCheckBox.onChange = function (state)
+			core:set("Weather", "GTARainEnabled", state)
+			HUDUI:getSingleton():setEnabled(state)
+		end
+
+		self.m_FogCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.7, self.m_Height*0.04, _"sanfter Wetter-Übergang (experimentell)", self.m_SettingBG)
+		self.m_FogCheckBox:setFont(VRPFont(25))
+		self.m_FogCheckBox:setFontSize(1)
+		self.m_FogCheckBox:setChecked(core:get("Weather", "Blending", false))
+		self.m_FogCheckBox.onChange = function (state)
+			core:set("Weather", "Blending", state)
+			HUDUI:getSingleton():setEnabled(state)
 		end
 	end
 end

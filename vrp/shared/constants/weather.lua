@@ -69,3 +69,5 @@ WEATHER_ID_DESCRIPTION = {
 	[18] = {chance = 4, minimumDuration = 90, changeChance = 40, info = "sonnig"},
 	[19] = {chance = 1, minimumDuration = 30, changeChance = 80, info = "Sandsturm"},
 }
+WEATHER_RAIN_EFFECT = {[8] = true, [16] = true}
+WEATHER_ID_INTERIOR = 22
