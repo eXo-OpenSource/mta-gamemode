@@ -206,13 +206,6 @@ function Core:constructor()
 		MapEditor:new()
 		DamageManager:new()
 		--AmmunationEvaluation:new()
-		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
-		setHeatHaze(0)
-
-		setWaveHeight(1)
-		setWaterColor(0, 65, 75, 250)
-		resetSkyGradient()
-		resetFogDistance()
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")

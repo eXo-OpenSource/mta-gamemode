@@ -15,7 +15,7 @@ end
 function AppWeather:onOpen(form)
 	GUILabel:new(10, 10, 200, 50, _"Wetter", form):setColor(Color.Black)
 
-	if Weather:getSingleton():getAll() then
+	if Weather:getSingleton():getAllWeather() then
 		local x_offs = 70
 		for i, v in pairs(Weather:getSingleton():getAllWeather()) do
 			GUILabel:new(10, x_offs, 200, 30, i, form):setColor(Color.Black)

@@ -159,11 +159,10 @@ function Halloween:setDarkness(force)
 			--killTimer(self.m_GhostTimer)
 			--HalloweenGhost.destroyAll()
 		end
-		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-		setWeather(0)
 		resetSkyGradient()
 		resetWaterColor()
 		resetFogDistance()
+		Weather:getSingleton()checkZone(true)
 	end
 end
 

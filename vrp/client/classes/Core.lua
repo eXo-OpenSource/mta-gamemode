@@ -128,11 +128,6 @@ function Core:ready() --onClientResourceStart
 	if core:get("Other", "Movehead", true) then
 		localPlayer:startLookAt()
 	end
-	if core:get("Other","RenderDistance", false) then
-		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-	else
-		setFarClipDistance(992)
-	end
 	if not core:get("Sounds", "Interiors", true) then
 		setInteriorSoundsEnabled(false)
 	end

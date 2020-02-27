@@ -1709,14 +1709,17 @@ function SelfGUI:onSettingChange(setting)
 	elseif setting == "Wetter" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Wetter", self.m_SettingBG)
 
-		self.m_RainCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.5, self.m_Height*0.04, _"GTA-Regen (ToDo)", self.m_SettingBG)
+		self.m_RainCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.5, self.m_Height*0.04, _"GTA-Regen", self.m_SettingBG)
 		self.m_RainCheckBox:setFont(VRPFont(25))
 		self.m_RainCheckBox:setFontSize(1)
-		self.m_RainCheckBox:setEnabled(false)
 		self.m_RainCheckBox:setChecked(core:get("Weather", "GTARainEnabled", true))
 		self.m_RainCheckBox.onChange = function (state)
 			core:set("Weather", "GTARainEnabled", state)
-			HUDUI:getSingleton():setEnabled(state)
+			if state then
+				resetRainLevel()
+			else
+				setRainLevel(0)
+			end
 		end
 
 		self.m_FogCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.7, self.m_Height*0.04, _"sanfter Wetter-Übergang (experimentell)", self.m_SettingBG)

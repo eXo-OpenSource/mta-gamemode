@@ -22,6 +22,27 @@ function Weather:constructor()
 	addEventHandler("receiveWeatherList", root, bind(Weather.onReceiveWeatherList, self))
 
 	addEventHandler("onClientRender", root, bind(Weather.checkZone, self))
+
+	--set every weather option to default (that it can be changed via weather id)
+	resetFarClipDistance()
+	resetNearClipDistance()
+	resetFogDistance()
+	resetSkyGradient()
+	resetMoonSize()
+	resetWaterColor()
+	resetSunColor()
+	resetSunSize()
+	resetWindVelocity()
+	-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
+	setHeatHaze(0)
+	--wave height does not seem to be affected by weather, so fix it to 1
+	setWaveHeight(1)
+	--disable rain effect only if the player wishes to
+	if (core:get("Weather", "GTARainEnabled", true)) then
+		resetRainLevel()
+	else
+		setRainLevel(0)
+	end
 end
 
 function Weather:onReceiveWeather(zone, weatherId)
