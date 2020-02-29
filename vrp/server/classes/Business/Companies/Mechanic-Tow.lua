@@ -59,7 +59,7 @@ function MechanicTow:respawnVehicle(vehicle)
 		end
 	end
 	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
-		vehicle:respawn()
+		vehicle:respawn(true, true)
 		vehicle:getFaction():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})
 		vehicle:getFaction():sendShortMessage(("Das Fahrzeug %s (%s) wurde vom M&T abgeschleppt und für %s an eurer Basis respawned!"):format(vehicle:getName(), vehicle:getPlateText(), toMoneyString(500)))
 	else
