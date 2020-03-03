@@ -23,6 +23,7 @@
 	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 	<script src="shared/constants/weather.lua" type="shared"/>
+	<script src="shared/constants/weatherData.lua" type="shared"/>
 	<script src="shared/constants/injury.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
@@ -1237,6 +1238,9 @@
 
 	<script src="client/classes/MapEditor/MapEditor.lua" type="client" />
 	<file src="files/data/objects.xml" />
+
+	<!-- Tests -->
+	<script src="client/tests/WeatherBlendingTest.lua" type="client" />
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
