@@ -456,7 +456,7 @@ function PolicePanel:locateElement(element, locationOf)
 		self:stopLocating()
 
 		local pos = element:getPosition()
-		ElementLocateBlip = Blip:new("Marker.png", pos.x, pos.y, 9999)
+		ElementLocateBlip = Blip:new("Bug.png", pos.x, pos.y, 9999, {50, 100, 150})
 		ElementLocateBlip:attachTo(element)
 		ElementLocateBlip:setColor(BLIP_COLOR_CONSTANTS.Red)
 		ElementLocateBlip:setDisplayText(elementText)
