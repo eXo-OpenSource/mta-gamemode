@@ -226,7 +226,7 @@ function DeathmatchLobby:onPlayerChat(player, text, type)
 		local receivedPlayers = {}
 		for playeritem, data in pairs(self.m_Players) do
 			playeritem:outputChat(("[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text), 125, 255, 0, true)
-			receivedPlayers[#receivedPlayers+1] = player
+			receivedPlayers[#receivedPlayers+1] = playeritem
 		end
 		StatisticsLogger:getSingleton():addChatLog(player, "deathmatch", text, receivedPlayers)
 		return true
