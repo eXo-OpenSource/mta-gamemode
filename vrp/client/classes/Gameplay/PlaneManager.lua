@@ -25,8 +25,14 @@ end
 
 function PlaneManager:deletePlaneInstance(accident)
     if accident then
-        self.m_PlaneAccidentInstance:delete()
+        if self.m_PlaneAccidentInstance then
+            delete(self.m_PlaneAccidentInstance)
+            self.m_PlaneAccidentInstance = nil
+        end
     else
-        self.m_PlaneInstance:delete()
+        if self.m_PlaneInstance then
+            delete(self.m_PlaneInstance)
+            self.m_PlaneInstance = nil
+        end
     end
 end
