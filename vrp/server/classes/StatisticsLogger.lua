@@ -128,8 +128,10 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
 
 
 	for k, pl in ipairs(heared) do
-		table.insert(parameters, sqlLogs:getPrefix())
-		table.insert(parameters, pl:getId())
+		if pl:getId() ~= -1 then
+			table.insert(parameters, sqlLogs:getPrefix())
+			table.insert(parameters, pl:getId())
+		end
 	end
 
 	table.insert(parameters, sqlLogs:getPrefix())
