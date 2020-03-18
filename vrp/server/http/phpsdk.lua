@@ -56,7 +56,6 @@ function phpSDKSendOnlinePlayers()
 			i = i+1
 		end
 	end
-	outputDebugString("PHP-Request Playerlist")
 	return players
 end
 

@@ -548,7 +548,7 @@ function VehicleManager:destroyUnusedVehicles( player )
 				end
 			end
 			--outputDebugString("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
-			outputServerLog("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
+			--outputServerLog("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
 		end
 	end
 end
@@ -1603,7 +1603,7 @@ function VehicleManager:destroyInactiveVehicles()
 			end
 		end
 	end
-	outputDebugString("[Vehicle-Manager] Cleaned "..counter.." inactive vehicles!")
+	--outputDebugString("[Vehicle-Manager] Cleaned "..counter.." inactive vehicles!")
 end
 
 function VehicleManager:migrate()
