@@ -451,12 +451,14 @@ end
 
 function PolicePanel:locateElement(element, locationOf)
 	local elementText = element:getType() == "player" and _"Der Spieler" or _"Die Wanze"
+	local elementBlip = element:getType() == "player" and "GPS.png" or "Bug.png"
+	local elementBlipColor = element:getType() == "player" and BLIP_COLOR_CONSTANTS.Red or {50, 100, 150}
 
 	if (getElementDimension(element) == 0 and getElementInterior(element) == 0) or element:getData("inSewer") then
 		self:stopLocating()
 
 		local pos = element:getPosition()
-		ElementLocateBlip = Blip:new("Bug.png", pos.x, pos.y, 9999, {50, 100, 150})
+		ElementLocateBlip = Blip:new(elementBlip, pos.x, pos.y, 9999, elementBlipColor)
 		ElementLocateBlip:attachTo(element)
 		ElementLocateBlip:setDisplayText(elementText)
 		localPlayer.m_LocatingElement = element
