@@ -27,7 +27,6 @@ end
 
 function DatabasePlayer:destructor()
 	self:save()
-	outputServerLog("[DATABASE-PLAYER] Unloaded player with id " .. tostring(self.m_Id))
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -82,7 +81,6 @@ function DatabasePlayer:load(sync)
 		outputServerLog("[DATABASE-PLAYER] Failed to load id " .. tostring(self.m_Id))
 		return false
 	end
-	outputServerLog("[DATABASE-PLAYER] Loaded player with id " .. tostring(self.m_Id))
 
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
 		self:updateAchievements(table.setIndexToInteger(fromJSON(row.Achievements)))

@@ -145,7 +145,7 @@ factionBadgeId[3] = {
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 --factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionCarColors[3] = {["r"] = 110,["g"] = 95,["b"] = 73, ["r1"] = 110,["g1"] = 95,["b1"] = 73}
-factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true,[285]=true}
+factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [285]=true}
 factionWeapons[3] = {[6]=true,[22]=true,[24]=true,[25]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[3] = {Vector3(221.49, 1865.97, 13.14), 0, 0}
@@ -284,16 +284,16 @@ factionAirDropPoint[9] = Vector3(664.71, -485.26, 16.19)
 
 -- ID 10 = Vatos
 factionRankNames[10] = {
-[0] = "Guerro",
-[1] = "Cholo",
-[2] = "Solado",
+[0] = "Novivo",
+[1] = "Miembro",
+[2] = "Trepador",
 [3] = "Pandillero",
-[4] = "Vato del Jefe",
-[5] = "Mano Derecha",
+[4] = "Veterano",
+[5] = "Derecha",
 [6] = "Jefe"
 }
-factionColors[10] = {["r"] = 46,["g"] = 169,["b"] = 186} 
-factionCarColors[10] = {["r"] = 158,["g"] = 250,["b"] = 255, ["r1"] = 158,["g1"] = 250,["b1"] = 255}
+factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
+factionCarColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170, ["r1"] = 255,["g1"] = 252,["b1"] = 170}
 factionSkins[10] = {[108]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true,[307]=true}
 factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
 evilFactionInteriorEnter[10] =Vector3(2786.59, -1952.59, 13.55)
