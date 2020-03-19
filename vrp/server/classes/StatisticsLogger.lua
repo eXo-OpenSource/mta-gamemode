@@ -126,14 +126,20 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
 
 	local parameters = {sqlLogs:getPrefix(), userId, type, text, toJSON(hearedOld), self:getZone(player), player.position.x, player.position.y}
 
+
 	for k, pl in ipairs(heared) do
-		table.insert(parameters, sqlLogs:getPrefix())
-		table.insert(parameters, pl:getId())
+		if pl:getId() ~= -1 and pl:getId() ~= userId then
+			table.insert(parameters, sqlLogs:getPrefix())
+			table.insert(parameters, pl:getId())
+		end
 	end
+
+	table.insert(parameters, sqlLogs:getPrefix())
+	table.insert(parameters, userId)
 
 	local query = "INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, PosX, PosY, Date) VALUES (?, ?, ?, ?, ?, ?, ?, Now());"
 	query = query .. " SET @lastId = LAST_INSERT_ID();"
-	query = query .. string.rep(" INSERT INTO ??_ChatReceivers (MessageId, Receiver) VALUES (@lastId, ?);", #heared)
+	query = query .. string.rep(" INSERT INTO ??_ChatReceivers (MessageId, Receiver) VALUES (@lastId, ?);", #heared + 1)
 
     sqlLogs:queryExec(query,
         unpack(parameters))
