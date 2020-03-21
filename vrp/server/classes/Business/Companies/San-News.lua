@@ -58,7 +58,9 @@ function SanNews:Event_news(player, cmd, ...)
     		local receivedPlayers = {}
 			for k, targetPlayer in ipairs(getElementsByType("player")) do
 				if targetPlayer ~= player then
-					receivedPlayers[#receivedPlayers+1] = targetPlayer
+					if targetPlayer:isLoggedIn() then
+						receivedPlayers[#receivedPlayers+1] = targetPlayer
+					end
 				end
 			end
 			StatisticsLogger:getSingleton():addChatLog(player, "news", text, receivedPlayers)
@@ -147,7 +149,9 @@ function SanNews:Event_onPlayerChat(player, text, type)
 				local receivedPlayers = {}
 				for k, targetPlayer in ipairs(getElementsByType("player")) do
 					if targetPlayer ~= player then
-						receivedPlayers[#receivedPlayers+1] = targetPlayer
+						if targetPlayer:isLoggedIn() then
+							receivedPlayers[#receivedPlayers+1] = targetPlayer
+						end
 					end
 				end
 				StatisticsLogger:getSingleton():addChatLog(player, "interview", text, receivedPlayers)
