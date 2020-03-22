@@ -14,6 +14,10 @@ function Sentry:parseDSN()
 end
 
 function Sentry:handleException(message, level, trace)
+	if triggerServerEvent then
+		return -- bruh skip it for now - implement some buffering first vallah
+	end
+
 	--[[
 		level enum [fatal, error, warning, info, debug]
 	]]
