@@ -78,7 +78,6 @@ function VehicleInteraction:render()
 
                         if doorRatio <= 0 and not isDoorBroken then
                                 self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum Öffnen %s#FFFFFF!", self.m_interactButton, doorName), 0)
-                                outputDebug(self:isOwner(self.m_lookAtVehicle))
                             if self:isOwner(self.m_lookAtVehicle) then
                                 self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug abzuschließen!", self.m_lockButton), 1)
                             end
