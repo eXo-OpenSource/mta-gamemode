@@ -78,6 +78,7 @@ function VehicleInteraction:render()
 
                         if doorRatio <= 0 and not isDoorBroken then
                                 self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum Öffnen %s#FFFFFF!", self.m_interactButton, doorName), 0)
+                                outputDebug(self:isOwner(self.m_lookAtVehicle))
                             if self:isOwner(self.m_lookAtVehicle) then
                                 self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug abzuschließen!", self.m_lockButton), 1)
                             end
@@ -235,10 +236,10 @@ function VehicleInteraction:isOwner(veh)
 		return true
 	elseif ownerName == localPlayer:getGroupName() then
 		return true
-	elseif localPlayer:getCompany() and ownerName == localPlayer:getCompany():getName() then
+	elseif localPlayer:getCompany() and ownerName == localPlayer:getCompany():getName() and localPlayer:getPublicSync("Company:Duty") then
 		return true
-	elseif localPlayer:getFaction() and ownerName == localPlayer:getFaction():getName() then
-		return
+	elseif localPlayer:getFaction() and ownerName == localPlayer:getFaction():getName()  and localPlayer:getPublicSync("Faction:Duty") then
+		return true
 	end
 
 	return false

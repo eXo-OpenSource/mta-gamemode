@@ -32,6 +32,7 @@ ANIMATIONS = {
 	["Bezahlen"] =				{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "drugs_buy", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Geld abheben"] =			{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "atm", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Kaugummi"] =				{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "gum_eat", ["loop"] = false, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Rauchen"] =				{["group"] = "Sonstiges", ["block"] = "smoking", ["animation"] = "M_smkstnd_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Pinkeln"] =				{["group"] = "Vulgär", ["block"] = "PAULNMAC", ["animation"] = "Piss_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true, ["object"] = 1904},
 	["Wichsen"] =				{["group"] = "Vulgär", ["block"] = "PAULNMAC", ["animation"] = "wank_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Sex oben"] =				{["group"] = "Vulgär", ["block"] = "sex", ["animation"] = "sex_1_cum_p", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
