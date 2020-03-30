@@ -14,11 +14,12 @@ function Sentry:parseDSN()
 end
 
 function Sentry:handleException(message, level, trace)
-	return false-- bruh skip it for now
+	-- bruh skip it for now
 
 	--[[
 		level enum [fatal, error, warning, info, debug]
 	]]
+	--[[
 	local eventId = self:generateEventId()
 	-- info.source, info.name, info.currentline or "not specified"
 	local frames = {}
@@ -110,6 +111,7 @@ function Sentry:handleException(message, level, trace)
 	}
 
 	fetchRemote("https://" .. self.m_Host .. "/api/" .. self.m_ProjectId .. "/store/", options, function() end)
+	]]
 end
 
 function Sentry:generateEventId()
