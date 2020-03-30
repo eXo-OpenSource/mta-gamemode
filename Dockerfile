@@ -57,6 +57,8 @@ RUN chown -R mtasa:mtasa /var/lib/mtasa && \
 	chmod +x /var/lib/mtasa/workerserver && \
 	chmod +x /docker-entrypoint.sh
 
+RUN "192.168.1.120 forum.exo-reallife.de" >> /etc/hosts
+
 # Expose config directory
 VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
