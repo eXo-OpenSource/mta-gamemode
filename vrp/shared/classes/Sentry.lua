@@ -14,7 +14,7 @@ function Sentry:parseDSN()
 end
 
 function Sentry:handleException(message, level, trace)
-	return -- bruh skip it for now
+	return false-- bruh skip it for now
 
 	--[[
 		level enum [fatal, error, warning, info, debug]
