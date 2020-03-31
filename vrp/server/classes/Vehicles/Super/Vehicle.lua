@@ -65,6 +65,8 @@ function Vehicle:virtual_destructor()
 		self.m_Magnet:destroy()
 	end
 
+	self:removeELS()
+
 	local occs = getVehicleOccupants(self)
 	if occs then
 		for seat, player in pairs(occs) do

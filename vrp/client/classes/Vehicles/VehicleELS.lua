@@ -28,6 +28,7 @@ function VehicleELS:constructor()
     addEventHandler("vehicleELStoggleDI", resourceRoot, bind(VehicleELS.toggleDI, self))
     self.m_InteriorChangeFunc = bind(VehicleELS.Event_OnVehicleInteriorChange, self)
     self.m_DimensionChangeFunc = bind(VehicleELS.Event_OnVehicleDimensionChange, self)
+    self.m_DestroyFunc = bind(VehicleELS.Event_OnVehicleDestroy, self)
 end
 
 function VehicleELS:loadServerELS(allVehs, activeVehs, diVehs)
@@ -48,6 +49,7 @@ function VehicleELS:initELS(veh, preset)
     veh.m_HasDI = ELS_PRESET[preset].directionIndicator
     addEventHandler("onClientElementInteriorChange", veh, self.m_InteriorChangeFunc)
     addEventHandler("onClientElementDimensionChange", veh, self.m_DimensionChangeFunc)
+    addEventHandler("onClientElementDestroy", veh, self.m_DestroyFunc)
 end
 
 function VehicleELS:removeELS(veh)
@@ -57,6 +59,7 @@ function VehicleELS:removeELS(veh)
         VehicleELS.Map[veh] = nil
         removeEventHandler("onClientElementInteriorChange", veh, self.m_InteriorChangeFunc)
         removeEventHandler("onClientElementDimensionChange", veh, self.m_DimensionChangeFunc)
+        removeEventHandler("onClientElementDestroy", veh, self.m_DestroyFunc)
     end
 end
 
@@ -116,12 +119,12 @@ end
 
 function VehicleELS:Event_OnVehicleInteriorChange()
     if source.m_ELSLights then
-        for name, cor in pairs(veh.m_ELSLights) do
+        for name, cor in pairs(source.m_ELSLights) do
             cor:setInterior(source:getInterior())
         end
     end
     if source.m_DILights then
-        for name, cor in pairs(veh.m_DILights) do
+        for name, cor in pairs(source.m_DILights) do
             cor:setInterior(source:getInterior())
         end
     end
@@ -129,15 +132,19 @@ end
 
 function VehicleELS:Event_OnVehicleDimensionChange()
     if source.m_ELSLights then
-        for name, cor in pairs(veh.m_ELSLights) do
+        for name, cor in pairs(source.m_ELSLights) do
             cor:setDimension(source:getDimension())
         end
     end
     if source.m_DILights then
-        for name, cor in pairs(veh.m_DILights) do
+        for name, cor in pairs(source.m_DILights) do
             cor:setDimension(source:getDimension())
         end
     end
+end
+
+function VehicleELS:Event_OnVehicleDestroy()
+    self:removeELS(source)
 end
 
 --Direction Indicator
@@ -206,7 +213,7 @@ end
 function VehicleELS.update(veh)
     if VehicleELS.ActiveMap[veh] then
         if not veh or not isElement(veh) then
-            return VehicleELS:getSingleton():internalRemoveELSLights(veh)
+            return killTimer(sourceTimer)
         end
         local data = ELS_PRESET[veh.m_ELSPreset].sequence[VehicleELS.ActiveMap[veh]]
         if data then
@@ -259,7 +266,7 @@ function VehicleELS.update(veh)
         end
         VehicleELS.ActiveMap[veh] = VehicleELS.ActiveMap[veh] % ELS_PRESET[veh.m_ELSPreset].sequenceCount  + 1
     else
-        VehicleELS:getSingleton():internalRemoveELSLights(veh)
+        killTimer(sourceTimer)
     end
 end
 
