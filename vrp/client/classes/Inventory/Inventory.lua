@@ -35,7 +35,6 @@ function Inventory:constructor()
 	local tabX, tabY = tabArea:getSize()
 	self.m_Rect = GUIRectangle:new(0, 0, tabX, tabY, Inventory.Color.TabHover, tabArea)
 
-	self.m_TabArea = tabArea
 	-- Tabs
 	self.m_Tabs = {}
 	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
@@ -47,7 +46,7 @@ function Inventory:constructor()
 	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
 	self:addItemSlots(7, self.m_Tabs[4])
 
-	self.m_InfoText1 = GUILabel:new(0, self.m_Height-45, self.m_Width, 20, _"Info: /changeinvtab [1-4] um den Tab zu wechseln!", self.m_Window):setAlignX("center")
+	self.m_InfoText1 = GUILabel:new(0, self.m_Height-45, self.m_Width, 20, _"Info: Zum Löschen von Items Control und Linksklick!", self.m_Window):setAlignX("center")
 	self.m_InfoText2 = GUILabel:new(0, self.m_Height-25, self.m_Width, 20, "", self.m_Window):setAlignX("center")
 
 	self.m_func1 = bind(self.Event_loadPlayerInventarClient,  self)
@@ -62,48 +61,7 @@ function Inventory:constructor()
 	addEventHandler("closeInventory",  root,  self.m_func4)
 	addEventHandler("onClientRender", root, self.m_KeyInputCheck)
 
-	self.m_ShowCmd = bind(self.show,  self)
-	self.m_HideCmd = bind(self.hide,  self)
-	self.m_UseCmd = bind(self.useItemCMD,  self)
-	self.m_TabCmd = bind(self.setTabCMD,  self)
-
-	addCommandHandler("openinv", self.m_ShowCmd)
-	addCommandHandler("closeinv", self.m_HideCmd)
-	addCommandHandler("useitem", self.m_UseCmd)
-	addCommandHandler("changeinvtab", self.m_TabCmd)
- 
-
 	self:hide()
-end
-
-function Inventory:useItemCMD(cmd, itemName)
-	if not self.Show then
-		ShortMessage:new("Öffne das Inventar mit /openinv")
-		return
-	end
-	local item
-	for i,v in pairs(self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do 
-		if v.ItemName == itemName then item = v end
-	end
-	if not item then ErrorBox:new("Item nicht gefunden") return end
-	if item.Item then
-		local itemDelete = false
-		if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
-		if not self.m_IsDeleteKeyDown then
-			triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
-		else
-			if self.m_InventoryActionPrompt then
-				self.m_InventoryActionPrompt:close()
-			end
-			local bThrowAway = self.m_ItemData[itemName]["Wegwerf"] == 1
-			if bThrowAway then
-				self.m_ItemPromptReference = item
-				self.m_InventoryActionPrompt = InventoryActionGUI:new("Löschen")
-			else
-				ErrorBox:new(_"Du kannst dieses Item nicht zerstören!")
-			end
-		end
-	end
 end
 
 function Inventory:Event_OnRender()
@@ -136,9 +94,9 @@ end
 
 function Inventory:toggle()
 	if self.Show then
-		ShortMessage:new("Schließe das Inventar mit /closeinv")
+		self:hide()
 	else
-		ShortMessage:new("Öffne das Inventar mit /openinv")
+		self:show()
 	end
 end
 
@@ -243,8 +201,7 @@ function Inventory:addTab(img, parent)
 		end
 	end
 	tabButton.onLeftClick = function()
-		ShortMessage:new("Benutze /changeinvtab [1-4] um den Tab zu wechseln")
-		--[[self:setTab(Id)
+		self:setTab(Id)
 
 		for k, v in ipairs(parent.m_Children) do
 			if v.isTab == true then
@@ -252,7 +209,7 @@ function Inventory:addTab(img, parent)
 			end
 		end
 
-		tabButton.m_Background:setColor(Inventory.Color.TabHover)]]
+		tabButton.m_Background:setColor(Inventory.Color.TabHover)
 	end
 
 	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height)+30, self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height)-30, self)
@@ -266,19 +223,6 @@ function Inventory:addTab(img, parent)
 
 	self.m_Tabs[Id] = itemArea
 	return itemArea
-end
-
-function Inventory:setTabCMD(cmd, Id) 
-	local id = tonumber(Id)
-	if id < 1 or id > 4 then ErrorBox:new("Bitte gebe eine Tab-Nummer zwischen 1 und 4 ein.") return end
-	self:setTab(id)
-	local tabCount = 0
-	for k, v in ipairs(self.m_TabArea.m_Children) do
-		if v.isTab == true then
-			tabCount = tabCount + 1
-			v.m_Background:setColor(tabCount == id and Inventory.Color.TabHover or Inventory.Color.TabNormal)
-		end
-	end
 end
 
 function Inventory:setTab(Id)
@@ -339,13 +283,36 @@ function Inventory:addItemEvents(item)
 
 	item.onUnhover = function()
 		item:setColor(Inventory.Color.ItemBackground)
-		self.m_InfoText1:setText(_"Info: /changeinvtab [1-4] um den Tab zu wechseln!")
+		self.m_InfoText1:setText(_"Info: Zum Löschen von Items Control und Linksklick!")
 		self.m_InfoText2:setText("")
 	end
 
 	item.onLeftClick = function()
-		if (item.ItemName) then
-			ShortMessage:new("Benutze das Item mit /useitem "..item.ItemName)
+		if item.Item then
+			local itemName = item.ItemName
+			local itemDelete = false
+			if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
+			if not self.m_IsDeleteKeyDown then
+				triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
+			else
+				if self.m_InventoryActionPrompt then
+					self.m_InventoryActionPrompt:close()
+				end
+				local bThrowAway = self.m_ItemData[item.ItemName]["Wegwerf"] == 1
+				if bThrowAway then
+					self.m_ItemPromptReference = item
+					self.m_InventoryActionPrompt = InventoryActionGUI:new("Löschen")
+				else
+					ErrorBox:new(_"Du kannst dieses Item nicht zerstören!")
+				end
+			end
+		end
+	end
+
+	item.onRightClick = function()
+		if item.Item then
+			local itemName = item.ItemName
+			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place)
 		end
 	end
 end
