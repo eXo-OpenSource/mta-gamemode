@@ -281,6 +281,10 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 	local player = client
 	model = model > 0 and model or math.random(400, 600)
 
+	if model == 464 or model == 425 or model == 447 or model == 540 or model == 476 or model == 432 then
+		model = 608 -- prevent preview of forbidden vehicles
+	end
+
 	client.TempTexVehicle = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
 	local veh = client.TempTexVehicle
 	veh:setLocked(true)
