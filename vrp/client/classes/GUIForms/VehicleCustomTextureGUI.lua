@@ -138,7 +138,7 @@ function VehicleCustomTextureGUI:initTextures(textures)
     -- Add 'special properties' (e.g. color)
     for index, row in ipairs(textures) do
         local item = self.m_TextureList:addItem(row["Name"])
-        item.Url = self.m_Path..row["Image"]
+        item.Url = string.sub(row["Image"], 0, 8) == "https://" and row["Image"] or (self.m_Path .. row["Image"])
 		item.Id = row["Id"]
         item.onLeftClick = bind(self.Texture_Click, self)
 		item.onLeftDoubleClick = function()

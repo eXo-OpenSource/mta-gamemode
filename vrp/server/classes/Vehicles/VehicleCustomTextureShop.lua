@@ -228,6 +228,14 @@ end
 function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp, isPreview, player)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	veh.m_Tunings:applyTuning()
+	outputConsole(inspect({
+		veh = veh, 
+		url = url, 
+		textureName = textureName, 
+		temp = temp, 
+		isPreview = isPreview, 
+		player = player
+	}))
 	if isPreview then
 		veh:setTexture(url, textureName, true, isPreview, player)
 	else
@@ -280,6 +288,10 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 	if client.TempTexVehicle and isElement(client.TempTexVehicle) then client.TempTexVehicle:destroy() end
 	local player = client
 	model = model > 0 and model or math.random(400, 600)
+
+	if model == 464 or model == 425 or model == 447 or model == 540 or model == 476 or model == 432 then
+		model = 608 -- prevent preview of forbidden vehicles
+	end
 
 	client.TempTexVehicle = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
 	local veh = client.TempTexVehicle
