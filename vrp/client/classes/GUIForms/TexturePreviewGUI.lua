@@ -94,7 +94,8 @@ function TexturePreviewGUI:initTextures(textures)
 	self.m_TextureList:clear()
     for index, row in ipairs(textures) do
         local item = self.m_TextureList:addItem(row["Name"])
-        item.Url = self.m_Path..row["Image"]
+		-- item.Url = self.m_Path..row["Image"]
+        item.Url = string.sub(row["Image"], 0, 8) == "https://" and row["Image"] or (self.m_Path .. row["Image"])
         item.Id = row["Id"]
 		item.Model = row["Model"]
 		item.Creator = row["UserName"] or "Unknown"

@@ -83,7 +83,7 @@ end
 function TextureReplacer:onStreamIn()
 	if not self.m_Active then return false end
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
-		self:addToLoadingQeue()
+		self:addToLoadingQueue()
 	end
 end
 
@@ -146,7 +146,7 @@ function TextureReplacer:setLoadingMode(loadingMode)
 					self:onStreamIn()
 				end
 			elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
-				self:addToLoadingQeue()
+				self:addToLoadingQueue()
 			elseif loadingMode == TEXTURE_LOADING_MODE.NONE then
 				self.m_Active = false
 			end
@@ -193,7 +193,7 @@ function TextureReplacer.deleteFromElement(element)
 end
 
 --// Queue
-function TextureReplacer:addToLoadingQeue()
+function TextureReplacer:addToLoadingQueue()
 	if not self.m_Force and not self.m_ForceMaximum then
 		if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", FILE_TEXTURE_DEFAULT_STATE) then
 			self:unload()
@@ -272,7 +272,7 @@ function TextureReplacer.forceReload()
 								instance:onStreamIn()
 							end
 						elseif instance.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
-							instance:addToLoadingQeue()
+							instance:addToLoadingQueue()
 						end
 					else 
 						instance:unload() 
@@ -288,7 +288,7 @@ end
 
 function TextureReplacer.loadBacklog()
 	for i, instance in pairs(TextureReplacer.Backlog) do
-		instance:addToLoadingQeue()
+		instance:addToLoadingQueue()
 	end
 	TextureReplacer.Backlog = {}
 end
