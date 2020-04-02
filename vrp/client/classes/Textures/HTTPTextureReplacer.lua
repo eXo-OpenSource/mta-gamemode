@@ -77,13 +77,6 @@ function HTTPTextureReplacer:downloadTexture()
 			else
 				provider = HTTPProvider:new(HTTPTextureReplacer.BaseCPPath, dgi)
 			end
-			outputConsole(tostring(inspect({
-				file = self.m_FileName,
-				target = HTTPTextureReplacer.ClientPath:sub(0, -3),
-				provider = provider.ms_URL,
-				pathType = self.m_PathType,
-				isCP = self.m_FileName:find(HTTPTextureReplacer.BaseCPPath)
-			})))
 			if provider:startCustom(self.m_FileName, HTTPTextureReplacer.ClientPath:sub(0, -3), false, true) then
 				delete(dgi)
 
