@@ -67,6 +67,7 @@ function InventoryManager:constructor()
 		ItemHealpack = ItemHealpack;
 		ItemAlcohol = ItemAlcohol;
 		ItemFirework = ItemFirework;
+		ItemThrowable = ItemThrowable;
 		WearableHelmet = WearableHelmet;
 		WearableShirt = WearableShirt;
 		WearablePortables = WearablePortables;
@@ -428,6 +429,7 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 
 	local itemData = ItemManager.get(item)
 
+	--[[
 	local cSize = inventory:getCurrentSize()
 
 	if amount < 1 then
@@ -437,6 +439,8 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 	if inventory.m_Size < cSize + itemData.Size * amount then
 		return false, "size"
 	end
+	]]
+	-- TODO: Add free slot check
 
 	if not inventory:isCompatibleWithCategory(itemData.Category) then
 		return false, "category"
@@ -627,6 +631,7 @@ function InventoryManager:useItem(inventory, id)
 	local item = inventory:getItem(id)
 
 	if not item then
+		outputDebugString("[INVENTORY]: Invalid item " .. tostring(id) .. " @ InventoryManager@useItem", 1)
 		return false, "invalid"
 	end
 
@@ -640,12 +645,14 @@ function InventoryManager:useItem(inventory, id)
 	local class = InventoryItemClasses[itemData.Class]
 
 	if not class then
+		outputDebugString("[INVENTORY]: Invalid item class " .. tostring(itemData.Class) .. " @ InventoryManager@useItem", 1)
 		return false, "class"
 	end
 
 	local instance = class:new(inventory, itemData, item)
 
 	if not instance.use then
+		outputDebugString("[INVENTORY]: Invalid item class use method " .. tostring(itemData.Class) .. " @ InventoryManager@useItem", 1)
 		return false, "classUse"
 	end
 
@@ -1088,6 +1095,9 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (239, 'spraycanGas', 8, 'ItemWeapon', 'Spraydosengas', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (240, 'fireExtinguisherGas', 8, 'ItemWeapon', 'Feuerlöschergas', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (241, 'cameraFilm', 8, 'ItemWeapon', 'Kamerafilm', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (242, 'bottle', 4, 'ItemThrowable', 'Flasche', 'Leere Flasche, Gravität tut den Rest.', 'Items/EmptyBottle.png', 1486, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (243, 'trash', 4, 'ItemThrowable', 'Abfall', 'Dreckig, Gravität tut den Rest.', 'Items/Trash.png', 1265, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (244, 'shoe', 4, 'ItemThrowable', 'Schuh', 'Dreckig, Gravität tut den Rest.', 'Items/Schuh.png', 1901, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	]])
 
 
@@ -1140,7 +1150,7 @@ function InventoryManager:migrate()
 		["Rauchgranate"] = "smokeGrenade", ["Transmitter"] = "transmitter", ["Stern"] = "star", ["Keycard"] = "keycard", ["Blumen-Samen"] = "flowerSeed",
 		["DefuseKit"] = "defuseKit", ["Fischlexikon"] = "fishLexicon", ["Angelrute"] = "fishingRod", ["Profi Angelrute"] = "expertFishingRod",
 		["Legendäre Angelrute"] = "legendaryFishingRod", ["Leuchtköder"] = "glowBait", ["Pilkerköder"] = "pilkerBait", ["Schwimmer"] = "swimmer",
-		["Spinner"] = "spinner", ["Clubkarte"] = "clubCard"
+		["Spinner"] = "spinner", ["Clubkarte"] = "clubCard", ["Flasche"] = "bottle", ["Abfall"] = "trash", ["Schuh"] = "shoe"
 	}
 
 	local WeaponMapping = {

@@ -225,16 +225,6 @@ function Inventory:isCompatibleWithCategory(category)
 	return false
 end
 
-function Inventory:getCurrentSize()
-	local size = 0
-
-	for k, v in pairs(self.m_Items) do
-		size = size + v.Size * v.Amount
-	end
-
-	return size
-end
-
 function Inventory:save(sync)
 	if not self.m_IsDirty then
 		return false

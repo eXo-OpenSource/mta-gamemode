@@ -26,6 +26,10 @@ end
 function ItemNew:getTechnicalName()
     return self.m_ItemData.TechnicalName
 end
+
+function ItemNew:getModel()
+    return self.m_ItemData.ModelId
+end
 --[[
 function Item:setName(name)
 	self.m_ItemName = name
