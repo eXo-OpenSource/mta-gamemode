@@ -84,7 +84,7 @@ end
 addEvent("HDB:Camera", true)
 addEventHandler("HDB:Camera", root,
 	function(bool)
-		setCameraClip(false, bool)
+		setCameraClip(true, bool)
 	end
 )
 -----------------
