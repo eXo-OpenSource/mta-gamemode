@@ -25,10 +25,10 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 
 	ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
 
-  interiorId = interiorId or 0
-  dimension = dimension or 0
-  self.m_ExitMarker:setInterior(interiorId)
-  self.m_ExitMarker:setDimension(dimension)
+  	interiorId = interiorId or 0
+  	dimension = dimension or 0
+  	self.m_ExitMarker:setInterior(interiorId)
+  	self.m_ExitMarker:setDimension(dimension)
 	--colExit:setInterior(interiorId)
 	--colExit:setDimension(dimension)
 
@@ -101,13 +101,18 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 		return
 	end
 
-
-
 	fadeCamera(player,false,1,0,0,0)
 	setElementFrozen(player, true)
 	setTimer(
 		function()
 			if not isElement(player) then return end
+
+			if getDistanceBetweenPoints3D(player:getPosition(), type == "enter" and self.m_EnterMarker:getPosition() or self.m_ExitMarker:getPosition()) > 15 then
+				fadeCamera(player, true)
+				setElementFrozen(player, false)
+				player:sendError("Fehler beim Teleportieren! Du bist zu weit vom Marker entfernt!")
+				return
+			end
 			setElementDimension(player,dimension)
 			setElementInterior(player,interior, pos)
 			player:setRotation(0, 0, rotation)
@@ -116,7 +121,7 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 			fadeCamera(player, true)
 			
 			setTimer(function() --map glitch fix
-				setElementFrozen( player, false)
+				setElementFrozen(player, false)
 				player:triggerEvent("checkNoDm")
 			end, 1000, 1)
 
