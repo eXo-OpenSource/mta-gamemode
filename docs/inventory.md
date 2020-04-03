@@ -60,12 +60,12 @@
 * ItemDefuseKit = ItemDefuseKit;
 * ItemFishing = ItemFishing;
 * ItemSellContract = ItemSellContract;
-* WearableHelmet = WearableHelmet;
-* WearableShirt = WearableShirt;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
 * ItemEntrance = ItemEntrance;
 * ItemDoor = ItemDoor; - started
+* ~~WearableShirt = WearableShirt;~~ - done
+* ~~WearableHelmet = WearableHelmet;~~ - done
 * ~~ItemBomb = ItemBomb;~~ - done
 * ~~ItemRadio = ItemRadio;~~ - done
 * ~~ItemBarricade = ItemBarricade;~~ - done

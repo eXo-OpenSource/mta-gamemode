@@ -65,14 +65,14 @@ function WearableHelmet:Event_toggleHelmet(state, item)
 			self.m_MaskSound = playSound("files/audio/gasmask.ogg", true)
 			self.m_MaskSound:setVolume(0.4)
 		else
-			if self.m_MaskSound then
+			if self.m_MaskSound and isElement(self.m_MaskSound) then
 				stopSound(self.m_MaskSound)
 			end
 			self.m_GasMask = false
 		end
 	else
 		self.m_GasMask = false
-		if self.m_MaskSound then
+		if self.m_MaskSound and isElement(self.m_MaskSound) then
 			stopSound(self.m_MaskSound)
 		end
 	end

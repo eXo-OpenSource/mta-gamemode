@@ -294,17 +294,12 @@ function Sewers:Event_onPedClick(button, state, player)
 end
 
 function Sewers:addKevlarToPed(ped)
-    local itemName = "Kevlar"
-    local x,y,z = getElementPosition(ped)
-    local dim = getElementDimension(ped)
-    local int = getElementInterior(ped)
-    local model, zOffset, yOffset, scale, rotX, rotZ = WearableShirt.objectTable[itemName][1] or WearableShirt.objectTable["Kevlar"][1],  WearableShirt.objectTable[itemName][2] or WearableShirt.objectTable["Kevlar"][2], WearableShirt.objectTable[itemName][3] or WearableShirt.objectTable["Kevlar"][3], WearableShirt.objectTable[itemName][4] or WearableShirt.objectTable["Kevlar"][4], WearableShirt.objectTable[itemName][5] or WearableShirt.objectTable["Kevlar"][5],  WearableShirt.objectTable[itemName][6] or WearableShirt.objectTable["Kevlar"][6]
-    local rotY =  WearableShirt.objectTable[itemName][7] or WearableShirt.objectTable["Kevlar"][7]
-    local obj = createObject(model,x,y,z)
-    local objName =  WearableShirt.objectTable["Kevlar"][8]
-    setElementDimension(obj, dim)
-    setElementInterior(obj, int)
-    setObjectScale(obj, scale)
-    setElementDoubleSided(obj,true)
-    exports.bone_attach:attachElementToBone(obj, ped, 3, 0, yOffset, zOffset, rotX , rotY, rotZ)
+	local data = WearableShirt.Data["kevlar"]
+
+    local obj = createObject(3916, ped.position)
+    obj:setDimension(ped.dimension)
+    obj:setInterior(ped.interior)
+    obj:setScale(data.scale)
+    obj:setDoubleSided(true)
+    exports.bone_attach:attachElementToBone(obj, ped, 3, data.offset.x, data.offset.y, data.offset.z, data.rotation.x , data.rotation.y, data.rotation.z)
 end

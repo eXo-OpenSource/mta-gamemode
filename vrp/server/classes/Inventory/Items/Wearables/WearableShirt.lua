@@ -5,6 +5,70 @@
 -- *  PURPOSE:     Wearable Shirts
 -- *
 -- ****************************************************************************
+
+WearableShirt = inherit(ItemNew)
+
+WearableShirt.Data = {
+	["kevlar"] = { offset = Vector3(0, 0.05, 0.05), rotation = Vector3(0, -90, 0), scale = 1.22, isConceal = false },
+	["duffle"] = { offset = Vector3(0, -0.1325, 0.145), rotation = Vector3(0, 0, 0), scale = 1, isConceal = true }
+}
+
+function WearableShirt:use()
+	local player = self.m_Inventory:getPlayer()
+	if not player then return false end
+	if player.m_PrisonTime > 0 then player:sendError("Im Prison nicht erlaubt!") return end
+	if player.m_JailTime > 0 then player:sendError("Im Gefängnis nicht erlaubt!") return end
+	if not WearableShirt.Data[self:getTechnicalName()] then return false end
+	local data = WearableShirt.Data[self:getTechnicalName()]
+	
+	if player.m_IsWearingShirt == self:getTechnicalName() and player.m_Shirt then --// if the player clicks onto the same helmet once more remove it
+		destroyElement(player.m_Shirt)
+		player.m_IsWearingShirt = false
+		player.m_Shirt = false
+		player:meChat(true, "setzt " .. self:getName() .. " ab!")
+		setElementData(player,"CanWeaponBeConcealed",false)
+		triggerEvent("WeaponAttach:unconcealWeapons", player)
+		return true
+	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
+		if isElement(player.m_Shirt) then
+			destroyElement(player.m_Shirt)
+		end
+		
+		local obj = createObject(self:getModel(), player.position)
+		obj:setDimension(player.dimension)
+		obj:setInterior(player.interior)
+		obj:setScale(data.scale)
+		obj:setDoubleSided(true)
+
+		local bConcealOutput = false
+
+		if data.isConceal then
+			for i = 3,7 do
+				if player:getWeapon(i) ~= 0 then
+					bConcealOutput = true
+					break
+				end
+			end
+		end
+		
+		exports.bone_attach:attachElementToBone(obj, player, 3, data.offset.x, data.offset.y, data.offset.z, data.rotation.x , data.rotation.y, data.rotation.z)
+		player.m_Shirt = obj
+		player.m_IsWearingShirt = self:getTechnicalName()
+		player:meChat(true, "zieht "..self:getName().." an!")
+		setElementData(player,"CanWeaponBeConcealed",bIsConceal)
+
+		if bConcealOutput then
+			player:meChat(true, "versteckt einige Waffen in seiner "..self:getName().."!")
+		end
+		if bIsConceal then
+			triggerEvent("WeaponAttach:concealWeapons", player)
+		end
+		
+		return true
+	end
+end
+
+--[[
 WearableShirt = inherit( Item )
 
 --{model, bone, x, y, z, rx, ry, rz, scale, doublesided, texture},
@@ -113,3 +177,4 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		player:meChat(true, "zieht "..objName.." an!")
 	end
 end
+]]
