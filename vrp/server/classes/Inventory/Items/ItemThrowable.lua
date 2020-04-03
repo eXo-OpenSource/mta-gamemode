@@ -32,9 +32,7 @@ function ItemThrowable:use()
 	local player = self.m_Inventory:getPlayer()
 	if not player then return false end
 	if Fishing:getSingleton():isPlayerFishing(player) then return player:sendError(_("Pack erst deine Angel weg!")) end
-    outputChatBox("uiui " .. tostring(self:getModel()))
-    outputConsole(inspect(self.m_ItemData))
-    if not ItemThrowable.Data[self:getModel()] then outputChatBox("BRUH") return false end
+    if not ItemThrowable.Data[self:getModel()] then return false end
     
     local data = ItemThrowable.Data[self:getModel()]
 
