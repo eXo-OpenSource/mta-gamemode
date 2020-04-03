@@ -34,6 +34,8 @@ function InventoryManager:constructor()
 
 	addEventHandler("onInventorySync", root, bind(self.Event_onInventorySync, self))
 	addEventHandler("openInventory", root, bind(self.Event_openInventory, self))
+
+	WearableHelmet:new()
 end
 
 function InventoryManager:Event_openInventory(title, elementType, elementId)

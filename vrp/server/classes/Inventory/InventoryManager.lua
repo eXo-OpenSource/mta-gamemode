@@ -910,9 +910,9 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (54, 'donutBox', 1, 'ItemDonutBox', 'Donutbox', '  Mhhh... Donuts...', 'Essen/ItemDonutBox.png', 0, 9, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (55, 'donut', 1, 'ItemFood', 'Donut', 'Doh!', 'Essen/ItemDonut.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (56, 'integralHelmet', 3, 'WearableHelmet', 'Helm', 'Ein Integralhelm der dich vor Wind und Blicken schützt!', 'Objekte/helm.png', 2052, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
-		INSERT INTO `vrp_items` VALUES (57, 'motoHelmet', 3, 'WearableHelmet', 'Motorcross-Helm', 'Ein Motocross-Helm welcher sehr gut den Dreck beim Fahren abwendet!', 'Objekte/crosshelmet.png', 2799, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
+		INSERT INTO `vrp_items` VALUES (57, 'motoHelmet', 3, 'WearableHelmet', 'Motorcross-Helm', 'Ein Motocross-Helm welcher sehr gut den Dreck beim Fahren abwendet!', 'Objekte/crosshelmet.png', 1924, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (58, 'pothelmet', 3, 'WearableHelmet', 'Pot-Helm', 'Auf der Harley besonders stylish!', 'Objekte/bikerhelmet.png', 3911, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
-		INSERT INTO `vrp_items` VALUES (59, 'gasmask', 3, 'WearableHelmet', 'Gasmaske', 'Hält Gase fern!', 'Objekte/gasmask.png', 3911, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
+		INSERT INTO `vrp_items` VALUES (59, 'gasmask', 3, 'WearableHelmet', 'Gasmaske', 'Hält Gase fern!', 'Objekte/gasmask.png', 3890, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (60, 'kevlar', 3, 'WearableShirt', 'Kevlar', 'Egal ob 9mm oder .45, alles wird gestoppt!', 'Objekte/kevlar.png', 3916, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (61, 'duffle', 3, 'WearableShirt', 'Tragetasche', 'Es passt einiges hier rein!', 'Objekte/dufflebag.png', 3915, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (62, 'swatshield', 3, 'WearablePortables', 'Swatschild', 'Ein Einsatzschild für Spezialtruppen!', 'Objekte/riot_shield.png', 1631, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
@@ -946,7 +946,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (90, 'slam', 3, 'ItemSlam', 'SLAM', 'Ein Sprengsatz mit Fernzünder.', 'Items/Slam.png', 1252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (91, 'smokeGrenade', 3, 'ItemSmokeGrenade', 'Rauchgranate', 'Eine Rauchgranate um Sicht zu verhindern.', 'Items/Smokegrenade.png', 1672, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (92, 'transmitter', 4, '-', 'Transmitter', 'Ein Radiosender der über Ultrakurzwelle empfängt.', 'Objekte/transmitter.png', 3031, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (93, 'star', 4, '-', 'Stern', 'Ein Stern erhalten durch den Braboy!', 'Objekte/star.png', 3031, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (93, 'star', 4, 'WearableHelmet', 'Stern', 'Ein Stern erhalten durch den Braboy!', 'Objekte/star.png', 902, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (94, 'keycard', 3, '-', 'Keycard', 'Benutze die Keycard um Knasttüren zu öffnen', 'Items/Keycard.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (95, 'flowerSeed', 1, 'ItemPlant', 'Blumen-Samen', 'Pflanze diese Samen um einen wunderschönen Blumenstrauß zu ernten', 'Drogen/Samen.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (96, 'defuseKit', 3, 'ItemDefuseKit', 'DefuseKit', 'Zum Entschärfen von SLAMs', 'Items/DefuseKit.png', 2886, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);

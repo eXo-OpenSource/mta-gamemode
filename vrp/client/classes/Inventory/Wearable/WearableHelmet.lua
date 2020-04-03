@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Wearable Helmets Client
 -- *
 -- ****************************************************************************
-WearableHelmet = inherit( Singleton )
+WearableHelmet = inherit(Singleton)
 addRemoteEvents{"onClientToggleHelmet"}
 
 function WearableHelmet:constructor()
@@ -56,9 +56,9 @@ function WearableHelmet:onEffectStop()
 	self.m_ShaderValue = 0.1
 end
 
-function WearableHelmet:Event_toggleHelmet( state, item )
+function WearableHelmet:Event_toggleHelmet(state, item)
 	if state then
-		if item == "Gasmaske" then
+		if item == "gasmask" then
 			self.m_GasMask = true
 			self.m_StartTick = getTickCount()
 			self.m_EndTick = self.m_StartTick + 3000

@@ -23,6 +23,8 @@
 - [ ] Fix StaticWorldItems
 - [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
 - [ ] Add weapon box logic for slots (limit 4 slots only for premium?)
+- [ ] Check removel of item "helmet"
+- [ ] Check item naming and if needed adjust it
 
 - [o] Create new GUI for inventory interaction <- partialy __needs__ better GUI?
 
