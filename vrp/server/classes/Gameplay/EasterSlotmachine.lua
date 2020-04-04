@@ -293,8 +293,8 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		StatisticsLogger:addCasino(player, name, 1)
 	elseif name == "Vehicle" then
 		local vehicles = {
-			{ id=495, name="Sandking", 	spawnPosX=1452.8, spawnPosY=-1747.3, spawnPosZ=14.1, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }, 	-- Sandking
-			{ id=480, name="Comet", 	spawnPosX=1452.8, spawnPosY=-1747.3, spawnPosZ=14.1, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }		-- Comet
+			{ id=422, name="Bobcat", 	spawnPosX=1452.8, spawnPosY=-1747.3, spawnPosZ=13.39, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }, 	-- Sandking
+			{ id=565, name="Flash", 	spawnPosX=1452.8, spawnPosY=-1747.3, spawnPosZ=13.1, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }		-- Comet
 		}
 		local vehicleData = vehicles[math.random(1, 2)]
 

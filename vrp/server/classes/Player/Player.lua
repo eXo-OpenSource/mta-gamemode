@@ -214,6 +214,7 @@ function Player:loadCharacter()
 	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
 	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
 	GrowableManager:getSingleton():sendGrowablesToClient(self)
+	PedScale:getSingleton():updateClients(self)
 end
 
 function Player:createCharacter()
@@ -1753,3 +1754,11 @@ function Player:setThrowingObject(object)
 end
 
 function Player:getThrowingObject() return self.m_ThrowingObject end
+
+function Player:setScale(scaleX, scaleY, scaleZ, offset)
+	PedScale:getSingleton():setPedScale(self, scaleX, scaleY, scaleZ, offset)
+end
+
+function Player:removeScale()
+	PedScale:getSingleton():removePedScale(self)
+end
