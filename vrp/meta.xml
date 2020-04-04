@@ -112,6 +112,7 @@
 	<script src="server/classes/ServiceSync.lua" type="server"/>
 	<script src="server/classes/InfluxLogging.lua" type="server"/>
 	<script src="server/classes/Time.lua" type="server"/>
+	<script src="server/classes/PedScale.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -480,6 +481,9 @@
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
 
 	<!-- Halloween -->
+	<script src="server/classes/Events/Easter/Easter.lua" type="server"/>
+
+	<!-- Halloween -->
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/EasterEggs.lua" type="server"/>
@@ -595,6 +599,7 @@
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
 	<script src="client/classes/InfluxLogging.lua" type="client"/>
 	<script src="client/classes/Time.lua" type="client"/>
+	<script src="client/classes/PedScale.lua" type="client"/>
 
 
 	<script src="client/classes/Guns/Guns.lua" type="client"/>
@@ -1088,6 +1093,10 @@
 	<script src="client/classes/Events/AdminEvent.lua" type="client"/>
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
+
+	<!-- Easter -->
+	<script src="client/classes/Events/Easter/Easter.lua" type="client"/>
+	<script src="client/classes/Events/Easter/RabbitManager.lua" type="client"/>
 
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
@@ -1788,6 +1797,7 @@
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
 	<vrpfile src="files/images/Radar/Blips/Turtle.png"/>
 	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
+	<vrpfile src="files/images/Radar/Blips/BunnyHead.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -3254,6 +3264,9 @@
 	<file src="files/models/objects/worldItems/easter_egg.txd" />
 	<file src="files/models/objects/worldItems/easter_egg.dff" />
 	<file src="files/models/objects/worldItems/easter_egg.col" />
+	<vrpfile src="files/models/skins/rabbit.dff"/>
+	<vrpfile src="files/models/skins/rabbit.txd"/>
+	<vrpfile src="files/animations/rabbit.ifp"/>
 	<!-- Easter Event End-->
 
 	<!-- Halloween Event Start-->

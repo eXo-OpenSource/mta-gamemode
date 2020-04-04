@@ -1,5 +1,5 @@
 float3 size = float3(0,0,0);
-//float3 lel = float3(2, 0, 0);
+float3 offset = float3(0,0,0);
 
 #include "mta-helper.fx"
 
@@ -23,6 +23,8 @@ PSInput VertexShaderFunction(VSInput VS)
     PSInput PS = (PSInput)0;
 
     VS.Position += VS.Position * size;
+
+    VS.Position += VS.Position + offset;
 
     PS.Position = MTACalcScreenPosition ( VS.Position );
 
