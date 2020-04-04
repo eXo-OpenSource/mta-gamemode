@@ -151,6 +151,11 @@ function Core:constructor()
 		PickupWeaponManager:new()
 		InteriorEnterExitManager:new()
 		ElevatorManager:new()
+
+		if EVENT_EASTER then
+			Easter:new()
+		end
+
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end
@@ -205,6 +210,7 @@ function Core:constructor()
 		MapLoader:new()
 		MapEditor:new()
 		DamageManager:new()
+		PedScale:new()
 		--AmmunationEvaluation:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
@@ -295,6 +301,9 @@ function Core:destructor()
 		ItemManager:updateOnQuit()
 		delete(BlackJackManager:getSingleton())
 		delete(CasinoWheelManager:getSingleton())
+		if EVENT_EASTER then
+			delete(Easter:getSingleton())
+		end
 		delete(sql) -- Very slow
 	end
 end

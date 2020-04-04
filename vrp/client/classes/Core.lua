@@ -194,6 +194,7 @@ function Core:ready() --onClientResourceStart
 	PoliceAnnouncements:new()
 	BlackJackTable:new()
 	CasinoWheel:new()
+	PedScale:new()
 end
 
 function Core:afterLogin()
@@ -216,6 +217,9 @@ function Core:afterLogin()
 	ElementInfoManager:new()
 	if EVENT_HALLOWEEN then
 		HalloweenEasterEggs:new()
+	end
+	if EVENT_EASTER then
+		Easter:new()
 	end
 
 	for i = 1,#GUNBOX_CRATES do
