@@ -75,6 +75,10 @@ end
 function GroupHouseRob:Event_OnSellAccept()
 	if client then
 		if client.m_ClickPed then
+			if getDistanceBetweenPoints3D(client.m_ClickPed:getPosition(), client:getPosition()) > 10 then
+				client:sendError("Du bist zu weit entfernt!")
+				return
+			end
 			local inv = client:getInventory()
 			if inv then
 				local amount = inv:getItemAmount("Diebesgut")

@@ -228,14 +228,6 @@ end
 function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp, isPreview, player)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	veh.m_Tunings:applyTuning()
-	outputConsole(inspect({
-		veh = veh, 
-		url = url, 
-		textureName = textureName, 
-		temp = temp, 
-		isPreview = isPreview, 
-		player = player
-	}))
 	if isPreview then
 		veh:setTexture(url, textureName, true, isPreview, player)
 	else
