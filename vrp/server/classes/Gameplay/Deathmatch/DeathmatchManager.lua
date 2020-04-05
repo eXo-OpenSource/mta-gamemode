@@ -91,6 +91,7 @@ function DeathmatchManager:constructor()
 
 	self:loadServerLobbys()
 	self.m_BankServer = BankServer.get("gameplay.deathmatch")
+	--[[
 	local b = Blip:new("SniperGame.png", 1327.88, -1556.25)
 	b:setDisplayText("Paintball-Arena", BLIP_CATEGORY.Leisure)
 	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
@@ -99,7 +100,7 @@ function DeathmatchManager:constructor()
 			hitElement:triggerEvent("deathmatchOpenLobbyGUI")
 		end
 	end)
-
+	]]
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player, killer, weapon)
 			if player.deathmatchLobby then
