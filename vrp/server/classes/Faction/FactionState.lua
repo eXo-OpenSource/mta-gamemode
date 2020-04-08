@@ -359,7 +359,10 @@ function FactionState:loadArmy(factionId)
 
 	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
 	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
-		areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+	self.m_DocksGate = Gate:new(3037, Vector3(2774.2299, -2493.9875, 14.85), Vector3(0, 0, 0), Vector3(2775.800, -2493.988, 16.780), Vector3(0, 90, 0))
+	self.m_DocksGate.m_Gates[1]:setScale(1, 0.99, 1)
 
 	local corners = {
 		112.889, 1799.158,
