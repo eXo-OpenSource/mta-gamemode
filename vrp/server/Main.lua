@@ -115,6 +115,13 @@ addEventHandler("onDebugMessage", root,
 			end
 
 			stackSlackMessages(msg, level, trace)
+		else
+			if msg:find("dbExec failed;") then
+				iprint(SQL.LastExecQuery)
+			elseif msg:find("dbPoll failed;") then
+				iprint(SQL.LastExecQuery)
+			end
+
 		end
 	end
 )

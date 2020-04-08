@@ -42,7 +42,7 @@ function GUIItemSlot:setItem(item)
 			suffix = suffix .. "Class: " .. item.Class
 		end
 
-		self:setTooltip(item.Name .. "\n" .. item.Description .. suffix, nil, true)
+		self:setTooltip(item.Name .. "\nBesitzer: " .. item.OwnerName .. "\n" .. item.Description .. suffix, nil, true)
 	else
 		self:setTooltip(nil)
 	end

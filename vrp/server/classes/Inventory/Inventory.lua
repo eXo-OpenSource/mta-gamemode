@@ -26,9 +26,9 @@ function Inventory.load(inventoryId, player, sync)
 
 	local items
 	if sync then
-		items = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+		items = sql:queryFetch("SELECT i.*, IF(a.Name IS NULL, 'Unbekannt', a.Name) AS OwnerName FROM ??_inventory_items i LEFT JOIN ??_account a ON a.Id = i.OwnerId WHERE i.InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
 	else
-		items = sql:asyncQueryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), inventory.Id)
+		items = sql:asyncQueryFetch("SELECT i.*, IF(a.Name IS NULL, 'Unbekannt', a.Name) AS OwnerName FROM ??_inventory_items i LEFT JOIN ??_account a ON a.Id = i.OwnerId WHERE i.InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
 	end
 
 	return Inventory:new(inventory, items, true, player)
@@ -307,6 +307,7 @@ function Inventory:save(sync)
 			table.insert(changes.insert, {
 				Id = v.Id;
 				ItemId = v.ItemId;
+				OwnerId = v.OwnerId;
 				Amount = v.Amount;
 				Durability = v.Durability;
 				Slot = v.Slot;
@@ -397,7 +398,8 @@ function Inventory:save(sync)
 		for k, v in pairs(changes.insert) do
 			queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, OwnerId, Tradeable, Slot, Amount, Durability, ExpireTime, Metadata) VALUES "
 			table.insert(queriesParams, sql:getPrefix())
-			queries = queries .. "(?, ?, ?, ?, ?, ?, "
+			queries = queries .. "(?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			-- 1 - Id, 2 - InventoryId, 3 - ItemId, 4 - OwnerId, 5 - Tradeable, 6 - Slot, 7 - Amount, 8 - Durability, 9 - ExpireTime, 10 - Metadata
 
 			table.insert(queriesParams, v.Id)				-- 1 - Id
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
@@ -409,11 +411,14 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.Durability)		-- 8 - Durability
 			table.insert(queriesParams, v.ExpireTime)		-- 9 - ExpireTime
 			if not v.Metadata then
-				queries = queries .. "NULL) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, Metadata = NULL;"
+				queries = queries .. "NULL)"
 			else
-				queries = queries .. "?) ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, Metadata = ?;"
-				table.insert(queriesParams, v.Metadata or nil)	-- 7 - Metadata
+				queries = queries .. "?)"
+				table.insert(queriesParams, v.Metadata or nil)	-- 10 - Metadata
 			end
+
+			queries = queries .. " ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, "
+			-- 2 - InventoryId = ?, 3 - ItemId = ?, 4 - OwnerId = ?, 5 - Tradeable = ?, 6 - Slot = ?, 7 - Amount = ?, 8 - Durability = ?, 9 - ExpireTime = ?
 
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
 			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
@@ -423,8 +428,15 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.Amount)			-- 7 - Amount
 			table.insert(queriesParams, v.Durability)		-- 8 - Durability
 			table.insert(queriesParams, v.ExpireTime)		-- 9 - ExpireTime
+
+			if not v.Metadata then
+				queries = queries .. "Metadata = NULL"
+			else
+				queries = queries .. "Metadata = ?"
+				table.insert(queriesParams, v.Metadata or nil)	-- 10 - Metadata
+			end
+			queries = queries .. ";"
 		end
-		queries = queries .. ";"
 	end
 
 	if queries ~= "" then

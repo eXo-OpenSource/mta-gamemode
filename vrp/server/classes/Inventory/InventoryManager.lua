@@ -524,17 +524,22 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		end
 
 		local id = inventory.m_NextItemId
+		local player = inventory:getPlayer()
 		inventory.m_NextItemId = inventory.m_NextItemId + 1
 
 		local data = table.copy(itemData)
 
 		data.Id = self.m_NextItemId
+		data.InventoryId = inventory.m_Id
 		data.ItemId = item
+		data.OwnerId = player and player.m_Id or nil
+		data.Owner = player and player.m_Name or "Unbekannt"
 		data.Slot = slot
 		data.Amount = amount
 		data.Durability = durability or itemData.MaxDurability
 		data.Metadata = metadata
 		data.Tradeable = itemData.Tradeable
+		data.ExpireTime = itemData.Expireable and itemData.MaxExpireTime or nil
 
 		self.m_NextItemId = self.m_NextItemId + 1
 

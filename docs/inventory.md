@@ -4,13 +4,13 @@
 
 - [p] Replace all old giveItem & takeItem - giveItem has been finished partially.
 
-- [ ] Add item owner (only change if item has been traded by the owner?)
 - [ ] Implement inventory auto cleanup
 
 - [ ] Faction - Equipment & Item storage
 
 - [ ] Create new GUI for trading
 - [ ] Reimplement trading
+- [p] Add item owner (only change if item has been traded by the owner?)
 
 - [ ] Write testing list
 - [ ] Implement new weapon handling with inventory
