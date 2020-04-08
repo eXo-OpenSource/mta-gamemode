@@ -64,7 +64,7 @@
 	<map src="fishing/location_cave.map" />
 
 	<!--<map src="events/battleroyale.map" />-->
-	<!--<map src="events/easter.map" />-->
+	<map src="events/easter.map" />
 	<!--<map src="events/halloween.map" />-->
 	<map src="events/auction.map" /><!--auction in interior-->
 
