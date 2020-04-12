@@ -51,6 +51,10 @@ function CompanyVehicle:constructor(data)
 		PublicTransport:createTaxiSign(self)
 	end
 
+	if self:getCompany():getId() == 4 then --ept dft
+		self:initTransportExtension()
+	end
+
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(
 			function(veh)
@@ -105,10 +109,6 @@ function CompanyVehicle:onAttachTrailer(truck)
 end
 
 function CompanyVehicle:onEnter(player, seat)
-	if self:isFrozen() then
-		self:setFrozen(false)
-	end
-
 	if self:getCompany().onVehicleEnter then
 		self:getCompany():onVehicleEnter(source, player, seat)
 	end

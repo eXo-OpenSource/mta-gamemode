@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
+inherit(VehicleTransportExtension, Vehicle)
 
 VEHICLE_ALT_SOUND =
 {
