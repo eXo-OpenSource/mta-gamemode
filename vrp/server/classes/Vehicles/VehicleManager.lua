@@ -126,7 +126,7 @@ function VehicleManager:constructor()
 		function (player, seat)
 			if player:getType() ~= "player" then return end
 
-			if source:isAttached() then -- If the vehicle is attached to a magnet helicopter
+			if source:isAttached() and not source.m_CurrentlyAttachedToTransporter then -- If the vehicle is attached to a magnet helicopter
 				return cancelEvent()
 			end
 			if source:getData("Burned") then -- if the vehicle is left from a fire

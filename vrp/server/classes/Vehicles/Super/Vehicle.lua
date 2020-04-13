@@ -26,6 +26,7 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
+	self.m_HandbrakeHook = Hook:new()
 
 	self.m_LastDrivers = {}
 
@@ -427,7 +428,9 @@ end
 function Vehicle:toggleHandBrake(player, preferredState)
 	if self.m_DisableToggleHandbrake then return end
 	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
-
+	if self.m_HandbrakeHook:call(self) then
+		return
+	end
 	if not self.m_HandBrake or preferredState then
 		if self:isOnGround() then
 			setControlState(player, "handbrake", true)
@@ -466,6 +469,10 @@ function Vehicle:toggleHandBrake(player, preferredState)
 	end
 
 	StatisticsLogger:getSingleton():addVehicleLog(player, owner, ownerType, self.m_Id, self:getModel(), self.m_HandBrake and "Handbremse gezogen" or "Handbremse gelöst")
+end
+
+function Vehicle:getHandbrakeHook()
+	return self.m_HandbrakeHook
 end
 
 function Vehicle:setEngineState(state)
