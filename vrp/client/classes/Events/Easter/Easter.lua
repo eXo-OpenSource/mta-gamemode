@@ -58,6 +58,15 @@ function Easter:constructor()
     self.m_HidingRabbits = {}
     addEventHandler("Easter:loadHidingRabbit", root, bind(self.loadHidingRabbit, self))
     triggerServerEvent("Easter:requestHidingRabbits", localPlayer) 
+
+    for index, object in pairs(getElementsByType("object")) do
+        if object:getModel() == 3095 then
+            local x, y, z = getElementPosition(object)
+            if getDistanceBetweenPoints3D(x, y, z, -1677, 1006, 5) < 100 then
+                FileTextureReplacer:new(object, "files/images/Textures/JetdoorMetal.png", "sam_camo", {}, true, true)
+            end
+        end
+    end
 end
 
 function Easter:loadHidingRabbit(rabbitsFound)
