@@ -179,7 +179,7 @@ function AdminGUI:constructor(money)
 	self:refreshOnlinePlayers()
 
 	local tabWeb = self.m_TabPanel:addTab(_"WebPanel")
-	local webPanelUrl = ("https://exo-reallife.de/index.php?page=admin&site=ingame&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
+	local webPanelUrl = ("https://cp.exo-reallife.de/api/auth?token=%s"):format(localPlayer:getSessionId())
 	self.m_WebPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, webPanelUrl, true, tabWeb)
 	self.m_FullScreen = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabWeb):setFont(FontAwesome(15))
 	self.m_FullScreen.onLeftClick = function ()
