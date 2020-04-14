@@ -479,6 +479,10 @@ DbElementType = {
 	WeaponBox = 8;
 	CoolingBox = 9;
 	FactionDepot = 10;
+	Server = 11;
+	Shop = 12;
+	VehicleShop = 13;
+	Admin = 14;
 }
 
 DbElementTypeName = {
@@ -492,8 +496,37 @@ DbElementTypeName = {
 	[DbElementType.WeaponBox] = "weaponBox";
 	[DbElementType.CoolingBox] = "coolingBox";
 	[DbElementType.FactionDepot] = "factionDepot";
+	[DbElementType.Server] = "server";
+	[DbElementType.Shop] = "shop";
+	[DbElementType.VehicleShop] = "vehicleShop";
+	[DbElementType.Admin] = "admin";
 }
 
+ItemsWeaponMapping = {
+	[1] = "brassknuckle", [2] = "golfclub", [3] = "nightstick", [4] = "knife", [5] = "bat", [6] = "shovel", [7] = "poolstick", [8] = "katana", [9] = "chainsaw",
+	[10] = "longDildo", [11] = "shortDildo", [12] = "vibrator", [14] = "flower",  [15] = "cane", [16] = "grenade", [17] = "teargas", [18] = "molotov",
+	[22] = "colt45", [23] = "taser", [24] = "deagle", [25] = "shotgun", [26] = "sawedOff", [27] = "combatShotgun", [28] = "uzi", [29] = "mp5", [30] = "ak47",
+	[31] = "m4", [32] = "tec9", [33] = "rifle", [34] = "sniper", [35] = "rocketLauncher", [36] = "rocketLauncherHS", [37] = "flamethrower", [38] = "minigun",
+	[39] = "satchel", [40] = "satchelDetonator", [41] = "spraycan", [42] = "fireExtinguisher", [43] = "camera", [44] = "nightvision", [45] = "infrared",
+	[46] = "parachute"
+}
+
+ItemsWeaponMappingAmmunition = {
+	[22] = "colt45Bullet", [23] = "taserBullet", [24] = "deagleBullet", [25] = "shotgunPallet", [26] = "sawedOffPallet", [27] = "combatShotgunPallet",
+	[28] = "uziBullet", [29] = "mp5Bullet", [30] = "ak47Bullet", [31] = "m4Bullet", [32] = "tec9Bullet", [33] = "rifleBullet", [34] = "sniperBullet",
+	[35] = "rocketLauncherRocket", [36] = "rocketLauncherHSRocket", [37] = "flamethrowerGas", [38] = "minigunBullet"
+}
+
+ItemsWeaponMappingName = {}
+ItemsWeaponMappingAmmunitionName = {}
+
+for k, v in pairs(ItemsWeaponMapping)
+	ItemsWeaponMappingName[v] = k
+end
+
+for k, v in pairs(ItemsWeaponMappingAmmunition)
+	ItemsWeaponMappingAmmunitionName[v] = k
+end
 
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}

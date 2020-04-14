@@ -482,7 +482,7 @@ function Player:spawn()
 	if self:isPremium() then
 		self:setArmor(100)
 		if self.m_JailTime == 0 then
-			giveWeapon(self, 24, 35)
+			-- giveWeapon(self, 24, 35)
 		end
 	end
 
@@ -497,7 +497,7 @@ function Player:spawn()
 
 	-- Give weapons
 	for k, info in pairs(self.m_Weapons) do
-		giveWeapon(self, info[1], info[2])
+		-- giveWeapon(self, info[1], info[2])
 	end
 
 	setCameraTarget(self, self)

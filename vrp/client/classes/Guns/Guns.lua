@@ -88,8 +88,23 @@ function Guns:constructor()
 	self.m_TracerEnabled = false
 	self.m_hitpath = fileExists("_custom/files/audio/hitsound.wav") and "_custom/files/audio/hitsound.wav" or "files/audio/hitsound.wav"
 
-	WeaponManager:new() 
+	WeaponManager:new()
 
+	self.m_Weapons = {}
+	self.m_CurrentWeapon = 0
+
+	self.m_UpdateInventoryEvent = bind(self.updateInventory, self)
+	self.m_ChangeWeaponEvent = bind(self.changeWeapon, self)
+
+	InventoryManager:getSingleton():getPlayerHook():register(self.m_UpdateInventoryEvent)
+	bindKey("next_weapon", "down", self.m_ChangeWeaponEvent)
+	bindKey("previous_weapon", "down", self.m_ChangeWeaponEvent)
+
+	-- local inventory = InventoryManager:getSingleton():getPlayerInventory()
+	-- self:updateInventory(inventory.inventoryId, inventory.elementId, inventory.elementType, inventory.size, inventory.items)
+
+	toggleControl("next_weapon", false)
+	toggleControl("previous_weapon", false)
 end
 
 function Guns:destructor()
@@ -167,7 +182,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
 	local bRangeCheck = true
 	local isThrowingHit = false
-	if isValidElement(attacker, "object") then 
+	if isValidElement(attacker, "object") then
 		if self:onHitByThrowObject(attacker, source, weapon, bodypart, loss) then -- check if the object that damaged the player is a throwable
 			return cancelEvent()
 		end
@@ -185,7 +200,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 				triggerServerEvent("onTaser",attacker,source)
 			end
 		end
-		if localPlayer == source then 
+		if localPlayer == source then
 			if InjuryTreatmentGUI:isInstantiated() then
 				triggerServerEvent("Damage:onCancelTreat", localPlayer)
 			end
@@ -249,11 +264,11 @@ end
 function Guns:onHitByThrowObject(attacker, target, weapon, bodypart, loss)
 	local throwingPlayer =  attacker:getData("Throw:responsiblePlayer")
 	if throwingPlayer then
-		if throwingPlayer == localPlayer then 
-			if not attacker:getData("Throw:entityDamageDisabled") then 
+		if throwingPlayer == localPlayer then
+			if not attacker:getData("Throw:entityDamageDisabled") then
 				triggerServerEvent("Throw:reportDamage", localPlayer, target, attacker, bodypart)
 			end
-			self.m_HitMark = true 
+			self.m_HitMark = true
 			self.m_HitAccuracy = 1.3
 			self.m_HitMarkRed = true
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
@@ -270,11 +285,11 @@ end
 function Guns:onPedHitByThrowObject(attacker, ped, weapon, bodypart)
 	local throwingPlayer =  attacker:getData("Throw:responsiblePlayer")
 	if throwingPlayer then
-		if throwingPlayer == localPlayer then 
-			if not attacker:getData("Throw:entityDamageDisabled") then 
+		if throwingPlayer == localPlayer then
+			if not attacker:getData("Throw:entityDamageDisabled") then
 				triggerServerEvent("Throw:reportDamage", localPlayer, ped, attacker, bodypart)
 			end
-			self.m_HitMark = true 
+			self.m_HitMark = true
 			self.m_HitAccuracy = 1.3
 			self.m_HitMarkRed = true
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
@@ -595,7 +610,7 @@ function Guns:drawBloodScreen()
 end
 
 function Guns:Event_onClientPedDamage(attacker, weapon, bodypart)
-	if isValidElement(attacker, "object") then 
+	if isValidElement(attacker, "object") then
 		self:onPedHitByThrowObject(attacker, source, weapon, bodypart) -- check if the object that damaged the ped is a throwable
 	end
 	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then
@@ -683,20 +698,20 @@ function Guns:toggleFastShot(bool)
 end
 
 function Guns:throwProjectile(projectile, force, leftHanded)
-	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25) 
+	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25)
 	local x, y, z, x2, y2, z2 = getCameraMatrix()
-	local x, y, z = normalize(x2-x, y2-y, z2-z) 
+	local x, y, z = normalize(x2-x, y2-y, z2-z)
 	createProjectile(localPlayer, projectile, bx, by, bz, 1, false, 0, 0, 0, x*force, y*force, z*force)
 	localPlayer.m_HasThrownGrenade = false
 end
 
-function Guns:renderThrowPreparation() 
+function Guns:renderThrowPreparation()
 	localPlayer.m_GrenadeThrowProgress = localPlayer.m_GrenadeThrowProgress - 0.001
 	setPedAnimationProgress(localPlayer, "WEAPON_throw", localPlayer.m_GrenadeThrowProgress)
 	localPlayer.m_GrenadeThrowForce = localPlayer.m_GrenadeThrowForce + 0.02
 
-	if localPlayer.m_GrenadeThrowProgress < 0.12 then 
-		removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind) 
+	if localPlayer.m_GrenadeThrowProgress < 0.12 then
+		removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
 	end
 end
 
@@ -729,4 +744,42 @@ function Guns:prepareGrenadeThrow(state)
 			removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
 		end
 	end
+end
+
+function Guns:updateInventory(data, items)
+	self.m_Weapons = {}
+
+	for k, v in pairs(items) do
+		for k2, v2 in pairs(ItemsWeaponMapping) do
+			if v.TechnicalName == v2 then
+				table.insert(self.m_Weapons, v)
+				break
+			end
+		end
+	end
+end
+
+function Guns:changeWeapon(key, keyState)
+    if key == "next_weapon" then
+		local weaponCount = table.size(self.m_Weapons)
+
+		if self.m_CurrentWeapon + 1 > weaponCount then
+			self.m_CurrentWeapon = 0
+		else
+			self.m_CurrentWeapon = self.m_CurrentWeapon + 1
+		end
+    else
+		local weaponCount = table.size(self.m_Weapons)
+
+		if self.m_CurrentWeapon - 1 < 0 then
+			self.m_CurrentWeapon = self.m_CurrentWeapon - 1
+		else
+			self.m_CurrentWeapon = weaponCount
+		end
+	end
+	self:updateCurrentWeapon()
+end
+
+function Guns:updateCurrentWeapon()
+	triggerServerEvent("onPlayerSlotSwitch")
 end

@@ -721,12 +721,15 @@ function InventoryManager:useItemSecondary(inventory, id)
 end
 
 function InventoryManager:migrate()
+	local h1, h2, h3, h4 = debug.gethook()
+	debug.sethook() -- disable infinity loop check
+
 	local st = getTickCount()
 	outputServerLog("========================================")
 	outputServerLog("=     STARTING INVENTORY MIGRATION     =")
 	outputServerLog("========================================")
 
-	setServerPassword(math.random() * 123456789) -- No player should be on the server while the migration runs
+	setServerPassword(string.random(128)) -- No player should be on the server while the migration runs
 	for _, v in pairs(getElementsByType("player")) do
 		v:kick("Migration")
 	end
@@ -1209,7 +1212,7 @@ function InventoryManager:migrate()
 		else
 			query = query .. ", "
 		end
-		query = query .. "(" .. player.Id .. ", 1, 40, 1)"
+		query = query .. "(" .. player.Id .. ", " .. DbElementType.Player .. ", 40, 1)"
 	end
 
 	sql:queryExec(query, sql:getPrefix())
@@ -1224,14 +1227,14 @@ function InventoryManager:migrate()
 		else
 			query = query .. ", "
 		end
-		query = query .. "(" .. player.Id .. ", 8, 8, 2)"
+		query = query .. "(" .. player.Id .. ", " .. DbElementType.WeaponBox .. ", 8, 2)"
 	end
 
 	sql:queryExec(query, sql:getPrefix())
 
 	local nextId = 1
 
-	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 1 OR ElementType = 8", sql:getPrefix())
+	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = " .. DbElementType.Player .. " OR ElementType = " .. DbElementType.WeaponBox .. "", sql:getPrefix())
 	local inventories = {}
 	local inventoriesWeapon = {}
 	for _, inventory in pairs(inventoriesDb) do
@@ -1358,7 +1361,7 @@ function InventoryManager:migrate()
 	outputServerLog("[MIGRATION] FINISH PLAYER ITEMS " .. tostring(count - 1) .. "/" .. tostring(total))
 
 	local items = sql:queryFetch("SELECT Id, Weapons, GunBox FROM ??_character", sql:getPrefix())
-	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, OwnerId, Slot, Amount, Durability, Metadata) VALUES "
 	local first = true
 	local count = 1
 	local total = table.size(items)
@@ -1390,7 +1393,7 @@ function InventoryManager:migrate()
 							end
 						end
 
-						query = query .. "(" .. nextId .. ", " .. inventories[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon[1]]] .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						query = query .. "(" .. nextId .. ", " .. inventories[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon[1]]] .. ", " .. item.Id .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
 						playerSlot[item.Id] = playerSlot[item.Id] + 1
 						nextId = nextId + 1
 
@@ -1401,7 +1404,7 @@ function InventoryManager:migrate()
 							menge = weapon[2]
 							durability = 0
 							metadata = "NULL"
-							query = query .. "(" .. nextId .. ", " .. inventories[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon[1]]] .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+							query = query .. "(" .. nextId .. ", " .. inventories[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon[1]]] .. ", " .. item.Id .. ", " .. playerSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
 							playerSlot[item.Id] = playerSlot[item.Id] + 1
 							nextId = nextId + 1
 						end
@@ -1436,7 +1439,7 @@ function InventoryManager:migrate()
 							end
 						end
 
-						query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon.WeaponId]] .. ", " .. item.Id .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
 						weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
 						nextId = nextId + 1
 
@@ -1447,7 +1450,7 @@ function InventoryManager:migrate()
 							menge = weapon.Amount
 							durability = 0
 							metadata = "NULL"
-							query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+							query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.WeaponId]] .. ", " .. item.Id .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
 							weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
 							nextId = nextId + 1
 						end
@@ -1461,7 +1464,7 @@ function InventoryManager:migrate()
 			if not first then
 				first = true
 				sql:queryExec(query, sql:getPrefix())
-				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, OwnerId, Slot, Amount, Durability, Metadata) VALUES "
 			end
 		end
 		count = count + 1
@@ -1470,273 +1473,71 @@ function InventoryManager:migrate()
 	if not first then sql:queryExec(query, sql:getPrefix()) end
 	outputServerLog("[MIGRATION] FINISH PLAYER WEAPONS " .. tostring(count - 1) .. "/" .. tostring(total))
 
-	setTimer(function()
-		local vehicles = sql:queryFetch("SELECT Id, TrunkId FROM ??_vehicles", sql:getPrefix())
-		local query = "INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES "
-		local first = true
+	local vehicles = sql:queryFetch("SELECT Id, TrunkId FROM ??_vehicles", sql:getPrefix())
+	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES "
+	local first = true
 
-		for _, vehicle in pairs(vehicles) do
-			if first then
-				first = false
-			else
-				query = query .. ", "
-			end
-			query = query .. "(" .. vehicle.Id .. ", 5, 30, 4)" -- TODO add logic for different trunk sizes
+	for _, vehicle in pairs(vehicles) do
+		if first then
+			first = false
+		else
+			query = query .. ", "
 		end
+		query = query .. "(" .. vehicle.Id .. ", " .. DbElementType.Vehicle .. ", 30, 4)" -- TODO add logic for different trunk sizes
+	end
 
-		sql:queryExec(query, sql:getPrefix())
+	sql:queryExec(query, sql:getPrefix())
 
-		local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 5", sql:getPrefix())
-		local inventories = {}
-		for _, inventory in pairs(inventoriesDb) do
-			inventories[inventory.ElementId] = inventory.Id
+	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = " .. DbElementType.Vehicle, sql:getPrefix())
+	local inventories = {}
+	for _, inventory in pairs(inventoriesDb) do
+		inventories[inventory.ElementId] = inventory.Id
+	end
+
+	local trunkVehicleId = {}
+
+	for _, vehicle in pairs(vehicles) do
+		if vehicle.TrunkId and vehicle.TrunkId ~= 0 then
+			trunkVehicleId[vehicle.TrunkId] = vehicle.Id
 		end
+	end
 
-		local trunkVehicleId = {}
+	local items = sql:queryFetch("SELECT * FROM ??_vehicle_trunks", sql:getPrefix())
+	local trunkSlot = {}
+	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+	local first = true
+	local total = table.size(items)
+	local count = 1
 
-		for _, vehicle in pairs(vehicles) do
-			if vehicle.TrunkId and vehicle.TrunkId ~= 0 then
-				trunkVehicleId[vehicle.TrunkId] = vehicle.Id
-			end
-		end
+	for _, item in pairs(items) do
+		if trunkVehicleId[item.Id] and inventories[trunkVehicleId[item.Id]] then
+			local inventoryId = inventories[trunkVehicleId[item.Id]]
+			if not trunkSlot[item.Id] then trunkSlot[item.Id] = 1 end
 
-		local items = sql:queryFetch("SELECT * FROM ??_vehicle_trunks", sql:getPrefix())
-		local trunkSlot = {}
-		local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
-		local first = true
-		local total = table.size(items)
-		local count = 1
+			local itemSlot1 = fromJSON(item.ItemSlot1)
+			local itemSlot2 = fromJSON(item.ItemSlot2)
+			local itemSlot3 = fromJSON(item.ItemSlot3)
+			local itemSlot4 = fromJSON(item.ItemSlot4)
+			local weaponSlot1 = fromJSON(item.WeaponSlot1)
+			local weaponSlot1 = fromJSON(item.WeaponSlot2)
+			local itemsNew = {itemSlot1, itemSlot2, itemSlot3, itemSlot4}
+			local weaponsNew = {weaponSlot1, weaponSlot2}
 
-		for _, item in pairs(items) do
-			if trunkVehicleId[item.Id] and inventories[trunkVehicleId[item.Id]] then
-				local inventoryId = inventories[trunkVehicleId[item.Id]]
-				if not trunkSlot[item.Id] then trunkSlot[item.Id] = 1 end
-
-				local itemSlot1 = fromJSON(item.ItemSlot1)
-				local itemSlot2 = fromJSON(item.ItemSlot2)
-				local itemSlot3 = fromJSON(item.ItemSlot3)
-				local itemSlot4 = fromJSON(item.ItemSlot4)
-				local weaponSlot1 = fromJSON(item.WeaponSlot1)
-				local weaponSlot1 = fromJSON(item.WeaponSlot2)
-				local itemsNew = {itemSlot1, itemSlot2, itemSlot3, itemSlot4}
-				local weaponsNew = {weaponSlot1, weaponSlot2}
-
-				for _, v in pairs(itemsNew) do
-					if v.Item ~= "none" and v.Item ~= "" then
-						if ItemMapping[v.Item] then
-							local itemTechnicalName = ItemMapping[v.Item]
-
-							local menge = v.Amount
-							local durability = 0
-							local metadata = "NULL"
-
-							--[[
-								Kleine Kühltasche [ [ { "Id": 10, "timestamp": 1547756920, "size": 61, "quality": 1 }, { "Id": 10, "timestamp": 1547756954, "quality": 1, "size": 56 }, { "Id": 11, "timestamp": 1547756983, "size": 29, "quality": 0 }, { "Id": 16, "timestamp": 1547757012, "quality": 1, "size": 107 }, { "Id": 11, "timestamp": 1547757055, "size": 33, "quality": 1 }, { "Id": 16, "timestamp": 1547757084, "quality": 1, "size": 92 }, { "Id": 10, "timestamp": 1547757111, "size": 56, "quality": 1 }, { "Id": 11, "timestamp": 1547757151, "quality": 0, "size": 27 }, { "Id": 11, "timestamp": 1547757180, "size": 32, "quality": 1 }, { "Id": 10, "timestamp": 1547757201, "quality": 0, "size": 43 }, { "Id": 10, "timestamp": 1547757226, "size": 62, "quality": 1 }, { "Id": 10, "timestamp": 1547757253, "quality": 1, "size": 55 }, { "Id": 16, "timestamp": 1547757625, "size": 108, "quality": 1 }, { "Id": 16, "timestamp": 1547757672, "quality": 1, "size": 97 }, { "Id": 11, "timestamp": 1547757722, "size": 27, "quality": 0 }, { "Id": 10, "timestamp": 1547757818, "quality": 1, "size": 47 }, { "Id": 11, "timestamp": 1547757885, "size": 20, "quality": 0 }, { "Id": 11, "timestamp": 1547757927, "quality": 0, "size": 25 }, { "Id": 16, "timestamp": 1547758015, "size": 80, "quality": 1 }, { "Id": 11, "timestamp": 1547799344, "quality": 1, "size": 37 }, { "Id": 16, "timestamp": 1547799373, "size": 106, "quality": 1 }, { "Id": 10, "timestamp": 1547799403, "quality": 1, "size": 47 }, { "Id": 23, "timestamp": 1547799433, "size": 13, "quality": 1 }, { "Id": 23, "timestamp": 1547799467, "quality": 1, "size": 17 }, { "Id": 19, "timestamp": 1547799495, "size": 34, "quality": 0 }, { "Id": 34, "timestamp": 1547799526, "quality": 1, "size": 104 }, { "Id": 10, "timestamp": 1547799547, "size": 52, "quality": 1 }, { "Id": 16, "timestamp": 1547799580, "quality": 3, "size": 155 }, { "Id": 19, "timestamp": 1547799602, "size": 36, "quality": 1 }, { "Id": 11, "timestamp": 1547799643, "quality": 1, "size": 32 }, { "Id": 11, "timestamp": 1547799696, "size": 53, "quality": 3 }, { "Id": 23, "timestamp": 1547799721, "quality": 1, "size": 16 }, { "Id": 16, "timestamp": 1547799748, "size": 104, "quality": 1 }, { "Id": 23, "timestamp": 1547799780, "quality": 0, "size": 10 }, { "Id": 19, "timestamp": 1547799811, "size": 43, "quality": 1 }, { "Id": 16, "timestamp": 1547799837, "quality": 1, "size": 83 }, { "Id": 19, "timestamp": 1547799868, "size": 41, "quality": 1 }, { "Id": 23, "timestamp": 1547799900, "quality": 1, "size": 16 }, { "Id": 34, "timestamp": 1547799921, "size": 105, "quality": 1 }, { "Id": 16, "timestamp": 1547799943, "quality": 1, "size": 88 }, { "Id": 10, "timestamp": 1547799966, "size": 60, "quality": 1 }, { "Id": 23, "timestamp": 1547800003, "quality": 0, "size": 7 }, { "Id": 11, "timestamp": 1547800042, "size": 34, "quality": 1 }, { "Id": 11, "timestamp": 1547800072, "quality": 1, "size": 34 }, { "Id": 34, "timestamp": 1547800087, "size": 114, "quality": 1 }, { "Id": 11, "timestamp": 1547800136, "quality": 1, "size": 32 } ] ]
-								Kühlbox     [ [ { "Id": 5, "timestamp": 1547588718, "quality": 0, "size": 38 } ] ]
-								Kühltasche  [ [ { "fishName": "Karpfen", "Id": 5, "timestamp": 1532891919, "size": 84, "quality": 1 }, { "fishName": "Kaulbarsch", "Id": 7, "timestamp": 1532892059, "quality": 0, "size": 41 } ] ]
-							]]
-
-							if v.Value and v.Value ~= "" then
-								if itemTechnicalName == "clothing" then
-									metadata = "\"[".. v.Value .."]\""
-								elseif itemTechnicalName == "can" then
-									durability = v.Value
-								elseif itemTechnicalName == "donutBox" then
-									durability = v.Value
-								elseif itemTechnicalName == "bambooFishingRod" or itemTechnicalName == "fishingRod" or itemTechnicalName == "expertFishingRod" or itemTechnicalName == "legendaryFishingRod" then
-								--	durability = v.WearLevel
-								elseif itemTechnicalName == "swimmer" or itemTechnicalName == "spinner" then
-								--	durability = v.WearLevel
-								elseif itemTechnicalName == "clubCard" then
-									metadata = "\"[".. v.Value .."]\""
-								elseif itemTechnicalName == "tollTicket" then
-									metadata = "\"[".. v.Value .."]\""
-								end
-							end
-
-							if v.Value and v.Value ~= "" and (itemTechnicalName == "coolingBoxSmall" or itemTechnicalName == "coolingBoxMedium" or itemTechnicalName == "coolingBoxLarge") then
-								outputServerLog("COOLING BOX IN VEHICLE")
-							else
-								if first then first = false else query = query .. ", " end
-								query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. trunkSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
-								trunkSlot[item.Id] = trunkSlot[item.Id] + 1
-								nextId = nextId + 1
-							end
-						end
-					end
-				end
-
-				for _, weapon in pairs(weaponsNew) do
-					if weapon.WeaponId ~= 0 and WeaponMapping[weapon.WeaponId] and inventoriesWeapon[item.Id] then
-						if not weaponBoxSlot[item.Id] then weaponBoxSlot[item.Id] = 1 end
-						local menge = 1
-						local durability = 0
-						local metadata = "NULL"
-
-						if first then
-							first = false
-						else
-							query = query .. ", "
-						end
-
-						if not WeaponMappingAmmunition[weapon.WeaponId] then
-							if WeaponAmmoIsDurability[weapon.WeaponId] then
-								durability = weapon.Amount
-							else
-								menge = weapon.Amount
-							end
-						end
-
-						query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
-						weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
-						nextId = nextId + 1
-
-
-						if WeaponMappingAmmunition[weapon.WeaponId] then
-							query = query .. ", "
-
-							menge = weapon.Amount
-							durability = 0
-							metadata = "NULL"
-							query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
-							weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
-							nextId = nextId + 1
-						end
-					end
-				end
-			else
-				--outputServerLog("[MIGRATION] Unknown trunk " .. tostring(item.Id))
-			end
-
-			if count % 500 == 0 then
-				outputServerLog("[MIGRATION] WAIT VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
-				if not first then
-					first = true
-					sql:queryExec(query, sql:getPrefix())
-					query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
-				end
-			end
-			count = count + 1
-		end
-
-		if not first then sql:queryExec(query, sql:getPrefix()) end
-		outputServerLog("[MIGRATION] FINISH VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
-
-
-		local items = sql:queryFetch("SELECT * FROM ??_depot", sql:getPrefix())
-		local factions = sql:queryFetch("SELECT * FROM ??_factions", sql:getPrefix())
-		local properties = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
-
-		local query = "INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES "
-		local first = true
-		local depotOwners = {}
-		for _, item in pairs(items) do
-			if item.OwnerType == "faction" then
-				for _, v in pairs(factions) do
-					if item.Id == v.Depot then
-						if first then first = false else query = query .. ", " end
-						depotOwners[item.Id] = {ElementId = v.Id, ElementType = 2}
-						query = query .. "(" .. v.Id .. ", 2, 10000, 5)"
-						break
-					end
-				end
-			elseif item.OwnerType == "GroupProperty" then
-				for _, v in pairs(properties) do
-					if item.Id == v.DepotId then
-						if first then first = false else query = query .. ", " end
-						depotOwners[item.Id] = {ElementId = v.Id, ElementType = 7}
-						query = query .. "(" .. v.Id .. ", 7, 40, 6)" -- well
-						break
-					end
-				end
-			end
-		end
-
-		if not first then sql:queryExec(query, sql:getPrefix()) end
-
-		local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = 2 OR ElementType = 7", sql:getPrefix())
-		local inventories = {}
-
-		for _, inventory in pairs(inventoriesDb) do
-			for depot, v in pairs(depotOwners) do
-				if v.ElementType == inventory.ElementType and v.ElementId == inventory.ElementId then
-					inventories[depot] = inventory.Id
-					break
-				end
-			end
-		end
-
-
-		local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
-		local first = true
-		local total = table.size(items)
-		local count = 1
-		local depotSlot = {}
-
-		for _, item in pairs(items) do
-			local inventoryId = inventories[item.Id]
-			local weapons = fromJSON(item.Weapons)
-			local items2 = fromJSON(item.Items)
-			local equipments = item.Equipments and fromJSON(item.Equipments) or false
-
-			if weapons then
-				for _, weapon in pairs(weapons) do
-					if weapon.Id ~= 0 and (weapon.Waffe ~= 0 or weapon.Munition ~= 0) and WeaponMapping[weapon.Id] then
-						if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
-
-						for i = 1, weapon.Waffe, 1 do
-							if first then first = false else query = query .. ", " end
-							local menge = 1
-							local durability = 0
-							local metadata = "NULL"
-
-							if not WeaponMappingAmmunition[weapon.Id] then
-								--[[
-								if WeaponAmmoIsDurability[weapon.Id] then
-									durability = weapon.Munition
-								else
-									menge = weapon.Munition
-								end
-								]]
-								-- TODO well fucked?
-							end
-
-							query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[WeaponMapping[weapon.Id]] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
-							depotSlot[inventoryId] = depotSlot[inventoryId] + 1
-							nextId = nextId + 1
-						end
-
-
-						if WeaponMappingAmmunition[weapon.Id] and weapon.Munition ~= 0 then
-							if first then first = false else query = query .. ", " end
-
-							menge = weapon.Munition
-							durability = 0
-							metadata = "NULL"
-							query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.Id]] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
-							depotSlot[inventoryId] = depotSlot[inventoryId] + 1
-							nextId = nextId + 1
-						end
-					end
-				end
-			end
-
-			if items2 then
-				for _, v in pairs(items2) do
+			for _, v in pairs(itemsNew) do
+				if v.Item ~= "none" and v.Item ~= "" then
 					if ItemMapping[v.Item] then
 						local itemTechnicalName = ItemMapping[v.Item]
-						if first then first = false else query = query .. ", " end
-						if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
 
 						local menge = v.Amount
 						local durability = 0
 						local metadata = "NULL"
 
 						--[[
-							Kleine Kühltasche
-							Kühlbox
-							Kühltasche
+							Kleine Kühltasche [ [ { "Id": 10, "timestamp": 1547756920, "size": 61, "quality": 1 }, { "Id": 10, "timestamp": 1547756954, "quality": 1, "size": 56 }, { "Id": 11, "timestamp": 1547756983, "size": 29, "quality": 0 }, { "Id": 16, "timestamp": 1547757012, "quality": 1, "size": 107 }, { "Id": 11, "timestamp": 1547757055, "size": 33, "quality": 1 }, { "Id": 16, "timestamp": 1547757084, "quality": 1, "size": 92 }, { "Id": 10, "timestamp": 1547757111, "size": 56, "quality": 1 }, { "Id": 11, "timestamp": 1547757151, "quality": 0, "size": 27 }, { "Id": 11, "timestamp": 1547757180, "size": 32, "quality": 1 }, { "Id": 10, "timestamp": 1547757201, "quality": 0, "size": 43 }, { "Id": 10, "timestamp": 1547757226, "size": 62, "quality": 1 }, { "Id": 10, "timestamp": 1547757253, "quality": 1, "size": 55 }, { "Id": 16, "timestamp": 1547757625, "size": 108, "quality": 1 }, { "Id": 16, "timestamp": 1547757672, "quality": 1, "size": 97 }, { "Id": 11, "timestamp": 1547757722, "size": 27, "quality": 0 }, { "Id": 10, "timestamp": 1547757818, "quality": 1, "size": 47 }, { "Id": 11, "timestamp": 1547757885, "size": 20, "quality": 0 }, { "Id": 11, "timestamp": 1547757927, "quality": 0, "size": 25 }, { "Id": 16, "timestamp": 1547758015, "size": 80, "quality": 1 }, { "Id": 11, "timestamp": 1547799344, "quality": 1, "size": 37 }, { "Id": 16, "timestamp": 1547799373, "size": 106, "quality": 1 }, { "Id": 10, "timestamp": 1547799403, "quality": 1, "size": 47 }, { "Id": 23, "timestamp": 1547799433, "size": 13, "quality": 1 }, { "Id": 23, "timestamp": 1547799467, "quality": 1, "size": 17 }, { "Id": 19, "timestamp": 1547799495, "size": 34, "quality": 0 }, { "Id": 34, "timestamp": 1547799526, "quality": 1, "size": 104 }, { "Id": 10, "timestamp": 1547799547, "size": 52, "quality": 1 }, { "Id": 16, "timestamp": 1547799580, "quality": 3, "size": 155 }, { "Id": 19, "timestamp": 1547799602, "size": 36, "quality": 1 }, { "Id": 11, "timestamp": 1547799643, "quality": 1, "size": 32 }, { "Id": 11, "timestamp": 1547799696, "size": 53, "quality": 3 }, { "Id": 23, "timestamp": 1547799721, "quality": 1, "size": 16 }, { "Id": 16, "timestamp": 1547799748, "size": 104, "quality": 1 }, { "Id": 23, "timestamp": 1547799780, "quality": 0, "size": 10 }, { "Id": 19, "timestamp": 1547799811, "size": 43, "quality": 1 }, { "Id": 16, "timestamp": 1547799837, "quality": 1, "size": 83 }, { "Id": 19, "timestamp": 1547799868, "size": 41, "quality": 1 }, { "Id": 23, "timestamp": 1547799900, "quality": 1, "size": 16 }, { "Id": 34, "timestamp": 1547799921, "size": 105, "quality": 1 }, { "Id": 16, "timestamp": 1547799943, "quality": 1, "size": 88 }, { "Id": 10, "timestamp": 1547799966, "size": 60, "quality": 1 }, { "Id": 23, "timestamp": 1547800003, "quality": 0, "size": 7 }, { "Id": 11, "timestamp": 1547800042, "size": 34, "quality": 1 }, { "Id": 11, "timestamp": 1547800072, "quality": 1, "size": 34 }, { "Id": 34, "timestamp": 1547800087, "size": 114, "quality": 1 }, { "Id": 11, "timestamp": 1547800136, "quality": 1, "size": 32 } ] ]
+							Kühlbox     [ [ { "Id": 5, "timestamp": 1547588718, "quality": 0, "size": 38 } ] ]
+							Kühltasche  [ [ { "fishName": "Karpfen", "Id": 5, "timestamp": 1532891919, "size": 84, "quality": 1 }, { "fishName": "Kaulbarsch", "Id": 7, "timestamp": 1532892059, "quality": 0, "size": 41 } ] ]
 						]]
+
 						if v.Value and v.Value ~= "" then
 							if itemTechnicalName == "clothing" then
 								metadata = "\"[".. v.Value .."]\""
@@ -1755,61 +1556,265 @@ function InventoryManager:migrate()
 							end
 						end
 
-						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
-						depotSlot[inventoryId] = depotSlot[inventoryId] + 1
-						nextId = nextId + 1
+						if v.Value and v.Value ~= "" and (itemTechnicalName == "coolingBoxSmall" or itemTechnicalName == "coolingBoxMedium" or itemTechnicalName == "coolingBoxLarge") then
+							outputServerLog("COOLING BOX IN VEHICLE")
+						else
+							if first then first = false else query = query .. ", " end
+							query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. trunkSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+							trunkSlot[item.Id] = trunkSlot[item.Id] + 1
+							nextId = nextId + 1
+						end
 					end
 				end
 			end
 
-			--[[
-				[ {
-					"Rauchgranate": 0,
-					"Gasgranate": 0,
-					"Granate": 0,
-					"Gasmaske": 0,
-					"Fallschirm": 0,
-					"SLAM": 0,
-					"DefuseKit": 0,
-					"RPG-7": 0,
-					"Scharfschützengewehr": 0
-				} ]
-			]]
+			for _, weapon in pairs(weaponsNew) do
+				if weapon.WeaponId ~= 0 and WeaponMapping[weapon.WeaponId] and inventoriesWeapon[item.Id] then
+					if not weaponBoxSlot[item.Id] then weaponBoxSlot[item.Id] = 1 end
+					local menge = 1
+					local durability = 0
+					local metadata = "NULL"
 
-			if equipments then
-				for name, amount in pairs(equipments) do
-					local itemTechnicalName = ItemMapping[name]
-					if itemTechnicalName and amount > 0 then
+					if first then
+						first = false
+					else
+						query = query .. ", "
+					end
+
+					if not WeaponMappingAmmunition[weapon.WeaponId] then
+						if WeaponAmmoIsDurability[weapon.WeaponId] then
+							durability = weapon.Amount
+						else
+							menge = weapon.Amount
+						end
+					end
+
+					query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMapping[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+					weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
+					nextId = nextId + 1
+
+
+					if WeaponMappingAmmunition[weapon.WeaponId] then
+						query = query .. ", "
+
+						menge = weapon.Amount
+						durability = 0
+						metadata = "NULL"
+						query = query .. "(" .. nextId .. ", " .. inventoriesWeapon[item.Id].. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.WeaponId]] .. ", " .. weaponBoxSlot[item.Id] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						weaponBoxSlot[item.Id] = weaponBoxSlot[item.Id] + 1
+						nextId = nextId + 1
+					end
+				end
+			end
+		else
+			--outputServerLog("[MIGRATION] Unknown trunk " .. tostring(item.Id))
+		end
+
+		if count % 500 == 0 then
+			outputServerLog("[MIGRATION] WAIT VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
+			if not first then
+				first = true
+				sql:queryExec(query, sql:getPrefix())
+				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			end
+		end
+		count = count + 1
+	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
+	outputServerLog("[MIGRATION] FINISH VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
+
+
+	local items = sql:queryFetch("SELECT * FROM ??_depot", sql:getPrefix())
+	local factions = sql:queryFetch("SELECT * FROM ??_factions", sql:getPrefix())
+	local properties = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
+
+	local query = "INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES "
+	local first = true
+	local depotOwners = {}
+	for _, item in pairs(items) do
+		if item.OwnerType == "faction" then
+			for _, v in pairs(factions) do
+				if item.Id == v.Depot then
+					if first then first = false else query = query .. ", " end
+					depotOwners[item.Id] = {ElementId = v.Id, ElementType = 2}
+					query = query .. "(" .. v.Id .. ", " .. DbElementType.Faction .. ", 10000, 5)"
+					break
+				end
+			end
+		elseif item.OwnerType == "GroupProperty" then
+			for _, v in pairs(properties) do
+				if item.Id == v.DepotId then
+					if first then first = false else query = query .. ", " end
+					depotOwners[item.Id] = {ElementId = v.Id, ElementType = 7}
+					query = query .. "(" .. v.Id .. ", " .. DbElementType.Property .. ", 40, 6)" -- well
+					break
+				end
+			end
+		end
+	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
+
+	local inventoriesDb = sql:queryFetch("SELECT * FROM ??_inventories WHERE ElementType = " .. DbElementType.Faction .. " OR ElementType = " .. DbElementType.Property, sql:getPrefix())
+	local inventories = {}
+
+	for _, inventory in pairs(inventoriesDb) do
+		for depot, v in pairs(depotOwners) do
+			if v.ElementType == inventory.ElementType and v.ElementId == inventory.ElementId then
+				inventories[depot] = inventory.Id
+				break
+			end
+		end
+	end
+
+
+	local query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+	local first = true
+	local total = table.size(items)
+	local count = 1
+	local depotSlot = {}
+
+	for _, item in pairs(items) do
+		local inventoryId = inventories[item.Id]
+		local weapons = fromJSON(item.Weapons)
+		local items2 = fromJSON(item.Items)
+		local equipments = item.Equipments and fromJSON(item.Equipments) or false
+
+		if weapons then
+			for _, weapon in pairs(weapons) do
+				if weapon.Id ~= 0 and (weapon.Waffe ~= 0 or weapon.Munition ~= 0) and WeaponMapping[weapon.Id] then
+					if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
+
+					for i = 1, weapon.Waffe, 1 do
 						if first then first = false else query = query .. ", " end
-						if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
-
-						local menge = amount
+						local menge = 1
 						local durability = 0
 						local metadata = "NULL"
 
-						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						if not WeaponMappingAmmunition[weapon.Id] then
+							--[[
+							if WeaponAmmoIsDurability[weapon.Id] then
+								durability = weapon.Munition
+							else
+								menge = weapon.Munition
+							end
+							]]
+							-- TODO well fucked?
+						end
+
+						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[WeaponMapping[weapon.Id]] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+						depotSlot[inventoryId] = depotSlot[inventoryId] + 1
+						nextId = nextId + 1
+					end
+
+
+					if WeaponMappingAmmunition[weapon.Id] and weapon.Munition ~= 0 then
+						if first then first = false else query = query .. ", " end
+
+						menge = weapon.Munition
+						durability = 0
+						metadata = "NULL"
+						query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[WeaponMappingAmmunition[weapon.Id]] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
 						depotSlot[inventoryId] = depotSlot[inventoryId] + 1
 						nextId = nextId + 1
 					end
 				end
 			end
-
-			if count % 500 == 0 then
-				outputServerLog("[MIGRATION] WAIT VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
-				if not first then
-					first = true
-					sql:queryExec(query, sql:getPrefix())
-					query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
-				end
-			end
-			count = count + 1
 		end
 
-		if not first then sql:queryExec(query, sql:getPrefix()) end
+		if items2 then
+			for _, v in pairs(items2) do
+				if ItemMapping[v.Item] then
+					local itemTechnicalName = ItemMapping[v.Item]
+					if first then first = false else query = query .. ", " end
+					if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
 
-		outputServerLog("========================================")
-		outputServerLog("=     INVENTORY MIGRATION FINISHED     =")
-		outputServerLog("========================================")
-		setServerPassword()
-	end, 1, 1)
+					local menge = v.Amount
+					local durability = 0
+					local metadata = "NULL"
+
+					--[[
+						Kleine Kühltasche
+						Kühlbox
+						Kühltasche
+					]]
+					if v.Value and v.Value ~= "" then
+						if itemTechnicalName == "clothing" then
+							metadata = "\"[".. v.Value .."]\""
+						elseif itemTechnicalName == "can" then
+							durability = v.Value
+						elseif itemTechnicalName == "donutBox" then
+							durability = v.Value
+						elseif itemTechnicalName == "bambooFishingRod" or itemTechnicalName == "fishingRod" or itemTechnicalName == "expertFishingRod" or itemTechnicalName == "legendaryFishingRod" then
+						--	durability = v.WearLevel
+						elseif itemTechnicalName == "swimmer" or itemTechnicalName == "spinner" then
+						--	durability = v.WearLevel
+						elseif itemTechnicalName == "clubCard" then
+							metadata = "\"[".. v.Value .."]\""
+						elseif itemTechnicalName == "tollTicket" then
+							metadata = "\"[".. v.Value .."]\""
+						end
+					end
+
+					query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+					depotSlot[inventoryId] = depotSlot[inventoryId] + 1
+					nextId = nextId + 1
+				end
+			end
+		end
+
+		--[[
+			[ {
+				"Rauchgranate": 0,
+				"Gasgranate": 0,
+				"Granate": 0,
+				"Gasmaske": 0,
+				"Fallschirm": 0,
+				"SLAM": 0,
+				"DefuseKit": 0,
+				"RPG-7": 0,
+				"Scharfschützengewehr": 0
+			} ]
+		]]
+
+		if equipments then
+			for name, amount in pairs(equipments) do
+				local itemTechnicalName = ItemMapping[name]
+				if itemTechnicalName and amount > 0 then
+					if first then first = false else query = query .. ", " end
+					if not depotSlot[inventoryId] then depotSlot[inventoryId] = 1 end
+
+					local menge = amount
+					local durability = 0
+					local metadata = "NULL"
+
+					query = query .. "(" .. nextId .. ", " .. inventoryId .. ", " .. ItemMappingId[itemTechnicalName] .. ", " .. depotSlot[inventoryId] .. ", " .. menge .. ", " .. durability .. ", " .. metadata .. ")"
+					depotSlot[inventoryId] = depotSlot[inventoryId] + 1
+					nextId = nextId + 1
+				end
+			end
+		end
+
+		if count % 500 == 0 then
+			outputServerLog("[MIGRATION] WAIT VEHICLE TRUNK " .. tostring(count - 1) .. "/" .. tostring(total))
+			if not first then
+				first = true
+				sql:queryExec(query, sql:getPrefix())
+				query = "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, Slot, Amount, Durability, Metadata) VALUES "
+			end
+		end
+		count = count + 1
+	end
+
+	if not first then sql:queryExec(query, sql:getPrefix()) end
+
+	outputServerLog("========================================")
+	outputServerLog("=     INVENTORY MIGRATION FINISHED     =")
+	outputServerLog("========================================")
+	setServerPassword()
+	iprint(debug.gethook())
+	iprint({h1 = h1, h2 = h2, h3 = h3, h4 = h4})
+	debug.sethook(nil, h1, h2, h3) -- enable infinity loop check
+	iprint(debug.gethook())
 end
