@@ -11,7 +11,7 @@ Easter.startDay = 95
 Easter.today = getRealTime().yearday
 Easter.RabbitObjects = { -- true = createObject ; false = removeWorldModel
     [4] = {
-        {isNew=true, id=6959, x=2772.5, y=-1383.54, z=9.2, xr=0, yr=270, zr=0}
+        {isNew=true, id=6959, x=2772.6, y=-1383.54, z=9.2, xr=0, yr=270, zr=0}
     },
     [8] = {
         {isNew=false, id=10671, radius=8.4, x=-2454.252, y=-125.72504, z=27.12412},
@@ -28,7 +28,7 @@ addRemoteEvents{"Easter:requestHidingRabbits", "Easter:onHidingRabbitFound"}
 function Easter:constructor()
     self.m_Objects = {}
     for day, data in pairs(Easter.RabbitObjects) do
-        if getRealTime().yearday - Easter.startDay > day then
+        if getRealTime().yearday - Easter.startDay >= day then
             for index, object in pairs(data) do
                 if object.isNew then
                     self.m_Objects[#self.m_Objects+1] = createObject(object.id, object.x, object.y, object.z, object.xr, object.yr, object.zr)
