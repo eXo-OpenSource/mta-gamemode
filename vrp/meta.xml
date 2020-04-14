@@ -1906,6 +1906,7 @@
 
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
+	<vrpfile src="files/images/Textures/JetdoorMetal.png" />
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
 	<vrpfile src="files/images/Textures/BusTexture.png"/>
 	<vrpfile src="files/images/Textures/MechanicTexture.png"/>
