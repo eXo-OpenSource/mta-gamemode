@@ -9,9 +9,19 @@ HelpGUI = inherit(GUIForm)
 inherit(Singleton, HelpGUI)
 
 function HelpGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.5/2, screenHeight/2 - screenHeight*0.65/2, screenWidth*0.5, screenHeight*0.65)
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 28)
+	self.m_Height = grid("y", 16)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+
+	-- GUIForm.constructor(self, screenWidth/2 - screenWidth*0.5/2, screenHeight/2 - screenHeight*0.65/2, screenWidth*0.5, screenHeight*0.65)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Hilfe", true, true, self)
+	-- "https://forum.exo-reallife.de/exo-api?token=%s"
+	self.m_WebView = GUIGridWebView:new(1, 1, 27, 15, ("https://forum.exo-reallife.de/index.php?exo-api&token=%s"):format(localPlayer:getSessionId()), true, self.m_Window)
+
+	--[[
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.9, self.m_Window)
 	self.m_Grid:addColumn("", 0.95)
 	self.m_WebView = GUIWebView:new(self.m_Width*0.28, self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.9, "http://mta/local/files/html/help.htm", true, self.m_Window)
@@ -64,6 +74,7 @@ function HelpGUI:constructor()
 		self.m_Grid:onInternalSelectItem(item)
 		item.onLeftClick()
 	end
+	]]
 end
 
 function HelpGUI:select(title)
