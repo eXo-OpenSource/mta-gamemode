@@ -138,7 +138,7 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 			end
 		end
 	end
-	if hasModsBan then
+	if hasModsBan and #tNames > 0 then
 		tNames[#tNames+1] = "Du darfst keine Fahrzeuge modden!"
 	end
 	if #tNames > 0 then
