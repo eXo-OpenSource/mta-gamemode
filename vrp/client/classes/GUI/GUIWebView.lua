@@ -22,14 +22,14 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self:setRenderingEnabled(true)
     addEventHandler("onClientBrowserLoadingFailed", root, self.m_OutputLoadErrorFunc)
     addEventHandler("onClientBrowserCreated", self.m_Browser, function() source:loadURL(url) end)
-    addEventHandler("onClientBrowserDocumentReady", self.m_Browser, 
-    function(...) 
-        if self.onDocumentReady then self:onDocumentReady(...) end 
+    addEventHandler("onClientBrowserDocumentReady", self.m_Browser,
+    function(...)
+        if self.onDocumentReady then self:onDocumentReady(...) end
         -- Request redraw
         nextframe(function()
             self:anyChange()
         end)
-        
+
     end)
     addEventHandler("onClientBrowserInputFocusChanged", self.m_Browser, function(gainedFocus) guiSetInputEnabled(gainedFocus) end)
 end
@@ -133,12 +133,12 @@ end
 
 function GUIWebView:onInternalMouseWheelDown()
     if not self.m_ControlsEnabled then return end
-    self.m_Browser:injectMouseWheel(getKeyState("lshift") and -40 or -20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and -80 or -60, 0)
 end
 
 function GUIWebView:onInternalMouseWheelUp()
     if not self.m_ControlsEnabled then return end
-    self.m_Browser:injectMouseWheel(getKeyState("lshift") and 40 or 20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and 80 or 60, 0)
 end
 
 function GUIWebView:onCursorMove(relX, relY, absX, absY)
