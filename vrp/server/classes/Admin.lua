@@ -1123,7 +1123,7 @@ local tpTable = {
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
-        ["pd"] =            {["pos"] = Vector3(255.34, 66.01, 1003.64),  	["typ"] = "Fraktionen", ["interior"] = 6},
+        ["pd"] =            {["pos"] = Vector3(246.39999, 107.6, 1003),  	["typ"] = "Fraktionen", ["interior"] = 10},
         ["pdgarage"] =      {["pos"] = Vector3(1584.75, -1688.79, 6.22),  	["typ"] = "Fraktionen", ["interior"] = 0, ["dimension"]  = 5},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},

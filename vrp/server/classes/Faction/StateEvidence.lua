@@ -21,7 +21,7 @@ addRemoteEvents{"State:startEvidenceTruck"}
 function StateEvidence:constructor()
     addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 	
-	self:createEvidencePickup(255.29, 90.78, 1002.45, 6, 0)
+	self:createEvidencePickup(233.47, 111.40, 1002.8, 10, 0)
 	self:createEvidencePickup(1579.43, -1691.53, 5.92, 0, 5)
 	self:loadObjectData()
 end

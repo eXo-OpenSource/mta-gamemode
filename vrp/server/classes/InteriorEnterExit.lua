@@ -14,6 +14,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	
 	self.m_EnterMarker = createMarker(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)
 	self.m_EnterMarker:setInterior(enterInterior or 0)
+
 	ElementInfo:new(self.m_EnterMarker, "Eingang", 1.2, "Walking", true)
 	--local colEnter = createColSphere(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-0.8), 2)
 	--colEnter:setInterior(enterInterior or 0)
@@ -34,7 +35,6 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 
 	self.m_EntranceData =  {interiorPosition, enterRotation, interiorId, dimension}
 	self.m_ExitData = {entryPosition, exitRotation, enterInterior or 0, enterDimension or 0}
-
 	--[[addEventHandler("onColShapeHit", colEnter,
 	function(hitElement, matchingDimension)
 		if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() and not isPedInVehicle(hitElement) then
@@ -63,6 +63,11 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 			player:triggerEvent("ColshapeStreamer:registerColshape", {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit")
 		end
 	end
+end
+
+function InteriorEnterExit:setCustomText(enter, exit) 
+	self.m_EntryText = enter
+	self.m_ExitText = exit
 end
 
 function InteriorEnterExit:enter(player)
@@ -157,7 +162,7 @@ function InteriorEnterExit:onEnterColHit(hitElement)
 	if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() and not isPedInVehicle(hitElement) then
 		if hitElement:getInterior() == source:getInterior() then
 			hitElement.m_LastEnterExit = {self.m_Id, "enter"}
-			hitElement:triggerEvent("onTryEnterExit", self.m_EnterMarker, "Eingang")
+			hitElement:triggerEvent("onTryEnterExit", self.m_EnterMarker, self.m_EntryText or "Eingang")
 		end
 	end
 end
@@ -166,7 +171,7 @@ function InteriorEnterExit:onExitColHit(hitElement)
 	if getElementType(hitElement) == "player" and hitElement:getDimension() == source:getDimension() then
 		if hitElement:getInterior() == source:getInterior() then
 			hitElement.m_LastEnterExit = {self.m_Id, "exit"}
-			hitElement:triggerEvent("onTryEnterExit", self.m_ExitMarker, "Ausgang")
+			hitElement:triggerEvent("onTryEnterExit", self.m_ExitMarker, self.m_ExitText or "Ausgang")
 		end
 	end
 end
