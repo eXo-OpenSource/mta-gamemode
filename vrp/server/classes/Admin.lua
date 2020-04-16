@@ -1787,8 +1787,10 @@ end
 function Admin:Event_adminDealSmodeReflectionDamage(attacker, weapon, bodypart, loss)
 	if client == source and client:getPublicSync("supportMode") then
 		if isElement(attacker) and attacker.type == "player" then
-			attacker:setHealth(attacker.health - loss)
-			attacker:setAnimation("fight_c", "hitc_3", -1, false, true, true, true, 250, true)
+			-- attacker:setHealth(attacker.health - loss)
+			-- (player, loss, attacker, weapon, bodypart)
+			Guns:getSingleton():damagePlayer(attacker, loss, attacker, weapon, bodypart)
+			attacker:setAnimation("ped", "hit_front", -1, false, true, true, false, 250, true)
 		end
 	end
 end
