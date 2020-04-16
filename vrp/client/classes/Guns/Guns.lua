@@ -201,7 +201,11 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		cancelEvent()
 	else
 		if attacker and weapon and source == localPlayer and attacker:getPublicSync("supportMode") and weapon == 0 then
-			source:setAnimation("fight_c", "hitc_3", -1, false, true, true, true, 250, true)
+			-- source:setAnimation("fight_c", "hitc_3", -1, false, true, true, true, 250, true)
+			localPlayer:setVelocity(0, 0, 0.2)
+			setTimer(function(forward)
+				localPlayer:setVelocity(forward * Vector3(0.2, 0.2, 0))
+			end, 200, 1, attacker.matrix:getForward())
 		end
 
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze and not NetworkMonitor:getSingleton():getPingDisabled() and not NetworkMonitor:getSingleton():getLossDisabled() then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
