@@ -88,7 +88,7 @@ function Guns:constructor()
 	self.m_TracerEnabled = false
 	self.m_hitpath = fileExists("_custom/files/audio/hitsound.wav") and "_custom/files/audio/hitsound.wav" or "files/audio/hitsound.wav"
 
-	WeaponManager:new() 
+	WeaponManager:new()
 
 end
 
@@ -167,7 +167,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
 	local bRangeCheck = true
 	local isThrowingHit = false
-	if isValidElement(attacker, "object") then 
+	if isValidElement(attacker, "object") then
 		if self:onHitByThrowObject(attacker, source, weapon, bodypart, loss) then -- check if the object that damaged the player is a throwable
 			return cancelEvent()
 		end
@@ -185,7 +185,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 				triggerServerEvent("onTaser",attacker,source)
 			end
 		end
-		if localPlayer == source then 
+		if localPlayer == source then
 			if InjuryTreatmentGUI:isInstantiated() then
 				triggerServerEvent("Damage:onCancelTreat", localPlayer)
 			end
@@ -200,6 +200,10 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
+		if attacker and weapon and source == localPlayer and attacker:getPublicSync("supportMode") and weapon == 0 then
+			source:setAnimation("fight_c", "hitc_3", -1, false, true, true, true, 250, true)
+		end
+
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze and not NetworkMonitor:getSingleton():getPingDisabled() and not NetworkMonitor:getSingleton():getLossDisabled() then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] or EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
@@ -249,11 +253,11 @@ end
 function Guns:onHitByThrowObject(attacker, target, weapon, bodypart, loss)
 	local throwingPlayer =  attacker:getData("Throw:responsiblePlayer")
 	if throwingPlayer then
-		if throwingPlayer == localPlayer then 
-			if not attacker:getData("Throw:entityDamageDisabled") then 
+		if throwingPlayer == localPlayer then
+			if not attacker:getData("Throw:entityDamageDisabled") then
 				triggerServerEvent("Throw:reportDamage", localPlayer, target, attacker, bodypart)
 			end
-			self.m_HitMark = true 
+			self.m_HitMark = true
 			self.m_HitAccuracy = 1.3
 			self.m_HitMarkRed = true
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
@@ -270,11 +274,11 @@ end
 function Guns:onPedHitByThrowObject(attacker, ped, weapon, bodypart)
 	local throwingPlayer =  attacker:getData("Throw:responsiblePlayer")
 	if throwingPlayer then
-		if throwingPlayer == localPlayer then 
-			if not attacker:getData("Throw:entityDamageDisabled") then 
+		if throwingPlayer == localPlayer then
+			if not attacker:getData("Throw:entityDamageDisabled") then
 				triggerServerEvent("Throw:reportDamage", localPlayer, ped, attacker, bodypart)
 			end
-			self.m_HitMark = true 
+			self.m_HitMark = true
 			self.m_HitAccuracy = 1.3
 			self.m_HitMarkRed = true
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
@@ -595,7 +599,7 @@ function Guns:drawBloodScreen()
 end
 
 function Guns:Event_onClientPedDamage(attacker, weapon, bodypart)
-	if isValidElement(attacker, "object") then 
+	if isValidElement(attacker, "object") then
 		self:onPedHitByThrowObject(attacker, source, weapon, bodypart) -- check if the object that damaged the ped is a throwable
 	end
 	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then
@@ -683,20 +687,20 @@ function Guns:toggleFastShot(bool)
 end
 
 function Guns:throwProjectile(projectile, force, leftHanded)
-	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25) 
+	local bx, by, bz = getPedBonePosition(localPlayer, leftHanded and 35 or 25)
 	local x, y, z, x2, y2, z2 = getCameraMatrix()
-	local x, y, z = normalize(x2-x, y2-y, z2-z) 
+	local x, y, z = normalize(x2-x, y2-y, z2-z)
 	createProjectile(localPlayer, projectile, bx, by, bz, 1, false, 0, 0, 0, x*force, y*force, z*force)
 	localPlayer.m_HasThrownGrenade = false
 end
 
-function Guns:renderThrowPreparation() 
+function Guns:renderThrowPreparation()
 	localPlayer.m_GrenadeThrowProgress = localPlayer.m_GrenadeThrowProgress - 0.001
 	setPedAnimationProgress(localPlayer, "WEAPON_throw", localPlayer.m_GrenadeThrowProgress)
 	localPlayer.m_GrenadeThrowForce = localPlayer.m_GrenadeThrowForce + 0.02
 
-	if localPlayer.m_GrenadeThrowProgress < 0.12 then 
-		removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind) 
+	if localPlayer.m_GrenadeThrowProgress < 0.12 then
+		removeEventHandler("onClientRender", root, self.m_GrenadeThrowBind)
 	end
 end
 
