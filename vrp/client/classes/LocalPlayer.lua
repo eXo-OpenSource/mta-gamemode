@@ -73,7 +73,7 @@ function LocalPlayer:constructor()
 	end)
 
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
-	self.m_CancelEvent = function()	cancelEvent() end
+	self.m_HandleDeactivatedDamage = bind(self.Event_DeactivatedDamage, self)
 
 	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37) --hospital
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col)
@@ -321,10 +321,18 @@ end
 function LocalPlayer:disableDamage(bstate)
 	if bstate then
 		Guns:getSingleton():disableDamage(bstate)
-		addEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelEvent, true, "high")
+		addEventHandler("onClientPlayerDamage", localPlayer, self.m_HandleDeactivatedDamage, true, "high")
 	else
 		Guns:getSingleton():disableDamage(bstate)
-		removeEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelEvent)
+		removeEventHandler("onClientPlayerDamage", localPlayer, self.m_HandleDeactivatedDamage)
+	end
+end
+
+function LocalPlayer:Event_DeactivatedDamage(attacker, weapon, bodypart, loss)
+	cancelEvent()
+
+	if localPlayer:getPublicSync("supportMode") then
+		triggerServerEvent("adminDealSmodeReflectionDamage", localPlayer, attacker, weapon, bodypart, loss)
 	end
 end
 

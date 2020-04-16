@@ -81,7 +81,7 @@ function Admin:constructor()
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
 	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck",
 	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction", "adminRequestMultiAccounts",
-	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial"}
+	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial", "adminDealSmodeReflectionDamage"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -115,6 +115,8 @@ function Admin:constructor()
 	addEventHandler("adminCreateMultiAccount", root, bind(self.Event_adminCreateMultiAccount, self))
 	addEventHandler("adminRequestSerialAccounts", root, bind(self.Event_adminRequestSerialAccounts, self))
 	addEventHandler("adminDeleteAccountFromSerial", root, bind(self.Event_adminDeleteAccountFromSerial, self))
+	addEventHandler("adminDealSmodeReflectionDamage", root, bind(self.Event_adminDealSmodeReflectionDamage, self))
+
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -633,13 +635,13 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 	elseif func == "spect" then
 		if not target then return end
 		--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
-		if admin:getPrivateSync("isSpecting") then 
-			if (type(admin.m_SpectStop) == "function") then 
-				admin.m_SpectStop() 
-			else 
-				admin:sendError("Beende das spectaten zuerst!") 
-				return 
-			end 
+		if admin:getPrivateSync("isSpecting") then
+			if (type(admin.m_SpectStop) == "function") then
+				admin.m_SpectStop()
+			else
+				admin:sendError("Beende das spectaten zuerst!")
+				return
+			end
 		end
 
 		admin.m_IsSpecting = true
@@ -725,9 +727,9 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		else
 			admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
 		end
-	elseif func == "throwaway" then 
-		if target and isElement(target) then 
-			if target.vehicle then 
+	elseif func == "throwaway" then
+		if target and isElement(target) then
+			if target.vehicle then
 				target:removeFromVehicle()
 			end
 			ThrowObject:new(admin, target:getModel()):replaceEntity(target)
@@ -1779,5 +1781,14 @@ function Admin:toggleInvisible(player)
 	else
 		player:setPublicSync("isInvisible", true)
 		player:setAlpha(0)
+	end
+end
+
+function Admin:Event_adminDealSmodeReflectionDamage(attacker, weapon, bodypart, loss)
+	if client == source and client:getPublicSync("supportMode") then
+		if isElement(attacker) and attacker.type == "player" then
+			attacker:setHealth(attacker.health - loss)
+			attacker:setAnimation("fight_c", "hitc_3", -1, false, true, true, true, 250, true)
+		end
 	end
 end

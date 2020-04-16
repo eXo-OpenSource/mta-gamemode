@@ -46,7 +46,7 @@ FACTION_MIN_RANK_KARMA = {
 }
 
 
-FACTION_STATE_BADGES = 
+FACTION_STATE_BADGES =
 {
 	[1] = "SAPD",
 	[2] = "SAPD-D",
@@ -54,12 +54,12 @@ FACTION_STATE_BADGES =
 	[4] = "RESCUE"
 }
 
-FACION_STATE_VEHICLE_MARK = 
+FACION_STATE_VEHICLE_MARK =
 {
 	[1] = "PD",
 	[2] = "H",
 	[3] = "D",
-	[4] = "R", 
+	[4] = "R",
 }
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
@@ -87,7 +87,7 @@ factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true,[285]=true}
 factionWeapons[1] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[1] = Vector3(2741.90, -2405.60, 12.6)
-factionSpawnpoint[1] = {Vector3(234.32, 71.69, 1005.04, 0, 0), 6, 0}
+factionSpawnpoint[1] = {Vector3(228.09, 110.949, 1003.219), 10, 0}
 factionNavigationpoint[1] = Vector3(1552.278, -1675.725, 12.6)
 
 -- ID 2 = FBI:
