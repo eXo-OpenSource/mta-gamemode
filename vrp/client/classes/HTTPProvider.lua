@@ -129,7 +129,7 @@ function HTTPProvider.checkFile(filePath, expectedHash)
 	if fileExists(filePath) then
 		local file = fileOpen(filePath)
 		if file then
-			if hash("md5", file:read(file:getSize())) == expectedHash then
+			if string.lower(hash("md5", file:read(file:getSize()))) == expectedHash then
 				file:close()
 				return true
 			end
