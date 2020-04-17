@@ -12,7 +12,7 @@ local radarRange = 20
 
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89, 0, 5) -- PD garare
-	self:createArrestZone(258.54, 109.09, 1003, 10)
+	self:createArrestZone(218.470, 118.571, 999.016, 10)
 	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
 	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
@@ -1418,12 +1418,11 @@ function FactionState:freePlayer(player, prisonBreak)
 		player:sendShortMessage("Du bist aus dem Gefängnis ausgebrochen!")
 		self:sendShortMessage(player:getName().." ist aus dem Gefängnis ausgebrochen!")
 	else
-		setElementDimension(player,0)
-		setElementInterior(player,0)
-		player:setPosition(222.444, 114.467, 999.016)
+		
 		player:setInterior(10)
-		player:setRotation(0, 0, 90)
 		player:setWanteds(0)
+		player:setPosition(256.938, 108.951, 1003.219)
+		player:setRotation(Vector3(0, 0, 90))
 	end
 
 	player:setData("inJail",false, true)
