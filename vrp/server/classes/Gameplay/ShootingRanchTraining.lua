@@ -47,21 +47,22 @@ function ShootingRanchTraining:constructor(player, level)
 end
 
 function ShootingRanchTraining:destructor()
-	self.m_Player:triggerEvent("stopClientShootingRanch")
-
-	local data = self:updateClient()
-	self.m_Player:triggerEvent("showShootingRanchResult", data, self.m_Success, self.m_Player:getTotalAmmo())
-
-	setElementDimension(self.m_Player,0)
-	self.m_Player:setPosition(248.492, 70.665, 1003.641)
-	self.m_Player:setInterior(6)
-	self.m_Player:restoreStorage()
-	self.m_Player:setTakeWeaponsOnLogin(false)
-
-	removeElementData(self.m_Player, "ShootingRanch:Data")
-	toggleAllControls(self.m_Player, true, true, false)
-	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
-	self.m_Player:triggerEvent("disableDamage", false)
+    self.m_Player:triggerEvent("stopClientShootingRanch")
+ 
+    local data = self:updateClient()
+    self.m_Player:triggerEvent("showShootingRanchResult", data, self.m_Success, self.m_Player:getTotalAmmo())
+ 
+    self.m_Player:setInterior(0)
+    self.m_Player:setDimension(0)
+    self.m_Player:setPosition(-7188.076, -2484.753, 32.355)
+ 
+    self.m_Player:restoreStorage()
+    self.m_Player:setTakeWeaponsOnLogin(false)
+ 
+    removeElementData(self.m_Player, "ShootingRanch:Data")
+    toggleAllControls(self.m_Player, true, true, false)
+    if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+    self.m_Player:triggerEvent("disableDamage", false)
 end
 
 function ShootingRanchTraining:onTargetHit(player)
