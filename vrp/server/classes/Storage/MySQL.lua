@@ -7,7 +7,7 @@ function MySQL:constructor(host, port, user, password, database, unixpath)
 	if not self.m_DBHandle then
 		critical_error("MySQL - Could not etablish a database connection: "..database)
 	end
-	self:queryExec("SET NAMES utf8;")
+	self:queryExec("SET NAMES utf8mb4;")
 end
 
 function MySQL.dbPoll(qh, timeout)

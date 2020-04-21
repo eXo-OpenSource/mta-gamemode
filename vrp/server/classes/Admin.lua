@@ -1060,7 +1060,7 @@ end
 
 function Admin:teleportTo(player,cmd,ort)
 local tpTable = {
-        ["noobspawn"] =     {["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
+        ["ns"] =     		{["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
         ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
         ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
@@ -1129,7 +1129,7 @@ local tpTable = {
         ["pdgarage"] =      {["pos"] = Vector3(1584.75, -1688.79, 6.22),  	["typ"] = "Fraktionen", ["interior"] = 0, ["dimension"]  = 5},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
-		["vatos"] =         {["pos"] = Vector3(1882.53, -2029.32, 13.39),	["typ"] = "Fraktionen"},
+		["vatos"] =         {["pos"] = Vector3(2782.422, -1944.273, 13.547),["typ"] = "Fraktionen"},
 		["yakuza"] =       	{["pos"] = Vector3(971.63, -1099.07, 23.90),	["typ"] = "Fraktionen"},
 		["kartell"] =       {["pos"] = Vector3(2529.555, -1465.829, 23.94), ["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(681.93, -478.47, 16.34),  	["typ"] = "Fraktionen"},

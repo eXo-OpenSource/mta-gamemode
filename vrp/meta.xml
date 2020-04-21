@@ -1927,6 +1927,7 @@
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Camo.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Copcar.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SASF_Decal_Bobcat.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/SASF_Decal_Coach.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/PatrolDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/PoliceDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/ChiefDec.png"/>

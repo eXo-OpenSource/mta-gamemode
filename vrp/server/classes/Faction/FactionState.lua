@@ -1834,8 +1834,8 @@ function FactionState:Event_putItemInVehicle(itemName, amount, inventory)
 			local veh = inventory and source or client.vehicle
 			if veh:getFaction() and veh:getFaction():isStateFaction() then
 				if FACTION_TRUNK_SWAT_ITEMS[itemName] then
-					if client.vehicle and client.vehicle:getModel() ~= 427 then
-						client:sendError(_("Dieses Item kann nur in einen Enforcer getan werden!", client))
+					if client.vehicle and not (client.vehicle:getModel() == 427 or client.vehicle:getModel() == 433 or client.vehicle:getModel() == 528) then
+						client:sendError(_("Dieses Item kann nur in einen Enforcer, FBI Truck oder Barracks getan werden!", client))
 						return
 					else
 						if not client.vehicle then
