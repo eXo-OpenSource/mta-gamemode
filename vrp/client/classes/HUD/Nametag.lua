@@ -34,7 +34,7 @@ function Nametag:draw()
 	local cx,cy,cz = getCameraMatrix()
 	local bRifleCheck = self:_weaponCheck()
 	local lpX, lpY, lpZ = getElementPosition(localPlayer)
-	for _, player in pairs(getElementsByType("player", rootw, true)) do
+	for _, player in pairs(getElementsByType("player", root, true)) do
 		if player ~= localPlayer and (player.getPublicSync and not player:getPublicSync("inSmokeGrenade") and not player:getPublicSync("isInvisible")) then
 			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
 			local pX, pY, pZ = getElementPosition(player)
