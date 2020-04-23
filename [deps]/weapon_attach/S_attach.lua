@@ -1,5 +1,6 @@
 for key, player in ipairs(getElementsByType("player")) do
 	setElementData(player, "a:weaponIsConcealed",false)
+	setElementData(player, "a:allWeaponsAreConcealed", false)
 end
 
 local slotChecks =
@@ -47,6 +48,7 @@ function createModel(player, weapon, state, slot)
 	local r = getPedRotation(player)
 	local dim = getElementDimension(player)
 	local int = getElementInterior(player)
+	if getElementData(source, "a:allWeaponsAreConcealed") then return false end
 	if weaponTable[weapon] then
 		local bone = weaponTable[weapon][1]
 		local x = weaponTable[weapon][2]
