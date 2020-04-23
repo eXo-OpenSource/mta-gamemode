@@ -65,6 +65,13 @@ function FactionGUI:constructor()
 		self.m_EquipmentPermGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 	end
 
+	if localPlayer:getFaction():getId() == 3 then
+		self.m_AreaAlarmButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Area Alarm (de-)aktivieren", tabAllgemein):setBarEnabled(true)
+		self.m_AreaAlarmButton.onLeftClick = function()
+			triggerServerEvent("factionStateDeactivateAreaAlarm", localPlayer)
+		end
+	end
+
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
 	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)
