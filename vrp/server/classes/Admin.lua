@@ -1771,16 +1771,15 @@ function Admin:Event_adminDeleteAccountFromSerial(userId, serial)
 end
 
 function Admin:toggleInvisible(player)
-	if player:getRank() ~= RANK.Developer then
-		return
-	end
-
 	if player:getPublicSync("isInvisible") then
 		player:setPublicSync("isInvisible", false)
 		player:setAlpha(255)
+		setElementData(player, "a:allWeaponsAreConcealed", false)
 	else
 		player:setPublicSync("isInvisible", true)
 		player:setAlpha(0)
+		setElementData(player, "a:allWeaponsAreConcealed", true)
+		triggerEvent("WeaponAttach:removeAllWeapons", player)
 	end
 end
 

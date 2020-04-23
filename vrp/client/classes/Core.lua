@@ -88,6 +88,7 @@ function Core:ready() --onClientResourceStart
 	})
 
 	-- Request Browser Domains
+	Admin:new()
 	Browser.requestDomains(DOMAINS, false, self.m_BrowserWhitelistResponse)
 	DxHelper:new()
 	TranslationManager:new()

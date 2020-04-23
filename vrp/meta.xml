@@ -557,6 +557,7 @@
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
+	<script src="client/classes/Admin.lua" type="client"/>
 	<script src="client/classes/Version.lua" type="client"/>
 	<script src="client/classes/HUD/TinyInfoLabel.lua" type="client"/>
 	<script src="client/classes/MTAFixes.lua" type="client"/>
