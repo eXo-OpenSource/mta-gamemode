@@ -91,7 +91,7 @@ function FactionState:constructor()
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
 	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
-	"factionStateCuff", "factionStateUncuff", "factionStateTie"
+	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
@@ -132,6 +132,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateCuff", root, bind(self.Event_cuffPlayer, self))
 	addEventHandler("factionStateUncuff", root, bind(self.Event_uncuffPlayer, self))
 	addEventHandler("factionStateTie", root, bind(self.Event_tiePlayer, self))
+	addEventHandler("factionStateDeactivateAreaAlarm", root, bind(self.Event_DeactivateAreaAlarm, self))
 
 
 	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
@@ -403,6 +404,7 @@ function FactionState:loadArmy(factionId)
 	addEventHandler("onColShapeLeave", self.m_AreaColShape, bind(self.onAreaColShapeLeave, self))
 
 	self.m_AreaAlert = false
+	self.m_AreaAlarmActivated = true
 end
 
 function FactionState:createTakeItemsPickup(pos, int, dim)
@@ -2075,16 +2077,18 @@ function FactionState:sendMoveRequest(targetChannel, text)
 end
 
 function FactionState:onAreaColShapeHit(hitElement, match)
-	if hitElement:getType() == "player" then
-		if (hitElement:getFaction() and not hitElement:getFaction():isStateFaction()) or not hitElement:getFaction() then
-			if not isTimer(self.m_AlertTimer) then
-				if not self.m_AreaAlert then
-					self.m_AlertTimer = setTimer(self.m_AlertBind, 10000, 1)
-					triggerClientEvent("playAreaAlertMessage", root, "blue")
+	if self.m_AreaAlarmActivated then
+		if hitElement:getType() == "player" then
+			if (hitElement:getFaction() and not hitElement:getFaction():isStateFaction()) or not hitElement:getFaction() then
+				if not isTimer(self.m_AlertTimer) then
+					if not self.m_AreaAlert then
+						self.m_AlertTimer = setTimer(self.m_AlertBind, 10000, 1)
+						triggerClientEvent("playAreaAlertMessage", root, "blue")
+					end
 				end
-			end
-			if isTimer(self.m_LeaveTimer) then
-				killTimer(self.m_LeaveTimer)
+				if isTimer(self.m_LeaveTimer) then
+					killTimer(self.m_LeaveTimer)
+				end
 			end
 		end
 	end
@@ -2136,4 +2140,14 @@ function FactionState:forceOpenAreaGates()
 	if self.m_AreaGateSmall.m_Closed == true then
 		self.m_AreaGateSmall:triggerMovement(false, true)
 	end
+end
+
+function FactionState:Event_DeactivateAreaAlarm()
+	if self.m_AreaAlarmActivated then
+		self:stopAreaAlert()
+		self.m_AreaAlarmActivated = false
+	else
+		self.m_AreaAlarmActivated = true
+	end
+	FactionManager.Map[3]:sendShortMessage(("%s hat den Area-Alarm %s!"):format(client:getName(), self.m_AreaAlarmActivated and "aktiviert" or "deaktiviert"))
 end
