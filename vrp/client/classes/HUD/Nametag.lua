@@ -26,7 +26,10 @@ function Nametag:destructor()
 end
 
 function Nametag:draw()
-	if self:isDisabled() then return end 
+	for _, player in pairs(getElementsByType("player", root, true)) do
+		setPlayerNametagShowing(player, false)
+	end
+	if self:isDisabled() then return end
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/Nametag") end
 	local cx,cy,cz = getCameraMatrix()
 	local bRifleCheck = self:_weaponCheck()
@@ -34,7 +37,6 @@ function Nametag:draw()
 	for _, player in pairs(getElementsByType("player", root, true)) do
 		if player ~= localPlayer and (player.getPublicSync and not player:getPublicSync("inSmokeGrenade") and not player:getPublicSync("isInvisible")) then
 			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
-			setPlayerNametagShowing(player, false)
 			local pX, pY, pZ = getElementPosition(player)
 			local phX, phY, phZ = getPedBonePosition(player, 8)
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
@@ -270,7 +272,7 @@ function isPedAiming ( thePedToCheck )
 	return false
 end
 
-function Nametag:setDisabled(bool) 
+function Nametag:setDisabled(bool)
 	self.m_Disabled = bool
 end
 

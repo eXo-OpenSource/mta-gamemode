@@ -36,8 +36,13 @@ build_docker_job:
     #- wget -q --no-check-certificate -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
     - apk add --update openssl
     - apk add curl
+<<<<<<< HEAD
     - wget -q -O build/workerserver https://download.exo-reallife.de/build/workerserver # Built by deploy-workerunit project
     - wget -q -O build/ml_gps.so https://glare.now.sh/eXo-OpenSource/ml_pathfind/ml_pathfind.so # Built by mta-module-gps project
+=======
+    - wget -q -O build/workerserver https://upload.exo-reallife.de/build/workerserver # Built by deploy-workerunit project
+    - wget -q -O build/ml_gps.so https://upload.exo-reallife.de/build/ml_gps.so # Built by mta-module-gps project
+>>>>>>> hotfix/general
     - wget -q -O build/ml_jwt.so https://glare.now.sh/eXo-OpenSource/ml_jwt/ml_jwt.so # Built by eXo-OpenSource/ml_jwt project
     - wget -q -O build/ml_redis.so https://glare.now.sh/eXo-OpenSource/ml_redis/ml_redis.so # Built by eXo-OpenSource/ml_redis project
     - docker info
@@ -46,7 +51,7 @@ build_docker_job:
     - docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest'
     - docker push "$CI_REGISTRY_IMAGE"
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
+    - curl -k -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://upload.exo-reallife.de/upload.php
   only:
     - master
     - release/pre-production
