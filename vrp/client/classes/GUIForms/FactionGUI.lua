@@ -66,7 +66,7 @@ function FactionGUI:constructor()
 	end
 
 	if localPlayer:getFaction():getId() == 3 then
-		self.m_AreaAlarmButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Area Alarm (de-)aktivieren", tabAllgemein):setBarEnabled(true)
+		self.m_AreaAlarmButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Alarm (de-)aktivieren", tabAllgemein):setBarEnabled(true)
 		self.m_AreaAlarmButton.onLeftClick = function()
 			triggerServerEvent("factionStateDeactivateAreaAlarm", localPlayer)
 		end
