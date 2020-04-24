@@ -1,7 +1,7 @@
 Sentry = inherit(Singleton)
 
 function Sentry:constructor()
-	self.m_DSN = "https://3ae511c975bd4531a3a37703e368cde9@sentry.exo.merx.dev/5"
+	self.m_DSN = "https://02b8397951db488690be010711c239cc@sentry.exo.cool/2"
 
 	self:parseDSN()
 end
@@ -19,7 +19,7 @@ function Sentry:handleException(message, level, trace)
 	--[[
 		level enum [fatal, error, warning, info, debug]
 	]]
-	--[[
+
 	local eventId = self:generateEventId()
 	-- info.source, info.name, info.currentline or "not specified"
 	local frames = {}
@@ -32,13 +32,13 @@ function Sentry:handleException(message, level, trace)
 
 		local frame = {
 			filename = filename,
-			abs_path = ("https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s"):format(GIT_BRANCH or "master", filename),
+			abs_path = ("https://git.exo.cool/eXo/mta-gamemode/tree/%s/%s"):format(GIT_BRANCH or "master", filename),
 			["function"] = v[3]
 		}
 
 		if type(v[2]) == "number" then
 			frame["lineno"] = v[2]
-			frame["abs_path"] = ("https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s#L%d"):format(GIT_BRANCH or "master", filename, v[2])
+			frame["abs_path"] = ("https://git.exo.cool/eXo/mta-gamemode/tree/%s/%s#L%d"):format(GIT_BRANCH or "master", filename, v[2])
 		end
 
 		table.insert(frames, frame)
@@ -103,6 +103,7 @@ function Sentry:handleException(message, level, trace)
 	data = data:sub(2, #data-1)
 
 	local options = {
+		queueName = "sentry",
 		method = "POST",
 		headers = {
             ['X-Sentry-Auth'] = self:generateAuthHeader()
@@ -111,7 +112,6 @@ function Sentry:handleException(message, level, trace)
 	}
 
 	fetchRemote("https://" .. self.m_Host .. "/api/" .. self.m_ProjectId .. "/store/", options, function() end)
-	]]
 end
 
 function Sentry:generateEventId()

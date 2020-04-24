@@ -16,19 +16,33 @@ function Nametag:constructor()
 	self.m_Stream = {}
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
 	self.m_Draw = bind(self.draw, self)
+	self.m_OnPlayerJoin = bind(self.Event_OnPlayerJoin, self)
 	addEventHandler("onClientRender", root, self.m_Draw, true, "high")
+	addEventHandler("onClientPlayerJoin", root, self.m_OnPlayerJoin)
 	setPedTargetingMarkerEnabled(false)
+
+	for _, player in pairs(getElementsByType("player")) do -- Initially remove all nametags
+		player:setNametagShowing(false)
+	end
 end
 
 function Nametag:destructor()
 	removeEventHandler("onClientRender", root, self.m_Draw)
+	removeEventHandler("onClientPlayerJoin", root, self.m_OnPlayerJoin)
 	setPedTargetingMarkerEnabled(true)
+
+	for _, player in pairs(getElementsByType("player")) do
+		player:setNametagShowing(true)
+	end
+end
+
+function Nametag:Event_OnPlayerJoin()
+	if source.type == "player" then -- and now remove the nametag only for newly streamd in players
+		source:setNametagShowing(false)
+	end
 end
 
 function Nametag:draw()
-	for _, player in pairs(getElementsByType("player", root, true)) do
-		setPlayerNametagShowing(player, false)
-	end
 	if self:isDisabled() then return end
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/Nametag") end
 	local cx,cy,cz = getCameraMatrix()
