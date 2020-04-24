@@ -190,7 +190,7 @@ function Company:addPlayer(playerId, rank)
 		player:reloadBlips()
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyLoanEnabled = 1, CompanyTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
   if self.onPlayerJoin then -- Only for Companies with own class
     self:onPlayerJoin(playerId, rank)
@@ -221,7 +221,7 @@ function Company:removePlayer(playerId)
 		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyLoanEnabled = 0, CompanyTraining = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 
 	if self.onPlayerLeft then -- Only for Companies with own class
 		self:onPlayerLeft(playerId)
