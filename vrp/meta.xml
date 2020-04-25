@@ -3304,6 +3304,8 @@
 	<vrpfile src="files/models/skins/zombie.txd"/>
 	<vrpfile src="files/models/skins/santaclaus.txd" />
 	<vrpfile src="files/models/skins/santaclaus.dff" />
+	<vrpfile src="files/models/skins/drill.txd" />
+	<vrpfile src="files/models/skins/drill.dff" />
 
 	<!--Wearables-->
 	<vrpfile src="files/models/wearables/helmet.txd" />
