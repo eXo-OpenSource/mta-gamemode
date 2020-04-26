@@ -32,7 +32,7 @@ function HTTPProvider:collectFiles()
 			local xml = xmlLoadFile("index.tmp")
 			for _, archive in pairs(xmlNodeGetChildren(xml)) do
 				if xmlNodeGetName(archive) == "archive" then
-					if not self.checkFile(xmlNodeGetAttribute(archive, "target_path"), xmlNodeGetAttribute(archive, "hash")) then
+					if not self.checkFile(xmlNodeGetAttribute(archive, "target_path"), xmlNodeGetAttribute(archive, "hash"), true) then
 						self:addFile(archive)
 						self:updateDownloadSize(tonumber(xmlNodeGetAttribute(archive, "size")))
 					else
@@ -125,13 +125,16 @@ function HTTPProvider:processArchives()
 	return true
 end
 
-function HTTPProvider.checkFile(filePath, expectedHash)
+function HTTPProvider.checkFile(filePath, expectedHash, outputDebugMessage)
 	if fileExists(filePath) then
 		local file = fileOpen(filePath)
 		if file then
-			if string.lower(hash("md5", file:read(file:getSize()))) == expectedHash then
+			local hashString = string.lower(hash("md5", file:read(file:getSize())))
+			if hashString == expectedHash then
 				file:close()
 				return true
+			else
+				if outputDebugMessage then outputDebugString(("[%s] expected %s, got %s"):format(filePath, expectedHash, tostring(hashString))) end
 			end
 			file:close()
 		end
