@@ -1087,6 +1087,7 @@
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleGuns.lua" type="client"/>
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -1620,6 +1621,7 @@
 	<vrpfile src="files/images/Textures/RoadSigns/parking2.png"/>
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
+	<vrpfile src="files/images/Other/Bullet.png"/>
 
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>

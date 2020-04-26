@@ -70,7 +70,8 @@ end
 
 function ShortCountdown:Event_onFrame() 
 	local prog = (getTickCount() - self.m_StartTick) / (self.m_Seconds*1000)
-	local width = (self.m_Width*.6 - 4) * prog
+	if prog > 1.0 then prog = 1 end
+	local width = (self.m_Width*.6 - 6) * prog
 	dxDrawRectangle(self.m_AbsoluteX + (self.m_Width*.1 + 2), self.m_AbsoluteY + 2, width, self.m_Height-4, Color.Accent )
 	dxDrawText(self.m_Title, self.m_AbsoluteX + (self.m_Width*.1 + 2), self.m_AbsoluteY + 2, self.m_AbsoluteX + (self.m_Width*.1 + 2) +  self.m_Width*.6, self.m_AbsoluteY + self.m_Height-4, Color.White, 1, self.m_Font, "center", "center")
 end
