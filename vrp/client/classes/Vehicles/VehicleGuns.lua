@@ -76,8 +76,8 @@ function VehicleGuns:onVehicleExit(player, seat)
     end
 end
 
-function VehicleGuns:onEngineStateChange(state)
-    if VehicleGuns.Cooldowns[source:getModel()] then
+function VehicleGuns:onEngineStateChange(vehicle, state)
+    if VehicleGuns.Cooldowns[vehicle:getModel()] then
         if state == false then
             if not isEventHandlerAdded("onClientRender", root, self.m_UpdateBind) then
                 addEventHandler("onClientRender", root, self.m_UpdateBind)
