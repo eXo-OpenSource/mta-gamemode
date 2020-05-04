@@ -4,7 +4,7 @@ addRemoteEvents{"DrivingLesson:setMarker", "DrivingLesson:endLesson"}
 function DrivingSchool:constructor()
 	self:createPed()
 	self:createLowLodObjects()
-	NonCollisionArea:new("Cuboid", {Vector3(1352, -1624, 12.5), 15, 5, 5})
+	NonCollisionArea:new("Cuboid", {Vector3(1759.65, -1691.26, 12.5), 5, 8, 5})
 
 	addEventHandler("DrivingLesson:setMarker", localPlayer, bind(self.Event_onNextMarker, self))
 	addEventHandler("DrivingLesson:endLesson", localPlayer, bind(self.Event_endLesson, self))
