@@ -2010,6 +2010,8 @@
 	<vrpfile src="files/images/Textures/Sewers/texCasino11.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino12.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino13.jpg"/>
+
+	<vrpfile src="files/images/Textures/DrivingSchool/ground.png"/>
 	<!-- onlinecasino -->
 	<vrpfile src="files/images/OnlineCasino/overlay.png"/>
 

@@ -5,9 +5,9 @@ DrivingSchool.m_LessonVehicles = {}
 DrivingSchool.testRoute =
 {
 	--{1355.07, -1621.64, 13.22, 90} .. start
-	{1378.94, -1648.58, 13.03},
-	{1421.00, -1648.88, 13.03},
-	{1427.45, -1719.98, 13.04},
+	{1807.23, -1711.17, 13.37},
+	{1807.27, -1730.13, 13.39},
+	{1651.56, -1729.75, 13.38},
 	{1327.79, -1730.02, 13.04},
 	{1310.11, -1575.86, 13.04},
 	{1349.55, -1399.87, 12.97},
@@ -32,17 +32,31 @@ DrivingSchool.testRoute =
 	{1427.40, -1577.95, 13.02},
 	{1515.72, -1595.33, 13.03},
 	{1527.44, -1718.88, 13.04},
-	{1439.76, -1729.61, 13.04},
-	{1431.99, -1659.23, 13.04},
-	{1372.90, -1648.60, 13.04},
+	{1592.89, -1734.80, 13.38},
+	{1802.97, -1734.55, 13.39},
+	{1761.76, -1687.31, 13.02},
 }
 
 addRemoteEvents{"drivingSchoolCallInstructor", "drivingSchoolStartTheory", "drivingSchoolPassTheory", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker",	"drivingSchoolStartLessionQuestion", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand", "drivingSchoolReduceSTVO"}
 
 function DrivingSchool:constructor()
-    InteriorEnterExit:new(Vector3(1364.14, -1669.10, 13.55), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
+	InteriorEnterExit:new(Vector3(1778.92, -1721.45, 13.37), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
+	InteriorEnterExit:new(Vector3(1778.78, -1709.76, 13.37), Vector3(-2029.75, -119.3, 1035.17), 0, 0, 3, 0, false)
 
-	Gate:new(968, Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 90), Vector3(1413.59, -1653.09, 13.30), Vector3(0, 5, 90), false).onGateHit = bind(self.onBarrierHit, self)
+	local leftDoor = createObject(3051, -2028.4250, -113.2535, 1035.1999, 0, 0, 284.6610)
+	leftDoor:setScale(0.25, 1, 0.75)
+	leftDoor:setInterior(3)
+	leftDoor:setCollisionsEnabled(false)
+	local rightDoor = createObject(3051, -2027.5666, -113.2525, 1035.1999, 0, 0, 284.6610)
+	rightDoor:setScale(0.25, 1, 0.75)
+	rightDoor:setInterior(3)
+	rightDoor:setCollisionsEnabled(false)
+	local elevator = Elevator:new()
+	elevator:addStation("Dach - Heliports", Vector3(1765.87, -1718.25, 19.88), 180, 0, 0)
+	elevator:addStation("Innenraum", Vector3(-2028.02, -113.8, 1035.17), 176, 3, 0)
+
+	Gate:new(968, Vector3(1810.675, -1716, 13.19), Vector3(0, 90, 180), Vector3(1810.675, -1716, 13.19), Vector3(0, 0, 180), false).onGateHit = bind(self.onBarrierHit, self)
+	Gate:new(968, Vector3(1811.2, -1691.275, 13.19), Vector3(0, 90, 90), Vector3(1811.2, -1691.275, 13.19), Vector3(0, 0, 90), false).onGateHit = bind(self.onBarrierHit, self)
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
 	self.m_StartLession = bind(self.startLession, self)
@@ -54,7 +68,7 @@ function DrivingSchool:constructor()
 	self:setSafe(safe)
 
 	local id = self:getId()
-	local blip = Blip:new("DrivingSchool.png", 1364.14, -1669.10, root, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
+	local blip = Blip:new("DrivingSchool.png", 1778.92, -1721.45, root, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
 	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
 
 	self.m_CurrentLessions = {}
@@ -218,20 +232,21 @@ function DrivingSchool:startAutomaticTest(player, type)
 		destroyElement(DrivingSchool.m_LessonVehicles[player])
 	end
 
-	local veh  = TemporaryVehicle.create(type == "car" and 410 or 586, 1355.07, -1621.64, 14.22, 90)
+	local veh  = TemporaryVehicle.create(type == "car" and 410 or 586, 1761.76, -1687.31, 13.02, 180)
 	veh:setColor(255, 255, 255)
 	veh.m_Driver = player
 	veh.m_CurrentNode = 1
 	veh.m_IsAutoLesson = true
 	veh.m_TestMode = type
 
-	player:setPosition(Vector3(1348.97, -1620.68, 13.60))
+	player:setPosition(Vector3(1766.50, -1687.10, 13.37))
+	player:setRotation(0, 0, 90)
 	player:setInterior(0)
 	player:setCameraTarget(player)
 
 	local randomName =	{"Nero Soliven", "Kempes Waldemar", "Avram Vachnadze", "Klaus Schweiger", "Luca Pasqualini", "Peter Schmidt", "Mohammed Vegas", "Isaha Rosenberg"}
 	local name = randomName[math.random(1, #randomName)]
-	veh.m_NPC = createPed(295,1355.07, -1621.64, 13.22)
+	veh.m_NPC = createPed(295, 1765.50, -1687.10, 15.37)
 	veh.m_NPC:setData("NPC:Immortal", true, true)
 	veh.m_NPC:setData("isBuckeled", true, true)
 	veh.m_NPC:setData("Ped:fakeNameTag", name, true)
@@ -278,7 +293,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 			end
 			player:triggerEvent("DrivingLesson:endLesson")
 			fadeCamera(player,false,0.5)
-			setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
+			setTimer(setElementPosition,1000,1,player,1759.05, -1690.22, 13.37)
 			setTimer(fadeCamera,1500,1, player,true,0.5)
 		end
 	)
@@ -296,7 +311,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 			end
 			player:triggerEvent("DrivingLesson:endLesson")
 			fadeCamera(player,false,0.5)
-			setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
+			setTimer(setElementPosition,1000,1,player,1759.05, -1690.22, 13.37)
 			setTimer(fadeCamera,1500,1, player,true,0.5)
 			if not alreadyFinished then
 				outputChatBox("Du hast das Fahrzeug zerstört!", player, 200,0,0)

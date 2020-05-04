@@ -94,7 +94,7 @@ Tour.Data = {
 		["Title"] = "Fahrschule",
 		["Description"] = "Du solltest nun die Fahrschule absolvieren.",
 		["Success"] = "Zunächst musst du im Gebäude die Theorie Prüfung absolvieren, indem du auf den NPC klickst. Anschließend kannst du hier im gelben Info-Marker einen Fahrlehrer kontaktieren.",
-		["Position"] = Vector3(1376.02, -1658.39, 12.38),
+		["Position"] = Vector3(1779.07, -1725.88, 13.55),
 		["Money"] = 1500
 	},
 	{

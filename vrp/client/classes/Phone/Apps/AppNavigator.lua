@@ -79,7 +79,7 @@ AppNavigator.Positions = {
 	},
 	["Unternehmen"] = {
 		["San News"] =     Vector3(762.05, -1343.33, 13.20),
-		["Fahrschule"] =  Vector3(1372.30, -1655.55, 13.38),
+		["Fahrschule"] =  Vector3(1779.07, -1725.88, 13.55),
 		["Mechaniker"] =  Vector3(2416.29, -2089.54, 13.41),
 		["Public Transport"] =	 Vector3(1791.10, -1901.46, 13.08),
 	},

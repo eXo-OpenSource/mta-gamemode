@@ -326,7 +326,6 @@ end
 function CustomModelManager:createObjectsForMods()
 	local objs = {
 		--objid, radius, x, y, z, lodid
-		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
 		{4552, 75.657227, 1391.125, -1318.0937, 24.66406, 4632}, --ammu nation central
 	}
 	for i,v in pairs(objs) do

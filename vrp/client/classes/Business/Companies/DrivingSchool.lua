@@ -3,6 +3,7 @@ addRemoteEvents{"DrivingLesson:setMarker", "DrivingLesson:endLesson"}
 
 function DrivingSchool:constructor()
 	self:createPed()
+	self:createLowLodObjects()
 	NonCollisionArea:new("Cuboid", {Vector3(1352, -1624, 12.5), 15, 5, 5})
 
 	addEventHandler("DrivingLesson:setMarker", localPlayer, bind(self.Event_onNextMarker, self))
@@ -66,4 +67,33 @@ function DrivingSchool:createPed()
 			DrivingSchoolPedGUI:new(#onlinePlayers < 3)
 		end
 	)
+end
+
+function DrivingSchool:createLowLodObjects()
+	house = createObject(6134, 1783, -1720.7002, 16, 0, 0, 0)
+	houseLOD = createObject(6134, 1783, -1720.7002, 15.5, 0, 0, 0, true)
+	setLowLODElement(house, houseLOD)
+
+
+	ground = createObject(6959, 1784.5, -1701.5, 12.39, 0, 0, 0)
+	ground:setScale(1.45, 1.2, 1)
+	groundLOD = createObject(6959, 1784.5, -1701.5, 11.7, 0, 0, 0, true)
+	groundLOD:setScale(1.45, 1.1, 1)
+	setLowLODElement(ground, groundLOD)
+
+	groundNorth = createObject(6959, 1784.5, -1657.5, 12.3)
+	groundNorth:setScale(1.45, 1, 1)
+
+	groundEast = createObject(6959, 1835.15, -1701.500, 12.3)
+	groundEast:setScale(1, 1.2, 1)
+
+	groundSouth = createObject(6959, 1784.5, -1745.5, 12.3)
+	groundSouth:setScale(1.45, 1, 1)
+
+	FileTextureReplacer:new(ground, "files/images/Textures/DrivingSchool/ground.png", "greyground256128", {}, true, true)
+	FileTextureReplacer:new(groundLOD, "files/images/Textures/DrivingSchool/ground.png", "greyground256128", {}, true, true)
+
+	FileTextureReplacer:new(groundNorth, "files/images/Textures/DrivingSchool/ground.png", "greyground256128", {}, true, true)
+	FileTextureReplacer:new(groundEast, "files/images/Textures/DrivingSchool/ground.png", "greyground256128", {}, true, true)
+	FileTextureReplacer:new(groundSouth, "files/images/Textures/DrivingSchool/ground.png", "greyground256128", {}, true, true)
 end
