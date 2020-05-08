@@ -121,7 +121,6 @@ addEventHandler("onDebugMessage", root,
 			elseif msg:find("dbPoll failed;") then
 				iprint(SQL.LastExecQuery)
 			end
-
 		end
 	end
 )

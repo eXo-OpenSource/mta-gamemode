@@ -520,11 +520,11 @@ ItemsWeaponMappingAmmunition = {
 ItemsWeaponMappingName = {}
 ItemsWeaponMappingAmmunitionName = {}
 
-for k, v in pairs(ItemsWeaponMapping)
+for k, v in pairs(ItemsWeaponMapping) do
 	ItemsWeaponMappingName[v] = k
 end
 
-for k, v in pairs(ItemsWeaponMappingAmmunition)
+for k, v in pairs(ItemsWeaponMappingAmmunition) do
 	ItemsWeaponMappingAmmunitionName[v] = k
 end
 

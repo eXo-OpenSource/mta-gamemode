@@ -383,11 +383,16 @@ function InventoryManager:loadInventory(inventoryId, sync)
 		inventoryId, player = self:getInventoryId(inventoryId, nil, sync)
 	end
 
-	local inventory = Inventory.load(inventoryId, player, sync)
+	local inventory = Inventory:new(inventoryId, player)
 
 	if inventory then
 		self.m_Inventories[inventoryId] = inventory
-		return inventory
+		local result = inventory:loadData(sync)
+		if not result then
+			self.m_Inventories[inventoryId] = nil
+			return false
+		end
+		return self.m_Inventories[inventoryId]
 	end
 
 	return false
@@ -533,13 +538,13 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		data.InventoryId = inventory.m_Id
 		data.ItemId = item
 		data.OwnerId = player and player.m_Id or nil
-		data.Owner = player and player.m_Name or "Unbekannt"
+		data.OwnerName = player and player.m_Name or "Unbekannt"
 		data.Slot = slot
 		data.Amount = amount
 		data.Durability = durability or itemData.MaxDurability
 		data.Metadata = metadata
 		data.Tradeable = itemData.Tradeable
-		data.ExpireTime = itemData.Expireable and itemData.MaxExpireTime or nil
+		data.ExpireTime = itemData.Expireable and itemData.MaxExpireTime or 0
 
 		self.m_NextItemId = self.m_NextItemId + 1
 
@@ -550,7 +555,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		end
 
 		table.insert(inventory.m_Items, data)
-		inventory:onInventoryChanged(inventory)
+		inventory:onInventoryChanged()
         return true
     end
     return false, reason
@@ -603,7 +608,7 @@ function InventoryManager:getNextFreeSlot(inventory)
 	if not inventory then
 		return false
 	end
-	local totalSlots = 200 -- TODO: move this to database
+	local totalSlots = inventory.m_Slots
 
 	for i = 1, totalSlots, 1 do
 		local found = false

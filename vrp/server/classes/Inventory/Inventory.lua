@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Inventory = inherit(Object)
-
+--[[
 function Inventory.create()
 
 end
@@ -33,17 +33,41 @@ function Inventory.load(inventoryId, player, sync)
 
 	return Inventory:new(inventory, items, true, player)
 end
+]]
 
-function Inventory:constructor(inventory, items, persistent, player)
-	self.m_Id = inventory.Id
+function Inventory:constructor(inventoryId, player)
+	self.m_Id = inventoryId
+	self.m_Player = player
+	self.m_Persistent = false
+end
+
+function Inventory:loadData(sync)
+	local inventory
+
+	if sync then
+		inventory = sql:queryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), self.m_Id)
+	else
+		inventory = sql:asyncQueryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), self.m_Id)
+	end
+
+	if not inventory then
+		return false
+	end
+
+	local items
+	if sync then
+		items = sql:queryFetch("SELECT i.*, IF(a.Name IS NULL, 'Unbekannt', a.Name) AS OwnerName FROM ??_inventory_items i LEFT JOIN ??_account a ON a.Id = i.OwnerId WHERE i.InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
+	else
+		items = sql:asyncQueryFetch("SELECT i.*, IF(a.Name IS NULL, 'Unbekannt', a.Name) AS OwnerName FROM ??_inventory_items i LEFT JOIN ??_account a ON a.Id = i.OwnerId WHERE i.InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
+	end
+
 	self.m_ElementId = inventory.ElementId
 	self.m_ElementType = inventory.ElementType
 	self.m_Size = inventory.Size
 	self.m_Slots = inventory.Slots
 	self.m_TypeId = inventory.TypeId
 	self.m_Type = InventoryManager:getSingleton().m_InventoryTypes[inventory.TypeId].TechnicalName
-	self.m_Persistent = persistent
-	self.m_Player = player
+	self.m_Persistent = true
 
 	self.m_IsDirty = false
 	self.m_DirtySince = 0
@@ -63,10 +87,11 @@ function Inventory:constructor(inventory, items, persistent, player)
 				end
 			end
 		end
-		--item.DatabaseId = item.Id
-		--item.Id = self.m_NextItemId
-		--self.m_NextItemId = self.m_NextItemId + 1
 	end
+
+	InventoryManager:getSingleton():syncInventory(self.m_Id)
+
+	return true
 end
 
 function Inventory:destructor()
@@ -405,11 +430,12 @@ function Inventory:save(sync)
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
 			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
 			table.insert(queriesParams, v.OwnerId)			-- 4 - OwnerId
-			table.insert(queriesParams, v.Tradeable)		-- 5 - Tradeable
+			table.insert(queriesParams, v.Tradeable and 1 or 0)		-- 5 - Tradeable
 			table.insert(queriesParams, v.Slot)				-- 6 - Slot
 			table.insert(queriesParams, v.Amount)			-- 7 - Amount
 			table.insert(queriesParams, v.Durability)		-- 8 - Durability
-			table.insert(queriesParams, v.ExpireTime)		-- 9 - ExpireTime
+			table.insert(queriesParams, v.ExpireTime or 0)		-- 9 - ExpireTime
+
 			if not v.Metadata then
 				queries = queries .. "NULL)"
 			else
@@ -423,11 +449,11 @@ function Inventory:save(sync)
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
 			table.insert(queriesParams, v.ItemId)			-- 3 - ItemId
 			table.insert(queriesParams, v.OwnerId)			-- 4 - OwnerId
-			table.insert(queriesParams, v.Tradeable)		-- 5 - Tradeable
+			table.insert(queriesParams, v.Tradeable and 1 or 0)		-- 5 - Tradeable
 			table.insert(queriesParams, v.Slot)				-- 6 - Slot
 			table.insert(queriesParams, v.Amount)			-- 7 - Amount
 			table.insert(queriesParams, v.Durability)		-- 8 - Durability
-			table.insert(queriesParams, v.ExpireTime)		-- 9 - ExpireTime
+			table.insert(queriesParams, v.ExpireTime or 0)		-- 9 - ExpireTime
 
 			if not v.Metadata then
 				queries = queries .. "Metadata = NULL"

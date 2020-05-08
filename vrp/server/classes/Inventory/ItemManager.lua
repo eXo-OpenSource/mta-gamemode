@@ -61,6 +61,7 @@ function ItemManager:loadItems()
 			DurabilityDestroy = row.DurabilityDestroy == 1;
 			Consumable = row.Consumable == 1;
 			Tradeable = row.Tradeable == 1;
+			MaxExpireTime = row.MaxExpireTime;
 			Expireable = row.Expireable == 1;
 			IsUnique = row.IsUnique == 1;
 			IsStackable = row.IsStackable == 1;
@@ -201,9 +202,9 @@ function ItemManager:constructor()
 
 		["Clubkarte"] = ItemPlayHouseCard,
 
-		["Schuh"] = ItemThrowShoe, 
+		["Schuh"] = ItemThrowShoe,
 		["Abfall"] = ItemThrowTrash,
-		["Flasche"] = ItemThrowBottle,  
+		["Flasche"] = ItemThrowBottle,
 	}
 
 	self.m_Properties = {
