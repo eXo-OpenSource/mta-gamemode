@@ -12,6 +12,26 @@ function PublicTransport:constructor()
 	self.m_Event_BusStopStreamIn = bind(PublicTransport.busStopStreamIn, self)
 	self.m_Event_BusStopStreamOut = bind(PublicTransport.busStopStreamOut, self)
 	self:registerBusStopObjects()
+
+	--ped at sf bay area 
+	self.m_Ped = createPed(17, VEHICLE_IMPORT_POSITION, 316.24)
+	setElementData(self.m_Ped, "clickable", true)
+	self.m_Ped:setData("NPC:Immortal", true)
+	self.m_Ped:setFrozen(true)
+	SpeakBubble3D:new(self.m_Ped, _"Fahrzeugimporteur", _"Starte den Fahrzeugtransport")
+	self.m_Ped:setData("onClickEvent", bind(self.onImportListRequest, self))
+end
+
+function PublicTransport:onImportListRequest()
+	if not localPlayer:getCompany() or localPlayer:getCompany():getId() ~= CompanyStaticId.EPT then 
+		ErrorBox:new(_"Nur Mitglieder des EPT können Fahrzeuge importieren.")
+		return
+	end
+	if not localPlayer:getPublicSync("Company:Duty") then
+		ErrorBox:new(_"Du bist nicht im Unternehmensdienst.")
+		return
+	end
+	triggerServerEvent("requestVehicleImportList", localPlayer) 
 end
 
 function PublicTransport:setBusDisplayText(vehicle, text, line)

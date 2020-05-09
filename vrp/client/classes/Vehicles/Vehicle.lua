@@ -278,7 +278,8 @@ addEventHandler("onClientVehicleDamage", root,
 				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 			end
 		end
-		if getVehicleOccupant(source,0) == localPlayer then
+		local controller = source.controller or  (source:getAttachedTo() and source:getAttachedTo().controller)
+		if controller == localPlayer then
 			if not weapon then
 				triggerServerEvent("onVehicleCrash", source, loss)
 			end

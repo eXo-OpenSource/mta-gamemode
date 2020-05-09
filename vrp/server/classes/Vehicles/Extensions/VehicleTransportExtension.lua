@@ -39,9 +39,15 @@ function VehicleTransportExtension:initTransportExtension()
     local tbl = VehicleTransportExtension.Presets[self:getModel()]
     if not tbl then return end
 
-    self.m_LoadingZoneHitBind = bind(self.Event_OnLoadingZoneHit, self)
-    self.m_LoadingZoneLeaveBind = bind(self.Event_OnLoadingZoneLeave, self)
-    self.m_LoadingZoneVehicleHandBrakeBind = bind(self.internalCheckVehicleLoading, self)
+    self.vehicleTransportVehicle = true
+    self.m_LoadingZoneHitFunc = bind(self.Event_OnLoadingZoneHit, self)
+    self.m_LoadingZoneLeaveFunc = bind(self.Event_OnLoadingZoneLeave, self)
+    self.m_LoadingZoneVehicleHandBrakeFunc = bind(self.internalCheckVehicleLoading, self)
+
+    self.m_TransportVehicleEnterFunc = bind(self.internalTransportVehicleOnEnter, self)
+    self.m_TransportVehicleExitFunc = bind(self.internalTransportVehicleOnExit, self)
+    addEventHandler("onVehicleEnter", self, self.m_TransportVehicleEnterFunc)
+    addEventHandler("onVehicleExit", self, self.m_TransportVehicleExitFunc)
 
     if tbl.extraObjects then
         self.m_TransportExtensionExtraObjects = {}
@@ -51,7 +57,6 @@ function VehicleTransportExtension:initTransportExtension()
             obj:setScale(v[8])
             table.insert(self.m_TransportExtensionExtraObjects, obj)
         end
-
     end
 
     if not tbl.rampId then return end
@@ -68,6 +73,28 @@ function VehicleTransportExtension:initTransportExtension()
     self:internalAttachRamps(false)
 end
 
+function VehicleTransportExtension:Event_OnLoadingZoneHit(hitElement, matchingDim)
+    if instanceof(hitElement, Vehicle) then
+        hitElement:getHandbrakeHook():register(self.m_LoadingZoneVehicleHandBrakeFunc)
+    end
+end
+
+function VehicleTransportExtension:Event_OnLoadingZoneLeave(hitElement, matchingDim)
+    if instanceof(hitElement, Vehicle) then
+        hitElement:getHandbrakeHook():unregister(self.m_LoadingZoneVehicleHandBrakeFunc)
+    end
+end
+
+
+function VehicleTransportExtension:internalTransportVehicleOnEnter(player, seat)
+    assert(source.vehicleTransportVehicle, "vehicle is not a transport vehicle")
+    player:triggerEvent("vehicleTransportExtensionSetCameraNoClip", true)
+end
+
+function VehicleTransportExtension:internalTransportVehicleOnExit(player, seat)
+    assert(source.vehicleTransportVehicle, "vehicle is not a transport vehicle")
+    player:triggerEvent("vehicleTransportExtensionSetCameraNoClip", false)
+end
 
 function VehicleTransportExtension:internalCreateRamps(rampId, rampPos1, rampRot1, rampPos2, rampRot2, doubleRamp)
 
@@ -115,33 +142,23 @@ function VehicleTransportExtension:internalToggleLoadingZone()
     if self.m_VehicleTransportLoadingMode and not self.m_VehicleTransportLoadingCol then
         self.m_VehicleTransportLoadingCol = createColSphere(self.position.x, self.position.y, self.position.z, 15)
         --self.m_VehicleTransportLoadingCol:attach(self)
-        addEventHandler("onColShapeHit", self.m_VehicleTransportLoadingCol, self.m_LoadingZoneHitBind)
-        addEventHandler("onColShapeLeave", self.m_VehicleTransportLoadingCol, self.m_LoadingZoneLeaveBind)
+        addEventHandler("onColShapeHit", self.m_VehicleTransportLoadingCol, self.m_LoadingZoneHitFunc)
+        addEventHandler("onColShapeLeave", self.m_VehicleTransportLoadingCol, self.m_LoadingZoneLeaveFunc)
         for i, v in pairs(getElementsWithinColShape(self.m_VehicleTransportLoadingCol, "vehicle")) do
             if v ~= self then
-                v:getHandbrakeHook():register(self.m_LoadingZoneVehicleHandBrakeBind)
+                v:getHandbrakeHook():register(self.m_LoadingZoneVehicleHandBrakeFunc)
             end
         end
+        VehicleImportManager:getSingleton():addLoadingCol(self.m_VehicleTransportLoadingCol)
     elseif not self.m_VehicleTransportLoadingMode and self.m_VehicleTransportLoadingCol then
         for i, v in pairs(getElementsWithinColShape(self.m_VehicleTransportLoadingCol, "vehicle")) do
             if v ~= self then
-                v:getHandbrakeHook():unregister(self.m_LoadingZoneVehicleHandBrakeBind)
+                v:getHandbrakeHook():unregister(self.m_LoadingZoneVehicleHandBrakeFunc)
             end
         end
+        VehicleImportManager:getSingleton():removeLoadingCol(self.m_VehicleTransportLoadingCol)
         self.m_VehicleTransportLoadingCol:destroy()
         self.m_VehicleTransportLoadingCol = nil
-    end
-end
-
-function VehicleTransportExtension:Event_OnLoadingZoneHit(hitElement, matchingDim)
-    if instanceof(hitElement, Vehicle) then
-        hitElement:getHandbrakeHook():register(self.m_LoadingZoneVehicleHandBrakeBind)
-    end
-end
-
-function VehicleTransportExtension:Event_OnLoadingZoneLeave(hitElement, matchingDim)
-    if instanceof(hitElement, Vehicle) then
-        hitElement:getHandbrakeHook():unregister(self.m_LoadingZoneVehicleHandBrakeBind)
     end
 end
 
@@ -170,7 +187,7 @@ end
 
 function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
     if not isElementWithinColShape(vehicleToLoad, self.m_VehicleTransportLoadingCol) then --garbage collection
-        hitElement:getHandbrakeHook():unregister(self.m_LoadingZoneVehicleHandBrakeBind)
+        hitElement:getHandbrakeHook():unregister(self.m_LoadingZoneVehicleHandBrakeFunc)
         return false 
     end
 
@@ -180,6 +197,8 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
         if vehicleToLoad.controller then triggerClientEvent(vehicleToLoad.controller, "playSFX", vehicleToLoad.controller, "script", 204, 3, false) end
         return
     end
+
+    if (vehicleToLoad:isAttached()) then return end -- cancel if the vehicle is already attached
 
     local driver = vehicleToLoad.controller
     if not driver or not isElement(driver) then return false end
@@ -192,7 +211,7 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
     local function inside(value, min, max) return value >= min and value <= max end
     if inside(x, tbl.boundingBox[1], tbl.boundingBox[4]) and inside(y, tbl.boundingBox[2], tbl.boundingBox[5]) and inside(z, tbl.boundingBox[3], tbl.boundingBox[6]) then
 
-        local function onSlope(rot) return math.abs(math.abs(math.abs(rot)-180)-180) > 10 end
+        local function onSlope(rot) return math.abs(math.abs(math.abs(rot)-180)-180) > 1 end
         if onSlope(rx) or onSlope(ry) then
             driver:sendWarning("Stelle dein Fahrzeug gerade auf die Ladefläche.")
             return false 
@@ -209,16 +228,21 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
     return false
 end
 
-function VehicleTransportExtension:toggleLoadingMode()
+function VehicleTransportExtension:isInVehicleLoadingMode()
+    return self.m_VehicleTransportLoadingMode
+end
+
+function VehicleTransportExtension:toggleVehicleLoadingMode()
     local tbl = VehicleTransportExtension.Presets[self:getModel()]
     if not tbl then return end
     if not tbl.rampId then return end
-    if self:getVelocity().length > 1 then return end -- prevent loading in mid-driving
+    if self:getVelocity().length > 0.001 then return end -- prevent loading in mid-driving
+    if isTimer(self.m_AnimationTimer) then return end -- prevent toggling mode when it is already toggling
     local startRotation, endRotation
     if self.m_VehicleTransportLoadingMode then --close the ramps
         startRotation, endRotation = tbl.rampRotation.open, tbl.rampRotation.closed
         self:internalAttachRamps(true)
-        setTimer(function()
+        self.m_AnimationTimer = setTimer(function()
             self:internalAttachRamps(false)
             self.m_DisableToggleHandbrake = false
             self:setFrozen(false)
@@ -226,16 +250,15 @@ function VehicleTransportExtension:toggleLoadingMode()
 		    setVehicleHandling(self, "suspensionLowerLimit", nil, true)
         end, VehicleTransportExtension.RampMovementTime + 100, 1) -- +100 to take lag into account
     else --open the ramps
-    
         setVehicleHandling(self, "suspensionUpperLimit", 0.6)
         setVehicleHandling(self, "suspensionLowerLimit", 0.1)
-        setElementVelocity(self, 0, 0, 0.005)
+        setElementVelocity(self, 0, 0, -0.05)
         setTimer(function() -- give the vehicle time to lower
             self:setFrozen(true)
             self.m_DisableToggleHandbrake = true
         end, 500, 1)
         startRotation, endRotation = tbl.rampRotation.closed, tbl.rampRotation.open
-        setTimer(function()
+        self.m_AnimationTimer = setTimer(function()
             self:internalAttachRamps(true) -- attach to open state for correct position
             self:internalDetachRamps() -- detach ramps to prevent collision bugs
         end, VehicleTransportExtension.RampMovementTime + 100, 1) 

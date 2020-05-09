@@ -889,6 +889,9 @@ function VehicleManager:Event_OnVehicleCrash(loss)
 	if source:getVehicleType() == VehicleType.Plane or source:getVehicleType() == VehicleType.Helicopter or source:getVehicleType() == VehicleType.Bike then
 		return false
 	end
+	if source:getDamageHook() and source:getDamageHook():call(source, loss) then
+		return false
+	end
 	local occupants = getVehicleOccupants(source)
 	local speedx, speedy, speedz = getElementVelocity(source)
 	local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
@@ -1817,8 +1820,9 @@ end
 
 function VehicleManager:Event_ToggleLoadingRamp()
 	if getDistanceBetweenPoints3D(client.position, source.position) > 10 then client:sendError("Du bist zu weit entfernt!") return end
+	if not source:isInVehicleLoadingMode() and source:isFrozen() then client:sendError("Bitte löse zuerst die Handbremse!") return end
 	if client:getCompany() and client:getCompany():getId() == 4 and client:isCompanyDuty() then
-		source:toggleLoadingMode() 
+		source:toggleVehicleLoadingMode() 
 	end
 end
 

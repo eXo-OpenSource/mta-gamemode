@@ -1090,6 +1090,7 @@ local tpTable = {
 		["friedhof"] =   	{["pos"] = Vector3(908.84, -1102.33, 24.30),  	["typ"] = "Orte"},
 		["lsforum"] =   	{["pos"] = Vector3(2798.93, -1830.34, 9.88),	["typ"] = "Orte"},
 		["auktion"] =   	{["pos"] = Vector3(1556.03, -1353.56, 23237.37),["typ"] = "Orte", ["interior"] = 1},
+		["import"] =   		{["pos"] = Vector3(-1684.73, 33.47, 3.55),		["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
