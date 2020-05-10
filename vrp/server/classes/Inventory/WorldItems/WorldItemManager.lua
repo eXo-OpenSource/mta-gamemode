@@ -13,6 +13,7 @@ function WorldItemManager:constructor()
 		slam = SlamWorldItem;
 	 	gate = DoorWorldItem;
 		entrance = EntranceWorldItem;
+		speedcam = SpeedCamWorldItem;
 	--	furniture = FurnitureWorldItem;
 	}
 
@@ -60,6 +61,7 @@ function WorldItemManager:constructor()
 end
 
 function WorldItemManager:destructor()
+	SpeedCamWorldItem.requestAllPunishments()
 	self:save()
 end
 

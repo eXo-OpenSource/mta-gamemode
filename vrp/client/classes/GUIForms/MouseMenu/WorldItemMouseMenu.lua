@@ -109,10 +109,6 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 				end
 			):setIcon(FontAwesomeSymbols.Lightbulb)
 		end
-	elseif model == 3902 then -- Blitzer
-		if self:hasPermissionTo("", element, true) then
-			self:addItem(_("Einnahmen: %d$", element:getData("earning"))):setTextColor(Color.Accent)
-		end
 	end
 end
 

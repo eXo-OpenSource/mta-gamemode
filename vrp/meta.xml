@@ -143,6 +143,7 @@
 	<script src="server/classes/Inventory/WorldItems/Items/EntranceWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/BarricadeWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/RadioWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/Items/SpeedCamWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryOld.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManagerOld.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>

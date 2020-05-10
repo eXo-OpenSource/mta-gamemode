@@ -181,7 +181,6 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		end
 		delete(self)
 		self.m_Delete = true
-		self:onChanged()
 		if resendList then WorldItem.sendItemListToPlayer(typ, player) end
 
 		return true
@@ -246,7 +245,6 @@ function WorldItem:onDelete(player, resendList, id, type)
 	end
 	if resendList then WorldItem.sendItemListToPlayer(type, player) end
 	delete(self)
-	self:onChanged()
 	self.m_Delete = true
 end
 
