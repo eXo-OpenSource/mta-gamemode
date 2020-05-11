@@ -283,6 +283,8 @@ function VehicleImportManager:internalDestroyVehicle(veh, missionSuccess)
 	end
 	self.m_ActiveVehiclesByShop[veh.transportShopId][veh:getModel()][veh.transportShopVariant] = self.m_ActiveVehiclesByShop[veh.transportShopId][veh:getModel()][veh.transportShopVariant] - 1
 	if isElement(veh) then
+		local members = CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT):getOnlinePlayers(true, true)
+		triggerClientEvent(members, "destroyVehicleTransportDestinationBlips", resourceRoot, veh) -- send this with specific vehicle to all players to catch DFT driver
 		if veh.controller then
 			veh.controller:triggerEvent("destroyVehicleTransportDestinationBlips")
 		end

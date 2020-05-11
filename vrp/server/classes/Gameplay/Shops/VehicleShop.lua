@@ -80,7 +80,7 @@ function VehicleShop:Event_onShopOpen(player)
 				vehicles[model] = {}
 			end
 			for i = 1, #self.m_VehicleList[model] do
-				if vehicleData[i].maxStock == -1 or vehicleData[i].currentStock ~= 0 then -- vehicle is not sold out
+				if self:isVehicleAvailable(model, i) then -- vehicle is not sold out
 					vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level, vehicleData[i].currentStock, vehicleData[i].maxStock}
 				end
 			end
@@ -90,7 +90,7 @@ function VehicleShop:Event_onShopOpen(player)
 end
 
 function VehicleShop:buyVehicle(player, vehicleModel, index)
-	local price, requiredLevel, shopIndex, currentStock = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level, self.m_VehicleList[vehicleModel][index].id, self.m_VehicleList[vehicleModel][index].currentStock
+	local price, requiredLevel, shopIndex = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level, self.m_VehicleList[vehicleModel][index].id
 	local template = self.m_VehicleList[vehicleModel][index].templateId
 	if not price then return end
 
@@ -98,7 +98,7 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 		player:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", player, requiredLevel))
 		return
 	end
-	if currentStock == 0 then
+	if not self:isVehicleAvailable(vehicleModel, index) then
 		player:sendError(_("Dieses Fahrzeug ist leider ausverkauft.", player))
 		return
 	end
@@ -168,6 +168,11 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 		self.m_UrgentlyNeedsVehicles = true
 		self.m_VehicleList[Model][index].vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	end
+end
+
+function VehicleShop:isVehicleAvailable(vehicleModel, index)
+	assert(self.m_VehicleList[vehicleModel] and self.m_VehicleList[vehicleModel][index], "bad argument @isVehicleAvailable: vehicle is not part of shop")
+	return self.m_VehicleList[vehicleModel][index].maxStock == -1 or self.m_VehicleList[vehicleModel][index].currentStock > 0
 end
 
 function VehicleShop:internalSetVehicleStock(vehicleModel, index, stock)

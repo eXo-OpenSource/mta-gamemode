@@ -10,19 +10,22 @@ function VehicleImportListGUI:constructor(vehicleList, showStartButton)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"zu liefernde Fahrzeuge", true, true, self)
-	self.m_Grid = GUIGridGridList:new(1, 1, 15, 6, self.m_Window)
-    self.m_Grid:addColumn("∑", 0.05)
-    self.m_Grid:addColumn(_"Fahrzeug", 0.3)
-	self.m_Grid:addColumn(_"Autohaus", 0.3)
-    self.m_Grid:addColumn(_"Preis", 0.3)
-    self.m_Grid:setSortable(true)
-    self.m_Grid:setSortColumn("∑", "down")
+    if #vehicleList > 0 then
+        self.m_GridListSelectedFunc = function()
+            self.m_StartTransportBtn:setEnabled(true)
+        end
+        self.m_Grid = GUIGridGridList:new(1, 1, 15, 6, self.m_Window)
+        self.m_Grid:addColumn("∑", 0.05)
+        self.m_Grid:addColumn(_"Fahrzeug", 0.3)
+        self.m_Grid:addColumn(_"Autohaus", 0.3)
+        self.m_Grid:addColumn(_"Preis", 0.3)
+        self.m_Grid:setSortable(true)
+        self.m_Grid:setSortColumn("∑", "down")
+    else
+        GUIGridLabel:new(1, 1, 15, 6, _"Alle Autohäuser sind befüllt.", self.m_Window):setAlignX("center")
+    end
 
     self.m_StartButtonActive = showStartButton
-
-    self.m_GridListSelectedFunc = function()
-        self.m_StartTransportBtn:setEnabled(true)
-    end
     
     if showStartButton then
         GUIGridLabel:new(1, 7, 10, 1, _"Hinweis: Für die Lieferung benötigst du einen DFT.", self.m_Window)
@@ -30,7 +33,10 @@ function VehicleImportListGUI:constructor(vehicleList, showStartButton)
         self.m_StartTransportBtn.onLeftClick = bind(self.triggerTransportStart, self)
         self.m_StartTransportBtn:setEnabled(false)
     end
-    self:populateList(vehicleList)
+
+    if self.m_Grid then
+        self:populateList(vehicleList)
+    end
 end
 
 function VehicleImportListGUI:triggerTransportStart()

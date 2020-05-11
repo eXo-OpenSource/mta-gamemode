@@ -15,7 +15,7 @@ function VehicleImportManager:constructor()
 	self.m_DestroyBlipsFunc = bind(self.destroyBlips, self)
 
 	addEventHandler("createVehicleTransportDestinationBlips", localPlayer, self.m_CreateBlipsFunc)
-	addEventHandler("destroyVehicleTransportDestinationBlips", localPlayer, self.m_DestroyBlipsFunc)
+	addEventHandler("destroyVehicleTransportDestinationBlips", root, self.m_DestroyBlipsFunc) -- root because it can trigger for 
 	self.m_BlipsVisible = false
 	self.m_Blips = {}
 end
@@ -38,11 +38,15 @@ function VehicleImportManager:createBlips(vehicles)
 	self.m_BlipsVisible = true
 end
 
-function VehicleImportManager:destroyBlips()
-	if not self.m_BlipsVisible then return end
-	for vehicle, blip in pairs(self.m_Blips) do
-		blip:delete()
+function VehicleImportManager:destroyBlips(veh)
+	if veh and self.m_Blips[veh] then
+		self.m_Blips[veh]:delete()
+	else
+		if not self.m_BlipsVisible then return end
+		for vehicle, blip in pairs(self.m_Blips) do
+			blip:delete()
+		end
+		self.m_Blips = {}
+		self.m_BlipsVisible = false
 	end
-	self.m_Blips = {}
-	self.m_BlipsVisible = false
 end
