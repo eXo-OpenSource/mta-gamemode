@@ -1401,6 +1401,7 @@
 	<export function="phpSDKUnbanPlayer" type="server" http="true" />
 	<export function="phpSDKAddWarn" type="server" http="true" />
 	<export function="phpSDKRemoveWarn" type="server" http="true" />
+	<export function="phpSDKTakeScreenShot" type="server" http="true" />
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
