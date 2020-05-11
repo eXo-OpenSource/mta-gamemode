@@ -40,6 +40,25 @@ function PublicTransport:constructor()
 	safe:setDimension(4)
 	self:setSafe(safe)
 	self:addBusStops()
+
+	local importBlackBoard = createObject(3077, 1234.18, -41.53, 1010.32, 0, 0, 180)
+	importBlackBoard:setInterior(12)
+	importBlackBoard:setDimension(4)
+	setElementData(importBlackBoard, "clickable", true)
+	setElementData(importBlackBoard, "importListObject", true) -- gets managed by click handler
+
+	self.m_VehicleImportBlip = Blip:new(_"CarShop.png", -1687.93, 14.47, {company = self.m_Id, duty = true}, nil, {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b})
+	self.m_VehicleImportBlip:setDisplayText("Fahrzeug-Import")
+end
+
+function PublicTransport:start(player) -- on start duty
+	local shopsToSend = ""
+	for id, shop in pairs(ShopManager.VehicleShopsMap) do
+		if shop:needsVehiclesUrgently() then
+			shopsToSend = shopsToSend.."\n"..shop:getName()
+		end
+	end
+	player:sendInfo(("Folgende Autohäuser benötigen dringend Fahrzeuge:%s"):format(shopsToSend))
 end
 
 function PublicTransport:destuctor()
@@ -136,7 +155,7 @@ end
 function PublicTransport:onVehicleEnter(veh, player, seat)
 	if seat == 0 then
 		if player:getCompany() == self and player:isCompanyDuty() then
-			if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
+			if veh:getModel() ~= 437 and veh:getModel() ~= 409 and veh:getModel() ~= 578 then -- as EPT gets more taxi models, it is easier to just exclude Buses, Stretch Limos and DFTs
 				player:triggerEvent("showTaxoMeter")
 				veh:setData("EPT_Taxi", true, true)
 			elseif veh:getModel() == 437 then
@@ -170,7 +189,7 @@ end
 
 function PublicTransport:onVehicleStartEnter(veh, player, seat)
 	if seat > 0 and not veh:getOccupant(0) then
-		if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
+		if veh:getModel() ~= 437 and veh:getModel() ~= 409 and veh:getModel() ~= 578  then -- as EPT gets more taxi models, it is easier to just exclude Buses, Stretch Limos and DFTs
 			cancelEvent()
 			player:sendError(_("Es sitzt kein %s.", player, veh:getModel() == 487 and "Pilot im Helikopter" or "Fahrer im Taxi"))
 		elseif veh:getModel() == 437 then
@@ -185,7 +204,7 @@ end
 
 function PublicTransport:onVehiceExit(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() ~= 437 and veh:getModel() ~= 409  then -- as EPT gets more taxi models, it is easier to just exclude Buses and Stretch Limos
+		if veh:getModel() ~= 437 and veh:getModel() ~= 409 and veh:getModel() ~= 578 then -- as EPT gets more taxi models, it is easier to just exclude Buses, Stretch Limos and DFTs
 			player:triggerEvent("hideTaxoMeter")
 			if veh:getModel() == 420 or veh:getModel() == 438 then
 				veh:setTaxiLightOn(false)

@@ -99,7 +99,7 @@ function ShopManager:loadVehicleShops()
 	local result = sql:queryFetch("SELECT * FROM ??_vehicle_shop_veh", sql:getPrefix())
     for k, row in ipairs(result) do
 		local shop = self:getFromId(row.ShopId, true)
-		shop:addVehicle(row.Id, row.Model, row.Name, row.Category, row.Price, row.Level, Vector3(row.X, row.Y, row.Z), Vector3(row.RX, row.RY, row.RZ), row.TemplateId)
+		shop:addVehicle(row.Id, row.Model, row.Name, row.Category, row.Price, row.Level, Vector3(row.X, row.Y, row.Z), Vector3(row.RX, row.RY, row.RZ), row.TemplateId, row.CurrentStock, row.MaxStock)
 	end
 end
 

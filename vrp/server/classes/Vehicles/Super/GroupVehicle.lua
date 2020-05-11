@@ -154,6 +154,10 @@ function GroupVehicle:respawn(force)
 		return false
 	end
 
+	if self.m_RespawnHook:call(self) then
+		return false
+	end
+
 	-- Teleport to Spawnlocation
 	self.m_LastUseTime = math.huge
 

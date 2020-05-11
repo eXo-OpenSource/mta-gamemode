@@ -393,6 +393,7 @@
 	<script src="server/classes/Business/Companies/San-News.lua" type="server"/>
 	<script src="server/classes/Business/Companies/PublicTransport.lua" type="server"/>
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
+	<script src="server/classes/Business/VehicleImportManager.lua" type="server"/>
 
 	<!-- Factions -->
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
@@ -437,6 +438,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleTransportExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 
 
@@ -812,6 +814,8 @@
 	<script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
 
+	<script src="client/classes/GUIForms/Company/VehicleImportListGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/InspectMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
@@ -1034,6 +1038,7 @@
 
 	<!-- Companies -->
 	<script src="client/classes/Business/Company.lua" type="client"/>
+	<script src="client/classes/Business/VehicleImportManager.lua" type="client"/>
 	<script src="client/classes/Business/Companies/PublicTransport.lua" type="client"/>
 	<script src="client/classes/Business/Companies/MechanicTow.lua" type="client"/>
 	<script src="client/classes/Business/Companies/DrivingSchool.lua" type="client"/>
@@ -1073,6 +1078,7 @@
 
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/VehicleTransportExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
@@ -3253,6 +3259,9 @@
 	<vrpfile src="files/models/vehicles/extensions/fire_main.col" />
 	<vrpfile src="files/models/vehicles/extensions/taxi_sign.txd" />
 	<vrpfile src="files/models/vehicles/extensions/taxi_sign.dff" />
+	<vrpfile src="files/models/vehicles/extensions/dft_ramp.txd" />
+	<vrpfile src="files/models/vehicles/extensions/dft_ramp.dff" />
+	<vrpfile src="files/models/vehicles/extensions/dft_ramp.col" />
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>

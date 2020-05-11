@@ -51,6 +51,11 @@ function CompanyVehicle:constructor(data)
 		PublicTransport:createTaxiSign(self)
 	end
 
+	if self:getCompany():getId() == 4 and self:getModel() == 578 then --ept dft
+		self:initTransportExtension()
+		VehicleImportManager:getSingleton():addVehicleTransporter(self)
+	end
+
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(
 			function(veh)
@@ -105,10 +110,6 @@ function CompanyVehicle:onAttachTrailer(truck)
 end
 
 function CompanyVehicle:onEnter(player, seat)
-	if self:isFrozen() then
-		self:setFrozen(false)
-	end
-
 	if self:getCompany().onVehicleEnter then
 		self:getCompany():onVehicleEnter(source, player, seat)
 	end
@@ -180,6 +181,10 @@ function CompanyVehicle:respawn(force, ignoreCooldown)
 		return false
 	end
 
+	if self.m_RespawnHook:call(self) then
+		return false
+	end
+	
 	if not ignoreCooldown then
 		if self.m_LastDrivers[#self.m_LastDrivers] then
 			local lastDriver = getPlayerFromName(self.m_LastDrivers[#self.m_LastDrivers])
