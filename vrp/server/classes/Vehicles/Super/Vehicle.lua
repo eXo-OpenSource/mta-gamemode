@@ -9,6 +9,7 @@ Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
 inherit(VehicleObjectLoadExtension, Vehicle)
 inherit(VehicleELS, Vehicle)
+inherit(VehicleTransportExtension, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -25,6 +26,9 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
+	self.m_HandbrakeHook = Hook:new()
+	self.m_RespawnHook = Hook:new()
+	self.m_DamageHook = Hook:new()
 
 	self.m_LastDrivers = {}
 
@@ -224,6 +228,10 @@ function Vehicle:onPlayerExit(player, seat)
 				self.m_HandBrake = false
 				self:setData( "Handbrake",  self.m_HandBrake , true )
 			end
+		end
+
+		if self:getAttachedTo() then --when vehicle is attached to another element (e.g. transport vehicle)
+			setVehicleDoorOpenRatio(self, 2, 0, 350)
 		end
 
 		if self.m_CountdownDestroy then
@@ -426,7 +434,9 @@ end
 function Vehicle:toggleHandBrake(player, preferredState)
 	if self.m_DisableToggleHandbrake then return end
 	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
-
+	if self.m_HandbrakeHook:call(self) then
+		return
+	end
 	if not self.m_HandBrake or preferredState then
 		if self:isOnGround() then
 			setControlState(player, "handbrake", true)
@@ -465,6 +475,10 @@ function Vehicle:toggleHandBrake(player, preferredState)
 	end
 
 	StatisticsLogger:getSingleton():addVehicleLog(player, owner, ownerType, self.m_Id, self:getModel(), self.m_HandBrake and "Handbremse gezogen" or "Handbremse gelöst")
+end
+
+function Vehicle:getHandbrakeHook()
+	return self.m_HandbrakeHook
 end
 
 function Vehicle:setEngineState(state)
@@ -721,6 +735,9 @@ function Vehicle:setCurrentPositionAsSpawn(type)
 end
 
 function Vehicle:respawnOnSpawnPosition()  
+	if self.m_RespawnHook:call(self) then
+		return
+	end
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
@@ -758,6 +775,15 @@ function Vehicle:respawnOnSpawnPosition()
 		end
 	end
 end
+
+function Vehicle:getRespawnHook()
+	return self.m_RespawnHook
+end
+
+function Vehicle:getDamageHook()
+	return self.m_DamageHook
+end
+
 
 function Vehicle:getTrunk()
   return self.m_Trunk or false

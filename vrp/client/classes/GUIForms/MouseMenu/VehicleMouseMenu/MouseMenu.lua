@@ -125,12 +125,22 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					self:addItem(_"Taxileuchte bedienen",
 						function()
 							if self:getElement() then
-								delete(self)
 								triggerServerEvent("publicTransportSwitchTaxiLight", self:getElement())
 							end
 						end
 					):setIcon(FontAwesomeSymbols.Lightbulb)
 				end
+			end
+		end
+		if element:getData("VehicleTransporterWithRamp") then
+			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
+				self:addItem(_"Laderampe bedienen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("vehicleToggleLoadingRamp", self:getElement())
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Car)
 			end
 		end
 		if element:getData("EPT_Bus") then -- Coach

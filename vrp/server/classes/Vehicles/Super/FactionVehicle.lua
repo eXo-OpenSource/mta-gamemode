@@ -288,6 +288,10 @@ function FactionVehicle:respawn(force, ignoreCooldown)
 		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
+
+	if self.m_RespawnHook:call(self) then
+		return false
+	end
 	
 	if not ignoreCooldown then
 		if self.m_LastDrivers[#self.m_LastDrivers] then

@@ -8,7 +8,7 @@
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"
-,"onTryEnterExit", "onAllowRadioCommunication"}
+,"onTryEnterExit", "onAllowRadioCommunication", "playSound", "playSFX", "playSFX3D"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"

@@ -221,6 +221,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 							element:getData("onClickEvent")()
 						elseif element:getModel() == 1895 then -- Wheel of Fortune?
 							triggerServerEvent("WheelOfFortuneClicked", element)
+						elseif element:getData("importListObject") then
+							PublicTransport:getSingleton():onImportListRequest()
 						end
 					end
 

@@ -144,6 +144,7 @@ function Core:ready() --onClientResourceStart
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()
+	VehicleImportManager:new()
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()

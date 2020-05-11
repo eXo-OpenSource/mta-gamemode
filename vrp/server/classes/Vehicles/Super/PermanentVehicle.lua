@@ -329,6 +329,10 @@ function PermanentVehicle:respawn(garageOnly)
   self.m_LastUseTime = math.huge
   local vehicleType = self:getVehicleType()
 
+  if self.m_RespawnHook:call(self) then
+	return false
+  end
+
   -- Add to active garage session if there is one
   local owner = Player.getFromId(self.m_Owner)
   if owner and isElement(owner) then

@@ -31,7 +31,7 @@ function VehicleManager:constructor()
 	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleBlow",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
-	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks",
+	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
 	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
@@ -71,6 +71,8 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRequestHandling", root, bind(self.Event_GetVehicleHandling, self))
 	addEventHandler("vehicleResetHandling", root, bind(self.Event_ResetVehicleHandling, self))
 	addEventHandler("requestVehicleMarks", root, bind(self.Event_RequestVehicleMarks, self))
+	addEventHandler("vehicleToggleLoadingRamp", root, bind(self.Event_ToggleLoadingRamp, self))
+
 	addEventHandler("onVehicleExplode", root,
 		function()
 			if source.m_Magnet and source.m_GrabbedVehicle then
@@ -124,7 +126,7 @@ function VehicleManager:constructor()
 		function (player, seat)
 			if player:getType() ~= "player" then return end
 
-			if source:isAttached() then -- If the vehicle is attached to a magnet helicopter
+			if source:isAttached() and not source.m_CurrentlyAttachedToTransporter then -- If the vehicle is attached to a magnet helicopter
 				return cancelEvent()
 			end
 			if source:getData("Burned") then -- if the vehicle is left from a fire
@@ -885,6 +887,9 @@ end
 function VehicleManager:Event_OnVehicleCrash(loss)
 	if not source then return end
 	if source:getVehicleType() == VehicleType.Plane or source:getVehicleType() == VehicleType.Helicopter or source:getVehicleType() == VehicleType.Bike then
+		return false
+	end
+	if source:getDamageHook() and source:getDamageHook():call(source, loss) then
 		return false
 	end
 	local occupants = getVehicleOccupants(source)
@@ -1811,6 +1816,14 @@ function VehicleManager:migrate()
 			sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
 	end
 
+end
+
+function VehicleManager:Event_ToggleLoadingRamp()
+	if getDistanceBetweenPoints3D(client.position, source.position) > 10 then client:sendError("Du bist zu weit entfernt!") return end
+	if not source:isInVehicleLoadingMode() and source:isFrozen() then client:sendError("Bitte löse zuerst die Handbremse!") return end
+	if client:getCompany() and client:getCompany():getId() == 4 and client:isCompanyDuty() then
+		source:toggleVehicleLoadingMode() 
+	end
 end
 
 

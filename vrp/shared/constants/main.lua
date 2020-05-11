@@ -670,6 +670,8 @@ SEASONS = {
 	WINTER = 4,
 }
 
+VEHICLE_IMPORT_POSITION = Vector3(-1687.93, 14.47, 3.55) -- where the ped will be located and the UI shows the mission start button
+
 COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect
 
 CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwards", "backwards", "left", "right", "zoom_in", "zoom_out",

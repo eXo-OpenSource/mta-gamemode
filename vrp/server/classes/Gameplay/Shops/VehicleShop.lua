@@ -80,7 +80,9 @@ function VehicleShop:Event_onShopOpen(player)
 				vehicles[model] = {}
 			end
 			for i = 1, #self.m_VehicleList[model] do
-				vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level}
+				if self:isVehicleAvailable(model, i) then -- vehicle is not sold out
+					vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level, vehicleData[i].currentStock, vehicleData[i].maxStock}
+				end
 			end
 		end
 		player:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
@@ -96,6 +98,11 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 		player:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", player, requiredLevel))
 		return
 	end
+	if not self:isVehicleAvailable(vehicleModel, index) then
+		player:sendError(_("Dieses Fahrzeug ist leider ausverkauft.", player))
+		return
+	end
+
 
 	if player:getBankMoney() < price then
 		player:sendError(_("Du hast nicht genügend Geld!", player))
@@ -103,6 +110,7 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 	end
 	if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
+		spawnZ = spawnZ + VehicleCategory:getSingleton():getModelBaseHeight(vehicleModel)
 		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, false, shopIndex, price, template)
 		if vehicle then
 			if player:transferBankMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell") then
@@ -113,6 +121,7 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 					player:warpIntoVehicle(vehicle)
 					player:triggerEvent("vehicleBought")
 				end, 100, 1, player, vehicle)
+				self:decreaseVehicleStock(vehicleModel, index)
 			else
 				StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
 				veh:purge()
@@ -132,7 +141,7 @@ function VehicleShop:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot, TemplateId)
+function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot, TemplateId, CurrentStock, MaxStock)
 	if not self.m_VehicleList[Model] then
 		self.m_VehicleList[Model] = {}
 	end
@@ -143,9 +152,11 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	self.m_VehicleList[Model][index].templateId = TemplateId or 0
 	self.m_VehicleList[Model][index].template =  TuningTemplateManager:getSingleton():getNameFromId( TemplateId ) or ""
 	self.m_VehicleList[Model][index].level = Level
+	self.m_VehicleList[Model][index].currentStock = CurrentStock
+	self.m_VehicleList[Model][index].maxStock = MaxStock
 	self.m_VehicleList[Model][index].vehicle = TemporaryVehicle.create(Model, Pos, Rot)
 	local color = VehicleShopColors[math.random(1, #VehicleShopColors)]
-	self.m_VehicleList[Model][index].vehicle:setColor(color[1], color[2], color[3], color[1], color[2], color[3], color[1], color[2], color[3])
+	--self.m_VehicleList[Model][index].vehicle:setColor(color[1], color[2], color[3], color[1], color[2], color[3], color[1], color[2], color[3])
 	local veh = self.m_VehicleList[Model][index].vehicle
 	veh.m_DisableToggleEngine = true
 	veh.m_DisableToggleHandbrake = true
@@ -153,6 +164,45 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	veh:setFrozen(true)
 	veh:toggleRespawn(false)
 	setVehicleDamageProof( veh , true)
+	if (CurrentStock == 0 and MaxStock ~= -1) then
+		self.m_UrgentlyNeedsVehicles = true
+		self.m_VehicleList[Model][index].vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+	end
+end
+
+function VehicleShop:isVehicleAvailable(vehicleModel, index)
+	assert(self.m_VehicleList[vehicleModel] and self.m_VehicleList[vehicleModel][index], "bad argument @isVehicleAvailable: vehicle is not part of shop")
+	return self.m_VehicleList[vehicleModel][index].maxStock == -1 or self.m_VehicleList[vehicleModel][index].currentStock > 0
+end
+
+function VehicleShop:internalSetVehicleStock(vehicleModel, index, stock)
+	local max = self.m_VehicleList[vehicleModel][index].maxStock
+	if max == -1 then return end -- stock is not supported
+	assert(self.m_VehicleList[vehicleModel] and self.m_VehicleList[vehicleModel][index], ("invalid vehicle @internalSetVehicleStock, (%s, %s)"):format(tostring(vehicleModel), tostring(index))) 
+	
+	self.m_VehicleList[vehicleModel][index].currentStock = math.clamp(0, stock, max) 
+	sql:queryExec("UPDATE ??_vehicle_shop_veh SET CurrentStock=? WHERE Id = ?", sql:getPrefix(), self.m_VehicleList[vehicleModel][index].currentStock, self.m_VehicleList[vehicleModel][index].id)
+	if (stock == 0) then
+		self.m_UrgentlyNeedsVehicles = true
+		self.m_VehicleList[vehicleModel][index].vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT)
+				:sendShortMessage(("Das Autohaus %s benötigt dringend neue Fahrzeuge vom Typ '%s'!"):format(self.m_Name, VehicleCategory:getSingleton():getModelName(vehicleModel)))
+	else
+		self.m_UrgentlyNeedsVehicles = false
+		self.m_VehicleList[vehicleModel][index].vehicle:setDimension(0)
+	end
+end
+
+function VehicleShop:needsVehiclesUrgently()
+	return self.m_UrgentlyNeedsVehicles
+end
+
+function VehicleShop:decreaseVehicleStock(vehicleModel, index)
+	self:internalSetVehicleStock(vehicleModel, index, self.m_VehicleList[vehicleModel][index].currentStock - 1)
+end
+
+function VehicleShop:increaseVehicleStock(vehicleModel, index)
+	self:internalSetVehicleStock(vehicleModel, index, self.m_VehicleList[vehicleModel][index].currentStock + 1)
 end
 
 function VehicleShop:save()
