@@ -307,3 +307,59 @@ function phpSDKRemoveWarn(adminId, targetId, warnId)
 	local data = toJSON({status = "SUCCESS"}, true)
 	return data:sub(2, #data-1)
 end
+
+function phpSDKTakeScreenShot(userId)
+	local player = DatabasePlayer.Map[userId]
+
+	if player and isElement(player) then
+		local tag = string.random(128)
+		local status = player:takeScreenShot(800, 600, "cp:" .. tag, 30, 1024 * 512, 500)
+		if status then
+			local data = toJSON({status = "SUCCESS", tag = tag}, true)
+			return data:sub(2, #data-1)
+		else
+			local data = toJSON({status = "ERROR", error = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+	else
+		local data = toJSON({status = "ERROR", error = "PLAYER_IS_OFFLINE"}, true)
+		return data:sub(2, #data-1)
+	end
+end
+
+
+addEventHandler("onPlayerScreenShot", root, function(resource, status, pixels, timestamp, tag)
+	if resource == getThisResource() then
+		if tag:sub(0, 3) == "cp:" then
+			local tag = tag:sub(4, #tag)
+			if status == "ok" then
+				fetchRemote("https://cp.exo-reallife.de/api/admin/screenshots", {
+					method = "POST",
+					formFields = {
+						status = "SUCCESS",
+						data = pixels,
+						tag = tag
+					}
+				}, function() end)
+			elseif status == "minimized" then
+				fetchRemote("https://cp.exo-reallife.de/api/admin/screenshots", {
+					method = "POST",
+					formFields = {
+						status = "ERROR",
+						error = "MINIMIZED",
+						tag = tag
+					}
+				}, function() end)
+			elseif status == "disabled" then
+				fetchRemote("https://cp.exo-reallife.de/api/admin/screenshots", {
+					method = "POST",
+					formFields = {
+						status = "ERROR",
+						error = "DISABLED",
+						tag = tag
+					}
+				}, function() end)
+			end
+		end
+	end
+end)

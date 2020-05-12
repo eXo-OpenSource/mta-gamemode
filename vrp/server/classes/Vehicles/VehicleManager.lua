@@ -841,7 +841,8 @@ function VehicleManager:Event_vehiclePark()
 				return
 			end
 
-			if source:getInterior() == 0 or source.m_InParkGarage then
+			-- enable parking in interiors for team members only (e.g. auction interior)
+			if source:getInterior() == 0 or source.m_InParkGarage or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] then 
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
 			else

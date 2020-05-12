@@ -9,12 +9,14 @@
 AuctionEvent = inherit(Singleton)
 
 function AuctionEvent:constructor()
-
-
-    self.m_Blip = Blip:new("Bank.png", 2801.97, -1849.48, root, 1500, BLIP_COLOR_CONSTANTS.Green)
-    self.m_Blip:setDisplayText("Adminversteigerung - 24.02. 20 Uhr")
+    self.m_Blip = Blip:new("Bank.png", 2750.79, -1825.51, root, 1500, BLIP_COLOR_CONSTANTS.Green)
+    self.m_Blip:setDisplayText("Adminversteigerung")
     self.m_Open = false
+end
 
+function AuctionEvent:destructor()
+    self.m_Blip:delete() 
+    self:setOpen(false)
 end
 
 function AuctionEvent:setOpen(state)

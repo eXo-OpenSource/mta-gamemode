@@ -1093,6 +1093,7 @@
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleGuns.lua" type="client"/>
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -1406,6 +1407,7 @@
 	<export function="phpSDKUnbanPlayer" type="server" http="true" />
 	<export function="phpSDKAddWarn" type="server" http="true" />
 	<export function="phpSDKRemoveWarn" type="server" http="true" />
+	<export function="phpSDKTakeScreenShot" type="server" http="true" />
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
@@ -1626,6 +1628,7 @@
 	<vrpfile src="files/images/Textures/RoadSigns/parking2.png"/>
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
+	<vrpfile src="files/images/Other/Bullet.png"/>
 
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
@@ -2014,6 +2017,8 @@
 	<vrpfile src="files/images/Textures/Sewers/texCasino11.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino12.jpg"/>
 	<vrpfile src="files/images/Textures/Sewers/texCasino13.jpg"/>
+
+	<vrpfile src="files/images/Textures/DrivingSchool/ground.png"/>
 	<!-- onlinecasino -->
 	<vrpfile src="files/images/OnlineCasino/overlay.png"/>
 
@@ -3313,6 +3318,8 @@
 	<vrpfile src="files/models/skins/zombie.txd"/>
 	<vrpfile src="files/models/skins/santaclaus.txd" />
 	<vrpfile src="files/models/skins/santaclaus.dff" />
+	<vrpfile src="files/models/skins/drill.txd" />
+	<vrpfile src="files/models/skins/drill.dff" />
 
 	<!--Wearables-->
 	<vrpfile src="files/models/wearables/helmet.txd" />

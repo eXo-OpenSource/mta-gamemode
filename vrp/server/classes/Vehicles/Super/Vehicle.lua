@@ -57,6 +57,10 @@ function Vehicle:virtual_constructor()
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
 	end
+
+	if VEHICLES_WITH_BULLET_ARMOR[self:getModel()] then
+		self:setBulletArmorLevel(VEHICLES_WITH_BULLET_ARMOR[self:getModel()])
+	end
 end
 
 function Vehicle:virtual_destructor()
@@ -493,6 +497,7 @@ function Vehicle:setEngineState(state)
 	self.m_StartingEnginePhase = false
 	if self.controller and self.controller:getType() == "player" then
 		self:allowControl(self.controller, state)
+		self.controller:triggerEvent("vehicleEngineStateChange", self, state)
 	end
 
 	if instanceof(self, PermanentVehicle, true) then return end

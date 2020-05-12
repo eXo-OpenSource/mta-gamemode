@@ -188,6 +188,11 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/skins/zombie.dff", 310)
 	self:loadImportTXD("files/models/skins/santaclaus.txd", 244)
 	self:loadImportDFF("files/models/skins/santaclaus.dff", 244)
+
+	-- drill
+	self:loadImportTXD("files/models/skins/drill.txd", 257)
+	self:loadImportDFF("files/models/skins/drill.dff", 257)
+
 	-- Halloween Smode
 	if EVENT_HALLOWEEN then
 		self:loadImportTXD("files/models/skins/ghost.txd", 260)
@@ -324,7 +329,6 @@ end
 function CustomModelManager:createObjectsForMods()
 	local objs = {
 		--objid, radius, x, y, z, lodid
-		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
 		{4552, 75.657227, 1391.125, -1318.0937, 24.66406, 4632}, --ammu nation central
 	}
 	for i,v in pairs(objs) do

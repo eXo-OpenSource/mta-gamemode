@@ -354,3 +354,8 @@ VehicleShopColors =  -- unified colors for the vehicle shop
 	{128,128,128},
 	{105,105,105},
 }
+
+VEHICLES_WITH_BULLET_ARMOR = {
+	[425] = 2, --Hunter
+    [432] = 2 --Rhino
+}

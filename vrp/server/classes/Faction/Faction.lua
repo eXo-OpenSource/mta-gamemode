@@ -313,7 +313,7 @@ function Faction:addPlayer(playerId, rank)
 		end
 		bindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
 	Async.create(
 		function(self)
@@ -347,7 +347,7 @@ function Faction:removePlayer(playerId)
 		player:reloadBlips()
 		unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
 function Faction:invitePlayer(player)

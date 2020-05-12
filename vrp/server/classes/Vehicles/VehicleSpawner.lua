@@ -159,6 +159,6 @@ function VehicleSpawner:initializeAll()
 	end
 
 	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- city hall
-	VehicleSpawner:new(1417.75, -1659.78, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- driving school
+	VehicleSpawner:new(1767.34, -1723.21, 12.55, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- driving school
 	VehicleSpawner:new(1182.59, -1331.99, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
 end

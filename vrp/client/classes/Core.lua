@@ -197,6 +197,7 @@ function Core:ready() --onClientResourceStart
 	BlackJackTable:new()
 	CasinoWheel:new()
 	PedScale:new()
+	VehicleGuns:new()
 end
 
 function Core:afterLogin()
