@@ -9,6 +9,12 @@ function AdminEvent:constructor()
     addEventHandler("onPlayerWasted", root, self.m_WastedBind)]]
 end
 
+function AdminEvent:destructor()
+    for i, player in pairs(self.m_Players) do
+        self:leaveEvent(player)
+    end
+end
+
 function AdminEvent:setTeleportPoint(eventManager)
 	self.m_TeleportPoint = {eventManager:getPosition(), eventManager:getInterior(), eventManager:getDimension()}
 	eventManager:sendInfo(_("Du hast den Event-Teleport Punkt an deine Position gesetzt!", eventManager))
@@ -24,6 +30,14 @@ function AdminEvent:joinEvent(player)
     player:triggerEvent("adminEventPrepareClient")
     if self.m_CurrentAuction then
         triggerClientEvent(player, "adminEventSendAuctionData", resourceRoot, self.m_CurrentAuction)
+    end
+end
+
+function AdminEvent:leaveEvent(player)
+    table.removevalue(self.m_Players, player)
+    if isElement(player) then
+        player:sendInfo(_("Du nimmst nicht mehr am Admin-Event teil!", player))
+        player:triggerEvent("adminEventRemoveClient")
     end
 end
 
