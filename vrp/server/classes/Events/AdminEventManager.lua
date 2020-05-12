@@ -7,6 +7,8 @@ function AdminEventManager:constructor()
 	self.m_EventVehicles = {}
 	self.m_EventVehiclesAmount = 0
 
+	self.m_PlayerLeaveEventFunc = bind(self.leaveEvent, self)
+
 	addCommandHandler("teilnehmen", bind(self.joinEvent, self))
 	addCommandHandler("bieten", bind(self.bidEvent, self))
 	addCommandHandler("ergebnis", bind(self.showAuctionResults, self))
@@ -73,6 +75,11 @@ function AdminEventManager:joinEvent(player)
 	self.m_CurrentEvent:joinEvent(player)
 end
 
+function AdminEventManager:leaveEvent(player)
+	if not self.m_EventRunning or not self.m_CurrentEvent then return end
+	self.m_CurrentEvent:leaveEvent(player)
+end
+
 function AdminEventManager:bidEvent(cmdPlayer, cmd, text)
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		cmdPlayer:sendError(_("Es läuft aktuell kein Event!", cmdPlayer))
@@ -104,10 +111,12 @@ function AdminEventManager:toggle()
 		delete(self.m_CurrentEvent)
 		self.m_EventRunning = false
 		Admin:getSingleton():sendShortMessage(_("%s hat ein Adminevent beendet!", client, client:getName()))
+		PlayerManager:getSingleton():getQuitHook():unregister(self.m_PlayerLeaveEventFunc)
 	else
 		self.m_CurrentEvent = AdminEvent:new()
 		self.m_EventRunning = true
 		Admin:getSingleton():sendShortMessage(_("%s hat ein Adminevent gestartet!", client, client:getName()))
+		PlayerManager:getSingleton():getQuitHook():register(self.m_PlayerLeaveEventFunc)
 	end
 	self:sendData(client)
 end

@@ -60,7 +60,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	for key, player in ipairs(getElementsByType("player")) do
 		if player:isLoggedIn() then
 			player:triggerEvent("ColshapeStreamer:registerColshape", {entryPosition.x, entryPosition.y, entryPosition.z+0.2}, self.m_EnterMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit")
-			player:triggerEvent("ColshapeStreamer:registerColshape", {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit")
+			player:triggerEvent("ColshapeStreamer:registerColshape", {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onExitColHit")
 		end
 	end
 end

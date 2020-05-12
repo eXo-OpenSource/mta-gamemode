@@ -1,8 +1,9 @@
 AdminEvent = inherit(Singleton)
-addRemoteEvents{"adminEventPrepareClient", "adminEventSendAuctionData", "adminEventCreateBattleRoyaleTextures", "adminEventDeleteBattleRoyaleTextures", "adminEventBattleRoyaleDeath"}
+addRemoteEvents{"adminEventPrepareClient", "adminEventRemoveClient", "adminEventSendAuctionData", "adminEventCreateBattleRoyaleTextures", "adminEventDeleteBattleRoyaleTextures", "adminEventBattleRoyaleDeath"}
 
 function AdminEvent:constructor()
-    addEventHandler("adminEventSendAuctionData", resourceRoot, bind(AdminEvent.sendAuctionData, self))
+    self.m_SendAuctionDataFunc = bind(AdminEvent.sendAuctionData, self)
+    addEventHandler("adminEventSendAuctionData", resourceRoot, self.m_SendAuctionDataFunc)
     --[[addEventHandler("adminEventCreateBattleRoyaleTextures", root, bind(self.createTexturesForBattleRoyale, self))
     addEventHandler("adminEventDeleteBattleRoyaleTextures", root, bind(self.deleteTexturesFromBattleRoyale, self))
     addEventHandler("adminEventBattleRoyaleDeath", root, bind(self.createDeathSign, self))]]
@@ -32,13 +33,25 @@ function AdminEvent:sendAuctionData(data)
             self.m_AuctionMessage = nil
         end
     end
+end
 
+function AdminEvent:destructor()
+    removeEventHandler("adminEventSendAuctionData", resourceRoot, self.m_SendAuctionDataFunc)
+    if self.m_AuctionMessage then
+        self.m_AuctionMessage:delete()
+        self.m_AuctionMessage = nil
+    end
 end
 
 function AdminEvent.start()
     AdminEvent:new()
 end
 addEventHandler("adminEventPrepareClient", root, AdminEvent.start)
+
+function AdminEvent.stop()
+    AdminEvent:delete()
+end
+addEventHandler("adminEventRemoveClient", root, AdminEvent.stop)
 
 --EASTEREVENT: BATTLE ROYALE--
 --[[
