@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Inventory/Drugs/ItemEmptyCan.lua
--- *  PURPOSE:     Item Manager Empty Watering-Can class
+-- *  FILE:        server/classes/Inventory/Items/Managers/ItemCanManager.lua
+-- *  PURPOSE:     Item Can Manager class
 -- *
 -- ****************************************************************************
 

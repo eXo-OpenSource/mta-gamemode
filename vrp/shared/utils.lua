@@ -1076,3 +1076,10 @@ function isValidPedModel(model)
 	end
 	return false
 end
+
+function isPositionBetweenPoints(posX, posY, posZ, minX, minY, minZ, maxX, maxY, maxZ)
+	if (posX >= minX and posX <= maxX) and (posY >= minY and posY <= maxY) and (posZ >= minZ and posZ <= maxZ) then
+		return true
+	end
+	return false
+end

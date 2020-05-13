@@ -144,6 +144,7 @@
 	<script src="server/classes/Inventory/WorldItems/Items/BarricadeWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/RadioWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/Items/SpeedCamWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/Items/NailsWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryOld.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManagerOld.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
@@ -204,6 +205,7 @@
 	<script src="server/classes/Inventory/Items/WorldItems/ItemRadio.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Managers/ItemCanManager.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Managers/ItemNailsManager.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
@@ -745,6 +747,9 @@
 	<script src="client/classes/Inventory/Firework/FireworkDynamicRocketTail.lua" type="client"/>
 	<script src="client/classes/Inventory/Firework/FireworkRomanCandleTail.lua" type="client"/>
 	<script src="client/classes/Inventory/Firework/FireworkRomanCandleRocket.lua" type="client"/>
+
+	<!-- Client Item Managers -->
+	<script src="client/classes/Inventory/Managers/NailWorldItemManager.lua" type="client"/>
 
 	<!-- World Items -->
 	<script src="client/classes/Inventory/WorldItems/SlamWorldItem.lua" type="client"/>

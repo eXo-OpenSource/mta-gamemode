@@ -110,6 +110,10 @@ function InventoryManager:constructor()
 		self.m_InventorySubscriptions[v] = {}
 	end
 
+	--Initialize Item Manager classes
+	ItemCanManager:new()
+	ItemNailsManager:new()
+
 	addRemoteEvents{"subscribeToInventory", "unsubscribeFromInventory", "onItemUse", "onItemUseSecondary", "onItemMove"}
 
 	addEventHandler("subscribeToInventory", root, bindAsync(self.Event_subscribeToInventory, self))

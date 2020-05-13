@@ -36,6 +36,8 @@ function InventoryManager:constructor()
 	addEventHandler("openInventory", root, bind(self.Event_openInventory, self))
 
 	WearableHelmet:new()
+	--Initialize Item Manager classes
+	NailWorldItemManager:new()
 end
 
 function InventoryManager:Event_openInventory(title, elementType, elementId)
