@@ -608,6 +608,7 @@
 	<script src="client/classes/Guns/WeaponManager.lua" type="client"/>
 	<script src="client/classes/Guns/RocketLauncher.lua" type="client"/>
 	<script src="client/classes/Guns/SniperRifle.lua" type="client"/>
+	<script src="client/classes/Guns/DesertEagle.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>

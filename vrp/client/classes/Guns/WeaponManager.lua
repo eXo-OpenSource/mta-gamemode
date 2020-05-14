@@ -12,13 +12,13 @@ WeaponManager.Weapon = {}
 
 function WeaponManager:constructor() 
 	
-	
-
 	WeaponManager.WeaponToClass = 
 	{
 		[34] = SniperRifle:new(), 
 		[35] = RocketLauncher:new()
 	}
+
+	DesertEagle:new()
 
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.render, self))
