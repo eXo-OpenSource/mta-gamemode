@@ -3,11 +3,13 @@ JobFarmer = inherit(Job)
 local VEHICLE_SPAWN = {-66.21, 69.00, 2.2, 68}
 local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local PLANTSONWALTON = 50
+local SEEDSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 104
-local MONEY_PLANT_HARVESTER = 20
-local MONEY_PLANT_TRACTOR = 13
+local MONEY_PER_PLANT = 40
+local MONEY_PER_SEED = 40
+local MONEY_PLANT_HARVESTER = 19
+local MONEY_PLANT_TRACTOR = 12
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -22,6 +24,8 @@ function JobFarmer:constructor()
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
+	self.m_CurrentSeeds = {}
+	self.m_CurrentSeedsFarm = 100
 	self.m_BankAccountServer = BankServer.get("job.farmer")
 
 	local x, y, z = unpack(STOREMARKERPOS)
@@ -93,6 +97,25 @@ function JobFarmer:storeHit(hitElement, matchingDimension)
 		return
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.jobVehicle then
+		if self.m_CurrentSeeds[player] and self.m_CurrentSeeds[player] > 0 then
+			player:sendSuccess(_("Du hast die Lieferung abgegeben.", player))
+			local income = self.m_CurrentSeeds[player]*MONEY_PER_SEED * JOB_PAY_MULTIPLICATOR
+			local duration = getRealTime().timestamp - player.m_LastJobAction
+			player.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentSeeds[player]/10)*JOB_EXTRA_POINT_FACTOR))
+			self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
+			player:givePoints(math.floor(math.ceil(self.m_CurrentSeeds[player]/10)*JOB_EXTRA_POINT_FACTOR))
+
+			self.m_CurrentSeedsFarm = self.m_CurrentSeedsFarm + self.m_CurrentSeeds[player]
+			self:updateClientData()
+			self.m_CurrentSeeds[player] = 0
+			self:updatePrivateData(player)
+			for i, v in pairs(getAttachedElements(hitElement)) do
+				if v:getModel() == 1221 then -- only destroy crates
+					destroyElement(v)
+				end
+			end
+		end
 		if self.m_CurrentPlants[player] ~= 0 then
 			player:sendError(_("Du hast schon %d Getreide auf deinem Walton!", player, self.m_CurrentPlants[player]))
 			return
@@ -139,6 +162,7 @@ function JobFarmer:start(player)
 	self.m_CurrentPlants[player] = 0
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 
+	setTimer(self.updateClientData, 100, 1, self, player)
 	-- give Achievement
 	player:giveAchievement(20)
 end
@@ -187,7 +211,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.jobVehicle then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
 			player:sendSuccess(_("Du hast die Lieferung abgegeben, fahre nun zurück zur Farm.", player))
-			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
+			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT * JOB_PAY_MULTIPLICATOR
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp
 			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
@@ -200,8 +224,34 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 					destroyElement(v)
 				end
 			end
-		else
-			player:sendError(_("Du hast keine Ladung dabei!", player))
+		end
+
+		if not self.m_CurrentSeeds[player] or self.m_CurrentSeeds[player] == 0 then
+			player:sendSuccess(_("Dein Transporter wurde mit Samen beladen.", player))
+			self.m_CurrentSeeds[player] = SEEDSONWALTON
+			self:updatePrivateData(player)
+			local x,y,z = unpack (STOREMARKERPOS)
+			player:startNavigationTo(Vector3(x, y, z))
+
+			self:updateClientData()
+			hitElement:setFrozen(true)
+			for i = 1, 3 do
+				for j = 1, 3 do
+					local obj = createObject(1221, 0, 0, 0)
+					obj:setFrozen(true)
+					obj:setScale(0.5, 0.5, 0.5)
+					attachElements(obj, hitElement, -1.2 + j * 0.6, -2.8 + i * 0.5, 0.3, 0, 0, 0)
+					setElementParent(obj, hitElement)
+				end
+			end
+
+			setTimer(
+				function(element)
+					if isElement(element) then
+						setElementFrozen(element,false)
+					end
+				end, 3500, 1, hitElement
+			)
 		end
 	end
 end
@@ -221,7 +271,7 @@ function JobFarmer:createPlant (colId, colPos, vehicle)
 		destroyElement (self.m_Plants[colId])
 		self.m_Plants[colId] = nil
 		if not client:getData("Farmer.Income") then client:setData("Farmer.Income", 0) end
-		client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_HARVESTER)
+		client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_HARVESTER * JOB_PAY_MULTIPLICATOR)
 		client:triggerEvent("Job.updateIncome", client:getData("Farmer.Income"))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
@@ -232,13 +282,20 @@ function JobFarmer:createPlant (colId, colPos, vehicle)
 		end
 	else
 		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[colId] and vehicle == client.jobVehicle then
+			if self.m_CurrentSeedsFarm <= 0 then
+				client:sendError(_("Es gibt keine Samen mehr!", player))
+				return false
+			end
+
+			self.m_CurrentSeedsFarm = self.m_CurrentSeedsFarm - 1
+			self:updateClientData()
 			self.m_Plants[colId] = createObject(818,x,y,z-1.5)
 			local object = self.m_Plants[colId]
 			object.isFarmAble = false
 			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 			setElementVisibleTo(object, client, true)
 			if not client:getData("Farmer.Income") then client:setData("Farmer.Income", 0) end
-			client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_TRACTOR)
+			client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR)
 			client:triggerEvent("Job.updateIncome", client:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then
@@ -248,13 +305,17 @@ function JobFarmer:createPlant (colId, colPos, vehicle)
 	end
 end
 
-function JobFarmer:updateClientData ()
+function JobFarmer:updateClientData(player)
 	-- TODO: Send info only to players doing this job
-	for i, v in pairs(getElementsByType("player")) do
-		v:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm)
+	if player and isElement(player) then
+		player:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm, self.m_CurrentSeedsFarm)
+	else
+		for i, v in pairs(getElementsByType("player")) do
+			v:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm, self.m_CurrentSeedsFarm)
+		end
 	end
 end
 
 function JobFarmer:updatePrivateData (player)
-	player:triggerEvent("Job.updatePlayerPlants", self.m_CurrentPlants[player])
+	player:triggerEvent("Job.updatePlayerPlants", self.m_CurrentPlants[player], self.m_CurrentSeeds[player])
 end

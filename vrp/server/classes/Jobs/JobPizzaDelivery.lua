@@ -48,7 +48,7 @@ function JobPizza:onPizzaDeliver(distance, time)
 		client.pizzaJobDelivered = getTickCount()
 
 		local workFactor = math.min(distance, 1899) / math.max(time, 10) -- Note: 1899 is the longest distance from start point
-		local pay = math.floor( BASE_LOAN * workFactor*2 )
+		local pay = math.floor( BASE_LOAN * workFactor*2  * JOB_PAY_MULTIPLICATOR )
 		local duration = getRealTime().timestamp - client.m_LastJobAction
 		local points = 0
 		client.m_LastJobAction = getRealTime().timestamp

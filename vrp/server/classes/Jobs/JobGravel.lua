@@ -10,9 +10,9 @@ JobGravel = inherit(Job)
 MAX_STONES_IN_STOCK = 250
 MAX_STONES_MINED = 100
 
-LOAN_MINING = 29*2 -- Per Stone
-LOAN_DOZER = 59*2 -- Per Stone
-LOAN_DUMPER = 79*2 -- Per Stone
+LOAN_MINING = 32*2 -- Per Stone
+LOAN_DOZER = 62*2 -- Per Stone
+LOAN_DUMPER = 82*2 -- Per Stone
 
 MAX_STONES_IN_DUMPER = 10
 
@@ -114,7 +114,7 @@ function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 	if getElementData(source, "syncer") == client then
 		source.m_Position = Vector3(posX, posY, posZ)
 		source.m_Velocity = Vector3(velX, velY, velZ)
-		
+
 		for k, v in ipairs(self.m_Col:getElementsWithin("player")) do
 			if v ~= client then
 				v:triggerEvent("gravelOnSync", {{element = source, posX = source.m_Position.x, posY = source.m_Position.y, posZ = source.m_Position.z, velX = source.m_Velocity.x, velY = source.m_Velocity.y, velZ = source.m_Velocity.z}})
@@ -285,7 +285,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 
 					if not self.m_DozerDropTimer[client] then
 						self.m_DozerDropTimer[client] = setTimer(function()
-							local loan = LOAN_DOZER * (self.m_DozerDropStones[client] or 0)
+							local loan = LOAN_DOZER * (self.m_DozerDropStones[client] or 0) * JOB_PAY_MULTIPLICATOR
 							local duration = getRealTime().timestamp - client.m_LastJobAction
 							client.m_LastJobAction = getRealTime().timestamp
 							local points = 0
@@ -407,7 +407,7 @@ end
 function JobGravel:giveDumperDeliverLoan(player)
 	local amount = self.m_DumperDeliverStones[player] or 0
 	if amount > MAX_STONES_IN_DUMPER then amount = MAX_STONES_IN_DUMPER end
-	local loan = amount*LOAN_DUMPER
+	local loan = amount*LOAN_DUMPER * JOB_PAY_MULTIPLICATOR * JOB_PAY_MULTIPLICATOR
 	local duration = getRealTime().timestamp - player.m_LastJobAction
 	local points = math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR)
 	player.m_LastJobAction = getRealTime().timestamp
