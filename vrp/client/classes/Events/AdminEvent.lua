@@ -49,7 +49,7 @@ end
 addEventHandler("adminEventPrepareClient", root, AdminEvent.start)
 
 function AdminEvent.stop()
-    AdminEvent:delete()
+    delete(AdminEvent:getSingleton())
 end
 addEventHandler("adminEventRemoveClient", root, AdminEvent.stop)
 
