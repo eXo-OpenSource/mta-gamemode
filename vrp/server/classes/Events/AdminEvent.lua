@@ -14,6 +14,7 @@ function AdminEvent:destructor()
         self:leaveEvent(player, true)
     end
     self.m_Players = {}
+    self:deleteEventVehicles()
 end
 
 function AdminEvent:setTeleportPoint(eventManager)
@@ -26,6 +27,7 @@ function AdminEvent:sendGUIData(player)
 end
 
 function AdminEvent:joinEvent(player)
+    if self:isPlayerInEvent(player) then player:sendError(_("Du nimmst bereits am Admin-Event teil! Bitte warte auf weitere Anweisungen!", player)) return end
 	table.insert(self.m_Players, player)
     player:sendInfo(_("Du nimmst am Admin-Event teil! Bitte warte auf weitere Anweisungen!", player))
     player:triggerEvent("adminEventPrepareClient")
@@ -55,14 +57,11 @@ function AdminEvent:teleportPlayers(eventManager)
 	local count = 0
 
 	for index, player in pairs(self.m_Players) do
-		if not player.adminEventPortet then
-			if player.vehicle then removePedFromVehicle(player)	end
-			player:setDimension(dim)
-			player:setInterior(dim)
-			player:setPosition(pos.x + math.random(1,3), pos.y + math.random(1,3), pos.z)
-			count = count + 1
-			player.adminEventPortet = true
-		end
+        if player.vehicle then removePedFromVehicle(player)	end
+        player:setDimension(dim)
+        player:setInterior(int)
+        player:setPosition(pos.x + math.random(1,3), pos.y + math.random(1,3), pos.z)
+        count = count + 1
 	end
 	eventManager:sendInfo(_("Es wurden %d Spieler teleportiert!", eventManager, count))
 end
@@ -93,10 +92,10 @@ function AdminEvent:createVehiclesInRow(player, amount, direction)
     amount = tonumber(amount)
 
     for i=0, amount do
-            if direction == "V" then pos = pos + matrix.forward*3
-        elseif direction == "H" then pos = pos - matrix.forward*3
-        elseif direction == "R" then pos = pos + matrix.right*3
-        elseif direction == "L" then pos = pos - matrix.right*3
+            if direction == "V" then pos = pos + matrix.forward*7
+        elseif direction == "H" then pos = pos - matrix.forward*7
+        elseif direction == "R" then pos = pos + matrix.right*4
+        elseif direction == "L" then pos = pos - matrix.right*4
         end
 
         veh = TemporaryVehicle.create(model, pos, rot)
@@ -139,13 +138,11 @@ function AdminEvent:deleteEventVehicles(player)
         if veh and isElement(veh) then
             veh:destroy()
             count = count+1
-        else
-            self.m_Vehicles[index] = nil
         end
     end
 	self.m_Vehicles = {}
 	self.m_VehiclesAmount = 0
-    player:sendInfo(_("Du hast %d Event-Fahrzege gelöscht!", player, count))
+    if player and isElement(player) then player:sendInfo(_("Du hast %d Event-Fahrzege gelöscht!", player, count)) end
 end
 
 function AdminEvent:startAuction(player, name)
