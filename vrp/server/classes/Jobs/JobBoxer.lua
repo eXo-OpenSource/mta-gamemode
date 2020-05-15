@@ -163,7 +163,7 @@ function JobBoxer:createTopList()
     local result = sql:queryFetch("SELECT Id, BoxerLevel FROM ??_stats ORDER BY BoxerLevel DESC LIMIT 10", sql:getPrefix())
     for _, row in ipairs(result) do
         int = int + 1
-        self.m_BoxerLevelTable[int] = {Account.getNameFromId(row["Id"]), row["BoxerLevel"]}
+        self.m_BoxerLevelTable[int] = {Account.getNameFromId(row["Id"]) or "- Unbekannt -", row["BoxerLevel"]}
     end
 end
 
