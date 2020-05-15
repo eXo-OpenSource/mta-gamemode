@@ -30,7 +30,7 @@ function DesertEagle:onWeaponFire(weapon)
         if not isPedDucked(localPlayer) then
             self.m_LastShot = getTickCount()
 
-            if not self.m_Aiming then
+            if not self.m_isAiming then
                 toggleControl("crouch", false)
         
                 if isTimer(self.m_CrouchTimer) then
