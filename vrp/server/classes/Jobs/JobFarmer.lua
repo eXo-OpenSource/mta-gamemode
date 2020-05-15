@@ -98,6 +98,13 @@ function JobFarmer:storeHit(hitElement, matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.jobVehicle then
 		if self.m_CurrentSeeds[player] and self.m_CurrentSeeds[player] > 0 then
+			if not hitElement.m_HasSeeds then
+				self.m_CurrentSeeds[player] = 0
+				player:sendError(_("Noughty boy", player))
+				return
+			end
+			hitElement.m_HasSeeds = false
+
 			player:sendSuccess(_("Du hast die Lieferung abgegeben.", player))
 			local income = self.m_CurrentSeeds[player]*MONEY_PER_SEED * JOB_PAY_MULTIPLICATOR
 			local duration = getRealTime().timestamp - player.m_LastJobAction
@@ -235,6 +242,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 
 			self:updateClientData()
 			hitElement:setFrozen(true)
+			hitElement.m_HasSeeds = true
 			for i = 1, 3 do
 				for j = 1, 3 do
 					local obj = createObject(1221, 0, 0, 0)

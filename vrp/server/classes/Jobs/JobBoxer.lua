@@ -23,7 +23,7 @@ function JobBoxer:constructor()
     self.m_PlayerLevelCache = {}
     self.m_BankAccountServer = BankServer.get("job.boxer")
 
-    addEventHandler("onMarkerHit", self.m_PickupMarker, 
+    addEventHandler("onMarkerHit", self.m_PickupMarker,
         function(player)
             if player:getJob() == self then
                 triggerClientEvent(player, "boxerJobFightList", player)
@@ -137,7 +137,7 @@ end
 
 function JobBoxer:leaveJobBuilding(player)
     if player:getData("Boxer.Income") and player:getData("Boxer.Income") > 1 then
-        local income = player:getData("Boxer.Income")
+        local income = player:getData("Boxer.Income") * JOB_PAY_MULTIPLICATOR
         player:setData("Boxer.Income", 0)
         local duration = getRealTime().timestamp - player.m_LastJobAction
         StatisticsLogger:getSingleton():addJobLog(player, "jobBoxer", duration, income)
@@ -178,7 +178,7 @@ function JobBoxer:createTopList()
 end
 
 function JobBoxer:getPlayerLevel(player)
-    if self.m_PlayerLevelCache[player:getName()] then 
+    if self.m_PlayerLevelCache[player:getName()] then
         return self.m_PlayerLevelCache[player:getName()]
     else
         local result = sql:queryFetch("SELECT (SELECT COUNT(*) FROM ??_stats WHERE BoxerLevel >= ?) AS Position, BoxerLevel FROM ??_stats WHERE Id=?", sql:getPrefix(), player:getPrivateSync("Stat_BoxerLevel"), sql:getPrefix(), player:getId())
@@ -210,7 +210,7 @@ function JobBoxer:updateCachedTopList(player)
     end
     if bNameFound == true then
         self.m_BoxerLevelTable[bTableIndex][2] = self:getPlayerLevel(player)[3]
-        for i = 10, 1, -1 do 
+        for i = 10, 1, -1 do
             if self.m_BoxerLevelTable[bTableIndex][2] >= self.m_BoxerLevelTable[i][2] then
                 bUpperIndex = i
             end
@@ -226,7 +226,7 @@ function JobBoxer:updateCachedTopList(player)
         end
     else
         local bUpperIndex = 10
-        for i = 10, 1, -1 do 
+        for i = 10, 1, -1 do
             if self:getPlayerLevel(player)[3] > self.m_BoxerLevelTable[i][2] then
                 bUpperIndex = i
             end
