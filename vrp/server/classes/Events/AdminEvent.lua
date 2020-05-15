@@ -11,8 +11,9 @@ end
 
 function AdminEvent:destructor()
     for i, player in pairs(self.m_Players) do
-        self:leaveEvent(player)
+        self:leaveEvent(player, true)
     end
+    self.m_Players = {}
 end
 
 function AdminEvent:setTeleportPoint(eventManager)
@@ -33,8 +34,8 @@ function AdminEvent:joinEvent(player)
     end
 end
 
-function AdminEvent:leaveEvent(player)
-    table.removevalue(self.m_Players, player)
+function AdminEvent:leaveEvent(player, dontModifyTable)
+    if not dontModifyTable then table.removevalue(self.m_Players, player) end -- hack-fix if we remove every player in the table
     if isElement(player) then
         player:sendInfo(_("Du nimmst nicht mehr am Admin-Event teil!", player))
         player:triggerEvent("adminEventRemoveClient")
