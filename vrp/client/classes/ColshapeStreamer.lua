@@ -27,7 +27,9 @@ end
 
 function ColshapeStreamer:registerColshape(pos, element, category, elementId, size, colshapeHitEvent, colshapeLeaveEvent, streamInEvent, streamOutEvent)
     local index = #ColshapeStreamer.Map+1
-    ColshapeStreamer.Map[index] = element
+    ColshapeStreamer.Map[index] = {}
+    ColshapeStreamer.Map[index].element = element
+    ColshapeStreamer.Map[index].element.index = index
     ColshapeStreamer.Map[index].colshapePosition = pos
     ColshapeStreamer.Map[index].category = category
     ColshapeStreamer.Map[index].elementId = elementId
@@ -42,11 +44,11 @@ function ColshapeStreamer:registerColshape(pos, element, category, elementId, si
     if streamOutEvent then
         ColshapeStreamer.Map[index].streamOutEvent = streamOutEvent
     end
-    addEventHandler("onClientElementStreamIn", ColshapeStreamer.Map[index], self.m_StreamInBind)
-    addEventHandler("onClientElementStreamOut", ColshapeStreamer.Map[index], self.m_StreamOutBind)
+    addEventHandler("onClientElementStreamIn", ColshapeStreamer.Map[index].element, self.m_StreamInBind)
+    addEventHandler("onClientElementStreamOut", ColshapeStreamer.Map[index].element, self.m_StreamOutBind)
 
     if isElementStreamedIn(element) then
-        triggerEvent("onClientElementStreamIn", ColshapeStreamer.Map[index])
+        triggerEvent("onClientElementStreamIn", ColshapeStreamer.Map[index].element)
     end
 end
 
@@ -55,17 +57,16 @@ function ColshapeStreamer:deleteColshape(category, elementId)
         if colshape.category == category and colshape.elementId == elementId then
             if colshape.colshape then colshape.colshape:destroy() end
             ColshapeStreamer.Map[key] = nil
-            return
         end
     end
 end
 
 function ColshapeStreamer:onStreamIn()
-    local element = source
+    local element = ColshapeStreamer.Map[source.index]
     element.colshape = createColSphere(element.colshapePosition[1], element.colshapePosition[2], element.colshapePosition[3], element.colshapeSize)
-    element.colshape:setDimension(element:getDimension())
+    element.colshape:setDimension(source:getDimension())
     if element.category == "beggarped" then
-        element.colshape:attach(element)
+        element.colshape:attach(source)
     end
     
     addEventHandler("onClientColShapeHit", element.colshape, function(hit, dim)
@@ -83,8 +84,9 @@ function ColshapeStreamer:onStreamIn()
 end
 
 function ColshapeStreamer:onStreamOut()
-    if source.colshape then 
-        source.colshape:destroy()
-        source.colshape = nil
+    local element = ColshapeStreamer.Map[source.index]
+    if element.colshape then 
+        element.colshape:destroy()
+        element.colshape = nil
     end
 end
