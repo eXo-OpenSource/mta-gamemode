@@ -49,6 +49,7 @@ end
 
 function DesertEagle:onWeaponSwitch(prev, current)
     if localPlayer:getWeapon(newSlot) == 24 then
+        self.m_isAiming = false
         addEventHandler("onClientPreRender", root, self.m_UpdateBind)
         self:bindKeys()
     else
