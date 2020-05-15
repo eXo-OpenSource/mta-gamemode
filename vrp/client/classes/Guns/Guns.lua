@@ -241,7 +241,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			outputDebugString("Canceling Damage")
 		end
 	end
-	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" and source ~= attacker then
+	if core:get("Sounds", "HitBell", true) and bPlaySound and getElementType(attacker) ~= "ped" and source ~= attacker then
 		playSound(self.m_hitpath or "files/audio/hitsound.wav")
 	end
 	if bPlaySound and self.m_HitMark and attacker == localPlayer then
@@ -266,7 +266,7 @@ function Guns:onHitByThrowObject(attacker, target, weapon, bodypart, loss)
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 			removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 			addEventHandler("onClientRender", root, self.m_HitMarkRender)
-			if core:get("Other", "HitSoundBell", true) then
+			if core:get("Sounds", "HitBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
@@ -287,7 +287,7 @@ function Guns:onPedHitByThrowObject(attacker, ped, weapon, bodypart)
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 			removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 			addEventHandler("onClientRender", root, self.m_HitMarkRender)
-			if core:get("Other", "HitSoundBell", true) then
+			if core:get("Sounds", "HitBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
@@ -325,13 +325,13 @@ function Guns:addMeleeDamage( player, weapon , bodypart, loss )
 				self.m_MeleeCache["Tick"] = getTickCount()
 				self.m_MeleeCache["Bodypart"] = bodypart
 				self.m_MeleeCache["Loss"] = 0
-				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
+				if core:get("Sounds", "HitBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
 					playSound(self.m_hitpath or "files/audio/hitsound.wav")
 				end
 			end
 		else
 			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
-			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
+			if core:get("Sounds", "HitBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
@@ -609,7 +609,7 @@ function Guns:Event_onClientPedDamage(attacker, weapon, bodypart)
 		cancelEvent()
 	else
 		if attacker == localPlayer then
-			if core:get("Other", "HitSoundBell", true) then
+			if core:get("Sounds", "HitBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 			if self.m_HitMark then
