@@ -102,9 +102,9 @@ end
 
 function JobBoxer:endJob()
     local level = client:getPublicSync("JobBoxer:activeLevel")
-    self.m_BankAccountServer:transferMoney({client, true}, JobBoxerMoney[level], "Boxer-Job", "Job", "Boxer")
-    client:setData("Boxer.Income", client:getData("Boxer.Income") + JobBoxerMoney[level] )
-    client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(JobBoxerMoney[level]))
+    self.m_BankAccountServer:transferMoney({client, true}, JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR, "Boxer-Job", "Job", "Boxer")
+    client:setData("Boxer.Income", client:getData("Boxer.Income") + JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR )
+    client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR))
 
     local level = self:getPlayerLevel(client)[3]
     self.m_PlayerLevelCache[client:getName()][3] = level + 1
@@ -137,7 +137,7 @@ end
 
 function JobBoxer:leaveJobBuilding(player)
     if player:getData("Boxer.Income") and player:getData("Boxer.Income") > 1 then
-        local income = player:getData("Boxer.Income") * JOB_PAY_MULTIPLICATOR
+        local income = player:getData("Boxer.Income")
         player:setData("Boxer.Income", 0)
         local duration = getRealTime().timestamp - player.m_LastJobAction
         StatisticsLogger:getSingleton():addJobLog(player, "jobBoxer", duration, income)
