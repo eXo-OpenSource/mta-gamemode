@@ -1450,7 +1450,7 @@ function SelfGUI:onSettingChange(setting)
 		end
 	elseif setting == "Sounds / Radio" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Sounds", self.m_SettingBG)
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Width*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
 		self.m_HallelujaSound:setFont(VRPFont(25))
 		self.m_HallelujaSound:setFontSize(1)
 		self.m_HallelujaSound:setChecked(core:get("Sounds", "Halleluja", true))
@@ -1492,7 +1492,7 @@ function SelfGUI:onSettingChange(setting)
 		end
 
 		
-		self.m_StaticNoiseRadio = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.9, self.m_Height*0.04, _"Funkkanal Rauschen", self.m_SettingBG)
+		self.m_StaticNoiseRadio = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.9, self.m_Height*0.04, _"Funkkanal Rauschen", self.m_SettingBG)
 		self.m_StaticNoiseRadio:setFont(VRPFont(25))
 		self.m_StaticNoiseRadio:setFontSize(1)
 		self.m_StaticNoiseRadio:setChecked(core:get("Sounds", "StaticNoise", true))
