@@ -66,7 +66,6 @@ function JobBoxer:destructor()
 end
 
 function JobBoxer:start(player)
-    player:setData("Boxer.Income", 0)
     player.m_LastJobAction = nil
 end
 
@@ -89,11 +88,9 @@ function JobBoxer:startJob(typ)
     client:setPosition(758.42, 11.18, 1001.16)
     client:setRotation(0, 0, 270)
     client:setCameraTarget(client)
-    client:setDimension(dimension)
+	client:setDimension(dimension)
 
-    if not client.m_LastJobAction then
-        client.m_LastJobAction = getRealTime().timestamp
-    end
+	client.m_LastJobAction = getRealTime().timestamp
 
     setPedFightingStyle(client, 5)
 
@@ -103,8 +100,11 @@ end
 function JobBoxer:endJob()
     local level = client:getPublicSync("JobBoxer:activeLevel")
     self.m_BankAccountServer:transferMoney({client, true}, JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR, "Boxer-Job", "Job", "Boxer")
-    client:setData("Boxer.Income", client:getData("Boxer.Income") + JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR )
-    client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR))
+	local income = JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR
+	local duration = getRealTime().timestamp - client.m_LastJobAction
+	StatisticsLogger:getSingleton():addJobLog(client, "jobBoxer", duration, income)
+	client.m_LastJobAction = nil
+    client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(income))
 
     local level = self:getPlayerLevel(client)[3]
     self.m_PlayerLevelCache[client:getName()][3] = level + 1
@@ -133,16 +133,6 @@ function JobBoxer:abortJob()
 
     client:setPublicSync("JobBoxer:activeLevel", false)
     setPedFightingStyle(client, 15)
-end
-
-function JobBoxer:leaveJobBuilding(player)
-    if player:getData("Boxer.Income") and player:getData("Boxer.Income") > 1 then
-        local income = player:getData("Boxer.Income")
-        player:setData("Boxer.Income", 0)
-        local duration = getRealTime().timestamp - player.m_LastJobAction
-        StatisticsLogger:getSingleton():addJobLog(player, "jobBoxer", duration, income)
-        player.m_LastJobAction = nil
-    end
 end
 
 function JobBoxer:isPlayerBoxing(player)

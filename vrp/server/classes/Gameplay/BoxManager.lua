@@ -23,7 +23,6 @@ BoxManager.Data = {
 
 function BoxManager:constructor()
 	self.m_Teleporter = InteriorEnterExit:new(Vector3(2229.85, -1721.20, 13.56), Vector3(772.45, -5.16, 1000.73), 130, 0, 5)
-	self.m_Teleporter:addExitEvent(function(player) JobBoxer:getSingleton():leaveJobBuilding(player) end)
 
 	self.m_Marker = createMarker(765.49, 1.57, 999.8, "cylinder", 1, 255, 0, 0, 200)
 	self.m_Marker:setInterior(5)
