@@ -12,7 +12,7 @@ if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
 
-DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "influxdb.merx.dev", "sentry.exo.merx.dev", "cp.exo-reallife.de"}
+DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "download2.exo-reallife.de", "influxdb.merx.dev", "sentry.exo.merx.dev", "cp.exo-reallife.de"}
 
 -- LEVELS
 MAX_JOB_LEVEL = 10
@@ -70,6 +70,8 @@ JOB_LEVEL_GRAVEL = 6
 JOB_LEVEL_BOXER = 8
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
+
+JOB_PAY_MULTIPLICATOR = 1.5
 
 BLIP_CATEGORY = {
 	Default = "Allgemein",

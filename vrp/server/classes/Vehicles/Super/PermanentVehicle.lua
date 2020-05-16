@@ -154,6 +154,8 @@ function PermanentVehicle:virtual_constructor(data)
 		self.m_ShopIndex = data.ShopIndex
 		self.m_BuyPrice = data.BuyPrice
 		self.m_Template = data.TemplateId
+		self:setDimension(data.Dimension or 0)
+		self:setInterior(data.Interior or 0)
 		self:setCurrentPositionAsSpawn(data.PositionType)
 
 		setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
@@ -214,8 +216,6 @@ function PermanentVehicle:virtual_constructor(data)
 
 		self.m_HasBeenUsed = 0
 		self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
-		self.m_SpawnDim = data.Dimension
-		self.m_SpawnIn = data.Interior
 	end
 end
 

@@ -138,8 +138,8 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 							hitElement.m_LastJobAction = getRealTime().timestamp
 							outputDebug(getDistanceBetweenPoints3D(hitElement:getData("Logistician:LastCrane").m_Object:getPosition(), crane.m_Object:getPosition()))
-							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
-							self.m_BankAccount:transferMoney({hitElement, true}, self.m_MoneyPerTransport, "Logistiker Job", "Job", "Logistician")
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport * JOB_PAY_MULTIPLICATOR, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
+							self.m_BankAccount:transferMoney({hitElement, true}, self.m_MoneyPerTransport * JOB_PAY_MULTIPLICATOR, "Logistiker Job", "Job", "Logistician")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
 					else
@@ -201,7 +201,7 @@ function Crane:dropContainer(vehicle, player, callback)
 		player:sendError(_("Es darf sich kein Spieler am LKW festhalten!", player))
 		return
 	end
-	
+
 	self.m_Busy = true
 	vehicle:setFrozen(true)
 	toggleAllControls(player, false, true, false)

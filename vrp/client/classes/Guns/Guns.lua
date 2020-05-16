@@ -71,7 +71,6 @@ function Guns:constructor()
 	self.HookDrawAttention = bind(self.drawNetworkInterupt, self)
 	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
 	--addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
-	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen", "clientMonochromeFlash", "prepareGrenadeThrow", "throwProjectile"}
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
@@ -242,7 +241,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			outputDebugString("Canceling Damage")
 		end
 	end
-	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" and source ~= attacker then
+	if core:get("Sounds", "HitBell", true) and bPlaySound and getElementType(attacker) ~= "ped" and source ~= attacker then
 		playSound(self.m_hitpath or "files/audio/hitsound.wav")
 	end
 	if bPlaySound and self.m_HitMark and attacker == localPlayer then
@@ -267,7 +266,7 @@ function Guns:onHitByThrowObject(attacker, target, weapon, bodypart, loss)
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 			removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 			addEventHandler("onClientRender", root, self.m_HitMarkRender)
-			if core:get("Other", "HitSoundBell", true) then
+			if core:get("Sounds", "HitBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
@@ -288,7 +287,7 @@ function Guns:onPedHitByThrowObject(attacker, ped, weapon, bodypart)
 			self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 			removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 			addEventHandler("onClientRender", root, self.m_HitMarkRender)
-			if core:get("Other", "HitSoundBell", true) then
+			if core:get("Sounds", "HitBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
@@ -326,13 +325,13 @@ function Guns:addMeleeDamage( player, weapon , bodypart, loss )
 				self.m_MeleeCache["Tick"] = getTickCount()
 				self.m_MeleeCache["Bodypart"] = bodypart
 				self.m_MeleeCache["Loss"] = 0
-				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
+				if core:get("Sounds", "HitBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
 					playSound(self.m_hitpath or "files/audio/hitsound.wav")
 				end
 			end
 		else
 			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
-			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
+			if core:get("Sounds", "HitBell", true) and getElementType(player) ~= "ped" and player ~= localPlayer then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
@@ -610,7 +609,7 @@ function Guns:Event_onClientPedDamage(attacker, weapon, bodypart)
 		cancelEvent()
 	else
 		if attacker == localPlayer then
-			if core:get("Other", "HitSoundBell", true) then
+			if core:get("Sounds", "HitBell", true) then
 				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 			if self.m_HitMark then
@@ -629,64 +628,6 @@ function Guns:disableDamage(state)
 		removeEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	else
 		addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
-	end
-end
-
-function Guns:initalizeAntiCBug()
-	self.m_AntiFastShotEnabled = true
-	self.m_LastShot = 0
-	self.m_LastCrouchTimers = {}
-
-	self.m_StopFastDeagleBind = bind(self.stopFastDeagle, self)
-	self.m_CrounchBind = bind(self.crounch, self)
-
-	addEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind, true, "high")
-	bindKey("crouch", "both", self.m_CrounchBind)
-end
-
-function Guns:crounch(btn, state)
-	if state == "down" then
-		if not isPedDucked ( localPlayer ) and ( getTickCount () - self.m_LastShot <= 700 ) then
-			setPedControlState ( "crouch", true )
-			toggleControl ( "crouch", false )
-			if isTimer ( self.m_LastCrouchTimers[1] ) then
-				killTimer ( self.m_LastCrouchTimers[1] )
-			end
-			self.m_LastCrouchTimers[1] = setTimer ( setPedControlState, 100, 1, "crouch", false )
-		end
-	else
-		if getTickCount() - self.m_LastShot <= 700 then
-			setPedControlState ( "crouch", false )
-			toggleControl ( "crouch", false )
-			if isTimer ( self.m_LastCrouchTimers[1] ) then
-				killTimer ( self.m_LastCrouchTimers[1] )
-			end
-			if isTimer ( self.m_LastCrouchTimers[2] ) then
-				killTimer ( self.m_LastCrouchTimers[2] )
-			end
-			self.m_LastCrouchTimers[2] = setTimer ( toggleControl, 100, 1, "crouch", true )
-		else
-			toggleControl ( "crouch", true )
-		end
-	end
-end
-
-function Guns:stopFastDeagle(weapon)
-	if weapon == 24 then
-		self.m_LastShot = getTickCount()
-		setPedControlState ( "crouch", false )
-		if isPedDucked ( localPlayer ) then
-			toggleControl ( "crouch", false )
-			self.m_LastCrouchTimers[1] = setTimer ( toggleControl, 500, 1, "crouch", true )
-		end
-	end
-end
-
-function Guns:toggleFastShot(bool)
-	self.m_AntiFastShotEnabled = not bool
-	if not self.m_AntiFastShotEnabled then
-		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
-		unbindKey ( "crouch", "both", crouch )
 	end
 end
 

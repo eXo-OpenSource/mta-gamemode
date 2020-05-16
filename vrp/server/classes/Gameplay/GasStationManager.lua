@@ -441,7 +441,7 @@ GAS_STATIONS = {
 		accessible =  {1, 0},
 		nonInterior = true,
 		serviceStation = true,
-		fuelTypes = {"petrol", "diesel", "petrol_plus"},
+		fuelTypes = {"petrol", "diesel", "petrol_plus", "jetfuel"},
 	},
 	{
 		name = "Rescue Service Station",
@@ -451,7 +451,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.RESCUE},
 		nonInterior = true,
 		serviceStation = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	--[[
 	{
@@ -470,7 +470,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.YAKUZA},
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	{
 		name = "Vatos Locos",
@@ -479,7 +479,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	{
 		name = "Outlaws MC",
@@ -488,7 +488,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.OUTLAWS},
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	--[[{
 		name = "Triaden",
@@ -528,7 +528,6 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	]]
 	{
 		name = "Brigada",
 		stations = {
@@ -538,4 +537,5 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	]]
 }

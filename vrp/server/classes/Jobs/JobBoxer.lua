@@ -23,7 +23,7 @@ function JobBoxer:constructor()
     self.m_PlayerLevelCache = {}
     self.m_BankAccountServer = BankServer.get("job.boxer")
 
-    addEventHandler("onMarkerHit", self.m_PickupMarker, 
+    addEventHandler("onMarkerHit", self.m_PickupMarker,
         function(player)
             if player:getJob() == self then
                 triggerClientEvent(player, "boxerJobFightList", player)
@@ -66,7 +66,6 @@ function JobBoxer:destructor()
 end
 
 function JobBoxer:start(player)
-    player:setData("Boxer.Income", 0)
     player.m_LastJobAction = nil
 end
 
@@ -89,11 +88,9 @@ function JobBoxer:startJob(typ)
     client:setPosition(758.42, 11.18, 1001.16)
     client:setRotation(0, 0, 270)
     client:setCameraTarget(client)
-    client:setDimension(dimension)
+	client:setDimension(dimension)
 
-    if not client.m_LastJobAction then
-        client.m_LastJobAction = getRealTime().timestamp
-    end
+	client.m_LastJobAction = getRealTime().timestamp
 
     setPedFightingStyle(client, 5)
 
@@ -102,9 +99,12 @@ end
 
 function JobBoxer:endJob()
     local level = client:getPublicSync("JobBoxer:activeLevel")
-    self.m_BankAccountServer:transferMoney({client, true}, JobBoxerMoney[level], "Boxer-Job", "Job", "Boxer")
-    client:setData("Boxer.Income", client:getData("Boxer.Income") + JobBoxerMoney[level] )
-    client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(JobBoxerMoney[level]))
+    self.m_BankAccountServer:transferMoney({client, true}, JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR, "Boxer-Job", "Job", "Boxer")
+	local income = JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR
+	local duration = getRealTime().timestamp - client.m_LastJobAction
+	StatisticsLogger:getSingleton():addJobLog(client, "jobBoxer", duration, income)
+	client.m_LastJobAction = nil
+    client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(income))
 
     local level = self:getPlayerLevel(client)[3]
     self.m_PlayerLevelCache[client:getName()][3] = level + 1
@@ -135,16 +135,6 @@ function JobBoxer:abortJob()
     setPedFightingStyle(client, 15)
 end
 
-function JobBoxer:leaveJobBuilding(player)
-    if player:getData("Boxer.Income") and player:getData("Boxer.Income") > 1 then
-        local income = player:getData("Boxer.Income")
-        player:setData("Boxer.Income", 0)
-        local duration = getRealTime().timestamp - player.m_LastJobAction
-        StatisticsLogger:getSingleton():addJobLog(player, "jobBoxer", duration, income)
-        player.m_LastJobAction = nil
-    end
-end
-
 function JobBoxer:isPlayerBoxing(player)
     if player:getPublicSync("JobBoxer:activeLevel") then
         return true
@@ -173,12 +163,12 @@ function JobBoxer:createTopList()
     local result = sql:queryFetch("SELECT Id, BoxerLevel FROM ??_stats ORDER BY BoxerLevel DESC LIMIT 10", sql:getPrefix())
     for _, row in ipairs(result) do
         int = int + 1
-        self.m_BoxerLevelTable[int] = {Account.getNameFromId(row["Id"]), row["BoxerLevel"]}
+        self.m_BoxerLevelTable[int] = {Account.getNameFromId(row["Id"]) or "- Unbekannt -", row["BoxerLevel"]}
     end
 end
 
 function JobBoxer:getPlayerLevel(player)
-    if self.m_PlayerLevelCache[player:getName()] then 
+    if self.m_PlayerLevelCache[player:getName()] then
         return self.m_PlayerLevelCache[player:getName()]
     else
         local result = sql:queryFetch("SELECT (SELECT COUNT(*) FROM ??_stats WHERE BoxerLevel >= ?) AS Position, BoxerLevel FROM ??_stats WHERE Id=?", sql:getPrefix(), player:getPrivateSync("Stat_BoxerLevel"), sql:getPrefix(), player:getId())
@@ -210,7 +200,7 @@ function JobBoxer:updateCachedTopList(player)
     end
     if bNameFound == true then
         self.m_BoxerLevelTable[bTableIndex][2] = self:getPlayerLevel(player)[3]
-        for i = 10, 1, -1 do 
+        for i = 10, 1, -1 do
             if self.m_BoxerLevelTable[bTableIndex][2] >= self.m_BoxerLevelTable[i][2] then
                 bUpperIndex = i
             end
@@ -226,7 +216,7 @@ function JobBoxer:updateCachedTopList(player)
         end
     else
         local bUpperIndex = 10
-        for i = 10, 1, -1 do 
+        for i = 10, 1, -1 do
             if self:getPlayerLevel(player)[3] > self.m_BoxerLevelTable[i][2] then
                 bUpperIndex = i
             end

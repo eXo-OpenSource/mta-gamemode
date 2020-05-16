@@ -104,12 +104,12 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 			local numCans = hitElement:getData("Trashman:Cans")
 
 			if numCans and numCans > 0 then
-				local moneyAmount = numCans * MONEY_PER_CAN
+				local moneyAmount = numCans * MONEY_PER_CAN * JOB_PAY_MULTIPLICATOR
 				local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 				local points = math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR)
 				hitElement.m_LastJobAction = getRealTime().timestamp
 				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount, nil, nil, points, numCans)
-				
+
 				self.m_BankAccount:transferMoney({hitElement, true}, moneyAmount, "Müll-Job", "Job", "Trashman")
 				hitElement:givePoints(points)
 
