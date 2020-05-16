@@ -48,11 +48,13 @@ end
 
 function InteriorEnterExitManager:sendInteriorEnterExitToClient(player)
 	if not player then player = root end
-	for key, enterexit in pairs(InteriorEnterExitManager.Map) do
-		local x, y, z = getElementPosition(enterexit.m_EnterMarker)
-        triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_EnterMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onEnterColHit")
-        local x, y, z = getElementPosition(enterexit.m_ExitMarker)
-        triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_ExitMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onExitColHit")
+    for key, enterexit in pairs(InteriorEnterExitManager.Map) do
+        if enterexit then
+            local x, y, z = getElementPosition(enterexit.m_EnterMarker)
+            triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_EnterMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onEnterColHit")
+            local x, y, z = getElementPosition(enterexit.m_ExitMarker)
+            triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_ExitMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onExitColHit")
+        end
 	end
 end
 
