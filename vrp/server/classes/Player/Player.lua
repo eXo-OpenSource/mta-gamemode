@@ -517,6 +517,7 @@ function Player:spawn()
 	triggerEvent("WeaponAttach:onInititate", self)
 
 	VehicleTexture.requestTextures(self)
+	ElementTexture.requestTextures(self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)

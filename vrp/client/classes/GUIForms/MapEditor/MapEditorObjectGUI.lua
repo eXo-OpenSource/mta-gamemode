@@ -16,7 +16,7 @@ function MapEditorObjectGUI:constructor(object)
 
 	GUIForm.constructor(self, 23, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Map Editor: Objekt bearbeiten", true, true, self)
-	self.m_Scrollable = GUIGridScrollableArea:new(1, 1, 10, 10, 10, 14, true, false, self.m_Window)
+	self.m_Scrollable = GUIGridScrollableArea:new(1, 1, 10, 10, 10, 15, true, false, self.m_Window)
     self.m_Scrollable:updateGrid()
     
     self.m_Object = object
@@ -67,7 +67,10 @@ function MapEditorObjectGUI:constructor(object)
 
     self.m_CollisionCheckbox = GUIGridCheckbox:new(1, 12, 10, 1, "Kollisionen", self.m_Scrollable)
 
-    self.m_DoubleSidedCheckbox = GUIGridCheckbox:new(1, 13, 10, 1, "Doppelseitige Textur", self.m_Scrollable)
+    self.m_DoubleSidedCheckbox = GUIGridCheckbox:new(1, 13, 5, 1, "Doppelseitige Textur", self.m_Scrollable)
+    self.m_TexturesButton = GUIGridButton:new(6, 13, 4, 1, "Texturen", self.m_Scrollable)
+
+    self.m_LODCheckbox = GUIGridCheckbox:new(1, 14, 10, 1, "LOD-Objekt aktivieren (Gebäude rendern weiter)", self.m_Scrollable)
 	
 	self.m_SaveButton = GUIGridButton:new(2, 12, 4, 1, "Speichern", self.m_Window):setBackgroundColor(Color.Green)
     self.m_DiscardButton = GUIGridButton:new(6, 12, 4, 1, "Abbrechen", self.m_Window):setBackgroundColor(Color.Red)
@@ -91,8 +94,13 @@ function MapEditorObjectGUI:constructor(object)
 
     self.m_DoubleSidedCheckbox.onChange = function() if isElement(object) then object:setDoubleSided(self.m_DoubleSidedCheckbox:isChecked()) end end
 
+    self.m_TexturesButton.onLeftClick = function()
+        MapEditorTextureEditGUI:new(self.m_Object, self.m_Object.m_Textures)
+    end
+
     self.m_SaveButton.onLeftClick = function()
         self:saveObject()
+        self.m_Object = nil
         delete(self)
     end
 
@@ -103,6 +111,11 @@ end
 
 function MapEditorObjectGUI:destructor()
     GUIForm.destructor(self)
+    if self.m_TempTextures then
+        for key, texture in pairs(self.m_TempTextures) do
+            delete(texture)
+        end
+    end
     if isElement(self.m_Object) then
         setElementModel(self.m_Object, self.m_Model)
         setElementInterior(self.m_Object, self.m_Interior)
@@ -124,6 +137,7 @@ function MapEditorObjectGUI:insertObjectData(object)
     self.m_Breakable = object:getData("breakable")
     self.m_Collision = object:getCollisionsEnabled()
     self.m_DoubleSided = object:isDoubleSided()
+    self.m_LODEnabled = isElement(object:getLowLOD())
 
     self.m_ModelEdit:setText(self.m_Model)
     self.m_InteriorEdit:setText(self.m_Interior)
@@ -161,6 +175,7 @@ function MapEditorObjectGUI:insertObjectData(object)
 
     self.m_CollisionCheckbox:setChecked(self.m_Collision)
     self.m_DoubleSidedCheckbox:setChecked(self.m_DoubleSided)
+    self.m_LODCheckbox:setChecked(self.m_LODEnabled)
 end
 
 function MapEditorObjectGUI:changeModel(id)
@@ -179,7 +194,36 @@ function MapEditorObjectGUI:saveObject()
         local breakable = self.m_BreakableCheckbox:isChecked()
         local collision = self.m_CollisionCheckbox:isChecked()
         local doublesided = self.m_DoubleSidedCheckbox:isChecked()
+        local textures = self.m_Object.m_Textures
+        local lodEnabled = self.m_LODCheckbox:isChecked()
 
-        MapEditor:getSingleton():onObjectPlaced(position, rotation, Vector3(sx, sy, sz), interior, dimension, model, breakable, collision, doublesided)
+        MapEditor:getSingleton():onObjectPlaced(position, rotation, Vector3(sx, sy, sz), interior, dimension, model, breakable, collision, doublesided, textures, lodEnabled)
     end
+end
+
+function MapEditorObjectGUI:addTextures(textures)
+    if self.m_TempTextures then
+        for key, texture in pairs(self.m_TempTextures) do
+            delete(texture)
+        end
+    end
+    self.m_TempTextures = {}
+    self.m_Object.m_Textures = textures
+
+    for textureName, texturePath in pairs(self.m_Object.m_Textures) do
+        if self:isTextureLocal(texturePath) then
+            local texture = FileTextureReplacer:new(self.m_Object, texturePath, textureName, {}, false, true)
+            table.insert(self.m_TempTextures, texture)
+        else
+            local texture = HTTPTextureReplacer:new(self.m_Object, texturePath, textureName, {}, false, true)
+            table.insert(self.m_TempTextures, texture)
+        end
+    end
+end
+
+function MapEditorObjectGUI:isTextureLocal(name)
+    if string.find(name, "http://") or string.find(name, "https://") then
+        return false
+    end
+    return true
 end

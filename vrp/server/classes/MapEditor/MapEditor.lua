@@ -44,6 +44,8 @@ function MapEditor:constructor()
     addEventHandler("MapEditor:forceCloseEditor", root, self.m_ForceCloseBind)
     addEventHandler("MapEditor:changeSettings", root, self.m_SettingsChangeBind)
 
+    self.m_Textures = {}
+
     addCommandHandler("mapeditor", self.m_CommandBind)
 end
 
@@ -60,7 +62,7 @@ function MapEditor:setPlayerInEditorMode(player, mapId, close)
     if not close then
         player.m_IsInEditorMode = true
         player.m_EditingMapId = mapId or 1
-        player:triggerEvent("MapEditor:enableClient", true)
+        player:triggerEvent("MapEditor:enableClient", true, mapId)
     else
         player.m_IsInEditorMode = nil
         player.m_EditingMapId = nil
@@ -72,7 +74,7 @@ function MapEditor:getPlayerEditingMap(player)
     return player.m_EditingMapId or 1
 end
 
-function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided)
+function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided, textures, lodEnabled)
     if not MapLoader:getSingleton():getMapStatus(self:getPlayerEditingMap(client)) then
         client:sendError(_("Die Map #%s ist deaktiviert!", client, self:getPlayerEditingMap(client)))
         return
@@ -103,6 +105,8 @@ function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimens
     if doublesided ~= nil then
         object:setDoubleSided(doublesided)
     end
+    object.m_TextureData = textures
+    object.m_LodEnabled = lodEnabled
 
     
     if objectExisted then
@@ -181,10 +185,10 @@ function MapEditor:requestControlForObject(callbackType, currentObject)
 
         if self:getPlayerEditingMap(client) == object.m_MapId then
             object.m_ControlledBy = client
-            client:triggerEvent("MapEditor:giveControlPermission", object, callbackType, true)
+            client:triggerEvent("MapEditor:giveControlPermission", object, callbackType, true, object.m_TextureData)
             return
         else
-            client:sendError(_("Dieses Objekt gehört zu Map #%s!", client, object.m_MapId))
+            client:sendShortMessage(_("Dieses Objekt gehört zu Map #%s!\nKlicke hier, um Map #%s zu bearbeiten!", client, object.m_MapId, object.m_MapId), "Map Editor: Hinweis", false, 7500, "MapEditor:startMapEditing", false, client, object.m_MapId)
         end
 
     end
@@ -236,7 +240,7 @@ function MapEditor:startMapEditing(player, id)
     if client then
         self:setPlayerInEditorMode(player, id)
         Admin:getSingleton():sendShortMessage(_("%s editiert nun die Map #%s", player, player:getName(), id))
-        if client ~= localPlayer then
+        if client ~= player then
             player:sendShortMessage(_("%s hat dich zum Mappen eingeladen!", client, client:getName()), "Map Editor: Einladung")
         end
     end

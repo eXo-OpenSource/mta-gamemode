@@ -52,6 +52,9 @@ function MapLoader:loadFromDatabase(id)
                 self.m_Maps[id][index]:setDimension(oRow.Dimension)
                 self.m_Maps[id][index]:setCollisionsEnabled(toboolean(oRow.Collision))
                 self.m_Maps[id][index]:setDoubleSided(toboolean(oRow.Doublesided))
+                self.m_Maps[id][index].m_TextureData = oRow.Textures and fromJSON(oRow.Textures) or {}
+                self.m_Maps[id][index].m_Textures = {}
+                self.m_Maps[id][index].m_LodEnabled = toboolean(oRow.LodEnabled)
                 self.m_Maps[id][index].m_Creator = oRow.Creator
                 self.m_Maps[id][index].m_ObjectId = oRow.Id
                 self.m_Maps[id][index].m_MapId = id
@@ -60,6 +63,9 @@ function MapLoader:loadFromDatabase(id)
                 self.m_Maps[id][index]:setData("MapEditor:id", oRow.Id, true)
                 self.m_Maps[id][index]:setData("MapEditor:mapId", id, true)
                 self.m_Maps[id][index]:setData("breakable", toboolean(oRow.Breakable), toboolean(oRow.Breakable))
+
+                self:loadTextures(self.m_Maps[id][index])
+                self:createLowLOD(self.m_Maps[id][index])
 
                 self:addRef(self.m_Maps[id][index])
             elseif oRow.Type == 0 then
@@ -87,12 +93,14 @@ function MapLoader:addObjectToMap(object, mapId, creator)
         local breakable = object:getData("breakable")
         local collision = object:getCollisionsEnabled()
         local doublesided = object:isDoubleSided()
+        local textures = object.m_TextureData
+        local lodEnabled = object.m_LodEnabled
         local creatorId = creator:getId() or 0
         local result, numrows, insertId = false, false, false
 
         if self:isMapSavingEnabled(mapId) then
-            result, numrows, insertId = sql:queryFetch("INSERT INTO ??_map_editor_objects (Type, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, ScaleX, ScaleY, ScaleZ, Interior, Dimension, Breakable, Collision, Doublesided, MapId, Creator) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                sql:getPrefix(), 1, model, math.round(x, 4), math.round(y, 4), math.round(z, 4), math.round(rx, 4), math.round(ry, 4), math.round(rz, 4), math.round(sx, 6), math.round(sy, 6), math.round(sz, 6), interior, dimension, fromboolean(breakable), fromboolean(collision), fromboolean(doublesided), mapId, creatorId)
+            result, numrows, insertId = sql:queryFetch("INSERT INTO ??_map_editor_objects (Type, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, ScaleX, ScaleY, ScaleZ, Interior, Dimension, Breakable, Collision, Doublesided, Textures, LodEnabled, MapId, Creator) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                sql:getPrefix(), 1, model, math.round(x, 4), math.round(y, 4), math.round(z, 4), math.round(rx, 4), math.round(ry, 4), math.round(rz, 4), math.round(sx, 6), math.round(sy, 6), math.round(sz, 6), interior, dimension, fromboolean(breakable), fromboolean(collision), fromboolean(doublesided), toJSON(textures), fromboolean(lodEnabled), mapId, creatorId)
         end
 
         local index = #self.m_Maps[mapId]+1
@@ -102,6 +110,7 @@ function MapLoader:addObjectToMap(object, mapId, creator)
         self.m_Maps[mapId][index].m_ObjectId = insertId
         self.m_Maps[mapId][index].m_MapId = mapId
         self.m_Maps[mapId][index].m_Index = index
+        self.m_Maps[mapId][index].m_Textures = {}
         self.m_Maps[mapId][index]:setData("MapEditor:object", true, true)
         self.m_Maps[mapId][index]:setData("MapEditor:id", insertId, true)
         self.m_Maps[mapId][index]:setData("MapEditor:mapId", mapId, true)
@@ -123,12 +132,17 @@ function MapLoader:updateObject(object)
         local breakable = object:getData("breakable")
         local collision = object:getCollisionsEnabled()
         local doublesided = object:isDoubleSided()
+        local textures = object.m_TextureData
+        local lodEnabled = object.m_LodEnabled
         local creatorId = client:getId() or 0
         local objectId = object.m_ObjectId
 
+        self:loadTextures(object)
+        self:createLowLOD(object)
+
         if self:isMapSavingEnabled(object.m_MapId) then
-            local result = sql:queryExec("UPDATE ??_map_editor_objects SET Model = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, ScaleX = ?, ScaleY = ?, ScaleZ = ?, Interior = ?, Dimension = ?, Breakable = ?, Collision = ?, Doublesided = ?, Creator = ? WHERE Id = ?", 
-                sql:getPrefix(), model, math.round(x, 4), math.round(y, 4), math.round(z, 4), math.round(rx, 4), math.round(ry, 4), math.round(rz, 4), math.round(sx, 6), math.round(sy, 6), math.round(sz, 6), interior, dimension, fromboolean(breakable), fromboolean(collision), fromboolean(doublesided), creatorId, objectId)
+            local result = sql:queryExec("UPDATE ??_map_editor_objects SET Model = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, ScaleX = ?, ScaleY = ?, ScaleZ = ?, Interior = ?, Dimension = ?, Breakable = ?, Collision = ?, Doublesided = ?, Textures = ?, LodEnabled = ?, Creator = ? WHERE Id = ?", 
+                sql:getPrefix(), model, math.round(x, 4), math.round(y, 4), math.round(z, 4), math.round(rx, 4), math.round(ry, 4), math.round(rz, 4), math.round(sx, 6), math.round(sy, 6), math.round(sz, 6), interior, dimension, fromboolean(breakable), fromboolean(collision), fromboolean(doublesided), toJSON(textures), fromboolean(lodEnabled), creatorId, objectId)
             
             return result
         end
@@ -190,6 +204,46 @@ function MapLoader:restoreWorldModel(mapId, index)
         self.m_MapRemovals[mapId][index] = nil
         local result = sql:queryExec("DELETE FROM ??_map_editor_objects WHERE Id = ?", sql:getPrefix(), insertId)
         return true
+    end
+end
+
+function MapLoader:loadTextures(object)
+    for textureName, texturePath in pairs(object.m_TextureData) do
+        local texture = ElementTexture:new(object, texturePath, textureName, true, false, nil, true, false)
+        if texture then
+            table.insert(object.m_Textures, texture)
+        end
+    end
+
+    for index, texture in pairs(object.m_Textures) do
+        local existingTextureName = texture.m_Texture
+        local textureFound = false
+        for textureName, texturePath in pairs(object.m_TextureData) do
+            if existingTextureName == textureName then
+                textureFound = true
+            end
+        end
+        
+        if textureFound == false then
+            table.remove(object.m_Textures, index)
+            delete(texture)
+        end
+    end
+end
+
+function MapLoader:createLowLOD(object)
+    local model = object:getModel()
+    local x, y, z = getElementPosition(object)
+    local rx, ry, rz = getElementRotation(object)
+
+    if object:getLowLOD() then
+        object:getLowLOD():destroy()
+    end
+
+    if object.m_LodEnabled then
+        local id = LOD_MAP[model] or model
+        local lowLOD = createObject(id, x, y, z, rx, ry, rz, true)
+        object:setLowLOD(lowLOD)
     end
 end
 
