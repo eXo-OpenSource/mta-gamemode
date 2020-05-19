@@ -9,6 +9,11 @@
 MapEditorTextureEditGUI = inherit(GUIForm)
 inherit(Singleton, MapEditorTextureEditGUI)
 
+MapEditorTextureEditGUI.FileEndings = {
+    ".jpg",
+    ".png"
+}
+
 function MapEditorTextureEditGUI:constructor(object, textures)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 12)
@@ -62,8 +67,20 @@ function MapEditorTextureEditGUI:constructor(object, textures)
 	self.m_SaveButton = GUIGridIconButton:new(11, 8, FontAwesomeSymbols.Save, self.m_Window):setBackgroundColor(Color.Green)
     self.m_SaveButton.onLeftClick = function()
         if self.m_Grid:getSelectedItem() then
-            self.m_Grid:getSelectedItem():setColumnText(2, self.m_PathEdit:getText())
-            self:save()
+            if self:checkForFileEndings(self.m_PathEdit:getText()) then
+
+                if self:isTextureLocal(self.m_PathEdit:getText()) then
+                    if not fileExists(self.m_PathEdit:getText()) or not string.find(self.m_PathEdit:getText(), "files/images/Textures/") then
+                        ErrorBox:new("Die Bilddatei existiert lokal nicht!")
+                        return
+                    end
+                end
+
+                self.m_Grid:getSelectedItem():setColumnText(2, self.m_PathEdit:getText())
+                self:save()
+            else
+                ErrorBox:new("Deine Bilddatei ist im falschen Format! (Nur PNG oder JPG)")
+            end
         end
     end
     
@@ -86,6 +103,22 @@ function MapEditorTextureEditGUI:save()
     if MapEditorObjectGUI:isInstantiated() then
         MapEditorObjectGUI:getSingleton():addTextures(textureTable)
     end
+end
+
+function MapEditorTextureEditGUI:checkForFileEndings(path)
+    for index, tag in pairs(MapEditorTextureEditGUI.FileEndings) do
+        if string.find(path, tag) then
+            return true
+        end
+    end
+    return false
+end
+
+function MapEditorTextureEditGUI:isTextureLocal(name)
+    if string.find(name, "http://") or string.find(name, "https://") then
+        return false
+    end
+    return true
 end
 
 function MapEditorTextureEditGUI:destructor()

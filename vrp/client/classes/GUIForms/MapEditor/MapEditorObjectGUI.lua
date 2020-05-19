@@ -95,7 +95,9 @@ function MapEditorObjectGUI:constructor(object)
     self.m_DoubleSidedCheckbox.onChange = function() if isElement(object) then object:setDoubleSided(self.m_DoubleSidedCheckbox:isChecked()) end end
 
     self.m_TexturesButton.onLeftClick = function()
-        MapEditorTextureEditGUI:new(self.m_Object, self.m_Object.m_Textures)
+        if localPlayer:getRank() == RANK.Developer or DEBUG then --For now, enable texturing for objects only for developers
+            MapEditorTextureEditGUI:new(self.m_Object, self.m_Object.m_Textures)
+        end
     end
 
     self.m_SaveButton.onLeftClick = function()
