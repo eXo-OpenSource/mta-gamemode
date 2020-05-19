@@ -44,7 +44,7 @@ function MapEditorMapGUI:constructor()
 	self.m_EditObject = GUIGridButton:new(9, 9, 5, 1, "Bearbeiten", self.m_Window):setBackgroundColor(Color.Green)
 	self.m_DeleteObject = GUIGridButton:new(15, 9, 5, 1, "Löschen", self.m_Window):setBackgroundColor(Color.Red)
 	
-	--self.m_ShowObject = GUIGridButton:new(9, 10, 5, 1, "Markieren", self.m_Window)
+	self.m_ShowBoundingBox = GUIGridButton:new(9, 10, 5, 1, "Rahmen für Alle anzeigen", self.m_Window):setBackgroundColor(Color.Orange)
 	self.m_ShowAllObjects = GUIGridButton:new(15, 10, 5, 1, "Alle auf Karte anzeigen", self.m_Window):setBackgroundColor(Color.Orange)
 	
 	self.m_CreateNewLabel = GUIGridLabel:new(9, 11, 5, 1, "Neue Map anlegen", self.m_Window):setHeader()
@@ -100,6 +100,12 @@ function MapEditorMapGUI:constructor()
 		end
 		local id = tonumber(self.m_GridList:getSelectedItem():getColumnText(1))
 		MapEditorMapSettingsGUI:new(id, self.m_MapInfos[id])
+	end
+
+	self.m_ShowBoundingBox.onLeftClick = function()
+		local state = not MapEditor:getSingleton():areAllBoundingBoxesEnabled()
+		MapEditor:getSingleton():setAllBoundingBoxesEnabled(state)
+		InfoBox:new(("Der Begrenzungsrahmen ist nun für alle Objekte der Map %s!"):format(state and "aktiviert" or "deaktiviert"))
 	end
 
 	self.m_ShowAllObjects.onLeftClick = function()

@@ -29,7 +29,7 @@ function GUIImage:drawThis()
 end
 
 function GUIImage:setImage(path)
-	assert(type(path) == "string", "Bad argument @ GUIImage.setImage")
+	assert(type(path) == "string" or path:getType() == "texture", "Bad argument @ GUIImage.setImage")
 
 	self.m_Image = path
 	self:anyChange()
