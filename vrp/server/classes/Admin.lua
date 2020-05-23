@@ -960,10 +960,10 @@ function Admin:deleteArrow()
     if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
-function Admin:sendMessage(msg,r,g,b, minRank)
+function Admin:sendMessage(msg, r, g, b, minRank)
 	for key, value in pairs(self.m_OnlineAdmins) do
 		if key:getRank() >= (minRank or 1) then
-			outputChatBox(msg, key, r,g,b)
+			outputChatBox(msg, key, r, g, b)
 		end
 	end
 end
