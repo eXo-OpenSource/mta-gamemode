@@ -230,7 +230,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin, RadioCommunication FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PlayTime, Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer, TakeWeaponsOnLogin, RadioCommunication FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -246,6 +246,10 @@ function Player:loadCharacterInfo()
 	-- Load health data
 	self.m_Health = row.Health
 	self.m_Armor = row.Armor
+	self.m_StartTime = row.PlayTime
+	self.m_PlayTimeAtLastSave = row.PlayTime
+	self.m_LoginTime = getRealTime().timestamp
+	self.m_JoinTime = getTickCount()
 
 	-- Load weapons
 	self.m_Weapons = fromJSON(row.Weapons or "") or {}
