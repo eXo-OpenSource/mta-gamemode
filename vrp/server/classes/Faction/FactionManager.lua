@@ -754,7 +754,7 @@ function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitch
 	local players = {}
 
 	if not faction then
-		local result = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), factionIdToSwitchTo)
+		local result = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), factionId)
 		for i, factionRow in ipairs(result) do
 			players[factionRow.Id] = factionRow.FactionRank
 		end
@@ -776,5 +776,5 @@ function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitch
 		factionToSwitchTo:addPlayer(playerId, rank)
 	end
 
-	admin:sendSuccess(_("Die Fraktionsmitglieder der %s wurden erfolgreich in die Fraktion %s transferiert!", admin, faction:getName(), factionToSwitchTo:getName()))
+	admin:sendSuccess(_("Die Fraktionsmitglieder der Fraktions ID %d wurden erfolgreich in die Fraktion %s transferiert!", admin, factionId, factionToSwitchTo:getName()))
 end
