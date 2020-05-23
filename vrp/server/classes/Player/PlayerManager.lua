@@ -200,6 +200,7 @@ function PlayerManager:Event_OnDeathPedWasted( pPed )
 				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
 				setElementData(pPed, "NPC:isDyingPed", false)
 				owner:dropReviveWeapons()
+				owner:dropReviveMoney()
 				owner:clearReviveWeapons()
 			end
 		end
@@ -430,6 +431,14 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")
 		end
+	end
+
+	local killer = killer
+	local killerVehicle = nil
+
+	if killer and isValidElement(killer, "vehicle") then
+		killerVehicle = killer
+		killer = killerVehicle.occupant
 	end
 
 	if killer and isValidElement(killer, "player") then
