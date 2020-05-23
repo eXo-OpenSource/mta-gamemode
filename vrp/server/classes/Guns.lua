@@ -53,6 +53,7 @@ function Guns:constructor()
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
 	addEventHandler("Guns:onClientRocketLauncherFire", root, bind(self.Event_syncRocketLauncherEffect, self))
 
+	self.m_BankAccountServerCorpse = BankServer.get("player.corpse")
 	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 	self.m_DamageLogCache = { }
@@ -197,10 +198,17 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 
 	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
 		local inv = source:getInventory()
+		-- TAKE THE MONEY BRUHH
+
+		local money = source.m_SpawnedDead == 0 and math.floor(source:getMoney()*0.25) or 0
+		source:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
+		source.m_DeathMoneyDrop = money
+
 		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
 			source:setHeadless(true)
 			source:setReviveWeapons(source:getFaction() and not source:getFaction():isEvilFaction() and source:isFactionDuty())
 			source:dropReviveWeapons()
+			source:dropReviveMoney()
 			source:clearReviveWeapons()
 		else
 			ExecutionPed:new(source, weapon, bodypart)
