@@ -960,10 +960,10 @@ function Admin:deleteArrow()
     if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
-function Admin:sendMessage(msg,r,g,b, minRank)
+function Admin:sendMessage(msg, r, g, b, minRank)
 	for key, value in pairs(self.m_OnlineAdmins) do
 		if key:getRank() >= (minRank or 1) then
-			outputChatBox(msg, key, r,g,b)
+			outputChatBox(msg, key, r, g, b)
 		end
 	end
 end
@@ -1065,7 +1065,8 @@ local tpTable = {
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
         ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
         ["angeln"] =        {["pos"] = Vector3(382.74, -1897.72, 7.52),  	["typ"] = "Orte"},
-        ["casino"] =      	{["pos"] = Vector3(1471.12, -1166.35, 23.63),  	["typ"] = "Orte"},
+        ["casino"] =      	{["pos"] = Vector3(2025.08, 1007.98, 10.82),  	["typ"] = "Orte"},
+        ["casino2"] =      	{["pos"] = Vector3(2188.73, 1677.65, 11.11),  	["typ"] = "Orte"},
         ["caligulas"] =     {["pos"] = Vector3(2156.73, 1677.19, 10.70),  	["typ"] = "Orte"},
         ["flughafenls"] =   {["pos"] = Vector3(1993.06, -2187.38, 13.23),  	["typ"] = "Orte"},
         ["flughafenlv"] =   {["pos"] = Vector3(1427.05, 1558.48,  10.50),  	["typ"] = "Orte"},

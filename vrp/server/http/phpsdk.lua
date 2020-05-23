@@ -14,7 +14,7 @@ end
 
 function phpSDKSendChatBox(type, target, message, r, g, b)
 	if type == "admin" then
-		Admin:getSingleton():sendMessage(message, r, g, b)
+		Admin:getSingleton():sendMessage(message, r, g, b, type(target) == "number" and target or 1)
 	elseif type == "player" then
 		local target = getPlayerFromName(target)
 		if isElement(target) then

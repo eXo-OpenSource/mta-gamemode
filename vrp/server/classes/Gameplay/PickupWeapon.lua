@@ -1,12 +1,12 @@
-PickupWeapon = inherit(Object) 
+PickupWeapon = inherit(Object)
 PickupWeapon.Map = { }
 local PICKUP_ANIMATION_BLOCK, PICKUP_ANIMATION_NAME = "misc", "pickup_box"
 
-function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner, ignoreHours, attachToPlayer, xOffset, yOffset) 
+function PickupWeapon:constructor(x, y, z, int, dim, weapon, ammo, owner, ignoreHours, attachToPlayer, xOffset, yOffset)
 	if WEAPON_MODELS_WORLD[weapon] then
-		self.m_WeaponID = weapon 
+		self.m_WeaponID = weapon
 		self.m_Ammo = ammo
-		if owner then 
+		if owner then
 			self.m_Owner = owner.m_Id
 			if owner:getFaction() then
 				self.m_OwnerFaction = owner:getFaction()
@@ -16,7 +16,7 @@ function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner, ignor
 		setElementDoubleSided(self.m_Entity, true)
 		setElementDimension(self.m_Entity, dim)
 		setElementInterior(self.m_Entity, int)
-		--[[if attachToPlayer then 
+		--[[if attachToPlayer then
 			self.m_Entity:attach(owner, xOffset, yOffset, 0)
 		end]]
 		self.m_Entity.m_DroppedWeapon = true
@@ -26,8 +26,8 @@ function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner, ignor
 	end
 end
 
-function PickupWeapon:pickup( player ) 
-	if player and isElement(player) then 
+function PickupWeapon:pickup(player)
+	if player and isElement(player) then
 		if ((player:getPlayTime() / 60) >=  3) or self.m_IgnoreHoursPlayed then
 			if not ( player:isFactionDuty() and player:getFaction():isStateFaction()) then
 				giveWeapon(player, self.m_WeaponID, self.m_Ammo, true)
@@ -46,9 +46,9 @@ function PickupWeapon:pickup( player )
 	end
 end
 
-function PickupWeapon:destructor() 
-	if self.m_Entity then 
-		if isElement(self.m_Entity) then 
+function PickupWeapon:destructor()
+	if self.m_Entity then
+		if isElement(self.m_Entity) then
 			destroyElement(self.m_Entity)
 		end
 	end

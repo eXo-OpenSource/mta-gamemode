@@ -429,9 +429,8 @@ function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
-	local money = player.m_SpawnedDead == 0 and math.floor(player:getMoney()*0.25) or 0
-	player:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
-	player.m_DeathPickup.money = money
+	player.m_DeathPickup:setDimension(player.dimension)
+	player.m_DeathPickup:setInterior(player.interior)
 
 	if not player:isInGangwar() then
 		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
@@ -467,9 +466,9 @@ function FactionRescue:createDeathPickup(player, ...)
 								setElementAlpha(player,255)
 								if player:getExecutionPed() then delete(player:getExecutionPed()) end
 								hitPlayer.m_RescueStretcher.player = player
-								if source.money and source.money > 0 then
-									self.m_BankAccountServerCorpse:transferMoney(hitPlayer, source.money, "verlorenes Geld zurückbekommen", "Player", "Corpse")
-									source.money = 0
+								if source.m_DeathMoneyDrop and source.m_DeathMoneyDrop > 0 then
+									Guns:getSingleton().m_BankAccountServerCorpse:transferMoney(hitPlayer, source.m_DeathMoneyDrop, "verlorenes Geld zurückbekommen", "Player", "Corpse")
+									source.m_DeathMoneyDrop = 0
 								end
 
 								source:destroy()
@@ -488,10 +487,6 @@ function FactionRescue:createDeathPickup(player, ...)
 						end
 					end
 				else
-					if source.money and source.money > 0 then
-						self.m_BankAccountServerCorpse:transferMoney(hitPlayer, source.money, "bei Leiche gefunden", "Player", "Corpse")
-						source.money = 0
-					end
 					hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
 				end
 			end
@@ -503,6 +498,7 @@ end
 
 function FactionRescue:destroyDeathBlip()
 	if client.m_DeathPickup then
+		client:dropReviveMoney()
 		client.m_DeathPickup:destroy()
 		client.m_DeathPickup = nil
 		if self.m_DeathBlips[client] then
