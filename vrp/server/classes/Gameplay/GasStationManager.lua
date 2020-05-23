@@ -481,7 +481,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	{
+	--[[{
 		name = "Outlaws MC",
 		stations = {
 			{Vector3(693.20, -455.38, 16.84), 270, 1},
@@ -490,7 +490,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	--[[{
+	{
 		name = "Triaden",
 		stations = {
 			{Vector3(1913.78, 964.34, 11.22), 185, 1},
@@ -510,7 +510,7 @@ GAS_STATIONS = {
 		fuelTypes = {"petrol", "diesel"},
 	},
 	]]
-	--[[{
+	{
 		name = "Ballas",
 		stations = {
 			{Vector3(2241.83, -1443.94, 24.63), 90, 1},
@@ -519,7 +519,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	{
+	--[[{
 		name = "Kartell",
 		stations = {
 			{Vector3( 2512.092, -1474.104, 23.623), 0, 1},
