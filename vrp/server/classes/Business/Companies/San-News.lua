@@ -222,7 +222,7 @@ function SanNews:Event_addBlip(posX, posY, text)
 		client:sendError("Du bist nicht berechtigt Marker zu erstellen!")
 		return
 	end
-	
+
 	local id = self:getId()
 	local color = {companyColors[id].r, companyColors[id].g, companyColors[id].b}
 	local blipName = ("San News - %s"):format(text or "Marker")
@@ -247,6 +247,7 @@ function SanNews:Event_sanNewsMessage(player, cmd, ...)
 	if self.m_SanNewsMessageEnabled then
 		local argTable = {...}
 		local msg = table.concat(argTable, " ")
+		StatisticsLogger:getSingleton():addChatLog(player, "sannews", msg, self:getOnlinePlayers())
 		self:sendMessage(("#9cff00[SanNews-Nachricht] %s: #FFFFFF%s"):format(player:getName(), msg), 255, 255 ,0, true)
 		player:sendMessage(("#9cff00[Msg an Sannews]: #FFFFFF%s"):format(msg), 255, 255 ,0, true)
 	else

@@ -29,11 +29,11 @@ end
 function Nametag:destructor()
 	removeEventHandler("onClientRender", root, self.m_Draw)
 	removeEventHandler("onClientPlayerJoin", root, self.m_OnPlayerJoin)
-	setPedTargetingMarkerEnabled(true)
+	-- setPedTargetingMarkerEnabled(true)
 
-	for _, player in pairs(getElementsByType("player")) do
-		player:setNametagShowing(true)
-	end
+	-- for _, player in pairs(getElementsByType("player")) do
+	-- 	player:setNametagShowing(true)
+	-- end
 end
 
 function Nametag:Event_OnPlayerJoin()
