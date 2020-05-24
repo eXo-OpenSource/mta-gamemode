@@ -12,10 +12,10 @@ function phpSDKGetPlayers()
 	return players
 end
 
-function phpSDKSendChatBox(type, target, message, r, g, b)
-	if type == "admin" then
+function phpSDKSendChatBox(messageType, target, message, r, g, b)
+	if messageType == "admin" then
 		Admin:getSingleton():sendMessage(message, r, g, b, type(target) == "number" and target or 1)
-	elseif type == "player" then
+	elseif messageType == "player" then
 		local target = getPlayerFromName(target)
 		if isElement(target) then
 			target:outputChat(message, r, g, b)
