@@ -7,14 +7,21 @@
 -- ****************************************************************************
 
 DesertEagle = inherit(Singleton)
+DesertEagle.AimLockTime = 600
+DesertEagle.NoScopeCrouchBlockTime = 700
 
 function DesertEagle:constructor()
     self.m_HandleAimBind = bind(self.handleAim, self)
     self.m_WeaponFireBind = bind(self.onWeaponFire, self)
     self.m_WeaponSwitchBind = bind(self.onWeaponSwitch, self)
+    self.m_StandUpBind = bind(self.onStandUp, self)
     self.m_UpdateBind = bind(self.update, self)
 
     self.m_LastShot = 0
+
+    bindKey("crouch", "down", self.m_StandUpBind)
+    bindKey("sprint", "down", self.m_StandUpBind)
+    bindKey("jump", "down", self.m_StandUpBind)
 
     addEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_WeaponFireBind)
     addEventHandler("onClientPlayerWeaponSwitch", localPlayer, self.m_WeaponSwitchBind)
@@ -29,6 +36,8 @@ function DesertEagle:onWeaponFire(weapon)
         self:bindKeys()
         if not isPedDucked(localPlayer) then
             self.m_LastShot = getTickCount()
+            self.m_AllowRelease = false
+            self.m_ForceAllowRelease = false
 
             if not self.m_isAiming then
                 toggleControl("crouch", false)
@@ -41,7 +50,7 @@ function DesertEagle:onWeaponFire(weapon)
                     function()
                         toggleControl("crouch", true)
                     end
-                , 700, 1)
+                , DesertEagle.NoScopeCrouchBlockTime, 1)
             end
         end
     end
@@ -70,13 +79,50 @@ function DesertEagle:handleAim(key, state)
 end
 
 function DesertEagle:update()
+    local timeSinceLastShot = getTickCount() - self.m_LastShot
     toggleControl("aim_weapon", false)
+
+
+    if timeSinceLastShot > DesertEagle.AimLockTime then
+        self.m_AllowRelease = true
+    else
+        --Check for Object near player that would abort the animation
+        if not isPedDucked(localPlayer) then
+            local x, y, z = getElementPosition(localPlayer)
+            local mX, mY, mZ = getPedWeaponMuzzlePosition(localPlayer)
+            local distance = getDistanceBetweenPoints3D(x, y, z, mX, mY, mZ)
+            if distance > 0.6 and distance < 0.8 then
+                self.m_ForceAllowRelease = true
+            end
+        end
+    end
     
     if self.m_isAiming then
         setPedControlState(localPlayer, "aim_weapon", true)
     else
-        if getTickCount() - self.m_LastShot > 700 then
+        if self.m_AllowRelease or self.m_ForceAllowRelease then
             setPedControlState(localPlayer, "aim_weapon", false)
+        end
+    end
+end
+
+function DesertEagle:onStandUp()
+    --Prevent a sync bug when pressing left or right instantly after pressing the button to stand up
+    if getPedWeapon(localPlayer) == 24 then
+        local x, y, z = getPedBonePosition(localPlayer, 1)
+        local fX, fY, fZ = getPedBonePosition(localPlayer, 53)
+        local distance = getDistanceBetweenPoints3D(x, y, z, fX, fY, fZ)
+
+        if distance < 0.4 then --hacky way to really check if a player is crouching
+            toggleControl("left", false)
+            toggleControl("right", false)
+
+            setTimer(
+                function()
+                    toggleControl("left", true)
+                    toggleControl("right", true)
+                end
+            , 200, 1)
         end
     end
 end
