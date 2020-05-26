@@ -206,10 +206,10 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	if getElementData(player,"writing") == true then
 		icons[#icons+1] = "chat.png"
 	end
-	if player:getFaction() then
+	if player:getFaction() and player:getPublicSync("Faction:Duty") then
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
 	end
-	if player:getCompany() then
+	if player:getCompany() and player:getPublicSync("Company:Duty") then
 		icons[#icons+1] = (player:getCompany().m_Id == CompanyStaticId.MECHANIC and "MT" or player:getCompany():getShortName())..".png"
 	end
 	local bHasBigGun = false
