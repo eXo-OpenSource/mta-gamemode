@@ -141,7 +141,6 @@ function HUDAviation:loadOffsets()
 	local ecasOffsetX = core:get("HUD", "aviationOffsetECASX", 0) or 0 
 	local ecasOffsetY = core:get("HUD", "aviationOffsetECASY", 0) or 0 
 	self:setOffset(ELECTRONIC_FLIGHT_INSTRUMENT_SYSTEM.ECAS.INDEX, ecasOffsetX, ecasOffsetY)
-	outputDebugString("Loaded HUDAviation-Offsets...")
 end
 
 
@@ -167,7 +166,6 @@ function HUDAviation:saveOffsets()
 	end
 	core:set("HUD", "aviationOffsetECASX", ecasOffsetX or core:get("HUD", "aviationOffsetECASX", 0))
 	core:set("HUD", "aviationOffsetECASY", ecasOffsetY or core:get("HUD", "aviationOffsetECASY", 0))
-	outputDebugString("Saved HUDAviation-Offsets...")
 end
 
 
@@ -721,4 +719,3 @@ function HUDAviation:checkDoors( aircraft )
 	end
 	return true
 end
-

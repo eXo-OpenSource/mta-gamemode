@@ -224,9 +224,7 @@ function BlackJackManager:createTable(pos, rot, bets, id, int, dim)
 	obj.ped.pone:setScale(0.6, 0.65, 0.6)
 	exports.bone_attach:attachElementToBone(obj.ped.pone, obj.ped, 1, 0.02, 0.05, 0.29, 3, 0, 90)
 	
-	for k, p in ipairs(getElementsByType("player")) do 
-		p:triggerEvent("BlackJack:sendTableObject", obj)
-	end
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "BlackJack:sendTableObject", resourceRoot, obj)
 	obj.m_Info = ElementInfo:new(obj.infoObj, "Casino", .4, "DoubleDown", true)
 
 	

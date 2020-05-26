@@ -84,7 +84,7 @@ function WareManager:stopEvent(i)
 end
 
 function WareManager:announceEvent()
-	for k, player in ipairs(getElementsByType("player")) do 
+	for k, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
 		player:sendInfo(_("In 10 Minuten startet das Ware-Event, begib dich zum Friedhof um mitzumachen!", player))
 	end
 end
@@ -126,4 +126,3 @@ end
 function WareManager:Event_onPedClick()
 	client:triggerEvent("Ware:wareOpenGUI", WareManager.Map)
 end
-

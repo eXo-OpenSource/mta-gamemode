@@ -80,11 +80,7 @@ function BeggarPedManager:spawnPeds()
 			local classId = #v.Roles > 0 and Randomizer:getRandomTableValue(v.Roles) or math.random(1, #BeggarPedManager.Classes)
 			local ped = BeggarPed:new(i, classId, v.Pos, v.Rot)
 			if ped then self:addRef(ped) end
-			for key, player in ipairs(getElementsByType("player")) do
-				if player:isLoggedIn() then
-					player:triggerEvent("ColshapeStreamer:registerColshape", {v.Pos.x, v.Pos.y, v.Pos.z}, ped, "beggarped", ped.m_Id, 10, "beggarped:onClientColShapeHit", "beggarped:onClientColShapeLeave")
-				end
-			end
+			triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {v.Pos.x, v.Pos.y, v.Pos.z}, ped, "beggarped", ped.m_Id, 10, "beggarped:onClientColShapeHit", "beggarped:onClientColShapeLeave")
 		end
 	end
 end

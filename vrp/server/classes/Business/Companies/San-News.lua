@@ -56,7 +56,7 @@ function SanNews:Event_news(player, cmd, ...)
 			outputChatBox(_("#FE8D14Reporter %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
 
     		local receivedPlayers = {}
-			for k, targetPlayer in ipairs(getElementsByType("player")) do
+			for k, targetPlayer in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 				if targetPlayer ~= player then
 					if targetPlayer:isLoggedIn() then
 						receivedPlayers[#receivedPlayers+1] = targetPlayer
@@ -147,7 +147,7 @@ function SanNews:Event_onPlayerChat(player, text, type)
 				end
 
 				local receivedPlayers = {}
-				for k, targetPlayer in ipairs(getElementsByType("player")) do
+				for k, targetPlayer in pairs(getElementsByType("player")) do
 					if targetPlayer ~= player then
 						if targetPlayer:isLoggedIn() then
 							receivedPlayers[#receivedPlayers+1] = targetPlayer

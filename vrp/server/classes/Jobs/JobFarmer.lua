@@ -318,9 +318,7 @@ function JobFarmer:updateClientData(player)
 	if player and isElement(player) then
 		player:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm, self.m_CurrentSeedsFarm)
 	else
-		for i, v in pairs(getElementsByType("player")) do
-			v:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm, self.m_CurrentSeedsFarm)
-		end
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "Job.updateFarmPlants", resourceRoot, self.m_CurrentPlantsFarm, self.m_CurrentSeedsFarm)
 	end
 end
 

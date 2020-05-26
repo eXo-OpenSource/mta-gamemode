@@ -106,7 +106,7 @@ function GangwarStatistics:flushSQLTable()
 			end
 		end
 	end
-	outputDebugString(("-- Flushed Gangwar-Statistics into SQL (%s entries) --"):format(count))
+	if count > 0 then outputDebugString(("-- Flushed Gangwar-Statistics into SQL (%s entries) --"):format(count)) end
 	self.m_SQLStats = {}
 end
 

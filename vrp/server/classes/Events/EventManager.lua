@@ -77,7 +77,7 @@ function EventManager:openEvent(eventClass)
 	local event = eventClass:new(self.m_EventIdCounter)
 	self.m_RunningEvents[self.m_EventIdCounter] = event
 
-	for k, player in pairs(getElementsByType("player")) do
+	for k, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		player:sendShortMessage(_("In 5min startet ein '%s'! Begib dich zum Flaggen-Blip, um teilzunehmen.", player, event:getName()), "San News - Event", {0, 32, 63}, 15000)
 	end
 

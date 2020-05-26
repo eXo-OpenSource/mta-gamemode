@@ -61,9 +61,7 @@ function ItemSmokeGrenade:use(player)
 end
 
 function ItemSmokeGrenade:sync()
-	for k, p in ipairs(getElementsByType("player")) do 
-		p:triggerEvent("ItemSmokeSync", ItemSmokeGrenade.Map)
-	end
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ItemSmokeSync", resourceRoot, ItemSmokeGrenade.Map)
 end
 
 function ItemSmokeGrenade:createNameTagZone(worldItem)

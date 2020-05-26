@@ -32,7 +32,7 @@ function PoliceAnnouncements:triggerWantedSound(target, wantedreason)
         color = vehicle:getColor()
     end
     local zone = getZoneName(target:getPosition())
-    for key, player in ipairs(getElementsByType("player")) do
+    for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
         if player:getFaction() and player:getFaction():isStateFaction() then
             if player:isFactionDuty() then
                 player:triggerEvent("PoliceAnnouncement:wanted", zone, wantedreason, modelId, color)
@@ -53,7 +53,7 @@ function PoliceAnnouncements:triggerChaseSound(vehicle)
         chaseSoundType = "Vehicles"
         chaseSoundRandom = math.random(1, #POLICE_ANNOUNCEMENT_CHASE_SOUNDS["Vehicles"])
     end
-    for key, player in ipairs(getElementsByType("player")) do
+    for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
         local x, y, z = getElementPosition(player)
         if getDistanceBetweenPoints3D(cx, cy, cz, x, y, z) < 200 then
             player:triggerEvent("PoliceAnnouncement:chase", vehicle, chaseSoundType, chaseSoundRandom)
@@ -74,9 +74,7 @@ function PoliceAnnouncements:syncSirens(singlePlayer)
         singlePlayer:triggerEvent("PoliceAnnouncement:syncSiren", self.m_SirenVehicles)
         return
     end
-    for key, player in ipairs(getElementsByType("player")) do
-        player:triggerEvent("PoliceAnnouncement:syncSiren", self.m_SirenVehicles)
-    end
+    triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "PoliceAnnouncement:syncSiren", resourceRoot, self.m_SirenVehicles)
 end
 
 function PoliceAnnouncements:setSirenState(vehicle, sirenType)
@@ -84,9 +82,7 @@ function PoliceAnnouncements:setSirenState(vehicle, sirenType)
 
     if self:isValidVehicle(vehicle) then 
         self.m_SirenVehicles[vehicle] = sirenType
-        for key, player in ipairs(getElementsByType("player")) do
-            player:triggerEvent("PoliceAnnouncement:siren", vehicle, sirenType)
-        end
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "PoliceAnnouncement:siren", resourceRoot, vehicle, sirenType)
     end
 end
 

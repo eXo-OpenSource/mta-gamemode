@@ -208,22 +208,16 @@ function VehicleManager:constructor()
 
 
 	addEventHandler("VehicleInfrared:onSyncLight", root, function(vehicle, data)
-		for k, player in pairs(getElementsByType("player")) do 
-			player:triggerLatentEvent("VehicleInfrared:updateLight", vehicle, data[1], data[2])
-		end
+		triggerLatentClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "VehicleInfrared:updateLight", vehicle, vehicle, data[1], data[2])
 	end)
 
 	addEventHandler("VehicleInfrared:onCreateLight", root, function(vehicle, data)
-		for k, player in pairs(getElementsByType("player")) do 
-			player:triggerLatentEvent("VehicleInfrared:createLight", vehicle, data[1], data[2])
-		end
+		triggerLatentClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "VehicleInfrared:createLight", vehicle, vehicle, data[1], data[2])
 	end)
 
 
 	addEventHandler("VehicleInfrared:onStopLight", root, function(vehicle)
-		for k, player in pairs(getElementsByType("player")) do 
-			player:triggerLatentEvent("VehicleInfrared:stopLight", vehicle)
-		end
+		triggerLatentClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "VehicleInfrared:stopLight", vehicle, vehicle)
 	end)
 
 	PlayerManager:getSingleton():getWastedHook():register(
@@ -1835,7 +1829,7 @@ end
 function VehicleManager:addVehicleMark(vehicle, mark) 
 	if vehicle and isElement(vehicle) and mark ~= "" then
 		self.m_VehicleMarks[vehicle] = mark
-		for k, p in ipairs(getElementsByType("player")) do 
+		for k, p in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
 			p:triggerEvent("addVehicleMark", vehicle, mark)
 		end
 	end
@@ -1844,7 +1838,7 @@ end
 function VehicleManager:removeVehicleMark(vehicle) 
 	if self.m_VehicleMarks[vehicle] then
 		self.m_VehicleMarks[vehicle] = nil
-		for k, p in ipairs(getElementsByType("player")) do 
+		for k, p in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
 			p:triggerEvent("removeVehicleMark", vehicle)
 		end
 	end

@@ -101,10 +101,9 @@ function CasinoWheelManager:create(pos, rot, maximum, spin, id, int, dim)
 	if pos and rot then
 		local instance = CasinoWheel:new(pos, rot, maximum, spin, id, int or 0, dim or 0) 
 		self.m_Map[instance:getObject()] = instance
-			
-		for k, p in ipairs(getElementsByType("player")) do 
-			p:triggerEvent("CasinoWheel:sendTableObject", instance:getObject())
-		end
+				
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "CasinoWheel:sendTableObject", resourceRoot, instance:getObject())
+		
 		instance:getObject():setData("clickable", true, true)
 		instance.m_Ped:setData("clickable", true, true)
 
@@ -131,4 +130,3 @@ function CasinoWheelManager:create(pos, rot, maximum, spin, id, int, dim)
 		return instance
 	end
 end
-

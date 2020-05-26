@@ -280,8 +280,8 @@ function Core:destructor()
 			removeAccount(self.m_ACLAccount)
 		end
 
-		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
+		delete(VehicleManager:getSingleton())
 		delete(GroupManager:getSingleton())
 		if HouseManager:isInstantiated() then
 			delete(HouseManager:getSingleton())

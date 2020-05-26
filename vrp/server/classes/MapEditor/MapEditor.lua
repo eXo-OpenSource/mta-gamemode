@@ -95,7 +95,7 @@ function MapEditor:placeObject(x, y, z, rx, ry, rz, sx, sy, sz, interior, dimens
     object:setModel(model)
     object:setData("breakable", breakable, true)
     if breakable then
-        triggerClientEvent("applyBreakableState", object)
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "applyBreakableState", object)
     end
     if collision ~= nil then
         object:setCollisionsEnabled(collision)

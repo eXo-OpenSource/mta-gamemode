@@ -420,7 +420,7 @@ function Guns:Event_onGunLogCacheTick()
 end
 
 function Guns:Event_syncRocketLauncherEffect(start, stop, back)
-	for key, player in pairs(getElementsByType("player")) do
+	for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		if player ~= client and player:getInterior() == client:getInterior() and player:getDimension() == client:getDimension() then
 			player:triggerEvent("RocketLauncher:syncRocketEffect", start, stop, back)
 		end

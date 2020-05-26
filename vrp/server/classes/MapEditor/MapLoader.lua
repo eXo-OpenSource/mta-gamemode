@@ -69,7 +69,7 @@ function MapLoader:loadFromDatabase(id)
                 removeWorldModel(oRow.Model, oRow.Radius, oRow.PosX, oRow.PosY, oRow.PosZ, oRow.Interior)
             end
         end
-        triggerClientEvent("applyBreakableState", resourceRoot)
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "applyBreakableState", resourceRoot)
         return true
     end
     

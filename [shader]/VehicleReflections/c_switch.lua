@@ -19,7 +19,6 @@
 -- Switch effect on or off
 --------------------------------
 function switchCarPaintReflect( cprOn )
-	outputDebugString( "switchCarPaintReflect: " .. tostring(cprOn) )
 	if cprOn then
 		startCarPaintReflect()
 	else

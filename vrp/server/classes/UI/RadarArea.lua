@@ -15,11 +15,7 @@ function RadarArea:constructor(x, y, width, height, color)
 	self.m_Id = #RadarArea.Map + 1
 	RadarArea.Map[self.m_Id] = self
 
-	for k, player in pairs(getElementsByType("player")) do
-		if player:isLoggedIn() then
-			player:triggerEvent("radarAreaCreate", self.m_Id, self.m_PosX, self.m_PosY, self.m_Width, self.m_Height, self.m_Color)
-		end
-	end
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "radarAreaCreate", resourceRoot, self.m_Id, self.m_PosX, self.m_PosY, self.m_Width, self.m_Height, self.m_Color)
 end
 
 function RadarArea:destructor()

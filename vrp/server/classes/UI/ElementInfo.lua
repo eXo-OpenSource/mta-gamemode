@@ -15,11 +15,7 @@ function ElementInfo:constructor(object, text, offset, icon, iconOnly)
 	self.m_Offset = offset
 	self.m_Icon = icon
 	self.m_IconOnly = iconOnly
-	for k, player in pairs(getElementsByType("player")) do
-		if player:isLoggedIn() then
-			player:triggerEvent("elementInfoCreate", object, text, offset, icon, iconOnly)
-		end
-	end
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "elementInfoCreate", resourceRoot, object, text, offset, icon, iconOnly)
 end
 
 function ElementInfo:destructor()

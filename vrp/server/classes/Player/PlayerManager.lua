@@ -236,7 +236,7 @@ function PlayerManager:updatePlayerSync()
 end
 
 function PlayerManager:checkPayday()
-	for k, v in pairs(getElementsByType("player")) do
+	for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		if v.m_LastPlayTime then
 			if v.m_NextPayday == v:getPlayTime() and (not v.m_PrisonTime or v.m_PrisonTime < 1) then
 				v:payDay()
@@ -314,10 +314,8 @@ function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 end
 
 function PlayerManager:sendShortMessage(text, ...)
-	for k, player in pairs(getElementsByType("player")) do
-		if player:isLoggedIn() then
-			player:sendShortMessage(_(text, player), ...)
-		end
+	for k, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+		player:sendShortMessage(_(text, player), ...)
 	end
 end
 

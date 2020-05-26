@@ -70,9 +70,9 @@ end
 function VehicleTexture:destructor()
 	VehicleTexture.Map[self.m_Id] = nil
 	if self.m_Vehicle and isElement(self.m_Vehicle) then
-		triggerClientEvent(root, "removeElementTexture",  self.m_Vehicle, self.m_Texture)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture", resourceRoot, self.m_Vehicle, self.m_Texture)
 		if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
-			triggerClientEvent(root, "removeElementTexture",  self.m_Vehicle, VehicleTexture.WeirdCamperTexture)
+			triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture", resourceRoot, self.m_Vehicle, VehicleTexture.WeirdCamperTexture)
 		end
 	end
 end
