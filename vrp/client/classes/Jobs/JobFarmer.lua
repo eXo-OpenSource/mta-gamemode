@@ -10,6 +10,18 @@ addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarme
 
 function JobFarmer:constructor()
 	Job.constructor(self, 1, -62.62, 76.34, 3.12, 250, "Farmer.png", {117, 93, 65}, "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
+
+	self.m_Ped2 = createPed(1, -2095.758, -2255.129, 30.625, 53)
+	setElementData(self.m_Ped2, "clickable", true)
+	self.m_Ped2:setData("Job", self)
+	self.m_Ped2:setData("NPC:Immortal", true)
+	self.m_Ped2:setFrozen(true)
+	SpeakBubble3D:new(self.m_Ped2, _("Job: %s", self.m_Name), _"Für einen Job klicke mich an!")
+
+	self.m_Blip2 = Blip:new("Farmer.png", -2095.758, -2255.129, 500)
+	self.m_Blip2:setDisplayText(_(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), BLIP_CATEGORY.Job)
+	self.m_Blip2:setOptionalColor({117, 93, 65})
+
 	self:setJobLevel(JOB_LEVEL_FARMER)
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), "jobs.farmer")

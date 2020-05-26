@@ -296,20 +296,20 @@ end
 -- Events
 addEvent("changeElementTexture", true)
 addEventHandler("changeElementTexture", root,
-	function(vehicles)
-		for i, vehData in pairs(vehicles) do
-			if not TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] = {}
+	function(elements)
+		for i, data in pairs(elements) do
+			if not TextureReplacer.Map.SERVER_ELEMENTS[data.element] then
+				TextureReplacer.Map.SERVER_ELEMENTS[data.element] = {}
 			end
 
-			if TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] then
-				delete(TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName])
+			if TextureReplacer.Map.SERVER_ELEMENTS[data.element][data.textureName] then
+				delete(TextureReplacer.Map.SERVER_ELEMENTS[data.element][data.textureName])
 			end
 			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
-			if string.find(vehData.texturePath, "https://") or string.find(vehData.texturePath, "http://") then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture,  vehData.forceMaximumTexture)
+			if string.find(data.texturePath, "https://") or string.find(data.texturePath, "http://") then
+				TextureReplacer.Map.SERVER_ELEMENTS[data.element][data.textureName] = HTTPTextureReplacer:new(data.element, data.texturePath, data.textureName, {}, data.forceTexture,  data.forceMaximumTexture)
 			else
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture,  vehData.forceMaximumTexture)
+				TextureReplacer.Map.SERVER_ELEMENTS[data.element][data.textureName] = FileTextureReplacer:new(data.element, data.texturePath, data.textureName, {}, data.forceTexture,  data.forceMaximumTexture)
 			end
 		end
 

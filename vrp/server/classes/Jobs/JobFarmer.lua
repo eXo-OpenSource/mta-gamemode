@@ -1,15 +1,16 @@
 JobFarmer = inherit(Job)
 
 local VEHICLE_SPAWN = {-66.21, 69.00, 2.2, 68}
-local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
+local VEHICLE_SPAWN2 = {-2089.364, -2240.163, 30.1, 143}
+local PLANT_DELIVERY = {-2092.709, -2247.585, 30.690 }
 local PLANTSONWALTON = 50
-local SEEDSONWALTON = 50
+local SEEDSONWALTON = 100
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 40
-local MONEY_PER_SEED = 40
-local MONEY_PLANT_HARVESTER = 19
-local MONEY_PLANT_TRACTOR = 12
+local MONEY_PER_PLANT = 50
+local MONEY_PER_SEED = 22
+local MONEY_PLANT_HARVESTER = 20
+local MONEY_PLANT_TRACTOR = 13
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -19,13 +20,18 @@ function JobFarmer:constructor()
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
+	local x, y, z, rotation = unpack (VEHICLE_SPAWN2)
+	self.m_VehicleSpawner2 = VehicleSpawner:new(x,y,z, {"Walton"}, rotation, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner2:disable()
+
 	self.m_Plants = {}
 	self.m_DeliveryBlips = {}
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
 	self.m_CurrentSeeds = {}
-	self.m_CurrentSeedsFarm = 100
+	self.m_CurrentSeedsFarm = 250
 	self.m_BankAccountServer = BankServer.get("job.farmer")
 
 	local x, y, z = unpack(STOREMARKERPOS)
@@ -71,6 +77,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 		addEventHandler("onElementDestroy", vehicle,
 			function()
 				self.m_CurrentPlants[player] = 0
+				self.m_CurrentSeeds[player] = 0
 				self:updatePrivateData(player)
 			end, false
 		)
@@ -136,6 +143,7 @@ function JobFarmer:storeHit(hitElement, matchingDimension)
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
 			self:updateClientData()
 			hitElement:setFrozen(true)
+			hitElement.m_HasPlants = true
 			for i = 1, 3 do
 				for j = 1, 3 do
 					local obj = createObject(2968, 0, 0, 0)
@@ -168,6 +176,7 @@ function JobFarmer:start(player)
 	self:setJobElementVisibility(player,true)
 	self.m_CurrentPlants[player] = 0
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
+	self.m_VehicleSpawner2:toggleForPlayer(player, true)
 
 	setTimer(self.updateClientData, 100, 1, self, player)
 	-- give Achievement
@@ -178,7 +187,7 @@ function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
 		self.m_DeliveryBlips[player:getId()] = Blip:new("Marker.png", x, y, player, 4000, BLIP_COLOR_CONSTANTS.Red)
-		self.m_DeliveryBlips[player:getId()]:setDisplayText("Kisten-Abgabe")
+		self.m_DeliveryBlips[player:getId()]:setDisplayText("Kisten-Abgabe & Samen-Beladung")
 	else
 		delete(self.m_DeliveryBlips[player:getId()])
 	end
@@ -194,6 +203,7 @@ function JobFarmer:stop(player)
 
 	self:setJobElementVisibility(player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 
 	self:giveJobMoney(player, player.jobVehicle)
 	self:destroyJobVehicle(player)
@@ -217,19 +227,24 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.jobVehicle then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			player:sendSuccess(_("Du hast die Lieferung abgegeben, fahre nun zurück zur Farm.", player))
-			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT * JOB_PAY_MULTIPLICATOR
-			local duration = getRealTime().timestamp - player.m_LastJobAction
-			player.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
-			self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
-			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
-			self.m_CurrentPlants[player] = 0
-			self:updatePrivateData(player)
-			for i, v in pairs(getAttachedElements(hitElement)) do
-				if v:getModel() == 2968 then -- only destroy crates
-					destroyElement(v)
+			if hitElement.m_HasPlants then
+				player:sendSuccess(_("Du hast die Lieferung abgegeben, fahre nun zurück zur Farm.", player))
+				local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT * JOB_PAY_MULTIPLICATOR
+				local duration = getRealTime().timestamp - player.m_LastJobAction
+				player.m_LastJobAction = getRealTime().timestamp
+				StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
+				self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
+				player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
+				self.m_CurrentPlants[player] = 0
+				self:updatePrivateData(player)
+				for i, v in pairs(getAttachedElements(hitElement)) do
+					if v:getModel() == 2968 then -- only destroy crates
+						destroyElement(v)
+					end
 				end
+			else
+				self.m_CurrentPlants[player] = 0
+				self:updatePrivateData(player)
 			end
 		end
 

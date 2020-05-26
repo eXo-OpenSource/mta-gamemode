@@ -69,7 +69,9 @@ end
 
 function VehicleGuns:onVehicleExit(player, seat)
     if player == localPlayer then
-        unbindKey(self.m_Control, "down", self.m_ShootBind)
+        if self.m_Control then
+            unbindKey(self.m_Control, "down", self.m_ShootBind)
+        end
         if self.m_Countdown then
             delete(self.m_Countdown)
         end

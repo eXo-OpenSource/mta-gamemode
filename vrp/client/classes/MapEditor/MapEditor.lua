@@ -48,6 +48,9 @@ function MapEditor:enableEditorMode(state, mapId)
             addEventHandler("MapEditor:giveControlPermission", root, self.m_PermissionBind)
             addEventHandler("onClientRender", root, self.m_MeshRenderBind)
         end
+        self.m_ShowAllMapObjects = false
+        self.m_MapElementTable = {}
+        self.m_MapElementTableLastUpdated = 0
         self.m_ControlledObject = nil
         self.m_MapId = mapId
         MapEditorMainGUI:new()
@@ -71,10 +74,6 @@ function MapEditor:enableEditorMode(state, mapId)
         if MapEditorEditingPlayersGUI:isInstantiated() then delete(MapEditorEditingPlayersGUI:getSingleton()) end
         delete(self)
     end
-end
-
-function MapEditor:getEditingMap()
-    return self.m_MapId
 end
 
 function MapEditor:Event_onClientClick(button, state, absoluteX, absoluteY, worldX, worldY, worldZ, element)
@@ -201,19 +200,12 @@ function MapEditor:Event_onClientKey(button, state)
             local breakable = isObjectBreakable(self.m_ControlledObject)
             local collision = getElementCollisionsEnabled(self.m_ControlledObject)
             local doublesided = isElementDoubleSided(self.m_ControlledObject)
+            local textures = self.m_ControlledObject.m_Textures
             triggerServerEvent("MapEditor:requestControlForObject", self.m_ControlledObject, "removeControl")
-            triggerServerEvent("MapEditor:placeObject", localPlayer, x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided)
+            triggerServerEvent("MapEditor:placeObject", localPlayer, x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided, textures)
             self.m_ControlledObject = nil
         end
     end
-end
-
-function MapEditor:getObjectXML()
-    return self.m_ObjectXML
-end
-
-function MapEditor:abortPlacing()
-    self.m_ControlledObject = nil
 end
 
 function MapEditor:setPlacingMode(state, model)
@@ -237,10 +229,6 @@ function MapEditor:setRemovingMode(state, keepShortMessage)
     end
 end
 
-function MapEditor:getRemovingMode()
-    return self.m_RemovingMode
-end
-
 function MapEditor:onNewObjectPlaced(position, rotation)
     if position == false then
         MapEditorObjectCreateGUI:getSingleton():setOpened()
@@ -256,7 +244,7 @@ function MapEditor:onNewObjectPlaced(position, rotation)
     delete(MapEditorObjectCreateGUI:getSingleton())
 end
 
-function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension, model, breakable, collision, doublesided)
+function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension, model, breakable, collision, doublesided, textures, lodEnabled)
     if position == false then 
         self:setPlacingMode(false)
         return
@@ -290,8 +278,14 @@ function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension
     if doublesided == nil then
         doublesided = false
     end
+    if textures == nil then
+        textures = {}
+    end
+    if lodEnabled == nil then
+        lodEnabled = false
+    end
 
-    triggerServerEvent("MapEditor:placeObject", self.m_ControlledObject or localPlayer, x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided)
+    triggerServerEvent("MapEditor:placeObject", self.m_ControlledObject or localPlayer, x, y, z, rx, ry, rz, sx, sy, sz, interior, dimension, model, breakable, collision, doublesided, textures, lodEnabled)
     self.m_ControlledObject = nil
     if self.m_ObjectBlip then
         delete(self.m_ObjectBlip)
@@ -299,7 +293,7 @@ function MapEditor:onObjectPlaced(position, rotation, scale, interior, dimension
     self:setPlacingMode(false)
 end
 
-function MapEditor:receiveControlPermission(object, callbackType, permission)
+function MapEditor:receiveControlPermission(object, callbackType, permission, textures)
     if permission == true then
         if callbackType == "normal" then
             self.m_ControlledObject = object
@@ -310,6 +304,7 @@ function MapEditor:receiveControlPermission(object, callbackType, permission)
         elseif callbackType == "ObjectSetter" then
             MapEditorObjectGUI:new(object)
             self.m_ControlledObject = object
+            self.m_ControlledObject.m_Textures = textures
         end
         if self.m_ObjectBlip then
             delete(self.m_ObjectBlip)
@@ -363,6 +358,23 @@ function MapEditor:colorizeObject(model, object)
 end
 
 function MapEditor:renderMesh()
+    if self.m_ShowAllMapObjects then
+        if getTickCount() - self.m_MapElementTableLastUpdated > 15000 then
+            for index, object in pairs(getElementsByType("object"), root, true) do
+                if object:getData("MapEditor:mapId") == self:getEditingMap() then
+                    self.m_MapElementTable[#self.m_MapElementTable+1] = object
+                    self.m_MapElementTableLastUpdated = getTickCount()
+                end
+            end
+        end
+
+        for index, object in pairs(self.m_MapElementTable) do
+            self:renderBoundingBox(object)
+        end
+
+        return
+    end
+
     if self.m_ControlledObject and not self.m_PlacingMode then
         if not isElement(self.m_ControlledObject) then
             return
@@ -375,42 +387,45 @@ function MapEditor:renderMesh()
         dxDrawLine3D(x, y, z-basedistance, x, y+self.m_DrawLineSize, z-basedistance, tocolor(0, 255, 0, 255), 2.0)
         dxDrawLine3D(x, y, z-basedistance, x, y, z-basedistance+self.m_DrawLineSize, tocolor(0, 0, 255, 255), 2.0)
 
-        if not isElementOnScreen(self.m_ControlledObject) then
-            return
-        end
-        
-        local objectMatrix = self.m_ControlledObject:getMatrix()
-        local minX, minY, minZ, maxX, maxY, maxZ = self.m_ControlledObject:getBoundingBox()
-
-        local a = objectMatrix:transformPosition(Vector3(minX, minY, maxZ))
-        local b = objectMatrix:transformPosition(Vector3(maxX, minY, maxZ))
-        local c = objectMatrix:transformPosition(Vector3(minX, maxY, maxZ))
-        local d = objectMatrix:transformPosition(Vector3(maxX, maxY, maxZ))
-
-        local e = objectMatrix:transformPosition(Vector3(minX, minY, minZ))
-        local f = objectMatrix:transformPosition(Vector3(maxX, minY, minZ))
-        local g = objectMatrix:transformPosition(Vector3(minX, maxY, minZ))
-        local h = objectMatrix:transformPosition(Vector3(maxX, maxY, minZ))
-
-        dxDrawLine3D(a, b, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(a, c, tocolor(255, 255, 255, 255), 2.0)
-
-        dxDrawLine3D(b, d, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(c, d, tocolor(255, 255, 255, 255), 2.0)
-
-        dxDrawLine3D(e, f, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(e, g, tocolor(255, 255, 255, 255), 2.0)
-
-        dxDrawLine3D(f, h, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(g, h, tocolor(255, 255, 255, 255), 2.0)
-
-        dxDrawLine3D(a, e, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(b, f, tocolor(255, 255, 255, 255), 2.0)
-
-        dxDrawLine3D(c, g, tocolor(255, 255, 255, 255), 2.0)
-        dxDrawLine3D(d, h, tocolor(255, 255, 255, 255), 2.0)
-
+        self:renderBoundingBox(self.m_ControlledObject)
     end
+end
+
+function MapEditor:renderBoundingBox(object)
+    if not isElementOnScreen(object) then
+        return
+    end
+    
+    local objectMatrix = object:getMatrix()
+    local minX, minY, minZ, maxX, maxY, maxZ = getElementBoundingBox(object)
+
+    local a = objectMatrix:transformPosition(Vector3(minX, minY, maxZ))
+    local b = objectMatrix:transformPosition(Vector3(maxX, minY, maxZ))
+    local c = objectMatrix:transformPosition(Vector3(minX, maxY, maxZ))
+    local d = objectMatrix:transformPosition(Vector3(maxX, maxY, maxZ))
+
+    local e = objectMatrix:transformPosition(Vector3(minX, minY, minZ))
+    local f = objectMatrix:transformPosition(Vector3(maxX, minY, minZ))
+    local g = objectMatrix:transformPosition(Vector3(minX, maxY, minZ))
+    local h = objectMatrix:transformPosition(Vector3(maxX, maxY, minZ))
+
+    dxDrawLine3D(a, b, tocolor(255, 255, 255, 255), 2.0)
+    dxDrawLine3D(a, c, tocolor(255, 255, 255, 255), 2.0)
+
+    dxDrawLine3D(b, d, tocolor(255, 255, 255, 255), 2.0)
+    dxDrawLine3D(c, d, tocolor(255, 255, 255, 255), 2.0)
+
+    dxDrawLine3D(e, f, tocolor(255, 255, 255, 255), 2.0)
+    dxDrawLine3D(e, g, tocolor(255, 255, 255, 255), 2.0)
+
+    dxDrawLine3D(f, h, tocolor(255, 255, 255, 255), 2.0)
+    dxDrawLine3D(g, h, tocolor(255, 255, 255, 255), 2.0)
+
+    dxDrawLine3D(a, e, tocolor(255, 255, 255, 255), 2.0)
+    dxDrawLine3D(b, f, tocolor(255, 255, 255, 255), 2.0)
+
+    dxDrawLine3D(c, g, tocolor(255, 255, 255, 255), 2.0)
+    dxDrawLine3D(d, h, tocolor(255, 255, 255, 255), 2.0)
 end
 
 function MapEditor:getWorldModelName(id)
@@ -451,4 +466,30 @@ function MapEditor:findMatchingObjects(name)
         end
     end
     return objecttable
+end
+
+
+
+function MapEditor:getObjectXML()
+    return self.m_ObjectXML
+end
+
+function MapEditor:abortPlacing()
+    self.m_ControlledObject = nil
+end
+
+function MapEditor:getEditingMap()
+    return self.m_MapId
+end
+
+function MapEditor:getRemovingMode()
+    return self.m_RemovingMode
+end
+
+function MapEditor:setAllBoundingBoxesEnabled(bool)
+    self.m_ShowAllMapObjects = bool
+end
+
+function MapEditor:areAllBoundingBoxesEnabled()
+    return self.m_ShowAllMapObjects
 end
