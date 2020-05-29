@@ -44,6 +44,16 @@ function WeaponManager:update()
 
 	local weapon = localPlayer:getWeapon() 
 	local now = getTickCount() 
+
+	if isPedDucked(localPlayer) and weapon == 0 then --Prevent a sync bug when punching while rolling off to abort roll animation
+		toggleControl("fire", false)
+		toggleControl("action", false)
+	else
+		if self:isFiringAllowed() then
+			toggleControl("fire", true)
+			toggleControl("action", true)
+		end
+	end
 	
 	if WEAPON_READY_TIME[weapon] then -- both of the following bugs work due to the script beeing latent when detecting wether a player is aiming or not, hence why the fixes for them are connected with confusing checks
 		if (getPedControlState(localPlayer, "fire") or getPedControlState(localPlayer, "action")) and not getPedControlState("aim_weapon") then --bug#1 prevent player pressing fire then aiming to override cooldown
@@ -79,4 +89,11 @@ end
 
 function WeaponManager:isAimingRocketLauncher() 
 	return RocketLauncher:getSingleton().m_Aiming
+end
+
+function WeaponManager:isFiringAllowed()
+	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() then
+		return false	
+	end
+	return true
 end
