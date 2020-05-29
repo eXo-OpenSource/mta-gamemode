@@ -109,11 +109,7 @@ end
 function DesertEagle:onStandUp()
     --Prevent a sync bug when pressing left or right instantly after pressing the button to stand up
     if getPedWeapon(localPlayer) == 24 then
-        local x, y, z = getPedBonePosition(localPlayer, 1)
-        local fX, fY, fZ = getPedBonePosition(localPlayer, 53)
-        local distance = getDistanceBetweenPoints3D(x, y, z, fX, fY, fZ)
-
-        if distance < 0.4 then --hacky way to really check if a player is crouching
+        if self:isPlayerCrouching() then
             toggleControl("left", false)
             toggleControl("right", false)
 
@@ -125,6 +121,19 @@ function DesertEagle:onStandUp()
             , 200, 1)
         end
     end
+end
+
+function DesertEagle:isPlayerCrouching() 
+    --hacky way to really check if a player is crouching
+    if isPedDucked(localPlayer) then
+        local x, y, z = getPedBonePosition(localPlayer, 1)
+        local fX, fY, fZ = getPedBonePosition(localPlayer, 53)
+        local distance = getDistanceBetweenPoints3D(x, y, z, fX, fY, fZ)
+        if distance < 0.4 then
+            return true
+        end
+    end
+    return false
 end
 
 function DesertEagle:bindKeys()

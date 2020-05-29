@@ -587,7 +587,7 @@ function Player:clearReviveWeapons()
 end
 
 function Player:dropReviveMoney()
-	if self.m_DeathMoneyDrop > 0 then
+	if self.m_DeathMoneyDrop and self.m_DeathMoneyDrop > 0 then
 		PickupMoney:new(self.position.x, self.position.y, self.position.z, self.dimension, self.interior, self.m_DeathMoneyDrop)
 		self.m_DeathMoneyDrop = 0
 	end
