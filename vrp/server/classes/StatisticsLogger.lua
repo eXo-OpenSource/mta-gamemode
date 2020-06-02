@@ -346,12 +346,12 @@ function StatisticsLogger:addAdminVehicleAction(player, type, vehicle, arg)
 	end
 
 	sqlLogs:queryExec("INSERT INTO ??_AdminActionVehicle (UserId, VehicleId, Type, Arg, Date ) VALUES(?, ?, ?, ?, NOW())",
-	sqlLogs:getPrefix(), userId, vehicle, type, arg)
+		sqlLogs:getPrefix(), userId, vehicle, type, arg)
 end
 
 function StatisticsLogger:onDebugMessageLog(message, level, file, line)
-sqlLogs:queryExec("INSERT INTO ??_Errors (Message, Level, File, Line, Date) VALUES(?, ?, ?, ?, NOW())",
-			sqlLogs:getPrefix(), message, level, file, line)
+	sqlLogs:queryExec("INSERT INTO ??_Errors (Message, Level, File, Line, Date) VALUES(?, ?, ?, ?, NOW())",
+		sqlLogs:getPrefix(), message, level, file, line)
 end
 
 function StatisticsLogger:GroupBuyImmoLog( groupId, action, immo)
