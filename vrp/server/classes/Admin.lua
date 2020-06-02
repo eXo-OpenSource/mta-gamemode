@@ -1290,6 +1290,7 @@ function Admin:Event_portVehicle(veh)
         veh:setInGarage(false)
         veh:setPositionType(VehiclePositionType.World)
 		client:sendInfo(_("Das Fahrzeug wurde zu dir geportet!", client))
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "vehiclePort", veh, "vehicle to admin")
     end
 end
 
@@ -1303,6 +1304,7 @@ function Admin:Event_portToVehicle(veh)
 		client:setDimension(veh:getDimension())
 		client:setPosition(pos.x+1, pos.y+1, pos.z+1)
 		client:sendInfo(_("Du wurdest zum Fahrzeug geportet!", client))
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "vehiclePort", veh, "admin to vehicle")
     end
 end
 
