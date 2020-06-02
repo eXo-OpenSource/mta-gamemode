@@ -1815,7 +1815,7 @@ end
 
 function VehicleManager:Event_ToggleLoadingRamp()
 	if getDistanceBetweenPoints3D(client.position, source.position) > 10 then client:sendError("Du bist zu weit entfernt!") return end
-	if not source:isInVehicleLoadingMode() and source:isFrozen() then client:sendError("Bitte löse zuerst die Handbremse!") return end
+	if not source:isInVehicleLoadingMode() and (source:isFrozen() or source.m_HandBrake) then client:sendError("Bitte löse zuerst die Handbremse!") return end
 	if client:getCompany() and client:getCompany():getId() == 4 and client:isCompanyDuty() then
 		source:toggleVehicleLoadingMode() 
 	end

@@ -46,8 +46,11 @@ function VehicleTransportExtension:initTransportExtension()
 
     self.m_TransportVehicleEnterFunc = bind(self.internalTransportVehicleOnEnter, self)
     self.m_TransportVehicleExitFunc = bind(self.internalTransportVehicleOnExit, self)
+    self.m_TransportVehicleRespawnFunc = bind(self.internalTransportVehicleOnRespawn, self)
+    
     addEventHandler("onVehicleEnter", self, self.m_TransportVehicleEnterFunc)
     addEventHandler("onVehicleExit", self, self.m_TransportVehicleExitFunc)
+    self:getRespawnHook():register(self.m_TransportVehicleRespawnFunc)
 
     if tbl.extraObjects then
         self.m_TransportExtensionExtraObjects = {}
@@ -94,6 +97,11 @@ end
 function VehicleTransportExtension:internalTransportVehicleOnExit(player, seat)
     assert(source.vehicleTransportVehicle, "vehicle is not a transport vehicle")
     player:triggerEvent("vehicleTransportExtensionSetCameraNoClip", false)
+end
+
+function VehicleTransportExtension:internalTransportVehicleOnRespawn(veh)
+    assert(veh.vehicleTransportVehicle, "vehicle is not a transport vehicle")
+    veh:toggleVehicleLoadingMode(true)
 end
 
 function VehicleTransportExtension:internalCreateRamps(rampId, rampPos1, rampRot1, rampPos2, rampRot2, doubleRamp)
@@ -232,23 +240,30 @@ function VehicleTransportExtension:isInVehicleLoadingMode()
     return self.m_VehicleTransportLoadingMode
 end
 
-function VehicleTransportExtension:toggleVehicleLoadingMode()
+function VehicleTransportExtension:toggleVehicleLoadingMode(instantUp)
     local tbl = VehicleTransportExtension.Presets[self:getModel()]
     if not tbl then return end
     if not tbl.rampId then return end
     if self:getVelocity().length > 0.001 then return end -- prevent loading in mid-driving
     if isTimer(self.m_AnimationTimer) then return end -- prevent toggling mode when it is already toggling
     local startRotation, endRotation
-    if self.m_VehicleTransportLoadingMode then --close the ramps
+    if self.m_VehicleTransportLoadingMode or (instantUp and self.m_VehicleTransportLoadingMode) then --close the ramps
         startRotation, endRotation = tbl.rampRotation.open, tbl.rampRotation.closed
         self:internalAttachRamps(true)
-        self.m_AnimationTimer = setTimer(function()
+      
+        local function closeRamps()
             self:internalAttachRamps(false)
             self.m_DisableToggleHandbrake = false
             self:setFrozen(false)
             setVehicleHandling(self, "suspensionUpperLimit", nil, true)
 		    setVehicleHandling(self, "suspensionLowerLimit", nil, true)
-        end, VehicleTransportExtension.RampMovementTime + 100, 1) -- +100 to take lag into account
+        end
+
+        if instantUp then
+            closeRamps()
+        else
+            self.m_AnimationTimer = setTimer(closeRamps, VehicleTransportExtension.RampMovementTime + 100, 1) -- +100 to take lag into account
+        end
     else --open the ramps
         setVehicleHandling(self, "suspensionUpperLimit", 0.6)
         setVehicleHandling(self, "suspensionLowerLimit", 0.1)
@@ -263,7 +278,9 @@ function VehicleTransportExtension:toggleVehicleLoadingMode()
             self:internalDetachRamps() -- detach ramps to prevent collision bugs
         end, VehicleTransportExtension.RampMovementTime + 100, 1) 
     end
-    triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "vehicleTransportExtensionAnimateRamps", self, self.m_RampData, startRotation, endRotation, VehicleTransportExtension.RampMovementTime)
+    if not instantUp then
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "vehicleTransportExtensionAnimateRamps", self, self.m_RampData, startRotation, endRotation, VehicleTransportExtension.RampMovementTime)
+    end
     self.m_VehicleTransportLoadingMode = not self.m_VehicleTransportLoadingMode
     self:internalToggleLoadingZone()
 end
