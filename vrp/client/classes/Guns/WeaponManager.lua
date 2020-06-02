@@ -92,7 +92,7 @@ function WeaponManager:isAimingRocketLauncher()
 end
 
 function WeaponManager:isFiringAllowed()
-	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or VehicleFuel:isInstantiated() or FishingRod:isInstantiated() then
+	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or VehicleFuel:isInstantiated() or FishingRod:isInstantiated() or getElementData(localPlayer, "inJail") or getElementData(localPlayer, "inAdminPrison") then
 		return false	
 	end
 	return true
