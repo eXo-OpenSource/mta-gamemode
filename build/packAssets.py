@@ -65,6 +65,9 @@ for child in main_root.findall("vrpfile"):
         archives[dirname] = tarfile.open(outdir + "/archives/%s.tar" % dirname, 'w')
         files[archives[dirname]] = {}
 
+    # set the last modified timestamp ( JJMMTThhmm )
+    os.system("touch -t 1702161600 \"%s\"" % rootdir+filename)
+
 	# add the files to the archive
     archives[dirname].add(rootdir+filename, arcname=(rootdir+filename)[4:])
 
