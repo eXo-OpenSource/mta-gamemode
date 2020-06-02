@@ -287,9 +287,9 @@ factionRankNames[10] = {
 [0] = "Novivo",
 [1] = "Miembro",
 [2] = "Trepador",
-[3] = "Pandillero",
-[4] = "Veterano",
-[5] = "Derecha",
+[3] = "Veterano",
+[4] = "Derecha",
+[5] = "Guerriero",
 [6] = "Jefe"
 }
 factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
