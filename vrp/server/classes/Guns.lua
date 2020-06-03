@@ -196,7 +196,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 
 	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 
-	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
+	if not source:getData("isInDeathMatch") and not source:getData("inWare") and not source:getPublicSync("JobBoxer:activeLevel") then
 		local inv = source:getInventory()
 		-- TAKE THE MONEY BRUHH
 
