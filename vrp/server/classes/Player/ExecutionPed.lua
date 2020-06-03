@@ -45,7 +45,6 @@ function ExecutionPed:putOnStretcher( stretcher )
 end
 
 function ExecutionPed:destructor()
-	outputChatBox("THOT BE GONE")
 	if isElement( self.m_Entity ) then destroyElement( self.m_Entity ) end
 	if isTimer(self.m_HealthTimer) then killTimer(self.m_HealthTimer) end
 	setElementAlpha(self.m_Player, 255)
