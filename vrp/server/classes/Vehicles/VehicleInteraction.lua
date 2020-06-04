@@ -64,27 +64,60 @@ function VehicleInteraction:Event_repairVehicle()
 end
 
 function VehicleInteraction:repairVehicle(player, veh)
-	if player:getInventory():getItemAmount("Reparaturkit") > 0 then
-		if veh.isBroken and veh:isBroken() then
-			player:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", player))
-			player:getInventory():removeItem("Reparaturkit", 1)
-			player:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
-			setTimer(function(player, veh)
-				veh:setBroken(false)
-				veh:setHealth(veh:getHealth() + 300)
+	local fullRepair = false
 
-				if isElement(player) then
-					player:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", player))
-					player:setAnimation(false)
-					player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-				end
-			end, 5000, 1, player, veh)
+	if veh:getHealth() > 950 then
+		player:sendError(_("Dieses Fahrzeug hat keine nennenswerten Beschädigungen!", player))
+		return
+	end
+
+	if player.m_IsRepairingVehicle then
+		player:sendError(_("Du reparierst bereits ein Fahrzeug!", player))
+		return
+	end
+
+	if player:getCompany() and player:getCompany():getId() == CompanyStaticId.MECHANIC and player:isCompanyDuty() then
+		local price = math.floor(((1000 - getElementHealth(veh))*0.5)*0.6)
+		if not player:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, price*0.6, "Eigenreperatur", "Company", "Repair") then
+			player:sendError(_("Du hast nicht genug Geld! (%d$)", player, price))
+			return
+		end
+		fullRepair = true
+
+	elseif player:getInventory():getItemAmount("Reparaturkit") > 0 then
+		if veh.isBroken and veh:isBroken() then
+			player:getInventory():removeItem("Reparaturkit", 1)
 		else
 			player:sendError(_("Das Fahrzeug hat keinen Totalschaden!", player))
+			return
 		end
+
 	else
-		player:sendError(_("Du hast keinen Reparaturkit dabei!", player))
+		player:sendError(_("Du hast kein Reparaturkit oder bist kein Mechaniker im Dienst!"))
+		return
 	end
+
+	player:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", player))
+	player:setAnimation("BAR", "Barserve_give", 0, true)
+	player.m_IsRepairingVehicle = true
+
+	setTimer(
+		function(player, veh)
+			veh:setBroken(false)
+			if fullRepair then 
+				veh:fix() 
+			else
+				veh:setHealth(500)
+			end
+			
+			if isElement(player) then
+				player:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", player))
+				player:setAnimation(false)
+				player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+				player.m_IsRepairingVehicle = false
+			end
+		end
+	, 5000, 1, player, veh)
 end
 
 function VehicleInteraction:doAction(door)

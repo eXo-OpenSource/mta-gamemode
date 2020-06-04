@@ -126,7 +126,7 @@ function MechanicTow:Event_mechanicRepair()
 		return
 	end
 	if driver == client then
-		client:sendError(_("Du kannst dein eigenes Fahrzeug nicht reparieren!", client))
+		client:sendError(_("Steige aus deinem Fahrzeug aus und stelle dich dafür an die Motorhaube!", client))
 		return
 	end
 	if source:getHealth() > 950 then
@@ -143,7 +143,7 @@ function MechanicTow:Event_mechanicRepair()
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
 
 	if self.m_PendingQuestions[client] and not timestampCoolDown(self.m_PendingQuestions[client], 20) then
-		client:sendError(_("Du kannst nur jede Minute eine Reparatur-Anfrage stellen!", client))
+		client:sendError(_("Du kannst nur alle 20 Sekunden eine Reparatur-Anfrage stellen!", client))
 		return
 	end
 
@@ -163,10 +163,10 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 
 				self.m_BankAccountServer:transferMoney(vehicle.PendingMechanic, price*0.3, "Reperatur", "Company", "Repair")
 				vehicle.PendingMechanic:givePoints(2)
-				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(source), price))
+				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(source), price*0.3))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
-				self.m_BankAccountServer:transferMoney(self, price*0., "Reperatur", "Company", "Repair")
+				self.m_BankAccountServer:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, price*0.6, "Reperatur", "Company", "Repair")
 			else
 				source:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", source))
 			end
