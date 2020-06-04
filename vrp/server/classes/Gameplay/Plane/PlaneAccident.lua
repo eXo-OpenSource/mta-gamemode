@@ -197,7 +197,7 @@ function PlaneAccident:createTrashTruck()
                 if hitElement == self.m_TrashTruck then
                     if self.m_TrashTruckLoaded == true then
                         if hitElement.controller then
-                            CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):transferMoney(hitElement.controller, 5000, "Flugzeug-Wrack Abgabe", "Company", "Plane accident removal", {silent = true})
+                            BankServer.get("company.mechanic"):transferMoney(hitElement.controller, 5000, "Flugzeug-Wrack Abgabe", "Company", "Plane accident removal", {silent = true})
                         end
                         self.m_TrashTruck:destroy()
                         self.m_TrashDeliveryMarker:destroy()
