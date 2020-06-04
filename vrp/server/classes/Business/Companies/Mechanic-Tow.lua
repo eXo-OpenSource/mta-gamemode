@@ -63,6 +63,20 @@ function MechanicTow:respawnVehicle(vehicle)
 		vehicle:getFaction():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})
 		vehicle:getFaction():sendShortMessage(("Das Fahrzeug %s (%s) wurde vom M&T abgeschleppt und für %s an eurer Basis respawned!"):format(vehicle:getName(), vehicle:getPlateText(), toMoneyString(500)))
 	else
+		if instanceof(vehicle, GroupVehicle, true) then
+			GroupManager.Map[vehicle:getOwner()]:transferMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
+		end
+
+		if instanceof(vehicle, PermanentVehicle, true) then
+			local player, isOffline = DatabasePlayer.get(vehicle:getOwner())
+
+			player:transferBankMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
+
+			if isOffline then
+				delete(player)
+			end
+		end
+		
 		vehicle:setPositionType(VehiclePositionType.Mechanic)
 		vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	end
