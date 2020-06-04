@@ -227,7 +227,9 @@ end
 function GroupVehicle:getVehicleTaxForGroup() -- some vehicles may not need taxation in groups, but if owned private
 	if self:isGroupPremiumVehicle() then return 0 end
 	if self:isForSale() and self:getSalePrice() <= 500000 then return 0 end
-	if self:getPositionType() == VehiclePositionType.Mechanic then return 0 end
+	if self:getPositionType() == VehiclePositionType.Mechanic then 
+		return math.floor(self:getTax() / 2), true
+	end
 	return self:getTax()
 end
 

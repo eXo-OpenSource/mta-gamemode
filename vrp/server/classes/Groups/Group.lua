@@ -718,6 +718,7 @@ function Group:payDay()
 	local incomingPermanently = {}
 	local incomingBonus = {}
 	local outgoingPermanently = {}
+	local outgoingSeperated = {}
 	local output = {}
 
 	incomingPermanently["Zinsen"] = 0
@@ -730,7 +731,15 @@ function Group:payDay()
 	end
 
 	for index, vehicle in pairs(self:getVehicles()) do
-		outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getVehicleTaxForGroup()
+		local tax, isTowed = vehicle:getVehicleTaxForGroup()
+		if isTowed then
+			outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getVehicleTaxForGroup()
+		else
+			if not outgoingSeperated["Abstellhof Gebühren"] then 
+				outgoingSeperated["Abstellhof Gebühren"] = 0 
+			end
+			outgoingSeperated["Abstellhof Gebühren"] = outgoingSeperated["Abstellhof Gebühren"] + vehicle:getVehicleTaxForGroup()
+		end
 	end
 
 	for id in pairs(self:getPlayers()) do
@@ -765,6 +774,10 @@ function Group:payDay()
 		table.insert(output, ("%s: %d$"):format(name, amount))
 	end
 
+	for name, amount in pairs(outgoingSeperated) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
+	end
+
 	local sum, inc, out = 0, 0, 0
 
 	for name, amount in pairs(incomingPermanently) do
@@ -786,6 +799,10 @@ function Group:payDay()
 		self.m_BankAccountServer:transferMoney({self, nil, true}, sum, "Payday", "Group", "Payday")
 	elseif sum < 0 then
 		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
+	end
+
+	if outgoingSeperated["Abstellhof Gebühren"] then
+		self:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, outgoingSeperated["Abstellhof Gebühren"], "Stellkosten", "Group", "Payday", {allowNegative = true, silent = true})
 	end
 
 	self:sendShortMessage(table.concat(output, "\n"), 10000)

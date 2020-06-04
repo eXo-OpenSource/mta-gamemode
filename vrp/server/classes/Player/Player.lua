@@ -1093,7 +1093,7 @@ function Player:calcVehiclesTax()
 	local tax = 0
 	local amount = 0
 	for key, vehicle in pairs(self:getVehicles()) do
-		if vehicle:getTax() > 0 then
+		if vehicle:getTax() > 0 and not vehicle:isPremiumVehicle() then
 			tax = tax + vehicle:getTax()
 			amount = amount + 1
 		end
