@@ -55,9 +55,11 @@ end
 function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimension, marker)
 	local vehicle
 	local isVehicle
+	local occupants = {}
 	if getPedOccupiedVehicleSeat(player) == 0 then
 		vehicle = player.vehicle
 		isVehicle = true
+		occupants = vehicle:getOccupants()
 	end
 	if not self:isValidPort(player, isVehicle, vehicle) then return false end
 	if player.LastPort and not timestampCoolDown(player.LastPort, 4) then
@@ -89,7 +91,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 					vehicle:setInterior(interior)
 					vehicle:setDimension(dimension)
 					vehicle:setFrozen(true)
-					for seat, occ in pairs(getVehicleOccupants(vehicle)) do
+					for seat, occ in pairs(occupants) do
 						if seat > 0 then
 							occ:setInterior(interior)
 							occ:setDimension(dimension)
@@ -104,12 +106,14 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 			else
 				player:sendWarning(_("Du musst im Marker bleiben!", player))
 			end
-			fadeCamera(player, true)
 
 			setTimer(function() --map glitch fix
 				if not self:isValidPort(player, isVehicle, vehicle) then return false end
-				setElementFrozen( player, false)
+				setElementFrozen(player, false)
 				if vehicle then
+					if not player.vehicle then
+						player:warpIntoVehicle(vehicle)
+					end
 					self:cancelExitingForOccupants(vehicle, false)
 					vehicle:toggleHandBrake(player, false)
 					vehicle:setFrozen(false)
@@ -120,6 +124,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 						end
 					end
 				end
+				fadeCamera(player, true)
 				player:triggerEvent("checkNoDm")
 			end, 1000, 1)
 
