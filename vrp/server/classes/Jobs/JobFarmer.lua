@@ -295,7 +295,7 @@ function JobFarmer:createPlant(position, vehicle)
 
 		self.m_CurrentSeedsFarm = self.m_CurrentSeedsFarm - 1
 		self:updateClientData()
-		local object = createObject(818, position - Vector3(0, 0, 3), -1.5)
+		local object = createObject(818, position - Vector3(0, 0, 4), -1.5)
 		table.insert(self.m_Plants, object)
 		object.isFarmAble = false
 		object:move(1000 * 7.5, position)
@@ -304,9 +304,13 @@ function JobFarmer:createPlant(position, vehicle)
 		addEventHandler("onColShapeHit", object.m_ColShape, self.m_CollectPlantEvent)
 		setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 		setElementVisibleTo(object, client, true)
-		if not client:getData("Farmer.Income") then client:setData("Farmer.Income", 0) end
-		client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR)
-		client:triggerEvent("Job.updateIncome", client:getData("Farmer.Income"))
+
+		local income = MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR
+		local duration = getRealTime().timestamp - client.m_LastJobAction
+		client.m_LastJobAction = getRealTime().timestamp
+		StatisticsLogger:getSingleton():addJobLog(client, "jobFarmer.tractor", duration, income)
+		self.m_BankAccountServer:transferMoney({client, true}, income, "Farmer-Job", "Job", "Farmer")
+
 		-- Give some points
 		if chance(4) then
 			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
@@ -359,17 +363,6 @@ function JobFarmer:createPlant(position, vehicle)
 end
 
 function JobFarmer:collectPlant(hitElement, matchingDimension)
-	outputConsole(inspect(
-		{
-			md = matchingDimension,
-			type = hitElement.type,
-			mod = hitElement.model == getVehicleModelFromName("Combine Harvester"),
-			cont = hitElement.controller,
-			jobVe = hitElement.controller and hitElement.controller.jobVehicle == hitElement or false,
-			farmAbl = source.m_Plant.isFarmAble
-		}
-	))
-
 	if matchingDimension then
 		if hitElement.type == "vehicle" and hitElement.model == getVehicleModelFromName("Combine Harvester") and
 		   hitElement.controller and hitElement.controller.jobVehicle == hitElement and source.m_Plant.isFarmAble then
@@ -381,9 +374,13 @@ function JobFarmer:collectPlant(hitElement, matchingDimension)
 			if distance > 4 then return end
 			destroyElement(source.m_Plant)
 			destroyElement(source)
-			if not player:getData("Farmer.Income") then player:setData("Farmer.Income", 0) end
-			player:setData("Farmer.Income", player:getData("Farmer.Income") + MONEY_PLANT_HARVESTER * JOB_PAY_MULTIPLICATOR)
-			player:triggerEvent("Job.updateIncome", player:getData("Farmer.Income"))
+
+			local income = MONEY_PLANT_HARVESTER * JOB_PAY_MULTIPLICATOR
+			local duration = getRealTime().timestamp - player.m_LastJobAction
+			player.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
+			self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
+
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 			self:updateClientData()
 

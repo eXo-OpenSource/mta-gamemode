@@ -81,9 +81,9 @@ function JobFarmer:start()
 	self.m_SeedLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
 	self.m_FarmLabel = GUILabel:new(150, 4, 55, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
 	self.m_TruckLabel = GUILabel:new(245, 4, 50, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
-	self.m_FarmerRectangle = GUIRectangle:new(screenWidth/2-300/2, 60, 300, 40, rgb(3, 17, 39))
-	self.m_EarnLabel = GUILabel:new(10, 5, 280, 17, _"Einkommen bisher: 0$", self.m_FarmerRectangle):setFont(VRPFont(20))
-	self.m_EarnInfoLabel = GUILabel:new(10, 25, 280, 15, "Steig aus um das Geld zu erhalten!", self.m_FarmerRectangle):setFont(VRPFont(15))
+	--self.m_FarmerRectangle = GUIRectangle:new(screenWidth/2-300/2, 60, 300, 40, rgb(3, 17, 39))
+	--self.m_EarnLabel = GUILabel:new(10, 5, 280, 17, _"Einkommen bisher: 0$", self.m_FarmerRectangle):setFont(VRPFont(20))
+	--self.m_EarnInfoLabel = GUILabel:new(10, 25, 280, 15, "Steig aus um das Geld zu erhalten!", self.m_FarmerRectangle):setFont(VRPFont(15))
 
 	-- Register update events
 	addEventHandler("Job.updateFarmPlants", root, function (plants, seeds)
@@ -94,7 +94,7 @@ function JobFarmer:start()
 		self.m_TruckLabel:setText(tostring((num and num or 0) + (num2 and num2 or 0)))
 	end)
 	addEventHandler("Job.updateIncome", root, function (num)
-		self.m_EarnLabel:setText(_("Einkommen bisher: %d$", num))
+		--self.m_EarnLabel:setText(_("Einkommen bisher: %d$", num))
 	end)
 
 	self.m_PlantShapes = {}
@@ -151,13 +151,13 @@ function JobFarmer:stop()
 end
 
 function JobFarmer:tickFarmerJob()
-	if localPlayer.vehicle and localPlayer.vehicle.model == 531 and localPlayer.vehicleSeat == 0 and localPlayer.vehicle:getData("JobVehicle") then
+	if localPlayer.vehicle and localPlayer.vehicle.model == 531 and localPlayer.vehicleSeat == 0 and localPlayer.vehicle:getData("JobVehicle") and localPlayer.vehicle.towedByVehicle then
 		for index, col in pairs(self.m_PlantShapes) do
-			if localPlayer.vehicle:isWithinColShape(col) then
-				local position = localPlayer.vehicle.position
+			if localPlayer.vehicle.towedByVehicle:isWithinColShape(col) and localPlayer.vehicle.towedByVehicle.onGround then
+				local position = localPlayer.vehicle.towedByVehicle.position
 				local found = false
 				for k, v in pairs(getElementsByType("object", true)) do
-					if v.model == 818 and getDistanceBetweenPoints3D(position, v.position) < 4 then
+					if v.model == 818 and getDistanceBetweenPoints3D(position, v.position) < 5.5 then
 						found = true
 						break
 					end
