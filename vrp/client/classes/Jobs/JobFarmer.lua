@@ -23,6 +23,9 @@ function JobFarmer:constructor()
 	self.m_Blip2:setOptionalColor({117, 93, 65})
 
 	self:setJobLevel(JOB_LEVEL_FARMER)
+
+	self.m_TickFarmerJob = bind(self.tickFarmerJob, self)
+	self.m_TickFarmerTimer = nil
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), "jobs.farmer")
 end
@@ -78,9 +81,9 @@ function JobFarmer:start()
 	self.m_SeedLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
 	self.m_FarmLabel = GUILabel:new(150, 4, 55, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
 	self.m_TruckLabel = GUILabel:new(245, 4, 50, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
-	self.m_FarmerRectangle = GUIRectangle:new(screenWidth/2-300/2, 60, 300, 40, rgb(3, 17, 39))
-	self.m_EarnLabel = GUILabel:new(10, 5, 280, 17, _"Einkommen bisher: 0$", self.m_FarmerRectangle):setFont(VRPFont(20))
-	self.m_EarnInfoLabel = GUILabel:new(10, 25, 280, 15, "Steig aus um das Geld zu erhalten!", self.m_FarmerRectangle):setFont(VRPFont(15))
+	--self.m_FarmerRectangle = GUIRectangle:new(screenWidth/2-300/2, 60, 300, 40, rgb(3, 17, 39))
+	--self.m_EarnLabel = GUILabel:new(10, 5, 280, 17, _"Einkommen bisher: 0$", self.m_FarmerRectangle):setFont(VRPFont(20))
+	--self.m_EarnInfoLabel = GUILabel:new(10, 25, 280, 15, "Steig aus um das Geld zu erhalten!", self.m_FarmerRectangle):setFont(VRPFont(15))
 
 	-- Register update events
 	addEventHandler("Job.updateFarmPlants", root, function (plants, seeds)
@@ -91,13 +94,25 @@ function JobFarmer:start()
 		self.m_TruckLabel:setText(tostring((num and num or 0) + (num2 and num2 or 0)))
 	end)
 	addEventHandler("Job.updateIncome", root, function (num)
-		self.m_EarnLabel:setText(_("Einkommen bisher: %d$", num))
+		--self.m_EarnLabel:setText(_("Einkommen bisher: %d$", num))
 	end)
 
 	self.m_PlantShapes = {}
 
 	local col, x, y, z
 	local id = 1
+
+	for key, value in ipairs (JobFarmer.PlantField) do
+		local col = createColPolygon(unpack(value))
+		self.m_PlantShapes[#self.m_PlantShapes+1] = col
+		col.m_Id = id
+		col.m_Data = value
+		id = id + 1
+	end
+
+	self.m_TickFarmerTimer = setTimer(self.m_TickFarmerJob, 1000, 0)
+
+	--[[
 	for key, value in ipairs (JobFarmer.PlantPlaces) do
 		local x, y, z = unpack(value)
 		local col = createColSphere(x,y,z,3)
@@ -118,6 +133,7 @@ function JobFarmer:start()
 			end
 		)
 	end
+	]]
 end
 
 function JobFarmer:stop()
@@ -127,12 +143,48 @@ function JobFarmer:stop()
 	-- delete infopanels
 	delete(self.m_FarmerImage)
 	delete(self.m_FarmerRectangle)
+	killTimer(self.m_TickFarmerTimer)
 
 	for index, col in pairs(self.m_PlantShapes) do
 		col:destroy()
 	end
 end
 
+function JobFarmer:tickFarmerJob()
+	if localPlayer.vehicle and localPlayer.vehicle.model == 531 and localPlayer.vehicleSeat == 0 and localPlayer.vehicle:getData("JobVehicle") and localPlayer.vehicle.towedByVehicle then
+		for index, col in pairs(self.m_PlantShapes) do
+			if localPlayer.vehicle.towedByVehicle:isWithinColShape(col) and localPlayer.vehicle.towedByVehicle.onGround then
+				local position = localPlayer.vehicle.towedByVehicle.position
+				local found = false
+				for k, v in pairs(getElementsByType("object", true)) do
+					if v.model == 818 and getDistanceBetweenPoints3D(position, v.position) < 5.5 then
+						found = true
+						break
+					end
+				end
+
+				if not found then
+					triggerServerEvent("jobFarmerCreatePlant", localPlayer, {position.x, position.y, position.z}, localPlayer.vehicle)
+				end
+			end
+		end
+	end
+end
+
+JobFarmer.PlantField = {
+	{
+		Vector2(-117.3076171875, 95.1875),
+		Vector3(-117.3076171875, 95.1875, 3.1171875),
+		Vector3(-99.8349609375, 150.2138671875, 3.1247665882111),
+		Vector3(-140.244140625, 162.8740234375, 5.2273964881897),
+		Vector3(-168.455078125, 171.83203125, 8.1895599365234),
+		Vector3(-183.658203125, 176.6015625, 9.0283603668213),
+		Vector3(-202.5029296875, 177.134765625, 8.5964212417603),
+		Vector3(-216.7275390625, 142.2314453125, 3.3410317897797),
+		Vector3(-187.0126953125, 119.7060546875, 3.4534635543823),
+		Vector3(-142.08203125, 101.568359375, 3.1216146945953)
+	}
+}
 
 JobFarmer.PlantPlaces = {
 	{-122.78, 61.12, 3.12}, -- Field1-Line1
