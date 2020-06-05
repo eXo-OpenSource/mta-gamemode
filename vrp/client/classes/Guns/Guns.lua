@@ -198,6 +198,13 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		end
 		cancelEvent()
+	elseif weapon == 54 then
+		if source == localPlayer then
+			if getPedSimplestTask(localPlayer) == "TASK_SIMPLE_CLIMB" then
+				cancelEvent()
+				outputDebugString("canceling edge bug damage")
+			end
+		end
 	else
 		if attacker and weapon and source == localPlayer and attacker.getPublicSync and attacker:getPublicSync("supportMode") and weapon == 0 then
 			-- source:setAnimation("fight_c", "hitc_3", -1, false, true, true, true, 250, true)
