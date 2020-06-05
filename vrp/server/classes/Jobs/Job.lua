@@ -29,6 +29,7 @@ function Job:registerJobVehicle(player, vehicle, countdown, stopJobOnDestroy)
 	end
 	player.jobVehicle = vehicle
 	vehicle.jobPlayer = player
+	setElementData(vehicle, "JobVehicle", true)
 
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if seat==0 and vehPlayer ~= player then
