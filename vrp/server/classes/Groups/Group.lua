@@ -531,6 +531,29 @@ function Group:sendShortMessage(text, timeout)
 	end
 end
 
+function Group:sendMessageWithRank(text, r, g, b, minRank, withPrefix, ...)
+	local r = r or 0
+	local g = g or 255
+	local b = b or 155
+	local prefix = withPrefix and ("[%s] "):format(self:getName()) or ""
+
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if self:getPlayerRank(player) >= (minRank or 0) then
+			player:sendMessage(prefix .. text, r, g, b, true, ...)
+		end
+	end
+end
+
+function Group:sendShortMessageWithRank(text, minRank, title, color, ...)
+	local color = {color.r or 0, color.g or 255, color.b or 155}
+	local suffix = title and ": " .. title or ""
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if self:getPlayerRank(player) >= (minRank or 0) then
+			player:sendShortMessage(text, self:getName() .. suffix, color, ...)
+		end
+	end
+end
+
 function Group:distributeMoney(sender, amount, reason, category, subcategory)
 	local moneyForFund = amount * self.m_ProfitProportion
 	sender:transferMoney(self, moneyForFund, reason, category, subcategory)

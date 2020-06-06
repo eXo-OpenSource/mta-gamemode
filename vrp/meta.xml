@@ -1397,6 +1397,7 @@
 	<script src="server/http/phpsdk.lua" type="server"/>
 	<export function="phpSDKGetPlayers" type="server" http="true" />
 	<export function="phpSDKSendChatBox" type="server" http="true" />
+	<export function="phpSDKSendMessage" type="server" http="true" />
 	<export function="phpSDKLoadCharacterInfo" type="server" http="true" />
 	<export function="phpSDKSendOnlinePlayers" type="server" http="true" />
 	<export function="phpSDKGiveQRAchievement" type="server" http="true" />

@@ -400,6 +400,29 @@ function Company:sendShortMessage(text, ...)
 	end
 end
 
+function Company:sendMessageWithRank(text, r, g, b, minRank, withPrefix, ...)
+	local r = r or companyColors[self.m_Id].r
+	local g = g or companyColors[self.m_Id].g
+	local b = b or companyColors[self.m_Id].b
+	local prefix = withPrefix and ("[%s] "):format(self:getName()) or ""
+
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if self:getPlayerRank(player) >= (minRank or 0) then
+			player:sendMessage(prefix .. text, r, g, b, true, ...)
+		end
+	end
+end
+
+function Company:sendShortMessageWithRank(text, minRank, title, color, ...)
+	local color = {color.r or companyColors[self.m_Id].r, color.g or companyColors[self.m_Id].g, color.b or companyColors[self.m_Id].b}
+	local suffix = title and ": " .. title or ""
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if self:getPlayerRank(player) >= (minRank or 0) then
+			player:sendShortMessage(text, self:getName() .. suffix, color, ...)
+		end
+	end
+end
+
 function Company:getRandomSkin()
 	local i = 1
 	local skins = {}
