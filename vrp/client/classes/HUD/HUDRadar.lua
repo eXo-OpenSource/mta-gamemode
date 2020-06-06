@@ -217,10 +217,10 @@ function HUDRadar:restore()
 end
 
 function HUDRadar:draw()
-	dxSetRenderTarget(self.m_RenderTargetAll, true)
 	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default then
 		return
 	end
+	dxSetRenderTarget(self.m_RenderTargetAll, true)
 	dxSetBlendMode("modulate_add")
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
