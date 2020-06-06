@@ -24,6 +24,121 @@ function phpSDKSendChatBox(messageType, target, message, r, g, b)
 	return
 end
 
+function phpSDKSendMessage(targetType, targetId, message, options)
+	local options = options or {}
+	local color = {r = options.r or nil, g = options.g or nil, b = options.b or nil}
+	local title = options.title or nil
+	local offline = options.offline or false
+	local messageType = options.messageType or "chat"
+	local timeout = options.timeout or nil
+	local minRank = options.minRank or nil
+	local withPrefix = options.withPrefix or false
+
+	if targetType == "admin" then
+		if messageType == "shortMessage" then
+			Admin:getSingleton():sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+		else
+			Admin:getSingleton():sendMessage(message, color.r, color.g, color.b, minRank or 1)
+		end
+
+		local data = toJSON({status = "SUCCESS"}, true)
+		return data:sub(2, #data-1)
+	elseif targetType == "faction" then
+		if targetId == "state" then
+			if messageType == "shortMessage" then
+				FactionState:getSingleton():sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+			else
+				FactionState:getSingleton():sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+			end
+
+			local data = toJSON({status = "SUCCESS"}, true)
+			return data:sub(2, #data-1)
+		else
+			local faction = FactionManager.Map[targetId]
+
+			if not faction then
+				local data = toJSON({status = "FAILED"}, true)
+				return data:sub(2, #data-1)
+			end
+
+			if messageType == "shortMessage" then
+				faction:sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+			else
+				faction:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+			end
+
+			local data = toJSON({status = "SUCCESS"}, true)
+			return data:sub(2, #data-1)
+		end
+	elseif targetType == "company" then
+		local company = CompanyManager.Map[targetId]
+
+		if not company then
+			local data = toJSON({status = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+
+		if messageType == "shortMessage" then
+			company:sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+		else
+			company:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+		end
+
+		local data = toJSON({status = "SUCCESS"}, true)
+		return data:sub(2, #data-1)
+	elseif targetType == "group" then
+		local group = GroupManager.Map[targetId]
+
+		if not group then
+			local data = toJSON({status = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+
+		if messageType == "shortMessage" then
+			group:sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+		else
+			group:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+		end
+
+		local data = toJSON({status = "SUCCESS"}, true)
+		return data:sub(2, #data-1)
+	elseif targetType == "player" then
+		local target, isOffline = DatabasePlayer.get(targetId)
+		if target then
+			if isOffline then
+				local data = toJSON({status = "SUCCESS", online = false}, true)
+				if offline then
+					target:addOfflineMessage(message, 1)
+				else
+					data = toJSON({status = "FAILED", online = false}, true)
+				end
+
+				target.m_DoNotSave = true
+				delete(target)
+
+				return data:sub(2, #data-1)
+			else
+				if messageType == "infoBox" then
+					target:sendInfo(message, timeout, title)
+				elseif messageType == "successBox" then
+					target:sendSuccess(message, timeout, title)
+				elseif messageType == "warningBox" then
+					target:sendWarning(message, timeout, title)
+				elseif messageType == "errorBox" then
+					target:sendError(message, timeout, title)
+				elseif messageType == "shortMessage" then
+					target:sendShortMessage(message, title, color, timeout)
+				else
+					target:sendMessage(message, color.r, color.g, color.b, true)
+				end
+				local data = toJSON({status = "SUCCESS", online = true}, true)
+				return data:sub(2, #data-1)
+			end
+		end
+	end
+	return
+end
+
 function phpSDKLoadCharacterInfo(targetName) -- Cause of Migrator
 	local target = getPlayerFromName(targetName)
 	if isElement(target) then
@@ -314,6 +429,43 @@ function phpSDKTakeScreenShot(userId)
 	if player and isElement(player) then
 		local tag = string.random(128)
 		local status = player:takeScreenShot(800, 600, "cp:" .. tag, 30, 1024 * 512, 500)
+		if status then
+			local data = toJSON({status = "SUCCESS", tag = tag}, true)
+			return data:sub(2, #data-1)
+		else
+			local data = toJSON({status = "ERROR", error = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+	else
+		local data = toJSON({status = "ERROR", error = "PLAYER_IS_OFFLINE"}, true)
+		return data:sub(2, #data-1)
+	end
+end
+
+function phpSDKStartScreenCapture(userId, width, height, frameLimit, time, forceResample)
+	local player = DatabasePlayer.Map[userId]
+
+	if player and isElement(player) then
+		local tag = string.random(128)
+		local status = player:triggerEvent("onScreenCaptureStart", tag, width, height, frameLimit, time, forceResample)
+		if status then
+			local data = toJSON({status = "SUCCESS", tag = tag}, true)
+			return data:sub(2, #data-1)
+		else
+			local data = toJSON({status = "ERROR", error = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+	else
+		local data = toJSON({status = "ERROR", error = "PLAYER_IS_OFFLINE"}, true)
+		return data:sub(2, #data-1)
+	end
+end
+
+function phpSDKStopScreenCapture(userId)
+	local player = DatabasePlayer.Map[userId]
+
+	if player and isElement(player) then
+		local status = player:triggerEvent("onScreenCaptureStop")
 		if status then
 			local data = toJSON({status = "SUCCESS", tag = tag}, true)
 			return data:sub(2, #data-1)

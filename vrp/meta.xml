@@ -1253,6 +1253,11 @@
 	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />
 
 	<script src="client/classes/MapEditor/MapEditor.lua" type="client" />
+
+	<script src="client/classes/ScreenCapture.lua" type="client" />
+
+
+
 	<file src="files/data/objects.xml" />
 
 	<!-- white pieces -->
@@ -1403,6 +1408,7 @@
 	<script src="server/http/phpsdk.lua" type="server"/>
 	<export function="phpSDKGetPlayers" type="server" http="true" />
 	<export function="phpSDKSendChatBox" type="server" http="true" />
+	<export function="phpSDKSendMessage" type="server" http="true" />
 	<export function="phpSDKLoadCharacterInfo" type="server" http="true" />
 	<export function="phpSDKSendOnlinePlayers" type="server" http="true" />
 	<export function="phpSDKGiveQRAchievement" type="server" http="true" />
@@ -1413,6 +1419,8 @@
 	<export function="phpSDKAddWarn" type="server" http="true" />
 	<export function="phpSDKRemoveWarn" type="server" http="true" />
 	<export function="phpSDKTakeScreenShot" type="server" http="true" />
+	<export function="phpSDKStartScreenCapture" type="server" http="true" />
+	<export function="phpSDKStopScreenCapture" type="server" http="true" />
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->

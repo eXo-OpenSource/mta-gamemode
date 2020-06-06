@@ -93,7 +93,7 @@ function DxElement:anyChange()
 	return false
 end
 
-function DxElement:draw(incache)
+function DxElement:draw(incache, skipPostGUI)
 	if self.m_Visible then
 		-- Draw me
 		if self.drawThis then
@@ -103,7 +103,7 @@ function DxElement:draw(incache)
 		-- Draw children
 		for k, v in ipairs(self.m_Children) do
 			if v.m_Visible and v.draw then
-				v:draw(incache)
+				v:draw(incache, skipPostGUI)
 			end
 		end
 	end

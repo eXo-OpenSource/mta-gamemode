@@ -124,7 +124,6 @@ end
 
 function JobBoxer:abortJob()
     client:sendInfo("Du hast den Kampf aufgegeben!")
-
     client:restoreStorage()
     --client:setPosition(763.26, 5.48, 1000.71)
     --client:setRotation(0, 0, 270)

@@ -18,6 +18,7 @@ function FactionState:constructor()
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
+	self.m_StateColor = {r = 3, g = 173, b = 252}
 
 	--self.m_GaragePorter = VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
 	--self.m_GaragePorter:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
@@ -251,12 +252,12 @@ end
 
 function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(237.83, 108.86, 1003.23, 10) -- PD Interior
-	
+
 	self.m_DutyNPC = NPC:new(280, 238.89999, 112.6, 1003.2, 270)
 	self.m_DutyNPC:setImmortal(true)
 	self.m_DutyNPC:setDimension(0)
 	self.m_DutyNPC:setInterior(10)
-	
+
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 0, 5) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 0, 5)
@@ -932,6 +933,30 @@ function FactionState:sendMessage(text, r, g, b, ...)
 	end
 end
 
+function FactionState:sendMessageWithRank(text, r, g, b, minRank, withPrefix, ...)
+	local r = r or self.m_StateColor.r
+	local g = g or self.m_StateColor.g
+	local b = b or self.m_StateColor.b
+	local prefix = withPrefix and "[Staat] #ffffff" or ""
+
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if player:getFaction():getPlayerRank(player) >= (minRank or 0) then
+			player:sendMessage(prefix .. text, r, g, b, true, ...)
+		end
+	end
+end
+
+function FactionState:sendShortMessageWithRank(text, minRank, title, color, ...)
+	local color = {color.r or self.m_StateColor.r, color.g or self.m_StateColor.g, color.b or self.m_StateColor.b}
+	local suffix = title and ": " .. title or ""
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if player:getFaction():getPlayerRank(player) >= (minRank or 0) then
+			player:sendShortMessage(text, "Staat" .. suffix, color, ...)
+		end
+	end
+end
+
+
 function FactionState:sendStateChatMessage(sourcePlayer, message)
 	if not getElementData(sourcePlayer, "StateChatEnabled") then return sourcePlayer:sendError(_("Du hast den Staatschat deaktiviert!", sourcePlayer)) end
 	local faction = sourcePlayer:getFaction()
@@ -939,12 +964,11 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 		local playerId = sourcePlayer:getId()
 		local rank = faction:getPlayerRank(playerId)
 		local rankName = faction:getRankName(rank)
-		local r,g,b = 3, 173, 252
 		local receivedPlayers = {}
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in pairs(self:getOnlinePlayers()) do
 			if getElementData(player, "StateChatEnabled") then
-				player:sendMessage(("[Staat] #ffffff %s"):format(text), r, g, b, true)
+				player:sendMessage(("[Staat] #ffffff %s"):format(text), self.m_StateColor.r, self.m_StateColor.g, self.m_StateColor.b, true)
 			end
 			if player ~= sourcePlayer then
 				receivedPlayers[#receivedPlayers+1] = player
@@ -1420,7 +1444,7 @@ function FactionState:freePlayer(player, prisonBreak)
 		player:sendShortMessage("Du bist aus dem Gefängnis ausgebrochen!")
 		self:sendShortMessage(player:getName().." ist aus dem Gefängnis ausgebrochen!")
 	else
-		
+
 		player:setInterior(10)
 		player:setWanteds(0)
 		player:setPosition(256.938, 108.951, 1003.219)

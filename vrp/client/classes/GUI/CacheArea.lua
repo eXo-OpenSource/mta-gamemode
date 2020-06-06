@@ -11,7 +11,6 @@ function CacheArea:constructor(posX, posY, width, height, containsGUIElements, c
 	DxElement.constructor(self, posX, posY, width, height)
 
 	GUIRenderer.addToDrawList(self)
-
 	self.m_PostGUI = postGUI
 	self.m_TimeoutCounter = 0
 	self.m_ContainsGUIElements = containsGUIElements
@@ -37,7 +36,7 @@ function CacheArea:anyChange()
 	return self:updateArea()
 end
 
-function CacheArea:drawCached()
+function CacheArea:drawCached(skipPostGUI)
 	if self.m_ChangedSinceLastFrame or not self.m_RenderTarget then
 		if not self.m_RenderTarget then
 			self.m_RenderTarget = dxCreateRenderTarget(self.m_Width, self.m_Height, true)
@@ -61,6 +60,7 @@ function CacheArea:drawCached()
 		end
 
 		-- We got a render Target so go on and render to it
+		local renderTarget = dxGetRenderTarget()
 		dxSetRenderTarget(self.m_RenderTarget, true)
 
 		-- Per definition we cannot have a drawThis method as only GUIElement instances
@@ -68,35 +68,40 @@ function CacheArea:drawCached()
 
 		-- Draw Children
 		for k, v in ipairs(self.m_Children) do
-			v:draw(true)
+			v:draw(true, skipPostGUI)
 		end
 
 		-- Restore render target
-		dxSetRenderTarget(nil)
+		dxSetRenderTarget(renderTarget)
 		self.m_ChangedSinceLastFrame = false
 	end
 
+	local postGUI = self.m_PostGUI
+
+	if skipPostGUI then
+		postGUI = false
+	end
 	-- Render! :>
 	dxSetBlendMode(self.m_BlendMode or "add")
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha), self.m_PostGUI)
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha), postGUI)
 	dxSetBlendMode("blend")
 
 	return true
 end
 
-function CacheArea:draw(incache)
+function CacheArea:draw(incache, skipPostGUI)
 	-- Do not waste time in drawing invisible elements
 	if not self.m_Visible then
 		return
 	end
 
 	if self.m_CachingEnabled and not incache then
-		if self:drawCached() then return end
+		if self:drawCached(skipPostGUI) then return end
 	end
 
 	-- Draw Children
 	for k, v in ipairs(self.m_Children) do
-		if v.draw then v:draw(incache) end
+		if v.draw then v:draw(incache, skipPostGUI) end
 	end
 end
 

@@ -1,7 +1,7 @@
 PickupMoney = inherit(Object)
 PickupMoney.Map = { }
 
-function PickupMoney:constructor(x, y, z, int, dim, amount)
+function PickupMoney:constructor(x, y, z, dim, int, amount)
 	self.m_Entity = createPickup(x, y, z, 3, 1212, 0)
 	self.m_Money = amount
 	self.m_Entity:setDimension(dim)

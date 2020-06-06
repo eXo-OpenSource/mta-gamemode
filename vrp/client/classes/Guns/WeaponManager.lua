@@ -10,11 +10,11 @@ WeaponManager = inherit(Singleton)
 WeaponManager.Weapon = {}
 
 
-function WeaponManager:constructor() 
-	
-	WeaponManager.WeaponToClass = 
+function WeaponManager:constructor()
+
+	WeaponManager.WeaponToClass =
 	{
-		[34] = SniperRifle:new(), 
+		[34] = SniperRifle:new(),
 		[35] = RocketLauncher:new()
 	}
 
@@ -25,25 +25,25 @@ function WeaponManager:constructor()
 	addEventHandler("onClientPlayerWeaponFire", localPlayer, bind(self.fire, self))
 end
 
-function WeaponManager:destructor() 
+function WeaponManager:destructor()
 
 end
 
-function WeaponManager:fire(weapon, ammo, ammoClip, hitX, hitY, hitZ, hitElement, startX, startY, startZ) 
+function WeaponManager:fire(weapon, ammo, ammoClip, hitX, hitY, hitZ, hitElement, startX, startY, startZ)
 	if WEAPON_RELOAD_TIME[weapon] then
 		WeaponManager.Weapon[weapon] = {ready = getTickCount() + WEAPON_RELOAD_TIME[weapon]}
 	end
-	if weapon == 35 then 
+	if weapon == 35 then
 		RocketLauncher:getSingleton():fire(weapon, ammo, ammoClip, hitX, hitY, hitZ, hitElement, startX, startY, startZ)
 	end
 end
 
-function WeaponManager:update() 
+function WeaponManager:update()
 	RocketLauncher:getSingleton():update()
 	SniperRifle:getSingleton():update()
 
-	local weapon = localPlayer:getWeapon() 
-	local now = getTickCount() 
+	local weapon = localPlayer:getWeapon()
+	local now = getTickCount()
 
 	if isPedDucked(localPlayer) and weapon == 0 then --Prevent a sync bug when punching while rolling off to abort roll animation
 		toggleControl("fire", false)
@@ -54,7 +54,7 @@ function WeaponManager:update()
 			toggleControl("action", true)
 		end
 	end
-	
+
 	if WEAPON_READY_TIME[weapon] then -- both of the following bugs work due to the script beeing latent when detecting wether a player is aiming or not, hence why the fixes for them are connected with confusing checks
 		if (getPedControlState(localPlayer, "fire") or getPedControlState(localPlayer, "action")) and not getPedControlState("aim_weapon") then --bug#1 prevent player pressing fire then aiming to override cooldown
 			WeaponManager.Weapon[weapon] = {ready = now + WEAPON_READY_TIME[weapon]+700}
@@ -66,11 +66,11 @@ function WeaponManager:update()
 		end
 	end
 
-	if WeaponManager.Weapon[weapon] then 
-		if WeaponManager.Weapon[weapon].ready and WeaponManager.Weapon[weapon].ready >= now then 
+	if WeaponManager.Weapon[weapon] then
+		if WeaponManager.Weapon[weapon].ready and WeaponManager.Weapon[weapon].ready >= now then
 			toggleControl("fire", false)
 			toggleControl("action", false)
-		else 
+		else
 			if (WeaponManager.Weapon[weapon].ready and (WeaponManager.Weapon[weapon].ready <= now)) and not NoDm:getSingleton():isInNoDmZone() and localPlayer:isControlEnabled() then
 				toggleControl("fire", true)
 				toggleControl("action", true)
@@ -79,21 +79,21 @@ function WeaponManager:update()
 	end
 end
 
-function WeaponManager:notify() 
+function WeaponManager:notify()
 
 end
 
-function WeaponManager:render() 
+function WeaponManager:render()
 	SniperRifle:getSingleton():render()
 end
 
-function WeaponManager:isAimingRocketLauncher() 
+function WeaponManager:isAimingRocketLauncher()
 	return RocketLauncher:getSingleton().m_Aiming
 end
 
 function WeaponManager:isFiringAllowed()
-	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or VehicleFuel:isInstantiated() or FishingRod:isInstantiated() then
-		return false	
+	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or VehicleFuel:isInstantiated() or FishingRod:isInstantiated() or getElementData(localPlayer, "inJail") or getElementData(localPlayer, "inAdminPrison") then
+		return false
 	end
 	return true
 end

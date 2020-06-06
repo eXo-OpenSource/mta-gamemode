@@ -12,6 +12,7 @@ function HUDRadar:constructor()
 	self.m_ImageSize = 1536, 1536 --3072, 3072
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
 	self.m_PosX, self.m_PosY = 20*screenWidth/1600, screenHeight - self.m_Height - 20*screenWidth/1600
+	self.m_RenderTargetAll = dxCreateRenderTarget(screenWidth, screenHeight, true)
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	self.m_StatusBarsEnabled = false
@@ -138,7 +139,7 @@ function HUDRadar:updateMapTexture(checkForDesign)
 		end
 	end
 
-	dxSetRenderTarget(nil)
+	dxSetRenderTarget(self.m_RenderTargetAll)
 end
 
 function HUDRadar:getImagePath(file, isMap)
@@ -216,9 +217,11 @@ function HUDRadar:restore()
 end
 
 function HUDRadar:draw()
+	dxSetRenderTarget(self.m_RenderTargetAll, true)
 	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default then
 		return
 	end
+	dxSetBlendMode("modulate_add")
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and getVehicleType(vehicle) ~= VehicleType.Plane and getVehicleType(vehicle) ~= VehicleType.Helicopter
@@ -279,7 +282,7 @@ function HUDRadar:draw()
 				self.m_RouteRenderTarget, self.m_Rotation)
 		end
 
-		dxSetRenderTarget(nil)
+		dxSetRenderTarget(self.m_RenderTargetAll)
 	end
 
 	-- Draw renderTarget
@@ -327,6 +330,10 @@ function HUDRadar:draw()
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	local size = Blip.getDefaultSize() * Blip.getScaleMultiplier()
 	dxDrawImage(self.m_PosX+self.m_Width/2 - size/2, self.m_PosY+self.m_Height/2 - size/2, size, size, self:getImagePath("LocalPlayer.png"), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+
+	dxSetRenderTarget()
+	dxSetBlendMode("blend")
+	dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RenderTargetAll)
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Radar") end
 end
 
@@ -455,7 +462,7 @@ function HUDRadar:drawRoute()
 		dxDrawLine(x, y, prevX, prevY, tocolor(10, 149, 240), 5, false)
 	end
 
-	dxSetRenderTarget(nil)
+	dxSetRenderTarget(self.m_RenderTargetAll)
 end
 
 function HUDRadar:setGPSRoute(nodes)

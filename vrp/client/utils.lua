@@ -70,9 +70,9 @@ CUSTOM_GUI = 1
 local offset = 0
 local outMargin = 0
 function grid(typ, pos, ignorecustom)
-	if not ignorecustom then 
-		local erg = grid(typ, pos, true) 
-		return type(erg) == "number" and erg*CUSTOM_GUI or erg 
+	if not ignorecustom then
+		local erg = grid(typ, pos, true)
+		return type(erg) == "number" and erg*CUSTOM_GUI or erg
 	end
 	if not pos then pos = 1 end
 	if typ == "offset" then
@@ -337,4 +337,20 @@ _setElementDimension = setElementDimension
 function setElementDimension(element, dimension)
 	_setElementDimension(element, dimension)
 	triggerEvent("onClientElementDimensionChange", element, dimension)
+end
+
+_dxSetRenderTarget = dxSetRenderTarget
+local currentRenderTarget = nil
+
+function dxSetRenderTarget(renderTarget, clear)
+	currentRenderTarget = renderTarget
+	return _dxSetRenderTarget(renderTarget, clear)
+end
+
+function dxGetRenderTarget()
+	if isElement(currentRenderTarget) then
+		return currentRenderTarget
+	else
+		return nil
+	end
 end

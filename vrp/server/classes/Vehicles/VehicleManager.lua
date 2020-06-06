@@ -1029,10 +1029,10 @@ function VehicleManager:Event_vehicleRepair()
 		return
 	end
 
-	StatisticsLogger:getSingleton():addAdminVehicleAction(client, "repair", source)
-	Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s repariert.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
-
 	source:fix()
+
+	Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s repariert.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
+	StatisticsLogger:getSingleton():addAdminVehicleAction(client, "repair", source)
 end
 
 function VehicleManager:Event_vehicleRespawn(garageOnly)
