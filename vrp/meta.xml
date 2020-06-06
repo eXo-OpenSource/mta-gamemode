@@ -1247,6 +1247,11 @@
 	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />
 
 	<script src="client/classes/MapEditor/MapEditor.lua" type="client" />
+
+	<script src="client/classes/ScreenCapture.lua" type="client" />
+
+	
+
 	<file src="files/data/objects.xml" />
 
 	<!-- white pieces -->
