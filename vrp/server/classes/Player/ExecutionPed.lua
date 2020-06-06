@@ -1,7 +1,7 @@
 ExecutionPed = inherit(Object)
 ExecutionPed.Map = {}
 
-local AnimationTable = 
+local AnimationTable =
 {
 {"crack","crckidle1"},
 {"wuzi","cs_dead_guy"},
@@ -32,19 +32,19 @@ function ExecutionPed:constructor( player, weapon, bodypart )
 	ExecutionPed.Map[player] = self
 end
 
-function ExecutionPed:setRandomAnimation() 
-	local randomAnimation = math.random(1, #AnimationTable) 
+function ExecutionPed:setRandomAnimation()
+	local randomAnimation = math.random(1, #AnimationTable)
 	local block, anim = unpack(AnimationTable[randomAnimation])
 	setPedAnimation( self.m_Entity, block, anim, -1, true, false, false, true)
 end
 
-function ExecutionPed:putOnStretcher( stretcher ) 
-	if isElement(stretcher) then 
+function ExecutionPed:putOnStretcher( stretcher )
+	if isElement(stretcher) then
 		stretcher:attach(self.m_Entity, Vector3(0, 1.4, -0.5))
 	end
 end
 
-function ExecutionPed:destructor() 
+function ExecutionPed:destructor()
 	if isElement( self.m_Entity ) then destroyElement( self.m_Entity ) end
 	if isTimer(self.m_HealthTimer) then killTimer(self.m_HealthTimer) end
 	setElementAlpha(self.m_Player, 255)

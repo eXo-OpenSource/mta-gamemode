@@ -974,6 +974,14 @@ function Admin:sendShortMessage(text, ...)
 	end
 end
 
+function Admin:sendShortMessageWithRank(text, minRank, ...)
+	for player, rank in pairs(self.m_OnlineAdmins) do
+		if player:getRank() >= (minRank or 1) then
+			player:sendShortMessage(("Admin: %s"):format(text), ...)
+		end
+	end
+end
+
 function Admin:ochat(player,cmd,...)
 	if player:getRank() >= RANK.Supporter then
 		local rankName = self.m_RankNames[player:getRank()]

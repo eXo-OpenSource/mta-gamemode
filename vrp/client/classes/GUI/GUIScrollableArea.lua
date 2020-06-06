@@ -40,7 +40,7 @@ function GUIScrollableArea:setScrollBarStartPosition(baseHeight)
 	self:createScrollbars(true, true, baseHeight)
 end
 
-function GUIScrollableArea:draw(incache)
+function GUIScrollableArea:draw(incache, skipPostGUI)
 	if self.m_Visible == false then
 		return
 	end
@@ -66,7 +66,7 @@ function GUIScrollableArea:draw(incache)
 
 	-- Draw children
 	for k, v in pairs(self.m_DrawnChildren and self.m_DrawnChildren or self.m_Children) do
-		if v.draw then v:draw(incache) end
+		if v.draw then v:draw(incache, skipPostGUI) end
 	end
 	dxSetRenderTarget(self.m_CacheArea and self.m_CacheArea.m_RenderTarget or nil)
 
