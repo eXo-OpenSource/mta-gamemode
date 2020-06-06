@@ -9,6 +9,7 @@ HUDUI = inherit(Singleton)
 
 function HUDUI:constructor()
 	self.m_IsVisible = false
+	self.m_RenderTarget = dxCreateRenderTarget(screenWidth, screenHeight, true)
 	self.m_Font = VRPFont(70)
 	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.Chart)
 	self.m_Enabled = core:get("HUD", "showUI", true)
@@ -57,6 +58,8 @@ function HUDUI:draw()
 	if not self.m_Enabled then return end
 	if not self.m_IsVisible then return end
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD_general") end
+	dxSetRenderTarget(self.m_RenderTarget, true)
+	dxSetBlendMode("modulate_add")
 	if self.m_UIMode == UIStyle.Default then
 		self:drawDefault()
 	elseif self.m_UIMode == UIStyle.vRoleplay then
@@ -72,6 +75,9 @@ function HUDUI:draw()
 	elseif self.m_UIMode == UIStyle.Chart then
 		self:drawChart()
 	end
+	dxSetRenderTarget()
+	dxSetBlendMode("blend")
+	dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RenderTarget)
 
 	if self.m_RedDot == true then
 		self:drawRedDot()

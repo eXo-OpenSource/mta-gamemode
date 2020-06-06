@@ -442,6 +442,43 @@ function phpSDKTakeScreenShot(userId)
 	end
 end
 
+function phpSDKStartScreenCapture(userId, width, height, frameLimit, time, forceResample)
+	local player = DatabasePlayer.Map[userId]
+
+	if player and isElement(player) then
+		local tag = string.random(128)
+		local status = player:triggerEvent("onScreenCaptureStart", tag, width, height, frameLimit, time, forceResample)
+		if status then
+			local data = toJSON({status = "SUCCESS", tag = tag}, true)
+			return data:sub(2, #data-1)
+		else
+			local data = toJSON({status = "ERROR", error = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+	else
+		local data = toJSON({status = "ERROR", error = "PLAYER_IS_OFFLINE"}, true)
+		return data:sub(2, #data-1)
+	end
+end
+
+function phpSDKStopScreenCapture(userId)
+	local player = DatabasePlayer.Map[userId]
+
+	if player and isElement(player) then
+		local status = player:triggerEvent("onScreenCaptureStop")
+		if status then
+			local data = toJSON({status = "SUCCESS", tag = tag}, true)
+			return data:sub(2, #data-1)
+		else
+			local data = toJSON({status = "ERROR", error = "FAILED"}, true)
+			return data:sub(2, #data-1)
+		end
+	else
+		local data = toJSON({status = "ERROR", error = "PLAYER_IS_OFFLINE"}, true)
+		return data:sub(2, #data-1)
+	end
+end
+
 
 addEventHandler("onPlayerScreenShot", root, function(resource, status, pixels, timestamp, tag)
 	if resource == getThisResource() then

@@ -245,7 +245,7 @@ function GUIGridList:sortList()
 	end
 end
 
-function GUIGridList:draw(incache) -- Swap render order
+function GUIGridList:draw(incache, skipPostGUI) -- Swap render order
 	if self.m_Visible then
 		dxSetBlendMode("modulate_add")
 
@@ -255,7 +255,7 @@ function GUIGridList:draw(incache) -- Swap render order
 		-- Draw items
 		for k, v in pairs(self.m_Children) do
 			if v.m_Visible and v.draw then
-				v:draw(incache)
+				v:draw(incache, skipPostGUI)
 			end
 		end
 
@@ -291,7 +291,7 @@ function GUIGridList:drawThis()
 	end
 end
 
-function GUIGridList:setAlternativeColor(color) 
+function GUIGridList:setAlternativeColor(color)
 	self.m_AlternateColor = color
 	self:anyChange()
 	return self
