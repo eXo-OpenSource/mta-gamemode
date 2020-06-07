@@ -139,7 +139,7 @@ function HUDRadar:updateMapTexture(checkForDesign)
 		end
 	end
 
-	dxSetRenderTarget(self.m_RenderTargetAll)
+	dxSetRenderTarget()
 end
 
 function HUDRadar:getImagePath(file, isMap)

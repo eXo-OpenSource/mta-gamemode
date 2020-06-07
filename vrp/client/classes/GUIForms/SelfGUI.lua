@@ -1054,7 +1054,7 @@ function SelfGUI:onSettingChange(setting)
 
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
-	elseif setting == "Chat" then 
+	elseif setting == "Chat" then
 
 
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Textkanäle aktivieren/deaktivieren!", self.m_SettingBG)
@@ -1078,7 +1078,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer, "CompanyChatEnabled", state)
 		end
 
-		
+
 		self.m_FactionChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.32, self.m_Width*0.8, self.m_Height*0.04, _"Firmen/Gangchat aktivieren", self.m_SettingBG)
 		self.m_FactionChat:setFont(VRPFont(25))
 		self.m_FactionChat:setFontSize(1)
@@ -1136,7 +1136,7 @@ function SelfGUI:onSettingChange(setting)
 
 		if SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")] then  -- this happens when any spawn option is not avaialble anymore (ie, player got kicked out of faction and has spawn still set to faction-spawn)
 			SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")]:setChecked(true)
-		end 
+		end
 
 		self.m_Default.onChange = function() uncheckAll() self.m_Default:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.DEFAULT) end
 		self.m_Noobspawn.onChange = function() uncheckAll() self.m_Noobspawn:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.NOOBSPAWN) end
@@ -1195,8 +1195,8 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "KillFeedbackShader", bool)
 			Guns:getSingleton():toggleMonochromeShader(bool)
 		end
-	
-	
+
+
 		self.m_DisplayBadge = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.8, self.m_Height*0.04, _"Dienstmarken anzeigen", self.m_SettingBG)
 		self.m_DisplayBadge:setFont(VRPFont(25))
 		self.m_DisplayBadge:setFontSize(1)
@@ -1349,7 +1349,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_InfraredSensitivty.onUpdate = function( value )
 			core:set("Vehicles","InfraredSensitivity", math.floor(value*100)/100)
 			self.m_InfraredSensitivtyLabel:setText(_("Thermal-Maussensitivität: %.2f", core:get("Vehicles", "InfraredSensitivity", 2)))
-			if VehicleInfrared:isInstantiated() then 
+			if VehicleInfrared:isInstantiated() then
 				VehicleInfrared:getSingleton():updateSensitivity()
 			end
 		end
@@ -1491,7 +1491,7 @@ function SelfGUI:onSettingChange(setting)
 			setInteriorSoundsEnabled(state)
 		end
 
-		
+
 		self.m_StaticNoiseRadio = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.9, self.m_Height*0.04, _"Funkkanal Rauschen", self.m_SettingBG)
 		self.m_StaticNoiseRadio:setFont(VRPFont(25))
 		self.m_StaticNoiseRadio:setFontSize(1)
