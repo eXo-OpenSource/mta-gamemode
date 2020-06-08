@@ -534,7 +534,7 @@ end
 
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(FactionManager.Map) do -- send the wt destination as point where players can navigate to
-		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()])) -- navigation point on some instances missing! 
+		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor(), serialiseVector(factionNavigationpoint[faction:getId()]), faction.m_Diplomacy) -- navigation point on some instances missing! 
 	end
 end
 
@@ -585,6 +585,7 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 	else
 		faction1:changeDiplomacy(faction2, diplomacy, client)
 		faction2:changeDiplomacy(faction1, diplomacy, client)
+		self:sendDiplomaciesToClient()
 	end
 
 	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
@@ -621,6 +622,7 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 	if answer == "accept" then
 		faction1:changeDiplomacy(faction2, diplomacy, client)
 		faction2:changeDiplomacy(faction1, diplomacy, client)
+		self:sendDiplomaciesToClient()
 	elseif answer == "decline" then
 		faction1:sendShortMessage(("%s hat eure %s an die %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
 		faction2:sendShortMessage(("%s hat die %s der %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
@@ -747,6 +749,22 @@ function FactionManager:getFromName(name)
 		end
 	end
 	return false
+end
+
+function FactionManager:sendDiplomaciesToClient(singlePlayer)
+	local diplomacies = {}
+
+	for factionId, faction in pairs(FactionManager.Map) do
+		diplomacies[factionId] = faction.m_Diplomacy
+	end
+
+	if singlePlayer then
+		singlePlayer:triggerEvent("onClientDiplomacyReceive", diplomacies)
+	else
+		for index, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+			player:triggerEvent("onClientDiplomacyReceive", diplomacies)
+		end
+	end
 end
 
 function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitchTo)

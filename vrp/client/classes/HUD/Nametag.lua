@@ -208,6 +208,13 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	end
 	if player:getFaction() and player:getPublicSync("Faction:Duty") then
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
+		if localPlayer:getFaction() and localPlayer:getPublicSync("Faction:Duty") then
+			if localPlayer:getFaction():getAllianceFaction() and localPlayer:getFaction():getAllianceFaction() == player:getFaction() then
+				icons[#icons+1] = "alliance.png"
+			elseif localPlayer:getFaction():hasWarWith(player:getFaction()) then
+				icons[#icons+1] = "war.png"
+			end
+		end
 	end
 	if player:getCompany() and player:getPublicSync("Company:Duty") then
 		icons[#icons+1] = (player:getCompany().m_Id == CompanyStaticId.MECHANIC and "MT" or player:getCompany():getShortName())..".png"

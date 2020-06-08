@@ -1147,6 +1147,7 @@
 
 
 	<!-- Factions -->
+	<script src="client/classes/Faction/FactionManager.lua" type="client"/>
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
 	<script src="client/classes/Faction/FactionRescue.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/Fire.lua" type="client"/>
@@ -1875,6 +1876,8 @@
 	<vrpfile src="files/images/Nametag/bandage.png"/>
 
 	<vrpfile src="files/images/Nametag/Badgebg.png"/>
+	<vrpfile src="files/images/Nametag/alliance.png"/>
+	<vrpfile src="files/images/Nametag/war.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
