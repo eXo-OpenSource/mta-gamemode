@@ -99,7 +99,9 @@ function ScreenCapture:sendPixelsToControlPanel()
 	dxSetRenderTarget(self.m_UploadTarget)
 	dxDrawImage(0, 0, self.m_RecordingWidth, self.m_RecordingHeight, self.m_ScreenSource)
 	dxDrawImage(0, 0, self.m_RecordingWidth, self.m_RecordingHeight, HUDUI:getSingleton().m_RenderTarget)
-	dxDrawImage(0, 0, self.m_RecordingWidth, self.m_RecordingHeight, HUDRadar:getSingleton().m_RenderTargetAll)
+	if HUDRadar:getSingleton().m_Enabled and HUDRadar:getSingleton().m_Visible and HUDRadar:getSingleton().m_DesignSet ~= RadarDesign.Default then
+		dxDrawImage(0, 0, self.m_RecordingWidth, self.m_RecordingHeight, HUDRadar:getSingleton().m_RenderTargetAll)
+	end
 	dxDrawImage(0, 0, self.m_RecordingWidth, self.m_RecordingHeight, self.m_TempTarget)
 	dxSetRenderTarget()
 

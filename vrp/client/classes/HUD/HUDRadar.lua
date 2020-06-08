@@ -139,7 +139,7 @@ function HUDRadar:updateMapTexture(checkForDesign)
 		end
 	end
 
-	dxSetRenderTarget(self.m_RenderTargetAll)
+	dxSetRenderTarget()
 end
 
 function HUDRadar:getImagePath(file, isMap)
@@ -247,6 +247,8 @@ function HUDRadar:draw()
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
 		MessageBoxManager.onRadarPositionChange()
 		self.m_UpdateMessageBoxes = true
+		dxSetRenderTarget()
+		dxSetBlendMode("blend")
 		return
 	elseif self.m_UpdateMessageBoxes == true then -- Todo: find better way to do this
 		self.m_UpdateMessageBoxes = false
