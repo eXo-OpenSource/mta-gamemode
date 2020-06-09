@@ -544,3 +544,13 @@ function StatisticsLogger:addRouletteLog(player, bet, bets, winningNumber, wonAm
 	sqlLogs:queryExec("INSERT INTO ??_Roulette (UserId, Bet, Bets, WinningNumber, WonAmount, HighStake, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())",
 		sqlLogs:getPrefix(), userId, bet, toJSON(betsInfo, true):sub(2, -2), winningNumber, wonAmount, highStake and 1 or 0)
 end
+
+function StatisticsLogger:addCinemaLog(player, host, lobbyName, action, videoId)
+	local playerId = 0
+	local hostId = 0
+	if isElement(player) then playerId = player:getId() else playerId = player or 0 end
+	if isElement(host) then hostId = host:getId() else hostId = host or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_Cinema (UserId, HostId, LobbyName, Action, VideoId, Date) VALUES (?, ?, ?, ?, ?, NOW())",
+	sqlLogs:getPrefix(), player:getId(), host:getId(), lobbyName, action, videoId)
+end
