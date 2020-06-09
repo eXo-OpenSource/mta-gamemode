@@ -69,6 +69,7 @@ function KeyBinds:constructor()
 		["KeyToggleThermalMode"] 	= {["defaultKey"] = "m", ["name"] = "Thermalkamera-Suchmodus (Helikopter)", ["func"] = self.m_ThermalModeKey, ["trigger"] = "down"};
 		["KeyToggleThermalSpeed"] 	= {["defaultKey"] = "lalt", ["name"] = "Thermalkamera umschalten (Helikopter)", ["func"] = self.m_ThermalSpeedKey, ["trigger"] = "down"};
 		["KeyNeedhelp"] 			= {["defaultKey"] = "N/A", ["name"] = "Hilferuf senden (Fraktion)", ["func"] = function() triggerServerEvent("factionPlayerNeedhelp",localPlayer) end, ["trigger"] = "down"};
+		["KeyCinemaVideoGUI"] 		= {["defaultKey"] = "x", ["name"] = "Kino Videoverwaltung öffnen", ["func"] = function() if CinemaLobby:isInstantiated() then CinemaLobby:getSingleton():openVideoGUI() end end, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};

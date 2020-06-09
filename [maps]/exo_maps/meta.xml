@@ -126,6 +126,7 @@
 	<map src="shop/fishshop.map"/>
 	<map src="sewer-ext.map"/>
 	<map src="minigamescafe.map" dimension="2" />
+	<map src="cinema.map"/>
 
 	<!--<map src="admin-auction.map" />--> <!-- Auction Event map at Veriona Beach, ugly -->
 </meta>

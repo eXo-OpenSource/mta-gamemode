@@ -169,6 +169,7 @@ ADMIN_RANK_PERMISSION = {
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
+	["cinemaRemoveLobby"] = RANK.Supporter,
 
 	--group management
 	["setFaction"] = RANK.Administrator,

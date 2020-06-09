@@ -152,6 +152,7 @@ function Core:constructor()
 		PickupWeaponManager:new()
 		InteriorEnterExitManager:new()
 		ElevatorManager:new()
+		CinemaManager:new()
 
 		if EVENT_EASTER then
 			Easter:new()
