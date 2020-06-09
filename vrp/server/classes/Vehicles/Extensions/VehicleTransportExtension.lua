@@ -219,7 +219,7 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
     local function inside(value, min, max) return value >= min and value <= max end
     if inside(x, tbl.boundingBox[1], tbl.boundingBox[4]) and inside(y, tbl.boundingBox[2], tbl.boundingBox[5]) and inside(z, tbl.boundingBox[3], tbl.boundingBox[6]) then
 
-        local function onSlope(rot) return math.abs(math.abs(math.abs(rot)-180)-180) > 1 end
+        local function onSlope(rot) return math.abs(math.abs(math.abs(rot)-180)-180) > 2 end
         if onSlope(rx) or onSlope(ry) then
             driver:sendWarning("Stelle dein Fahrzeug gerade auf die Ladefläche.")
             return false 
@@ -244,7 +244,7 @@ function VehicleTransportExtension:toggleVehicleLoadingMode(instantUp)
     local tbl = VehicleTransportExtension.Presets[self:getModel()]
     if not tbl then return end
     if not tbl.rampId then return end
-    if self:getVelocity().length > 0.001 then return end -- prevent loading in mid-driving
+    if self:getVelocity().length > 0.001 and self:getOccupantsCount() > 0 then return end -- prevent loading in mid-driving
     if isTimer(self.m_AnimationTimer) then return end -- prevent toggling mode when it is already toggling
     local startRotation, endRotation
     if self.m_VehicleTransportLoadingMode or (instantUp and self.m_VehicleTransportLoadingMode) then --close the ramps

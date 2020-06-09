@@ -248,7 +248,6 @@ end
 
 function VehicleImportManager:internalCreateVehicle(shop, model, variant, payment)
 	local veh = TemporaryVehicle.create(model, VehicleImportManager.ImportLocation.x, VehicleImportManager.ImportLocation.y, VehicleImportManager.ImportLocation.z, VehicleImportManager.ImportRotation)
-	veh:setRepairAllowed(false)
 	veh.destroyOnColLeaveFunc 	= bind(self.internalDestroyVehicle, self, veh)
 	veh.transportShopId 		= shop
 	veh.transportShopVariant 	= variant
@@ -330,7 +329,7 @@ function VehicleImportManager:internalOnVehicleExit(player, seat)
 		local moneyEarnedPlayer = math.round(veh.transportPayment * (VehicleImportManager.PaymentForDriverFactor))
 		local moneyEarnedCompany = veh.transportPayment - moneyEarnedPlayer
 		local eptInstance = CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT)
-		eptInstance:sendShortMessage(("%s hat das Fahrzeug '%s' abgeliefert."):format(getPlayerName(player), veh:getName()))
+		eptInstance:sendShortMessage(("%s hat das Fahrzeug '%s' abgeliefert (+%s)."):format(getPlayerName(player), veh:getName(), toMoneyString(moneyEarnedCompany)))
 		eptInstance:addLog(player, "Import", ("hat das Fahrzeug '%s' abgeliefert (+%s)!"):format(veh:getName(), toMoneyString(moneyEarnedCompany)))
 		self:increaseShopStockByVehicle(veh.transportShopId, veh:getModel(), veh.transportShopVariant)
 

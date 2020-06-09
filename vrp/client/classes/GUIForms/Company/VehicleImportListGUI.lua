@@ -15,12 +15,13 @@ function VehicleImportListGUI:constructor(vehicleList, showStartButton)
             self.m_StartTransportBtn:setEnabled(true)
         end
         self.m_Grid = GUIGridGridList:new(1, 1, 15, 6, self.m_Window)
-        self.m_Grid:addColumn(_"Bedarf", 0.15)
+        self.m_Grid:addColumn(_"Bedarf", 0.12)
         self.m_Grid:addColumn(_"Fahrzeug", 0.3)
         self.m_Grid:addColumn(_"Autohaus", 0.3)
         self.m_Grid:addColumn(_"Preis", 0.3)
+        self.m_Grid:addColumn(_"Importance", 0.3)
         self.m_Grid:setSortable(true)
-        self.m_Grid:setSortColumn(_"Bedarf", "down")
+        self.m_Grid:setSortColumn(_"Importance", "down")
     else
         GUIGridLabel:new(1, 1, 15, 6, _"Alle Autohäuser sind befüllt.", self.m_Window):setAlignX("center")
     end
@@ -52,9 +53,9 @@ function VehicleImportListGUI:populateList(list)
         self.m_StartTransportBtn:setEnabled(false)
     end
     for i, data in pairs(list) do
-        local importance = 1-(data.currentStock + data.currentlyTransported)/data.maxStock
-        local amountToDeliver = ("%s%% (%s)"):format(math.round(importance*100), data.maxStock - data.currentStock - data.currentlyTransported)
-        local item = self.m_Grid:addItem(amountToDeliver, VehicleCategory:getSingleton():getModelName(data.model), data.shopName, toMoneyString(data.price))
+        local importance = math.round((1-(data.currentStock + data.currentlyTransported)/data.maxStock))*100
+        local amountToDeliver = data.maxStock - data.currentStock - data.currentlyTransported
+        local item = self.m_Grid:addItem(amountToDeliver, VehicleCategory:getSingleton():getModelName(data.model), data.shopName, toMoneyString(data.price), importance)
         item.shopId = data.shopId
         item.model = data.model
         item.variant = data.variant

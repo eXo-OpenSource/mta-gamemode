@@ -123,6 +123,8 @@ function HUDSpeedo:draw()
 
 		if handbrake or getPedControlState("handbrake") or vehicle:isFrozen() then
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
+		elseif vehicle:getAttachedTo() and vehicle:getAttachedTo():getType() == "vehicle" then
+			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake_transport.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 		else
 			local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
 			if cruiseSpeed then

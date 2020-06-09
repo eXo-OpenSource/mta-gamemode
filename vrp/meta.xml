@@ -1547,6 +1547,7 @@
 	<vrpfile src="files/images/Speedo/seatbelt.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
+	<vrpfile src="files/images/Speedo/handbrake_transport.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_light.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
