@@ -76,6 +76,12 @@ function CompanyGUI:constructor()
 		self.m_BindManageGUI:addBackButton(function() CompanyGUI:getSingleton():show() end)
 	end
 
+	self.m_SkinChangeButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.07, _"Kleidung wechseln", tabAllgemein):setBarEnabled(true)
+	self.m_SkinChangeButton.onLeftClick = function()
+		self:close()
+		triggerServerEvent("companyRequestSkinSelection", localPlayer)
+	end
+
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
 
