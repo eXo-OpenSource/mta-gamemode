@@ -165,6 +165,7 @@ function VehicleImportManager:internalOnVehicleTransporterRespawn(transporter)
 	for i, veh in pairs(getAttachedElements(transporter)) do
 		if self.m_ActiveVehicles[veh] then
 			veh:detach()
+			veh:setCollisionsEnabled(true)
 			self:internalOnVehicleColLeave(veh, true)
 		end
 	end
@@ -176,6 +177,7 @@ function VehicleImportManager:internalOnVehicleTransporterDamage(transporter, lo
 	for i, veh in pairs(getAttachedElements(transporter)) do
 		if self.m_ActiveVehicles[veh] then
 			veh:detach()
+			veh:setCollisionsEnabled(true)
 			self:internalOnVehicleColLeave(veh, true)
 			vehiclesDetached = vehiclesDetached + 1
 		end

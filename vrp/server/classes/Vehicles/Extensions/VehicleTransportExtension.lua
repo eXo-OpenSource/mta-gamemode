@@ -283,4 +283,10 @@ function VehicleTransportExtension:toggleVehicleLoadingMode(instantUp)
     end
     self.m_VehicleTransportLoadingMode = not self.m_VehicleTransportLoadingMode
     self:internalToggleLoadingZone()
+
+    for i, v in pairs(getAttachedElements(self)) do
+        if getElementType(v) == "vehicle" then
+            setElementCollisionsEnabled(v, self.m_VehicleTransportLoadingMode)
+        end
+    end
 end
