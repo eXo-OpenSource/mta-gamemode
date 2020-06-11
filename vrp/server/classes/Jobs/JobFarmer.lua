@@ -337,7 +337,7 @@ function JobFarmer:collectPlant(hitElement, matchingDimension)
 			local pos = vehicle.position + vehicle.matrix.forward * 2
 			local distance = getDistanceBetweenPoints3D(pos, source.position)
 			if distance > 4 then return end
-			table.removevalue(source.m_Plant)
+			table.removevalue(self.m_Plants, source.m_Plant) -- unsure if this even works?
 			destroyElement(source.m_Plant)
 			destroyElement(source)
 
