@@ -298,7 +298,6 @@ function JobFarmer:createPlant(position, vehicle)
 		end
 
 		if getDistanceBetweenPoints3D(position, client.position) > 3.4 then -- Check if distance of player to vehicle is valid
-			outputChatBox(tostring(getDistanceBetweenPoints3D(position, client.position)))
 			AntiCheat:getSingleton():report(client, "JobFarmer:InvalidVehicleDistance", CheatSeverity.Middle)
 			return false
 		end
