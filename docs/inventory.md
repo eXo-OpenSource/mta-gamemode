@@ -20,7 +20,6 @@
 - [ ] Write world items migration
 - [ ] Rewrite WorldItem GUI for Admins
 - [ ] Rework StatisticsLogger:getSingleton():worldItemLog
-- [ ] Fix StaticWorldItems
 - [ ] Fix WorldItems saving (metadata etc. Door, Keypad) and rework Id
 - [ ] Add weapon box logic for slots (limit 4 slots only for premium?)
 - [ ] Check removel of item "helmet"
@@ -38,6 +37,7 @@
 - [x] Rework WorldItem & Item IDs!!
 - [x] Rework WorldItems
 - [x] Implement inventory change events
+- [x] Fix StaticWorldItems
 
 ## Bug List
 
@@ -50,11 +50,6 @@
 ## Items
 
 * ItemFurniture = ItemFurniture;
-* ItemTransmitter = ItemTransmitter;
-* ItemSpeedCam = ItemSpeedCam;
-* ItemNails = ItemNails;
-* ItemEasteregg = ItemEasteregg;
-* ItemPumpkin = ItemPumpkin;
 * ItemTaser = ItemTaser;
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
@@ -86,6 +81,11 @@
 * ~~ItemAlcohol = ItemAlcohol;~~ - done
 * ~~ItemFirework = ItemFirework;~~ - done
 * ~~ItemSkyBeam = ItemSkyBeam;~~ - remove
+* ~~ItemSpeedCam = ItemSpeedCam;~~ - done
+* ~~ItemNails = ItemNails;~~ - done
+* ~~ItemTransmitter = ItemTransmitter;~~ - remove
+* ~~ItemEasteregg = ItemEasteregg;~~ - remove
+* ~~ItemPumpkin = ItemPumpkin;~~ - remove
 
 ## Notes
 

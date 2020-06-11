@@ -146,6 +146,16 @@ function Inventory:getItem(id)
 	return false
 end
 
+function Inventory:getItemAmount(item)
+	local amount = 0
+	for k, v in pairs(self.m_Items) do
+		if v.TechnicalName == item then
+			amount = amount + v.Amount
+		end
+	end
+	return amount
+end
+
 function Inventory:getItemFromSlot(slot)
 	for k, v in pairs(self.m_Items) do
 		if v.Slot == slot then

@@ -15,6 +15,7 @@ WearableHelmet.Data = {
 	["swathelmet"] = { offset = Vector3(0, 0.05, 0.1), rotation = Vector3(10, 0, 180), scale = 0.95, isFaceConcealed = false },
 	["gasmask"] = { offset = Vector3(0, 0.15, 0), rotation = Vector3(0, 0, 90), scale = 0.8, isFaceConcealed = true },
 	["bunnyEars"] = { offset = Vector3(0, 0, 0), rotation = Vector3(0, 0, 180), scale = 1, isFaceConcealed = true },
+	["pumpkin"] = { offset = Vector3(0, 0, 0.05), rotation = Vector3(0, 0, 180), scale = 0.8, isFaceConcealed = true },
 	["christmasHat"] = { offset = Vector3(0, 0, 0.14), rotation = Vector3(0, 0, 90), scale = 1, isFaceConcealed = true },
 	["star"] = { offset = Vector3(0, 0, 0.1), rotation = Vector3(0, 0, 90), scale = 0.2, isFaceConcealed = true }
 }

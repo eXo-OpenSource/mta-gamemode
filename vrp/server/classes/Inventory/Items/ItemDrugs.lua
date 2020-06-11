@@ -20,8 +20,9 @@ ItemDrugs.Settings = {
 	},
 	["shrooms"] = {
 		["Text"] = "isst einen Magic Mushroom",
-		["Model"] = 1882,
-		["Animation"] = {"FOOD", "EAT_Burger", 2000}
+		["Model"] = 1947,
+		["Animation"] = {"FOOD", "EAT_Burger", 2000},
+		["Attach"] = {12, 0, 0.05, 0.05, 0, -90, 0}
 	},
 	["heroin"] = {
 		["Text"] = "spritzt sich Heroin",

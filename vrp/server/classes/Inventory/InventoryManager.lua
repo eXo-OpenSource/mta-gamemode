@@ -897,7 +897,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (24, 'cocaine', 5, 'ItemDrugs', 'Kokain', 'Finger weg von den Drogen!', 'Drogen/Koks.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (25, 'repairKit', 3, 'ItemRepairKit', 'Reparaturkit', 'Zum reparieren von Totalschaeden', 'Items/Reparaturkit.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (26, 'candies', 1, 'ItemFood', 'Suessigkeiten', 'Was zum Naschen fuer Zwischendurch', 'Essen/Suessigkeiten.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (27, 'pumpkin', 3, 'ItemPumpkin', 'Kürbis', 'Sammle diese und Kauf dir wundervolle Praemien davon!', 'Items/Kuerbis.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (27, 'pumpkin', 3, 'WearableHelmet', 'Kürbis', 'Sammle diese und Kauf dir wundervolle Praemien davon!', 'Items/Kuerbis.png', 1935, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (28, 'packet', 3, '-', 'Päckchen', 'Nettes Päckchen vom Weihnachtsmann', 'Items/Paeckchen.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (29, 'gluvine', 1, 'ItemAlcohol', 'Glühwein', 'Gibts was besseres zur kalten Adventzeit\'', 'Essen/Gluehwein.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (30, 'coffee', 1, 'ItemFood', 'Kaffee', 'Warmer Kaffee, nicht vor dem Schlafen gehen trinken!', 'Essen/Kaffee.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
@@ -941,7 +941,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (68, 'coolingBoxLarge', 3, 'ItemFishing', 'Kühlbox', 'Kühlt gut, wieder und wieder!', 'Items/Coolbox.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (69, 'swathelmet', 3, 'WearableHelmet', 'Einsatzhelm', 'Falls es hart auf hart kommt.', 'Objekte/einsatzhelm.png', 3911, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (70, 'bait', 3, 'ItemFishing', 'Köder', 'Lockt ein paar Fische an und vereinfacht das Angeln', 'Items/Bait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (71, 'easterEgg', 3, 'ItemEasteregg', 'Osterei', 'Event-Special: Osterei', 'Items/Osterei.png', 1933, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (71, 'easterEgg', 3, '-', 'Osterei', 'Event-Special: Osterei', 'Items/Osterei.png', 1933, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (72, 'bunnyEars', 3, 'WearableHelmet', 'Hasenohren', 'Event-Special Hasenohren', 'Objekte/Hasenohren.png', 1934, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (73, 'warningCones', 4, 'ItemBarricade', 'Warnkegel', 'zum Markieren von Einsatzorten', 'Objekte/Warnkegel.png', 1238, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (74, 'apple', 1, 'ItemFood', 'Apfel', 'gesundes Obst', 'Essen/Apfel.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
