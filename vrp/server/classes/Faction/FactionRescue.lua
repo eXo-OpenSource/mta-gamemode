@@ -921,7 +921,6 @@ function FactionRescue:addVehicleFire(veh)
 						category = "Faction",
 						subcategory = "Fire"
 					},
-					karma = math.random(1,4),
 					points = math.random(5, 10)
 				})
 				playersByID[player:getId()] = score

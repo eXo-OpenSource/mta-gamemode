@@ -10,7 +10,6 @@ function ItemBeggar:giveItem(player, item)
 		if player:getInventory():getItemAmount(item) >= 1 then
 			player:getInventory():removeItem(item, 1)
 			player:giveCombinedReward("Bettler-Handel", {
-				karma = 5,
 				points = 5,
 			})
 			self:sendMessage(player, BeggarPhraseTypes.Thanks)
@@ -37,7 +36,6 @@ function ItemBeggar:buyItem(player, item)
 		if player:getInventory():getFreePlacesForItem(item) >= BeggarItemBuy[item]["amount"] then
 			local price = BeggarItemBuy[item]["amount"] * BeggarItemBuy[item]["pricePerAmount"]
 			if player:getMoney() >= price then
-				local karma = 5
 				player:giveCombinedReward("Bettler-Handel", {
 					money = {
 						mode = "take",
@@ -47,7 +45,6 @@ function ItemBeggar:buyItem(player, item)
 						category = "Gameplay",
 						subcategory = "BeggarTrade"
 					},
-					karma = -5,
 					points = 5,
 				})
 				player:getInventory():giveItem(item, BeggarItemBuy[item]["amount"])

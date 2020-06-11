@@ -1212,47 +1212,6 @@ function Player.getScreamHook()
 	return Player.ms_ScreamHook
 end
 
-function Player:setKarma(karma)
-	if karma < 0 and self.m_Karma >= 0 then
-		self:giveAchievement(1)
-	end
-	if karma >= 0 and self.m_Karma < 0 then
-		self:giveAchievement(2)
-	end
-
-	DatabasePlayer.setKarma(self, karma)
-end
-
-function Player:giveKarma(karma, reason, bNoSound, silent)
-	if not karma then return false end
-	local oldKarma = self.m_Karma
-	local success = DatabasePlayer.giveKarma(self, karma, reason)
-	if success then
-		if karma < 0 and self.m_Karma >= 0 then
-			self:giveAchievement(1)
-		end
-		if karma ~= 0 and not silent then
-			self:sendShortMessage(("%s Karma%s"):format("+"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
-		end
-	end
-	return success
-end
-
-function Player:takeKarma(karma, reason, bNoSound, silent)
-	if not karma or karma < 1 then return false end
-	local oldKarma = self.m_Karma
-	local success = DatabasePlayer.takeKarma(self, karma, reason)
-	if success then
-		if oldKarma >= 0 and self.m_Karma < 0 then
-			self:giveAchievement(2)
-		end
-		if karma ~= 0 and not silent then
-			self:sendShortMessage(("%s Karma%s"):format("-"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
-		end
-	end
-	return success
-end
-
 function Player:givePoints(p, reason, bNoSound, silent) -- Overriden
 	DatabasePlayer.givePoints(self, p, reason)
 	if p ~= 0 and not silent then
@@ -1299,14 +1258,6 @@ function Player:giveCombinedReward(reason, tblReward)
 				elseif amount < 0 then
 					self:takePoints(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s Punkte\n"):format(amount)
-				end
-			elseif name == "karma" then
-				if amount > 0 then
-					self:giveKarma(amount, reason, false, true)
-					smText = smText .. ("+%s Karma\n"):format(amount)
-				elseif amount < 0 then
-					self:takeKarma(math.abs(amount), reason, false, true)
-					smText = smText .. ("%s Karma\n"):format(amount)
 				end
 			end
 		end

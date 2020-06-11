@@ -9,7 +9,6 @@ Player = inherit(MTAElement)
 registerElementClass("player", Player)
 
 function Player:virtual_constructor()
-	self.m_Karma = 0
 	self.m_GarageType = 0
 
 	self.m_PublicSync = {}
@@ -70,10 +69,6 @@ end
 
 function Player:isPremium()
 	return self:getPublicSync("Premium") or false
-end
-
-function Player:getKarma()
-	return self:getPublicSync("Karma") or 0
 end
 
 function Player:getGroupId()

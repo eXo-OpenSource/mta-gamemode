@@ -35,17 +35,6 @@ FACTION_MAX_RANK_LOANS ={
 	[6] = 3000
 }
 
-FACTION_MIN_RANK_KARMA = {
-	[0] = 1;
-	[1] = 25;
-	[2] = 50;
-	[3] = 75;
-	[4] = 100;
-	[5] = 125;
-	[6] = 150;
-}
-
-
 FACTION_STATE_BADGES =
 {
 	[1] = "SAPD",

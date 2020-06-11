@@ -161,7 +161,6 @@ function BankRobbery:startRobGeneral(player) --ped got targeted
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
 	self.m_MoneyInSafes = 0
-	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
 	self.m_CircuitBreakerPlayers = {}
 	self.m_MoneyBags = {}
 	self:setAllTrucksActive(true)
@@ -246,7 +245,6 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 end
 
 function BankRobbery:timeUp()
-	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert!")
 	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zu viel Zeit gelassen!")
 	Discord:getSingleton():outputBreakingNews("Der Banküberfall ist beendet! Die Täter haben sich zu viel Zeit gelassen!")
 	self:destroyRob()
@@ -526,7 +524,6 @@ function BankRobbery:handleBagDelivery(faction, player)
 
 			PlayerManager:getSingleton():breakingNews(text)
 			Discord:getSingleton():outputBreakingNews(text)
-			--self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
 			source:destroy()
 			self:destroyRob()
 		end

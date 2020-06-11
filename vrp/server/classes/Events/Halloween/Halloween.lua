@@ -36,13 +36,6 @@ Halloween.ms_Bonus = {
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "Karma Reset",
-		["Image"] = "Bonus_Karma.png",
-		["Pumpkin"] = 70,
-		["Sweets"] = 1300,
-		["Type"] = "Special"
-	},
-	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
 		["Pumpkin"] = 75,
@@ -296,8 +289,6 @@ function Halloween:Event_buyBonus(bonusId)
 				client:sendError(_("Du hast den Payday Bonus bereits aktiviert!", client))
 				return
 			end
-		elseif bonus["Text"] == "Karma Reset" then
-			client:setKarma(0)
 		elseif bonus["Text"] == "Nick Change" then
 			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
 			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)

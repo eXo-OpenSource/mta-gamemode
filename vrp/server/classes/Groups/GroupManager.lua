@@ -57,9 +57,9 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups WHERE Deleted IS NULL", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, lastNameChange, Type, RankNames, RankLoans FROM ??_groups WHERE Deleted IS NULL", sql:getPrefix())
 	for k, row in ipairs(result) do
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans)
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.lastNameChange, row.RankNames, row.RankLoans)
 		GroupManager.Map[row.Id] = group
 		count = count + 1
 	end
@@ -81,14 +81,14 @@ end
 
 function GroupManager:loadFromId(Id)
 	if not GroupManager.Map[Id] then
-		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), Id)
+		local row = sql:queryFetchSingle("SELECT Id, Name, Money, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), Id)
 		if row then
 			local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 			local players = {}
 			for i, groupRow in ipairs(result2) do
 				players[groupRow.Id] = groupRow.GroupRank
 			end
-			GroupManager.Map[row.Id] = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
+			GroupManager.Map[row.Id] = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		end
 	end
 end
@@ -123,9 +123,9 @@ function GroupManager:sendInfosToClient(player)
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
 		if group:getPlayerRank(player) < GroupRank.Manager then
-			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames)
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames)
 		else
-			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames, group.m_RankLoans)
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames, group.m_RankLoans)
 		end
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
@@ -334,7 +334,7 @@ function GroupManager:Event_AddPlayer(player)
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
 		--group:addPlayer(player)
-		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 	else
 		client:sendError(_("Dieser Spieler ist bereits in deiner Firma/Gang!", client))
 	end
@@ -533,33 +533,6 @@ function GroupManager:Event_SaveRank(rank,name,loan)
 		self:sendInfosToClient(client)
 	end
 end
-
---[[function GroupManager:Event_UpdateVehicleTuning()
-	local group = client:getGroup()
-	--if true then -- Todo: Tuning Shop needs rework on this
-	--	client:sendInfo(_("Derzeit ist dies nicht möglich!", client))
-	--	return
-	--end
-	if group and group:getPlayerRank(client) >= GroupRank.Manager then
-	--	if group:getKarma() <= -50 then
-			if group:getMoney() >= 3000 then
-				group:transferMoney(self.m_BankAccountServer, 3000, "Fahrzeug Tuning", "Group", "VehicleTuning")
-				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
-				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
-				if group.m_VehiclesCanBeModified == true then
-					client:sendInfo(_("Eure Fahrzeuge können nun getuned werden!", client))
-				else
-					client:sendInfo(_("Eure Fahrzeuge können nun nicht mehr getuned werden!", client))
-				end
-				self:sendInfosToClient(client)
-			else
-				client:sendError(_("Die %s hat zu wenig Geld! (3000$)", client, group:getType()))
-			end
-		--else
-		--	client:sendError(_("Die %s hat zu wenig negatives Karma!", client, group:getType()))
-		--end
-	end
-end]]
 
 function GroupManager:Event_ConvertVehicle(veh)
 	local group = client:getGroup()

@@ -10,7 +10,6 @@ function BuyItemBeggar:giveItem(player, item)
 		if player:getInventory():getItemAmount(item) >= 1 then
 			player:getInventory():removeItem(item, 1)
 			player:giveCombinedReward("Bettler-Handel", {
-				karma = 5,
 				points = 5,
 			})
 			self:sendMessage(player, BeggarPhraseTypes.Thanks)

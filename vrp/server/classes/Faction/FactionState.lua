@@ -642,13 +642,6 @@ function FactionState:getOnlinePlayers(afkCheck, dutyCheck)
 	return players
 end
 
-function FactionState:giveKarmaToOnlineMembers(karma, reason)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		player:giveKarma(karma)
-		player:sendShortMessage(_("%s\nDu hast %d Karma erhalten!", player, reason, karma), "Karma")
-	end
-end
-
 function FactionState:getFactions()
 	local factions = FactionManager:getSingleton():getAllFactions()
 	local returnFactions = {}
@@ -1243,7 +1236,6 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 						player:transferMoney(self.m_BankAccountServer, factionBonus, "Knaststrafe (Bar)", "Faction", "Arrest")
 					end
 
-					player:takeKarma(wantedLevel)
 					player:setJailTime(jailTime)
 					player:setWanteds(0)
 					player:moveToJail(CUTSCENE, isoCell)
@@ -1258,9 +1250,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 						end
 					end
 
-					-- Pay some money to faction and karma, xp to the policeman
+					-- Pay some money to faction, xp to the policeman
 					self.m_BankAccountServer:transferMoney(policeman:getFaction(), factionBonus, "Arrest", "Faction", "Arrest")
-					policeman:giveKarma(wantedLevel)
 					policeman:givePoints(wantedLevel)
 					PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
 					StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
@@ -1314,7 +1305,6 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		else
 			player:transferMoney(self.m_BankAccountServer, factionBonus, "Knast Strafe (Bar)", "Faction", "Arrest")
 		end
-		player:takeKarma(wantedLevel)
 		player:setJailTime(jailTime)
 		player:setWanteds(0)
 		player:moveToJail(CUTSCENE, isoCell)

@@ -24,9 +24,6 @@ end]]
 function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
 	if killer and isElement(killer) and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		--killer:reportCrime(Crime.Kill)
-
-		-- Take karma
-		killer:takeKarma(0.15)
 	end
 end
 

@@ -318,7 +318,6 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Skin = player:getSkin() or false;
                         Ban = Ban.checkOfflineBan(Id);
 						Warn = Warn.getAmount(Id);
-						Karma = player:getKarma();
 						PrisonTime = player.m_PrisonTime;
                     }
 

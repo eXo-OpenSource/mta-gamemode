@@ -189,13 +189,6 @@ function Faction:getSetting(category, key, defaultValue)
 	return self.m_Settings:getSetting(category, key, defaultValue)
 end
 
-function Faction:giveKarmaToOnlineMembers(karma, reason)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		player:giveKarma(karma)
-		player:sendShortMessage(_("%s\nDu hast %d Karma erhalten!", player, reason, karma), "Karma")
-	end
-end
-
 function Faction:getType()
 	return self.m_Type
 end

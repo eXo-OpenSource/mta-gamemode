@@ -18,13 +18,6 @@ Christmas.ms_Bonus = {
 		["PointsAmount"] = 250
 	},
 	{
-		["Text"] = "Neutrales Karma",
-		["Image"] = "Bonus_Karma.png",
-		["Packages"] = 50,
-		["CandyCane"] = 90,
-		["Type"] = "Special"
-	},
-	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
 		["Packages"] =75,
@@ -139,8 +132,6 @@ function Christmas:Event_buyBonus(bonusId)
 	elseif bonus["Type"] == "Special" then
 		if bonus["Text"] == "Schutzweste" then
 			client:setArmor(100)
-		elseif bonus["Text"] == "Neutrales Karma" then
-			client:setKarma(0)
 		elseif bonus["Text"] == "Nick Change" then
 			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
 			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Weichnachts Event kostenlos erhälst!", client, 0, 255, 0)

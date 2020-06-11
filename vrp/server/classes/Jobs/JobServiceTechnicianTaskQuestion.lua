@@ -51,5 +51,5 @@ JobServiceTechnicianTaskQuestion.Questions = {
     }
 }
 for index in ipairs(JobServiceTechnicianTaskQuestion.Questions) do
-	JailBreak.Questions[index][6] = index
+	JobServiceTechnicianTaskQuestion.Questions[index][6] = index
 end

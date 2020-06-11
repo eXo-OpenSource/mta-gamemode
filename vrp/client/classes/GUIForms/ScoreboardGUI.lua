@@ -25,9 +25,8 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:addColumn(_"Unternehmen", 0.15)
 	self.m_Grid:addColumn(_"Gang/Firma", 0.19)
 	self.m_Grid:addColumn(_"Spielzeit", 0.08)
-	self.m_Grid:addColumn(_"Karma", 0.08)
 	self.m_Grid:addColumn(_"Ping", 0.11)
-	self.m_Grid:setSortable{"VIP", "Name", "Fraktion", "Unternehmen", "Gang/Firma", "Spielzeit"} --We can't sort Ping and Karma (Ping can be a number and also a string; karma is a numeric string eg. "+123" which will be not sort properly)
+	self.m_Grid:setSortable{"VIP", "Name", "Fraktion", "Unternehmen", "Gang/Firma", "Spielzeit"} --We can't sort Ping (Ping can be a number and also a string)
 	--self.m_Grid:setSortColumn(_"Fraktion")
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
@@ -176,8 +175,6 @@ function ScoreboardGUI:insertPlayers()
 		local isLoggedIn = not player:getName():find("Gast_")
 
 		local playtime = ("%d:%.2d"):format(math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60))
-		local karmaValue = player:getKarma()
-		local karma = ("%s%d"):format(karmaValue >= 0 and "+" or "-", math.abs(karmaValue))
 
 		local ping
 		if player:isAFK() then
@@ -200,7 +197,6 @@ function ScoreboardGUI:insertPlayers()
 			isLoggedIn and (player:getCompany() and player:getCompany():getShortName()  or "- Keins -") or "-",
 			isLoggedIn and string.short(gname, 16) or "-",
 			isLoggedIn and playtime or "-",
-			isLoggedIn and karma or "-",
 			ping or " - "
 		)
 		item:setColumnToImage(1, true, item.m_Height)
@@ -231,56 +227,6 @@ function ScoreboardGUI:insertPlayers()
 			item:setColumnColor(8, Color.Red)
 		elseif ping == "Knast" then
 			item:setColumnColor(8, Color.Yellow)
-		end
-
-		if isLoggedIn then
-			if karmaValue >= 5 then
-				item:setColumnColor(7, Color.Green)
-			elseif karmaValue <= -5 then
-				item:setColumnColor(7, Color.Red)
-			end
-		end
-	end
-
-	if DEBUG and add then
-		local rndFaction = {"SAPD", "FBI", "SASF", "Rescue", "LCN", "Yakuzza", "Grove", "Ballas", "Outlaws", "Aztecas", "Kartell", "- Keine -"}
-		local rndCompany = {"Fahrschule", "M & T", "San News", "EPT", "- Keins -" }
-
-		for i = 1, 50 do
-			local faction = rndFaction[math.random(1, #rndFaction)]
-			local company = rndCompany[math.random(1, #rndCompany)]
-			local karma = math.random(-150, 150)
-			local ping = math.random(1,3) == 1 and (math.random(1,5) == 1 and "Knast" or "AFK") or math.random(15, 200)
-
-			local item = self.m_Grid:addItem(
-				math.random(1,2) == 1 and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
-				getRandomUniqueNick(),
-				faction,
-				company,
-				"- Keine -",
-				("%d:%.2d"):format(math.random(1, 1337), math.random(0, 59)),
-				("%s%d"):format(karma >= 0 and "+" or "-", math.abs(karma)),
-				ping or " - "
-			)
-			item:setColumnToImage(1, true, item.m_Height)
-			item:setFont(VRPFont(24))
-
-			if FactionManager:getSingleton():getFromName(faction) then
-				local color = FactionManager:getSingleton():getFromName(faction):getColor()
-				item:setColumnColor(3, tocolor(color.r, color.g, color.b))
-			end
-
-			if ping == "AFK" then
-				item:setColumnColor(8, Color.Red)
-			elseif ping == "Knast" then
-				item:setColumnColor(8, Color.Yellow)
-			end
-
-			if karma >= 5 then
-				item:setColumnColor(7, Color.Green)
-			elseif karma <= -5 then
-				item:setColumnColor(7, Color.Red)
-			end
 		end
 	end
 end

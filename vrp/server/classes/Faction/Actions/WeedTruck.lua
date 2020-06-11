@@ -34,8 +34,6 @@ function WeedTruck:constructor(driver)
 
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
-	self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Weedtruck gestartet!")
-
 
 	self.m_Destroyed = false
 	self.m_DestroyFunc = bind(self.Event_OnWeedTruckDestroy,self)
@@ -100,7 +98,6 @@ function WeedTruck:Event_OnWeedTruckDestroy()
 		self:Event_OnWeedTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Weed-LKW wurde soeben zerstört!")
 		Discord:getSingleton():outputBreakingNews("Der Weed-LKW wurde soeben zerstört!")
-		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Weedtruck verhindert!")
 		delete(self)
 	end
 end
@@ -131,7 +128,6 @@ function WeedTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 				PlayerManager:getSingleton():breakingNews("Der Weed-Transport wurde erfolgreich abgeschlossen!")
 				Discord:getSingleton():outputBreakingNews("Der Weed-Transport wurde erfolgreich abgeschlossen!")
 				hitElement:sendInfo(_("Weed-Truck abgegeben! Du erhälst %d Gramm Weed!", hitElement, WeedTruck.Weed))
-				faction:giveKarmaToOnlineMembers(-10, "Weed-Truck abgegeben!")
 				hitElement:getInventory():giveItem("Weed", WeedTruck.Weed)
 				self:Event_OnWeedTruckExit(hitElement,0)
 				delete(self)

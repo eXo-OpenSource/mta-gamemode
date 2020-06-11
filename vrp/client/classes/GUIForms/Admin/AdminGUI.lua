@@ -156,7 +156,6 @@ function AdminGUI:constructor(money)
 	self.m_PlayerOfflineLabel["Playtime"] = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabOffline)
 	self.m_PlayerOfflineLabel["Job"] = GUILabel:new(220, 60, 180, 20, _"Job: -", tabOffline)
 	self.m_PlayerOfflineLabel["Money"] = GUILabel:new(220, 85, 180, 20, _"Geld: -", tabOffline)
-	self.m_PlayerOfflineLabel["Karma"] = GUILabel:new(220, 110, 180, 20, _"Karma: -", tabOffline)
 	self.m_PlayerOfflineLabel["BankMoney"] = GUILabel:new(410, 85, 180, 20, _"Bank-Geld: -", tabOffline)
 	self.m_PlayerOfflineLabel["Faction"] = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabOffline)
 	self.m_PlayerOfflineLabel["Company"] = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabOffline)
@@ -289,7 +288,6 @@ function AdminGUI:onOfflinePlayerInfo(info)
 			Money = false;
 			BankMoney = false;
 			Ban = true;
-			Karma = false;
 			PrisonTime = 0;
 		}
 	end
@@ -308,7 +306,6 @@ function AdminGUI:onOfflinePlayerInfo(info)
 		banString = "Ja"
 	end
 	self.m_PlayerOfflineLabel["Ban"]:setText(_("Gebannt: %s",  banString))
-	self.m_PlayerOfflineLabel["Karma"]:setText(_("Karma: %s", info.Karma or "-"))
 	self.m_PlayerOfflineLabel["Prison"]:setText(_("Prison: %s", math.floor(info.PrisonTime/60).."min" or "-"))
 
 end

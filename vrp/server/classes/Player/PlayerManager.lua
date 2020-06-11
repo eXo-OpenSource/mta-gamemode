@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
+addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
@@ -30,7 +30,6 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
 	addEventHandler("playerReady", root, bind(self.Event_playerReady, self))
 	addEventHandler("playerSendMoney", root, bind(self.Event_playerSendMoney, self))
-	addEventHandler("requestPointsToKarma", root, bind(self.Event_requestPointsToKarma, self))
 	addEventHandler("requestWeaponLevelUp", root, bind(self.Event_requestWeaponLevelUp, self))
 	addEventHandler("requestVehicleLevelUp", root, bind(self.Event_requestVehicleLevelUp, self))
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
@@ -451,13 +450,12 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 						killer:giveAchievement(64)
 						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
 						client.m_DeathInJail = true
-						-- Pay some money to faction and karma, xp to the policeman
+						-- Pay some money to faction, xp to the policeman
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						if client:getFaction() and client:getFaction():isEvilFaction() then
 							factionBonus = JAIL_COSTS[wantedLevel]/2
 						end
 						FactionState:getSingleton().m_BankAccountServer:transferMoney(killer:getFaction(), factionBonus, "Arrest", "Faction", "ArrestKill")
-						killer:giveKarma(wantedLevel)
 						killer:givePoints(wantedLevel)
 						PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", client, client:getName(), killer:getName(), jailTime, factionBonus), "Staat")
 						StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, killer, 0)
@@ -702,18 +700,6 @@ function PlayerManager:Event_playerSendMoney(amount)
 	if client:getMoney() >= amount then
 		client:transferMoney(source, amount, "Spieler-Zahlung", "Gameplay", "SendMoney")
 		source:sendShortMessage(_("Du hast %d$ von %s bekommen!", source, amount, client:getName()))
-	end
-end
-
-function PlayerManager:Event_requestPointsToKarma(positive)
-	if client:getPoints() >= 200 then
-		outputDebug(positive)
-
-		client:giveKarma((positive and 1 or -1))
-		client:givePoints(-200)
-		client:sendInfo(_("Punkte eingetauscht!", client))
-	else
-		client:sendError(_("Du hast nicht genügend Punkte!", client))
 	end
 end
 

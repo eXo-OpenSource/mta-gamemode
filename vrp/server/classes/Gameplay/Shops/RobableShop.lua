@@ -159,7 +159,6 @@ function RobableShop:startRob(shop, attacker, ped)
 			end
 			if attacker:getGroup() == self.m_AttackerGroup then
 				realCount = realCount + 1
-				if chance(2) then attacker:takeKarma(1, "Shop-Überfall") end
 			end
 		end
 		if hasAnyoneBag then
@@ -425,7 +424,6 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
 				hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
 				Discord:getSingleton():outputBreakingNews(string.format("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName()))
 				PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
-				FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Shop Raub Beute sichergestellt!")
 			else
 				hitElement:sendError(_("Du darfst die Beute hier nicht abgeben!", hitElement))
 				return

@@ -169,7 +169,6 @@ function FireManager:stopCurrentFire(stats)
 						category = "Faction",
 						subcategory = "Fire"
 					},
-					karma = math.round(score/30),
 					points = math.round(score/10),
 				})
 				playersByID[player:getId()] = score

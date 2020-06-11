@@ -92,7 +92,6 @@ function BeggarPed:rob(player)
 				category = "Gameplay",
 				subcategory = "BeggarRob"
 			},
-			karma = -math.ceil(money/2),
 		})
 		self:sendMessage(player, BeggarPhraseTypes.Rob)
 		player:meChat(true, ("packt %s und entreißt ihm %s"):format(self.m_Name, money == 1 and "einen Schein" or "ein paar Scheine"))
@@ -136,8 +135,6 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 
 	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = killer.controller end
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
-		-- Take karma
-		killer:takeKarma(3)
 		-- Give Wanteds
 		if (getZoneName(self.position, true) == "Los Santos" and chance(50) or chance(25)) then
 			setTimer(function()
@@ -171,7 +168,6 @@ function BeggarPed:createLootPickup()
 					category = "Gameplay",
 					subcategory = "BeggarRob"
 				},
-				karma = -math.random(0, 1),
 			})
 			if chance(25) then
 				if self.giveLoot then

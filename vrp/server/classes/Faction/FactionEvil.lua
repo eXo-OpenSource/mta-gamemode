@@ -139,12 +139,6 @@ function FactionEvil:countPlayers(afkCheck, dutyCheck)
 	return count
 end
 
-function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		player:giveKarma(karma)
-	end
-end
-
 function FactionEvil:sendWarning(text, header, withOffDuty, pos, ...)
 	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
 		player:sendWarning(_(text, player, ...), 30000, header)

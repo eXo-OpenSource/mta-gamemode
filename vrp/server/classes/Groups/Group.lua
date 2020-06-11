@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, type, money, playTime, karma, lastNameChange, rankNames, rankLoans)
+function Group:constructor(Id, name, type, money, playTime, lastNameChange, rankNames, rankLoans)
 	if not players then players = {} end -- can happen due to Group.create using different constructor
 
 	self.m_Id = Id
@@ -21,7 +21,6 @@ function Group:constructor(Id, name, type, money, playTime, karma, lastNameChang
 	self.m_IsActive = false
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
-	self.m_Karma = karma or 0
 	self.m_LastNameChange = lastNameChange or 0
 	self.m_Type = type
 	self.m_Shops = {} -- shops automatically add the reference
@@ -200,16 +199,6 @@ function Group:addPlayTime(time)
 	return self.m_PlayTime
 end
 
-function Group:getKarma()
-	return self.m_Karma
-end
-
-function Group:setKarma(karma)
-	self.m_Karma = karma
-
-	sql:queryExec("UPDATE ??_groups SET Karma = ? WHERE Id = ?", sql:getPrefix(), self.m_Karma, self.m_Id)
-end
-
 function Group:setRankName(rank,name)
 	self.m_RankNames[tostring(rank)] = name
 end
@@ -233,18 +222,6 @@ function Group:paydayPlayer(player)
 	if self:getMoney() < loan then loan = self:getMoney() end
 	if loan < 0 then loan = 0 end
 	return loan
-end
-
-function Group:giveKarma(karma)
-	self:setKarma(self:getKarma() + karma)
-end
-
-function Group:getKarma()
-	return self.m_Karma
-end
-
-function Group:isEvil()
-	return self:getKarma() < 0
 end
 
 function Group:addPlayer(playerId, rank)

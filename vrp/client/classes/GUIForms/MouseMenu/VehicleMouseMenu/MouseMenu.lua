@@ -216,15 +216,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.SignOut)
 		end
-		--[[if localPlayer:isInVehicle() then
-			self:addItem(_"Kurzschließen",
-				function()
-					if self:getElement() then
-						triggerServerEvent("vehicleHotwire", self:getElement())
-					end
-				end
-			):setIcon(FontAwesomeSymbols.Random)
-		end]]
 		if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
 			if #self:getAttachedElement(2912, element) > 0 then
 				self:addItem(_"Kiste abladen",

@@ -18,7 +18,6 @@ function WeedBeggar:sellWeed(player, amount)
 					category = "Gameplay",
 					subcategory = "BeggarWeed"
 				},
-				karma = -math.ceil(amount/50),
 				points = math.ceil(20 * amount/200),
 			})
 			player:meChat(true, ("übergibt %s %s"):format(self.m_Name, amount > 100 and "eine große Tüte" or "eine Tüte"))

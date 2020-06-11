@@ -448,7 +448,6 @@ SkinInfo = {
 	[261] = {"Trucker mit Bart 2", 60},
 }
 
-MAX_KARMA_LEVEL = 150
 
 Tasks = {
 	TASK_GUARD = 1,

@@ -32,11 +32,9 @@ function GroupGUI:constructor()
 	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
 	self.m_GroupsNameChangeLabel.onUnhover = function () self.m_GroupsNameChangeLabel:setColor(Color.Accent) end
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGroups)
-	self.m_GroupsKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
-	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
+	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.8, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupQuitButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.07, _"Verlassen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
 	self.m_GroupDeleteButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.1, self.m_Width*0.3, self.m_Height*0.07, _"Löschen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
 
@@ -152,20 +150,18 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, karma, type, vehicles, canVehiclesBeModified, rankNames, rankLoans)
+function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, type, vehicles, canVehiclesBeModified, rankNames, rankLoans)
 	if not id then
 		delete(self)
 		return
 	end
 
-	local karma = math.floor(karma)
 	local nextPayDay = 60 - (playTime % 60)
 	local x, y = self.m_GroupsNameLabel:getPosition()
 
 	self.m_Id = id
 	self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
 	self.m_GroupsNameLabel:setText(name)
-	self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 	self.m_GroupsRankLabel:setText(rankNames[tostring(rank)])
 	self.m_GroupMoneyLabel:setText(toMoneyString(money))
 	self.m_GroupPayDayLabel:setText(_("in %s Minuten", nextPayDay))

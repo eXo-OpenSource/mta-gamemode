@@ -28,7 +28,7 @@ function VehicleManager:constructor()
 
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
-	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleBlow",
+	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleBlow",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
@@ -46,7 +46,6 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSellAccept", root, bind(self.Event_acceptVehicleSell, self))
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
-	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
@@ -1347,28 +1346,6 @@ function VehicleManager:Event_vehicleUpgradeHangar()
 		end
 	else
 		client:sendError(_("Du besitzt keinen gültigen Hangar!", client))
-	end
-end
-
-function VehicleManager:Event_vehicleHotwire()
-	if client:getInventory():hasItem(ITEM_HOTWIREKIT) then
-		if source:isBroken() then
-			client:sendError(_("Dieses Fahrzeug ist kaputt und kann nicht kurzgeschlossen werden!", client))
-			return
-		end
-		client:sendInfo(_("Schließe kurz...", client), 20000)
-		client:reportCrime(Crime.Hotwire)
-		client:takeKarma(0.1)
-
-		setTimer(
-			function(source)
-				if isElement(source) then
-					source:setEngineState(true)
-				end
-			end, 20000, 1, source
-		)
-	else
-		client:sendWarning(_("Hierfür brauchst du ein Kurzschließkit!", client))
 	end
 end
 

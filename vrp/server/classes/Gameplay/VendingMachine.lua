@@ -54,7 +54,6 @@ function VendingMachine.Event_vendingRob()
 		client:giveWanteds(1)
 		client:sendMessage("Verbrechen begangen: Automaten-Raub, 1 Wanted", 255, 255, 0)
 		BankServer.get("gameplay.vending_machine"):transferMoney(client, math.random(10, 100), "Automaten-Raub", "Gameplay", "VendingMachineRob")
-		client:takeKarma(1)
 
 		-- give Achievement
 		client:giveAchievement(19)

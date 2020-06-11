@@ -74,7 +74,6 @@ function WeaponTruck:constructor(driver, boxContent, totalAmount, type)
 	local EvilBlipVisible = {}
 	if self.m_Type == "evil" then
 		self.m_AmountPerBox = math.floor(WEAPONTRUCK_MAX_LOAD/8)
-		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 		table.insert(EvilBlipVisible, self.m_StartFaction:getId())
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
 			if self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
@@ -96,7 +95,6 @@ function WeaponTruck:constructor(driver, boxContent, totalAmount, type)
 		end
 	elseif self.m_Type == "state" then
 		self.m_AmountPerBox = math.floor(WEAPONTRUCK_MAX_LOAD/8)
-		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
 			dest = self:addDestinationMarker(faction, "evil")
@@ -185,11 +183,6 @@ end
 function WeaponTruck:timeUp()
 	PlayerManager:getSingleton():breakingNews("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type])
 	Discord:getSingleton():outputBreakingNews(string.format("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type]))
-	if self.m_Type == "evil" then
-		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
-	elseif self.m_Type == "state" then
-		FactionEvil:getSingleton():giveKarmaToOnlineMembers(-10, "Staats-Waffentruck verhindert!")
-	end
 
 	delete(self)
 end

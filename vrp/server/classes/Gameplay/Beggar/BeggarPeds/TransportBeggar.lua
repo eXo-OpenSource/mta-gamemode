@@ -44,7 +44,6 @@ function TransportBeggar:acceptTransport(player)
 						if player.vehicle and veh:getOccupant(seat) == self then
 							local distance = getDistanceBetweenPoints3D(player.beggarTransportStartPos, player.position)/1000
 							player:giveCombinedReward("Bettler-Transport", {
-								karma = math.ceil(5*distance),
 								points = math.ceil(7*distance),
 							})
 							player:meChat(true, ("lässt %s aus seinem Fahrzeug"):format(self.m_Name))

@@ -101,7 +101,6 @@ function Core:ready() --onClientResourceStart
 	HelpBar:new()
 	JobManager:new()
 	TippManager:new()
-	--JailBreak:new()
 	RadioStationManager:new()
 	DimensionManager:new()
 	Inventory:new()
