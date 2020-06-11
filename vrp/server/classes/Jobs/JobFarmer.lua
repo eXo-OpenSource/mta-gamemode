@@ -31,9 +31,12 @@ function JobFarmer:constructor()
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
 	self.m_CurrentSeeds = {}
-	self.m_CurrentSeedsFarm = 250
+	self.m_CurrentSeedsFarm = 100
+
 	self.m_BankAccountServer = BankServer.get("job.farmer")
 	self.m_CollectPlantEvent = bind(self.collectPlant, self)
+	self.m_AddSeedsAutomatic = bind(self.addSeedsAutomatic, self)
+	self.m_AddSeedsAutomaticTimer = setTimer(self.m_AddSeedsAutomatic, 30 * 60 * 1000, 0)
 
 	local x, y, z = unpack(STOREMARKERPOS)
 	self.m_Storemarker = self:createJobElement (createMarker (x,y,z,"cylinder",3,0,125,0,125))
@@ -48,19 +51,9 @@ function JobFarmer:constructor()
 	addEventHandler("jobFarmerCreatePlant", root, bind(self.createPlant, self))
 end
 
-function JobFarmer:giveJobMoney(player, vehicle)
-	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
-		local income = player:getData("Farmer.Income")
-		local duration = getRealTime().timestamp - player.m_LastJobAction
-		player.m_LastJobAction = getRealTime().timestamp
-		if vehicle:getModel() == 531 then
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.tractor", duration, income)
-		else
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
-		end
-		self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
-		player:setData("Farmer.Income", 0)
-		player:triggerEvent("Job.updateIncome", 0)
+function JobFarmer:addSeedsAutomatic()
+	if self.m_CurrentSeedsFarm < 1000 then
+		self.m_CurrentSeedsFarm = self.m_CurrentSeedsFarm + 100
 	end
 end
 
@@ -83,14 +76,6 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 			end, false
 		)
 	end
-
-	addEventHandler("onVehicleExit", vehicle,
-		function(vehPlayer, seat)
-			if seat == 0 and source:getModel() ~= 478 then
-				self:giveJobMoney(vehPlayer, source)
-			end
-		end
-	)
 end
 
 function JobFarmer:storeHit(hitElement, matchingDimension)
@@ -167,7 +152,7 @@ function JobFarmer:storeHit(hitElement, matchingDimension)
 	end
 end
 
-function JobFarmer:createJobElement (element)
+function JobFarmer:createJobElement(element)
 	setElementVisibleTo(element, root, false)
 	table.insert (self.m_JobElements,element)
 	return element
@@ -200,13 +185,11 @@ end
 
 function JobFarmer:stop(player)
 	if self.m_CurrentPlants[player] then self.m_CurrentPlants[player] = nil end
-	if self.m_Plants[player] then self.m_Plants[player] = nil end
 
 	self:setJobElementVisibility(player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 
-	self:giveJobMoney(player, player.jobVehicle)
 	self:destroyJobVehicle(player)
 end
 
@@ -253,7 +236,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 			player:sendSuccess(_("Dein Transporter wurde mit Samen beladen.", player))
 			self.m_CurrentSeeds[player] = SEEDSONWALTON
 			self:updatePrivateData(player)
-			local x,y,z = unpack (STOREMARKERPOS)
+			local x,y,z = unpack(STOREMARKERPOS)
 			player:startNavigationTo(Vector3(x, y, z))
 
 			self:updateClientData()
@@ -292,6 +275,33 @@ function JobFarmer:createPlant(position, vehicle)
 			client:sendError(_("Es gibt keine Samen mehr!", player))
 			return false
 		end
+		local found = false
+
+		-- Checks against event faking
+		for k, v in pairs(self.m_Plants) do -- check if there is a plant to near to the new one
+			if v and isElement(v) then
+				if getDistanceBetweenPoints3D(position, v.position) < 5.5 then
+					found = true
+					break
+				end
+			end
+		end
+
+		if found then
+			AntiCheat:getSingleton():report(client, "JobFarmer:InvalidDistance", CheatSeverity.Middle)
+			return false
+		end
+
+		if position.z < 0 or position.z > 10 then -- Check if height is valid
+			AntiCheat:getSingleton():report(client, "JobFarmer:InvalidHeight", CheatSeverity.Middle)
+			return false
+		end
+
+		if getDistanceBetweenPoints3D(position, client.position) > 3.4 then -- Check if distance of player to vehicle is valid
+			outputChatBox(tostring(getDistanceBetweenPoints3D(position, client.position)))
+			AntiCheat:getSingleton():report(client, "JobFarmer:InvalidVehicleDistance", CheatSeverity.Middle)
+			return false
+		end
 
 		self.m_CurrentSeedsFarm = self.m_CurrentSeedsFarm - 1
 		self:updateClientData()
@@ -316,50 +326,6 @@ function JobFarmer:createPlant(position, vehicle)
 			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	end
-	--[[
-	local x,y,z = getElementPosition(client)
-	local vehicleID = getElementModel(vehicle)
-	local colX, colY, colZ = unpack(colPos)
-	if self.m_Plants[colId] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[colId].isFarmAble and vehicle == client.jobVehicle then
-		local pos = vehicle.position + vehicle.matrix.forward * 2
-		local distance = getDistanceBetweenPoints3D(pos, colX, colY, colZ)
-		if distance > 4 then return end
-		destroyElement (self.m_Plants[colId])
-		self.m_Plants[colId] = nil
-		if not client:getData("Farmer.Income") then client:setData("Farmer.Income", 0) end
-		client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_HARVESTER * JOB_PAY_MULTIPLICATOR)
-		client:triggerEvent("Job.updateIncome", client:getData("Farmer.Income"))
-		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
-		self:updateClientData()
-
-		-- Give some points
-		if chance(6) then
-			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
-		end
-	else
-		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[colId] and vehicle == client.jobVehicle then
-			if self.m_CurrentSeedsFarm <= 0 then
-				client:sendError(_("Es gibt keine Samen mehr!", player))
-				return false
-			end
-
-			self.m_CurrentSeedsFarm = self.m_CurrentSeedsFarm - 1
-			self:updateClientData()
-			self.m_Plants[colId] = createObject(818,x,y,z-1.5)
-			local object = self.m_Plants[colId]
-			object.isFarmAble = false
-			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
-			setElementVisibleTo(object, client, true)
-			if not client:getData("Farmer.Income") then client:setData("Farmer.Income", 0) end
-			client:setData("Farmer.Income", client:getData("Farmer.Income") + MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR)
-			client:triggerEvent("Job.updateIncome", client:getData("Farmer.Income"))
-			-- Give some points
-			if chance(4) then
-				client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
-			end
-		end
-	end
-	]]
 end
 
 function JobFarmer:collectPlant(hitElement, matchingDimension)
@@ -372,6 +338,7 @@ function JobFarmer:collectPlant(hitElement, matchingDimension)
 			local pos = vehicle.position + vehicle.matrix.forward * 2
 			local distance = getDistanceBetweenPoints3D(pos, source.position)
 			if distance > 4 then return end
+			table.removevalue(source.m_Plant)
 			destroyElement(source.m_Plant)
 			destroyElement(source)
 
