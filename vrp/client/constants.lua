@@ -582,11 +582,11 @@ for i = 1,#GUNBOX_CRATES do
 end
 
 
-AREA51_WARNING = createColCuboid( -32.87, 1667.50, 14.62, 450, 450,40)
+AREA51_WARNING = createColCuboid(-32.87, 1667.50, -35, 450, 450, 135)
 addEventHandler("onClientColShapeHit",AREA51_WARNING,function(hE)
 	if hE == localPlayer then
 		if ShortMessage then
-			if localPlayer:getFactionId() ~= 1 or localPlayer:getFactionId() ~= 2 then
+			if not(localPlayer:getFaction() and localPlayer:getFaction():isStateFaction()) then
 				ShortMessage:new(_"Du betrittst ein militärisches Sperrgebiet! Sei vorsichtig!")
 			end
 		end
