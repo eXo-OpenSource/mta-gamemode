@@ -54,7 +54,6 @@
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
 * ItemFishing = ItemFishing;
-* ItemSellContract = ItemSellContract;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
 * ItemEntrance = ItemEntrance;
@@ -81,11 +80,12 @@
 * ~~ItemAlcohol = ItemAlcohol;~~ - done
 * ~~ItemFirework = ItemFirework;~~ - done
 * ~~ItemSkyBeam = ItemSkyBeam;~~ - remove
-* ~~ItemSpeedCam = ItemSpeedCam;~~ - done
+* ~~ItemSpeedCam = ItemSpeedCam;~~ - done (Will need some adjustments, payments need to be charged)
 * ~~ItemNails = ItemNails;~~ - done
 * ~~ItemTransmitter = ItemTransmitter;~~ - remove
 * ~~ItemEasteregg = ItemEasteregg;~~ - remove
 * ~~ItemPumpkin = ItemPumpkin;~~ - remove
+* ~~ItemSellContract = ItemSellContract;~~ - done (Needs testing)
 
 ## Notes
 
