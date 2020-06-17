@@ -21,3 +21,7 @@ build/workerserver
 vrp/server/logs/*
 !vrp/server/logs/.gitkeep
 vrp/Evaluation/*
+
+tools/server.pot
+tools/client.pot
+tools/shared.pot

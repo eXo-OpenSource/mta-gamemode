@@ -5,15 +5,9 @@ Description: A simple parser for Lua files to gather strings for translation
 ]]
 
 require("lfs")
-
-function removeComments(input)
-	-- Remove multiline comments
-	input = input:gsub("%-%-%[%[.-%]%]", "")
-	-- Remove single lined comments
-	input = input:gsub("%-%-.-\n", "\n")
-	
-	return input
-end
+local regex = require("regex")
+local pattern = [[^.{0,}[^a-zA-Z0-9](\_|\_\()"((\\\"|[^\"\n\r]){0,})".{0,}$]]
+local re, er = regex.new(pattern, "gm")
 
 -- Processes a lua file and writes the strings to pothandle
 function processLuaFile(path, name, pothandle)
@@ -21,17 +15,25 @@ function processLuaFile(path, name, pothandle)
 
 	-- Read the file
 	local fh = io.open(path.."/"..name, "r")
-	local input = fh:read("*all")
-	fh:close()
-	input = removeComments(input)
-	
-	-- 	this gmatch matches _("foo") and _"foo" 
-	for match in string.gmatch(input, '.-_%(?"(.-)"%)?') do
-		pothandle:write("#: "..path.."/"..name..":0\n")
-		pothandle:write("msgid \""..match.."\"\n")
-		pothandle:write("msgstr \"\"\n")
-		pothandle:write("\n")
+	local line = 0
+	while true do
+		local input = fh:read()
+		line = line + 1
+		if input == nil then
+			break
+		else
+			local match, err = re:match(input, 0)
+			--print(input)
+			if match or err then
+				pothandle:write("#: "..path.."/"..name..":"..line.."\n")
+				pothandle:write("msgid \""..match[3].."\"\n")
+				pothandle:write("msgstr \"\"\n")
+				pothandle:write("\n")
+			end
+		end
 	end
+
+	fh:close()
 end
 
 -- Processes all lua files in a directory and all subdirectories
@@ -66,11 +68,11 @@ end
 function genpot(name)
 	local pot = io.open(name..".pot", "w")
 	writePotHeader(pot)
-	
+
 	-- change to main directory
 	lfs.chdir("../vrp")
 	processDirectory(name, pot)
-	
+
 	-- go back to tools
 	lfs.chdir("../tools")
 	pot:close()

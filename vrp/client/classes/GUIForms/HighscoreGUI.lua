@@ -11,11 +11,11 @@ inherit(Singleton, HighscoreGUI)
 addRemoteEvents{"showHighscoreGUI", "highscoreReceiveData"}
 
 HighscoreGUI.Scores = {
-	[1] = {["name"] = "Global", ["data"] = "Global"},
-	[2] = {["name"] = "Jährlich", ["data"] = "Yearly"},
-	[3] = {["name"] = "Monatlich", ["data"] = "Monthly"},
-	[4] = {["name"] = "Wöchentlich", ["data"] = "Weekly"},
-	[5] = {["name"] = "Täglich", ["data"] = "Daily"}
+	[1] = {["name"] = _"Global", ["data"] = "Global"},
+	[2] = {["name"] = _"Jährlich", ["data"] = "Yearly"},
+	[3] = {["name"] = _"Monatlich", ["data"] = "Monthly"},
+	[4] = {["name"] = _"Wöchentlich", ["data"] = "Weekly"},
+	[5] = {["name"] = _"Täglich", ["data"] = "Daily"}
 }
 
 function HighscoreGUI:constructor(game)
@@ -27,7 +27,7 @@ function HighscoreGUI:constructor(game)
 	self.m_GridList = {}
 
 	for index, score in ipairs(HighscoreGUI.Scores) do
-		self.m_Tabs[score["data"]] = self.m_TabPanel:addTab(_("%s", score["name"]))
+		self.m_Tabs[score["data"]] = self.m_TabPanel:addTab(score["name"])
 		self.m_GridList[score["data"]] = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-50, self.m_Tabs[score["data"]])
 		self.m_GridList[score["data"]]:addColumn(_"Spieler", 0.7)
 		self.m_GridList[score["data"]]:addColumn(_"Score", 0.3)
