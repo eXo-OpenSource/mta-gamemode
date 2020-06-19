@@ -82,9 +82,10 @@ function BankPalomino:build()
 	self:createBombableBricks()
 
 	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
-	self.m_HelpColFunc = bind(self.onHelpColHit, self)
-	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
+	self.m_HelpColHitFunc = bind(self.onHelpColHit, self)
+	self.m_HelpColLeaveFunc = bind(self.onHelpColLeave, self)
+	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColHitFunc)
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColLeaveFunc)
 
 	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim then

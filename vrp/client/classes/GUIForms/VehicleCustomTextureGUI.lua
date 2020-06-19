@@ -197,10 +197,7 @@ function CustomTextureInfoGUI:constructor()
 
 	self:addItem(_"Hilfe/Info anzeigen",Color.Green ,
 		function()
-			HelpGUI:getSingleton()
-			HelpGUI:getSingleton().m_WebView.onDocumentReady = function()
-				setTimer(function() HelpGUI:getSingleton():select("Fahrzeug-Texturen") end, 250, 1)
-			end
+			HelpGUI:getSingleton():openLexiconPage(LexiconPages.VehicleTexture)
 			delete(self)
 		end
 	)

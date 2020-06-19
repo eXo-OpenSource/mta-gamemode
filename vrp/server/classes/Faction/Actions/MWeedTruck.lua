@@ -32,15 +32,13 @@ end
 
 function MWeedTruck:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then
-			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeedTruck", "HelpTexts.Actions.WeedTruck", true)
-		end
+		hitElement:triggerEvent("setHelpBarLexiconPage", LexiconPages.ActionWeedTruck)
 	end
 end
 
 function MWeedTruck:onHelpColLeave(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		hitElement:triggerEvent("resetManualHelpBarText")
+		hitElement:triggerEvent("resetHelpBar")
 	end
 end
 

@@ -8,8 +8,6 @@
 DMRaceEvent = inherit(Event)
 
 function DMRaceEvent:constructor()
-  -- Add to Helpmenu
-  HelpTextManager:getSingleton():addText(_"Events", _(HelpTextTitles.Events.DMRace):gsub("Event: ", ""), "events.dmrace")
 end
 
 function DMRaceEvent:destructor()

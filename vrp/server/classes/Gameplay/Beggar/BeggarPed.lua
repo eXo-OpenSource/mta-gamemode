@@ -183,34 +183,16 @@ function BeggarPed:createLootPickup()
 	end)
 end
 
---function BeggarPed:
---[[
-function BeggarPed:Event_onColShapeHit(hitElement, dim)
-    if dim and not self.m_Dead then
-        if hitElement:getType() ~= "player" then return end
-        self:sendMessage(hitElement, BeggarPhraseTypes.Help)
-		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
-    end
-end
-
-function BeggarPed:Event_onColShapeLeave(hitElement, dim)
-    if dim and not self.m_Dead then
-        if hitElement:getType() ~= "player" then return end
-        self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
-		hitElement:triggerEvent("resetManualHelpBarText")
-    end
-end
-]]
 function BeggarPed:onClientColShapeHit(hitElement, dim)
     if dim and not self.m_Dead then
-        self:sendMessage(hitElement, BeggarPhraseTypes.Help)
-		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
+		self:sendMessage(hitElement, BeggarPhraseTypes.Help)
+		hitElement:triggerEvent("setHelpBarLexiconPage", LexiconPages.BeggarPed)
     end
 end
 
 function BeggarPed:onClientColShapeLeave(hitElement, dim)
     if dim and not self.m_Dead then
-        self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
-		hitElement:triggerEvent("resetManualHelpBarText")
+		self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
+		hitElement:triggerEvent("resetHelpBar")
     end
 end

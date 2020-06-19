@@ -140,14 +140,14 @@ end
 function BankRobbery:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		if hitElement:getFaction() then
-			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.Bankrob", "HelpTexts.Actions.Bankrob", true)
+			hitElement:triggerEvent("setHelpBarLexiconPage", LexiconPages.ActionBankRobbery)
 		end
 	end
 end
 
 function BankRobbery:onHelpColLeave(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		hitElement:triggerEvent("resetManualHelpBarText")
+		hitElement:triggerEvent("resetHelpBar")
 	end
 end
 

@@ -16,6 +16,7 @@ function CinemaLobbyGUI:constructor()
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
     self.m_LobbyWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kino Lobbys", true, true, self)
+    self.m_LobbyWindow:addHelpButton(LexiconPages.Cinema)
     self.m_LobbyGrid = GUIGridGridList:new(1, 2, 15, 7, self.m_LobbyWindow)
     self.m_LobbyGrid:addColumn(_"Lobby Name", 0.4)
     self.m_LobbyGrid:addColumn(_"Host", 0.4)

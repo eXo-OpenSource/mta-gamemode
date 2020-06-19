@@ -9,7 +9,8 @@ function VehicleImportListGUI:constructor(vehicleList, showStartButton)
 	self.m_Height = grid("y", showStartButton and 8 or 7) 	-- height of the window
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"zu liefernde Fahrzeuge", true, true, self)
+    self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"zu liefernde Fahrzeuge", true, true, self)
+    self.m_Window:addHelpButton(LexiconPages.VehicleImport)
     if #vehicleList > 0 then
         self.m_GridListSelectedFunc = function()
             self.m_StartTransportBtn:setEnabled(true)

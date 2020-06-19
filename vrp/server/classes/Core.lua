@@ -169,7 +169,6 @@ function Core:constructor()
 		Chair:new()
 		Atrium:new()
 
-		Help:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()

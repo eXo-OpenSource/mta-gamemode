@@ -682,3 +682,15 @@ CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwa
  "steer_forward", "steer_back", "accelerate", "brake_reverse", "radio_next", "radio_previous", "radio_user_track_skip", "horn", "sub_mission",
  "handbrake", "vehicle_look_left", "vehicle_look_right", "vehicle_look_behind", "vehicle_mouse_look", "special_control_left", "special_control_right",
  "special_control_down", "special_control_up" }
+
+
+ LexiconPages = {
+	VehicleTexture = "38-speziallackierung",
+	VehicleImport = "51-fahrzeugimport",
+	Cinema = "52-kino",
+	BeggarPed = "58-bettler",
+	JobOverview = "35-übersicht-der-jobs",
+	ActionBankRobbery = "10-bankraub-casinoraub",
+	ActionWeaponTruck = "7-waffentruck",
+	ActionWeedTruck = "8-drogentruck",
+}

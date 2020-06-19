@@ -42,9 +42,11 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 			:setAlignY("center")
 	end
 
+	self.m_TitleBarButtonCount = 0
 	if self.m_HasCloseButton then
 		self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBarEnabled(false):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
+		self.m_TitleBarButtonCount = self.m_TitleBarButtonCount + 1
 	end
 end
 
@@ -109,7 +111,8 @@ function GUIWindow:deleteOnClose(close) -- Todo: Find a better name
 end
 
 function GUIWindow:addBackButton(callback)
-	local x = self.m_TitlebarButton and self.m_Width-90 or self.m_Width-60
+	self.m_TitleBarButtonCount = self.m_TitleBarButtonCount + 1
+	local x = self.m_Width-(30*self.m_TitleBarButtonCount)
 	self.m_BackButton = GUIButton:new(x, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function()
 		self:close()
@@ -122,9 +125,20 @@ function GUIWindow:addBackButton(callback)
 	end
 end
 
+function GUIWindow:addHelpButton(lexiconPage)
+	self.m_TitleBarButtonCount = self.m_TitleBarButtonCount + 1
+	local x = self.m_Width-(30*self.m_TitleBarButtonCount)
+	self.m_HelpButton = GUIButton:new(x, 0, 30, 30, FontAwesomeSymbols.Question, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
+	self.m_HelpButton.onLeftClick = function()
+		HelpGUI:getSingleton():openLexiconPage(lexiconPage)
+	end
+end
+
 function GUIWindow:addTitlebarButton(faIcon, callback)
+	self.m_TitleBarButtonCount = self.m_TitleBarButtonCount + 1
+	local x = self.m_Width-(30*self.m_TitleBarButtonCount)
 	if type(callback) == "function" then
-		self.m_TitlebarButton = GUIButton:new(self.m_Width-60, 0, 30, 30, faIcon, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
+		self.m_TitlebarButton = GUIButton:new(x, 0, 30, 30, faIcon, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Accent):setHoverColor(Color.White):setFontSize(1)
 		self.m_TitlebarButton.onLeftClick = function()
 			if type(callback) == "function" then
 				callback()
@@ -139,12 +153,6 @@ end
 
 function GUIWindow:toggleMoving(state)
 	self.m_MovingEnabled = state
-end
-
-function GUIWindow:removeBackButton()
-	if self.m_BackButton then
-		delete(self.m_BackButton)
-	end
 end
 
 function GUIWindow.updateGrid(withTabs)

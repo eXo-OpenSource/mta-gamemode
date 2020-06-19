@@ -26,8 +26,6 @@ function JobFarmer:constructor()
 
 	self.m_TickFarmerJob = bind(self.tickFarmerJob, self)
 	self.m_TickFarmerTimer = nil
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), "jobs.farmer")
 end
 function JobFarmer:onInfo()
 	if localPlayer.vehicle then
@@ -74,7 +72,7 @@ end
 
 function JobFarmer:start()
 	-- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Farmer), _(HelpTexts.Jobs.Farmer), true, self.onInfo)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 
 	-- Create info display
 	self.m_FarmerImage = GUIImage:new(screenWidth/2-300/2, 10, 300, 50, "files/images/Jobs/Farmerdisplay.png")
@@ -138,7 +136,7 @@ end
 
 function JobFarmer:stop()
 	-- Reset text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+	HelpBar:getSingleton():setLexiconPage(nil)
 
 	-- delete infopanels
 	delete(self.m_FarmerImage)

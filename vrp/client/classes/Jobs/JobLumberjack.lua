@@ -19,8 +19,6 @@ function JobLumberjack:constructor()
 
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), "jobs.lumberjack")
 end
 
 function JobLumberjack:start()
@@ -48,7 +46,7 @@ function JobLumberjack:start()
 	self.m_SawMillBlip:setDisplayText("Sägewerk")
 	ShortMessage:new(_"Säge die auf der Karte markierten Bäume mit der Motorsäge um.")
 	-- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Lumberjack), _(HelpTexts.Jobs.Lumberjack))
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobLumberjack:stop()
@@ -80,7 +78,7 @@ function JobLumberjack:stop()
 	self.m_NumTrees = 0
 
 	-- Reset text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+	HelpBar:getSingleton():setLexiconPage(nil)
 end
 
 function JobLumberjack:processTreeDamage(loss, attacker)

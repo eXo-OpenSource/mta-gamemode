@@ -30,27 +30,19 @@ function MWeaponTruck:createStartPoint(x, y, z, type)
 	self.m_HelpColShape = createColSphere(x, y, z, 5)
 	self.m_HelpColShape.type = type
 	addEventHandler("onColShapeHit", self.m_HelpColShape, bind(self.onHelpColHit, self))
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, bind(self.onHelpColHit, self))
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, bind(self.onHelpColLeave, self))
 
 end
 
 function MWeaponTruck:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		if source.type == "evil" then
-			if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then
-				hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeaponTruck", "HelpTexts.Actions.WeaponTruck", true)
-			end
-		elseif source.type == "state" then
-			if hitElement:getFaction() and hitElement:getFaction():isStateFaction() then
-				hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.StateWeaponTruck", "HelpTexts.Actions.StateWeaponTruck", true)
-			end
-		end
+		hitElement:triggerEvent("setHelpBarLexiconPage", LexiconPages.ActionWeaponTruck)
 	end
 end
 
 function MWeaponTruck:onHelpColLeave(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		hitElement:triggerEvent("resetManualHelpBarText")
+		hitElement:triggerEvent("resetHelpBar")
 	end
 end
 

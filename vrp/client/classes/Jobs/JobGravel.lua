@@ -16,9 +16,6 @@ function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", {190, 160, 4}, "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_GRAVEL)
 
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), "jobs.gravel")
-
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
@@ -30,6 +27,8 @@ end
 
 function JobGravel:start()
 	QuestionBox:new(_"Willst du das Tutorial zum Kiesgruben-Job ansehen?", bind(self.onInfo, self))
+	
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 
 	self.m_Rocks = {}
 	self.m_RockCols = {}
@@ -186,6 +185,8 @@ function JobGravel:stop()
 	delete(self.m_GravelImage)
 
 	if JobGravel.GravelProgress then delete(JobGravel.GravelProgress) end
+
+	HelpBar:getSingleton():setLexiconPage(nil)
 end
 
 

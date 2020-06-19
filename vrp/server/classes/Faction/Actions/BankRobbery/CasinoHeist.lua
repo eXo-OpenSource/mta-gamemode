@@ -95,7 +95,12 @@ function CasinoHeist:build()
 	self.m_SecurityRoomShape = createColCuboid(2140.20, 1626.9, 992, 8, 17, 6)
 	self.m_SecurityRoomShape:setInterior(1)
 	self.m_Timer = false
-    self.m_ColShape = createColSphere(2283.52, 1710.49, 11.05, 60)
+	self.m_ColShape = createColSphere(2283.52, 1710.49, 11.05, 60)
+	
+	self.m_HelpColHitFunc = bind(self.onHelpColHit, self)
+	self.m_HelpColLeaveFunc = bind(self.onHelpColLeave, self)
+	addEventHandler("onColShapeHit", self.m_ColShape, self.m_HelpColHitFunc)
+	addEventHandler("onColShapeLeave", self.m_ColShape, self.m_HelpColLeaveFunc)
     
 	--self:spawnGuards()
 	self:createSafes()

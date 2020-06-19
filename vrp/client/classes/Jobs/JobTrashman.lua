@@ -17,9 +17,6 @@ function JobTrashman:constructor()
 
 	addRemoteEvents{"trashcanReset"}
 	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
-
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), "jobs.trashman")
 end
 
 function JobTrashman:start()
@@ -43,7 +40,7 @@ function JobTrashman:start()
 	self:reset()
 
 	-- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Trashman), _(HelpTexts.Jobs.Trashman), true, self.onInfo)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobTrashman:onInfo()
@@ -84,7 +81,7 @@ function JobTrashman:stop()
 	delete(self.m_ContainerLabel)
 
 	-- Reset text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+	HelpBar:getSingleton():setLexiconPage(nil)
 end
 
 function JobTrashman:reset()

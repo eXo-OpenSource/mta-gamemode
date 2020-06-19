@@ -101,19 +101,6 @@ MATERIAL_TYPES =
 
 
 HelpTextTitles = {
-	General = {
-		Main = "eXo-Reallife";
-		LoginRegister = "Login/Registration";
-		Team = "Team";
-	};
-	Leisure = {
-		Kart = "Kartstrecke";
-		Fishing = "Angeln";
-		Boxing = "Boxhalle";
-		Bars = "Bars";
-		Horserace = "Pferdewetten";
-		Minigames = "Minispiele";
-	};
 	Jobs = {
 		Boxer = "Job: Boxer";
 		BusDriver = "Job: Busfahrer";
@@ -131,9 +118,6 @@ HelpTextTitles = {
 		TreasureSeeker = "Job: Schatzsucher";
 		Gravel = "Job: Kiesgruben-Arbeiter";
 	};
-	Gameplay = {
-		Beggar = "Gameplay: Bettler";
-	};
 	Minigames = {
 		ZombieSurvival = "Minigame: Zombie Survival";
 		GoJump = "Minigame: GoJump";
@@ -142,140 +126,9 @@ HelpTextTitles = {
 		TCars = "Minigame: 2Cars";
 		Roulette = "Casino: Roulette";
 	};
-	Actions = {
-		WeaponTruck = "Aktionen: Waffen-Truck";
-		WeedTruck = "Aktionen: Weed-Truck";
-		Bankrob = "Aktionen: Bank-Überfall";
-		StateWeaponTruck = "Aktionen: Staats Waffen Truck";
-
-	};
-	Events = {
-		DMRace = "Event: DM-Race";
-		StreetRace = "Event: Street Race";
-	};
-	Credits = {
-		OldVRPTeam = "vRP-Team";
-		Other = "sonstige Credits";
-	};
-	Vehicles = {
-		Info = "Info zu Fahrzeugen";
-		CustomTextures = "Fahrzeug-Texturen";
-	};
 }
 
 HelpTexts = {
-	General = {
-		Main = [[
-			eXo-Reallife ist ein Server-Projekt für die Multiplayer Modifikation Multi Theft Auto: San Andreas für GTA: San Andreas.
-			Ziel des Projekts ist ein möglichst umfangreiches, neuartiges Rollenspiel zu schaffen.
-
-			Wir gingen am 16.02.2017 um 16:00 online, wir danken unsere Community für die großartige Unterstützung dem gesamten
-			letzen Jahr über.
-
-			Sollten Bugs auftauchen, bitten wir euch diese in unserem Bugtracker unter forum.exo-reallife.de zu posten!
-
-			Bei weiteren Fragen oder Anregungen einfach ein Ticket im F2 Menü unter "Ticketsystem" erstellen.
-		]],
-		LoginRegister = [[
-			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
-		]];
-		Team = [[
-			Entwicklung:
-			[eXo]Stumpy
-			Heisi
-			StiviK
-			Jusonex (kleinere Unterstüzung)
-			Strobe
-			PewX
-			MasterM
-
-			Projektleitung:
-			[eXo]Stumpy
-			[eXo]Clausus
-			Heisi
-
-			stellv. Projektleitung:
-			StiviK
-			[eXo]xXKing
-
-			Servermanagement:
-			[eXo]Chris
-			[eXo]Luka
-			[eXo]StrongVan
-
-			Administration:
-			[eXo]Tisti
-
-			Moderation:
-			[eXo]ZaPP
-			[eXo]MiHawk
-			[eXo]AfGun
-
-			Support:
-			[eXo]Korsakov
-			[eXo]Cpen
-			[eXo]Gamora.
-			[eXo]SaLvaz
-			[eXo]Swatbird
-
-			Clanmitglied:
-			[eXo]John_Rambo
-			[eXo]Burmtim
-			Krox
-			Risi
-			Toxsi
-
-			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
-		]];
-
-	};
-	Leisure = {
-		Kart = [[
-		Die Kartstrecke befindet sich in Montgomery (Reifen Blip auf der Karte). Du kannst dort auf täglich wechselnden
-		Strecken dein Fahrkönnen unter Beweis stellen.
-		Natürlich gibt es ein Highscore System für die schnellsten Runden.
-
-		In den nächsten Updates wird zudem ein Ghostmode hinzugefügt um rauszufinden wo du deine Zeit liegen lässt.
-		]];
-		Fishing = [[
-		Am Pier in Los Santos (am Riesenrad) gibt es mehrere Angeln um Meeresbewohner oder andere Gegenstände aus dem
-		Wasser zu angeln. Je besser du auswirfst und einholst, desto wertvoller deine Beute.
-
-		Verkaufe diese einfach an Angeler Lutz der direkt daneben seinen Stand aufgebaut hat!
-		]];
-		Boxing = [[
-		Im Fitness-Center Los Santos kannst du andere Spieler zum Boxkampf herausfordern! Dabei könnt ihr einfach aus
-		Spaß kämpfen oder aber einen Geldeinsatz vereinbaren.
-		Du findest das Fitness-Center nahe der Green Bottle bar!
-
-		Möge der stärkste Kämpfer gewinnen!
-		]];
-		Bars = [[
-		Bars können von privaten Firma (Können in der Stadthalle gegründet werden) gekauft werden.
-		Diese bieten den Angestellten der Firma viele Funktionen wie z.B die Verwaltung der Kasse
-		(in der die Einnahmen gehen),das Abspielen von Musik oder das Engagieren von
-		professionellen Tänzerinnen.
-
-		Der perfekten Party steht damit nichts im Wege!
-		]];
-		Horserace = [[
-		Täglich um 20:00 Uhr findet das eXo-Pferderennen statt. Du kannst im Wettlokal (Pferd auf der Karte)
-		einen gewünschten Geldbetrag auf das Pferd deiner Wahl setzen.
-
-		Mit etwas Glück kannst du damit deinen Einsatz verdreifachen!
-		]];
-		Minigames = [[
-		Auf eXo-Reallife gibt es zahlreiche Minispiele die du teilweise alleine, teilweise mit anderen Usern
-		spielen kannst.
-		Klicke einen Spieler an und wähle "Spielen" im Klickmenü, dort gibt es eine Auswahl
-		an Spielen zu denen du den Spieler herausfordern kannst.
-
-		Unter anderem mit von der Partie sind Schach, Pong und Schere, Stein, Papier
-
-		Weitere Spiele findest du im Casino. (Spielkarten Symbol auf der Karte)
-		Dort findest du z.B. 2 Cars, Go-Jump oder SideSwipe.
-		]];
-	};
 	Jobs = {
 		Boxer = [[
 			Als Boxer musst du gegen andere Boxer antreten und diese im Kampf besiegen.
@@ -367,22 +220,6 @@ HelpTexts = {
 		]];
 
 	};
-	Events = {
-		DMRace = [[
-		Der von Race Servern bekannte Gamemode mit DM Maps.
-		Ziel ist es, das Ziel vor allen anderen zu erreichen während sich auf dem Weg viele Hindernisse befinden.
-		Einmal ein kaputtes Auto führt und du hast verloren.]];
-		StreetRace = [[
-		Dieses Event ist ein Sprint-Rennen, welches gewonnen werden kann, indem als Erster das Ziel erreicht wird.
-		]];
-	};
-	Gameplay = {
-		Beggar = [[
-			Wenn du einen Bettler antriffst, kann es passieren, dass dieser dich nach Geld fragt. Es liegt
-			an dir ob du ihn ignorierst, bezahlst oder ausraubst. Bedenke jedoch, dass solche Aktionen einen
-			Einfluss auf dein Karma haben.
-		]];
-	};
 	Minigames = {
 		ZombieSurvival = [[
 			Kämpfe gegen Zombies bis zu deinem bitteren Tod! In der Area spawnen immer wieder gute Waffen,
@@ -406,139 +243,7 @@ HelpTexts = {
 		]];
 
 	};
-	Actions = {
-		WeaponTruck = [[
-			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Truck.
-			Fahrt nun mit dem Truck zu eurer Base und versucht die Kisten abzugeben.
-			Die Cops werden versuchen euren Truck zu zerstören. Falls ihnen das gelingt, könnt ihr
-			eure Kisten mit einem kleinem Lieferwagen aus eurer Base weitertransportieren.
-		]];
-		StateWeaponTruck = [[
-			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Staatswaffentruck.
-			Fahrt nun den Truck vor die FBI-Base und versucht die Kisten abzugeben.
-			Die Bösen Fraktionisten werden versuchen den SWT zu zerstören.
-			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
-		]];
-		WeedTruck = [[
-			Dieser illegale Transport versorgt eure Fraktion mit Drogen (Cannabis). Gegen eine Bezahlung von 10000$
-			erhaltet ihr den Truck. Er wird beladen und anschließend bereit gestellt. Fahrt zu eurem Versteck um ihn
-			dann zu entladen!
-		]];
-		Bankrob = [[
-		Nachdem ihr den Kassierer mit einer Waffe bedroht oder ein Loch in die Wand gesprengt habt, müsst ihr
-		zum Kontrollraum laufen und die Tresortür knacken. Außerdem könnt ihr dort den Alarm ausschalten.
-		Sobald der Tresorraum offen ist, knackt einen Safe in dem ihr auf einen klickst. Nach einem weiteren
-		Klick nehmt ihr das Geld aus ihm heraus. Die Taschen auf dem Boden füllen sich mit Geld. Wenn ihr genug habt,
-		oder der Tresorraum leer ist, könnt ihr die Taschen via. Klicksystem auf den Rücken schnallen.
-		Lauft zum Boxville um die Ecke und ladet durch einen klick auf ihn die Taschen ein.
-		Fahrt nun schnell zu einem der Abgabepunkte!
-		]];
-	};
-	Credits = {
-		OldVRPTeam = [[
-			Dies ist das ehemalige Team des vRP-Gamemodes, die uns freundlicherweise den Gamemode überlassen haben.
-
-			Entwicklung und Administration:
-			Jusonex
-			sbx320
-			Revelse
-			StiviK
-
-			Administration:
-			Doneasty (außerdem Grafik und Design)
-
-			Moderation:
-			Sarcasm (außerdem Webauftritt)
-			Johnny (außerdem Mapping)
-			Toxsi (außerdem Mapping)
-
-			Vielen Dank an:
-			Sam@ke (für seine wunderschönen Shader)
-			thefleshpound (für seine Zeit als Grafiker)
-			Schlumpf (für seine kurze Zeit als Mapper)
-			ReZ (für seine kurze Zeit als Mapper)
-			Alex (für seine Zeit als Mapper)
-			Audifire (für das Verteilen von Müll)
-			Poof (für das Schreiben von Hilfetexten)
-
-			Alpha-Tester:
-			Gibaex
-		]];
-		Other = [[
-			Wir danken folgenden Personen/Teams für zur Verfügung gestellte Scripts:
-
-			dem iLife-Team für:
-			Slotmaschinen
-			Zug
-
-			Bonus für
-			Anti c-Bug
-			realdriveby
-		]];
-	};
-	Vehicles = {
-		 Info = [[
-			Fahrzeuge können in folgende Kategorien unterteilt werden.
-
-			Leihfahrzeuge:
-			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen.
-			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das
-			auszuleihende Fahrzeug auswählen.
-
-			Private Fahrzeuge:
-			Private Fahrzeuge kannst du an Autohäusern oder durch Handel mit anderen Usern erwerben. Autohäuser
-			sind auf der Karte mit einem Auto-Blip markiert.
-			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
-			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
-			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
-			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
-			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
-			sendet.
-
-			Fraktionsfahrzeuge:
-			Fraktionsfahrzeuge sind wie im Namen erwähnt Eigentum der jeweiligen Fraktionen und ihr Zustand wird
-			vom Fraktionsanführer verwaltet.
-
-			Firmen-/Gangfahrzeuge:
-			Du kannst falls du einen Firma oder eine Gang besitzt, deine privaten Fahrzeuge in den Bestand dieser aufnehmen.
-			Drücke hierzu F2 und navigiere zu deinem Firmen-/Gangpanel. Unter dem Reiter Fahrzeuge findest du einen blauen
-			Button, welcher dir erlaubt deine privaten Fahrzeuge zur Gang/Firma hinzuzufügen.
-			]];
-		 CustomTextures = [[
-			Auf eXo-Reallife kannst du selbst Texturen für dein Fahrzeug erstellen. Lade diese im cPanel
-			unter exo-reallife.de hoch und teste sie hier.
-			Du kannst Texturen auch für andere Spieler freigeben.
-
-			Bitte beachte das jede Textur erst durch einen Admin akzeptiert werden muss.
-			Also teste die Textur hier erst	sorgfältig bevor du Sie zur Überprüfung freigibst, bereits akzeptierte Texturen können nicht mehr verändert werden.
-
-			Hier nun der ganze Prozess in einer Schritt für Schritt Anleitung:
-			1.) Hochladen: Textur im 'Control-Panel -> Fahrzeug Texturen' unter eXo-Reallife.de hochladen
-			2.) Testen: Direkt neben dem Custom Texture Shop ist ein gelbes Info-Pickup, dort kannst du deine hochgeladenen Texturen testen
-			3.) Im Textur-Test Fenster kannst du Texturen zur Überprüfung einsenden wenn Sie dir gefällt.
-			(Wichtig: Erst zur Überprüfung einsenden wenn dir die Textur auf dem Fahrzeug gefällt)
-			4.) Die Textur wird nun von einem Admin überprüft. Wenn diese ordentlich gemacht ist wird Sie freigeschaltet.
-			5.) Nachdem die Textur überprüft und freigeschaltet wurde kannst du Sie im Custom-Textur Shop auf dein Fahrzeug speichern.
-
-			Regeln:
-			+ Beleidigungen oder Serverwerbung ist verboten!
-			+ Admins behalten Sich jederzeit das Recht vor Texturen abzulehnen, oder nachträglich zu löschen
-			+ Texturen dürfen eine Größe von 600x600px sowie 200kb Dateigröße nicht überschreiten
-			+ Texturen müssen einen gewissen Qualitätsstandard erfüllen, dieser liegt im Ermessen des Admin-Teams
-			]];
-	};
 };
-
-Tipps = {
-	{"", "Schon ein paar eXo-Points bekommen? Nein? Dann suche auf der Karte nach schwebenden eXo Logos oder bekomme Archievements! Mithilfe der eXo-Points kannst du dir diverse Premiumdinge holen oder sie in XP eintauschen."};
-	{"wie ändere ich mein Karma", "Um auf die gute Seite zu wechseln kannst du a.) gute Taten vollbringen oder b.) ein paar deiner gesammelten XP in Karmapunkte eintauschen. Wenn dein Karma im positiven Bereich ist kannst du dich als Polizist versuchen und weiter positives Karma sammeln. Wenn du auf die böse Seite wechseln willst musst du im Grunde nur böses tun. Raube Läden aus, überfalle Leute und lebe ein Gangsterleben."};
-	{"wie komme ich in eine Gang", "Um in eine Gang zu kommen muss der Gangboss dir eine Einladung senden. Diese wird dir auf dein Handy (Hotkey 'U') geschickt. Du findest sie in der Dashboard App."};
-	{"wie gründe ich eine Gang", "Um eine Gang zu gründen brauchst du a.) reichlich XP und b.) ein großes Vermögen, denn die Gründung kostet 100.000$! Du kannst sie im Self-Menü unter 'Firma / Gang' gründen. Als Boss hast du Rang 2 und kannst die Ränge nach belieben verwalten. Natürlich kannst du die Firma/Gang jederzeit verlassen und/oder löschen."};
-	{"wo parke ich meine Autos", "Das Garagensymbol auf der Map zeigt dir die Standorte für die Garagen. Anfangs hast du eine Garage mit 3 Standplätzen. Diese Garage kannst du jederzeit unter 'Fahrzeuge' gegen Geld upgraden. Übrigens kannst du nur in der Garage geparkte Fahrzeuge respawnen!"};
-	{"welche Jobs eignen sich für den Anfang", "Anfangs stehen dir durch dein geringes Level wenige Jobs zur Auswahl. Du kannst anfangs nur den Kehrmaschinen und den Farmerjob machen. Je nachdem wieviel XP du hast stehen dir weitere Jobs wie der Holzfäller oder der Müllfahrer zur Auswahl."};
-	{"wie erreiche ich das Team", "Um das Team zu erreichen kannst du das Support System auf dem Hotkey 'hierderkrassehotkey' öffnen und ein Ticket schreiben."};
-	{"was macht man als Gang", "Als Firma / Gang mit positivem Durchschnittskarma kann man besipielsweise auf Verbecherjagd gehen (sofern man Polizist ist). Mit negativem Karma kann man diverse Raubüberfälle auf Läden, Häuser oder Banken starten, Ganggebiete erobern, seine 'Brüder' aus dem Knast holen, mit Drogen dealen und die Stadt nach und nach erobern."};
-}
 
 SkinShops = {
 	{

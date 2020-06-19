@@ -19,11 +19,11 @@ function JobBoxer:constructor()
 end
 
 function JobBoxer:start()
-    HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Boxer), _(HelpTexts.Jobs.Boxer))
+    HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobBoxer:stop()
-    HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+    HelpBar:getSingleton():setLexiconPage(nil)
 end
 
 function JobBoxer:openFightList()

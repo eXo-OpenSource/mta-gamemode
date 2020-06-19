@@ -13,8 +13,6 @@ function JobRoadSweeper:constructor()
 
 	self.m_Rubbish = {}
 
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.RoadSweeper):gsub("Job: ", ""), "jobs.roadsweeper")
 end
 
 function JobRoadSweeper:start()
@@ -31,7 +29,7 @@ function JobRoadSweeper:start()
 	end
 
 	-- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.RoadSweeper), _(HelpTexts.Jobs.RoadSweeper))
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobRoadSweeper:stop()
@@ -43,7 +41,7 @@ function JobRoadSweeper:stop()
 	self.m_Rubbish = {}
 
 	-- Reset text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+	HelpBar:getSingleton():setLexiconPage(nil)
 end
 
 function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)

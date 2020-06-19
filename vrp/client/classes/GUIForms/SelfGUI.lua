@@ -294,51 +294,6 @@ function SelfGUI:constructor()
 			self:onSettingChange(setting)
 		end
 	end
-
-
-
-	--[[ TODO: Do we require this?
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
-	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren", tabSettings)
-	self.m_EnableTippsBox:setFont(VRPFont(25))
-	self.m_EnableTippsBox:setFontSize(1)
-	self.m_EnableTippsBox:setChecked(core:get("Tipps", "enableTipps", true))
-	localPlayer.m_showTipps = core:get("Tipps", "enableTipps", true) -- Todo: Find a better position
-	self.m_EnableTippsBox.onChange = function (state)
-		localPlayer.m_showTipps = state
-		core:set("Tipps", "enableTipps", state)
-
-		if not state then
-			delete(TippManager:getSingleton())
-		else
-			if not TippManager:isInstantiated() then
-				TippManager:new()
-			end
-		end
-	end
-
-	self.m_TippResetButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.64, self.m_Width*0.35, self.m_Height*0.07, _"Tipps zurücksetzen", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
-	self.m_TippResetButton.onLeftClick = function ()
-		if localPlayer.m_showTipps then
-			self:close()
-			QuestionBox:new(_"Wirklich fortfahren?\nDadurch werden alle Tipps erneut angezeigt!", function()
-				core:set("Tipps", "lastTipp", 0)
-				if not TippManager:isInstantiated() then
-					TippManager:new()
-				end
-				SuccessBox:new(_"Tipps wurden erfolgreich zurückgesetzt!")
-
-				self:open()
-			end, function()
-				self:open()
-			end)
-		else
-			ErrorBox:new(_"Tipps wurden deaktiviert!")
-		end
-	end
-	--]]
-
-
 end
 
 function SelfGUI:onShow()

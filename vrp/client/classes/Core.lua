@@ -92,7 +92,6 @@ function Core:ready() --onClientResourceStart
 	Browser.requestDomains(DOMAINS, false, self.m_BrowserWhitelistResponse)
 	DxHelper:new()
 	TranslationManager:new()
-	HelpTextManager:new()
 	MTAFixes:new()
 	ClickHandler:new()
 	HoverHandler:new()
@@ -100,7 +99,6 @@ function Core:ready() --onClientResourceStart
 	--GangAreaManager:new()
 	HelpBar:new()
 	JobManager:new()
-	TippManager:new()
 	RadioStationManager:new()
 	DimensionManager:new()
 	Inventory:new()
@@ -172,7 +170,6 @@ function Core:ready() --onClientResourceStart
 
 	GroupRob:new()
 	DrivingSchool:new()
-	Help:new()
 	ClientStatistics:new()
 	Nametag:new()
 	VehicleMark:new()
@@ -238,10 +235,6 @@ function Core:afterLogin()
 	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
 
-	if not localPlayer:getJob() then
-		-- Change text in help menu (to the main text)
-		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
-	end
 
 	localPlayer:setPlayTime()
 	localPlayer:deactivateBlur(core:get("Shaders", "BlurLevel", false))

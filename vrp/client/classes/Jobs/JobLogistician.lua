@@ -15,16 +15,14 @@ function JobLogistician:constructor()
 	Job.constructor(self, 16, 2407.25, -2439.00, 13.63, 227, "Logistician.png", {120, 70, 0}, "files/images/Jobs/HeaderLogistician.png", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))
 	self:setJobLevel(JOB_LEVEL_LOGISTICAN)
 
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), "jobs.logistican")
 end
 
 function JobLogistician:start()
   -- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Logistician), _(HelpTexts.Jobs.Logistician))
+  HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobLogistician:stop()
   -- Reset text in help menu
-  HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+  HelpBar:getSingleton():setLexiconPage(nil)
 end

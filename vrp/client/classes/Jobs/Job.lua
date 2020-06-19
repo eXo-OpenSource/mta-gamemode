@@ -37,7 +37,7 @@ function Job:onPedClick()
 end
 
 function Job:InfoMessage(name, description, tutorial)
-	HelpBar:getSingleton():addTempText(_("Job: %s", name), description, false, tutorial and function () HelpBar:getSingleton():fadeOut() tutorial() end or nil, 10000, true)
+	HelpGUI:getSingleton():openLexiconPage(LexiconPages.JobOverview)
 end
 
 function Job:acceptHandler()

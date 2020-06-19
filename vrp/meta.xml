@@ -93,7 +93,6 @@
 	<script src="server/classes/StatisticsLogger.lua" type="server"/>
 	<script src="server/classes/Admin.lua" type="server"/>
 	<script src="server/classes/Guns.lua" type="server"/>
-	<script src="server/classes/Help.lua" type="server"/>
 	<script src="server/classes/ActionsCheck.lua" type="server"/>
 	<script src="server/classes/Gate.lua" type="server"/>
 	<script src="server/classes/Door.lua" type="server"/>
@@ -559,7 +558,6 @@
 	<script src="client/mapEditorScriptingExtension_c.lua" type="client"/>
 	<script src="client/classes/ExecTimeRecorder.lua" type="client"/>
 	<script src="client/classes/NetworkMonitor.lua" type="client"/>
-	<script src="client/classes/HelpTextManager.lua" type="client"/>
 	<script src="client/classes/ColshapeStreamer.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
@@ -596,10 +594,8 @@
 	<script src="client/classes/AchievementBox.lua" type="client"/>
 	<script src="client/classes/CoronaEffect.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
-	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
 
-	<script src="client/classes/Help.lua" type="client"/>
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>

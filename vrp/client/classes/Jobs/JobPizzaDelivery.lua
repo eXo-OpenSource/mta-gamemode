@@ -17,14 +17,13 @@ function JobPizza:constructor()
 	Job.constructor(self, 155, 2108.99, -1790.68, 13.55, 0, "Pizza.png", {170, 150, 100}, "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_PIZZA)
 
-	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), "jobs.pizzadelivery")
 	addEventHandler("nextPizzaDelivery", localPlayer, bind(JobPizza.nextDeliver, self))
 end
 
 
 function JobPizza:start()
 	self:nextDeliver()
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobPizza:throwPizza()
@@ -54,6 +53,7 @@ function JobPizza:stop( )
 	if isElement(self.m_PizzaPickupMarker) then
 		destroyElement( self.m_PizzaPickupMarker )
 	end
+	HelpBar:getSingleton():setLexiconPage(nil)
 end
 
 function JobPizza:nextDeliver( )

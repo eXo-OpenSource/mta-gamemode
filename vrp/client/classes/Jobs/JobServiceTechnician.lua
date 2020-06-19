@@ -14,10 +14,10 @@ end
 
 function JobServiceTechnician:start()
   -- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.ServiceTechnician), _(HelpTexts.Jobs.ServiceTechnician))
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
 end
 
 function JobServiceTechnician:stop()
   -- Reset text in help menu
-  HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+  HelpBar:getSingleton():setLexiconPage(nil)
 end
