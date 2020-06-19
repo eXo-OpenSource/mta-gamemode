@@ -1774,3 +1774,7 @@ end
 function Player:removeScale()
 	PedScale:getSingleton():removePedScale(self)
 end
+
+function Player:isDisconnecting()
+	return self.m_Disconnecting or false
+end

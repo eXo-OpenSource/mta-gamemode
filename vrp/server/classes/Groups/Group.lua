@@ -138,7 +138,7 @@ function Group:onPlayerJoin(player)
 end
 
 function Group:onPlayerQuit(player)
-	if not self:getOnlinePlayers() then
+	if #self:getOnlinePlayers() == 0 then
 		self.m_IsActive = false
 		GroupManager:getSingleton():removeActiveGroup(self)
 	end
@@ -486,7 +486,7 @@ function Group:getOnlinePlayers()
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
-		if player and isElement(player) and player:isLoggedIn() then
+		if player and isElement(player) and player:isLoggedIn() and not player:isDisconnecting() then
 			players[#players + 1] = player
 		end
 	end
@@ -718,7 +718,7 @@ function Group:spawnVehicles()
 end
 
 function Group:checkDespawnVehicle()
-	if self.m_VehiclesSpawned and #self:getOnlinePlayers()-1 <= 0 then
+	if self.m_VehiclesSpawned and #self:getOnlinePlayers() == 0 then
 		VehicleManager:getSingleton():destroyGroupVehicles(self)
 		self.m_VehiclesSpawned = false
 	end
