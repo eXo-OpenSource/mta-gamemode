@@ -23,7 +23,7 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:addColumn(_"Name", 0.2)
 	self.m_Grid:addColumn(_"Fraktion", 0.14)
 	self.m_Grid:addColumn(_"Unternehmen", 0.15)
-	self.m_Grid:addColumn(_"Gang/Firma", 0.19)
+	self.m_Grid:addColumn(_"Gang/Firma", 0.27)
 	self.m_Grid:addColumn(_"Spielzeit", 0.08)
 	self.m_Grid:addColumn(_"Ping", 0.11)
 	self.m_Grid:setSortable{"VIP", "Name", "Fraktion", "Unternehmen", "Gang/Firma", "Spielzeit"} --We can't sort Ping (Ping can be a number and also a string)
@@ -195,7 +195,7 @@ function ScoreboardGUI:insertPlayers()
 			(player.getPublicSync and player:getPublicSync("supportMode") and ("(%s) %s"):format(RANKSCOREBOARD[player.getPublicSync and player:getPublicSync("Rank") or 3] or "Support", player:getName())) or player:getName(),
 			isLoggedIn and (player:getFaction() and player:getFaction():getId() >= 1 and player:getFaction():getId() <= 3 and "Staat" or (player:getFaction() and player:getFaction():getShortName() or "- Keine -")) or "-",
 			isLoggedIn and (player:getCompany() and player:getCompany():getShortName()  or "- Keins -") or "-",
-			isLoggedIn and string.short(gname, 16) or "-",
+			isLoggedIn and gname or "-",
 			isLoggedIn and playtime or "-",
 			ping or " - "
 		)
