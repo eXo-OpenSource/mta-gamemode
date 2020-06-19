@@ -28,6 +28,7 @@ function Area:destructor( )
 	if self.m_CenterSphere and isElement(self.m_CenterSphere) then destroyElement(self.m_CenterSphere) end
 	if self.m_BlipImage then self.m_BlipImage:delete() end
 	if self.m_AttackSession then self.m_AttackSession:stopClients( true ); self.m_AttackSession:delete() end
+	self:destroySurroundingCol()
 end
 
 function Area:getName()
@@ -66,6 +67,34 @@ function Area:createRadar()
 	self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
 end
 
+--colshape where players who do not participate in the gang war get a warning
+function Area:createSurroundingCol()
+	if self.m_SurroundingCol then self:destroySurroundingCol() end
+	local surroundingDistance = 100
+	local areaX,areaY = self.m_PositionRadar[1],self.m_PositionRadar[2]
+	local areaX2, areaY2 = self.m_PositionRadar[3],self.m_PositionRadar[4]
+	local centerZ = self.m_Position[3]
+	local areaWidth = math.abs(areaX -  areaX2) + surroundingDistance*2
+	local areaHeight = math.abs(areaY - areaY2) + surroundingDistance*2
+
+	self.m_SurroundingCol = createColCuboid (areaX-surroundingDistance, areaY-surroundingDistance, centerZ - surroundingDistance, areaWidth, areaHeight, surroundingDistance*2 )
+	addEventHandler("onColShapeHit" ,self.m_SurroundingCol, bind(self.onSurroundingEnter,self))
+end
+
+function Area:destroySurroundingCol()
+	if self.m_SurroundingCol and isElement(self.m_SurroundingCol) then
+		destroyElement(self.m_SurroundingCol)
+		self.m_SurroundingCol = nil
+	end
+end
+
+--player is near a gang zone, but did not enter it by now
+function Area:onSurroundingEnter(hitElement, dim)
+	if hitElement and getElementType(hitElement) == "player" and dim and not hitElement:isInGangwar() then
+		hitElement:sendWarning("Du näherst dich einem aktiven Gangwar-Gebiet! Bitte verlasse dieses Areal und nutze eine andere Route oder warte, bis der Kampf vorbei ist.")
+	end
+end
+
 function Area:createCenterPickup()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
 	self.m_Pickup = createPickup( x,y,z ,3,2993,5)
@@ -98,6 +127,7 @@ function Area:attack( faction1, faction2, attackingPlayer)
 		self.m_RadarArea:setFlashing(true)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
 		self.m_GangwarManager:addAreaToAttacks( self )
+		self:createSurroundingCol()
 	end
 end
 
@@ -138,6 +168,7 @@ function Area:attackEnd(  )
 		self.m_BlipImage:delete()
 		setPickupType(self.m_Pickup,3,2993)
 		self.m_GangwarManager:removeAreaFromAttacks( )
+		self:destroySurroundingCol()
 	end
 end
 
