@@ -13,9 +13,9 @@ VehicleGuns.Cooldowns = {
     [520] = 5000 --Hydra
 }
 VehicleGuns.ControlToDeactivate = {
-    [425] = "vehicle_fire", --Hunter
-    [432] = "vehicle_fire", --Rhino
-    [520] = "vehicle_secondary_fire" --Hydra
+    [425] = {"vehicle_fire"}, --Hunter
+    [432] = {"vehicle_fire", "vehicle_secondary_fire"}, --Rhino
+    [520] = {"vehicle_secondary_fire"} --Hydra
 }
 VehicleGuns.LastShoot = {ShotAt=0, LockedUntil=0}
 
@@ -29,7 +29,7 @@ end
 
 function VehicleGuns:onShoot()
     if localPlayer:getOccupiedVehicle() then
-        if isControlEnabled(self.m_Control) then
+        if self:areControlsEnabled() then
             if localPlayer:getOccupiedVehicle():getEngineState() then
                 if VehicleGuns.LastShoot.LockedUntil < getTickCount() then
                     local cooldown = VehicleGuns.Cooldowns[localPlayer:getOccupiedVehicle():getModel()]
@@ -46,11 +46,11 @@ end
 
 function VehicleGuns:update()
     if VehicleGuns.LastShoot.LockedUntil >= getTickCount() or (localPlayer:getOccupiedVehicle() and localPlayer:getOccupiedVehicle():getEngineState() == false) then
-        toggleControl(self.m_Control, false)
+        self:toggleControls(false)
     else
         if self:isKeyPressed() == false then
             removeEventHandler("onClientRender", root, self.m_UpdateBind)
-            toggleControl(self.m_Control, true)
+            self:toggleControls(true)
         end
     end
 end
@@ -59,8 +59,12 @@ function VehicleGuns:onVehicleEnter(player, seat)
     if player == localPlayer then
         if seat == 0 then
             if VehicleGuns.Cooldowns[source:getModel()] then
-                self.m_Control = VehicleGuns.ControlToDeactivate[source:getModel()]
-                bindKey(self.m_Control, "down", self.m_ShootBind)
+                self.m_Controls = VehicleGuns.ControlToDeactivate[source:getModel()]
+
+                for index, control in pairs(self.m_Controls) do
+                    bindKey(control, "down", self.m_ShootBind)
+                end
+
                 addEventHandler("onClientRender", root, self.m_UpdateBind)
             end
         end
@@ -69,8 +73,10 @@ end
 
 function VehicleGuns:onVehicleExit(player, seat)
     if player == localPlayer then
-        if self.m_Control then
-            unbindKey(self.m_Control, "down", self.m_ShootBind)
+        if self.m_Controls then
+            for index, control in pairs(self.m_Controls) do
+                unbindKey(control, "down", self.m_ShootBind)
+            end
         end
         if self.m_Countdown then
             delete(self.m_Countdown)
@@ -90,10 +96,27 @@ end
 
 function VehicleGuns:isKeyPressed()
     local keyPressed = false
-    for key, state in pairs(getBoundKeys("vehicle_fire")) do
-        if getKeyState(key) then
-            keyPressed = true
+    for index, control in pairs(self.m_Controls) do
+        for key, state in pairs(getBoundKeys(control)) do
+            if getKeyState(key) then
+                keyPressed = true
+            end
         end
     end
     return keyPressed
+end
+
+function VehicleGuns:toggleControls(state)
+    for index, control in pairs(self.m_Controls) do
+        toggleControl(control, state)
+    end
+end
+
+function VehicleGuns:areControlsEnabled()
+    for index, control in pairs(self.m_Controls) do
+        if not isControlEnabled(control) then
+            return false
+        end
+    end
+    return true
 end

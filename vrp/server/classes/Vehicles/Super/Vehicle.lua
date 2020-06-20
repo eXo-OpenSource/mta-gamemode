@@ -188,7 +188,7 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
-		self:allowControl(player, getVehicleEngineState(player.vehicle))
+		self:allowControl(player, getVehicleEngineState(self))
 	end
 
 	if self.m_HasBeenUsed then
