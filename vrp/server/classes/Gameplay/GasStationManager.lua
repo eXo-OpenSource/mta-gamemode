@@ -517,7 +517,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.BALLAS},
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	--[[{
 		name = "Kartell",
