@@ -94,7 +94,8 @@ function ego:freeCamMouse(_, _, aX, aY)
     elseif self.m_RotY > ego.Pi / 2.05 then
         self.m_RotY = ego.Pi / 2.05
     end
-	if WeaponManager:getSingleton():isAimingRocketLauncher() then 
+	if WeaponManager:getSingleton():isAimingRocketLauncher() then
+		delete(self)
 		ego.Active = false
 	end
 end
