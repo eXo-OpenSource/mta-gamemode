@@ -61,6 +61,9 @@ function DesertEagle:onWeaponSwitch(prev, current)
         self.m_isAiming = false
         addEventHandler("onClientPreRender", root, self.m_UpdateBind)
         self:bindKeys()
+        if getPedTask(localPlayer, "secondary", 0) == "TASK_SIMPLE_FIGHT" then
+            self:onWeaponFire(24)
+        end
     else
         if isEventHandlerAdded("onClientPreRender", root, self.m_UpdateBind) then
             removeEventHandler("onClientPreRender", root, self.m_UpdateBind)
