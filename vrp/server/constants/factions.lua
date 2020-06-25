@@ -10,6 +10,8 @@ factionNavigationpoint = {}
 factionSpawnpoint = {}
 factionAirDropPoint = {}
 TICKET_PRICE = 1500
+EVIL_FACTION_SPAWN_POINT = Vector3(2816.75, -1166.49, 1029.17) -- position inside the standard evil faction interior
+EVIL_FACTION_SPAWN_INTERIOR = 8
 
 
 
@@ -187,7 +189,7 @@ factionWeapons[5] = {[2]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=
 evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
 factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,17.8)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
-factionSpawnpoint[5] = {Vector3(728.03, -1203.80, 19.06), 0, 0}
+factionSpawnpoint[5] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 5}
 factionAirDropPoint[5] = Vector3(806.26, -1145.07, 24.02)
 factionNavigationpoint[5] = evilFactionInteriorEnter[5]
 
@@ -207,7 +209,7 @@ factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [
 factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3(1028.83, -1102.81, 23.83)
 factionWTDestination[6] = Vector3(962.57, -1102.63, 23.69)
-factionSpawnpoint[6] = {Vector3(1003.01, -1105.58, 23.83), 0, 0}
+factionSpawnpoint[6] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 6}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
 factionAirDropPoint[6] = Vector3(997.42, -1089.35, 23.83)
 
@@ -227,7 +229,7 @@ factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [32]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[7] = Vector3(2522.5205078125, -1679.2890625, 15.496999740601)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
-factionSpawnpoint[7] = {Vector3(2501.12, -1666.82, 13.36), 0, 0}
+factionSpawnpoint[7] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 7}
 factionNavigationpoint[7] = evilFactionInteriorEnter[7]
 factionAirDropPoint[7] = Vector3(2476.883, -1667.080, 13.326)
 
@@ -247,7 +249,7 @@ factionSkins[8] = {[13]=true, [102]=true, [103]=true, [104]=true, [195]=true, [2
 factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
 factionWTDestination[8] = Vector3(2212.42, -1435.53, 21.7)
-factionSpawnpoint[8] = {Vector3(2226.87, -1441.04, 24.00), 0, 0}
+factionSpawnpoint[8] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 8}
 factionAirDropPoint[8] = Vector3(2199.05, -1385.16, 23.83)
 factionNavigationpoint[8] = evilFactionInteriorEnter[8]
 
@@ -267,7 +269,7 @@ factionSkins[9] = {[44]=true, [100]=true, [181]=true, [242]=true, [247]=true, [2
 factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[9] =  Vector3(681.44, -444.98, 16.34)
 factionWTDestination[9] =   Vector3(659.08, -455.65, 16.34)
-factionSpawnpoint[9] = {Vector3(686.55, -453.80, 20.65), 0, 0}
+factionSpawnpoint[9] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 9}
 factionNavigationpoint[9] = evilFactionInteriorEnter[9]
 factionAirDropPoint[9] = Vector3(664.71, -485.26, 16.19)
 
@@ -287,7 +289,7 @@ factionSkins[10] = {[108]=true, [110]=true, [114]=true, [115]=true, [116]=true, 
 factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
 evilFactionInteriorEnter[10] =Vector3(2786.59, -1952.59, 13.55)
 factionWTDestination[10] = Vector3(2768.62, -1944.73, 13.36-0.7)
-factionSpawnpoint[10] = {Vector3(2782.50, -1952.61, 13.55), 0, 0}
+factionSpawnpoint[10] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 10}
 factionAirDropPoint[10] = Vector3(2770.33, -1945.15, 13.35)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
@@ -307,7 +309,7 @@ factionSkins[11] = {[49]=true, [118]=true, [120]=true, [122]=true, [123]=true, [
 factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.0)
 factionWTDestination[11] = Vector3(1912.89, 935.21, 9.7)
-factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.1), 0, 0}
+factionSpawnpoint[11] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 11}
 factionNavigationpoint[11] = evilFactionInteriorEnter[11]
 factionAirDropPoint[11] = Vector3(1877.10, 934.00, 9.67)
 
@@ -330,7 +332,7 @@ factionWeapons[12] = {[4]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]
 evilFactionInteriorEnter[12] = Vector3(283.75, -1181.02, 81.00)
 factionWTDestination[12] = Vector3(371.22, -1154.53, 78)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
-factionSpawnpoint[12] = {Vector3(297.88, -1156.61, 80.91), 0, 0}
+factionSpawnpoint[12] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 12}
 factionAirDropPoint[12] = Vector3(280.24, -1230.52, 74.74)
 factionNavigationpoint[12] = evilFactionInteriorEnter[12]
 
