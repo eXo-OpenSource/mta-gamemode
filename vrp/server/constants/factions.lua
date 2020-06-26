@@ -196,10 +196,10 @@ factionCarColors[5] = {["r"] = 75,["g"] = 75,["b"] = 75, ["r1"] = 75,["g1"] = 75
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
 factionWeapons[5] = {[2]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
-factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,17.8)
+factionWTDestination[5] = Vector3(797.266, -1151.333, 24.039)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
 factionSpawnpoint[5] = {Vector3(728.03, -1203.80, 19.06), 0, 0}
-factionAirDropPoint[5] = Vector3(806.26, -1145.07, 24.02)
+factionAirDropPoint[5] = Vector3(679.589, -1311.815, 13.681)
 factionNavigationpoint[5] = evilFactionInteriorEnter[5]
 
 -- ID 6 = Yakuza
