@@ -1132,7 +1132,7 @@ local tpTable = {
         ["fahrschule"] =    {["pos"] = Vector3(1783.92, -1707.39, 13.37),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(2406.46, -2089.79, 13.55),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-		["lcn"] =           {["pos"] = Vector3(297.88, -1156.61, 80.9),		["typ"] = "Fraktionen"},
+		["lcn"] =           {["pos"] = Vector3(673.87, -1267.26, 13.63),	["typ"] = "Fraktionen"},
 		["brigada"] =       {["pos"] = Vector3(297.88, -1156.61, 80.9),		["typ"] = "Fraktionen"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
