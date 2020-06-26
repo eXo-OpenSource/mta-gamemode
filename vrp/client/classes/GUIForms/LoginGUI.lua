@@ -157,17 +157,19 @@ function LoginGUI:loadLoginElements()
 
 	--logic
 	self.m_Elements.BtnLogin.onLeftClick = bind(function(self)
-		local name = self.m_Elements.editName:getText()
-		local pw = self.m_Elements.editPW:getText()
+		if self:checkExternalWebsitesActivated() then
+			local name = self.m_Elements.editName:getText()
+			local pw = self.m_Elements.editPW:getText()
 
-		if self.m_SavedPW and self.m_SavedPW == pw then -- User has not changed the password
-			triggerServerEvent("accountlogin", root, name, "", pw)
-		else
-			triggerServerEvent("accountlogin", root, name, pw, nil, self.m_Elements.swSavePW:isChecked())
+			if self.m_SavedPW and self.m_SavedPW == pw then -- User has not changed the password
+				triggerServerEvent("accountlogin", root, name, "", pw)
+			else
+				triggerServerEvent("accountlogin", root, name, pw, nil, self.m_Elements.swSavePW:isChecked())
+			end
+
+			-- Disable login button field to avoid several events
+			self.m_Elements.BtnLogin:setEnabled(false)
 		end
-
-		-- Disable login button field to avoid several events
-		self.m_Elements.BtnLogin:setEnabled(false)
 	end, self)
 
 	nextframe(function()
@@ -231,21 +233,25 @@ function LoginGUI:loadRegisterElements()
 	self:checkRegister()
 
 	self.m_Elements.BtnRegister.onLeftClick = bind(function(self)
-		if self.m_Elements.editPW:getText() == self.m_Elements.editPW2:getText() then
-			if self.m_Elements.checkAcceptRules:isChecked() then
-				triggerServerEvent("accountregister", root, self.m_Elements.editName:getText(), self.m_Elements.editPW:getText(), self.m_Elements.editEmail:getText())
-				self.m_Elements.BtnRegister:setEnabled(false)
+		if self:checkExternalWebsitesActivated() then
+			if self.m_Elements.editPW:getText() == self.m_Elements.editPW2:getText() then
+				if self.m_Elements.checkAcceptRules:isChecked() then
+					triggerServerEvent("accountregister", root, self.m_Elements.editName:getText(), self.m_Elements.editPW:getText(), self.m_Elements.editEmail:getText())
+					self.m_Elements.BtnRegister:setEnabled(false)
+				else
+					triggerEvent("registerfailed",localPlayer,"Du musst den Serveregeln zustimmen!")
+				end
 			else
-				triggerEvent("registerfailed",localPlayer,"Du musst den Serveregeln zustimmen!")
+				triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
 			end
-		else
-			triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
 		end
 	end, self)
 
 	self.m_Elements.cLblRules.onLeftClick = function()
-		LoginRuleGUI:new()
-		InfoBox:new(_"Da alle Regeln in einem Dokument stehen wirkt der Scrollbalken erscheckend klein - aber keine Sorge, wichtig für dich sind für den Anfang nur die Regeln von §1 - §5.\nMit gedrückter Shift-Taste kannst du im Dokument schneller scrollen.")
+		if self:checkExternalWebsitesActivated() then
+			LoginRuleGUI:new()
+			InfoBox:new(_"Da alle Regeln in einem Dokument stehen wirkt der Scrollbalken erscheckend klein - aber keine Sorge, wichtig für dich sind für den Anfang nur die Regeln von §1 - §5.\nMit gedrückter Shift-Taste kannst du im Dokument schneller scrollen.")
+		end
 	end
 
 	self.m_Loaded = true
@@ -276,6 +282,14 @@ function LoginGUI:showRegisterMultiaccountError(name)
 	self.m_Elements.ErrorLbl:setVisible(true)
 	self.m_Elements.ErrorLbl:setText(text)
 
+end
+
+function LoginGUI:checkExternalWebsitesActivated()
+	if getBrowserSettings().RemoteEnabled == false then
+		ErrorBox:new(_"Bitte aktiviere in den Einstellungen unter Webbrowser die Option Externe Webseiten aktivieren!")
+		return false
+	end
+	return true
 end
 
 addEvent("receiveRegisterAllowed", true)
