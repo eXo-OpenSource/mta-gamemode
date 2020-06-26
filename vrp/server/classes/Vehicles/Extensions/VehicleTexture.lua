@@ -14,6 +14,7 @@ function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, pl
 	if vehicle and isElement(vehicle) then
 		self.m_Id = #VehicleTexture.Map+1
 		self.m_Optional = not self:checkOptional(vehicle)
+		self.m_Preview = isPreview
 		self.m_Force = forceTexture
 		self.m_ForceMaximum = forceMaximumTexture
 		self.m_Vehicle = vehicle
@@ -67,12 +68,14 @@ function VehicleTexture:checkOptional(vehicle)
 	return false
 end
 
+function VehicleTexture:isPreview() return self.m_Preview end
+
 function VehicleTexture:destructor()
 	VehicleTexture.Map[self.m_Id] = nil
 	if self.m_Vehicle and isElement(self.m_Vehicle) then
-		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture", resourceRoot, self.m_Vehicle, self.m_Texture)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture", self.m_Vehicle, self.m_Texture)
 		if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
-			triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture", resourceRoot, self.m_Vehicle, VehicleTexture.WeirdCamperTexture)
+			triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture", self.m_Vehicle, VehicleTexture.WeirdCamperTexture)
 		end
 	end
 end
