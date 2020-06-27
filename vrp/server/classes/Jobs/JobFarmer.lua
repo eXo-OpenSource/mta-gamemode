@@ -9,7 +9,7 @@ local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
 local MONEY_PER_PLANT = 50
 local MONEY_PER_SEED = 22
-local MONEY_PLANT_HARVESTER = 20
+local MONEY_PLANT_HARVESTER = 13
 local MONEY_PLANT_TRACTOR = 13
 
 function JobFarmer:constructor()
@@ -25,6 +25,7 @@ function JobFarmer:constructor()
 	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner2:disable()
 
+	self.m_PlayerIncomeCache = {} -- cache money when players are working on a field, only pay them if they leave the field
 	self.m_Plants = {}
 	self.m_DeliveryBlips = {}
 	self.m_JobElements = {}
@@ -47,8 +48,44 @@ function JobFarmer:constructor()
 	self.m_DeliveryMarker = self:createJobElement(createMarker(x,y,z,"corona",4))
 	addEventHandler ("onMarkerHit",self.m_DeliveryMarker,bind(self.deliveryHit,self))
 
-	addRemoteEvents{"jobFarmerCreatePlant"}
+	addRemoteEvents{"jobFarmerCreatePlant", "jobFarmerLeaveField"}
 	addEventHandler("jobFarmerCreatePlant", root, bind(self.createPlant, self))
+	addEventHandler("jobFarmerLeaveField", root, bind(self.onClientLeaveField, self))
+end
+
+function JobFarmer:giveJobMoney(player)
+
+	if not self.m_PlayerIncomeCache[player] then return end 
+	local income = 0
+	if self.m_PlayerIncomeCache[player].combine > 0 then
+		income = self.m_PlayerIncomeCache[player].combine
+		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
+		self.m_PlayerIncomeCache[player].combine = 0 
+	elseif self.m_PlayerIncomeCache[player].tractor > 0 then
+		income = self.m_PlayerIncomeCache[player].tractor
+		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.tractor", duration, income)
+		self.m_PlayerIncomeCache[player].tractor = 0
+	end
+	if income > 0 then
+		local duration = getRealTime().timestamp - player.m_LastJobAction
+		player.m_LastJobAction = getRealTime().timestamp
+		player:giveCombinedReward("Farmer-Job", {
+			money = {
+				mode = "give",
+				bank = true,
+				amount = income,
+				toOrFrom = self.m_BankAccountServer,
+				category = "Job",
+				subcategory = "Farmer"
+			},
+			points = math.round(((income / MONEY_PLANT_HARVESTER) / 6)*JOB_EXTRA_POINT_FACTOR), -- one point every six plants
+		})
+
+	end
+end
+
+function JobFarmer:onClientLeaveField()
+	self:giveJobMoney(client)
 end
 
 function JobFarmer:addSeedsAutomatic()
@@ -65,7 +102,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
 		vehicle:attachTrailer(vehicle.trailer)
 
-		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor) tractor:attachTrailer(source)	end)
+		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor) if isElement(tractor) then tractor:attachTrailer(source) end	end)
 		addEventHandler("onElementDestroy", vehicle, function() if source.trailer and isElement(source.trailer) then source.trailer:destroy() end end, false)
 	elseif vehicleModel == 478 then -- Walton
 		addEventHandler("onElementDestroy", vehicle,
@@ -161,6 +198,7 @@ end
 function JobFarmer:start(player)
 	self:setJobElementVisibility(player,true)
 	self.m_CurrentPlants[player] = 0
+	self.m_PlayerIncomeCache[player] = {combine = 0, tractor = 0}
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 	self.m_VehicleSpawner2:toggleForPlayer(player, true)
 
@@ -185,6 +223,8 @@ end
 
 function JobFarmer:stop(player)
 	if self.m_CurrentPlants[player] then self.m_CurrentPlants[player] = nil end
+	self:giveJobMoney(player)
+	self.m_PlayerIncomeCache[player] = nil
 
 	self:setJobElementVisibility(player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
@@ -314,16 +354,8 @@ function JobFarmer:createPlant(position, vehicle)
 		setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 		setElementVisibleTo(object, client, true)
 
-		local income = MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR
-		local duration = getRealTime().timestamp - client.m_LastJobAction
-		client.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(client, "jobFarmer.tractor", duration, income)
-		self.m_BankAccountServer:transferMoney({client, true}, income, "Farmer-Job", "Job", "Farmer")
-
-		-- Give some points
-		if chance(4) then
-			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
-		end
+		local income = MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR	
+		self.m_PlayerIncomeCache[client].tractor = self.m_PlayerIncomeCache[client].tractor + income
 	end
 end
 
@@ -342,18 +374,9 @@ function JobFarmer:collectPlant(hitElement, matchingDimension)
 			destroyElement(source)
 
 			local income = MONEY_PLANT_HARVESTER * JOB_PAY_MULTIPLICATOR
-			local duration = getRealTime().timestamp - player.m_LastJobAction
-			player.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
-			self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
-
+			self.m_PlayerIncomeCache[player].combine = self.m_PlayerIncomeCache[player].combine + income
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 			self:updateClientData()
-
-			-- Give some points
-			if chance(6) then
-				player:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
-			end
 		end
 	end
 end
