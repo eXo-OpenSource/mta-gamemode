@@ -58,7 +58,7 @@ function ItemFood:use(player)
 	end
 
 	local block, animation, time = unpack(ItemSettings["Animation"])
-	if not player.vehicle then player:setAnimation(block, animation, time, true, false, false) end
+	if not player.vehicle then player:setAnimation(block, animation, time, true, false) end
 	setTimer(
 		function()
 			if isElement(item) then item:destroy() end

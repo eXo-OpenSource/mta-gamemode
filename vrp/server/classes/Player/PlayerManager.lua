@@ -818,6 +818,7 @@ function PlayerManager:Event_startAnimation(animation)
 	if client:isOnFire() then return end
 	if client:getData("isInDeathMatch") then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
+	if client:isInGangwar() then client:sendError(_("Du kannst im Gangwar keine Animationen ausführen!", client)) return end
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]

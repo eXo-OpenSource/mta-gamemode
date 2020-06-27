@@ -905,6 +905,7 @@ function LocalPlayer:startAnimation(_, ...)
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
 	if isPedAiming(localPlayer) then return end
+	if getPedTask(localPlayer, "primary", 1) == "TASK_COMPLEX_IN_AIR_AND_LAND" then return end --prevent animation when player is falling or laying on the ground
 
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
