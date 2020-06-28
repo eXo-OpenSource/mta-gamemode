@@ -11,14 +11,14 @@ addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarme
 function JobFarmer:constructor()
 	Job.constructor(self, 1, -62.62, 76.34, 3.12, 250, "Farmer.png", {117, 93, 65}, "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
 
-	self.m_Ped2 = createPed(1, -2095.758, -2255.129, 30.625, 53)
+	self.m_Ped2 = createPed(1, -19.04, 1175.55, 19.56, 0)
 	setElementData(self.m_Ped2, "clickable", true)
 	self.m_Ped2:setData("Job", self)
 	self.m_Ped2:setData("NPC:Immortal", true)
 	self.m_Ped2:setFrozen(true)
 	SpeakBubble3D:new(self.m_Ped2, _("Job: %s", self.m_Name), _"Für einen Job klicke mich an!")
 
-	self.m_Blip2 = Blip:new("Farmer.png", -2095.758, -2255.129, 500)
+	self.m_Blip2 = Blip:new("Farmer.png", -19.04, 1175.55, 500)
 	self.m_Blip2:setDisplayText(_(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), BLIP_CATEGORY.Job)
 	self.m_Blip2:setOptionalColor({117, 93, 65})
 
@@ -108,7 +108,6 @@ function JobFarmer:start()
 
 	self.m_OnFieldEnterFunc = bind(self.onFieldEnter, self)
 	self.m_OnFieldLeaveFunc = bind(self.onFieldLeave, self)
-	self.m_FieldRenderFunc = bind(self.renderOnField, self)
 
 	for key, value in ipairs (JobFarmer.PlantField) do
 		local col = createColPolygon(unpack(value))
@@ -137,42 +136,32 @@ end
 
 function JobFarmer:onFieldEnter(hitEle, dim)
 	if hitEle ~= localPlayer or not dim then return end
-	if not self:hasPlayerFieldVehicle() then return end
+	if not self:hasPlayerFieldVehicle() or self.m_CurrentField then return end
 	self.m_CurrentField = source
-	addEventHandler("onClientRender", root, self.m_FieldRenderFunc)
-	self.m_TickFarmerTimer = setTimer(self.m_TickFarmerJob, 1000, 0)
-
-	-- save which type of object detection (all objects inside colshape vs. all streamed-in objects result in less objects)
-	-- this is useful to minimize the load on the client when comparing the distance to other plants
-	self.m_ObjectDetectionInStreamDistance = #getElementsWithinColShape(self.m_CurrentField, "object") > #getElementsByType("object", resourceRoot, true)  
+	self.m_TickFarmerTimer = setTimer(self.m_TickFarmerJob, 250, 0) 
 end
 
 function JobFarmer:onFieldLeave(hitEle, dim)
-	if hitEle ~= localPlayer or not dim then return end
-	if not self:hasPlayerFieldVehicle() then return end
+	if hitEle ~= localPlayer or not dim or not self.m_CurrentField then return end
 	self.m_CurrentField = nil
-	removeEventHandler("onClientRender", root, self.m_FieldRenderFunc)
 	triggerServerEvent("jobFarmerLeaveField", localPlayer)
 	killTimer(self.m_TickFarmerTimer)
 end
 
 function JobFarmer:renderOnField()
 	if not localPlayer.vehicle then return end
-	-- Reset speed if it is bigger than our treshold (please look at cruise control to see how this calculation works)
-	local speed = localPlayer.vehicle:getVelocity():getLength()
-	if speed > (17/195) then
-		localPlayer.vehicle:setVelocity(localPlayer.vehicle:getVelocity():getNormalized() * (17/195))
-	end
 end
 
 function JobFarmer:tickFarmerJob()
+	local distBetweenPlants = 5.5
 	if localPlayer.vehicle and localPlayer.vehicle.model == 531 and localPlayer.vehicleSeat == 0 and localPlayer.vehicle:getData("JobVehicle") and localPlayer.vehicle.towedByVehicle then
 		if localPlayer.vehicle.towedByVehicle:isWithinColShape(self.m_CurrentField) and localPlayer.vehicle.towedByVehicle.onGround then
+			-- cancel plant attempt if player is too close to own plant
+			if self.m_LastPlantPosition and getDistanceBetweenPoints3D(localPlayer.vehicle.towedByVehicle.position, self.m_LastPlantPosition) < distBetweenPlants then return end
+
 			local position = localPlayer.vehicle.towedByVehicle.position
 			local found = false
-			local objectsOnField = self.m_ObjectDetectionInStreamDistance 
-					and getElementsByType("object", resourceRoot, true) 
-					or getElementsWithinColShape(self.m_CurrentField, "object")
+			local objectsOnField = getElementsByType("object", resourceRoot, true) 
 
 			for i = 1, #objectsOnField do
 				local v = objectsOnField[i]
@@ -184,6 +173,7 @@ function JobFarmer:tickFarmerJob()
 
 			if not found then
 				triggerServerEvent("jobFarmerCreatePlant", localPlayer, {position.x, position.y, position.z}, localPlayer.vehicle)
+				self.m_LastPlantPosition = position
 			end
 		end
 	end
