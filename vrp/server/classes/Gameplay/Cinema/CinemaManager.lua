@@ -81,7 +81,7 @@ end
 
 function CinemaManager:onEnterMarkerHit(hitElement, matchingDimension)
     if hitElement:getType() == "player" and matchingDimension then
-        hitElement:triggerEvent("Cinema_onEnterMarkerHit")
+        hitElement:triggerEvent("Cinema_onEnterMarkerHit", self.m_CreateLobbyMarker)
     end   
 end   
 

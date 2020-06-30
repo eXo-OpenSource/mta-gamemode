@@ -11,7 +11,7 @@ inherit(Singleton, StateFactionArrestGUI)
 addRemoteEvents{"showStateFactionArrestGUI"}
 
 function StateFactionArrestGUI:constructor(col)
-	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(370/2), 300, 370)
+	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(370/2), 300, 370, true, false, col, 5)
 	self.m_Window = GUIWindow:new(0,0,300,500,_"Arrest-Menü",true,true,self)
 
 	self.m_List = GUIGridList:new(30, 80, self.m_Width-60, 170, self.m_Window)

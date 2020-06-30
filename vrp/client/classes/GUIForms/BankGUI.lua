@@ -10,12 +10,12 @@ inherit(Singleton, BankGUI)
 
 addRemoteEvents{"bankMoneyBalanceRetrieve", "groupMoneyBalanceRetrieve"}
 
-function BankGUI:constructor()
+function BankGUI:constructor(bankAtm)
 	GUIWindow.updateGrid()			-- initialise the grid function to use a window
 	self.m_Width = grid("x", 11) 	-- width of the window
 	self.m_Height = grid("y", 7.5) 	-- height of the window
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, bankAtm)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bankautomat", true, true, self)
 
 	local tabs = {"Ein/Auszahlen", "Überweisung"}

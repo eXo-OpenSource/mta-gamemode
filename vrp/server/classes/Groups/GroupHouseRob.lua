@@ -118,7 +118,7 @@ function GroupHouseRob:Event_onClickPed(  m, s, player)
 					player:meChat(true, "nickt mit dem Kopf.")
 					player.m_ClickPed = source
 					player:sendPedChatMessage( source:getData("Ped:Name"), "Lass mich mal sehen!")
-					player:triggerEvent("showHouseRobSellGUI")
+					player:triggerEvent("showHouseRobSellGUI", source)
 				else
 					player:meChat(true, "schüttelt den Kopf.")
 					player:sendPedChatMessage( source:getData("Ped:Name"), "Hmm... Komm wieder wenn du etwas hast!")

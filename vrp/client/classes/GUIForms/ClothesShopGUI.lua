@@ -10,10 +10,10 @@ inherit(Singleton, ClothesShopGUI)
 
 addRemoteEvents{"showClothesShopGUI"}
 
-function ClothesShopGUI:constructor(shopId, typeId, clothes)
+function ClothesShopGUI:constructor(shopId, typeId, clothes, ped)
 	localPlayer:setFrozen(true)
 
-	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
+	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2, true, false, ped)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kleidungsshop", false, true, self)
 	self.m_Grid = GUIGridList:new(0, self.m_Height*0.22, self.m_Width, self.m_Height*0.72, self.m_Window)
@@ -84,6 +84,6 @@ end
 addEventHandler("showClothesShopGUI", root,
 	function(shopId, typeId, clothes)
 		if ClothesShopGUI:isInstantiated() then delete(ClothesShopGUI:getSingleton()) end
-		ClothesShopGUI:new(shopId, typeId, clothes)
+		ClothesShopGUI:new(shopId, typeId, clothes, ped)
 	end
 )

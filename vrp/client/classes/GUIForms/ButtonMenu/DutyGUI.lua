@@ -2,8 +2,8 @@ DutyGUI = inherit(GUIButtonMenu)
 inherit(Singleton, DutyGUI)
 addRemoteEvents{"showDutyGUI"}
 
-function DutyGUI:constructor(isFaction, id, isOnDuty, specialSkin)
-	GUIButtonMenu.constructor(self, "Duty-Menü")
+function DutyGUI:constructor(isFaction, id, isOnDuty, specialSkin, ped)
+	GUIButtonMenu.constructor(self, "Duty-Menü", 300, 380, screenWidth/2-(width/2), screenHeight/2-(height/2), ped)
 	if isFaction then
 		local fac = FactionManager.Map[id]
 		if fac then
@@ -76,10 +76,10 @@ function DutyGUI:destructor()
 end
 
 
-function DutyGUI.open(isFaction, id, isOnDuty, specialSkin)
+function DutyGUI.open(isFaction, id, isOnDuty, specialSkin, ped)
 	if DutyGUI:isInstantiated() then
 		delete(DutyGUI:getSingleton())
 	end
-	DutyGUI:new(isFaction, id, isOnDuty, specialSkin)
+	DutyGUI:new(isFaction, id, isOnDuty, specialSkin, ped)
 end
 addEventHandler("showDutyGUI", root, DutyGUI.open)

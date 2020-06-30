@@ -85,7 +85,7 @@ function VehicleShop:Event_onShopOpen(player)
 				end
 			end
 		end
-		player:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
+		player:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles, player.m_VehicleShopMarker)
 	end
 end
 

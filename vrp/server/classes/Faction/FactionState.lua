@@ -199,7 +199,7 @@ function FactionState:Event_OnEvidenceEquipmentClick(button, state, player)
 					if not getElementData(player, "isEquipmentGUIOpen") then -- get/setData doesnt seem to sync to client despite sync-arguement beeing true(?)
 						setElementData(player, "isEquipmentGUIOpen", true, true)
 						player.m_LastEquipmentDepot = source
-						player:getFaction():getDepot():showEquipmentDepot(player)
+						player:getFaction():getDepot():showEquipmentDepot(player, source)
 					end
 				end
 			else
@@ -1462,7 +1462,7 @@ function FactionState:Event_FactionRearm()
 	if not self:isPlayerInDutyPickup(client) then return client:sendError(_("Du bist zu weit entfernt!", client)) end
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
-		client:triggerEvent("showFactionWeaponShopGUI")
+		client:triggerEvent("showFactionWeaponShopGUI", client.m_CurrentDutyPickup)
 		client:setHealth(100)
 		client:setArmor(100)
 		local wStorage, aStorage

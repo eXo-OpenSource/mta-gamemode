@@ -9,12 +9,12 @@
 CinemaLobbyGUI = inherit(GUIForm)
 inherit(Singleton, CinemaLobbyGUI)
 
-function CinemaLobbyGUI:constructor()
+function CinemaLobbyGUI:constructor(position)
     GUIWindow.updateGrid()
 	self.m_Width = grid("x", 16)
 	self.m_Height = grid("y", 11)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, position)
     self.m_LobbyWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kino Lobbys", true, true, self)
     self.m_LobbyWindow:addHelpButton(LexiconPages.Cinema)
     self.m_LobbyGrid = GUIGridGridList:new(1, 2, 15, 7, self.m_LobbyWindow)

@@ -10,8 +10,8 @@ inherit(Singleton, GasStationShopGUI)
 
 addRemoteEvents{"showGasStationShopGUI", "refreshGasStationShopGUI"}
 
-function GasStationShopGUI:constructor(callback, name)
-	GUIForm.constructor(self, screenWidth/2-240, screenHeight/2-150, 480, 300)
+function GasStationShopGUI:constructor(callback, name, ped)
+	GUIForm.constructor(self, screenWidth/2-240, screenHeight/2-150, 480, 300, true, false, ped)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
@@ -114,11 +114,11 @@ function GasStationShopGUI:ButtonBuy_Click()
 end
 
 addEventHandler("showGasStationShopGUI", root,
-	function(name)
+	function(name, ped)
 		if GasStationShopGUI:isInstantiated() then delete(GasStationShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount)
 			triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
 		end
-		GasStationShopGUI:new(callback, name)
+		GasStationShopGUI:new(callback, name, ped)
 	end
 )

@@ -10,6 +10,7 @@ CinemaManager = inherit(Singleton)
 
 function CinemaManager:constructor()
     self.m_Lobbys = {}
+    self.m_MarkerPosition = Vector3(-2161.24, 640.62, 1051.5)
 
     addRemoteEvents{"Cinema_onEnterMarkerHit", "Cinema_triggerLobbyUpdate", "Cinema_returnLobbyDetails", "Cinema_getPasswordValidationResponse", "Cinema_createLobbyInstance", "Cinema_deleteLobby"}
    
@@ -38,20 +39,20 @@ function CinemaManager:constructor()
     engineImportTXD(self.m_EntraceTXD, 14534)
 end   
 
-function CinemaManager:lobbyGUI()
+function CinemaManager:lobbyGUI(marker)
     self:closeGUI()
-    self.m_CinemaGUI = CinemaLobbyGUI:new()
+    self.m_CinemaGUI = CinemaLobbyGUI:new(self.m_MarkerPosition)
     self:requestLobbyDetails()
 end 
 
 function CinemaManager:createLobbyGUI()
     self:closeGUI()
-    self.m_CinemaGUI = CinemaCreateLobbyGUI:new()
+    self.m_CinemaGUI = CinemaCreateLobbyGUI:new(self.m_MarkerPosition)
 end   
 
 function CinemaManager:PasswordGUI(lobbyHost)
     self:closeGUI()
-    self.m_CinemaGUI = CinemaPasswordGUI:new(lobbyHost)
+    self.m_CinemaGUI = CinemaPasswordGUI:new(lobbyHost, self.m_MarkerPosition)
 end
 
 function CinemaManager:videoGUI()

@@ -9,12 +9,12 @@
 CinemaPasswordGUI = inherit(GUIForm)
 inherit(Singleton, CinemaPasswordGUI)
 
-function CinemaPasswordGUI:constructor(lobbyHost)
+function CinemaPasswordGUI:constructor(lobbyHost, position)
     GUIWindow.updateGrid()
 	self.m_Width = grid("x", 8)
 	self.m_Height = grid("y", 5)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, position)
 	
 	self.m_PasswordWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Passwort eingeben", true, true, self)
 

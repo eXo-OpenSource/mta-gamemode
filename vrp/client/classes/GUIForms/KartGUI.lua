@@ -13,8 +13,8 @@ addRemoteEvents{"showKartGUI", "receiveKartDatas"}
 local lapPrice = 20
 local lapPackDiscount = 4
 
-function KartGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 460)
+function KartGUI:constructor(marker)
+	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 460, true, false, marker)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
@@ -142,9 +142,9 @@ function KartGUI:receiveToptimes(mapname, mapauthor, toptimes, mapID)
 end
 
 addEventHandler("showKartGUI", root,
-	function(show)
+	function(show, marker)
 		if show then
-			KartGUI:new()
+			KartGUI:new(marker)
 		else
 			delete(KartGUI:getSingleton())
 		end

@@ -9,7 +9,7 @@ JobHelpGUI = inherit(GUIForm)
 inherit(Singleton, JobHelpGUI)
 
 function JobHelpGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460, true, false, Vector3(2750.27, -2374.66, 819.24))
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Job Info", true, true, self)
 	self.m_InfoLabel = GUILabel:new(5, 35, self.m_Width-10, 20, "Doppelklicke um die Position auf der Karte zu markieren!", self):setColor(Color.Red)

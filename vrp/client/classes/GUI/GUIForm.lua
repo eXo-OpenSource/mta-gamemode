@@ -9,7 +9,7 @@ GUIForm = inherit(CacheArea)
 GUIForm.Map = {}
 GUIForm.BlurCounter = 0
 
-function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI)
+function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI, rangeElement, rangeToClose)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true, postGUI)
 	self.m_KeyBinds = {}
 	if incrementCursorCounter ~= false then
@@ -25,6 +25,8 @@ function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, 
 		GUIForm.BlurCounter = GUIForm.BlurCounter + 1
 		RadialShader:getSingleton():setEnabled(true)
 	end
+
+	self:addClosingRange(rangeElement, rangeToClose)
 end
 
 function GUIForm:destructor()
@@ -40,6 +42,10 @@ function GUIForm:destructor()
 	self.m_KeyBinds = {}
 
 	self:close(false)
+
+	if self.m_RangeColShape then
+		self.m_RangeColShape:destroy()
+	end
 
 	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
@@ -176,3 +182,26 @@ GUIForm.onClientKey =
 
 		cancelEvent()
 	end
+
+function GUIForm:addClosingRange(rangeElement, rangeToClose)
+	if not rangeElement then
+		return
+	end
+	self.m_RangeElement = rangeElement
+	self.m_RangeToClose = rangeToClose or 10
+
+	if isElement(self.m_RangeElement) then -- determine whether its an MTA Element or an Vector
+		self.m_RangeColShape = createColSphere(self.m_RangeElement:getPosition(), self.m_RangeToClose)
+		self.m_RangeColShape:attach(self.m_RangeElement)
+	else
+		self.m_RangeColShape = createColSphere(self.m_RangeElement, self.m_RangeToClose)
+	end
+
+	addEventHandler("onClientColShapeLeave", self.m_RangeColShape, 
+		function(leaveElement)
+			if leaveElement == localPlayer then
+				delete(self)
+			end
+		end
+	)
+end

@@ -40,7 +40,7 @@ function PlayHouse:constructor()
 	addEventHandler("onClientMarkerHit", self.m_ShopMarker, function(hE)
 		if hE == localPlayer and hE:getInterior() == source:getInterior() then 
 			if hE.position.z < source.position.z+2 then
-				PlayHouseShopGUI:new()
+				PlayHouseShopGUI:new(source)
 			end
 		end
 	end)

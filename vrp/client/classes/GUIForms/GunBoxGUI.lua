@@ -11,7 +11,7 @@ inherit(Singleton, GunBoxGUI)
 addRemoteEvents{"openGunBox", "receiveGunBoxData"}
 
 function GunBoxGUI:constructor(gunBoxObject)
-    GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
+    GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400, true, false, gunBoxObject)
 
     self.ms_SlotsSettings = {
         ["weapon"] = {["color"] = Color.Orange, ["btnColor"] = Color.Red, ["emptyText"] = _"Keine Waffe"}

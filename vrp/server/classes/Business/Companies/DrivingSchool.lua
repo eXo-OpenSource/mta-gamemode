@@ -117,7 +117,7 @@ function DrivingSchool:Event_callInstructor()
 	self:sendShortMessage(_("Der Spieler %s sucht einen Fahrlehrer! Bitte melden!", client, client.name))
 end
 
-function DrivingSchool:Event_startTheory()
+function DrivingSchool:Event_startTheory(ped)
 	if client.m_HasTheory then
 		client:sendWarning(_("Du hast die Theorieprüfung bereits bestanden!", client))
 		return
@@ -130,7 +130,7 @@ function DrivingSchool:Event_startTheory()
 				return
 			end
 
-			player:triggerEvent("showDrivingSchoolTest")
+			player:triggerEvent("showDrivingSchoolTest", ped)
 		end,
 		function() end,
 		client

@@ -10,7 +10,7 @@ VehicleKeyGUI = inherit(GUIForm)
 addRemoteEvents{"vehicleKeysRetrieve"}
 
 function VehicleKeyGUI:constructor(vehicleElement)
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/ASPECT_RATIO_MULTIPLIER/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.3/ASPECT_RATIO_MULTIPLIER, screenHeight*0.4)
+	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/ASPECT_RATIO_MULTIPLIER/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.3/ASPECT_RATIO_MULTIPLIER, screenHeight*0.4, true, false, vehicleElement)
 	self.m_Element = vehicleElement
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Schlüsselverwaltung", true, true, self)

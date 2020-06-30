@@ -12,7 +12,7 @@ addRemoteEvents{"showHorseBetGUI", "receiveKartDatas"}
 
 HorseBetGUI.Bets = {10, 100, 1000, 5000, 10000, 50000, 100000}
 function HorseBetGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 460)
+	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 460, true, false, Vector3(822.84, 2.07, 1003.3))
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Pferdewetten", true, true, self)
 

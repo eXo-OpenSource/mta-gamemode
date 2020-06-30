@@ -150,14 +150,14 @@ function Depot:addMagazineD(id,amount)
 	self.m_Weapons[id]["Munition"] = self.m_Weapons[id]["Munition"] + amount
 end
 
-function Depot:showItemDepot(player)
-	player:triggerEvent("ItemDepotOpen")
+function Depot:showItemDepot(player, depotElement)
+	player:triggerEvent("ItemDepotOpen", depotElement)
 	player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
 end
 
-function Depot:showEquipmentDepot(player)
+function Depot:showEquipmentDepot(player, depotElement)
 	player:getInventory():syncClient()
-	player:triggerEvent("ItemEquipmentOpen")
+	player:triggerEvent("ItemEquipmentOpen", depotElement)
 	player:triggerEvent("ItemEquipmentRefresh", self.m_Id, self.m_Equipments, ArmsDealer.Data, true)
 end
 

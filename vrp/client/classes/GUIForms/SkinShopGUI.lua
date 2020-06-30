@@ -9,10 +9,10 @@ SkinShopGUI = inherit(GUIForm)
 inherit(Singleton, SkinShopGUI)
 addRemoteEvents{"skinBought"}
 
-function SkinShopGUI:constructor()
+function SkinShopGUI:constructor(marker)
 	localPlayer:setFrozen(true)
 
-	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
+	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2, true, false, marker)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self)
 	self.m_SkinList = GUIGridList:new(0, self.m_Height*0.22, self.m_Width, self.m_Height*0.72, self.m_Window)
@@ -99,7 +99,7 @@ function SkinShopGUI.initializeAll()
 							localPlayer:setRotation(v.PlayerRot)
 							setCameraMatrix(unpack(v.CameraMatrix))
 
-							SkinShopGUI:new()
+							SkinShopGUI:new(marker)
 						else
 							ErrorBox:new(_"Du kannst im Dienst nicht den Skin wechseln!")
 						end

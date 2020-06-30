@@ -10,7 +10,7 @@ inherit(Singleton, GroupPropertyBuy)
 addRemoteEvents{"GetImmoForSale","ForceClose" }
 
 function GroupPropertyBuy:constructor()
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.3/2, screenWidth*0.4, screenHeight*0.3)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.3/2, screenWidth*0.4, screenHeight*0.3, true, false, Vector3(2763.01, -2374.46, 819.24))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Erwerbliche Immobilien", true, true, self)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.16, self.m_Width*0.98, self.m_Height*0.04, _"Hier kannst du eine Immobilie für deine Firma/Gang erwerben!", self.m_Window):setFont(VRPFont(self.m_Height*0.11)):setMultiline(true)
 	self.m_BuyButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.15, _"Kaufen", self.m_Window):setBackgroundColor(Color.Green)
@@ -71,13 +71,12 @@ end
 
 function GroupPropertyBuy:updateList( _table )
 	self.m_ImmoTable = _table
-	outputDebug(_table)
 	if _table then
 		self.m_ImmoGrid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.28, self.m_Width*0.9, self.m_Height*0.5, self.m_Window)
 		self.m_ImmoGrid:addColumn(_"Verfügbare Immobilien", 1)
 		for id, obj in pairs( _table ) do
-			if obj.m_OwnerID == 0 then
-				item = self.m_ImmoGrid:addItem(obj.m_Price.."$ - "..obj.m_Name)
+			if obj.owner == 0 then
+				item = self.m_ImmoGrid:addItem(obj.price.."$ - "..obj.name)
 				item.Id = id
 				item.onLeftDoubleClick = function ()  end
 			end

@@ -210,7 +210,7 @@ function Kart:startMarkerHit(hitElement, matchingDimension)
 	if not matchingDimension then return end
 	if hitElement.type ~= "player" then return end
 
-	hitElement:triggerEvent("showKartGUI", true)
+	hitElement:triggerEvent("showKartGUI", true, source)
 end
 
 function Kart:startFinishMarkerHit(hitElement, matchingDimension)

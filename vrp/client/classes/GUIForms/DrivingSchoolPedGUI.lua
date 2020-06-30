@@ -8,11 +8,11 @@
 DrivingSchoolPedGUI = inherit(GUIButtonMenu)
 inherit(Singleton, DrivingSchoolPedGUI)
 
-function DrivingSchoolPedGUI:constructor(automaticTestAvailable)
-	GUIButtonMenu.constructor(self, "Fahrschule")
+function DrivingSchoolPedGUI:constructor(automaticTestAvailable, ped)
+	GUIButtonMenu.constructor(self, "Fahrschule", 300, 380, screenWidth/2-(width/2), screenHeight/2-(height/2), ped)
 	self:addItem(_"Theorietest", Color.Accent,
 		function()
-			triggerServerEvent("drivingSchoolStartTheory", localPlayer)
+			triggerServerEvent("drivingSchoolStartTheory", localPlayer, ped)
 			self:delete()
 		end
 	)
