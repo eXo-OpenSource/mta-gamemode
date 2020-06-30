@@ -40,7 +40,7 @@ function JobTrashman:start()
 	self:reset()
 
 	-- Show text in help menu
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobTrashman)
 end
 
 function JobTrashman:onInfo()

@@ -18,7 +18,7 @@ function JobHeliTransport:constructor()
 end
 
 function JobHeliTransport:start()
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobHeliTransport)
 end
 
 function JobHeliTransport:stop()

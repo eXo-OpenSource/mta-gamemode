@@ -9,9 +9,9 @@ JobFarmer = inherit(Job)
 addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarmerData", "Job.updateIncome"}
 
 function JobFarmer:constructor()
-	Job.constructor(self, 1, -62.62, 76.34, 3.12, 250, "Farmer.png", {117, 93, 65}, "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
+	Job.constructor(self, 158, -62.62, 76.34, 3.12, 250, "Farmer.png", {117, 93, 65}, "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
 
-	self.m_Ped2 = createPed(1, -19.04, 1175.55, 19.56, 0)
+	self.m_Ped2 = createPed(158, -19.04, 1175.55, 19.56, 0)
 	setElementData(self.m_Ped2, "clickable", true)
 	self.m_Ped2:setData("Job", self)
 	self.m_Ped2:setData("NPC:Immortal", true)
@@ -78,7 +78,7 @@ end
 
 function JobFarmer:start()
 	-- Show text in help menu
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobFarmer)
 
 	-- Create info display
 	self.m_FarmerImage = GUIImage:new(screenWidth/2-300/2, 10, 300, 50, "files/images/Jobs/Farmerdisplay.png")

@@ -23,7 +23,7 @@ end
 
 function JobPizza:start()
 	self:nextDeliver()
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobPizzaDelivery)
 end
 
 function JobPizza:throwPizza()
