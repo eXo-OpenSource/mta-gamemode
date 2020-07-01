@@ -254,6 +254,7 @@ function VehicleImportManager:internalCreateVehicle(shop, model, variant, paymen
 	veh.transportShopId 		= shop
 	veh.transportShopVariant 	= variant
 	veh.transportPayment 		= payment
+	veh.importVehicle 			= true
 	
 	veh.destinationCol = ShopManager.VehicleShopsMap[shop].m_NonCollissionCol
 	self:addLoadingCol(veh.destinationCol)
