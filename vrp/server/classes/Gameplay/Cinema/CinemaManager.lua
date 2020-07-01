@@ -77,6 +77,13 @@ function CinemaManager:constructor()
                 player.CinemaLobby:deleteLobbyOnQuitOrDeath(player)
             end
         end)
+
+    PlayerManager:getSingleton():getAFKHook():register(
+        function(player)
+            if player.CinemaLobby then
+                player.CinemaLobby:deleteLobbyOnQuitOrDeath(player)
+            end
+        end)  
 end   
 
 function CinemaManager:onEnterMarkerHit(hitElement, matchingDimension)
@@ -90,11 +97,11 @@ function CinemaManager:getLobbyDetails()
 end    
 
 function CinemaManager:validatePassword(enteredPassword, lobbyHost)
-        if self.m_Lobbys[lobbyHost].lobbyPassword == enteredPassword then
-            client:triggerEvent("Cinema_getPasswordValidationResponse", true, lobbyHost)
-        else
-            client:triggerEvent("Cinema_getPasswordValidationResponse", false)
-        end    
+    if self.m_Lobbys[lobbyHost] and self.m_Lobbys[lobbyHost].lobbyPassword == enteredPassword then
+        client:triggerEvent("Cinema_getPasswordValidationResponse", true, lobbyHost)
+    else
+        client:triggerEvent("Cinema_getPasswordValidationResponse", false)
+    end    
 end
 
 function CinemaManager:createLobbyInstance(lobbyName, lobbyPassword, settingVideoAddHostOnly, settingManageVideoHostOnly)
@@ -116,46 +123,62 @@ function CinemaManager:createLobbyInstance(lobbyName, lobbyPassword, settingVide
 end    
 
 function CinemaManager:addPlayerToLobby(lobbyHost)
-    self.m_Lobbys[lobbyHost].lobbyInstance:addPlayer(client)
-    self:log(client, lobbyHost, "join lobby")
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:addPlayer(client)
+        self:log(client, lobbyHost, "join lobby")
+    end
 end    
 
 function CinemaManager:deleteLobby(lobbyHost)
-    self:log(lobbyHost, lobbyHost, "delete lobby")
-    delete(self.m_Lobbys[lobbyHost].lobbyInstance)
-    self.m_Lobbys[lobbyHost] = nil
-    self.m_LobbysReturnToClient[lobbyHost] = nil
+    if self.m_Lobbys[lobbyHost] then
+        self:log(lobbyHost, lobbyHost, "delete lobby")
+        delete(self.m_Lobbys[lobbyHost].lobbyInstance)
+        self.m_Lobbys[lobbyHost] = nil
+        self.m_LobbysReturnToClient[lobbyHost] = nil
+    end
 end
 
 function CinemaManager:addVideoToQueue(lobbyHost, URL)
-    self.m_Lobbys[lobbyHost].lobbyInstance:addToQueue(URL, client:getName())
-    self:log(client, lobbyHost, "add video", URL)
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:addToQueue(URL, client:getName())
+        self:log(client, lobbyHost, "add video", URL)
+    end
 end    
 
 function CinemaManager:removeVideoFromQueue(lobbyHost, URL)
-    self.m_Lobbys[lobbyHost].lobbyInstance:removeFromQueue(URL)
-    self:log(client, lobbyHost, "remove video", URL)
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:removeFromQueue(URL)
+        self:log(client, lobbyHost, "remove video", URL)
+    end
 end    
 
 function CinemaManager:updateCurrentlyPlaying(lobbyHost, URL)
-    self.m_Lobbys[lobbyHost].lobbyInstance:updateCurrentlyPlaying(URL)
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:updateCurrentlyPlaying(URL)
+    end
 end      
 
 function CinemaManager:requestCurrentQueue(lobbyHost)
-    self.m_Lobbys[lobbyHost].lobbyInstance:getCurrentQueue(client)
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:getCurrentQueue(client)
+    end
 end    
 
 function CinemaManager:syncVideoForPlayers(lobbyHost, URL)
-    self.m_Lobbys[lobbyHost].lobbyInstance:syncVideo(URL)
-    self:log(client, lobbyHost, "play video", URL)
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:syncVideo(URL)
+        self:log(client, lobbyHost, "play video", URL)
+    end
 end    
 
 function CinemaManager:syncRemoveVideo(lobbyHost)
-    self.m_Lobbys[lobbyHost].lobbyInstance:syncRemoveVideo()
+    if self.m_Lobbys[lobbyHost] then
+        self.m_Lobbys[lobbyHost].lobbyInstance:syncRemoveVideo()
+    end
 end   
 
 function CinemaManager:adminRemoveLobby(lobbyHost)
-    if client:getRank() >= ADMIN_RANK_PERMISSION["cinemaRemoveLobby"] then
+    if client:getRank() >= ADMIN_RANK_PERMISSION["cinemaRemoveLobby"] and self.m_Lobbys[lobbyHost] then
         self:log(client, lobbyHost, "delete lobby")
         delete(self.m_Lobbys[lobbyHost].lobbyInstance)
         self.m_Lobbys[lobbyHost] = nil
