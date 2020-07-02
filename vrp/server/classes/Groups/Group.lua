@@ -732,7 +732,7 @@ function Group:payDay()
 
 	for index, vehicle in pairs(self:getVehicles()) do
 		local tax, isTowed = vehicle:getVehicleTaxForGroup()
-		if isTowed then
+		if not isTowed then
 			outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getVehicleTaxForGroup()
 		else
 			if not outgoingSeperated["Abstellhof Gebühren"] then 
