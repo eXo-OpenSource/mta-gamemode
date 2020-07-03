@@ -1106,7 +1106,6 @@ local tpTable = {
         ["lkw1"] =       	{["pos"] = Vector3(2409.07, -2471.10, 13.30),  	["typ"] = "Jobs"},
         ["lkw2"] =       	{["pos"] = Vector3(-234.96, -254.46,  1.11),  	["typ"] = "Jobs"},
         ["holzfäller"] = 	{["pos"] = Vector3(1041.02, -343.88,  73.67),  	["typ"] = "Jobs"},
-        ["boxer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
         ["farmer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
         ["farmer2"] =     	{["pos"] = Vector3( -2103.7, -2249, 30.6), 		["typ"] = "Jobs"},
         ["sweeper"] =    	{["pos"] = Vector3(219.49, -1429.61, 13.01),  	["typ"] = "Jobs"},
