@@ -70,6 +70,10 @@ function MechanicTow:respawnVehicle(vehicle)
 		if instanceof(vehicle, PermanentVehicle, true) then
 			local player, isOffline = DatabasePlayer.get(vehicle:getOwner())
 
+			if isOffline then
+				player:load()
+			end
+
 			player:transferBankMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
 
 			if isOffline then
