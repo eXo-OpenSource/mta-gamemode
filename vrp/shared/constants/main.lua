@@ -136,7 +136,6 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
-	["freeVip"] = RANK.Moderator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -152,9 +151,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
-	["loginFix"] = RANK.Moderator,
-	["vehicleMenu"] = RANK.Moderator,
-	["syncForum"] = RANK.Supporter,
+	["throwaway"] = RANK.Moderator,
+
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
@@ -169,7 +167,12 @@ ADMIN_RANK_PERMISSION = {
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
+	["loginFix"] = RANK.Moderator,
+	["syncForum"] = RANK.Supporter,
+	["freeVip"] = RANK.Moderator,
 	["cinemaRemoveLobby"] = RANK.Supporter,
+	["openAdminMenu"] = RANK.Ticketsupporter,
+	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
 
 	--group management
 	["setFaction"] = RANK.Administrator,
@@ -228,6 +231,7 @@ ADMIN_RANK_PERMISSION = {
 	["transactionMenu"] = RANK.Administrator,
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
 	["serialAccountMenu"] = RANK.Supporter,
+	["vehicleMenu"] = RANK.Moderator,
 
 	["openMapEditor"] = RANK.Administrator,
 	["createNewMap"] = RANK.Administrator,
@@ -235,10 +239,6 @@ ADMIN_RANK_PERMISSION = {
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
-
-	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
-
-	["throwaway"] = RANK.Moderator,
 }
 
 GroupRank = {
