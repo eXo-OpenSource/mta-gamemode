@@ -329,7 +329,11 @@ end
 function PlayerManager:playerJoin()
 	-- Set a random nick to prevent blocking nicknames
 	source:setName(getRandomUniqueNick())
-	source:join()
+	if source.join then
+		source:join()
+	else
+		source:kick("Fehler beim Spielbeitritt, melde Dich bitte im Support!")
+	end
 end
 
 function PlayerManager:playerCommand(cmd)
