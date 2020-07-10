@@ -275,7 +275,7 @@ end
 
 function Admin:openAdminMenu(player)
 	if client then player = client end
-	if ADMIN_RANK_PERMISSION["openAdminMenu"] >= player:getRank() then
+	if player:getRank() >= ADMIN_RANK_PERMISSION["openAdminMenu"] then
 		player:triggerEvent("showAdminMenu", self.m_BankAccount:getMoney())
 		player:triggerEvent("adminRefreshEventMoney", self.m_BankAccount:getMoney())
 	else
