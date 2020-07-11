@@ -188,7 +188,11 @@ function MapEditor:requestControlForObject(callbackType, currentObject)
             client:triggerEvent("MapEditor:giveControlPermission", object, callbackType, true, object.m_TextureData)
             return
         else
-            client:sendShortMessage(_("Dieses Objekt gehört zu Map #%s!\nKlicke hier, um Map #%s zu bearbeiten!", client, object.m_MapId, object.m_MapId), "Map Editor: Hinweis", false, 7500, "MapEditor:startMapEditing", false, client, object.m_MapId)
+            if client:getRank() >= ADMIN_RANK_PERMISSION["openMapEditor"] then
+                client:sendShortMessage(_("Dieses Objekt gehört zu Map #%s!\nKlicke hier, um Map #%s zu bearbeiten!", client, object.m_MapId, object.m_MapId), "Map Editor: Hinweis", false, 7500, "MapEditor:startMapEditing", false, client, object.m_MapId)
+            else
+                client:sendShortMessage(_("Dieses Objekt gehört zu Map #%s", client, object.m_MapId, object.m_MapId), "Map Editor: Hinweis", false, 7500)
+            end
         end
 
     end
