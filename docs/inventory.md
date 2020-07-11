@@ -12,6 +12,7 @@
 - [ ] Reimplement trading
 - [p] Add item owner (only change if item has been traded by the owner?)
 
+- [ ] Add logic for cooling box size!!!
 - [ ] Write testing list
 - [ ] Implement new weapon handling with inventory
 - [ ] Rewrite all ItemClasses for new Inventory
