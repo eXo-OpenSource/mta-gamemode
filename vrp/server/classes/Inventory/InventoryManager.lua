@@ -32,8 +32,7 @@ InventoryTemplates = {
 	VehicleTrunk = 5;
 }
 
-InventoryItemClasses = {
-}
+InventoryItemClasses = {}
 
 function InventoryManager:constructor()
 	InventoryItemClasses = {
@@ -68,6 +67,10 @@ function InventoryManager:constructor()
 		ItemAlcohol = ItemAlcohol;
 		ItemFirework = ItemFirework;
 		ItemThrowable = ItemThrowable;
+		ItemFishingRod = ItemFishingRod;
+		ItemFishingLexicon = ItemFishingLexicon;
+		ItemCoolingBox = ItemCoolingBox;
+		ItemBait = ItemBait;
 		WearableHelmet = WearableHelmet;
 		WearableShirt = WearableShirt;
 		WearablePortables = WearablePortables;
@@ -935,12 +938,12 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (62, 'swatshield', 3, 'WearablePortables', 'Swatschild', 'Ein Einsatzschild für Spezialtruppen!', 'Objekte/riot_shield.png', 1631, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (63, 'stolenGoods', 3, '-', 'Diebesgut', 'Eine Beutel voller Gegenstände! Legal\'', 'Objekte/diebesgut.png', 3915, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (64, 'clothing', 3, '-', 'Kleidung', 'Ein Set Kleidung.', 'Items/Kleidung.png', 1275, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (65, 'bambooFishingRod', 3, 'ItemFishing', 'Bambusstange', 'Wollen fangen Fische\'', 'Items/Bamboorod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (66, 'coolingBoxSmall', 3, 'ItemFishing', 'Kleine Kühltasche', 'Kühlt gut, wieder und wieder!', 'Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
-		INSERT INTO `vrp_items` VALUES (67, 'coolingBoxMedium', 3, 'ItemFishing', 'Kühltasche', 'Kühlt gut, wieder und wieder!', 'Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
-		INSERT INTO `vrp_items` VALUES (68, 'coolingBoxLarge', 3, 'ItemFishing', 'Kühlbox', 'Kühlt gut, wieder und wieder!', 'Items/Coolbox.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+		INSERT INTO `vrp_items` VALUES (65, 'bambooFishingRod', 3, 'ItemFishingRod', 'Bambusstange', 'Wollen fangen Fische\'', 'Items/Bamboorod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (66, 'coolingBoxSmall', 3, 'ItemCoolingBox', 'Kleine Kühltasche', 'Kühlt gut, wieder und wieder!', 'Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+		INSERT INTO `vrp_items` VALUES (67, 'coolingBoxMedium', 3, 'ItemCoolingBox', 'Kühltasche', 'Kühlt gut, wieder und wieder!', 'Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
+		INSERT INTO `vrp_items` VALUES (68, 'coolingBoxLarge', 3, 'ItemCoolingBox', 'Kühlbox', 'Kühlt gut, wieder und wieder!', 'Items/Coolbox.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
 		INSERT INTO `vrp_items` VALUES (69, 'swathelmet', 3, 'WearableHelmet', 'Einsatzhelm', 'Falls es hart auf hart kommt.', 'Objekte/einsatzhelm.png', 3911, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0);
-		INSERT INTO `vrp_items` VALUES (70, 'bait', 3, 'ItemFishing', 'Köder', 'Lockt ein paar Fische an und vereinfacht das Angeln', 'Items/Bait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (70, 'bait', 3, 'ItemBait', 'Köder', 'Lockt ein paar Fische an und vereinfacht das Angeln', 'Items/Bait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (71, 'easterEgg', 3, '-', 'Osterei', 'Event-Special: Osterei', 'Items/Osterei.png', 1933, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (72, 'bunnyEars', 3, 'WearableHelmet', 'Hasenohren', 'Event-Special Hasenohren', 'Objekte/Hasenohren.png', 1934, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (73, 'warningCones', 4, 'ItemBarricade', 'Warnkegel', 'zum Markieren von Einsatzorten', 'Objekte/Warnkegel.png', 1238, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -967,12 +970,12 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (94, 'keycard', 3, '-', 'Keycard', 'Benutze die Keycard um Knasttüren zu öffnen', 'Items/Keycard.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (95, 'flowerSeed', 1, 'ItemPlant', 'Blumen-Samen', 'Pflanze diese Samen um einen wunderschönen Blumenstrauß zu ernten', 'Drogen/Samen.png', 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (96, 'defuseKit', 3, 'ItemDefuseKit', 'DefuseKit', 'Zum Entschärfen von SLAMs', 'Items/DefuseKit.png', 2886, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (97, 'fishLexicon', 3, 'ItemFishing', 'Fischlexikon', 'Sammelt Informationen über deine geangelte Fische!', 'Items/FishEncyclopedia.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (98, 'fishingRod', 3, 'ItemFishing', 'Angelrute', 'Für angehende Angler!', 'Items/fishingrod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (99, 'expertFishingRod', 3, 'ItemFishing', 'Profi Angelrute', 'Für profi Angler!', 'Items/ProFishingrod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (100, 'legendaryFishingRod', 3, 'ItemFishing', 'Legendäre Angelrute', 'Für legendäre Angler! Damit fängst du jeden Fisch!', 'Items/LegendaryFishingrod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (101, 'glowBait', 3, 'ItemFishing', 'Leuchtköder', 'Lockt allgemeine Fische an', 'Items/Glowingbait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (102, 'pilkerBait', 3, 'ItemFishing', 'Pilkerköder', 'Spezieller Köder für Meeresangeln', 'Items/Pilkerbait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (97, 'fishLexicon', 3, 'ItemFishingLexicon', 'Fischlexikon', 'Sammelt Informationen über deine geangelte Fische!', 'Items/FishEncyclopedia.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (98, 'fishingRod', 3, 'ItemFishingRod', 'Angelrute', 'Für angehende Angler!', 'Items/fishingrod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (99, 'expertFishingRod', 3, 'ItemFishingRod', 'Profi Angelrute', 'Für profi Angler!', 'Items/ProFishingrod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (100, 'legendaryFishingRod', 3, 'ItemFishingRod', 'Legendäre Angelrute', 'Für legendäre Angler! Damit fängst du jeden Fisch!', 'Items/LegendaryFishingrod.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (101, 'glowBait', 3, 'ItemBait', 'Leuchtköder', 'Lockt allgemeine Fische an', 'Items/Glowingbait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (102, 'pilkerBait', 3, 'ItemBait', 'Pilkerköder', 'Spezieller Köder für Meeresangeln', 'Items/Pilkerbait.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (103, 'swimmer', 3, 'ItemFishing', 'Schwimmer', 'Zubehör. Auf der Wasseroberfläche treibender Bissanzeiger', 'Items/Bobber.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (104, 'spinner', 3, 'ItemFishing', 'Spinner', 'Zubehör. Eine rotierende Metallscheibe für ein einfaches und effektives fangen von kleinen als auch große Fische', 'Items/Spinner.png', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (105, 'clubCard', 3, '-', 'Clubkarte', 'Willkommen im Club der Riskanten.', 'Items/Clubcard.png', 2886, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
@@ -1273,6 +1276,17 @@ function InventoryManager:migrate()
 						inventoryItem.Durability = item.Value
 					elseif itemTechnicalName == "bambooFishingRod" or itemTechnicalName == "fishingRod" or itemTechnicalName == "expertFishingRod" or itemTechnicalName == "legendaryFishingRod" then
 						inventoryItem.Durability = item.WearLevel
+						inventoryItem.Metadata = {}
+
+						local data = fromJSON(item.Value)
+
+						if data and data.accessories then
+							inventoryItem.Metadata.accessory = ItemMapping[data.accessories]
+						end
+
+						if data and data.bait then
+							inventoryItem.Metadata.bait = ItemMapping[data.bait]
+						end
 					elseif itemTechnicalName == "swimmer" or itemTechnicalName == "spinner" then
 						inventoryItem.Durability = item.WearLevel
 					elseif itemTechnicalName == "clubCard" then

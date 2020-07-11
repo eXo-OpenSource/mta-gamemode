@@ -28,6 +28,7 @@
 
 - [o] Create new GUI for inventory interaction <- partialy __needs__ better GUI?
 
+- [x] Fix migration of fishing rod metadata
 - [x] Replace property inventory with new inventory
 - [x] Replace weapon depot with new inventory
 - [x] Write inventory migration
@@ -59,6 +60,9 @@
 * WearableClothes = WearableClothes;
 * ItemEntrance = ItemEntrance;
 * ItemDoor = ItemDoor; - started
+
+
+* ItemFishingRod = ItemFishingRod; - partialy - add logic to remove rod if user loggs off
 
 
 * ~~WearableShirt = WearableShirt;~~ - done
