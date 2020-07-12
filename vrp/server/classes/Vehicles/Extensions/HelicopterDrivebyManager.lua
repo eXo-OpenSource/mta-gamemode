@@ -23,7 +23,7 @@ function HelicopterDrivebyManager:constructor()
 end
 
 function HelicopterDrivebyManager:startDriveby()
-    if client.vehicle then
+    if client.vehicle and client.vehicleSeat > 0 then
         client.m_HelicopterDrivebyVehicle = client.vehicle
         client.m_HelicopterDrivebySeat = client.vehicleSeat
 
