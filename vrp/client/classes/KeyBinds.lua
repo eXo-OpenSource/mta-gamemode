@@ -217,7 +217,7 @@ end
 function KeyBinds:toggleHelicopterDriveBy() 
 	if not VehicleInfrared:isInstantiated() and (not self.m_LastHeliTrigger or getTickCount() > self.m_LastHeliTrigger) then 
 		self.m_LastHeliTrigger = getTickCount() + 200
-		triggerServerEvent("HelicopterDriveBy:toggle", localPlayer) 
+		HelicopterDrivebyManager:getSingleton():tryDriveby()
 	end
 end
 

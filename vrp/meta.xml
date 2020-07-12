@@ -476,6 +476,7 @@
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/GPS/GPS.lua" type="server"/>
 
 	<!-- Events -->
@@ -1090,6 +1091,7 @@
 	<script src="client/classes/Vehicles/Extensions/VehicleTransportExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>
@@ -3445,7 +3447,6 @@
 	<!-- Includes -->
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
-	<include resource="helicopterdriveby" />
 	<include resource="reload"/>
 	<include resource="helicopterrope" />
 	<include resource="heligrab" />

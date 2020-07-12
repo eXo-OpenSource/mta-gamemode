@@ -195,6 +195,7 @@ function Core:ready() --onClientResourceStart
 	CasinoWheel:new()
 	PedScale:new()
 	VehicleGuns:new()
+	HelicopterDrivebyManager:new()
 end
 
 function Core:afterLogin()

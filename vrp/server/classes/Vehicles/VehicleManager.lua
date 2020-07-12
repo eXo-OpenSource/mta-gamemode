@@ -81,6 +81,19 @@ function VehicleManager:constructor()
 
 				source.m_GrabbedVehicle:blow()
 			end
+
+			if source:getVehicleType() == "Helicopter" then
+				for key, element in pairs(source:getAttachedElements()) do
+					if element:getType() == "player" then
+						if element.m_HelicopterDrivebyVehicle and element.m_HelicopterDrivebyVehicle == source then
+							element:detach()
+							element.m_HelicopterDrivebyVehicle = nil
+							element.m_HelicopterDrivebySeat = nil
+							element:setPublicSync("isDoingHelicopterDriveby", false)
+						end
+					end
+				end
+			end
 		end
 	)
 
