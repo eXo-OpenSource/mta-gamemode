@@ -172,7 +172,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineUnPrison", "aus Prison entlassen", self.onOfflineButtonClick, 410, 410, 180, 30, Color.Orange, tabOffline)
 
 	self.m_TicketTab = self.m_TabPanel:addTab(_"Tickets")
-	local url = (INGAME_WEB_PATH .. "/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
+	local url = ("https://cp.exo-reallife.de/api/auth/?redirect=/tickets?minimal&token=%s"):format(localPlayer:getSessionId())
 	self.m_TicketsBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, self.m_TicketTab)
 
 	self:refreshOnlinePlayers()
