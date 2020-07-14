@@ -35,23 +35,23 @@ FISHING_BAGS = {
 }
 
 FISHING_RODS = {
-	["Bambusstange"] = 			{baitSlots = 0, accessorieSlots = 0, difficultyReduction = 0, biteTimeReduction = 0},
-	["Angelrute"] = 			{baitSlots = 1, accessorieSlots = 0, difficultyReduction = 15, biteTimeReduction = 4000},
-	["Profi Angelrute"] = 		{baitSlots = 1, accessorieSlots = 1, difficultyReduction = 25, biteTimeReduction = 7500},
-	["Legendäre Angelrute"] = 	{baitSlots = 1, accessorieSlots = 1, difficultyReduction = 40, biteTimeReduction = 10000},
+	["bambooFishingRod"] = 			{baitSlots = 0, accessorieSlots = 0, difficultyReduction = 0, biteTimeReduction = 0},
+	["fishingRod"] = 			{baitSlots = 1, accessorieSlots = 0, difficultyReduction = 15, biteTimeReduction = 4000},
+	["expertFishingRod"] = 		{baitSlots = 1, accessorieSlots = 1, difficultyReduction = 25, biteTimeReduction = 7500},
+	["legendaryFishingRod"] = 	{baitSlots = 1, accessorieSlots = 1, difficultyReduction = 40, biteTimeReduction = 10000},
 }
 
 FISHING_BAITS = {
 	[false] = 			{biteTimeReduction = 0, difficultyReduction = 0},
-	["Köder"] = 		{biteTimeReduction = 1000, difficultyReduction = 25},
-	["Leuchtköder"] = 	{biteTimeReduction = 5000, difficultyReduction = 5},
-	["Pilkerköder"] = 	{biteTimeReduction = 5000, difficultyReduction = 15},
+	["bait"] = 		{biteTimeReduction = 1000, difficultyReduction = 25},
+	["glowBait"] = 	{biteTimeReduction = 5000, difficultyReduction = 5},
+	["pilkerBait"] = 	{biteTimeReduction = 5000, difficultyReduction = 15},
 }
 
 FISHING_ACCESSORIES = {
 	[false] = 			{biteTimeReduction = 0, difficultyReduction = 0, bobberBarHeightMultiplier = 1},
-	["Schwimmer"] =		{biteTimeReduction = 1000, difficultyReduction = 0, bobberBarHeightMultiplier = 1, renderBobber = true},
-	["Spinner"] =		{biteTimeReduction = 2500, difficultyReduction = 10, bobberBarHeightMultiplier = 1.1},
+	["swimmer"] =		{biteTimeReduction = 1000, difficultyReduction = 0, bobberBarHeightMultiplier = 1, renderBobber = true},
+	["spinner"] =		{biteTimeReduction = 2500, difficultyReduction = 10, bobberBarHeightMultiplier = 1.1},
 }
 
 -- (level * 15)^2 // for i = 1, 15 do print(("[%s] = %s,"):format(i, math.floor((i*15)^(i>10 and 2.2 or 2)))) end
@@ -142,13 +142,13 @@ FISHING_BAD_CATCH_MESSAGES = {
 }
 
 FISHING_BAD_CATCH_MESSAGES_SEWERS = {
-	"einen dreckigen Schuh", 
+	"einen dreckigen Schuh",
 	"einen Müllsack",
 	"eine Bierflasche",
 	"nichts",
 }
 
-FISHING_BAD_CATCH_ITEMS_SEWERS = 
+FISHING_BAD_CATCH_ITEMS_SEWERS =
 {
 	"Schuh",
 	"Abfall",

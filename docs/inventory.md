@@ -12,6 +12,7 @@
 - [ ] Reimplement trading
 - [p] Add item owner (only change if item has been traded by the owner?)
 
+- [ ] Check if fishing works
 - [ ] Add logic for cooling box size!!!
 - [ ] Write testing list
 - [ ] Implement new weapon handling with inventory
@@ -62,9 +63,7 @@
 * ItemDoor = ItemDoor; - started
 
 
-* ItemFishingRod = ItemFishingRod; - partialy - add logic to remove rod if user loggs off
-
-
+* ~~ItemFishingRod = ItemFishingRod;~~ - done
 * ~~WearableShirt = WearableShirt;~~ - done
 * ~~WearableHelmet = WearableHelmet;~~ - done
 * ~~ItemBomb = ItemBomb;~~ - done

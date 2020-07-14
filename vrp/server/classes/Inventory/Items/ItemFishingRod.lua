@@ -34,9 +34,27 @@ function ItemFishingRod:use()
 	fishingRod:setDimension(player.dimension)
 	fishingRod:setInterior(player.interior)
 	player:attachPlayerObject(fishingRod)
+
 	player.m_FishingRod = fishingRod
 	player.m_FishingRodId = self.m_Item.Id
+	player.m_FishingRodType = self.m_ItemData.TechnicalName
 	player.m_FishingRodMeta = self.m_Item.Metadata
+
+	local accessory = false
+	local bait = false
+
+	if self.m_Item.Metadata then
+		accessory = self.m_Item.Metadata.accessory or false
+		bait = self.m_Item.Metadata.bait or false
+	end
+
+	player:triggerEvent("onFishingStart", fishingRod, self.m_ItemData.TechnicalName, bait, accessory)
 
 	return true
 end
+
+addEventHandler("onPlayerQuit", root, function()
+	if source.m_FishingRod and isElement(source.m_FishingRod) then
+		source.m_FishingRod:destroy()
+	end
+end)

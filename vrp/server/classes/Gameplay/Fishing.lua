@@ -209,34 +209,38 @@ function Fishing:FishingRodCast()
 end
 
 function Fishing:FishHit(location, castPower)
-	if not self.m_Players[client] then return end
+	if not client.m_FishingRod then return end
 
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
 	local weather = getWeather()
 	local season = getCurrentSeason()
 	local playerLevel = client:getPrivateSync("FishingLevel")
-	local fishingRodName = self.m_Players[client].fishingRodName
-	local fishingRodEquipments = self:getFishingRodEquipments(client, fishingRodName)
-	local baitName = fishingRodEquipments["bait"] or false
-	local accessorieName = fishingRodEquipments["accessories"] or false
+	local fishingRodName = client.m_FishingRodType
+	local baitName = false
+	local accessorieName = false
 
-	if self.m_Players[client].lastBait then
-		baitName = self.m_Players[client].lastBait
-		self.m_Players[client].lastBait = nil
+	if client.m_FishingRodMeta then
+		baitName = client.m_FishingRodMeta.bait or false
+		accessorieName = client.m_FishingRodMeta.accessory or false
+	end
+
+	if client.m_FishingLastBait then
+		baitName = client.m_FishingLastBait
+		client.m_FishingLastBait = nil
 	end
 
 	local fish = self:getFish(location, time, weather, season, playerLevel, {baitName, accessorieName})
 	if not fish then
 		client:triggerEvent("onFishingBadCatch")
-		local randomMessage 
-		if not client:isInSewer() then 
+		local randomMessage
+		if not client:isInSewer() then
 			randomMessage = FISHING_BAD_CATCH_MESSAGES[self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES)]
-		else 
+		else
 			local index = self.Random:get(1, #FISHING_BAD_CATCH_MESSAGES_SEWERS)
 			randomMessage = FISHING_BAD_CATCH_MESSAGES_SEWERS[index]
-			if randomMessage ~= "nichts" then 
-				if math.random(1, 10) < 3 then 
-					if FISHING_BAD_CATCH_ITEMS_SEWERS[index] then 
+			if randomMessage ~= "nichts" then
+				if math.random(1, 10) < 3 then
+					if FISHING_BAD_CATCH_ITEMS_SEWERS[index] then
 						client:getInventory():giveItem(FISHING_BAD_CATCH_ITEMS_SEWERS[index], 1)
 					end
 				else
@@ -251,10 +255,10 @@ function Fishing:FishHit(location, castPower)
 
 	client:triggerEvent("fishingBobberBar", fish, fishingRodName, baitName, accessorieName)
 
-	self.m_Players[client].lastFish = fish
-	self.m_Players[client].location = location
-	self.m_Players[client].castPower = castPower
-	self.m_Players[client].lastFishHit = getTickCount()
+	client.m_FishingLastFish = fish
+	client.m_FishingLocation = location
+	client.m_FishingCastPower = castPower
+	client.m_FishingLastFishHit = getTickCount()
 end
 
 function Fishing:FishCaught()

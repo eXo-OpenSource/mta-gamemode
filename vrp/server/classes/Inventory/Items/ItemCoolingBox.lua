@@ -10,6 +10,5 @@ ItemCoolingBox = inherit(ItemNew)
 function ItemCoolingBox:use()
 	local player = self.m_Inventory:getPlayer()
 
-
 	-- return true, true
 end
