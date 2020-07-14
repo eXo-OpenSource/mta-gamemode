@@ -498,7 +498,6 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},]]
-	--[[ --
 	{
 		name = "Grove Street",
 		stations = {
@@ -506,9 +505,8 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.GROVE},
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel"},
+		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	]]
 	{
 		name = "Ballas",
 		stations = {
