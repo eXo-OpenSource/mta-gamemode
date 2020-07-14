@@ -559,11 +559,13 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			target:setFrozen(false)
 			self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
+			target.m_IsAdminFrozen = false
 		else
 			if target.vehicle then target:removeFromVehicle() end
 			target:setFrozen(true)
 			self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+			target.m_IsAdminFrozen = true
 		end
 	elseif func == "rkick" then
 		self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
