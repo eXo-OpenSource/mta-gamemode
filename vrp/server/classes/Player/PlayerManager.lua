@@ -332,6 +332,7 @@ function PlayerManager:playerJoin()
 	if source.join then
 		source:join()
 	else
+		outputDebugString( ("PlayerManager.playerJoin: Player-Element %s, inherited by Player-class: %s"):format(inspect(source), tostring(instanceof(source, Player))) )
 		source:kick("Fehler beim Spielbeitritt, melde Dich bitte im Support!")
 	end
 end
