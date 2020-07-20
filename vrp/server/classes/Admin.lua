@@ -1682,8 +1682,10 @@ function Admin:Event_adminRequestMultiAccounts()
 	for i, row in pairs(result) do
 		local nameTable = {}
 		for key, accountId in pairs(fromJSON(row.LinkedTo) or {}) do
-			local nameResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), accountId)
-			nameTable[#nameTable+1] = nameResult.Name
+			local accountName = Account.getNameFromId(accountId)
+			if accountName then
+				nameTable[#nameTable+1] = accountName
+			end
 		end
 
 		local adminResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.Admin)
@@ -1757,8 +1759,10 @@ function Admin:Event_adminRequestSerialAccounts(serial)
 	local result = sql:queryFetch("SELECT * FROM ??_account_to_serial WHERE Serial = ?", sql:getPrefix(), serial)
 	local accountTable = {}
 	for i, row in pairs(result) do
-		local singleResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.PlayerId)
-		accountTable[#accountTable+1] = {row.PlayerId, singleResult.Name}
+		local accountName = Account.getNameFromId(row.PlayerId)
+		if accountName then
+			accountTable[#accountTable+1] = {row.PlayerId, accountName}
+		end
 	end
 	client:triggerEvent("adminSendSerialAccountsToClient", serial, accountTable)
 end
