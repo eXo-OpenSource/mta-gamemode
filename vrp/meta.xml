@@ -1156,7 +1156,7 @@
 	<script src="client/classes/Faction/FactionManager.lua" type="client"/>
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
 	<script src="client/classes/Faction/FactionRescue.lua" type="client"/>
-	<script src="client/classes/Faction/Actions/Fire.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/FireManager.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>

@@ -110,7 +110,7 @@ function Core:ready() --onClientResourceStart
 	ThrowObject:new()
 	Casino:new()
 	TrainManager:new()
-	Fire:new()
+	FireManager:new()
 	VehicleInteraction:new()
 	EventManager:new()
 	DMRaceEvent:new()

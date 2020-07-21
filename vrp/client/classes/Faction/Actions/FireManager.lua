@@ -1,19 +1,19 @@
-Fire = inherit(Singleton)
-Fire.Settings = {
+FireManager = inherit(Singleton)
+FireManager.Settings = {
 	["smoke"] = true,
 	["smokeRenderDistance"] = 100,
-	["fireRenderDistance"] = 50,
+	["fireRenderDistance"] = 25,
 	["extinguishTime"] = 50,
 	["extraEffects"] = true,
 }
 
-Fire.EffectFromFireSize = {
+FireManager.EffectFromFireSize = {
 	[1] = "fire",
 	[2] = "fire_med",
 	[3] = "fire_large",
 }
 
-function Fire:constructor()
+function FireManager:constructor()
 	self.m_Fires = {}
 	self.m_LoadingQueue = AutomaticQueue:new()
 	self.m_FiresWaitingForColUpdate = {}
@@ -26,31 +26,25 @@ function Fire:constructor()
 	addEventHandler("fireElements:onFireChangeSize", resourceRoot, bind(self.changeFireSize, self))
 	addEventHandler("onClientPedHitByWaterCannon", root, bind(self.handlePedWaterCannon, self))
 	addEventHandler("refreshFireStatistics", root, bind(self.updateStatistics, self))
-	addCommandHandler("reloadFires", bind(self.reloadFiresIfBugged), false, false)
+	addCommandHandler("reloadFires", bind(self.reloadFiresIfBugged, self), false, false)
 
 
-	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, function(fireTable)
-		self.m_LoadingQueue:clear()
-
-		local trigger = self.m_LoadingQueue:prepare(THREAD_PIORITY_HIGHEST)
-		for ped, size in pairs(fireTable) do
-			self:createFireElement(size, ped, true)
-		end
-		trigger()
-	end)
+	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, bind(self.processInitialFireSync, self))
 	triggerServerEvent("fireElements:onClientRequestsFires", root)
 end
 
-function Fire:destroyElementIfExists(uElement)
+function FireManager:processInitialFireSync(tblFires)
+	for ped, size in pairs(tblFires) do
+		self:createFireElement(size, ped, true)
+	end
+end
+
+function FireManager:destroyElementIfExists(uElement)
 	if isElement(uElement) then
 		destroyElement(uElement)
 		return true
 	end
 	return false
-end
-
-function Fire:addToQueue(element)
-	self.m_LoadingQueue:push(element)
 end
 
 --//
@@ -60,7 +54,7 @@ end
 --||  	returns: success of the function
 --\\
 
-function Fire:destroyFireElement(uElement)
+function FireManager:destroyFireElement(uElement)
 	if self.m_Fires[uElement] then
 		self:destroyElementIfExists(self.m_Fires[uElement].uEffect)
 		self:destroyElementIfExists(self.m_Fires[uElement].uBurningCol)
@@ -79,11 +73,11 @@ end
 --||  		uFire		= the fire element
 --\\
 
-function Fire:handleSmoke(uFire)
-	if Fire.Settings["smoke"] then
+function FireManager:handleSmoke(uFire)
+	if FireManager.Settings["smoke"] then
 		local iX, iY, iZ	= getElementPosition(localPlayer)
 		local iFX, iFY, iFZ = getElementPosition(uFire)
-		if getDistanceBetweenPoints3D(iX, iY, iZ, iFX, iFY, iFZ) < Fire.Settings["smokeRenderDistance"] then
+		if getDistanceBetweenPoints3D(iX, iY, iZ, iFX, iFY, iFZ) < FireManager.Settings["smokeRenderDistance"] then
 			if self.m_Fires[uFire] and not self.m_Fires[uFire].iSmokeEffectTime or getTickCount()-self.m_Fires[uFire].iSmokeEffectTime > 2000 then
 				self:destroyElementIfExists(self.m_Fires[uFire].uSmokeEffect)
 				local iX, iY, iZ = getElementPosition(uFire)
@@ -104,12 +98,12 @@ end
 --||  		uAttacker, iWeap	= event parameters
 --\\
 
-function Fire:handlePedDamage(uAttacker, iWeap)
+function FireManager:handlePedDamage(uAttacker, iWeap)
 	cancelEvent()
 	if self.m_Fires[source] then
 		if iWeap == 42 then -- extinguisher
 			self:handleSmoke(source)
-			if uAttacker == localPlayer and math.random(1, Fire.Settings["extinguishTime"]) == 1 then
+			if uAttacker == localPlayer and math.random(1, FireManager.Settings["extinguishTime"]) == 1 then
 				triggerServerEvent("fireElements:requestFireDeletion", source, self.m_Fires[source].iSize)
 			end
 		end
@@ -122,12 +116,12 @@ end
 --||  		uPed		= event parameter
 --\\
 
-function Fire:handlePedWaterCannon(uPed)
+function FireManager:handlePedWaterCannon(uPed)
 cancelEvent()
 	if self.m_Fires[uPed] then
 		if getElementModel(source) == 407 then -- fire truck
 		self:handleSmoke(uPed)
-			if getVehicleController(source) == localPlayer and math.random(1, Fire.Settings["extinguishTime"]/3) == 1 then
+			if getVehicleController(source) == localPlayer and math.random(1, FireManager.Settings["extinguishTime"]/3) == 1 then
 				triggerServerEvent("fireElements:requestFireDeletion", uPed, self.m_Fires[uPed].iSize)
 			end
 		end
@@ -141,7 +135,7 @@ end
 --||  		uHitElement,bDim	= event parameter
 --\\
 
-function Fire:burnPlayer(uHitElement, bDim)
+function FireManager:burnPlayer(uHitElement, bDim)
 	if not bDim then return end
 	if getElementType(uHitElement) == "player" then
 		setPedOnFire(uHitElement, true)
@@ -155,13 +149,13 @@ end
 --||  		iSize			= the new size of the fire
 --\\
 
-function Fire:changeFireSize(iSize)
+function FireManager:changeFireSize(iSize)
 	if self.m_Fires[source] then
 		self.m_Fires[source].iSize = iSize
 		self:destroyElementIfExists(self.m_Fires[source].uEffect)
 		self:destroyElementIfExists(self.m_Fires[source].uBurningCol)
 		local iX, iY, iZ = getElementPosition(source)
-		self.m_Fires[source].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"], true)
+		self.m_Fires[source].uEffect = createEffect(FireManager.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, FireManager.Settings["fireRenderDistance"]*iSize, true)
 		self.m_Fires[source].uBurningCol = createColSphere(iX, iY, iZ + (self.m_Fires[source].iMaterialID and 1 or 0), iSize/4) -- set the col shape higher when correct ground position got determined
 		addEventHandler("onClientColShapeHit", self.m_Fires[source].uBurningCol, bind(self.burnPlayer, self))
 		self.m_Fires[source].bCorrectPlaced = false -- force recalculate the height
@@ -176,7 +170,7 @@ end
 --||  		uFire			= the fire
 --\\
 
-function Fire:getFireSize(uFire)
+function FireManager:getFireSize(uFire)
 	if self.m_Fires[uFire] then
 		return self.m_Fires[uFire].iSize
 	end
@@ -189,11 +183,11 @@ end
 --||  		uFire			= the fire
 --\\
 
-function Fire:checkForFireGroundInfo(uFire)
+function FireManager:checkForFireGroundInfo(uFire)
 	if self.m_Fires[uFire] then
 		local iX, iY, iZ = getElementPosition(uFire)
-		if Fire.Settings["extraEffects"] then
-			createExplosion (iX, iY, iZ-2, 12, false, 0, false)
+		if FireManager.Settings["extraEffects"] then -- black outline on the ground
+			createExplosion (iX, iY, iZ+2, 8, false, 0, false)
 		end
 		if not self.m_Fires[uFire].bCorrectPlaced and isElementStreamedIn(uFire) then
 			local iNewZ = getGroundPosition(iX, iY, iZ + 100)
@@ -227,13 +221,13 @@ end
 --||  		uPed			= the ped element synced by the server
 --\\
 
-function Fire:createFireElement(iSize, uPed)
+function FireManager:createFireElement(iSize, uPed)
 	if not uPed then uPed = source end
 	local iX, iY, iZ = getElementPosition(uPed)
 	self.m_Fires[uPed] = {}
 	self.m_Fires[uPed].iSize = iSize
 	self.m_Fires[uPed].baseZ = iZ
-	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
+	self.m_Fires[uPed].uEffect = createEffect(FireManager.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, FireManager.Settings["fireRenderDistance"]*iSize)
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollisionsEnabled(uPed, false) --temporary until stream in
 	self:checkForFireGroundInfo(uPed)
@@ -249,7 +243,7 @@ function Fire:createFireElement(iSize, uPed)
 	end)
 end
 
-function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
+function FireManager:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
 	if not self.m_StatisticShortMessage[tblStats.name] then
 		self.m_StatisticShortMessage[tblStats.name] = ShortMessage:new("", "Brand-Übersicht ("..(tblStats.name)..")", Color.Orange, 6000, nil, function()
 			self.m_StatisticShortMessage[tblStats.name] = nil
@@ -269,12 +263,12 @@ function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
 	sm:resetTimeout()
 end
 
-function Fire:reloadFiresIfBugged()
+function FireManager:reloadFiresIfBugged()
 	local count = {}
-	for _, fire in pairs(Fire:getSingleton().m_Fires) do
+	for _, fire in pairs(self.m_Fires) do
 		if fire.uEffect:getPosition().z == fire.baseZ or not fire.bCorrectPlaced then
 			fire.bCorrectPlaced = false
-			local r = Fire:getSingleton():checkForFireGroundInfo(fire)
+			local r = self:checkForFireGroundInfo(fire)
 			if not count[r] then count[r] = 0 end
 			count[r] = count[r] + 1
 		end
