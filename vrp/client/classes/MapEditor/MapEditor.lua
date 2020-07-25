@@ -300,6 +300,7 @@ function MapEditor:receiveControlPermission(object, callbackType, permission, te
     if permission == true then
         if callbackType == "normal" then
             self.m_ControlledObject = object
+            self.m_ControlledObject.m_Textures = textures
         elseif callbackType == "ObjectPlacer" then
             self.m_ControlledObject = object
             ObjectPlacer:new(self.m_ControlledObject:getModel(), self.m_ObjectPlacedBind, object, true)
