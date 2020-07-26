@@ -355,7 +355,6 @@
 
 	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Shop.lua" type="server"/>
-	<script src="server/classes/Gameplay/Shops/ShopNPC.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/RobableShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/ItemShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/BarShop.lua" type="server"/>
@@ -374,6 +373,8 @@
 
 	<script src="server/classes/Gameplay/Cinema/CinemaLobby.lua" type="server"/>
 	<script src="server/classes/Gameplay/Cinema/CinemaManager.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/NPCs/TargetableNPC.lua" type="server"/>
 
 	<script src="server/classes/MapEditor/MapLoader.lua" type="server" />
 	<script src="server/classes/MapEditor/MapEditor.lua" type="server" />
