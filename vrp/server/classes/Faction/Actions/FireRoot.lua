@@ -14,13 +14,14 @@ FireRoot.Settings = {
 }
 
 
-function FireRoot:constructor(iX, iY, iW, iH)
+function FireRoot:constructor(iX, iY, iZ, iW, iH)
 	iW = math.round(iW)
     iH = math.round(iH)
    	self.m_Root = createElement("fire-root")
 
 	self.m_X = iX
 	self.m_Y = iY 
+	self.m_Z = iZ 
 	self.m_Width = iW
 	self.m_Height = iH
 	self.m_CenterPoint = Vector3(iX + iW/2, iY + iH/2)
@@ -59,11 +60,6 @@ end
 
 function FireRoot:setName(name)
 	self.m_Statistics.name = name
-end
-
-function FireRoot:setBaseZ(z)
-	self.m_BaseZ = z
-	self.m_CenterPoint.z = z
 end
 
 function FireRoot:destructor()
@@ -233,7 +229,7 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 				if not currentFire then
 					local iX = self.m_X + i*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
 					local iY = self.m_Y + v*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
-					local fire = Fire:new(iX, iY, self.m_BaseZ or 4, iNewSize, false, self, i, v)
+					local fire = Fire:new(iX, iY, self.m_Z, iNewSize, false, self, i, v)
 					self.m_Statistics.firesActive = self.m_Statistics.firesActive + 1
 					self.m_Statistics.firesTotal = self.m_Statistics.firesTotal + 1
 					

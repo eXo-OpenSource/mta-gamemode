@@ -78,8 +78,7 @@ end
 function FireManager:startFire(id)
 	if self.m_CurrentFire then self:stopCurrentFire() end
 	local fireTable = self.m_Fires[id]
-	self.m_CurrentFire = FireRoot:new(fireTable.position.x, fireTable.position.y, fireTable["width"] or 20, fireTable["height"] or 20)
-	self.m_CurrentFire:setBaseZ(fireTable.position.z)
+	self.m_CurrentFire = FireRoot:new(fireTable.position.x, fireTable.position.y, fireTable.position.z, fireTable["width"] or 20, fireTable["height"] or 20)
 	self.m_CurrentFire.m_Id = id
 	self.m_CurrentFire:setName(self.m_Fires[id].name)
 	self.m_CurrentFire.Blip = Blip:new("Warning.png", fireTable.position.x + fireTable.width/2, fireTable.position.y + fireTable.height/2, root, 400)
