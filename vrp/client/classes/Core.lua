@@ -119,6 +119,7 @@ function Core:ready() --onClientResourceStart
 	SkinShopGUI.initializeAll()
 	ItemManager:new()
 	CinemaManager:new()
+	CustomAnimationManager:new()
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()

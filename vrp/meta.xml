@@ -112,6 +112,7 @@
 	<script src="server/classes/InfluxLogging.lua" type="server"/>
 	<script src="server/classes/Time.lua" type="server"/>
 	<script src="server/classes/PedScale.lua" type="server"/>
+	<script src="server/classes/CustomAnimationManager.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -597,6 +598,7 @@
 	<script src="client/classes/CoronaEffect.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
+	<script src="client/classes/CustomAnimationManager.lua" type="client"/>
 
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
@@ -916,6 +918,7 @@
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WalkingstyleGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/CustomAnimationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BindGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
@@ -3387,6 +3390,11 @@
 	<vrpfile src="files/models/wearables/waterCan.txd" />
 	<vrpfile src="files/models/wearables/waterCan.dff" />
 	<vrpfile src="files/models/wearables/waterCan.col" />
+
+	<!-- Custom Animations -->
+	<vrpfile src="files/animations/parkour.ifp"/>
+	<vrpfile src="files/animations/dance.ifp"/>
+	<vrpfile src="files/animations/other.ifp"/>
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
