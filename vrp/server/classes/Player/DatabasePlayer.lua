@@ -1056,7 +1056,7 @@ function DatabasePlayer:setSTVO(category, stvo)
 			elseif category == "Truck" then
 				self.m_HasTruckLicense = false
 			elseif category == "Pilot" then
-				self.m_HasPilotLicense = false
+				self.m_HasPilotsLicense = false
 			end
 		end
 	else
