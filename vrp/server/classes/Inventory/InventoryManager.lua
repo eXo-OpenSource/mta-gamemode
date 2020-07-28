@@ -175,8 +175,8 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	end
 
 	if (player:getPosition() - target:getPosition()).length > 10 then
-		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
-		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+		player:sendError(_("Du bist zu weit von %s entfernt!", player, target.name))
+		target:sendError(_("Du bist zu weit von %s entfernt!", target, player.name))
 		return false
 	end
 	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
@@ -237,8 +237,8 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 	local money = player.sendRequest.money
 
 	if (player:getPosition() - target:getPosition()).length > 10 then
-		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
-		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+		player:sendError(_("Du bist zu weit von %s entfernt!", player, target.name))
+		target:sendError(_("Du bist zu weit von %s entfernt!", target, player.name))
 		return false
 	end
 

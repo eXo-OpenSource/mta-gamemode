@@ -1516,7 +1516,7 @@ function VehicleManager:Event_LoadObject(veh, type)
 					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
@@ -1564,7 +1564,7 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))

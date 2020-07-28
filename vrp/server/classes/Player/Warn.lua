@@ -76,7 +76,7 @@ function Warn.checkWarn(player, id, doNotSave)
 		end
 		return true
 	elseif Warn.getAmount(id) > 0 then
-		outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", player, Warn.getAmount(id)),player, 255,0,0)
+		outputChatBox(_("Vorsicht, du hast bereits %d Verwarnung/en!", player, Warn.getAmount(id)),player, 255,0,0)
 	end
 	return true
 end

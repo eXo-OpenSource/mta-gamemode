@@ -81,10 +81,7 @@ function QuestPackageFind:onPackageClick(button, state, player)
 				self:success(player)
 			end
 		else
-			player:sendError("Dafür musst du erst den Quest annehmen!")
+			player:sendError("Dafür musst du erst die Quest annehmen!")
 		end
 	end
 end
-
-
-

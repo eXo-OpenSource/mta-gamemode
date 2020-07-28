@@ -68,12 +68,12 @@ function QuestDrawGUI:constructor(id, name)
 	local save = GUIGridButton:new(18, 11, 3, 1, "Einsenden", self.m_Window)
 	save.onLeftClick = function()
 		if not dxGetStatus().AllowScreenUpload then
-			ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um den Quest zu machen!")
+			ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
 			return
 		end
 		QuestionBox:new("Möchtest du das Bild wirklich einsenden? Warnung: Du kannst nur ein einziges Bild für das Event einsenden!", function()
 			if not dxGetStatus().AllowScreenUpload then
-				ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um den Quest zu machen!")
+				ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
 				return
 			end
 			self.m_Skribble:setDrawingEnabled(false)
@@ -268,4 +268,3 @@ function QuestDrawAdminGUI:resetOverview(labelText)
 	self.m_AcceptDrawBtn:setVisible(false)
 	self.m_DeclineDrawBtn:setVisible(false)
 end
-

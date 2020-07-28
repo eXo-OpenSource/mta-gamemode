@@ -118,7 +118,7 @@ function Trunk:addItem(player, item, amount, value)
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
 			if item == "Kleidung" then
-				player:sendError(_("Du kannst dieses Item in den Kofferraum legen!", player))
+				player:sendError(_("Du kannst dieses Item nicht in den Kofferraum legen!", player))
 				return false
 			end
 

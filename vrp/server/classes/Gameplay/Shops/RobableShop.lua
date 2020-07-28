@@ -316,7 +316,7 @@ function RobableShop:onBagClick(button, state, player)
 			player:sendError(_("Du darfst die Beute nicht besitzen!", player))
 			end
 		else
-			player:sendError(_("Du bist zuweit von dem Geldsack entfernt!", player))
+			player:sendError(_("Du bist zu weit von dem Geldsack entfernt!", player))
 		end
 	end
 end

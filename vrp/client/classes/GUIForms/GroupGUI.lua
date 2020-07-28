@@ -103,7 +103,7 @@ function GroupGUI:constructor()
 	tabBusiness:setEnabled(false)
 
 	GUIRectangle:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.65, self.m_Height*0.005, Color.Accent, tabBusiness)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesammt:", tabBusiness)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesamt:", tabBusiness)
 	self.m_ShopsMoneyLabel = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabBusiness):setColor(Color.Accent)
 	self.m_ShopsLocate = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", tabBusiness):setBarEnabled(true)

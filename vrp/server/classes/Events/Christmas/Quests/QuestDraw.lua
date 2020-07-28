@@ -112,11 +112,11 @@ function QuestDraw:declineImage(drawId)
 end
 
 function QuestDraw:savedImage()
-	client:sendShortMessage("Deine Zeichnung muss bestätigt werden!\nKomm später wieder und starte nochmal den Quest!")
+	client:sendShortMessage("Deine Zeichnung muss bestätigt werden!\nKomm später wieder und starte nochmal die Quest!")
 	self:removePlayer(client)
 end
 
 function QuestDraw:noScreenShot()
-	client:sendError("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um den Quest zu machen!")
+	client:sendError("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
 	self:removePlayer(client)
 end
