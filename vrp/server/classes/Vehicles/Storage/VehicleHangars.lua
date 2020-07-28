@@ -70,7 +70,6 @@ function VehicleHangars:openSessionForPlayer(player, entranceId)
     player:setPrivateSync("isInHangar", true)
 	player.m_HangarSession = session
 
-	player:setSpawnLocation(SPAWN_LOCATIONS.GARAGE)
 	player:setLastHangarEntrance(session:getEntranceId())
 	player:setDimension(session:getDimension())
 

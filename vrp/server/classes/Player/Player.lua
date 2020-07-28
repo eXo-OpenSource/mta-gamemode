@@ -445,8 +445,6 @@ function Player:spawn()
 				local position = companySpawnpoint[self:getCompany():getId()]
 				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 			end
-		--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-		--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
 			local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
 			if self:getGroup() and #groupProperties > 0 then
@@ -1160,7 +1158,7 @@ function Player:__giveBankMoney(money, reason, silent) -- Overriden
 	local success = DatabasePlayer.__giveBankMoney(self, money, reason, silent)
 	if success then
 		if money ~= 0 and not silent then
-			self:sendShortMessage(("%s$%s"):format("+"..money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+			self:sendShortMessage(("%s%s"):format("+"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
 		end
 		self:triggerEvent("playerCashChange", bNoSound)
 	end
@@ -1172,7 +1170,7 @@ function Player:__takeBankMoney(money, reason, silent) -- Overriden
 	local success = DatabasePlayer.__takeBankMoney(self, money, reason, silent)
 	if success then
 		if money ~= 0 and not silent then
-			self:sendShortMessage(("%s$%s"):format("-"..money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+			self:sendShortMessage(("%s%s"):format("-"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
 		end
 		self:triggerEvent("playerCashChange", bNoSound)
 	end
