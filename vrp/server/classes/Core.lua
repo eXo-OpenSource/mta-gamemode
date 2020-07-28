@@ -151,6 +151,7 @@ function Core:constructor()
 		InteriorEnterExitManager:new()
 		ElevatorManager:new()
 		CinemaManager:new()
+		CustomAnimationManager:new()
 
 		if EVENT_EASTER then
 			Easter:new()
