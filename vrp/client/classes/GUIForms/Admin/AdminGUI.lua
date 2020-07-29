@@ -171,10 +171,6 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlinePrison", "ins Prison", self.onOfflineButtonClick, 220, 410, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlineUnPrison", "aus Prison entlassen", self.onOfflineButtonClick, 410, 410, 180, 30, Color.Orange, tabOffline)
 
-	self.m_TicketTab = self.m_TabPanel:addTab(_"Tickets")
-	local url = ("https://cp.exo-reallife.de/api/auth/?redirect=/tickets?minimal&token=%s"):format(localPlayer:getSessionId())
-	self.m_TicketsBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, self.m_TicketTab)
-
 	self:refreshOnlinePlayers()
 
 	local tabWeb = self.m_TabPanel:addTab(_"WebPanel")
@@ -226,8 +222,6 @@ end
 function AdminGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabSpieler.TabIndex then
 		self:refreshOnlinePlayers()
-	elseif tabId == self.m_TicketTab.TabIndex then
-		self.m_TicketsBrowser:reload()
 	end
 end
 
