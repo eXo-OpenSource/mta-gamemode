@@ -46,9 +46,9 @@ function phpSDKSendMessage(targetType, targetId, message, options)
 	elseif targetType == "faction" then
 		if targetId == "state" then
 			if messageType == "shortMessage" then
-				FactionState:getSingleton():sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+				FactionState:getSingleton():sendShortMessageWithRank(message, minRank or 0, title, color, timeout)
 			else
-				FactionState:getSingleton():sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+				FactionState:getSingleton():sendMessageWithRank(message, color.r, color.g, color.b, minRank or 0, withPrefix)
 			end
 
 			local data = toJSON({status = "SUCCESS"}, true)
@@ -62,9 +62,9 @@ function phpSDKSendMessage(targetType, targetId, message, options)
 			end
 
 			if messageType == "shortMessage" then
-				faction:sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+				faction:sendShortMessageWithRank(message, minRank or 0, title, color, timeout)
 			else
-				faction:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+				faction:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 0, withPrefix)
 			end
 
 			local data = toJSON({status = "SUCCESS"}, true)
@@ -79,9 +79,9 @@ function phpSDKSendMessage(targetType, targetId, message, options)
 		end
 
 		if messageType == "shortMessage" then
-			company:sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+			company:sendShortMessageWithRank(message, minRank or 0, title, color, timeout)
 		else
-			company:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+			company:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 0, withPrefix)
 		end
 
 		local data = toJSON({status = "SUCCESS"}, true)
@@ -95,9 +95,9 @@ function phpSDKSendMessage(targetType, targetId, message, options)
 		end
 
 		if messageType == "shortMessage" then
-			group:sendShortMessageWithRank(message, minRank or 1, title, color, timeout)
+			group:sendShortMessageWithRank(message, minRank or 0, title, color, timeout)
 		else
-			group:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 1, withPrefix)
+			group:sendMessageWithRank(message, color.r, color.g, color.b, minRank or 0, withPrefix)
 		end
 
 		local data = toJSON({status = "SUCCESS"}, true)
@@ -207,11 +207,13 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 	end
 
 	if not duration then
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
 
 	if not reason or reason == "" then
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -229,13 +231,112 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 		kickPlayer(target, reason)
 	end
 
-	if aCreated then
-		delete(admin)
+	if aCreated then delete(admin) end
+
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
+end
+
+function phpSDKPrisonPlayer(adminId, targetId, duration, reason)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
 	end
 
-	if tCreated then
-		delete(target)
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
 	end
+
+	if not duration then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local duration = tonumber(duration)
+
+	if not duration or duration <= 0 then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "DURATION_INVALID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not reason or reason == "" then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	if tCreated then
+		target:load()
+	end
+
+	Admin:getSingleton():sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", nil, adminName, targetName, duration, reason))
+	Admin:getSingleton():addPunishLog(adminId, targetId, "prisonCP", reason, duration * 60)
+	outputChatBox(_("%s hat %s für %s Minuten ins Prison gesteckt!!", nil, targetName, adminName, duration), root, 200, 0, 0)
+	outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
+	target:setPrison(duration * 60)
+
+	if tCreated then delete(target) end
+	if aCreated then delete(admin) end
+
+	local data = toJSON({status = "SUCCESS"}, true)
+	return data:sub(2, #data-1)
+end
+
+function phpSDKUnprisonPlayer(adminId, targetId, reason)
+	local admin, aCreated = DatabasePlayer.get(adminId)
+	if not admin then
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_ADMIN_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local target, tCreated = DatabasePlayer.get(targetId)
+	if not target then
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	if not reason or reason == "" then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	local adminName = Account.getNameFromId(adminId)
+	local targetName = Account.getNameFromId(targetId)
+
+	if tCreated then
+		target:load()
+	end
+
+	local prisonTime = target:getRemainingPrisonTime()
+
+	if prisonTime == 0 then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
+		local data = toJSON({status = "ERROR", error = "PLAYER_NOT_IN_PRISON"}, true)
+		return data:sub(2, #data-1)
+	end
+
+	Admin:getSingleton():sendShortMessage(_("%s hat %s aus dem Prison gelassen! Grund: %s", nil, adminName, targetName, reason))
+	Admin:getSingleton():addPunishLog(adminId, targetId, "unPrisonCP", reason, duration * 60)
+	target:endPrison()
+
+	if tCreated then delete(target) end
+	if aCreated then delete(admin) end
 
 	local data = toJSON({status = "SUCCESS"}, true)
 	return data:sub(2, #data-1)
@@ -250,11 +351,14 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
 		return data:sub(2, #data-1)
 	end
 
 	if not duration then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -262,11 +366,15 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 	local duration = tonumber(duration)
 
 	if not duration or duration < 0 then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "DURATION_INVALID"}, true)
 		return data:sub(2, #data-1)
 	end
 
 	if not reason or reason == "" then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -288,13 +396,8 @@ function phpSDKBanPlayer(adminId, targetId, duration, reason)
 		Ban.addBan(targetId, adminId, reason, duration * 60 * 60, adminName)
 	end
 
-	if aCreated then
-		delete(admin)
-	end
-
-	if tCreated then
-		delete(target)
-	end
+	if tCreated then delete(target) end
+	if aCreated then delete(admin) end
 
 	local data = toJSON({status = "SUCCESS"}, true)
 	return data:sub(2, #data-1)
@@ -309,11 +412,14 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
 		return data:sub(2, #data-1)
 	end
 
 	if not reason or reason == "" then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -322,17 +428,12 @@ function phpSDKUnbanPlayer(adminId, targetId, reason)
 	local targetName = Account.getNameFromId(targetId)
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s offline entbannt!", nil, adminName, targetName))
-	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineUnbanCP", reason, 0)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "unbanCP", reason, 0)
 	sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
 	outputChatBox(_("Der Spieler %s wurde von %s entbannt!", nil, targetName, adminName), root, 200, 0, 0)
 
-	if aCreated then
-		delete(admin)
-	end
-
-	if tCreated then
-		delete(target)
-	end
+	if tCreated then delete(target) end
+	if aCreated then delete(admin) end
 
 	local data = toJSON({status = "SUCCESS"}, true)
 	return data:sub(2, #data-1)
@@ -347,11 +448,14 @@ function phpSDKAddWarn(adminId, targetId, duration, reason)
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
 		return data:sub(2, #data-1)
 	end
 
 	if not duration then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -359,11 +463,15 @@ function phpSDKAddWarn(adminId, targetId, duration, reason)
 	local duration = tonumber(duration)
 
 	if not duration or duration < 0 then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "DURATION_INVALID"}, true)
 		return data:sub(2, #data-1)
 	end
 
 	if not reason or reason == "" then
+		if tCreated then delete(target) end
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -372,20 +480,15 @@ function phpSDKAddWarn(adminId, targetId, duration, reason)
 	local targetName = Account.getNameFromId(targetId)
 
 	Warn.addWarn(targetId, adminId, reason, duration*60*60*24)
-	Admin:getSingleton():addPunishLog(adminId, targetId, "offlineWarnCP", reason, duration*60*60*24)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "warnCP", reason, duration*60*60*24)
 	Admin:getSingleton():sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", nil, adminName, targetName, duration, reason))
 
 	if target and isElement(target) then
 		target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, adminName, duration, reason), 255, 0, 0)
 	end
 
-	if aCreated then
-		delete(admin)
-	end
-
-	if tCreated then
-		delete(target)
-	end
+	if tCreated then delete(target) end
+	if aCreated then delete(admin) end
 
 	local data = toJSON({status = "SUCCESS"}, true)
 	return data:sub(2, #data-1)
@@ -400,6 +503,7 @@ function phpSDKRemoveWarn(adminId, targetId, warnId)
 
 	local target, tCreated = DatabasePlayer.get(targetId)
 	if not target then
+		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "UNKNOWN_PLAYER_ID"}, true)
 		return data:sub(2, #data-1)
 	end
@@ -408,16 +512,11 @@ function phpSDKRemoveWarn(adminId, targetId, warnId)
 	local targetName = Account.getNameFromId(targetId)
 
 	Warn.removeWarn(targetId, warnId)
-	Admin:getSingleton():addPunishLog(adminId, targetId, "removeOfflineWarnCP", nil, 0)
+	Admin:getSingleton():addPunishLog(adminId, targetId, "removeWarnCP", nil, 0)
 	Admin:getSingleton():sendShortMessage(_("%s hat einen Warn von %s entfernt!", nil, adminName, targetName))
 
-	if aCreated then
-		delete(admin)
-	end
-
-	if tCreated then
-		delete(target)
-	end
+	if tCreated then delete(target) end
+	if aCreated then delete(admin) end
 
 	local data = toJSON({status = "SUCCESS"}, true)
 	return data:sub(2, #data-1)

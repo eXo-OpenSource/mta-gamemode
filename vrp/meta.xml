@@ -1428,6 +1428,8 @@
 	<export function="phpSDKUnbanPlayer" type="server" http="true" />
 	<export function="phpSDKAddWarn" type="server" http="true" />
 	<export function="phpSDKRemoveWarn" type="server" http="true" />
+	<export function="phpSDKPrisonPlayer" type="server" http="true" />
+	<export function="phpSDKUnprisonPlayer" type="server" http="true" />
 	<export function="phpSDKTakeScreenShot" type="server" http="true" />
 	<export function="phpSDKStartScreenCapture" type="server" http="true" />
 	<export function="phpSDKStopScreenCapture" type="server" http="true" />
