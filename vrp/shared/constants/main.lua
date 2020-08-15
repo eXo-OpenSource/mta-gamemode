@@ -523,9 +523,9 @@ AD_COST_PER_CHAR = 3
 AD_BREAK_TIME = 30 -- In Seconds
 
 AD_DURATIONS = {
-	["20 Sekunden"] = 20,
-	["30 Sekunden"] = 30,
-	["45 Sekunden"] = 45
+	["20 Sek."] = 20,
+	["30 Sek."] = 30,
+	["45 Sek."] = 45
 }
 
 BODYPART_NAMES = {

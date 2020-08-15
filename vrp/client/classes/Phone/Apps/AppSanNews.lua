@@ -11,7 +11,7 @@ local ColorTable = {
 	["Orange"] = Color.Orange,
 	["Grün"] = Color.Green,
 	["Blau-Grün"] = Color.AD_LightBlue,
-	["Red"] = Color.Red,
+	["Rot"] = Color.Red,
 }
 
 function AppSanNews:constructor()
@@ -52,13 +52,13 @@ function AppSanNews:onOpen(form)
 	self.m_SenderNameChanger = GUIChanger:new(tab.m_Width*0.4, tab.m_Height*0.52, tab.m_Width*0.58, tab.m_Height*0.07, self.m_Tabs["Advertisment"])
 	self.m_SenderNameChanger:addItem(localPlayer:getName())
 	if localPlayer:getGroupName() and localPlayer:getGroupName() ~= "" then
-		self.m_SenderNameChanger:addItem(localPlayer:getGroupName())
+		self.m_SenderNameChanger:addItem(_"Firma / Gang")
 	end
 	if localPlayer:getFaction() then
-		self.m_SenderNameChanger:addItem(localPlayer:getFaction():getShortName())
+		self.m_SenderNameChanger:addItem(_"Fraktion")
 	end
 	if localPlayer:getCompany() then
-		self.m_SenderNameChanger:addItem(localPlayer:getCompany():getShortName())
+		self.m_SenderNameChanger:addItem(_"Unternehmen")
 	end
 
 	self.m_InfoRect = GUIRectangle:new(tab.m_Width*0.02, tab.m_Height*0.65, tab.m_Width*0.96, tab.m_Height*0.13, Color.Red, self.m_Tabs["Advertisment"])
@@ -69,7 +69,13 @@ function AppSanNews:onOpen(form)
 
 	self.m_SubmitButton.onLeftClick =
 		function()
-			local senderName, senderIndex = self.m_SenderNameChanger:getIndex()
+			local senderName = self.m_SenderNameChanger:getIndex()
+			--we have to do this because otherwise we can't get the correct ad type if some options are not added in the first place
+			local senderIndex = 1
+			if senderName == _"Firma / Gang" then senderIndex = 2
+			elseif senderName == _"Fraktion" then senderIndex = 3
+			elseif senderName == _"Unternehmen" then senderIndex = 4 end
+
 			triggerServerEvent("sanNewsAdvertisement", localPlayer, senderIndex, self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex())
 		end
 	self:calcCosts()
