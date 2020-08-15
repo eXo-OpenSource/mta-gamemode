@@ -187,7 +187,7 @@ function FireManager:checkForFireGroundInfo(uFire)
 	if self.m_Fires[uFire] then
 		local iX, iY, iZ = getElementPosition(uFire)
 		if FireManager.Settings["extraEffects"] then -- black outline on the ground
-			createExplosion (iX, iY, iZ+2, 8, false, 0, false)
+			createExplosion (iX, iY, iZ-2, 12, false, 0, false)
 		end
 		if not self.m_Fires[uFire].bCorrectPlaced and isElementStreamedIn(uFire) then
 			local iNewZ = getGroundPosition(iX, iY, iZ + 100)
@@ -210,6 +210,7 @@ function FireManager:checkForFireGroundInfo(uFire)
 		if not isElementStreamedIn(uFire) then return "nicht eingestreamed" end
 		if self.m_Fires[uFire].uEffect:getPosition().z == 0 then return "z auf 0" end
 		if self.m_Fires[uFire].uEffect:getPosition().z == self.m_Fires[uFire].baseZ then return "z auf Basishöhe" end
+		return "kein Fehler gefunden"
 	end
 	return "nicht in der Tabelle"
 end
@@ -265,13 +266,10 @@ end
 
 function FireManager:reloadFiresIfBugged()
 	local count = {}
-	for _, fire in pairs(self.m_Fires) do
-		if fire.uEffect:getPosition().z == fire.baseZ or not fire.bCorrectPlaced then
-			fire.bCorrectPlaced = false
-			local r = self:checkForFireGroundInfo(fire)
-			if not count[r] then count[r] = 0 end
-			count[r] = count[r] + 1
-		end
+	for ped, fire in pairs(self.m_Fires) do
+		local r = self:checkForFireGroundInfo(ped)
+		if not count[r] then count[r] = 0 end
+		count[r] = count[r] + 1
 	end
 	ShortMessage:new(inspect(count), _"aktualisierte Feuer")
 end
