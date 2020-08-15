@@ -242,7 +242,9 @@ function PublicTransport:endTaxiDrive(customer)
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
 		if price > customer:getBankMoney() then price = customer:getBankMoney() end
-		customer:transferBankMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
+		if price > 0 then
+			customer:transferBankMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
+		end
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		local priceForEPT = price*2
 		if priceForEPT > 0 then
@@ -254,7 +256,9 @@ function PublicTransport:endTaxiDrive(customer)
 
 		if isElement(driver) then
 			driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
-			self.m_BankAccountServer:transferMoney(driver, price, "Public Transport Taxi", "Company", "Taxi")
+			if price > 0 then
+				self.m_BankAccountServer:transferMoney(driver, price, "Public Transport Taxi", "Company", "Taxi")
+			end
 		end
 
 		killTimer(self.m_TaxiCustomer[customer]["timer"])

@@ -172,7 +172,9 @@ function GasStationManager:serviceStationRepairVehicle(element)
 		local price = math.floor(client.vehicle:getMaxHealth() - client.vehicle:getHealth()) * SERVICE_REPAIR_PRICE_MULTIPLICATOR
 
 		client.vehicle:fix()
-		client:getFaction():transferMoney(self.m_BankAccountServer, price, "Fahrzeug-Reparatur", "Vehicle", "Repair")
+		if price > 0 then
+			client:getFaction():transferMoney(self.m_BankAccountServer, price, "Fahrzeug-Reparatur", "Vehicle", "Repair")
+		end
 	end
 end
 
