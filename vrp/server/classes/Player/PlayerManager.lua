@@ -415,6 +415,19 @@ function PlayerManager:Event_playerReady(tblClientSettings)
 	local player = client
 	player.m_tblClientSettings = tblClientSettings or {}
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
+
+	-- use this code for debugging purposes
+	-- sometimes there are invalid players in the ready table, so let's see if there is some kind of
+	-- race condition between playerQuit and playerReady
+	nextframe(function()
+		if not player or not isElement(player) or getElementType(player) ~= "player" then 
+			outputDebugString(("invalid player @Event_playerReady (got '%s')"):format(inspect(player)), 1)
+			local index = table.find(self.m_ReadyPlayers, player)
+			if index then
+				table.remove(self.m_ReadyPlayers, index)
+			end
+		end
+	end)
 end
 
 function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
