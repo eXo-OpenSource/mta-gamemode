@@ -9,6 +9,12 @@ GroupVehicle = inherit(PermanentVehicle)
 
 -- This function converts a normal (User/PermanentVehicle) to an GroupVehicle
 function GroupVehicle.convertVehicle(vehicle, group)
+
+	-- don't convert them if they have occupants or are currently towed 
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle then
+		return false
+	end
+	
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
 			local id = vehicle:getId()

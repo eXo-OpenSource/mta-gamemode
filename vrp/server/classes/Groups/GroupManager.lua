@@ -546,7 +546,7 @@ function GroupManager:Event_ConvertVehicle(veh)
 					group.m_VehiclesSpawned = true
 					self:sendInfosToClient(client)
 				else
-					client:sendError(_("Es ist ein Fehler aufgetreten!", client))
+					client:sendError(_("Es ist ein Fehler aufgetreten (ist das Fahrzeug in Benutzung?)!", client))
 				end
 			else
 				client:sendError(_("Das ist nicht dein Fahrzeug!", client))
@@ -578,7 +578,7 @@ function GroupManager:Event_RemoveVehicle(veh)
 			group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." entfernt!")
 			self:sendInfosToClient(client)
 		else
-			client:sendError(_("Maximaler Fahrzeug-Slot erreicht!", client))
+			client:sendError(_("Das Fahrzeug ist in Benutzung oder dein Maximaler Fahrzeug-Slot ist erreicht!", client))
 		end
 	end
 end
