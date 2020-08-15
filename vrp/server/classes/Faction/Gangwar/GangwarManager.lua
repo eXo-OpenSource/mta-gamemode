@@ -172,11 +172,6 @@ function Gangwar:isPlayerInGangwar(player)
 			return true
 		end
 	end
-	for index, gwPlayerName in pairs(disq) do
-		if gwPlayerName and player and player.name == gwPlayerName then
-			return true
-		end
-	end
 	return false
 end
 
