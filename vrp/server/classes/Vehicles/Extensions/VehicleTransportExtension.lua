@@ -199,10 +199,13 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
         return false 
     end
 
+    -- unload vehicle
     if (vehicleToLoad.m_CurrentlyAttachedToTransporter) then
         vehicleToLoad:detach()
         vehicleToLoad.m_CurrentlyAttachedToTransporter = nil
         if vehicleToLoad.controller then triggerClientEvent(vehicleToLoad.controller, "playSFX", vehicleToLoad.controller, "script", 204, 3, false) end
+        -- prevent loading a vehicle directly after unloading if there is another dft nearby
+        vehicleToLoad.controller.lastVehicleTransportInteraction = getTickCount()
         return
     end
 
@@ -227,6 +230,13 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
         if vehicleToLoad:getVelocity().length > 0.001 then 
             driver:sendWarning("Fahre langsamer um das Fahrzeug auf den Transporter zu laden.")
             return false 
+        end
+        -- prevent loading a vehicle directly after unloading if there is another dft nearby
+        if vehicleToLoad.controller then
+            if (vehicleToLoad.controller.lastVehicleTransportInteraction or 0) > (getTickCount() - 500) then
+                return
+            end
+            vehicleToLoad.controller.lastVehicleTransportInteraction = getTickCount()
         end
         vehicleToLoad:attach(self, x, y, z, rx, ry, rz)
         vehicleToLoad.m_CurrentlyAttachedToTransporter = self
@@ -264,7 +274,8 @@ function VehicleTransportExtension:toggleVehicleLoadingMode(instantUp)
         else
             self.m_AnimationTimer = setTimer(closeRamps, VehicleTransportExtension.RampMovementTime + 100, 1) -- +100 to take lag into account
         end
-    else --open the ramps
+        self.m_VehicleTransportLoadingMode = false
+    elseif not instantUp then --open the ramps
         setVehicleHandling(self, "suspensionUpperLimit", 0.6)
         setVehicleHandling(self, "suspensionLowerLimit", 0.1)
         setElementVelocity(self, 0, 0, -0.05)
@@ -277,11 +288,11 @@ function VehicleTransportExtension:toggleVehicleLoadingMode(instantUp)
             self:internalAttachRamps(true) -- attach to open state for correct position
             self:internalDetachRamps() -- detach ramps to prevent collision bugs
         end, VehicleTransportExtension.RampMovementTime + 100, 1) 
+        self.m_VehicleTransportLoadingMode = true
     end
     if not instantUp then
         triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "vehicleTransportExtensionAnimateRamps", self, self.m_RampData, startRotation, endRotation, VehicleTransportExtension.RampMovementTime)
     end
-    self.m_VehicleTransportLoadingMode = not self.m_VehicleTransportLoadingMode
     self:internalToggleLoadingZone()
 
     for i, v in pairs(getAttachedElements(self)) do
