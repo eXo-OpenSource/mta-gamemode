@@ -481,8 +481,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		col:destroy()
 		local count = 0
 		for index, vehicle in pairs(vehicles) do
-			if vehicle:isRespawnAllowed() then
-				vehicle:respawn(true)
+			if vehicle.isRespawnAllowed and vehicle:isRespawnAllowed() then
+				if instanceof(vehicle, PermanentVehicle, true) then
+					vehicle:respawnOnSpawnPosition()
+				else
+					vehicle:respawn(true) -- force respawn
+				end
 				count = count + 1
 			end
 		end
