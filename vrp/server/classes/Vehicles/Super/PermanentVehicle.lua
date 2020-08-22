@@ -14,7 +14,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 	end
 
 	-- don't convert them if they have occupants or are currently towed 
-	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle then
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") then
 		return false
 	end
 
