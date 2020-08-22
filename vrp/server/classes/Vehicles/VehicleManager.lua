@@ -1384,7 +1384,7 @@ function VehicleManager:Event_vehicleEmpty()
 					end
 					client:triggerEvent("DrivingLesson:endLesson")
 					fadeCamera(client,false,0.5)
-					setTimer(setElementPosition,1000,1,client,1348.97, -1620.68, 13.60)
+					setTimer(setElementPosition,1000,1,client,1759.05, -1690.22, 13.37)
 					setTimer(fadeCamera,1500,1, client,true,0.5)
 					outputChatBox("Du hast den Fahrlehrer rausgeworfen und die Prüfung beendet!", client, 200,0,0)
 				end
