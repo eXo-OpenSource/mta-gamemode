@@ -485,7 +485,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 						else
 							killer:giveAchievement(47)
 						end
-						client:triggerEvent("playerWasted")
+						client:triggerEvent("playerWasted", true)
 						return
 					end
 				end
