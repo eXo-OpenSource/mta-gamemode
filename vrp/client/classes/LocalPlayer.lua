@@ -457,7 +457,7 @@ function LocalPlayer:Event_playerWasted(arrestedOnWaste)
 	setTimer(setGameSpeed, 5000, 1, 1)
 	self.m_CameraTimer = setTimer(
 		function()
-			if localPlayer:getInterior() == 0 then
+			if localPlayer:getInterior() == 0 and not arrestedOnWaste then
 				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 			end
 		end
