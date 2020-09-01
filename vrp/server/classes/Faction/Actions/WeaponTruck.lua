@@ -437,7 +437,7 @@ function WeaponTruck:getAttachedBoxes(element)
 	local count = 0
 	if getAttachedElements(element) then
 		for index, ele in pairs(getAttachedElements(element)) do
-			if ele:getModel() == 2912 then
+			if ele:getModel() == 2912 and ele:getData("weaponBox") then
 				count = count + 1
 			end
 		end
@@ -531,7 +531,7 @@ function WeaponTruck:mergeBoxes(boxes)
 	local weaponTable
 	local mergeTable = {}
 	for key, box in pairs (boxes) do
-		if box:getModel() == 2912 then
+		if box:getModel() == 2912 and box:getData("weaponBox") then
 			weaponTable = box.content
 			for weaponID, v in pairs(weaponTable) do
 				if not mergeTable[weaponID] then mergeTable[weaponID] = { ["Waffe"] = 0, ["Munition"] = 0 } end
