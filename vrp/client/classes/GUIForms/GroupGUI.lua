@@ -76,9 +76,10 @@ function GroupGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.Accent)
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
-	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabVehicles):setBackgroundColor(Color.Orange):setBarEnabled(true)
+	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.17, self.m_Height*0.07, _"Respawn", tabVehicles):setBackgroundColor(Color.Orange):setBarEnabled(true)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+	self.m_VehicleRespawnAllToggle = GUICheckbox:new(self.m_Width*0.875, self.m_Height*0.26, self.m_Width*0.10, self.m_Height*0.05, "alle", tabVehicles):setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zu Privatbesitz hinzufügen", tabVehicles):setBarEnabled(true)
 	self.m_VehicleRemoveFromGroup:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleRemoveFromGroup.onLeftClick = bind(self.VehicleRemoveFromGroupButton_Click, self)
@@ -391,12 +392,19 @@ function GroupGUI:onSelectRank(name,rank)
 end
 
 function GroupGUI:VehicleRespawnButton_Click()
-	local item = self.m_VehiclesGrid:getSelectedItem()
-	if not item then
-		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
-		return
+	local respawnAll = self.m_VehicleRespawnAllToggle:isChecked()
+	if respawnAll then
+		QuestionBox:new(_("Möchtest du wirklich alle Fahrzeuge respawnen? Dies wird deine Firma/Gang %s kosten!", toMoneyString(self.m_VehiclesGrid:getItemCount()*100)), function()
+			triggerServerEvent("groupRespawnAllVehicles", localPlayer)
+		end)
+	else
+		local item = self.m_VehiclesGrid:getSelectedItem()
+		if not item then
+			ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
+			return
+		end
+		triggerServerEvent("vehicleRespawn", item.VehicleElement)
 	end
-	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
 
 function GroupGUI:VehicleConvertToGroupButton_Click()

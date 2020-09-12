@@ -313,6 +313,10 @@ function VehicleManager:destructor()
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
+function VehicleManager:getServerBankAccount()
+	return self.m_BankAccountServer
+end
+
 function VehicleManager:Event_OnRadioChange(vehicle, radio)
 	if vehicle and radio then
 

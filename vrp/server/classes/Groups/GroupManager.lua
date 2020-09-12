@@ -18,7 +18,7 @@ function GroupManager:constructor()
 	self.m_BankAccountServer = BankServer.get("group")
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
+	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupRespawnAllVehicles", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestMoney", root, bind(self.Event_RequestMoney, self))
@@ -37,6 +37,7 @@ function GroupManager:constructor()
 	addEventHandler("groupSaveRank", root, bind(self.Event_SaveRank, self))
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_ConvertVehicle, self))
 	addEventHandler("groupRemoveVehicle", root, bind(self.Event_RemoveVehicle, self))
+	addEventHandler("groupRespawnAllVehicles", root, bind(self.Event_RespawnAllVehicles, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
@@ -554,6 +555,18 @@ function GroupManager:Event_ConvertVehicle(veh)
 		else
 			client:sendError(_("Error no Vehicle!", client))
 		end
+	end
+end
+
+
+function GroupManager:Event_RespawnAllVehicles(veh)
+	local group = client:getGroup()
+	if group then
+		if group:getPlayerRank(client) < GroupRank.Manager then
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+			return
+		end
+		group:respawnVehicles()
 	end
 end
 

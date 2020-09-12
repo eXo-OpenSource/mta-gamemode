@@ -36,6 +36,10 @@ function GUIGridList:addItem(...)
 	return listItem
 end
 
+function GUIGridList:getItemCount()
+	return #self.m_ScrollArea.m_Children
+end
+
 function GUIGridList:addItemNoClick(...)
 	local listItem = GUIGridListItem:new(0, #self:getItems() * self.m_ItemHeight, self.m_Width, self.m_ItemHeight, self.m_ScrollArea):setClickable(false)
 	for k, arg in ipairs({...}) do
