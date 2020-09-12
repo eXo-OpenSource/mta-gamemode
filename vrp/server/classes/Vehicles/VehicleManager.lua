@@ -487,6 +487,10 @@ function VehicleManager:createVehicle(idOrData, handlingTemplate)
 			vehicle:setInterior(data.Interior or 0)
 			vehicle:setDimension(data.Dimension or 0)
 		end
+		vehicle:setHealth(data.Health)
+		if data.Health <= VEHICLE_TOTAL_LOSS_HEALTH then
+			vehicle:setBroken(true)
+		end
 		if handlingTemplate then
 			local template = TuningTemplateManager:getSingleton():getTemplateFromId( handlingTemplate )
 			if template then

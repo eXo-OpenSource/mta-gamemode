@@ -50,7 +50,7 @@ function FactionVehicle:constructor(data)
 	end
 
 	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
-		self:setMaxHealth(1500, true)
+		self:setMaxHealth(1500, false)
 		self:setDoorsUndamageable(true)
 	end
 	

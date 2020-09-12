@@ -79,7 +79,8 @@ function GroupGUI:constructor()
 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabVehicles):setBackgroundColor(Color.Orange):setBarEnabled(true)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
-	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug entfernen", tabVehicles):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zu Privatbesitz hinzufügen", tabVehicles):setBarEnabled(true)
+	self.m_VehicleRemoveFromGroup:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleRemoveFromGroup.onLeftClick = bind(self.VehicleRemoveFromGroupButton_Click, self)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.25, self.m_Height*0.06, _"Privat-Fahrzeuge:", tabVehicles)
@@ -89,7 +90,7 @@ function GroupGUI:constructor()
 	self.m_PrivateVehiclesGrid:addColumn(_"Steuer", 0.2)
 
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.Accent)
-	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zur \nFirma/Gang hinzufügen", tabVehicles):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zur \nFirma/Gang hinzufügen", tabVehicles):setBarEnabled(true)
 	self.m_VehicleConvertToGroupButton:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 

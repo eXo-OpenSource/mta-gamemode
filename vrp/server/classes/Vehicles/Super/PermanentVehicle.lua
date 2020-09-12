@@ -186,10 +186,6 @@ function PermanentVehicle:virtual_constructor(data)
 			self.m_Trunk:setVehicle(self)
 		end
 
-		if health and health <= 300 then
-			health = 300
-		end
-
 		if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
 			self:setELSPreset(data.ELSPreset)
 		end
