@@ -201,8 +201,10 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 		-- TAKE THE MONEY BRUHH
 
 		local money = source.m_SpawnedDead == 0 and math.floor(source:getMoney()*0.25) or 0
-		source:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
-		source.m_DeathMoneyDrop = money
+		if money > 0 then
+			source:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
+			source.m_DeathMoneyDrop = money
+		end
 
 		if bodypart == 9 and (weapon == 24 or weapon == 25 or weapon == 26 or weapon ==27 or weapon == 33 or weapon == 34) then
 			source:setHeadless(true)

@@ -68,13 +68,21 @@ function MechanicTow:respawnVehicle(vehicle)
 		end
 
 		if instanceof(vehicle, PermanentVehicle, true) then
-			local player, isOffline = DatabasePlayer.get(vehicle:getOwner())
+			Async.create( -- player:load()/:save() needs a aynchronous execution
+				function()
+					local player, isOffline = DatabasePlayer.get(vehicle:getOwner())
 
-			player:transferBankMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
+					if isOffline then
+						player:load()
+					end
 
-			if isOffline then
-				delete(player)
-			end
+					player:transferBankMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
+
+					if isOffline then
+						delete(player)
+					end
+				end
+			)()
 		end
 		
 		vehicle:setPositionType(VehiclePositionType.Mechanic)

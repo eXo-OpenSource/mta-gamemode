@@ -7,7 +7,7 @@
 -- ****************************************************************************
 local findItems =
 {
-	"TV-Reciever",
+	"TV-Receiver",
 	"Handy",
 	"Armbanduhr",
 	"Kreditkarte",
@@ -172,4 +172,3 @@ end
 function GroupHouseRob:destructor()
 
 end
-

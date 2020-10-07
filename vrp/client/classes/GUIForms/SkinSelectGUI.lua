@@ -66,6 +66,7 @@ function SkinSelectGUI:loadSkins()
 		local x, y, w, h = (i-1)*3 + 1 - row*images_per_row*3, row*images_per_row + 1, 3, 5
 
 		local image = GUIGridImage:new(x, y, w, h, string.format("files/images/Skins/full/%s.jpg", skinId), self.m_ScrollableArea)
+		image:fitBySize(104, 270)
 		image.onLeftClick = function()
 			if self.m_Edit then return false end
 			if self.m_GroupType == "faction" then

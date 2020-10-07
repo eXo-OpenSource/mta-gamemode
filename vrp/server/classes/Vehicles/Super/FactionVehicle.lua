@@ -50,7 +50,7 @@ function FactionVehicle:constructor(data)
 	end
 
 	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
-		self:setMaxHealth(1500, true)
+		self:setMaxHealth(1500, false)
 		self:setDoorsUndamageable(true)
 	end
 	
@@ -193,9 +193,9 @@ function FactionVehicle:hasKey(player)
 	elseif player:getFaction() and self.m_Faction:isRescueFaction() and player:getFaction():isRescueFaction() then
 		return player:isFactionDuty()
 	elseif player:getFaction() and player:getFaction() == self.m_Faction then
-      	return player:isFactionDuty()
+      	return true
 	elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
-      	return player:isFactionDuty()
+      	return true
     end
   end
 

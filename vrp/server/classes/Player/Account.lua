@@ -148,6 +148,12 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 		ServiceSync:getSingleton():syncPlayer(Id)
 	end
 
+	if not player.loadCharacter then
+		outputDebugString( ("Account.loginSuccess: Player-Element %s, inherited by Player-class: %s"):format(inspect(player), tostring(instanceof(player, Player))) )
+		player:kick("Fehler beim Einloggen, melde Dich bitte im Support!")
+		return
+	end
+
 	player:loadCharacter()
 	player:spawn()
 	player:triggerEvent("loginsuccess", pwhash)

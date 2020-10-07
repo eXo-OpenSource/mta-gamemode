@@ -27,7 +27,10 @@ function ExplosiveTruck:constructor(faction, player)
 		end
 	end
 
-	addEventHandler("onPickupUse", FactionState:getSingleton().m_EvidenePickup, bind(self.impoundBox, self))
+	self.m_OnStateEvidencePickupUseFunc = bind(self.impoundBox, self)
+	for i, pickup in pairs(StateEvidence:getSingleton():getEvidencePickups()) do
+		addEventHandler("onPickupUse", pickup, self.m_OnStateEvidencePickupUseFunc)
+	end
 
 	self.m_Box = createObject(2912, player:getPosition())
 	self.m_Box.m_Faction = faction
@@ -49,7 +52,9 @@ function ExplosiveTruck:destructor()
 		end
 	end
 
-	removeEventHandler("onPickupUse", FactionState:getSingleton().m_EvidenePickup, bind(self.impoundBox, self))
+	for i, pickup in pairs(StateEvidence:getSingleton():getEvidencePickups()) do
+		removeEventHandler("onPickupUse", pickup, self.m_OnStateEvidencePickupUseFunc)
+	end
 end
 
 function ExplosiveTruck:dragBox(button, state, player)
@@ -115,7 +120,7 @@ function ExplosiveTruck:deliverBox(button, state, player)
 end
 
 function ExplosiveTruck:impoundBox(player)
-	if not player or player:getFaction() and player:getFaction():isStateFaction() then
+	if not player or not player:getFaction() or not player:getFaction():isStateFaction() then
 		return
 	end
 

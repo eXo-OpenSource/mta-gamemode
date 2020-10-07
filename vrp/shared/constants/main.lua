@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.8.3"
+PROJECT_VERSION = "1.9"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -12,7 +12,7 @@ if DEBUG then
 	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
 
-DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "download2.exo-reallife.de", "influxdb.merx.dev", "sentry.exo.merx.dev", "cp.exo-reallife.de"}
+DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "download2.exo-reallife.de", "influxdb.merx.dev", "sentry.exo.merx.dev", "cp.exo-reallife.de", "cp-echo.exo-reallife.de"}
 
 -- LEVELS
 MAX_JOB_LEVEL = 10
@@ -136,7 +136,6 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 
 	--player punish
-	["freeVip"] = RANK.Moderator,
 	["freeze"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
@@ -152,9 +151,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
-	["loginFix"] = RANK.Moderator,
-	["vehicleMenu"] = RANK.Moderator,
-	["syncForum"] = RANK.Supporter,
+	["throwaway"] = RANK.Moderator,
+
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
@@ -169,7 +167,12 @@ ADMIN_RANK_PERMISSION = {
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
+	["loginFix"] = RANK.Moderator,
+	["syncForum"] = RANK.Supporter,
+	["freeVip"] = RANK.Moderator,
 	["cinemaRemoveLobby"] = RANK.Supporter,
+	["openAdminMenu"] = RANK.Ticketsupporter,
+	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
 
 	--group management
 	["setFaction"] = RANK.Administrator,
@@ -228,6 +231,7 @@ ADMIN_RANK_PERMISSION = {
 	["transactionMenu"] = RANK.Administrator,
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
 	["serialAccountMenu"] = RANK.Supporter,
+	["vehicleMenu"] = RANK.Moderator,
 
 	["openMapEditor"] = RANK.Administrator,
 	["createNewMap"] = RANK.Administrator,
@@ -235,10 +239,6 @@ ADMIN_RANK_PERMISSION = {
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
-
-	["disablereg"] = RANK.Servermanager, --disablereg, enablereg
-
-	["throwaway"] = RANK.Moderator,
 }
 
 GroupRank = {
@@ -523,9 +523,9 @@ AD_COST_PER_CHAR = 3
 AD_BREAK_TIME = 30 -- In Seconds
 
 AD_DURATIONS = {
-	["20 Sekunden"] = 20,
-	["30 Sekunden"] = 30,
-	["45 Sekunden"] = 45
+	["20 Sek."] = 20,
+	["30 Sek."] = 30,
+	["45 Sek."] = 45
 }
 
 BODYPART_NAMES = {
@@ -591,7 +591,7 @@ FERRIS_IDS = {
 SPAWN_LOCATIONS = {
 	DEFAULT = 0,
 	NOOBSPAWN = 1,
-	GARAGE = 2,
+	--GARAGE = 2, (not used anymore)
 	FACTION_BASE = 3,
 	COMPANY_BASE = 4,
 	HOUSE = 5,
@@ -690,6 +690,17 @@ CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwa
 	Cinema = "52-kino",
 	BeggarPed = "58-bettler",
 	JobOverview = "35-übersicht-der-jobs",
+	JobPizzaDelivery = "62-pizzalieferant",
+	JobRoadSweeper = "63-straßenkehrer",
+	JobLogistician = "64-logistik-lkw",
+	JobTreasureSeeker = "65-schatzsucher",
+	JobTrashman = "66-müllmann",
+	JobForkLift = "67-logistik-gabelstapler",
+	JobLumberjack = "68-holzfäller",
+	JobHeliTransport = "69-helikopterpilot",
+	JobFarmer = "61-farmer",
+	JobGravel = "70-kiesgrubenarbeiter",
+	JobBoxer = "71-boxer",
 	ActionBankRobbery = "10-bankraub-casinoraub",
 	ActionWeaponTruck = "7-waffentruck",
 	ActionWeedTruck = "8-drogentruck",

@@ -224,9 +224,9 @@ function ScoreboardGUI:insertPlayers()
 		end
 
 		if ping == "AFK" then
-			item:setColumnColor(8, Color.Red)
+			item:setColumnColor(7, Color.Red)
 		elseif ping == "Knast" then
-			item:setColumnColor(8, Color.Yellow)
+			item:setColumnColor(7, Color.Yellow)
 		end
 	end
 end

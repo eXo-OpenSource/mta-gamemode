@@ -124,8 +124,10 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 			fadeCamera(player, true)
 			
 			setTimer(function() --map glitch fix
-				setElementFrozen(player, false)
-				player:triggerEvent("checkNoDm")
+				if isElement(player) then --check if player maybe went offline
+					setElementFrozen(player, false)
+					player:triggerEvent("checkNoDm")
+				end
 			end, 1000, 1)
 
 			if type == "enter" then

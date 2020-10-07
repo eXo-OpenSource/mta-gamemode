@@ -36,7 +36,7 @@ function RobableShop:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorI
 		self.m_Ped:destroy()
 	end
 
-	self.m_Ped = ShopNPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
+	self.m_Ped = TargetableNPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
 	self.m_Ped:setInterior(interiorId)
 	self.m_Ped:setDimension(dimension)
 	self.m_Ped.Shop = shop
@@ -316,7 +316,7 @@ function RobableShop:onBagClick(button, state, player)
 			player:sendError(_("Du darfst die Beute nicht besitzen!", player))
 			end
 		else
-			player:sendError(_("Du bist zuweit von dem Geldsack entfernt!", player))
+			player:sendError(_("Du bist zu weit von dem Geldsack entfernt!", player))
 		end
 	end
 end

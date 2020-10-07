@@ -175,8 +175,8 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	end
 
 	if (player:getPosition() - target:getPosition()).length > 10 then
-		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
-		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+		player:sendError(_("Du bist zu weit von %s entfernt!", player, target.name))
+		target:sendError(_("Du bist zu weit von %s entfernt!", target, player.name))
 		return false
 	end
 	if (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
@@ -201,7 +201,9 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 				end
 				player:getInventory():removeItem(item, amount, value)
 				WearableManager:getSingleton():removeWearable( player, item, value )
-				target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
+				if money > 0 then
+					target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
+				end
 				StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
 				if item == "Osterei" and money == 0 then
@@ -237,8 +239,8 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 	local money = player.sendRequest.money
 
 	if (player:getPosition() - target:getPosition()).length > 10 then
-		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
-		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+		player:sendError(_("Du bist zu weit von %s entfernt!", player, target.name))
+		target:sendError(_("Du bist zu weit von %s entfernt!", target, player.name))
 		return false
 	end
 
@@ -257,7 +259,9 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
 				takeWeapon(player, weaponId)
-				target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
+				if money > 0 then
+					target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
+				end
 				if target:getFaction() and target:getFaction():isStateFaction() and target:isFactionDuty() then
 					StateEvidence:getSingleton():addWeaponWithMunitionToEvidence(target, weaponId, amount)
 					return

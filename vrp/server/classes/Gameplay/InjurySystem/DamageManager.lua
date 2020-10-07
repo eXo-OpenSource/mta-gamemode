@@ -53,6 +53,13 @@ function DamageManager:Event_TreatPlayer(healer, player, data)
 	local client = healer
 	if not healer then return end 
 	if not player then return end
+
+	if healer.isTasered then return end
+	if player.isTasered then return end
+
+	if healer.m_IsAdminFrozen then return end
+	if player.m_IsAdminFrozen then return end
+
 	if player.m_TreatedBy then
 		if isElement(player.m_TreatedBy) then 
 			return client:sendInfo(_("Dieser Spieler wird bereits behandelt!", client))

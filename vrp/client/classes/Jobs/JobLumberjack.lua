@@ -46,7 +46,7 @@ function JobLumberjack:start()
 	self.m_SawMillBlip:setDisplayText("Sägewerk")
 	ShortMessage:new(_"Säge die auf der Karte markierten Bäume mit der Motorsäge um.")
 	-- Show text in help menu
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobLumberjack)
 end
 
 function JobLumberjack:stop()

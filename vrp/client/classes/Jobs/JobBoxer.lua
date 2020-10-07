@@ -19,7 +19,7 @@ function JobBoxer:constructor()
 end
 
 function JobBoxer:start()
-    HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+    HelpBar:getSingleton():setLexiconPage(LexiconPages.JobBoxer)
 end
 
 function JobBoxer:stop()

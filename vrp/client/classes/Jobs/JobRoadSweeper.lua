@@ -29,7 +29,7 @@ function JobRoadSweeper:start()
 	end
 
 	-- Show text in help menu
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobRoadSweeper)
 end
 
 function JobRoadSweeper:stop()

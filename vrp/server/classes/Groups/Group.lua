@@ -701,6 +701,34 @@ function Group:checkDespawnVehicle()
 	end
 end
 
+function Group:respawnVehicles(player)
+	local time = getRealTime().timestamp
+	if self.m_LastRespawn then
+		if time - self.m_LastRespawn <= 900 then --// 15min
+			return self:sendShortMessage("Fahrzeuge können nur alle 15 Minuten respawned werden!")
+		end
+	end
+	local groupVehicles = VehicleManager:getSingleton():getGroupVehicles(self.m_Id)
+	local fails = 0
+	local vehicles = 0
+	local costs = 0
+	for id, vehicle in pairs(groupVehicles) do
+		vehicles = vehicles + 1
+		costs = costs + 100
+		if costs > self:getMoney() then
+			self:sendShortMessage(("Ihr habt nicht genügend Geld um alle Fahrzeuge zu respawnen"):format(vehicles-fails, vehicles))
+			break;
+		end
+		if not vehicle:respawn(false, true) then
+			fails = fails + 1
+		end
+	end
+	self.m_LastRespawn = getRealTime().timestamp
+	-- adapted from VehicleManager
+	self:transferMoney(VehicleManager:getSingleton():getServerBankAccount(), costs, "Fahrzeug-Respawn", "Vehicle", "Respawn")
+	self:sendShortMessage(("%s/%s Fahrzeuge wurden von %s respawned!"):format(vehicles-fails, vehicles, player:getName()))
+end
+
 function Group:calculateVehicleTax(data)
 	local sum = 0
 	local tax
@@ -732,7 +760,7 @@ function Group:payDay()
 
 	for index, vehicle in pairs(self:getVehicles()) do
 		local tax, isTowed = vehicle:getVehicleTaxForGroup()
-		if isTowed then
+		if not isTowed then
 			outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getVehicleTaxForGroup()
 		else
 			if not outgoingSeperated["Abstellhof Gebühren"] then 

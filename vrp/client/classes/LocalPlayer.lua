@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerCashChange", "disableDamage",
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"
 ,"onTryEnterExit", "onAllowRadioCommunication", "playSound", "playSFX", "playSFX3D"}
 
@@ -441,7 +441,7 @@ function LocalPlayer:createDeathShortMessage()
 	end
 end
 
-function LocalPlayer:Event_playerWasted()
+function LocalPlayer:Event_playerWasted(arrestedOnWaste)
 	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
@@ -457,13 +457,13 @@ function LocalPlayer:Event_playerWasted()
 	setTimer(setGameSpeed, 5000, 1, 1)
 	self.m_CameraTimer = setTimer(
 		function()
-			if localPlayer:getInterior() == 0 then
+			if localPlayer:getInterior() == 0 and not arrestedOnWaste then
 				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 			end
 		end
 	, 4500, 1)
 	setTimer(resetSkyGradient,30000,1)
-	if localPlayer:getInterior() > 0 then
+	if localPlayer:getInterior() > 0 or arrestedOnWaste then
 		self.m_OnDeathTimerUp()
 		return
 	end
@@ -905,7 +905,6 @@ function LocalPlayer:startAnimation(_, ...)
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
 	if isPedAiming(localPlayer) then return end
-
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
 

@@ -1,23 +1,23 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/NPC.lua
--- *  PURPOSE:     Shop NPC class (peds in shops)
+-- *  FILE:        server/classes/Gameplay/NPCs/TargetableNPC.lua
+-- *  PURPOSE:     Targetable NPC class (peds in shops etc.)
 -- *
 -- ****************************************************************************
-ShopNPC = inherit(NPC)
+TargetableNPC = inherit(NPC)
 
-function ShopNPC:constructor(skinId, x, y, z, rotation)
+function TargetableNPC:constructor(skinId, x, y, z, rotation)
 	NPC.constructor(self, skinId, x, y, z, rotation)
 	self:setFrozen(true)
 	self.m_InTarget = false
 	self.m_TargettedBy = {}
-	self.m_RefreshAttackersFunc = bind(ShopNPC.refreshAttackers, self)
+	self.m_RefreshAttackersFunc = bind(self.refreshAttackers, self)
 	self.m_Warning = "Du überfällst den Verkäufer in 5 Sekunden, wenn du weiter auf ihn zielst!"
 	self:toggleWanteds(true)
 end
 
-function ShopNPC:onInternalTargetted(playerBy)
+function TargetableNPC:onInternalTargetted(playerBy)
 	if not NO_MUNITION_WEAPONS[playerBy:getWeapon()] and not THROWABLE_WEAPONS[playerBy:getWeapon()] then
 		self.m_TargettedBy[playerBy] = true
 	else
@@ -30,19 +30,21 @@ function ShopNPC:onInternalTargetted(playerBy)
 		self.m_InTarget = true
 		self.m_TargettedBy[playerBy] = true
 		local targetTimer = setTimer(function(playerBy)
-			if playerBy:getTarget() == self then
-				self.m_StartingPlayer = playerBy
-				self:onTargetted(playerBy)
-				self.m_RefreshTimer = setTimer(self.m_RefreshAttackersFunc, 1000, 0)
-			else
-				self:setAnimation()
-				self.m_InTarget = false
+			if isElement(playerBy) then -- if the player went offline
+				if playerBy:getTarget() == self then
+					self.m_StartingPlayer = playerBy
+					self:onTargetted(playerBy)
+					self.m_RefreshTimer = setTimer(self.m_RefreshAttackersFunc, 1000, 0)
+				else
+					self:setAnimation()
+					self.m_InTarget = false
+				end
 			end
 		end, 5000, 1, playerBy)
 	end
 end
 
-function ShopNPC:refreshAttackers()
+function TargetableNPC:refreshAttackers()
 	local count = 0
 	for player in pairs(self.m_TargettedBy) do
 		if player and isElement(player) and getElementType(player) == "player" and player:getTarget() == self then
@@ -69,41 +71,14 @@ function ShopNPC:refreshAttackers()
 	end
 end
 
-function ShopNPC:getAttackers()
+function TargetableNPC:getAttackers()
 	return self.m_TargettedBy
 end
 
 addEventHandler("onPlayerTarget", root,
-function(targettedElement)
-	if isElement(targettedElement) and getElementType(targettedElement) == "ped" and targettedElement.onInternalTargetted then
-		targettedElement:onInternalTargetted(source)
-		--[[if not targettedElement.m_InTarget and source:getWeapon() ~= 0 then
-			targettedElement:setAnimation("ped", "handsup", -1, false)
-			targettedElement.m_InTarget = true
-
-			if targettedElement.onTargetted then
-				source:sendWarning(_("Du überfällst den NPC in 5 Sekunden, wenn du weiter auf ihn zielst!", source))
-				local targetTimer = setTimer(function(player)
-					if player:getTarget() == targettedElement then
-						targettedElement:onTargetted(player)
-					end
-				end, 5000, 1, source)
-			end
-
-
-			-- Block inTarget for a while | TODO: Optimize this
-			setTimer(function(player)
-				if not isElement(player) or getElementType(player) ~= "player" or player:getTarget() == false then
-					targettedElement.m_InTarget = false
-					targettedElement:setAnimation(nil)
-					killTimer(sourceTimer)
-					if targetTimer and isTimer(targetTimer) then
-						killTimer(targetTimer)
-					end
-				end
-			end, 3*1000, 0, source)
-
-		end]]
+	function(targettedElement)
+		if isElement(targettedElement) and getElementType(targettedElement) == "ped" and instanceof(targettedElement, TargetableNPC) then
+			targettedElement:onInternalTargetted(source)
+		end
 	end
-end
 )

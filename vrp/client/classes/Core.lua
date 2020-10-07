@@ -110,7 +110,7 @@ function Core:ready() --onClientResourceStart
 	ThrowObject:new()
 	Casino:new()
 	TrainManager:new()
-	Fire:new()
+	FireManager:new()
 	VehicleInteraction:new()
 	EventManager:new()
 	DMRaceEvent:new()
@@ -119,6 +119,7 @@ function Core:ready() --onClientResourceStart
 	SkinShopGUI.initializeAll()
 	ItemManager:new()
 	CinemaManager:new()
+	CustomAnimationManager:new()
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()
@@ -195,6 +196,7 @@ function Core:ready() --onClientResourceStart
 	CasinoWheel:new()
 	PedScale:new()
 	VehicleGuns:new()
+	HelicopterDrivebyManager:new()
 end
 
 function Core:afterLogin()

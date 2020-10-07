@@ -193,12 +193,12 @@ function QuestManager:startQuestForPlayer(player)
 		return false
 	end
 	if table.find(self.m_CurrentQuest:getPlayers(), player) then
-		player:sendError("Du hast den Quest bereits gestartet!")
+		player:sendError("Du hast die Quest bereits gestartet!")
 		return
 	end
 
 	if self.m_CurrentQuest:isQuestDone(player) then
-		player:sendError("Du hast den Quest bereits abgeschlossen!")
+		player:sendError("Du hast die Quest bereits abgeschlossen!")
 		return
 	end
 
@@ -238,7 +238,7 @@ function QuestManager:stopQuest()
 end
 
 function QuestManager:onShortMessageClick()
-	QuestionBox:new(client, client, "Möchtest du den Quest "..self.m_CurrentQuest.m_Name.." abbrechen? Du kannst diesen jederzeit wieder starten.",
+	QuestionBox:new(client, client, "Möchtest du die Quest "..self.m_CurrentQuest.m_Name.." abbrechen? Du kannst diesen jederzeit wieder starten.",
 	function()
 		self:endQuestForPlayer(client)
 	end,

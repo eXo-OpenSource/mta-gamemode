@@ -16,7 +16,7 @@ end
 
 function JobTreasureSeeker:start()
 	TreasureRadar:new()
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobTreasureSeeker)
 end
 
 function JobTreasureSeeker:stop()

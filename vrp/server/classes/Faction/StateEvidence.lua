@@ -21,6 +21,7 @@ addRemoteEvents{"State:startEvidenceTruck"}
 function StateEvidence:constructor()
     addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 	
+	self.m_Pickups = {}
 	self:createEvidencePickup(233.47, 111.40, 1002.8, 10, 0)
 	self:createEvidencePickup(1579.43, -1691.53, 5.92, 0, 5)
 	self:loadObjectData()
@@ -52,6 +53,11 @@ function StateEvidence:createEvidencePickup( x,y,z, int, dim )
 		end
 	end)
 	ElementInfo:new(pickup, "Asservatenkammer", 1 )
+	table.insert(self.m_Pickups, pickup)
+end
+
+function StateEvidence:getEvidencePickups()
+	return self.m_Pickups
 end
 
 function StateEvidence:getObjectPrice(type, object, amount)

@@ -1296,13 +1296,15 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		if mon < factionBonus then
 			local bankM = player:getBankMoney()
 			local remainMoney = factionBonus - mon
-			player:transferMoney(self.m_BankAccountServer, mon, "Knast Strafe (Bar)", "Faction", "Arrest")
+			if mon > 0 then
+				player:transferMoney(self.m_BankAccountServer, mon, "Knast Strafe (Bar)", "Faction", "Arrest")
+			end
 			if remainMoney > bankM then
 				player:transferBankMoney(self.m_BankAccountServer, bankM, "Knast Strafe (Bank)", "Faction", "Arrest")
 			else
 				player:transferBankMoney(self.m_BankAccountServer, remainMoney, "Knast Strafe (Bank)", "Faction", "Arrest")
 			end
-		else
+		elseif factionBonus > 0 then
 			player:transferMoney(self.m_BankAccountServer, factionBonus, "Knast Strafe (Bar)", "Faction", "Arrest")
 		end
 		player:setJailTime(jailTime)

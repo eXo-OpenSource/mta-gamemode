@@ -41,7 +41,7 @@ end
 function ElementTexture:destructor()
 	ElementTexture.Map[self.m_Id] = nil
 	if self.m_Element and isElement(self.m_Element) then
-		triggerClientEvent(root, "removeElementTexture",  self.m_Element, self.m_Texture)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "removeElementTexture",  self.m_Element, self.m_Texture)
 	end
 end
 

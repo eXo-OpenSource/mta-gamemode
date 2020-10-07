@@ -81,6 +81,19 @@ function VehicleManager:constructor()
 
 				source.m_GrabbedVehicle:blow()
 			end
+
+			if source:getVehicleType() == "Helicopter" then
+				for key, element in pairs(source:getAttachedElements()) do
+					if element:getType() == "player" then
+						if element.m_HelicopterDrivebyVehicle and element.m_HelicopterDrivebyVehicle == source then
+							element:detach()
+							element.m_HelicopterDrivebyVehicle = nil
+							element.m_HelicopterDrivebySeat = nil
+							element:setPublicSync("isDoingHelicopterDriveby", false)
+						end
+					end
+				end
+			end
 		end
 	)
 
@@ -102,7 +115,11 @@ function VehicleManager:constructor()
 		function()
 			if client.vehicleSeat ~= 0 then return end
 
-			if client.vehicle:hasKey(client) or client.vehicle:canObjectBeLoaded() or client.vehicle:getData("isGangwarVehicle") or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
+			if client.vehicle:hasKey(client) or 
+					client.vehicle:canObjectBeLoaded() or 
+					client.vehicle:getData("isGangwarVehicle") or 
+					(client.vehicle.importVehicle and client:getCompany() and client:getCompany():getId() == CompanyStaticId.EPT) or 
+					client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
 				client.vehicle:toggleHandBrake(client)
 			else
 				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
@@ -296,6 +313,10 @@ function VehicleManager:destructor()
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
+function VehicleManager:getServerBankAccount()
+	return self.m_BankAccountServer
+end
+
 function VehicleManager:Event_OnRadioChange(vehicle, radio)
 	if vehicle and radio then
 
@@ -469,6 +490,10 @@ function VehicleManager:createVehicle(idOrData, handlingTemplate)
 		if vehicle:getDimension() ~= PRIVATE_DIMENSION_SERVER then -- don't set interior and dimension if it is already despawned
 			vehicle:setInterior(data.Interior or 0)
 			vehicle:setDimension(data.Dimension or 0)
+		end
+		vehicle:setHealth(data.Health)
+		if data.Health <= VEHICLE_TOTAL_LOSS_HEALTH then
+			vehicle:setBroken(true)
 		end
 		if handlingTemplate then
 			local template = TuningTemplateManager:getSingleton():getTemplateFromId( handlingTemplate )
@@ -1367,7 +1392,7 @@ function VehicleManager:Event_vehicleEmpty()
 					end
 					client:triggerEvent("DrivingLesson:endLesson")
 					fadeCamera(client,false,0.5)
-					setTimer(setElementPosition,1000,1,client,1348.97, -1620.68, 13.60)
+					setTimer(setElementPosition,1000,1,client,1759.05, -1690.22, 13.37)
 					setTimer(fadeCamera,1500,1, client,true,0.5)
 					outputChatBox("Du hast den Fahrlehrer rausgeworfen und die Prüfung beendet!", client, 200,0,0)
 				end
@@ -1499,7 +1524,7 @@ function VehicleManager:Event_LoadObject(veh, type)
 					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
@@ -1547,7 +1572,7 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))

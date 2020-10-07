@@ -19,7 +19,7 @@ end
 
 function JobLogistician:start()
   -- Show text in help menu
-  HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+  HelpBar:getSingleton():setLexiconPage(LexiconPages.JobLogistician)
 end
 
 function JobLogistician:stop()

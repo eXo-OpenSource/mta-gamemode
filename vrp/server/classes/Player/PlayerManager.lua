@@ -329,7 +329,12 @@ end
 function PlayerManager:playerJoin()
 	-- Set a random nick to prevent blocking nicknames
 	source:setName(getRandomUniqueNick())
-	source:join()
+	if source.join then
+		source:join()
+	else
+		outputDebugString( ("PlayerManager.playerJoin: Player-Element %s, inherited by Player-class: %s"):format(inspect(source), tostring(instanceof(source, Player))) )
+		source:kick("Fehler beim Spielbeitritt, melde Dich bitte im Support!")
+	end
 end
 
 function PlayerManager:playerCommand(cmd)
@@ -410,6 +415,19 @@ function PlayerManager:Event_playerReady(tblClientSettings)
 	local player = client
 	player.m_tblClientSettings = tblClientSettings or {}
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
+
+	-- use this code for debugging purposes
+	-- sometimes there are invalid players in the ready table, so let's see if there is some kind of
+	-- race condition between playerQuit and playerReady
+	nextframe(function()
+		if not player or not isElement(player) or getElementType(player) ~= "player" then 
+			outputDebugString(("invalid player @Event_playerReady (got '%s')"):format(inspect(player)), 1)
+			local index = table.find(self.m_ReadyPlayers, player)
+			if index then
+				table.remove(self.m_ReadyPlayers, index)
+			end
+		end
+	end)
 end
 
 function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
@@ -467,7 +485,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 						else
 							killer:giveAchievement(47)
 						end
-						client:triggerEvent("playerWasted")
+						client:triggerEvent("playerWasted", true)
 						return
 					end
 				end
@@ -818,6 +836,7 @@ function PlayerManager:Event_startAnimation(animation)
 	if client:isOnFire() then return end
 	if client:getData("isInDeathMatch") then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
+	if client:isInGangwar() then client:sendError(_("Du kannst im Gangwar keine Animationen ausführen!", client)) return end
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]

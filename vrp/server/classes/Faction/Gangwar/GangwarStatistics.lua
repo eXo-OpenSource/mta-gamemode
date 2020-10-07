@@ -68,9 +68,11 @@ function GangwarStatistics:collectDamage(mAreaID, facPlayers)
 			end
 			moneyDamage = damage * GANGWAR_PAY_PER_DAMAGE
 			moneyKill = kill * GANGWAR_PAY_PER_KILL
-			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",player,200,200,0,true)
-			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",player,200,200,0,true)
-			self.m_BankAccountServer:transferMoney(player, moneyDamage + moneyKill, "Gangwar-Boni", "Faction", "GangwarBoni")
+			if moneyDamage + moneyKill > 0 then
+				outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",player,200,200,0,true)
+				outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",player,200,200,0,true)
+				self.m_BankAccountServer:transferMoney(player, moneyDamage + moneyKill, "Gangwar-Boni", "Faction", "GangwarBoni")
+			end
 			self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { player, damage}
 			self.m_SQLStats[#self.m_SQLStats+1] = {player:getId(), "Damage", damage, player:getName()}
 			self.m_SQLStats[#self.m_SQLStats+1] = {player:getId(), "Kill", kill, player:getName()}

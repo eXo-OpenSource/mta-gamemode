@@ -27,7 +27,7 @@ function InteriorEnterExitGUI:constructor(entry, text, icon, checkRange, allowVe
         self.m_Font = VRPFont(math.ceil(60-(60*exceed)))
     end
     local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
-    self.m_KeyText = ("Drücke %s[%s]%s zum Betreten!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
+    self.m_KeyText = ("Drücke %s[%s]%s zum Benutzen!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
 
     self:start()
     if not self.m_CancelVehicleEnter then 
@@ -121,4 +121,3 @@ function InteriorEnterExitGUI:destructor()
     end
     removeEventHandler("onClientRender", root, self.m_DrawBind)
 end
-

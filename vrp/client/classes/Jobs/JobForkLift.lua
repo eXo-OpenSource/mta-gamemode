@@ -42,7 +42,7 @@ function JobForkLift:onLoadMarkerHit(hitElement, dim)
 end
 
 function JobForkLift:start()
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobForkLift)
 end
 
 function JobForkLift:stop()

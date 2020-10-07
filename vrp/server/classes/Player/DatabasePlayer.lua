@@ -575,12 +575,14 @@ function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, su
 	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory, options)
 
 	if result then
-		local options = options and options or {}
-		outputDebug(reason, options)
-		if money ~= 0 and not options.silent then
-			self:sendShortMessage(("%s$%s"):format("-"..amount, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+		if self:isActive() then
+			local options = options and options or {}
+			outputDebug(reason, options)
+			if money ~= 0 and not options.silent then
+				self:sendShortMessage(("%s%s"):format("-"..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+			end
+			self:triggerEvent("playerCashChange", options.silent)
 		end
-		self:triggerEvent("playerCashChange", options.silent)
 	end
 
 	return result
@@ -1054,7 +1056,7 @@ function DatabasePlayer:setSTVO(category, stvo)
 			elseif category == "Truck" then
 				self.m_HasTruckLicense = false
 			elseif category == "Pilot" then
-				self.m_HasPilotLicense = false
+				self.m_HasPilotsLicense = false
 			end
 		end
 	else

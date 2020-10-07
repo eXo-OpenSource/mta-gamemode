@@ -117,8 +117,11 @@ function MapEditor:Event_onClientClick(button, state, absoluteX, absoluteY, worl
 end
 
 function MapEditor:Event_onClientDoubleClick(button, absoluteX, absoluteY, worldX, worldY, worldZ, element)
-    if button == "left" then
+    if MapEditorMapGUI:isInstantiated() or MapEditorObjectGUI:isInstantiated() or self.m_PlacingMode or GUIElement.getHoveredElement() then 
+        return
+    end
 
+    if button == "left" then
         if self:getRemovingMode() then
             local worldModelId = false
             if ClickHandler:getSingleton().m_WorldObjectInfos then
@@ -297,6 +300,7 @@ function MapEditor:receiveControlPermission(object, callbackType, permission, te
     if permission == true then
         if callbackType == "normal" then
             self.m_ControlledObject = object
+            self.m_ControlledObject.m_Textures = textures
         elseif callbackType == "ObjectPlacer" then
             self.m_ControlledObject = object
             ObjectPlacer:new(self.m_ControlledObject:getModel(), self.m_ObjectPlacedBind, object, true)

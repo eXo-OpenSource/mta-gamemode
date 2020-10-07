@@ -56,7 +56,7 @@ function PrisonBreakManager:createEntrance()
 end
 
 function PrisonBreakManager:createDummyPoliceman()
-    self.m_Officer = ShopNPC:new(276, Vector3(2564.98, -1432.98, 1044.52), 345.4)
+    self.m_Officer = TargetableNPC:new(276, Vector3(2564.98, -1432.98, 1044.52), 345.4)
     self.m_Officer:setInterior(2)
     self.m_Officer:setImmortal(true)
     self.m_Officer:setFrozen(true)

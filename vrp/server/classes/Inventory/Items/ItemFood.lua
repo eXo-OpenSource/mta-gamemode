@@ -58,7 +58,13 @@ function ItemFood:use(player)
 	end
 
 	local block, animation, time = unpack(ItemSettings["Animation"])
-	if not player.vehicle then player:setAnimation(block, animation, time, true, false, false) end
+	if not player.vehicle then 
+		player:setFrozen(true) --prevent the player from running forwards when eating while laying on ground after fall
+		nextframe(function() 
+			player:setFrozen(false)
+			player:setAnimation(block, animation, time, true, false, false) 
+		end)
+	end
 	setTimer(
 		function()
 			if isElement(item) then item:destroy() end

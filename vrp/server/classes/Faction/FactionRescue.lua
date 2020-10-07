@@ -99,6 +99,10 @@ function FactionRescue:constructor()
 					self.m_DeathBlips[player] = nil
 				end
 			end
+
+			if player.m_RescueStretcher then
+				player.m_RescueStretcher:destroy()
+			end
 		end
 	)
 
@@ -287,14 +291,16 @@ function FactionRescue:getStretcher(player, vehicle)
 
 	setTimer(
 		function (player)
-			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
-			if player:getExecutionPed() then
-				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
+			if isElement(player) then
+				player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+				if player:getExecutionPed() then
+					player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
+				end
+				player:toggleControlsWhileObjectAttached(false, true, true, false, true)
+				player:setFrozen(false)
+				setElementAlpha(player,255)
+				if player:getExecutionPed() then delete(player:getExecutionPed()) end
 			end
-			player:toggleControlsWhileObjectAttached(false, true, true, false, true)
-			player:setFrozen(false)
-			setElementAlpha(player,255)
-			if player:getExecutionPed() then delete(player:getExecutionPed()) end
 		end, 3000, 1, player
 	)
 end
@@ -860,7 +866,7 @@ function FactionRescue:addVehicleFire(veh)
 	local pos = veh:getPosition()
 	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
 	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
-	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 8, 8)
+	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, pos.z, 8, 8)
 	self.m_VehicleFires[veh]:setName("Fahrzeug-Brand "..zone)
 
 	if veh.controller then

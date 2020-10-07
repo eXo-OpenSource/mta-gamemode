@@ -28,7 +28,7 @@ end
 function JobGravel:start()
 	QuestionBox:new(_"Willst du das Tutorial zum Kiesgruben-Job ansehen?", bind(self.onInfo, self))
 	
-	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobOverview)
+	HelpBar:getSingleton():setLexiconPage(LexiconPages.JobGravel)
 
 	self.m_Rocks = {}
 	self.m_RockCols = {}

@@ -76,10 +76,12 @@ function GroupGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.Accent)
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
-	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabVehicles):setBackgroundColor(Color.Orange):setBarEnabled(true)
+	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.17, self.m_Height*0.07, _"Respawn", tabVehicles):setBackgroundColor(Color.Orange):setBarEnabled(true)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
-	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug entfernen", tabVehicles):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_VehicleRespawnAllToggle = GUICheckbox:new(self.m_Width*0.875, self.m_Height*0.26, self.m_Width*0.10, self.m_Height*0.05, "alle", tabVehicles):setFont(VRPFont(25)):setFontSize(1)
+	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zu Privatbesitz hinzufügen", tabVehicles):setBarEnabled(true)
+	self.m_VehicleRemoveFromGroup:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleRemoveFromGroup.onLeftClick = bind(self.VehicleRemoveFromGroupButton_Click, self)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.25, self.m_Height*0.06, _"Privat-Fahrzeuge:", tabVehicles)
@@ -89,7 +91,7 @@ function GroupGUI:constructor()
 	self.m_PrivateVehiclesGrid:addColumn(_"Steuer", 0.2)
 
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.Accent)
-	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zur \nFirma/Gang hinzufügen", tabVehicles):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zur \nFirma/Gang hinzufügen", tabVehicles):setBarEnabled(true)
 	self.m_VehicleConvertToGroupButton:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 
@@ -103,7 +105,7 @@ function GroupGUI:constructor()
 	tabBusiness:setEnabled(false)
 
 	GUIRectangle:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.65, self.m_Height*0.005, Color.Accent, tabBusiness)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesammt:", tabBusiness)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesamt:", tabBusiness)
 	self.m_ShopsMoneyLabel = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabBusiness):setColor(Color.Accent)
 	self.m_ShopsLocate = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", tabBusiness):setBarEnabled(true)
@@ -390,12 +392,19 @@ function GroupGUI:onSelectRank(name,rank)
 end
 
 function GroupGUI:VehicleRespawnButton_Click()
-	local item = self.m_VehiclesGrid:getSelectedItem()
-	if not item then
-		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
-		return
+	local respawnAll = self.m_VehicleRespawnAllToggle:isChecked()
+	if respawnAll then
+		QuestionBox:new(_("Möchtest du wirklich alle Fahrzeuge respawnen? Dies wird deine Firma/Gang %s kosten!", toMoneyString(self.m_VehiclesGrid:getItemCount()*100)), function()
+			triggerServerEvent("groupRespawnAllVehicles", localPlayer)
+		end)
+	else
+		local item = self.m_VehiclesGrid:getSelectedItem()
+		if not item then
+			ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
+			return
+		end
+		triggerServerEvent("vehicleRespawn", item.VehicleElement)
 	end
-	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
 
 function GroupGUI:VehicleConvertToGroupButton_Click()

@@ -101,7 +101,7 @@ function CinemaLobby:queueUpdate()
                 if not(responseData) then
                     CinemaVideoGUI:getSingleton():addItemToList(URL, self.m_Queue[URL].playerName, URL)
                 else
-                    if #responseData.title > 50 then
+                    if responseData.title and #responseData.title > 50 then
                         title = responseData.title:sub(0, 50)
                         title = ("%s [...]"):format(title)
                         CinemaVideoGUI:getSingleton():addItemToList(title, self.m_Queue[URL].playerName, URL)

@@ -180,15 +180,20 @@ end
 
 function KeyBinds:animationMenu()
 	if not localPlayer:isInVehicle() then
-		if not WalkingstyleGUI:isInstantiated() then
-			if not AnimationGUI:isInstantiated() then
-				AnimationGUI:new()
-			else
-				delete(AnimationGUI:getSingleton())
-			end
-		else
-			delete(WalkingstyleGUI:getSingleton())
+
+		if CustomAnimationGUI:isInstantiated() then
+			return delete(CustomAnimationGUI:getSingleton())
 		end
+
+		if WalkingstyleGUI:isInstantiated() then
+			return delete(WalkingstyleGUI:getSingleton())
+		end
+
+		if AnimationGUI:isInstantiated() then
+			return delete(AnimationGUI:getSingleton())
+		end
+
+		AnimationGUI:new()
 	end
 end
 
@@ -217,7 +222,7 @@ end
 function KeyBinds:toggleHelicopterDriveBy() 
 	if not VehicleInfrared:isInstantiated() and (not self.m_LastHeliTrigger or getTickCount() > self.m_LastHeliTrigger) then 
 		self.m_LastHeliTrigger = getTickCount() + 200
-		triggerServerEvent("HelicopterDriveBy:toggle", localPlayer) 
+		HelicopterDrivebyManager:getSingleton():tryDriveby()
 	end
 end
 

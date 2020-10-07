@@ -237,7 +237,7 @@ function VehicleInteraction:isOwner(veh)
 		return true
 	elseif localPlayer:getCompany() and ownerName == localPlayer:getCompany():getName() and localPlayer:getPublicSync("Company:Duty") then
 		return true
-	elseif localPlayer:getFaction() and ownerName == localPlayer:getFaction():getName()  and localPlayer:getPublicSync("Faction:Duty") then
+	elseif localPlayer:getFaction() and ownerName == localPlayer:getFaction():getName() and (localPlayer:getFaction():isEvilFaction() or localPlayer:getPublicSync("Faction:Duty")) then
 		return true
 	end
 

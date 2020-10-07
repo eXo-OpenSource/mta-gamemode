@@ -275,7 +275,7 @@ end
 
 function Admin:openAdminMenu(player)
 	if client then player = client end
-	if self.m_OnlineAdmins[player] > 0 then
+	if player:getRank() >= ADMIN_RANK_PERMISSION["openAdminMenu"] then
 		player:triggerEvent("showAdminMenu", self.m_BankAccount:getMoney())
 		player:triggerEvent("adminRefreshEventMoney", self.m_BankAccount:getMoney())
 	else
@@ -481,8 +481,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		col:destroy()
 		local count = 0
 		for index, vehicle in pairs(vehicles) do
-			if vehicle:isRespawnAllowed() then
-				vehicle:respawn(true)
+			if vehicle.isRespawnAllowed and vehicle:isRespawnAllowed() then
+				if instanceof(vehicle, PermanentVehicle, true) then
+					vehicle:respawnOnSpawnPosition()
+				else
+					vehicle:respawn(true) -- force respawn
+				end
 				count = count + 1
 			end
 		end
@@ -559,11 +563,13 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			target:setFrozen(false)
 			self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
+			target.m_IsAdminFrozen = false
 		else
 			if target.vehicle then target:removeFromVehicle() end
 			target:setFrozen(true)
 			self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+			target.m_IsAdminFrozen = true
 		end
 	elseif func == "rkick" then
 		self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
@@ -1106,7 +1112,6 @@ local tpTable = {
         ["lkw1"] =       	{["pos"] = Vector3(2409.07, -2471.10, 13.30),  	["typ"] = "Jobs"},
         ["lkw2"] =       	{["pos"] = Vector3(-234.96, -254.46,  1.11),  	["typ"] = "Jobs"},
         ["holzfäller"] = 	{["pos"] = Vector3(1041.02, -343.88,  73.67),  	["typ"] = "Jobs"},
-        ["boxer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
         ["farmer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
         ["farmer2"] =     	{["pos"] = Vector3( -2103.7, -2249, 30.6), 		["typ"] = "Jobs"},
         ["sweeper"] =    	{["pos"] = Vector3(219.49, -1429.61, 13.01),  	["typ"] = "Jobs"},
@@ -1681,8 +1686,10 @@ function Admin:Event_adminRequestMultiAccounts()
 	for i, row in pairs(result) do
 		local nameTable = {}
 		for key, accountId in pairs(fromJSON(row.LinkedTo) or {}) do
-			local nameResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), accountId)
-			nameTable[#nameTable+1] = nameResult.Name
+			local accountName = Account.getNameFromId(accountId)
+			if accountName then
+				nameTable[#nameTable+1] = accountName
+			end
 		end
 
 		local adminResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.Admin)
@@ -1756,8 +1763,10 @@ function Admin:Event_adminRequestSerialAccounts(serial)
 	local result = sql:queryFetch("SELECT * FROM ??_account_to_serial WHERE Serial = ?", sql:getPrefix(), serial)
 	local accountTable = {}
 	for i, row in pairs(result) do
-		local singleResult = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), row.PlayerId)
-		accountTable[#accountTable+1] = {row.PlayerId, singleResult.Name}
+		local accountName = Account.getNameFromId(row.PlayerId)
+		if accountName then
+			accountTable[#accountTable+1] = {row.PlayerId, accountName}
+		end
 	end
 	client:triggerEvent("adminSendSerialAccountsToClient", serial, accountTable)
 end

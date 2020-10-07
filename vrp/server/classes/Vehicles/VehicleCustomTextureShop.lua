@@ -41,7 +41,7 @@ function VehicleCustomTextureShop:constructor()
         function(player)
             if player.TempTexVehicle and isElement(player.TempTexVehicle) then player.TempTexVehicle:destroy() end
 			local vehicle = player:getOccupiedVehicle()
-            if player.m_VehicleTuningGarageId and vehicle then
+            if player.m_VehicleTextureGarageId and vehicle then
                 self:closeFor(player, vehicle, true)
             end
         end
@@ -100,8 +100,7 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
             return
         end
 
-        local vehicleType = vehicle:getVehicleType()
-        if vehicleType == VehicleType.Automobile or vehicleType == VehicleType.Bike then
+        if vehicle:isLandVehicle() then
             self:openFor(hitElement, vehicle, garageId)
 			vehicle.m_TextureCount = table.size(vehicle.m_Texture or {})
 			vehicle:setData("TextureCount", vehicle.m_TextureCount, true)
@@ -124,7 +123,7 @@ function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
-    player.m_VehicleTuningGarageId = garageId
+    player.m_VehicleTextureGarageId = garageId
 	if not vehicle.m_Tunings then vehicle.m_Tunings = VehicleTuning:new(vehicle) end
 	vehicle.OldTexture = vehicle.m_Tunings:getTuning("Texture")
 	vehicle.OldColor1 = vehicle.m_Tunings:getTuning("Color1")
@@ -138,18 +137,23 @@ function VehicleCustomTextureShop:closeFor(player, vehicle, doNotCallEvent)
         player:triggerEvent("vehicleCustomTextureShopExit")
     end
 
-    local garageId = player.m_VehicleTuningGarageId
+    local garageId = player.m_VehicleTextureGarageId
     if garageId then
         local position, rotation = unpack(self.m_GarageInfo[garageId][2])
         if vehicle then
             vehicle:setFrozen(false)
             vehicle:setPosition(position)
-            vehicle:setRotation(0, 0, rotation)
+			vehicle:setRotation(0, 0, rotation)
+			for name, tex in pairs(vehicle:getTexture()) do
+				if tex:isPreview() then
+					vehicle:removeTexture(name)
+				end
+			end
         end
 
         player:setPosition(position) -- Set player position also as it will not be updated automatically before quit
         player:setFrozen(false)
-        player.m_VehicleTuningGarageId = nil
+        player.m_VehicleTextureGarageId = nil
 
         -- Hackfix for MTA issue #4658
         if vehicle and getVehicleType(vehicle) == VehicleType.Bike then

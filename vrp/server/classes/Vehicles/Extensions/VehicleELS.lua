@@ -24,6 +24,8 @@ function VehicleELS:setELSPreset(ELSPreset)
         if ELS_PRESET[ELSPreset].lightBar then
             local l = ELS_PRESET[ELSPreset].lightBar
             local obj = createObject(1921, 0, 0, 0)
+            obj:setInterior(self:getInterior())
+            obj:setDimension(self:getDimension())
             obj:attach(self, l[1], l[2], l[3])
             obj:setCollisionsEnabled(false)
             if l[5] == "red" then
@@ -32,8 +34,6 @@ function VehicleELS:setELSPreset(ELSPreset)
                 VehicleTexture:new(obj, "files/images/Textures/Faction/State/MBT_Copcar.png", "copcarla92interior128", true)
             end
             if l[4] then obj:setScale(l[4]) end
-            obj:setInterior(self:getInterior())
-            obj:setDimension(self:getDimension())
             self.m_LightBarObject = obj
         end
         VehicleELS.Map[self] = ELSPreset

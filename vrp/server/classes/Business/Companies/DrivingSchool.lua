@@ -336,7 +336,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 				end
 				player:triggerEvent("DrivingLesson:endLesson")
 				fadeCamera(player,false,0.5)
-				setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
+				setTimer(setElementPosition,1000,1,player,1759.05, -1690.22, 13.37)
 				setTimer(fadeCamera,1500,1, player,true,0.5)
 			end
 		end, false

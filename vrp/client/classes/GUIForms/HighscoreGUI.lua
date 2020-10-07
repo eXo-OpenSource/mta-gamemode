@@ -10,15 +10,16 @@ inherit(Singleton, HighscoreGUI)
 
 addRemoteEvents{"showHighscoreGUI", "highscoreReceiveData"}
 
-HighscoreGUI.Scores = {
-	[1] = {["name"] = _"Global", ["data"] = "Global"},
-	[2] = {["name"] = _"Jährlich", ["data"] = "Yearly"},
-	[3] = {["name"] = _"Monatlich", ["data"] = "Monthly"},
-	[4] = {["name"] = _"Wöchentlich", ["data"] = "Weekly"},
-	[5] = {["name"] = _"Täglich", ["data"] = "Daily"}
-}
 
 function HighscoreGUI:constructor(game)
+	HighscoreGUI.Scores = { -- because translation is not loaded if table is outside of class
+		[1] = {["name"] = _"Global", ["data"] = "Global"},
+		[2] = {["name"] = _"Jährlich", ["data"] = "Yearly"},
+		[3] = {["name"] = _"Monatlich", ["data"] = "Monthly"},
+		[4] = {["name"] = _"Wöchentlich", ["data"] = "Weekly"},
+		[5] = {["name"] = _"Täglich", ["data"] = "Daily"}
+	}
+
 	GUIForm.constructor(self, screenWidth/2-540/2, screenHeight/2-230, 540, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, MinigameGUI.Data[game]["title"].." Highscore", true, true, self)
 

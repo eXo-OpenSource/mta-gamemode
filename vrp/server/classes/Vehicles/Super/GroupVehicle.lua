@@ -9,6 +9,12 @@ GroupVehicle = inherit(PermanentVehicle)
 
 -- This function converts a normal (User/PermanentVehicle) to an GroupVehicle
 function GroupVehicle.convertVehicle(vehicle, group)
+
+	-- don't convert them if they have occupants or are currently towed 
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") then
+		return false
+	end
+	
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
 			local id = vehicle:getId()
@@ -147,7 +153,7 @@ function GroupVehicle:canBeModified()
   return self:getGroup():canVehiclesBeModified()
 end
 
-function GroupVehicle:respawn(force)
+function GroupVehicle:respawn(force, suppressMessage)
     local vehicleType = self:getVehicleType()
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getGroup():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
@@ -187,10 +193,12 @@ function GroupVehicle:respawn(force)
 	self:resetIndicator()
 	self:fix()
 	self:setForSale(self.m_ForSale, self.m_SalePrice)
-	if not force then
-		self:getGroup():sendShortMessage("Euer Fahrzeug ["..self.getNameFromModel(self:getModel()).."] wurde respawnt!")
-	else 
-		self:getGroup():sendShortMessage("Euer Fahrzeug ["..self.getNameFromModel(self:getModel()).."] wurde respawnt (administrativ)!")
+	if not suppressMessage then
+		if not force then
+			self:getGroup():sendShortMessage("Euer Fahrzeug ["..self.getNameFromModel(self:getModel()).."] wurde respawnt!")
+		else 
+			self:getGroup():sendShortMessage("Euer Fahrzeug ["..self.getNameFromModel(self:getModel()).."] wurde respawnt (administrativ)!")
+		end
 	end
 	if self.m_Magnet then
 		detachElements(self.m_Magnet)

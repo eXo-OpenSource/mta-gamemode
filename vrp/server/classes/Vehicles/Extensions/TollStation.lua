@@ -125,8 +125,6 @@ function TollStation:buyToll(player)
 			else
 				player:sendError(_("Du hast zu wenig Geld auf deinem Bankkonto! (%s$)", player, TOLL_KEY_COSTS))
 			end
-		else
-			player:sendError(_("Du bist zuweit entfernt!", player))
 		end
 
 		unbindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)

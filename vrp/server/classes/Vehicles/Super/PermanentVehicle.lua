@@ -13,6 +13,11 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 		return false -- Apply vehilce limit
 	end
 
+	-- don't convert them if they have occupants or are currently towed 
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") then
+		return false
+	end
+
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
 			local id = vehicle:getId()
@@ -179,10 +184,6 @@ function PermanentVehicle:virtual_constructor(data)
 			self.m_Trunk = Trunk.load(data.TrunkId)
 			self.m_TrunkId = data.TrunkId
 			self.m_Trunk:setVehicle(self)
-		end
-
-		if health and health <= 300 then
-			health = 300
 		end
 
 		if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
