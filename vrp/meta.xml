@@ -3329,6 +3329,7 @@
 	<vrpfile src="files/models/skins/ghost.txd"/>
 	<vrpfile src="files/models/skins/skeleton.dff"/>
 	<vrpfile src="files/models/skins/skeleton.txd"/>
+	<vrpfile src="files/models/skins/skeletonfull.dff"/>
 	<vrpfile src="files/models/objects/headstone.txd" />
 	<vrpfile src="files/models/objects/headstone.dff" />
 	<vrpfile src="files/models/objects/headstone.col" />

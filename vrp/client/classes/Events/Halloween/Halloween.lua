@@ -125,23 +125,23 @@ function Halloween:Event_restore(clear)
 	dxSetRenderTarget(self.m_TeamNameTexture, true)
 		local xoffs = 0
 		local color = tocolor(200, 200, 200, 200)
-		dxDrawText("Stumpy\nHeisi", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Stumpy", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 55
-		dxDrawText("Opposite\nfreaK", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Opposite", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Padty", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("rottby\nSli\nDeanWinchester", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("DeanW.\nSaiya\nrottby\nPoldi\nRefrigerator", xoffs, 5, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Refrigerator\nPeter", xoffs, 5, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Swatbird\nSven.Salvarez\nzomb4k33l\nBlack", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Angry\nMaurice\nChef532\nDonnerHerzArrow", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 		dxDrawText("Renn\nkleiner\nMann", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 		dxDrawText("Strobe\nPewX\nMasterM", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
-		dxDrawText("MegaThorx\nStiviK\nSnake", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("MegaThorx\nSnake\nSlliX", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 	dxSetRenderTarget()
 end
