@@ -195,8 +195,7 @@ function CustomModelManager:constructor()
 
 	-- Halloween Smode
 	if EVENT_HALLOWEEN then
-		self:loadImportTXD("files/models/skins/ghost.txd", 260)
-		self:loadImportDFF("files/models/skins/ghost.dff", 260)
+		self:loadImportDFF("files/models/skins/skeletonfull.dff", 260)
 		self:loadImportCOL("files/models/objects/headstone.col", 3878)
 		self:loadImportTXD("files/models/objects/headstone.txd", 3878)
 		self:loadImportDFF("files/models/objects/headstone.dff", 3878)
