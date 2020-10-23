@@ -252,6 +252,8 @@
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/OnlineCasino/SlotGame.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Minigames/PricePool/PricePoolManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/PricePool/PricePool.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Minigames/CasinoWheel/CasinoWheelManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/CasinoWheel/CasinoWheel.lua" type="server"/>
@@ -1001,6 +1003,10 @@
 	<script src="client/classes/GUIForms/Cinema/CinemaLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Cinema/CinemaPasswordGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Cinema/CinemaVideoGUI.lua" type="client"/>
+
+	<script src="client/classes/GUIForms/PricePoolRaffleGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/PricePoolEntryGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/PricePoolPriceGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>

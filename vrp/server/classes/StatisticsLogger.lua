@@ -554,3 +554,9 @@ function StatisticsLogger:addCinemaLog(player, host, lobbyName, action, videoId)
 	sqlLogs:queryExec("INSERT INTO ??_Cinema (UserId, HostId, LobbyName, Action, VideoId, Date) VALUES (?, ?, ?, ?, ?, NOW())",
 	sqlLogs:getPrefix(), player:getId(), host:getId(), lobbyName, action, videoId)
 end
+
+function StatisticsLogger:addPricePoolLog(pricepoolId, player, entries, entryPrice, price)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_PricePool (PricePoolId, UserId, Entries, EntryPrice, Price, Date) VALUES (?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+		pricepoolId, userId, entries, entryPrice, price)
+end
