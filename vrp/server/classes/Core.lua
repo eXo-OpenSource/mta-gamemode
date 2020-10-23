@@ -152,6 +152,7 @@ function Core:constructor()
 		ElevatorManager:new()
 		CinemaManager:new()
 		CustomAnimationManager:new()
+		PricePoolManager:new()
 
 		if EVENT_EASTER then
 			Easter:new()
@@ -302,6 +303,7 @@ function Core:destructor()
 		ItemManager:updateOnQuit()
 		delete(BlackJackManager:getSingleton())
 		delete(CasinoWheelManager:getSingleton())
+		delete(PricePoolManager:getSingleton())
 		if EVENT_EASTER then
 			delete(Easter:getSingleton())
 		end

@@ -93,6 +93,25 @@ Halloween.ms_QuestRewards = {
 	{pumpkins=25, sweets=50},
 }
 
+Halloween.ms_PricePoolPrices = {
+	{"money", 50000},
+	{"money", 50000},
+	{"money", 50000},
+	{"money", 50000},
+	{"Kürbis", 50},
+	{"Kürbis", 50},
+	{"Kürbis", 50},
+	{"Kürbis", 50},
+	{"VIP", 1},
+	{"VIP", 1},
+	{"VIP", 1},
+	{"VIP", 1},
+	{"vehicle", 411},
+	{"vehicle", 411},
+}
+
+Halloween.maxPumpkinsToDropPerPlayer = 3
+
 function Halloween:constructor()
 	DrawContest:new()
 	WareManager:new()
@@ -134,6 +153,12 @@ function Halloween:constructor()
 	self:createQuestMarkers()
 
 	HalloweenEasterEggs:new()
+
+	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Halloween2020", "Kürbis", Halloween.ms_PricePoolPrices, 1604163600)
+	if self.m_PricePool then
+		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(884.832, -1080.05, 24.297), 220)
+		self.m_PricePool:addBuyCallback(bind(self.onEntryBuy, self))
+	end
 end
 
 function Halloween:initTTPlayer(pId)
@@ -399,5 +424,31 @@ function Halloween:setQuestState(player, quest)
 		sql:queryExec("INSERT INTO ??_halloween_quest (UserId, Quest) VALUES (?, ?)", sql:getPrefix(), player:getId(), 1)
 	else
 		sql:queryExec("UPDATE ??_halloween_quest SET Quest = ? WHERE UserId = ?", sql:getPrefix(), quest, player:getId())
+	end
+end
+
+function Halloween:onEntryBuy(playerId, amount)
+	local pumpkinsToDrop = 0
+
+	local minX, minY, minZ = 884.377, -1078.099, 28
+	local maxX, maxY, maxZ = 887.316, -1076.691, 32
+	local groundZ = 22
+
+	if amount < Halloween.maxPumpkinsToDropPerPlayer then
+		pumpkinsToDrop = amount
+	else
+		pumpkinsToDrop = Halloween.maxPumpkinsToDropPerPlayer
+	end
+
+	for i = 1, pumpkinsToDrop do
+		local x = math.random(minX*100, maxX*100)/100
+		local y = math.random(minY*100, maxY*100)/100
+		local z = math.random(minZ*100, maxZ*100)/100
+
+		local time = (1 + ((z - groundZ) / 10)) * 750
+
+		local pumpkin = createObject(1935, x, y, z)
+		pumpkin:move(time, x, y, groundZ, 0, 0, 0, "InQuad")
+		setTimer(destroyElement, time+50, 1, pumpkin)
 	end
 end

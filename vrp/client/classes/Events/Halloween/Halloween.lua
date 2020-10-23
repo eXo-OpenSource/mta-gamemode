@@ -54,6 +54,10 @@ function Halloween:constructor()
 		end
 	)
 
+	--water in grave
+	createWater(883.80, -1079.09, 23.2, 888.36, -1079.09, 23.2, 883.80, -1075.38, 23.2, 888.36, -1075.38, 23.2)
+	setWaveHeight(0.05)
+
 	--water in grave yard
 
 	createWater(884, -1112, 23, 908, -1112, 23, 884, -1090, 23, 908, -1090, 23)
