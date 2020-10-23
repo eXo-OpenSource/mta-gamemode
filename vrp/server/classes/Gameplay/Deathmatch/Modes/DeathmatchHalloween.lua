@@ -81,6 +81,7 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_Markers = {}
 	self.m_Colshapes = {}
 	self.m_Deleted = false
+	self.m_PlayerTeams = {}
 
 	self.m_CheckMarkerBind = bind(self.checkMarkers, self)
 	self.m_ZombieHealBind = bind(self.healZombies, self)
@@ -203,10 +204,15 @@ function DeathmatchHalloween:addPlayer(player)
 	player:triggerEvent("dmHalloweenToggleDamageEvent", true)
 
 	local team
-	if table.size(self.m_Zombies) <= table.size(self.m_Residents) then
-		team = DeathmatchHalloween.Teams[2]
+	if not self.m_PlayerTeams[player:getId()] then
+		if table.size(self.m_Zombies) <= table.size(self.m_Residents) then
+			team = DeathmatchHalloween.Teams[2]
+		else
+			team = DeathmatchHalloween.Teams[1]
+		end
+		self.m_PlayerTeams[player:getId()] = team
 	else
-		team = DeathmatchHalloween.Teams[1]
+		team = self.m_PlayerTeams[player:getId()]
 	end
 
 
@@ -339,7 +345,7 @@ function DeathmatchHalloween:checkMarkers()
 			player:getInventory():giveItem("Kürbis", 25)
 		end
 		for key, player in pairs(self.m_Residents) do
-			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle eure Stadt erobert!")
+			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben eure Stadt erobert!")
 		end
 		delete(self)
 	end

@@ -89,9 +89,8 @@ function DeathmatchManager:constructor()
 		["halloween"] = DeathmatchHalloween
 	}
 
-	self:loadServerLobbys()
+	--self:loadServerLobbys()
 	self.m_BankServer = BankServer.get("gameplay.deathmatch")
-	--[[
 	local b = Blip:new("SniperGame.png", 1327.88, -1556.25)
 	b:setDisplayText("Paintball-Arena", BLIP_CATEGORY.Leisure)
 	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
@@ -100,7 +99,6 @@ function DeathmatchManager:constructor()
 			hitElement:triggerEvent("deathmatchOpenLobbyGUI")
 		end
 	end)
-	]]
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player, killer, weapon)
 			if player.deathmatchLobby then
@@ -156,14 +154,14 @@ function DeathmatchManager:constructor()
 	addEventHandler("deathmatchCreateLobby", root, bind(self.createPlayerLobby, self))
 
 	--Development
-	--[[
-	addCommandHandler("halloweendm", function()
-		self:createLobby("Halloween Event", "Server", "halloween", {}, "halloween", 10)
-		for index, player in pairs(getElementsByType("player")) do
-			player:sendShortMessage("Die Halloween-Deathmatch Lobby wurde geöffnet!")
-		end
-	end)
-	]]
+	if DEBUG and EVENT_HALLOWEEN then
+		addCommandHandler("halloweendm", function()
+			self:createLobby("Halloween Event", "Server", "halloween", {}, "halloween", 10)
+			for index, player in pairs(getElementsByType("player")) do
+				player:sendShortMessage("Die Halloween-Deathmatch Lobby wurde geöffnet!")
+			end
+		end)
+	end
 end
 
 function DeathmatchManager:createLobby(name, owner, map, weapons, mode, maxPlayer, password)
