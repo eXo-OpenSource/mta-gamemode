@@ -1082,6 +1082,10 @@ function Player:payDay()
 		self:getInventory():giveItem("Zuckerstange", 3)
 	end
 
+	if EVENT_HALLOWEEN then
+		self:addPaydayText("info", _("Du hast 5 Süßigkeiten bekommen!", self))
+		self:getInventory():giveItem("Suessigkeiten", 5)
+	end
 
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
