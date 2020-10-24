@@ -464,15 +464,16 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	--[[{
+	{
 		name = "Yakuza",
 		stations = {
-			{Vector3(1020.83, -1101.28, 24.33), 0, 1},
+			{Vector3(1409.013, -1437.945, 9), 80, 1},
+			{Vector3(1404.33, -1333.30, 34.5), 270, 1}
 		},
 		accessible =  {1, FactionStaticId.YAKUZA},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	}, ]]
+	},
 	{
 		name = "Vatos Locos",
 		stations = {
