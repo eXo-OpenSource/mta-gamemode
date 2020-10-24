@@ -66,7 +66,7 @@ Halloween.ms_Bonus = {
 		["VehicleModel"] = 442
 	},
 	{
-		["Text"] = "Hofknife",
+		["Text"] = "Hotknife",
 		["Image"] = "Bonus_Hotknife.png",
 		["Pumpkin"] = 1000,
 		["Sweets"] = 7500,
