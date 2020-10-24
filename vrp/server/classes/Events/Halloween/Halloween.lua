@@ -21,25 +21,17 @@ Halloween.ms_Phrases = {
 
 Halloween.ms_Bonus = {
 	{
-		["Text"] = "10.000$",
-		["Image"] = "Bonus_Money.png",
-		["Pumpkin"] = 30,
-		["Sweets"] = 500,
-		["Type"] = "Money",
-		["MoneyAmount"] = 10000
-	},
-	{
 		["Text"] = "Payday Bonus",
 		["Image"] = "Bonus_Payday.png",
-		["Pumpkin"] = 50,
-		["Sweets"] = 700,
+		["Pumpkin"] = 20,
+		["Sweets"] = 100,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
 		["Pumpkin"] = 75,
-		["Sweets"] = 1400,
+		["Sweets"] = 500,
 		["Type"] = "Special"
 	},
 	{
@@ -50,36 +42,21 @@ Halloween.ms_Bonus = {
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "75.000$",
+		["Text"] = "10.000$",
 		["Image"] = "Bonus_Money.png",
-		["Pumpkin"] = 125,
-		["Sweets"] = 2400,
+		["Pumpkin"] = 30,
+		["Sweets"] = 150,
 		["Type"] = "Money",
-		["MoneyAmount"] = 75000
+		["MoneyAmount"] = 10000
 	},
 	{
-		["Text"] = "30 Tage VIP",
-		["Image"] = "Bonus_VIP.png",
-		["Pumpkin"] = 150,
-		["Sweets"] = 3000,
-		["Type"] = "Special"
+		["Text"] = "50.000$",
+		["Image"] = "Bonus_Money.png",
+		["Pumpkin"] = 120,
+		["Sweets"] = 600,
+		["Type"] = "Money",
+		["MoneyAmount"] = 50000
 	},
-	{
-		["Text"] = "Romero",
-		["Image"] = "Bonus_Romero.png",
-		["Pumpkin"] = 450,
-		["Sweets"] = 4200,
-		["Type"] = "Vehicle",
-		["VehicleModel"] = 442
-	},
-	{
-		["Text"] = "Broadway",
-		["Image"] = "Bonus_Broadway.png",
-		["Pumpkin"] = 650,
-		["Sweets"] = 4500,
-		["Type"] = "Vehicle",
-		["VehicleModel"] = 575
-	}
 }
 
 Halloween.ms_QuestRewards = {
@@ -94,20 +71,19 @@ Halloween.ms_QuestRewards = {
 }
 
 Halloween.ms_PricePoolPrices = {
-	{"money", 50000},
-	{"money", 50000},
-	{"money", 50000},
-	{"money", 50000},
-	{"Kürbis", 50},
-	{"Kürbis", 50},
-	{"Kürbis", 50},
-	{"Kürbis", 50},
+	{"vehicle", 448},
+	{"points", 1000},
+	{"money", 100000},
+
+	{"vehicle", 587},
+	{"points", 1000},
+	{"money", 100000},
+
+	{"vehicle", 534},
+	{"points", 1000},
+	{"money", 100000},
+	
 	{"VIP", 1},
-	{"VIP", 1},
-	{"VIP", 1},
-	{"VIP", 1},
-	{"vehicle", 411},
-	{"vehicle", 411},
 }
 
 Halloween.maxPumpkinsToDropPerPlayer = 3
@@ -154,9 +130,10 @@ function Halloween:constructor()
 
 	HalloweenEasterEggs:new()
 
-	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Halloween2020", "Kürbis", Halloween.ms_PricePoolPrices, 1604163600)
+	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Halloween2020-1", "Kürbis", Halloween.ms_PricePoolPrices, 1604163600)
 	if self.m_PricePool then
 		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(884.832, -1080.05, 24.297), 220)
+		self.m_PricePool:setDailyEntryBuyLimit(100)
 		self.m_PricePool:addBuyCallback(bind(self.onEntryBuy, self))
 	end
 end

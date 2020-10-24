@@ -29,6 +29,8 @@ function PricePoolPriceGUI:constructor(pricelist)
 
         if priceType == "money" then
             text = ("1x %d$"):format(priceIndexOrAmount)
+        elseif priceType == "points" then
+            text = ("1x %d Punkte"):format(priceIndexOrAmount)
         elseif priceType == "vehicle" then
             text = ("1x %s"):format(VehicleCategory:getSingleton():getModelName(priceIndexOrAmount))
         else
