@@ -226,16 +226,16 @@ ADMIN_RANK_PERMISSION = {
 	["editHouse"] = RANK.Administrator,
 	["freeHouse"] = RANK.Administrator, -- free house from owner, tenants and house bank account money
 	["pedMenu"] = RANK.Administrator,
-	["fireMenu"] = RANK.Administrator,
-	["eventGangwarMenu"] = RANK.Administrator,
+	["fireMenu"] = RANK.Supporter,
+	["eventGangwarMenu"] = RANK.Supporter,
 	["transactionMenu"] = RANK.Administrator,
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
 	["serialAccountMenu"] = RANK.Supporter,
 	["vehicleMenu"] = RANK.Moderator,
 
-	["openMapEditor"] = RANK.Administrator,
-	["createNewMap"] = RANK.Administrator,
-	["setMapStatus"] = RANK.Administrator,
+	["openMapEditor"] = RANK.Moderator,
+	["createNewMap"] = RANK.Moderator,
+	["setMapStatus"] = RANK.Moderator,
 
 	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
