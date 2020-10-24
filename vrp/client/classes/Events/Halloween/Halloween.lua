@@ -108,7 +108,7 @@ function Halloween:constructor()
 	self.m_QuestPed = Ped.create(148, 930.69, -1123.8, 23.98)
 	self.m_QuestPed:setData("NPC:Immortal", true)
 	self.m_QuestPed:setFrozen(true)
-	self.m_QuestPed.SpeakBubble = SpeakBubble3D:new(self.m_QuestPed, "Halloween", "Quests")
+	self.m_QuestPed.SpeakBubble = SpeakBubble3D:new(self.m_QuestPed, "Halloween", "Geschichten vergangener Zeit")
 	self.m_QuestPed.SpeakBubble:setBorderColor(Color.Orange)
 	self.m_QuestPed.SpeakBubble:setTextColor(Color.Orange)
 	setElementData(self.m_QuestPed, "clickable", true)
@@ -135,11 +135,11 @@ function Halloween:Event_restore(clear)
 		xoffs = xoffs + 60 + 58
 		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("rottby\nSli\nDeanWinchester", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Sli\nDean-\nWinchester", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Refrigerator\nPeter", xoffs, 5, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Refrigerator\nPeter", xoffs, 20, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Angry\nMaurice\nChef532\nDonnerHerzArrow", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Angry\nMaurice\nChef532\nDonnerHerz-\nArrow", xoffs, 5, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 		dxDrawText("Renn\nkleiner\nMann", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57

@@ -15,9 +15,11 @@ function PricePool:constructor(id, name, entryPrice, raffleDate, priceTable)
     self.m_RaffleDate = raffleDate
     self.m_Prices = priceTable
     self.m_EntryBuyCallback = false
+    self.m_DailyEntryBuyLimit = false
     self.m_AdminsAllowedToWin = false
     self.m_Active = true
     self.m_Entries = {}
+    self.m_TodaysEntries = {}
 
     self:addRaffleCountdown()
 end
@@ -54,23 +56,40 @@ function PricePool:getPriceList()
     return self.m_Prices
 end
 
+function PricePool:getDailyEntryBuyLimit()
+    return self.m_DailyEntryBuyLimit
+end
+
+function PricePool:setDailyEntryBuyLimit(limit)
+    self.m_DailyEntryBuyLimit = limit
+end
+
 function PricePool:addBuyCallback(callback)
     self.m_EntryBuyCallback = callback
 end
 
-function PricePool:addEntry(playerId, amount, dontCallCallback)
+function PricePool:getTodaysEntryAmount(id)
+    return self.m_TodaysEntries[id] or 0
+end
+
+function PricePool:addEntry(playerId, amount, isEntryLoading)
     if not self.m_Entries[playerId] then
         self.m_Entries[playerId] = {entries = 0, name = Account.getNameFromId(playerId)}
     end
+    if not self.m_TodaysEntries[playerId] then
+        self.m_TodaysEntries[playerId] = 0
+    end
     self.m_Entries[playerId].entries = self.m_Entries[playerId].entries + amount
-    if not dontCallCallback and self.m_EntryBuyCallback then
+
+    if not isEntryLoading and self.m_EntryBuyCallback then
         self.m_EntryBuyCallback(playerId, amount)
+        self.m_TodaysEntries[playerId] = self.m_TodaysEntries[playerId] + amount
     end
 end
 
-function PricePool:addEntries(entryTable, dontCallCallback)
+function PricePool:addEntries(entryTable, isEntryLoading)
     for playerId, amount in pairs(entryTable) do
-        self:addEntry(playerId, amount, dontCallCallback)
+        self:addEntry(playerId, amount, isEntryLoading)
     end
 end
 
@@ -188,6 +207,8 @@ function PricePool:presentWinner(winnerTable)
         price = VehicleCategory:getSingleton():getModelName(winIndex)
     elseif winType == "money" then
         price = ("%d$"):format(winIndex)
+    elseif winType == "points" then
+        price = ("%d Punkte"):format(winIndex)
     else
         price = ("%dx %s"):format(winIndex, winType)
     end

@@ -81,14 +81,17 @@ function PricePoolManager:buyEntries(pricepoolId, entries)
     if not pricepool then
         return
     end
-
-    if client:getInventory():removeItem(pricepool:getEntryPrice(), entries) then
-        pricepool:addEntry(client:getId(), entries)
-        client:sendSuccess(_("Du hast dir erfolgreich %d Lose gekauft!", client, entries))
-        for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
-            player:triggerEvent("updatePricePoolEntryWindow", pricepoolId, pricepool:getEntriesByName())
+    if pricepool:getDailyEntryBuyLimit() and pricepool:getDailyEntryBuyLimit() - pricepool:getTodaysEntryAmount(client:getId()) >= entries then
+        if client:getInventory():removeItem(pricepool:getEntryPrice(), entries) then
+            pricepool:addEntry(client:getId(), entries)
+            client:sendSuccess(_("Du hast dir erfolgreich %d Lose gekauft!", client, entries))
+            for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+                player:triggerEvent("updatePricePoolEntryWindow", pricepoolId, pricepool:getEntriesByName())
+            end
+        else
+            client:sendError(_("Du hast nicht genug, um den Preis zu bezahlen!", client))
         end
     else
-        client:sendError(_("Du hast nicht genug, um den Preis zu bezahlen!", client))
+        client:sendError(_("Du kannst heute nur noch %d Lose kaufen!", client, pricepool:getDailyEntryBuyLimit() - pricepool:getTodaysEntryAmount(client:getId())))
     end
 end
