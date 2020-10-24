@@ -57,6 +57,22 @@ Halloween.ms_Bonus = {
 		["Type"] = "Money",
 		["MoneyAmount"] = 50000
 	},
+	{
+		["Text"] = "Romero",
+		["Image"] = "Bonus_Romero.png",
+		["Pumpkin"] = 500,
+		["Sweets"] = 5000,
+		["Type"] = "Vehicle",
+		["VehicleModel"] = 442
+	},
+	{
+		["Text"] = "Hofknife",
+		["Image"] = "Bonus_Hotknife.png",
+		["Pumpkin"] = 1000,
+		["Sweets"] = 7500,
+		["Type"] = "Vehicle",
+		["VehicleModel"] = 434
+	},
 }
 
 Halloween.ms_QuestRewards = {
@@ -373,6 +389,9 @@ function Halloween:createQuestMarkers()
 		},
 		[4] = {
 			InteriorEnterExit:new(Vector3(2539.86, -1303.96, 34.95), Vector3(2542.45, -1304.00, 1025.07), 90, 270, 2, 13, 0, 0)
+		},
+		[7] = {
+			InteriorEnterExit:new(Vector3(1412.666,-1304.790, 8.561), Vector3(1426.313, -1938.632, -38.160), 180, 90, 0, 3, 0, 0)
 		}
 	}
 end

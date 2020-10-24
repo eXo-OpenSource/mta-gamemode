@@ -17,7 +17,7 @@ function BonusGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Halloween Bonus GUI", true, true, self)
 	GUIGridLabel:new(1, 2, 15, 1, "Herzlich Willkommen beim Halloween Premium Shop!\nHier kannst du deine Kürbisse und Süßigkeiten in wertvolle Prämien umwandeln!", self.m_Window)
-	self.m_ScrollArea =	GUIGridScrollableArea:new(1, 4, 15, 8, 10, 12, true, false, self.m_Window, 4)
+	self.m_ScrollArea =	GUIGridScrollableArea:new(1, 4, 15, 8, 10, 18, true, false, self.m_Window, 4)
 	self.m_ScrollArea:updateGrid()
 	self.m_BonusAmount = 0
 
@@ -53,7 +53,7 @@ function BonusGUI:addBonus(index, data)
 
 	GUIGridRectangle:new(1, 4.5, 4, 1, Color.Background, self.m_BonusBG[id])
 	GUIGridImage:new(1, 4.5, 1, 1, "files/images/Inventory/items/Items/Kuerbis.png", self.m_BonusBG[id]):fitBySize(128, 128)
-	GUIGridLabel:new(2, 4.5, 1, 1, tostring(data["Pumpkin"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(25))
+	GUIGridLabel:new(2, 4.5, 1, 1, tostring(data["Pumpkin"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(data["Pumpkin"] >= 1000 and 20 or 25))
 	GUIGridImage:new(3, 4.5, 1, 1, "files/images/Inventory/items/Essen/Suessigkeiten.png", self.m_BonusBG[id]):fitBySize(128, 128)
 	GUIGridLabel:new(4, 4.5, 1, 1, tostring(data["Sweets"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
 
