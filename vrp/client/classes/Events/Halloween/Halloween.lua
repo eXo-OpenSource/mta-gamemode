@@ -7,9 +7,8 @@ function Halloween:constructor()
 
 	Blip:new("Ghost.png", 945.57, -1103.55, 400):setDisplayText("Halloween-Friedhof")
 
-	--Drawing Contest
+	--[[Drawing Contest
 	local ped = Ped.create(151, Vector3(906.59998, -1065.7, 24.8), 270)
-	--DrawContest.createPed(151, Vector3(1488.87, -1777.00, 13.55), 0, "Halloween", "Zeichen-Wettbewerb") -- Temporary for 06.11.2017
 
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
@@ -22,7 +21,7 @@ function Halloween:constructor()
 		function()
 			DrawContestOverviewGUI:getSingleton():open()
 		end
-	)
+	)]]
 
 	--Ware Ped
 	local ped = Ped.create(68, Vector3(934.79999, -1070.5, 25), 118)
