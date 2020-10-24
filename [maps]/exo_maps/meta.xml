@@ -46,9 +46,9 @@
 	<map src="fraktionen/rescue_int.map" />
 	<!--map src="fraktionen/lostmc.map" /-->
 	<!--<map src="fraktionen/vatos.map" />-->
-	<map src="fraktionen/vatos-sevilla.map" />
+	<!--<map src="fraktionen/vatos-sevilla.map" />-->
 	<!-- <map src="fraktionen/triad.map" /> -->
-	<!-- <map src="fraktionen/yakuza.map"/> -->
+	<map src="fraktionen/yakuza.map"/>
 
 	<!-- <map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
