@@ -46,7 +46,9 @@ function StateEvidenceGUI:constructor(evidenceTable, fillState, element)
 			self:close()
 			self.m_Window:close()
 			triggerServerEvent("State:startEvidenceTruck", localPlayer)
-		end)
+		end,
+		nil,
+		localPlayer.position)
 	end
 
 

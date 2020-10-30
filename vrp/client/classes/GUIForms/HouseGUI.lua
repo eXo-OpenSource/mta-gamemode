@@ -155,14 +155,18 @@ end
 
 function HouseGUI:buyHouse()
 	QuestionBox:new(_("Möchtest du wirklich dieses Haus kaufen? %s werden dir von deinem Konto abgebucht! Zudem kannst du nur ein Haus besitzen.", toMoneyString(self.m_Price)),
-	function() triggerServerEvent("buyHouse",root) end
+	function() triggerServerEvent("buyHouse",root) end,
+	nil,
+	localPlayer.position
 	)
 
 end
 
 function HouseGUI:sellHouse()
 	QuestionBox:new("Möchtest du wirklich dein Haus verkaufen? Du erhälst 75% des Preises auf dein Konto gutgeschrieben!",
-	function() triggerServerEvent("sellHouse",root) end
+	function() triggerServerEvent("sellHouse",root) end,
+	nil,
+	localPlayer.position
 	)
 
 end

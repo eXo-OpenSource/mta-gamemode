@@ -162,7 +162,7 @@ end
 function AdminEvent:registerBid(player, bid)
     if self.m_CurrentAuction then
         if not self.m_CurrentAuction.bids[1] or bid > self.m_CurrentAuction.bids[1][2] then
-            QuestionBox:new(player, player, ("Achtung bindend! Willst du wirklich %s auf %s bieten? (Es folgen administrative Strafen, wenn du nach der Auktion nicht bezahlen kannst)"):format(toMoneyString(bid), self.m_CurrentAuction.name), function(player, bid)
+            QuestionBox:new(player, ("Achtung bindend! Willst du wirklich %s auf %s bieten? (Es folgen administrative Strafen, wenn du nach der Auktion nicht bezahlen kannst)"):format(toMoneyString(bid), self.m_CurrentAuction.name), function(player, bid)
                 if self.m_CurrentAuction then
                     if not self.m_CurrentAuction.bids[1] or bid > self.m_CurrentAuction.bids[1][2] then
                         local updated = false
@@ -189,7 +189,7 @@ function AdminEvent:registerBid(player, bid)
                 else
                     player:sendError(_("Es läuft keine Auktion!", player))
                 end
-            end, false, player, bid)
+            end, false, false, false, player, bid)
         else
             player:sendError(_("Dein Gebot ist zu tief, das Höchstgebot für %s liegt bei %s!", player, self.m_CurrentAuction.name, toMoneyString(bid)))
         end

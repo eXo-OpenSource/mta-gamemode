@@ -238,7 +238,7 @@ function QuestManager:stopQuest()
 end
 
 function QuestManager:onShortMessageClick()
-	QuestionBox:new(client, client, "Möchtest du die Quest "..self.m_CurrentQuest.m_Name.." abbrechen? Du kannst diesen jederzeit wieder starten.",
+	QuestionBox:new(client, "Möchtest du die Quest "..self.m_CurrentQuest.m_Name.." abbrechen? Du kannst diesen jederzeit wieder starten.",
 	function()
 		self:endQuestForPlayer(client)
 	end,

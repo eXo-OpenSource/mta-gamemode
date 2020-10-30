@@ -257,7 +257,9 @@ function TrunkGUI:fromTrunk(type, id)
                 triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
                 self.m_MyItemsGrid:setVisible(false)
                 self.m_LoadingLabel:setVisible(true)
-            end)
+            end,
+            nil,
+            localPlayer.position)
         else
             triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
             self.m_MyItemsGrid:setVisible(false)

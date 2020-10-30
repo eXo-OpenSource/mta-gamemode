@@ -156,7 +156,7 @@ function MechanicTow:Event_mechanicRepair()
 	end
 
 	self.m_PendingQuestions[client] = getRealTime().timestamp
-	QuestionBox:new(client, driver,  _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", driver, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
+	QuestionBox:new(driver,  _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", driver, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", client, 20, source)
 end
 
 function MechanicTow:Event_mechanicRepairConfirm(vehicle)
@@ -416,7 +416,7 @@ function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 		return
 	end
 
-	QuestionBox:new(client, vehicle.controller,  _("%s möchte dein Fahrzeug tanken. %s Liter zum Preis von %s$", vehicle.controller, client:getName(), fuel, price), self.m_FillAccept, self.m_FillDecline, client, vehicle.controller, vehicle, fuel, price)
+	QuestionBox:new(vehicle.controller,  _("%s möchte dein Fahrzeug tanken. %s Liter zum Preis von %s$", vehicle.controller, client:getName(), fuel, price), self.m_FillAccept, self.m_FillDecline, client, 20, client, vehicle.controller, vehicle, fuel, price)
 	client:sendInfo("Dem Spieler wurde dein Service angeboten..")
 	vehicle.controller.fillRequest = true
 end

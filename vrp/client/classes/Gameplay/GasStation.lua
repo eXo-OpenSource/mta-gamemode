@@ -85,7 +85,8 @@ function GasStation:nonInteriorRequest()
 		end,
 		function()
 			GasStation.PendingTransaction = nil
-		end
+		end,
+		localPlayer.position
 	)
 end
 

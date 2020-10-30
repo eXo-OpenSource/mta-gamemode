@@ -52,7 +52,7 @@ function MWeedTruck:onStartPointHit(hitElement, matchingDimension)
 						hitElement:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",hitElement, WEEDTRUCK_MIN_MEMBERS))
 						return false
 					end
-					QuestionBox:new(hitElement, hitElement, _("Möchtest du einen Weed-Truck starten? Kosten: %s", hitElement, toMoneyString(MWeedTruck.Settings["costs"])), "weedTruckStart")
+					QuestionBox:new(hitElement, _("Möchtest du einen Weed-Truck starten? Kosten: %s", hitElement, toMoneyString(MWeedTruck.Settings["costs"])), "weedTruckStart", false, source, 10)
 				end
 
 			else

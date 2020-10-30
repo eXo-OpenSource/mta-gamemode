@@ -8,8 +8,8 @@
 QuestionBox = inherit(GUIForm)
 inherit(Singleton, QuestionBox)
 
-function QuestionBox:constructor(text, yesCallback, noCallback)
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.18/2, screenWidth*0.4, screenHeight*0.18)
+function QuestionBox:constructor(text, yesCallback, noCallback, rangeElement, range)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.18/2, screenWidth*0.4, screenHeight*0.18, false, false, rangeElement, range)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Frage", true, false, self)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.22, self.m_Width*0.98, self.m_Height*0.5, text, self.m_Window):setFont(VRPFont(self.m_Height*0.17))
@@ -22,14 +22,16 @@ end
 
 addEvent("questionBox", true)
 addEventHandler("questionBox", root,
-	function(id, text)
+	function(id, text, rangeElement, range)
 		QuestionBox:new(text,
 			function()
 				triggerServerEvent("questionBoxAccept", root, id)
 			end,
 			function()
 				triggerServerEvent("questionBoxDiscard", root, id)
-			end
+			end,
+			rangeElement,
+			range
 		)
 	end
 )

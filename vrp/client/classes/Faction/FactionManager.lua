@@ -118,7 +118,9 @@ function FactionManager:Event_selfArrestMarker( client )
 			end,
 			function ()
 				localPlayer.m_selfArrest = false
-			end)
+			end,
+			localPlayer.position
+		)
 	end
 end
 

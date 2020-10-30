@@ -15,7 +15,7 @@ function ExplosiveTruckManager:constructor()
 	setElementData(self.m_Ped, "clickable", true)
 
 	self.m_Ped:setData("onClickEvent", function()
-		QuestionBox:new("Möchtest du für 5000 $ Sprengstoff kaufen?", bind(self.start, self))
+		QuestionBox:new("Möchtest du für 5000 $ Sprengstoff kaufen?", bind(self.start, self), nil, self.m_Ped)
 	end)
 end
 

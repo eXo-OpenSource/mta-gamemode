@@ -53,9 +53,9 @@ function VehicleScrapper:Event_onConfirmScrap(player)
 		if player.vehicle:getOwner() == player:getId() then 
 			local price = player.vehicle:getBuyPrice()
 			if price then
-				QuestionBox:new(player, player, _("Möchtest du dieses Fahrzeug wirklich für $%s verschrotten?", player, convertNumber(price*.1)), function(player) 
+				QuestionBox:new(player, _("Möchtest du dieses Fahrzeug wirklich für $%s verschrotten?", player, convertNumber(price*.1)), function(player) 
 					self:Event_onScrap(player)
-				end, function() end, player)
+				end, function() end, false, false, player)
 			end 
 		end
 	end

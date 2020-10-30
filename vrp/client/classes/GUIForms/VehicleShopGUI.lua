@@ -44,7 +44,9 @@ function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
 		QuestionBox:new(_("Möchtest du das Fahrzeug %s wirklich für %s kaufen?", VehicleCategory:getSingleton():getModelName(item.VehicleId), toMoneyString(item.VehiclePrice)), function()
 			triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
-		end)
+		end,
+		nil,
+		localPlayer.position)
 	end
 end
 

@@ -1299,10 +1299,10 @@ function VehicleManager:Event_vehicleSell()
 
 	local price = source:getBuyPrice()
 	if price > 0 then
-		QuestionBox:new(client, client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
+		QuestionBox:new(client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, false, false, source)
 	else
 		client:sendError("Das Fahrzeug ist in keinem Shop erhätlich und kann nicht an den Server verkauft werden!")
-		QuestionBox:new(client, client, _("Möchtest du dieses Fahrzeug entfernen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
+		QuestionBox:new(client, _("Möchtest du dieses Fahrzeug entfernen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, false, false, source)
 	end
 end
 

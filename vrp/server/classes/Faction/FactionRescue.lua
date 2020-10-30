@@ -608,7 +608,7 @@ function FactionRescue:Event_healPlayerQuestion(target)
 	if isElement(target) then
 		if target:getHealth() < 100 then
 			local costs = math.floor(100-target:getHealth())
-			QuestionBox:new(client, target, _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, target)
+			QuestionBox:new(target, _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, 20, client, target)
 		else
 			client:sendError(_("Der Spieler hat volles Leben!", client))
 		end
