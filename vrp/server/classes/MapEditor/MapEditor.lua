@@ -242,10 +242,12 @@ end
 
 function MapEditor:startMapEditing(player, id)
     if client then
-        self:setPlayerInEditorMode(player, id)
-        Admin:getSingleton():sendShortMessage(_("%s editiert nun die Map #%s", player, player:getName(), id))
-        if client ~= player then
-            player:sendShortMessage(_("%s hat dich zum Mappen eingeladen!", client, client:getName()), "Map Editor: Einladung")
+        if client:getRank() >= ADMIN_RANK_PERMISSION["remoteOpenMapEditor"] then
+            self:setPlayerInEditorMode(player, id)
+            Admin:getSingleton():sendShortMessage(_("%s editiert nun die Map #%s", player, player:getName(), id))
+            if client ~= player then
+                player:sendShortMessage(_("%s hat dich zum Mappen eingeladen!", player, client:getName()), "Map Editor: Einladung")
+            end
         end
     end
 end

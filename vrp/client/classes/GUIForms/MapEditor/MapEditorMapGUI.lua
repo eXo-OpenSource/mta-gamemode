@@ -52,7 +52,7 @@ function MapEditorMapGUI:constructor()
 	self.m_CreateNewButton = GUIGridButton:new(15, 12, 5, 1, "Map anlegen", self.m_Window):setBackgroundColor(Color.Green)
 
 	self.m_EditMap.onLeftClick = function()
-		if localPlayer:getRank() >= RANK.Administrator then
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["openMapEditor"] then
 			self:startMapEditing(localPlayer)
 		else
 			ErrorBox:new("Du bist nicht berechtigt!")
@@ -60,7 +60,7 @@ function MapEditorMapGUI:constructor()
 	end
 
 	self.m_EditMap.onRightClick = function()
-		if localPlayer:getRank() >= RANK.Administrator then
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["remoteOpenMapEditor"] then
 			InviteGUI:new(
 				function(player)
 					self:startMapEditing(player)
@@ -81,7 +81,7 @@ function MapEditorMapGUI:constructor()
 	end
 
 	self.m_EditingPlayers.onLeftClick = function()
-		if localPlayer:getRank() < RANK.Administrator then
+		if localPlayer:getRank() < ADMIN_RANK_PERMISSION["openMapEditor"] then
 			ErrorBox:new("Du bist nicht berechtigt!")
 			return
 		end
@@ -90,7 +90,7 @@ function MapEditorMapGUI:constructor()
 	end
 
 	self.m_EditMapSettings.onLeftClick = function()
-		if localPlayer:getRank() < RANK.Administrator then
+		if localPlayer:getRank() < ADMIN_RANK_PERMISSION["setMapStatus"] then
 			ErrorBox:new("Du bist nicht berechtigt!")
 			return
 		end
