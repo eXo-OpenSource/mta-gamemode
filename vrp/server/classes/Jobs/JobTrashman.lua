@@ -115,7 +115,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 
 				hitElement:setData("Trashman:Cans", 0)
 				hitElement:triggerEvent("trashcanReset")
-				QuestionBox:new(hitElement, hitElement, _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)
+				QuestionBox:new(hitElement, _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", false, false, hitElement)
 
 			else
 				hitElement:sendInfo(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount))

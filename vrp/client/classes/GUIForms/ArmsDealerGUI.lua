@@ -9,11 +9,11 @@ ArmsDealerGUI = inherit(GUIForm)
 inherit(Singleton, ArmsDealerGUI)
 
 addRemoteEvents{"updateArmsDealerInfo", "openArmsDealerGUI"}
-function ArmsDealerGUI:constructor( )
+function ArmsDealerGUI:constructor(ped)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 15)	
 	self.m_Height = grid("y", 10)
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, ped)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Waffenhandel", true, true, self)
 	self.m_WeaponCategories = GUIGridChanger:new(1, 2, 8, 1, self.m_Window)
@@ -137,7 +137,9 @@ function ArmsDealerGUI:checkoutCart()
 	if self.m_Price and self.m_Price > 0 then
 		QuestionBox:new(
 			_("Bist du sicher, dass du die folgende Summe zahlen willst: $%s ?", self.m_Price),
-			function() triggerServerEvent("checkoutArmsDealerCart", localPlayer, self.m_Cart) end
+			function() triggerServerEvent("checkoutArmsDealerCart", localPlayer, self.m_Cart) end,
+			nil,
+			localPlayer.position
 		)
 	end
 end
@@ -147,9 +149,9 @@ function ArmsDealerGUI:destructor()
 	GUIForm.destructor(self)
 end
 
-addEventHandler("openArmsDealerGUI", root, function() 
+addEventHandler("openArmsDealerGUI", root, function(ped) 
 	if not ArmsDealerGUI:isInstantiated() then 
-		ArmsDealerGUI:new()
+		ArmsDealerGUI:new(ped)
 	end
 end
 )

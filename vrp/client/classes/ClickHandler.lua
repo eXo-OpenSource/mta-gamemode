@@ -18,7 +18,7 @@ function ClickHandler:constructor()
 		[2922] = function(element) triggerServerEvent("keypadClick", element) end;
 		[2977] = function(element) GunBoxGUI:new(element) end;
 		[FERRIS_IDS.Gond] = function(element) FerrisWheel.onClientClickedGond(element) end;
-		[2942] = function(element) BankGUI:getSingleton():show() end;
+		[2942] = function(element) BankGUI:getSingleton(element):show() end;
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;

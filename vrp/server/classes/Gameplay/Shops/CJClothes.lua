@@ -35,10 +35,10 @@ end
 function CJClothes:onCJClothesMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		if hitElement:getModel() == 0 then
-			hitElement:triggerEvent("showClothesShopGUI", self.m_Id, source.typeId, source.clothes)
+			hitElement:triggerEvent("showClothesShopGUI", self.m_Id, source.typeId, source.clothes, self.m_ClothesMarker)
 		else
 			local cjName, cjPrice = unpack(SkinInfo[0])
-			QuestionBox:new(hitElement, hitElement, _("Diese Kleidung ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
+			QuestionBox:new(hitElement, _("Diese Kleidung ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, source, 10, 0)
 		end
 	end
 end
@@ -46,10 +46,10 @@ end
 function CJClothes:onTattooMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		if hitElement:getModel() == 0 then
-			hitElement:triggerEvent("showTattooSelectionGUI", self.m_Id)
+			hitElement:triggerEvent("showTattooSelectionGUI", self.m_Id, self.m_ClothesMarker)
 		else
 			local cjName, cjPrice = unpack(SkinInfo[0])
-			QuestionBox:new(hitElement, hitElement, _("Diese Tattoos sind nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
+			QuestionBox:new(hitElement, _("Diese Tattoos sind nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, source, 10, 0)
 		end
 	end
 end
@@ -57,7 +57,7 @@ end
 function CJClothes:onTattoSelection(player, typeId)
 	local type = CJ_CLOTHE_TYPES[typeId]
 	local clothes = CJ_CLOTHES[type]
-	player:triggerEvent("showClothesShopGUI", self.m_Id, typeId, clothes)
+	player:triggerEvent("showClothesShopGUI", self.m_Id, typeId, clothes, self.m_ClothesMarker)
 end
 
 function CJClothes:onShopEnter(player)

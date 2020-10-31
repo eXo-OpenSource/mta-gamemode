@@ -31,8 +31,8 @@ local QUESTIONS =
 	{"Was machen Sie wenn ein Beamter Sie auffordert Ihren Führerschein zu zeigen?","Ich lehne ab","Ich zeige ihm den Führerschein",nil,nil,4,2},
 }
 
-function DrivingSchoolTheoryGUI:constructor(type )
-	GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2 - height/2, width,height, false)
+function DrivingSchoolTheoryGUI:constructor(type, ped)
+	GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2 - height/2, width,height, false, false, ped)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Theoretische Prüfung"), true, true, self)
 	self.m_Window:toggleMoving(false)
 	self.m_Window:deleteOnClose(true)
@@ -134,8 +134,8 @@ end
 
 
 addEventHandler("showDrivingSchoolTest", localPlayer,
-	function(type )
-		DrivingSchoolTheoryGUI:new(type)
+	function(type, ped)
+		DrivingSchoolTheoryGUI:new(type, ped)
 	end
 )
 

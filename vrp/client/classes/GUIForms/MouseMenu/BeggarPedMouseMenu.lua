@@ -37,7 +37,9 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 					_("Möchtest du 5g Heroin für 150$ kaufen?"),
 					function ()
 						triggerServerEvent("buyBeggarItem", self:getElement(), "Heroin")
-					end
+					end,
+					nil,
+					element
 				)
 			end
 		)

@@ -13,7 +13,7 @@ function JobBoxerGUI:constructor()
 	self.m_Width = grid("x", 12)
 	self.m_Height = grid("y", 9)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, Vector3(774.016, 5.358, 1000))
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Gewichtsklassen", true, true, self)
     self.m_GridList = GUIGridGridList:new(1, 1, 6, 8, self.m_Window)
     self.m_GridList:addColumn("", 0.95)

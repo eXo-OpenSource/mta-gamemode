@@ -32,7 +32,7 @@ function BusRouteInformationGUI:constructor(element)
 
     self.m_Width = 350
 	self.m_Height = 451
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, element)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _(header), true, true, self)
     self.m_Window:deleteOnClose(true)
     local baseHeight = 31 -- header  + line

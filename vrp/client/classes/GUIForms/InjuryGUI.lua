@@ -26,7 +26,7 @@ function InjuryGUI:constructor(data, player, healerType)
 	self.m_Height = grid("y", 11) 	
 
 	self.m_FontScale = screenHeight / 1080
-	GUIForm.constructor(self, screenWidth-self.m_Width, screenHeight-self.m_Height*1.5, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth-self.m_Width, screenHeight-self.m_Height*1.5, self.m_Width, self.m_Height, true, false, player)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, ("%s"):format((player == localPlayer and "Selbstbehandlung") or ("%s"):format(player:getName())), true, true, self)
 	
 	GUIGridLabel:new(7, 1, 9, 1, "Behandelbare Wunden (Doppelklick)", self)

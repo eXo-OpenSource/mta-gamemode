@@ -9,12 +9,12 @@
 CinemaCreateLobbyGUI = inherit(GUIForm)
 inherit(Singleton, CinemaCreateLobbyGUI)
 
-function CinemaCreateLobbyGUI:constructor()
+function CinemaCreateLobbyGUI:constructor(position)
     GUIWindow.updateGrid()
 	self.m_Width = grid("x", 8)
     self.m_Height = grid("y", 12)
     
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, position)
 	
 	self.m_CreateLobbyWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kino Lobby erstellen", true, true, self)
 

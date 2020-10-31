@@ -33,8 +33,8 @@ local weaponModels = {
 	[0] = 1242
 }
 
-function AmmuNationGUI:constructor()
-	GUIForm.constructor(self, 10, screenHeight*0.25, 300, screenHeight*0.5)
+function AmmuNationGUI:constructor(ped)
+	GUIForm.constructor(self, 10, screenHeight*0.25, 300, screenHeight*0.5, true, false, ped)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Ammunation", true, true, self)
 
 	self.m_WeaponList = GUIGridList:new(5, 35, self.m_Width-10, self.m_Height-35-65, self)
@@ -134,9 +134,9 @@ function AmmuNationGUI:onSelectMagazine(weaponId)
 end
 
 addEventHandler("showAmmunationMenu", root,
-		function()
+		function(ped)
 			if AmmuNationGUI:isInstantiated() then delete(AmmuNationGUI:getSingleton()) end
-			AmmuNationGUI:getSingleton():new()
+			AmmuNationGUI:new(ped)
 		end
 	)
 

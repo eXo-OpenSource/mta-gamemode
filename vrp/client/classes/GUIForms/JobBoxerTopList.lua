@@ -12,7 +12,7 @@ function JobBoxerTopList:constructor(table, playertable)
 	self.m_Width = grid("x", 12)
 	self.m_Height = grid("y", 11)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, Vector3(773.99, -0.6, 999.8))
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bestenliste", true, true, self)
 
     self.m_GridList = GUIGridGridList:new(1, 1, 11, 10, self.m_Window)

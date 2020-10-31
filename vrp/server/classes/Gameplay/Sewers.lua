@@ -290,7 +290,7 @@ function Sewers:Event_onPedClick(button, state, player)
 	then
 		return
 	end
-	player:triggerEvent("openArmsDealerGUI")
+	player:triggerEvent("openArmsDealerGUI", source)
 end
 
 function Sewers:addKevlarToPed(ped)

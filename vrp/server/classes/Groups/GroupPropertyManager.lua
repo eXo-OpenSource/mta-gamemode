@@ -58,7 +58,7 @@ end
 function GroupPropertyManager:OnRequestPropertyItemDepot(id)
 	if client then
 		if client.m_LastPropertyPickup then
-			client.m_LastPropertyPickup:getDepot():showItemDepot(client)
+			client.m_LastPropertyPickup:getDepot():showItemDepot(client, client.m_LastPropertyPickup)
 		end
 	end
 end
@@ -86,7 +86,15 @@ function GroupPropertyManager:addNewProperty( )
 end
 
 function GroupPropertyManager:OnRequestImmo()
-	client:triggerEvent("GetImmoForSale", GroupPropertyManager:getSingleton().Map )
+	local tempTable = {}
+	for index, property in pairs(GroupPropertyManager:getSingleton().Map) do
+		tempTable[index] = {
+			name = property.m_Name,
+			owner = property.m_OwnerID, 
+			price = property.m_Price
+		}
+	end
+	client:triggerEvent("GetImmoForSale", tempTable)
 end
 
 function GroupPropertyManager:OnKeyChange( player,action)

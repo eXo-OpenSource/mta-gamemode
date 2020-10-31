@@ -10,8 +10,8 @@ inherit(Singleton, ItemShopGUI)
 
 addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI", "showBarGUI", "shopCloseGUI"}
 
-function ItemShopGUI:constructor(callback, shopName)
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4)
+function ItemShopGUI:constructor(callback, shopName, rangeElement)
+	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4, true, false, rangeElement)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, shopName or _"Shop", true, true, self)
 	self.m_Preview = GUIImage:new(self.m_Height*0.08, self.m_Height*0.12, self.m_Width*0.2, self.m_Width*0.2, false, self.m_Window)
@@ -92,7 +92,7 @@ function ItemShopGUI:ButtonBuy_Click()
 end
 
 addEventHandler("showItemShopGUI", root,
-	function()
+	function(ped)
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount, isWeapon)
 			if isWeapon then
@@ -101,17 +101,17 @@ addEventHandler("showItemShopGUI", root,
 				triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
 			end
 		end
-		ItemShopGUI:new(callback)
+		ItemShopGUI:new(callback, false, ped)
 	end
 )
 
 addEventHandler("showBarGUI", root,
-	function()
+	function(ped)
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount)
 			triggerServerEvent("barBuyDrink", root, shop, itemName, amount)
 		end
-		ItemShopGUI:new(callback)
+		ItemShopGUI:new(callback, false, ped)
 	end
 )
 
@@ -121,7 +121,7 @@ addEventHandler("showStateItemGUI", root,
 		local callback = function(shop, itemName, amount)
 			triggerServerEvent("factionStatePutItemInVehicle", root, itemName, amount)
 		end
-		ItemShopGUI:new(callback, shopName)
+		ItemShopGUI:new(callback, shopName, ped)
 	end
 )
 

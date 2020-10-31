@@ -63,7 +63,7 @@ function VehicleSpawner:markerHit(hitElement, matchingDimension)
 				return
 			end
 
-			hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles, self.m_ShowEPTAdvertisement)
+			hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles, self.m_ShowEPTAdvertisement, self.m_Marker)
 		end
 	end
 end

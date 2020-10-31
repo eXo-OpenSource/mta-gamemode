@@ -17,12 +17,12 @@ PlayHouseShopGUI.Items =
 	{"Monatskarte", 250000,  (60*60*24*30), "files/images/Inventory/items/Items/Clubcard.png", "Diese Karte erlaubt es dir, die oberen Gemächer zu betreten. (Monat)"}
 }
 
-function PlayHouseShopGUI:constructor()
+function PlayHouseShopGUI:constructor(marker)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 12)
 	self.m_Height = grid("y", 9)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, marker)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Theke", true, true, self)
 	
 	GUIGridLabel:new(1, 1, 12, 1, _"Willkommen, was kann man für dich tun?", self)

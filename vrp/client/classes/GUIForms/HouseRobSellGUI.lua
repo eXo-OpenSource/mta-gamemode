@@ -10,8 +10,8 @@ inherit(Singleton, HouseRobSellGUI)
 
 addRemoteEvents{"showHouseRobSellGUI"}
 
-function HouseRobSellGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(150/2), 300, 200)
+function HouseRobSellGUI:constructor(ped)
+	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(150/2), 300, 200, true, false, ped)
 	self.m_Window = GUIWindow:new(0,0,300,500,_"Diebesgut verkaufen",true,true,self)
 
 	self.m_Accept = GUIButton:new(30, 50, self.m_Width-60, 40,_"Verkaufen", self)
@@ -29,8 +29,8 @@ function HouseRobSellGUI:acceptSell()
 end
 
 addEventHandler("showHouseRobSellGUI", root,
-		function()
-			HouseRobSellGUI:getSingleton():show()
+		function(ped)
+			HouseRobSellGUI:new(ped)
 		end
 	)
 

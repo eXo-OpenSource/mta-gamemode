@@ -22,7 +22,7 @@ function TurtleRace.load()
 
 	ped:setData("onClickEvent",
 		function()
-			TurtleRaceGUI:new()
+			TurtleRaceGUI:new(ped)
 		end
 	)
 end

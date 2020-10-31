@@ -86,7 +86,7 @@ function ItemTransmitter:onTransmitterClick(button, state, player)
 	elseif button == "right" and state == "up" then 
 		if player.m_SupMode then 
 			player.m_TransmitterQuestionDeleteId = source.Id
-			QuestionBox:new(player, player, _("Möchtest du diesen Transmitter (# "..source.Id..") löschen?", player), "confirmTransmitterDelete", nil, source.Id)
+			QuestionBox:new(player, _("Möchtest du diesen Transmitter (# "..source.Id..") löschen?", player), "confirmTransmitterDelete", nil, false, false, source.Id)
 		end
     end
 end

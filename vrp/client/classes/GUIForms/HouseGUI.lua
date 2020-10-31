@@ -11,7 +11,7 @@ inherit(Singleton, HouseGUI)
 addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
 
 HouseGUI.Blips = {}
-function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId)
+function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId, pickup)
 	self.m_isOwner = ownerName == localPlayer:getName()
 	self.m_isTenant = tenants and tenants[localPlayer:getPrivateSync("Id")]
 	self.m_isRentEnabled = rentprice > 0
@@ -24,7 +24,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	self.m_Width = grid("x", self.m_isOwner and 13 or 7)
 	self.m_Height = grid("y", self.m_isOwner and 10 or 8)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, pickup)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Hausmenü (Hausnr. %d)", houseId), true, true, self)
 
 	self.m_OwnerLbl = GUIGridLabel:new(1, 1, 6, 1, _("Besitzer: %s", ownerName or "Niemand"), self.m_Window)
@@ -155,14 +155,18 @@ end
 
 function HouseGUI:buyHouse()
 	QuestionBox:new(_("Möchtest du wirklich dieses Haus kaufen? %s werden dir von deinem Konto abgebucht! Zudem kannst du nur ein Haus besitzen.", toMoneyString(self.m_Price)),
-	function() triggerServerEvent("buyHouse",root) end
+	function() triggerServerEvent("buyHouse",root) end,
+	nil,
+	localPlayer.position
 	)
 
 end
 
 function HouseGUI:sellHouse()
 	QuestionBox:new("Möchtest du wirklich dein Haus verkaufen? Du erhälst 75% des Preises auf dein Konto gutgeschrieben!",
-	function() triggerServerEvent("sellHouse",root) end
+	function() triggerServerEvent("sellHouse",root) end,
+	nil,
+	localPlayer.position
 	)
 
 end

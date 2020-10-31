@@ -10,8 +10,8 @@ inherit(Singleton, ItemDepotGUI)
 
 addRemoteEvents{"ItemDepotOpen", "ItemDepotRefresh"}
 
-function ItemDepotGUI:constructor()
-    GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
+function ItemDepotGUI:constructor(element)
+    GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400, true, false, element)
 
     self.ms_SlotsSettings = {
         ["item"] = {["color"] = Color.Accent, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"}
@@ -171,10 +171,10 @@ function ItemDepotGUI:fromDepot(id)
     end
 end
 
-addEventHandler("ItemDepotOpen", root, function()
+addEventHandler("ItemDepotOpen", root, function(element)
     if ItemDepotGUI:getSingleton():isInstantiated() then
-        ItemDepotGUI:getSingleton():open()
+        delete(ItemDepotGUI:getSingleton())
     else
-        ItemDepotGUI:getSingleton():new()
+        ItemDepotGUI:new(element)
     end
 end)

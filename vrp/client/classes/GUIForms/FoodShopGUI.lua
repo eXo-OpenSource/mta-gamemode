@@ -53,8 +53,8 @@ local typeTable = {
 -- 0 70
 addRemoteEvents{"showFoodShopMenu", "refreshFoodShopMenu"}
 
-function FoodShopGUI:constructor()
-	GUIForm.constructor(self, 10, screenHeight/2-350/2, 300, 350)
+function FoodShopGUI:constructor(ped)
+	GUIForm.constructor(self, 10, screenHeight/2-350/2, 300, 350, true, false, ped)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Restaurant", true, true, self)
 
 	self.m_FoodList = GUIGridList:new(5, 35, self.m_Width-10, 270, self)
@@ -136,9 +136,9 @@ function FoodShopGUI:onSelectItem(item)
 end
 
 addEventHandler("showFoodShopMenu", root,
-		function()
+		function(ped)
 			if FoodShopGUI:isInstantiated() then delete(FoodShopGUI:getSingleton()) end
-			FoodShopGUI:getSingleton():new()
+			FoodShopGUI:new(ped)
 		end
 	)
 

@@ -8,8 +8,8 @@
 TurtleRaceGUI = inherit(GUIForm)
 inherit(Singleton, TurtleRaceGUI)
 
-function TurtleRaceGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 395)
+function TurtleRaceGUI:constructor(ped)
+	GUIForm.constructor(self, screenWidth/2-270, screenHeight/2-230, 540, 395, true, false, ped)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Schildkrötenrennen", true, true, self)
 

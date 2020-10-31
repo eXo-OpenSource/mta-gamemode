@@ -10,8 +10,8 @@ inherit(Singleton, VehicleSpawnGUI)
 
 addRemoteEvents{"vehicleSpawnGUI"}
 
-function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisement)
-	GUIForm.constructor(self, screenWidth/2 - screenWidth/4/2, screenHeight/2 - screenHeight/2.5/2, screenWidth/4, screenHeight/2.5)
+function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisement, marker)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth/4/2, screenHeight/2 - screenHeight/2.5/2, screenWidth/4, screenHeight/2.5, true, false, marker)
 	self.m_SpawnerId = spawnerId
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug erstellen", true, true, self)

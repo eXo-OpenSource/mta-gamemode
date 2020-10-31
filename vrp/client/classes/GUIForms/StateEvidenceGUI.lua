@@ -10,12 +10,12 @@ inherit(Singleton, StateEvidenceGUI)
 
 addRemoteEvents{"State:sendEvidenceItems", "State:clearEvidenceItems" }
 
-function StateEvidenceGUI:constructor(evidenceTable, fillState)
+function StateEvidenceGUI:constructor(evidenceTable, fillState, element)
 	GUIWindow.updateGrid(true)			-- initialise the grid function to use a window
 	self.m_Width = grid("x", 13) 	-- width of the window
 	self.m_Height = grid("y", 6) 	-- height of the window
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, element)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Asservatenkammer", true, true, self)
 	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Übersicht", "Details"}) -- fügt Tabs hinzu und gibt ihnen eine füllende Breite
 	self.m_TabPanel:updateGrid() -- updated das Grid, weil die nächsten Elemente als parent einen tab haben, der keinen Header besitzt (und somit auch keinen oberen Abstand)
@@ -46,7 +46,9 @@ function StateEvidenceGUI:constructor(evidenceTable, fillState)
 			self:close()
 			self.m_Window:close()
 			triggerServerEvent("State:startEvidenceTruck", localPlayer)
-		end)
+		end,
+		nil,
+		localPlayer.position)
 	end
 
 
@@ -106,7 +108,7 @@ function StateEvidenceGUI:refreshGrid()
 end
 
 addEventHandler("State:sendEvidenceItems", root,
-	function( ev , fillState)
-		StateEvidenceGUI:new( ev,fillState )
+	function(ev, fillState, element)
+		StateEvidenceGUI:new(ev, fillState, element)
 	end
 )

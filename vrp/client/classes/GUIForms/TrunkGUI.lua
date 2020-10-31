@@ -11,7 +11,7 @@ inherit(Singleton, TrunkGUI)
 addRemoteEvents{"openTrunk", "getTrunkData"}
 
 function TrunkGUI:constructor(vehicle)
-    GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
+    GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400, true, false, vehicle, 5)
 
     self.ms_SlotsSettings = {
         ["item"] = {["color"] = Color.Accent, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"},
@@ -257,7 +257,9 @@ function TrunkGUI:fromTrunk(type, id)
                 triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
                 self.m_MyItemsGrid:setVisible(false)
                 self.m_LoadingLabel:setVisible(true)
-            end)
+            end,
+            nil,
+            localPlayer.position)
         else
             triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
             self.m_MyItemsGrid:setVisible(false)

@@ -11,7 +11,7 @@ inherit(Singleton, WeaponLevelGUI)
 addRemoteEvents{"openWeaponLevelGUI"}
 
 function WeaponLevelGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(310/2), 300, 310)
+	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(310/2), 300, 310, true, false, Vector3(-7190.96, -2482.61, 31.4))
 
 	local currentLevel = localPlayer:getWeaponLevel()
 	local nextLevel = currentLevel+1

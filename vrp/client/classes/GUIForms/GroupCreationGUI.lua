@@ -8,7 +8,7 @@
 GroupCreationGUI = inherit(GUIForm)
 
 function GroupCreationGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.3/2, screenWidth*0.4, screenHeight*0.3)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.3/2, screenWidth*0.4, screenHeight*0.3, true, false, Vector3(2758.87, -2374.48, 819.24))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Private Gang/Firma erstellen", true, true, self)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.16, self.m_Width*0.98, self.m_Height*0.04, _("Hier kannst du eine private Firma oder Gang gründen.\nEine Gründung kostet %s!", toMoneyString(GROUP_CREATE_COSTS)), self.m_Window):setFont(VRPFont(self.m_Height*0.11)):setMultiline(true)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.42, self.m_Width*0.65, self.m_Height*0.10, _"Name der Gang/Firma:", self.m_Window):setFont(VRPFont(self.m_Height*0.12))

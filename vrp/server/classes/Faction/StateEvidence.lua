@@ -46,7 +46,7 @@ function StateEvidence:createEvidencePickup( x,y,z, int, dim )
 		if hitElement:getType() == "player" and dim then
 			if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 				hitElement.evidencePickup = source
-				self:showEvidenceStorage( hitElement )
+				self:showEvidenceStorage( hitElement, source )
 			else
 				hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
 			end
@@ -134,10 +134,10 @@ function StateEvidence:addItemToEvidence(player, itemName, amount, noMessage)
     end
 end
 
-function StateEvidence:showEvidenceStorage(player)
+function StateEvidence:showEvidenceStorage(player, storageElement)
 	if player then
 		if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() then
-			player:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems, self.m_FillState)
+			player:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems, self.m_FillState, storageElement)
 		end
 	end
 end

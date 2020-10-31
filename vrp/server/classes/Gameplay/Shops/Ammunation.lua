@@ -42,7 +42,7 @@ function Ammunation:onAmmunationMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		if self.m_Robable and self.m_Robable.m_RobActive then return end
 
-		hitElement:triggerEvent("showAmmunationMenu")
+		hitElement:triggerEvent("showAmmunationMenu", self.m_Ped)
 		triggerClientEvent(hitElement, "refreshAmmunationMenu", hitElement, self.m_Id, self.m_TypeName, self.m_Weapons, self.m_Magazines)
 	end
 end

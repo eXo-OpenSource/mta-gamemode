@@ -15,19 +15,18 @@ function QuestionBox.initalize()
 	addEventHandler("questionBoxDiscard", root, QuestionBox.Discard)
 end
 
-function QuestionBox:constructor(player, target, msg, yesEvent, noEvent, ...)
+function QuestionBox:constructor(target, msg, yesEvent, noEvent, rangeElement, range, ...)
 	local additionalParameters = {...}
 	local id = QuestionBox.Count+1
 	self.m_Id = id
 	QuestionBox.Map[id] = {
-		["player"] = player,
 		["target"] = target,
 		["yesEvent"] = yesEvent,
 		["noEvent"] = noEvent,
 		["additionalParameters"] = additionalParameters,
 		["object"] = self
 	}
-	target:triggerEvent("questionBox", id, msg)
+	target:triggerEvent("questionBox", id, msg, rangeElement, range)
 end
 
 function QuestionBox:destructor()

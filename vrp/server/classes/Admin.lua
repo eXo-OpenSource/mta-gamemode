@@ -1525,7 +1525,7 @@ function Admin:Event_OnClientRunStringResult(result)
 end
 
 function Admin:checkOverlappingVehicles()
-	QuestionBox:new(client, client,  _("Warnung! Diese Funktion ist performance-lastig",client), "admin:acceptOverlappingCheck")
+	QuestionBox:new(client,  _("Warnung! Diese Funktion ist performance-lastig",client), "admin:acceptOverlappingCheck")
 end
 
 function Admin:Event_OnAcceptOverlapCheck()

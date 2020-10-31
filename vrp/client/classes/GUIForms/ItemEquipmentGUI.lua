@@ -11,12 +11,12 @@ inherit(Singleton, ItemEquipmentGUI)
 addRemoteEvents{"ItemEquipmentOpen", "ItemEquipmentRefresh"}
 
 ItemEquipmentGUI.ImagePath = "files/images/Inventory/items/"
-function ItemEquipmentGUI:constructor(id)
+function ItemEquipmentGUI:constructor(id, element)
     self.m_Id = id
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 21)
 	self.m_Height = grid("y", 11)
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, element)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Ausrüstungslager", true, true, self)
 	GUIGridRectangle:new(10, 2, 5, 1, Color.Grey, self.m_Window)
@@ -183,10 +183,10 @@ function ItemEquipmentGUI:onShow()
     setElementData(localPlayer, "isEquipmentGUIOpen", true, true)
 end
 
-addEventHandler("ItemEquipmentOpen", root, function()
+addEventHandler("ItemEquipmentOpen", root, function(element)
     if ItemEquipmentGUI:getSingleton():isInstantiated() then
-        ItemEquipmentGUI:getSingleton():open()
+        delete(ItemEquipmentGUI:getSingleton())
     else
-        ItemEquipmentGUI:getSingleton():new(id)
+        ItemEquipmentGUI:new(id, element)
     end
 end)

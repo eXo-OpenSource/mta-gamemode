@@ -10,8 +10,8 @@ inherit(Singleton, VehicleShopGUI)
 
 addRemoteEvents{"showVehicleShopMenu", "vehicleBought"}
 
-function VehicleShopGUI:constructor()
-	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
+function VehicleShopGUI:constructor(rangeElement)
+	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2, true, false, rangeElement, 6)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self)
 	self.m_VehicleList = GUIGridList:new(0, self.m_Height/7+30, self.m_Width, self.m_Height-self.m_Height/7-self.m_Height/14-30, self.m_Window)
@@ -44,7 +44,9 @@ function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
 		QuestionBox:new(_("Möchtest du das Fahrzeug %s wirklich für %s kaufen?", VehicleCategory:getSingleton():getModelName(item.VehicleId), toMoneyString(item.VehiclePrice)), function()
 			triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
-		end)
+		end,
+		nil,
+		localPlayer.position)
 	end
 end
 
@@ -125,8 +127,8 @@ function VehicleShopGUI:setColBack()
 	end
 end
 
-addEventHandler("showVehicleShopMenu", root, function(id, name, image, vehicles)
-	local shopGUI = VehicleShopGUI:getSingleton()
+addEventHandler("showVehicleShopMenu", root, function(id, name, image, vehicles, rangeElement)
+	local shopGUI = VehicleShopGUI:getSingleton(rangeElement)
 	shopGUI:setShopName(name)
 	shopGUI:setShopId(id)
 	shopGUI:setShopLogoPath("files/images/Shops/"..image)
