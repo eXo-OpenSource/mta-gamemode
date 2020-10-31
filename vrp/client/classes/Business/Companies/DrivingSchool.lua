@@ -64,7 +64,7 @@ function DrivingSchool:createPed()
 			if DrivingSchoolTheoryGUI:isInstantiated() then return end
 
 			local onlinePlayers = CompanyManager:getSingleton():getFromId(CompanyStaticId.DRIVINGSCHOOL):getOnlinePlayers()
-			DrivingSchoolPedGUI:new(#onlinePlayers < 3, ped)
+			DrivingSchoolPedGUI:new(#onlinePlayers < 3)
 		end
 	)
 end
