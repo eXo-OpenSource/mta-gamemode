@@ -3,7 +3,7 @@ inherit(Singleton, DutyGUI)
 addRemoteEvents{"showDutyGUI"}
 
 function DutyGUI:constructor(isFaction, id, isOnDuty, specialSkin, ped)
-	GUIButtonMenu.constructor(self, "Duty-Menü", 300, 380, screenWidth/2-(width/2), screenHeight/2-(height/2), ped)
+	GUIButtonMenu.constructor(self, "Duty-Menü", 300, 380, false, false, ped) --posX and posY are false so the standard values will be taken
 	if isFaction then
 		local fac = FactionManager.Map[id]
 		if fac then

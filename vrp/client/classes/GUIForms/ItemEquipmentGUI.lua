@@ -184,7 +184,7 @@ function ItemEquipmentGUI:onShow()
 end
 
 addEventHandler("ItemEquipmentOpen", root, function(element)
-    if ItemEquipmentGUI:getSingleton():isInstantiated() then
+    if ItemEquipmentGUI:isInstantiated() then
         delete(ItemEquipmentGUI:getSingleton())
     else
         ItemEquipmentGUI:new(id, element)

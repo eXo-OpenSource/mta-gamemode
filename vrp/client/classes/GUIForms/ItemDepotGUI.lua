@@ -172,7 +172,7 @@ function ItemDepotGUI:fromDepot(id)
 end
 
 addEventHandler("ItemDepotOpen", root, function(element)
-    if ItemDepotGUI:getSingleton():isInstantiated() then
+    if ItemDepotGUI:isInstantiated() then
         delete(ItemDepotGUI:getSingleton())
     else
         ItemDepotGUI:new(element)
