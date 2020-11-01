@@ -87,15 +87,15 @@ Halloween.ms_QuestRewards = {
 }
 
 Halloween.ms_PricePoolPrices = {
-	{"vehicle", 448},
+	{"vehicle", 461},
 	{"points", 1000},
 	{"money", 100000},
 
-	{"vehicle", 587},
+	{"vehicle", 445},
 	{"points", 1000},
 	{"money", 100000},
 
-	{"vehicle", 534},
+	{"vehicle", 567},
 	{"points", 1000},
 	{"money", 100000},
 	
@@ -146,7 +146,7 @@ function Halloween:constructor()
 
 	HalloweenEasterEggs:new()
 
-	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Halloween2020-1", "Kürbis", Halloween.ms_PricePoolPrices, 1604163600)
+	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Halloween2020-2", "Kürbis", Halloween.ms_PricePoolPrices, 1602086400)
 	if self.m_PricePool then
 		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(884.832, -1080.05, 24.297), 220)
 		self.m_PricePool:setDailyEntryBuyLimit(100)
