@@ -242,7 +242,7 @@ end
 
 function MapEditor:startMapEditing(player, id)
     if client then
-        if client:getRank() >= ADMIN_RANK_PERMISSION["remoteOpenMapEditor"] then
+        if client:getRank() >= (client ~= player and ADMIN_RANK_PERMISSION["remoteOpenMapEditor"] or ADMIN_RANK_PERMISSION["openMapEditor"]) then
             self:setPlayerInEditorMode(player, id)
             Admin:getSingleton():sendShortMessage(_("%s editiert nun die Map #%s", player, player:getName(), id))
             if client ~= player then
