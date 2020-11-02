@@ -10,7 +10,7 @@ GUIButtonMenu = inherit(GUIForm)
 function GUIButtonMenu:constructor(text, width, height, posX, posY, rangeElement, range)
 	width = width and width or 300
 	height = height and height or 380
-	GUIForm.constructor(self, posX or screenWidth/2-(width/2), posY or screenHeight/2-(height/2), width, height, false, false, rangeElement, range)
+	GUIForm.constructor(self, posX or screenWidth/2-(width/2), posY or screenHeight/2-(height/2), width, height, true, false, rangeElement, range)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, text, true, true, self)
 	self.m_Window:deleteOnClose(true)
 	self.m_Items = {}

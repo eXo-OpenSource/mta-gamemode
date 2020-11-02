@@ -91,7 +91,10 @@ function GroupPropertyManager:OnRequestImmo()
 		tempTable[index] = {
 			name = property.m_Name,
 			owner = property.m_OwnerID, 
-			price = property.m_Price
+			price = property.m_Price,
+			camMatrix = property.m_CamMatrix,
+			interior = property.m_Interior,
+			dimension = property.m_Dimension
 		}
 	end
 	client:triggerEvent("GetImmoForSale", tempTable)

@@ -56,9 +56,9 @@ function GroupPropertyBuy:PreviewButton_Click()
 		local selected = self.m_ImmoGrid:getSelectedItem()
 		if self.m_ImmoTable then
 			setElementFrozen(localPlayer,true)
-			local matrix = self.m_ImmoTable[selected.Id].m_CamMatrix
-			local interior = self.m_ImmoTable[selected.Id].m_Interior
-			local dimension = self.m_ImmoTable[selected.Id].m_Dimension
+			local matrix = self.m_ImmoTable[selected.Id].camMatrix
+			local interior = self.m_ImmoTable[selected.Id].interior
+			local dimension = self.m_ImmoTable[selected.Id].dimension
 			self:setVisible(false)
 			setTimer(function() self:setVisible(true) end, 7500, 1)
 			setElementInterior(localPlayer, 0)
