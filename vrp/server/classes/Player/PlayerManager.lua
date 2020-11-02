@@ -867,6 +867,7 @@ function PlayerManager:stopAnimation(player)
 end
 
 function PlayerManager:Event_changeWalkingstyle(walkingstyle)
+	if client:getData("isInDeathMatch") then return end
 	if client:getPrivateSync("AlcoholLevel") == 0 then
 		if not client:isStateCuffed() then
 			if WALKINGSTYLES[walkingstyle] then
