@@ -206,12 +206,6 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 		return data:sub(2, #data-1)
 	end
 
-	if not duration then
-		if aCreated then delete(admin) end
-		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
-		return data:sub(2, #data-1)
-	end
-
 	if not reason or reason == "" then
 		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
