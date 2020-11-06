@@ -592,7 +592,7 @@ function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
 
-	if source:getFaction() and source.m_WasOnDuty and not source.m_DeathInJail then
+	if source:getFaction() and source.m_WasOnDuty and not source.m_DeathInJail and source.m_JailTime == 0 then
 		source.m_WasOnDuty = false
 		local position = factionSpawnpoint[source:getFaction():getId()]
 		source:respawn(position[1])
