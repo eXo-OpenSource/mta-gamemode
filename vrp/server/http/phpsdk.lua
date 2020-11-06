@@ -327,7 +327,12 @@ function phpSDKUnprisonPlayer(adminId, targetId, reason)
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s aus dem Prison gelassen! Grund: %s", nil, adminName, targetName, reason))
 	Admin:getSingleton():addPunishLog(adminId, targetId, "unPrisonCP", reason, 0)
-	target:endPrison()
+
+	if tCreated then
+		target:setPrison(0, true)
+	else
+		target:endPrison()
+	end
 
 	if tCreated then delete(target) end
 	if aCreated then delete(admin) end
