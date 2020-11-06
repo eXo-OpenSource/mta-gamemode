@@ -206,12 +206,6 @@ function phpSDKKickPlayer(adminId, targetId, reason)
 		return data:sub(2, #data-1)
 	end
 
-	if not duration then
-		if aCreated then delete(admin) end
-		local data = toJSON({status = "ERROR", error = "DURATION_MISSING"}, true)
-		return data:sub(2, #data-1)
-	end
-
 	if not reason or reason == "" then
 		if aCreated then delete(admin) end
 		local data = toJSON({status = "ERROR", error = "REASON_MISSING"}, true)
@@ -278,7 +272,7 @@ function phpSDKPrisonPlayer(adminId, targetId, duration, reason)
 	local targetName = Account.getNameFromId(targetId)
 
 	if tCreated then
-		target:load()
+		target:load(true)
 	end
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", nil, adminName, targetName, duration, reason))
@@ -319,7 +313,7 @@ function phpSDKUnprisonPlayer(adminId, targetId, reason)
 	local targetName = Account.getNameFromId(targetId)
 
 	if tCreated then
-		target:load()
+		target:load(true)
 	end
 
 	local prisonTime = target:getRemainingPrisonTime()
@@ -332,8 +326,13 @@ function phpSDKUnprisonPlayer(adminId, targetId, reason)
 	end
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s aus dem Prison gelassen! Grund: %s", nil, adminName, targetName, reason))
-	Admin:getSingleton():addPunishLog(adminId, targetId, "unPrisonCP", reason, duration * 60)
-	target:endPrison()
+	Admin:getSingleton():addPunishLog(adminId, targetId, "unPrisonCP", reason, 0)
+
+	if tCreated then
+		target:setPrison(0, true)
+	else
+		target:endPrison()
+	end
 
 	if tCreated then delete(target) end
 	if aCreated then delete(admin) end
