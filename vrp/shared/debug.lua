@@ -10,6 +10,8 @@
 -- @param ... The parameters' types
 DEBUG = GIT_BRANCH ~= "release/production"
 DEBUG_MONITOR_CLASSLIB = false
+DEBUG_MONITOR_CLASSLIB_TIME = 10
+DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE = {}
 if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
 	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
 	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
@@ -225,3 +227,29 @@ function outputDebug(...)
 end
 
 LOREM_IPSUM = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
+
+function writePerfTable(func, stacktrace, time, hookInfo)
+	if not DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func] then
+		DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func] = {
+			stack = stacktrace,
+			timesCalled = 1,
+			longestExecutionTime = time,
+			info = {},
+			infoWritten = false,
+		}
+	else
+		DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].timesCalled = DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].timesCalled + 1
+		if time > DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].longestExecutionTime then
+			DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].longestExecutionTime = time
+		end
+	end
+
+	if not DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].infoWritten then
+		if hookInfo then
+			for k, v in pairs(hookInfo) do
+				DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].info[#DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].info+1] = {functionName = v.functionName, fileName = v.luaFilename, lineNumber = v.luaLineNumber}
+			end
+			DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE[func].infoWritten = true
+		end
+	end
+end

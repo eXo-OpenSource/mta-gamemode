@@ -294,6 +294,8 @@ function bind(func, ...)
 		error("Bad function pointer @ bind. See console for more details")
 	end
 
+	local stacktrace = debug.traceback()
+
 	local boundParams = {...}
 	return
 		function(...)
@@ -308,38 +310,13 @@ function bind(func, ...)
 			for i = 1, select("#", ...) do
 				params[boundParamSize + i] = funcParams[i]
 			end
-			local hookInfo = {}
-			local dHook = function(sourceResource, functionName, isAllowedByACL, luaFilename, luaLineNumber, ...)
-				table.insert(hookInfo, {sourceResource = sourceResource, functionName = functionName, isAllowedByACL = isAllowedByACL, luaFilename = luaFilename, luaLineNumber = luaLineNumber, args = {...}})
-			end
-
-			if DEBUG_MONITOR_CLASSLIB and not triggerServerEvent then
-				addDebugHook("preFunction", dHook)
-			end
 
 			local retValue = func(unpack(params))
 
-			if DEBUG_MONITOR_CLASSLIB and not triggerServerEvent then
-				removeDebugHook("preFunction", dHook)
-
+			if DEBUG_MONITOR_CLASSLIB and triggerServerEvent then
 				local time = getTickCount() - perfTest
-				if time >= 250 then -- log everthing over 50ms ;)
-					local name = "UNKNOWN"
-					if hookInfo and hookInfo[1] and hookInfo[1].functionName then
-						name = hookInfo[1].functionName
-					end
-
-					local data =  {
-						["client"] = client and client:getName() or "-",
-						["eventName"] = eventName
-					}
-
-					for k, v in pairs(hookInfo) do
-						data["functionName"] = v.functionName
-						data["luaFilename"] = v.luaFilename
-						data["luaLineNumber"] = v.luaLineNumber
-						InfluxDB:getSingleton():write("classlib", time, data)
-					end
+				if time >= DEBUG_MONITOR_CLASSLIB_TIME then -- log everthing over 50ms ;)
+					writePerfTable(func, stacktrace, time, hookInfo)
 				end
 			end
 			return retValue

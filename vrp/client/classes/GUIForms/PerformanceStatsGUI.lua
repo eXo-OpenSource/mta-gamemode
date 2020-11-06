@@ -24,7 +24,7 @@ function PerformanceStatsGUI:constructor()
 
 	GUIForm.constructor(self, screenWidth-30-screenWidth*0.3, screenHeight*0.3, screenWidth*0.3, screenHeight*0.4)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Debug Tools (F10 to close)", true, false, self)
-	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Dx Stats", "Elements", "Cache", "Perf. Stats", "Network"}) -- fügt Tabs hinzu und gibt ihnen eine füllende Breite
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Dx Stats", "Elements", "Cache", "Perf. Stats", "Classlib", "Network"}) -- fügt Tabs hinzu und gibt ihnen eine füllende Breite
 	self.m_Fields = {}
 	self.m_TabDxStats = self.m_Tabs[1]
 	self:addField(self.m_TabDxStats, "VideoCardName", function() return tostring(dxGetStatus().VideoCardName) end)
@@ -59,7 +59,36 @@ function PerformanceStatsGUI:constructor()
 	self.m_TabPerformance.m_Gridlist:setItemHeight(math.min(self.m_Height*0.08, 20))
 	self.m_TabPerformance.m_Gridlist:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
 
-	self.m_TabNetwork = self.m_Tabs[5]
+	self.m_TabClasslib = self.m_Tabs[5]
+	self.m_TabClasslib.m_LogCheckbox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.04, "Log starten", self.m_TabClasslib)
+	self.m_TabClasslib.m_LogCheckbox.onChange = function(state)
+		DEBUG_MONITOR_CLASSLIB = state
+	end
+	self.m_TabClasslib.m_LogShowButton = GUIButton:new(self.m_Width*0.8, self.m_Width*0.01, self.m_Width*0.18, self.m_Height*0.08-self.m_Width*0.01, "Log leeren", self.m_TabClasslib)
+	self.m_TabClasslib.m_LogShowButton.onLeftClick = function()
+		self.m_TabClasslib.m_Gridlist:clear()
+		DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE = {}
+	end
+
+	GUILabel:new(self.m_Width*0.35, 0, self.m_Width*0.2, self.m_Height*0.08, "Loggen ab", self.m_TabClasslib)
+	self.m_TabClasslib.m_LogTimeEdit = GUIEdit:new(self.m_Width*0.55, self.m_Width*0.005, self.m_Width*0.1, self.m_Height*0.08-self.m_Width*0.01, self.m_TabClasslib)
+	self.m_TabClasslib.m_LogTimeEdit:setNumeric(true, true):setMaxValue(1000):setText(DEBUG_MONITOR_CLASSLIB_TIME)
+	self.m_TabClasslib.m_LogTimeEdit.onChange = function(time)
+		if tonumber(time) then
+			DEBUG_MONITOR_CLASSLIB_TIME = tonumber(time)
+		end
+	end
+	GUILabel:new(self.m_Width*0.68, 0, self.m_Width*0.1, self.m_Height*0.08, "ms", self.m_TabClasslib)
+
+	self.m_TabClasslib.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.73, self.m_TabClasslib)
+	self.m_TabClasslib.m_Gridlist:addColumn("Max. exec. time", 0.20)
+	self.m_TabClasslib.m_Gridlist:addColumn("Calls", 0.10)
+	self.m_TabClasslib.m_Gridlist:addColumn("Source", 0.70)
+	self.m_TabClasslib.m_Gridlist:setSortable{"Max. exec. time", "Calls"}
+	self.m_TabClasslib.m_Gridlist:setItemHeight(math.min(self.m_Height*0.08, 20))
+	self.m_TabClasslib.m_Gridlist:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
+
+	self.m_TabNetwork = self.m_Tabs[6]
 	for ___, type in pairs({"bytesReceived", "bytesSent", "packetsReceived", "packetsSent", "packetlossTotal", "packetlossLastSecond", "messagesInSendBuffer", "messagesInResendBuffer"}) do
 		self:addField(self.m_TabNetwork, type, function() return getNetworkStats()[type] end)
 	end
@@ -115,6 +144,9 @@ function PerformanceStatsGUI:refresh()
 			end
 		end
 	end
+	if self.m_TabClasslib.m_LogCheckbox:isChecked() then
+		self:showPerfTable()
+	end
 end
 
 function PerformanceStatsGUI:addField(parent, name, getFunc)
@@ -141,7 +173,20 @@ addEventHandler("onClientResourceStart", resourceRoot,
 				PerformanceStatsGUI:getSingleton():setVisible(not PerformanceStatsGUI:getSingleton():isVisible())
 				PerformanceStatsGUI:getSingleton().m_TabElements:setEnabled(localPlayer:getRank() >= ADMIN_RANK_PERMISSION["showDebugElementView"])
 				PerformanceStatsGUI:getSingleton().m_TabPerformance:setEnabled(localPlayer:getRank() >= 1)
+				PerformanceStatsGUI:getSingleton().m_TabClasslib:setEnabled(localPlayer:getRank() >= 3)
 			end
 		)
 	end
 )
+
+function PerformanceStatsGUI:showPerfTable()
+	self.m_TabClasslib.m_Gridlist:clear()
+	for func, stats in pairs(DEBUG_MONITOR_CLASSLIB_PERFORMANCE_TABLE) do
+		local execTime = ("%d ms"):format(stats.longestExecutionTime)
+		local info = debug.getinfo(func, "Sl")
+		local pathTable = split(info.short_src, '\\')
+		local source = ("%s:%d"):format(pathTable[#pathTable], info.linedefined)
+		local item = self.m_TabClasslib.m_Gridlist:addItem(execTime, stats.timesCalled, source)
+		item:setColumnColor(1, stats.longestExecutionTime >= 10 and Color.Yellow or stats.longestExecutionTime >= 50 and Color.Orange or stats.longestExecutionTime >= 100 and Color.Red or Color.Green)
+	end
+end
