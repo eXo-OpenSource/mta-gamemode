@@ -277,7 +277,7 @@ function phpSDKPrisonPlayer(adminId, targetId, duration, reason)
 
 	Admin:getSingleton():sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", nil, adminName, targetName, duration, reason))
 	Admin:getSingleton():addPunishLog(adminId, targetId, "prisonCP", reason, duration * 60)
-	outputChatBox(_("%s hat %s für %s Minuten ins Prison gesteckt!!", nil, targetName, adminName, duration), root, 200, 0, 0)
+	outputChatBox(_("%s hat %s für %s Minuten ins Prison gesteckt!!", nil, adminName, targetName, duration), root, 200, 0, 0)
 	outputChatBox(_("Grund: %s", nil, reason), root, 200, 0, 0)
 	target:setPrison(duration * 60)
 
