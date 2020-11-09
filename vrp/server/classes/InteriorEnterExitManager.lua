@@ -8,11 +8,13 @@
 InteriorEnterExitManager = inherit(Singleton)
 InteriorEnterExitManager.Map ={}
 
-addRemoteEvents{"clientTryEnterEntrance", "InteriorEnterExit:onEnterColHit", "InteriorEnterExit:onExitColHit"}
+addRemoteEvents{"clientTryEnterEntrance", "InteriorEnterExit:onEnterColHit", "InteriorEnterExit:onExitColHit", "InteriorEnterExit:onEnterColLeave", "InteriorEnterExit:onExitColLeave"}
 function InteriorEnterExitManager:constructor() 
     addEventHandler("clientTryEnterEntrance", root, bind(self.Event_requestEntrance, self))
     addEventHandler("InteriorEnterExit:onEnterColHit", root, bind(self.onEnterColHit, self))
     addEventHandler("InteriorEnterExit:onExitColHit", root, bind(self.onExitColHit, self))
+    addEventHandler("InteriorEnterExit:onEnterColLeave", root, bind(self.onEnterColLeave, self))
+    addEventHandler("InteriorEnterExit:onExitColLeave", root, bind(self.onExitColLeave, self))
 end
 
 function InteriorEnterExitManager:destructor()
@@ -51,9 +53,9 @@ function InteriorEnterExitManager:sendInteriorEnterExitToClient(player)
     for key, enterexit in pairs(InteriorEnterExitManager.Map) do
         if enterexit then
             local x, y, z = getElementPosition(enterexit.m_EnterMarker)
-            triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_EnterMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onEnterColHit")
+            triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_EnterMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onEnterColHit", "InteriorEnterExit:onEnterColLeave")
             local x, y, z = getElementPosition(enterexit.m_ExitMarker)
-            triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_ExitMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onExitColHit")
+            triggerClientEvent(player, "ColshapeStreamer:registerColshape", player, {x, y, z+0.2}, enterexit.m_ExitMarker, "enterexit", enterexit.m_Id, 2, "InteriorEnterExit:onExitColHit", "InteriorEnterExit:onExitColLeave")
         end
 	end
 end
@@ -64,4 +66,12 @@ end
 
 function InteriorEnterExitManager:onExitColHit(id)
     InteriorEnterExitManager.Map[id]:onExitColHit(client)
+end
+
+function InteriorEnterExitManager:onEnterColLeave(id)
+    InteriorEnterExitManager.Map[id]:onEnterColLeave(client)
+end
+
+function InteriorEnterExitManager:onExitColLeave(id)
+    InteriorEnterExitManager.Map[id]:onExitColLeave(client)
 end

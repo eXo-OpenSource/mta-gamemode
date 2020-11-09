@@ -57,8 +57,8 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	end
 )	]]
 	
-	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {entryPosition.x, entryPosition.y, entryPosition.z+0.2}, self.m_EnterMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit")
-	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onExitColHit")
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {entryPosition.x, entryPosition.y, entryPosition.z+0.2}, self.m_EnterMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit", "InteriorEnterExit:onEnterColLeave")
+	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onExitColHit", "InteriorEnterExit:onExitColLeave")
 
 end
 
@@ -121,6 +121,7 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 			player:setRotation(0, 0, rotation)
 			player:setPosition(pos)
 			player:setCameraTarget(player)
+			player:setGhostMode(true)
 			fadeCamera(player, true)
 			
 			setTimer(function() --map glitch fix
@@ -129,6 +130,12 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 					player:triggerEvent("checkNoDm")
 				end
 			end, 1000, 1)
+
+			setTimer(function() --remove ghostmode
+				if isElement(player) then --check if player maybe went offline
+					player:setGhostMode(false)
+				end
+			end, 5000, 1)
 
 			if type == "enter" then
 				if self.m_EnterEvent then self.m_EnterEvent(player) end
@@ -139,6 +146,7 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 	)
 
 	player.LastPort = getRealTime().timestamp
+	player.LastPortType = type
 
 end
 
@@ -172,6 +180,34 @@ function InteriorEnterExit:onExitColHit(hitElement)
 		if hitElement:getInterior() == source:getInterior() then
 			hitElement.m_LastEnterExit = {self.m_Id, "exit"}
 			hitElement:triggerEvent("onTryEnterExit", self.m_ExitMarker, self.m_ExitText or "Ausgang")
+		end
+	end
+end
+
+function InteriorEnterExit:onEnterColLeave(leaveElement)
+	if getElementType(leaveElement) == "player" and leaveElement:getDimension() == source:getDimension() and not isPedInVehicle(leaveElement) then
+		if leaveElement:getInterior() == source:getInterior() then
+			if not leaveElement:isInGhostMode() then
+				return
+			end
+
+			if leaveElement.LastPortType == "exit" then
+				leaveElement:setGhostMode(false)
+			end
+		end
+	end
+end
+
+function InteriorEnterExit:onExitColLeave(leaveElement)
+	if getElementType(leaveElement) == "player" and leaveElement:getDimension() == source:getDimension() then
+		if leaveElement:getInterior() == source:getInterior() then
+			if not leaveElement:isInGhostMode() then
+				return
+			end
+			
+			if leaveElement.LastPortType == "enter" then
+				leaveElement:setGhostMode(false)
+			end
 		end
 	end
 end

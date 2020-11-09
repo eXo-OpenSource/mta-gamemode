@@ -116,67 +116,46 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 	--if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
 	local attacker = client
+	if not target or not attacker or not isElement(target) or not isElement(attacker) then
+		return
+	end
 	if client:getData("isInDeathMatch") and target:getData("isInDeathMatch") then
 		if not DeathmatchManager:getSingleton():isDamageAllowed(target, attacker, weapon) then return end
 	end
-
+	if target.m_SupMode or attacker.m_SupMode or target:isInGhostMode() or attacker:isInGhostMode() then
+		return
+	end
 	if weapon == 34 and bodypart == 9 then
-		if not target.m_SupMode and not attacker.m_SupMode then
-			local hasHelmet = target.m_Helmet
-			if hasHelmet then
-				local isProtectingHeadShot = hasHelmet:getData("isProtectingHeadshot")
-				if isProtectingHeadShot then
-					local inventory = target:getInventory()
-					if inventory then
-						local itemCount = inventory:getItemAmount("Einsatzhelm")
-						if itemCount > 0 then
-							local isProtect = math.random(1,8)
-							if isProtect == 1 then
-								inventory:removeItem("Einsatzhelm", 1)
-								destroyElement(hasHelmet)
-								target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
-								target.m_IsWearingHelmet = false
-								target.m_Helmet = false
-								target:setData("isFaceConcealed", false)
-								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", client, 200,200,0)
-								target:triggerEvent("clientBloodScreen")
-								return
-							end
-						end
-					end
-				end
-			end
-			target:triggerEvent("clientBloodScreen")
-			self:killPed(target, attacker, weapon, bodypart)
+		if self:destroyProtectionHelmet(attacker, target) then
+			return
 		end
+		target:triggerEvent("clientBloodScreen")
+		self:killPed(target, attacker, weapon, bodypart)
+		return
+	end
+	
+	local realLoss = 0
+	if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
+		realLoss = loss * EXPLOSIVE_DAMAGE_MULTIPLIER[weapon]
 	else
-		if target and attacker and isElement(target) and isElement(attacker) then
-			if not target.m_SupMode and not attacker.m_SupMode then
-				target:triggerEvent("clientBloodScreen")
-				local realLoss
-				if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
-					realLoss = loss * EXPLOSIVE_DAMAGE_MULTIPLIER[weapon]
-				else
-					local basicDamage = WEAPON_DAMAGE[weapon]
-					if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
-						local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
-						local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
-						basicDamage = basicDamage*((maxDist-dist)/maxDist)
-					elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
-						basicDamage = math.random(2, 5)
-					end
-					local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-					realLoss = basicDamage*multiplier
-
-					if realLoss < basicDamage then -- workaround for 5 hp damages
-						realLoss = basicDamage -- workaround
-					end
-				end
-				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
-				target:dropPlayerAttachedObjectOnDamage()
-			end
+		local basicDamage = WEAPON_DAMAGE[weapon]
+		if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
+			local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
+			local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
+			basicDamage = basicDamage*((maxDist-dist)/maxDist)
+		elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
+			basicDamage = math.random(2, 5)
+		end
+		local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+		realLoss = basicDamage*multiplier
+		
+		if realLoss < basicDamage then -- workaround for 5 hp damages
+			realLoss = basicDamage -- workaround
 		end
 	end
+	target:triggerEvent("clientBloodScreen")
+	self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+	target:dropPlayerAttachedObjectOnDamage()
 end
 
 function Guns:killPed(target, attacker, weapon, bodypart)
@@ -564,4 +543,23 @@ end
 
 function Guns:disableGrenadeAimLeave()
 	client.m_Thrown = true
+end
+
+function Guns:destroyProtectionHelmet(attacker, target)
+	if target.m_Helmet then
+		if target.m_Helmet:getData("isProtectingHeadshot") then
+			if math.random(1,8) == 1 then
+				target:getInventory():removeItem("Einsatzhelm", 1)
+				destroyElement(target.m_Helmet)
+				target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
+				target.m_IsWearingHelmet = false
+				target.m_Helmet = false
+				target:setData("isFaceConcealed", false)
+				outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", attacker, 200,200,0)
+				target:triggerEvent("clientBloodScreen")
+				
+				return true
+			end
+		end
+	end
 end

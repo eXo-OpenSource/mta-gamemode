@@ -1733,3 +1733,12 @@ end
 function Player:isDisconnecting()
 	return self.m_Disconnecting or false
 end
+
+function Player:setGhostMode(state)
+	self:setAlpha(state and 150 or 255)
+	self.m_GhostMode = state
+end
+
+function Player:isInGhostMode()
+	return self.m_GhostMode
+end
