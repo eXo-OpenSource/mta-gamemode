@@ -1072,6 +1072,7 @@ end
 
 function Admin:teleportTo(player,cmd,ort)
 local tpTable = {
+		["noobspawn"] =		{["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
         ["ns"] =     		{["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
         ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
