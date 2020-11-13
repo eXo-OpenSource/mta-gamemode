@@ -157,6 +157,7 @@ function Core:ready() --onClientResourceStart
 	Neon.initalize()
 	CoronaEffect.initalize()
 	GroupSaleVehicles.initalize()
+	GroupRentVehicles.initalize()
 	EasterEgg:new()
 	EasterEggArcade.Game:new()
 	Shaders.load()

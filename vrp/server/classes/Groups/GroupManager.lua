@@ -18,7 +18,7 @@ function GroupManager:constructor()
 	self.m_BankAccountServer = BankServer.get("group")
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupRespawnAllVehicles", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
+	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupRespawnAllVehicles", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan", "groupSetVehicleForRent", "groupRentVehicle", "groupStopVehicleForRent"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestMoney", root, bind(self.Event_RequestMoney, self))
@@ -42,11 +42,19 @@ function GroupManager:constructor()
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
 	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
+	addEventHandler("groupSetVehicleForRent", root, bind(self.Event_SetVehicleForRent, self))
+	addEventHandler("groupRentVehicle", root, bind(self.Event_RentVehicle, self))
+	addEventHandler("groupStopVehicleForRent", root, bind(self.Event_StopVehicleForRent, self))
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
 	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
+	self.m_RentedVehicle = {}
+
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayDay, self))
+
+	self.m_RentedVehiclePulse = TimedPulse:new(60000)
+	self.m_RentedVehiclePulse:registerHandler(bind(self.rentedVehiclePulse, self))
 end
 
 function GroupManager:destructor()
@@ -614,6 +622,10 @@ function GroupManager:Event_SetVehicleForSale(amount)
 		client:sendError(_("Es sitzt jemand im Fahrzeug!", client))
 		return
 	end
+	if source.m_ForRent or source.m_ForSale or source.m_IsRented then
+		client:sendInfo(_("Es ist ein Fehler aufgetreten!", client))
+		return
+	end
 	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 15000000 then
 		if group:getPlayerRank(client) < GroupRank.Manager then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
@@ -642,6 +654,46 @@ end
 function GroupManager:Event_BuyVehicle()
 	local group = client:getGroup()
 	source:buy(client)
+end
+
+function GroupManager:Event_SetVehicleForRent(amount)
+	local group = client:getGroup()
+	if source:getOccupant(0) then
+		client:sendError(_("Es sitzt jemand im Fahrzeug!", client))
+		return
+	end
+	if source.m_ForRent or source.m_ForSale or source.m_IsRented then
+		client:sendInfo(_("Es ist ein Fehler aufgetreten!", client))
+		return
+	end
+	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 25000 then
+		if group:getPlayerRank(client) < GroupRank.Manager then
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+			return
+		end
+		if source:isGroupPremiumVehicle() then
+			client:sendError(_("Premium-Fahrzeuge können nicht zum vermietet werden!", client))
+			return
+		end
+		if getVehicleEngineState(source) then
+			source:setEngineState(false)
+		end
+		group:addLog(client, "Fahrzeugverleih", "hat das Fahrzeug "..source.getNameFromModel(source:getModel()).." um "..amount.."$ pro Stunde zum vermieten angeboten!")
+		client:sendInfo(_("Du hast das Fahrzeug für %d$ pro Stunde angeboten!", client, amount))
+		source:setForRent(true, tonumber(amount))
+	end
+end
+
+function GroupManager:Event_StopVehicleForRent()
+	local group = client:getGroup()
+	if group and group == source:getGroup() then
+		source:setForRent(false)
+	end
+end
+
+function GroupManager:Event_RentVehicle(duration)
+	local group = client:getGroup()
+	source:rent(client, duration)
 end
 
 function GroupManager:Event_ChangeType()
@@ -716,6 +768,28 @@ function GroupManager:checkPayDay()
 			group:payDay()
 		end
 	end
+end
+
+function GroupManager:rentedVehiclePulse()
+	for key, vehicle in pairs(self.m_RentedVehicle) do
+		if vehicle.m_RentedUntil < getRealTime().timestamp then
+			vehicle:rentEnd()
+		else
+			if vehicle.m_RentedUntil < getRealTime().timestamp + 60 * 10 then
+				local player = DatabasePlayer.Map[vehicle.m_RentedBy]
+				local minutes = math.ceil((vehicle.m_RentedUntil - getRealTime().timestamp) / 60)
+				if minutes == 10 or minutes == 5 or minutes == 2 then
+					if player and isElement(player) then
+						outputChatBox(_("Dein gemietet Fahrzeug despawnt in %s Minuten.", player, minutes), player, 244, 182, 66)
+					end
+				end
+			end
+		end
+	end
+end
+
+function GroupManager:addRentedVehicle(vehicle)
+	table.insert(self.m_RentedVehicle, vehicle)
 end
 
 function GroupManager:addActiveGroup(group)

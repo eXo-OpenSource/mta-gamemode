@@ -49,34 +49,70 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) then
 			if (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
-				if getElementData(element, "forSale") == true then
-					self:addItem(_"Firma: Verkauf beenden",
-						function()
-							if self:getElement() then
-								delete(self)
-								QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
-								function ()
-									triggerServerEvent("groupStopVehicleForSale", self:getElement())
-								end)
-							end
-						end
-					):setIcon(FontAwesomeSymbols.Cart_Down)
-				else
-					self:addItem(_"Firma: zum Verkauf anbieten",
-						function()
-							if self:getElement() then
-								delete(self)
-								InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
-								function (amount)
-									if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
-										triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
-									else
-										ErrorBox:new(_("Der Betrag muss zwischen 1$ und 5.000.000$ liegen!"))
+				if getElementData(element, "isRented") ~= true then
+					if getElementData(element, "forRent") ~= true then
+						if getElementData(element, "forSale") == true then
+							self:addItem(_"Firma: Verkauf beenden",
+								function()
+									if self:getElement() then
+										delete(self)
+										QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
+										function ()
+											triggerServerEvent("groupStopVehicleForSale", self:getElement())
+										end)
 									end
-								end, true)
-							end
+								end
+							):setIcon(FontAwesomeSymbols.Cart_Down)
+						else
+							self:addItem(_"Firma: zum Verkauf anbieten",
+								function()
+									if self:getElement() then
+										delete(self)
+										InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
+										function (amount)
+											if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
+												triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
+											else
+												ErrorBox:new(_("Der Betrag muss zwischen 1$ und 5.000.000$ liegen!"))
+											end
+										end, true)
+									end
+								end
+							):setIcon(FontAwesomeSymbols.Cart_Plus)
 						end
-					):setIcon(FontAwesomeSymbols.Cart_Plus)
+					end
+
+					if getElementData(element, "forSale") ~= true then
+						if getElementData(element, "forRent") == true then
+							self:addItem(_"Firma: Vermieten beenden",
+								function()
+									if self:getElement() then
+										delete(self)
+										QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
+										function ()
+											triggerServerEvent("groupStopVehicleForRent", self:getElement())
+										end)
+									end
+								end
+							):setIcon(FontAwesomeSymbols.HandHoldingUSD)
+						else
+							self:addItem(_"Firma: zum Mieten anbieten",
+								function()
+									if self:getElement() then
+										delete(self)
+										InputBox:new("Fahrzeug zum Mieten anbieten", "Für welchen Betrag pro Stunde möchtest du das Fahrzeug anbieten?",
+										function (amount)
+											if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 25000 then
+												triggerServerEvent("groupSetVehicleForRent", self:getElement(), tonumber(amount))
+											else
+												ErrorBox:new(_("Der Betrag muss zwischen 1$ und 25.000$ pro Stunde liegen!"))
+											end
+										end, true)
+									end
+								end
+							):setIcon(FontAwesomeSymbols.HandHoldingUSD)
+						end
+					end
 				end
 			end
 			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
@@ -368,6 +404,35 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Cart)
+	end
+
+	if getElementData(element, "OwnerType") == "group" and getElementData(element, "forRent") == true then
+		self:addItem(_"Fahrzeug mieten",
+			function()
+				if self:getElement() then
+					delete(self)
+
+					InputBox:new(_("Möchtest du das Fahrzeug für %d$ pro Stunde mieten?", getElementData(element, "forRentRate")), "Für wie viele Stunden möchtest du es mieten? Zusätzlich kommt noch eine Kaution von 1000$ dazu, welche zum Begleichen von Kosten vom Tanken, Schäden und/oder Abschleppen verwendet wird.",
+					function (duration)
+						if duration and #duration > 0 and tonumber(duration) > 0 and tonumber(duration) <= 24 then
+							triggerServerEvent("groupRentVehicle", self:getElement(), tonumber(duration))
+						else
+							ErrorBox:new(_("Es muss länger als 1 Stunde sein und maximal 24 Stunden!"))
+						end
+					end, true, 1)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.HandHoldingUSD)
+	end
+
+	if getElementData(element, "OwnerType") == "group" and getElementData(element, "isRented") == true then
+		local rentedUntil = (getElementData(element, "rentedUntil") - getRealTime().timestamp) / 60
+		local minutes = math.floor(rentedUntil % 60)
+		local hours = math.floor(rentedUntil / 60)
+		if minutes < 10 then minutes = "0" .. minutes end
+
+		self:addItem(_("Gemietet von: %s", getElementData(element, "rentedByName"))):setTextColor(Color.White)
+		self:addItem(_("Noch %s:%s vermietet", hours, minutes)):setTextColor(Color.White)
 	end
 
 	if VEHICLE_MODEL_SPAWNS[element:getModel()] and getElementData(element, "OwnerName") == localPlayer.name then

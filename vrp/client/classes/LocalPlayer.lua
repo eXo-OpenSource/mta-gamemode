@@ -97,6 +97,10 @@ function LocalPlayer:constructor()
 
 end
 
+function LocalPlayer:getId()
+	return self:getPublicSync("Id")
+end
+
 function LocalPlayer:setChatSettings()
 	setElementData(localPlayer, "ChatEnabled", core:get("Chat", "enableChat", true))
 	setElementData(localPlayer, "FactionChatEnabled", core:get("Chat", "enableFactionChat", true))

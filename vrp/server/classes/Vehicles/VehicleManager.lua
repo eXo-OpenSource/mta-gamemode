@@ -115,10 +115,10 @@ function VehicleManager:constructor()
 		function()
 			if client.vehicleSeat ~= 0 then return end
 
-			if client.vehicle:hasKey(client) or 
-					client.vehicle:canObjectBeLoaded() or 
-					client.vehicle:getData("isGangwarVehicle") or 
-					(client.vehicle.importVehicle and client:getCompany() and client:getCompany():getId() == CompanyStaticId.EPT) or 
+			if client.vehicle:hasKey(client) or
+					client.vehicle:canObjectBeLoaded() or
+					client.vehicle:getData("isGangwarVehicle") or
+					(client.vehicle.importVehicle and client:getCompany() and client:getCompany():getId() == CompanyStaticId.EPT) or
 					client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
 				client.vehicle:toggleHandBrake(client)
 			else
@@ -179,30 +179,30 @@ function VehicleManager:constructor()
 	)
 
 	addEventHandler("VehicleInfrared:onPlayerExit", root, function(vehicle)
-		if client then 
-			if vehicle and isValidElement(vehicle, "vehicle") and vehicle ~= client.vehicle then 
-				if vehicle.m_InfraredUsedBy and vehicle.m_InfraredUsedBy == client then 
+		if client then
+			if vehicle and isValidElement(vehicle, "vehicle") and vehicle ~= client.vehicle then
+				if vehicle.m_InfraredUsedBy and vehicle.m_InfraredUsedBy == client then
 					vehicle.m_InfraredUsedBy = nil
-				end	
+				end
 			end
 			client:setData("inInfraredVehicle", false, true)
 		end
 	end)
 
 	addEventHandler("VehicleInfrared:onUse", root, function()
-		if client and client.vehicle then 
-			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then 
+		if client and client.vehicle then
+			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then
 				if not isValidElement(client.vehicle.m_InfraredUsedBy, "player") then
 					client.vehicle.m_InfraredUsedBy = client
 					client:setData("inInfraredVehicle", true, true)
 					client:triggerEvent("VehicleInfrared:start", client.vehicle)
-				else 
-					if not client.vehicle.m_InfraredUsedBy.vehicle or client.vehicle.m_InfraredUsedBy.vehicle ~= client.vehicle then 
+				else
+					if not client.vehicle.m_InfraredUsedBy.vehicle or client.vehicle.m_InfraredUsedBy.vehicle ~= client.vehicle then
 						client.vehicle.m_InfraredUsedBy:setData("inInfraredVehicle", false, true)
 						client.vehicle.m_InfraredUsedBy = client
 						client:setData("inInfraredVehicle", true, true)
 						client:triggerEvent("VehicleInfrared:start", client.vehicle)
-					else 
+					else
 						if client.vehicle.m_InfraredUsedBy ~= client then
 							client:sendError(_("Die Kamera wird zurzeit von %s bedient!", client, client.vehicle.m_InfraredUsedBy:getName()))
 						end
@@ -211,10 +211,10 @@ function VehicleManager:constructor()
 			end
 		end
 	end)
-	
+
 	addEventHandler("VehicleInfrared:onStop", root, function(vehicle)
-		if client and client.vehicle then 
-			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then 
+		if client and client.vehicle then
+			if client.vehicle.hasInfrared and client.vehicle:hasInfrared() then
 				client:setData("inInfraredVehicle", false, true)
 				client.vehicle.m_InfraredUsedBy = nil
 			end
@@ -237,8 +237,8 @@ function VehicleManager:constructor()
 	end)
 
 	PlayerManager:getSingleton():getWastedHook():register(
-		function(player) 
-			if player:getData("inInfraredVehicle") then 
+		function(player)
+			if player:getData("inInfraredVehicle") then
 				player:setData("inInfraredVehicle", false, true)
 				player:triggerEvent("VehicleInfrared:onWasted")
 			end
@@ -784,10 +784,15 @@ function VehicleManager:destroyGroupVehicles(group)
 
 	if self.m_GroupVehicles[groupId] then
 		for index, veh in pairs(table.copy(self.m_GroupVehicles[groupId])) do
-			if veh.m_ForSale then triggerClientEvent("groupSaleVehiclesDestroyBubble", root, veh) end
+			if not veh.m_IsRented then
+				if veh.m_ForSale then triggerClientEvent("groupSaleVehiclesDestroyBubble", root, veh) end
+				if veh.m_ForRent then triggerClientEvent("groupRentVehiclesDestroyBubble", root, veh) end
 
-			veh:save()
-			veh:destroy()
+				veh:save()
+				veh:destroy()
+			else
+				outputServerLog("Did not destroy rented vehicle")
+			end
 		end
 	end
 	self.m_GroupVehicles[groupId] = nil
@@ -803,7 +808,16 @@ function VehicleManager:loadGroupVehicles(group)
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE OwnerId = ? AND OwnerType = ? AND Deleted IS NULL", sql:getPrefix(), groupId, VehicleTypes.Group)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.OwnerId) then
-			self:createVehicle(row)
+			local found = false -- Check if vehicle is already spawned
+			for i2, veh in pairs(self.m_GroupVehicles[row.OwnerId] or {}) do
+				if veh.m_Id == row.Id then
+					found = true
+					break
+				end
+			end
+			if not found then
+				self:createVehicle(row)
+			end
 		else
 			sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
@@ -860,7 +874,7 @@ function VehicleManager:Event_vehiclePark()
 			end
 
 			-- enable parking in interiors for team members only (e.g. auction interior)
-			if source:getInterior() == 0 or source.m_InParkGarage or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] then 
+			if source:getInterior() == 0 or source.m_InParkGarage or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
 			else
@@ -1595,7 +1609,7 @@ function VehicleManager:destroyInactiveVehicles()
 		if vehicle.m_OwnerType == 1 then
 			if lastUseTimeToBeDestroyed > vehicle:getLastUseTime() then
 				if vehicle:getOccupantsCount() == 0 then
-					if vehicle.m_Owner then 
+					if vehicle.m_Owner then
 						if not DatabasePlayer.Map[vehicle.m_Owner] then
 							vehicle:destroy()
 							counter = counter + 1
@@ -1819,34 +1833,34 @@ function VehicleManager:Event_ToggleLoadingRamp()
 	if getDistanceBetweenPoints3D(client.position, source.position) > 10 then client:sendError("Du bist zu weit entfernt!") return end
 	if not source:isInVehicleLoadingMode() and (source:isFrozen() or source.m_HandBrake) then client:sendError("Bitte löse zuerst die Handbremse!") return end
 	if client:getCompany() and client:getCompany():getId() == 4 and client:isCompanyDuty() then
-		source:toggleVehicleLoadingMode() 
+		source:toggleVehicleLoadingMode()
 	end
 end
 
 
-function VehicleManager:Event_RequestVehicleMarks() 
+function VehicleManager:Event_RequestVehicleMarks()
 	client:triggerEvent("receiveVehicleMarks", self.m_VehicleMarks)
 end
 
-function VehicleManager:addVehicleMark(vehicle, mark) 
+function VehicleManager:addVehicleMark(vehicle, mark)
 	if vehicle and isElement(vehicle) and mark ~= "" then
 		self.m_VehicleMarks[vehicle] = mark
-		for k, p in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
+		for k, p in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 			p:triggerEvent("addVehicleMark", vehicle, mark)
 		end
 	end
 end
 
-function VehicleManager:removeVehicleMark(vehicle) 
+function VehicleManager:removeVehicleMark(vehicle)
 	if self.m_VehicleMarks[vehicle] then
 		self.m_VehicleMarks[vehicle] = nil
-		for k, p in pairs(PlayerManager:getSingleton():getReadyPlayers()) do 
+		for k, p in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 			p:triggerEvent("removeVehicleMark", vehicle)
 		end
 	end
 end
 
-function VehicleManager:getStateVehicleCount() 
+function VehicleManager:getStateVehicleCount()
 	local facVehicles = VehicleManager:getSingleton().m_FactionVehicles
 	local count = (facVehicles[1] and #facVehicles[1] or 0) + (facVehicles[2] and #facVehicles[2] or 0) + (facVehicles[3] and #facVehicles[3] or 0)
 	return count

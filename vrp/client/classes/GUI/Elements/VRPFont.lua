@@ -175,6 +175,7 @@ FontAwesomeSymbols = {
 	Calendar = "",
 	Crosshair = "",
 	Egg = "",
+	HandHoldingUSD = "",
 }
 
 -- uncomment this to render a list of all loaded fonts
