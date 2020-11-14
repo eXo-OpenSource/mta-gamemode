@@ -350,9 +350,7 @@ function GroupVehicle:rent(player, duration)
 				group:addLog(player, "Fahrzeugverleih", "hat das Fahrzeug "..self.getNameFromModel(self:getModel()).." für "..rental.." gemietet!")
 				player:sendInfo(_("Das Fahrzeug erfolgreich gemietet!", player))
 				GroupManager:getSingleton():addRentedVehicle(self)
-				--[[
-				StatisticsLogger:getSingleton():addVehicleTradeLog(newVeh, player, 0, price, "group")
-				]]
+				StatisticsLogger:getSingleton():addVehicleRentLog(group:getId(), player:getId(), self:getId(), rental, duration)
 			else
 				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
 			end
@@ -419,6 +417,7 @@ function GroupVehicle:rentEnd()
 			player:removeFromVehicle()
 		end
 
+		GroupManager:getSingleton():removeRentedVehicle(self)
 		self:respawn(true, true)
 	end
 end

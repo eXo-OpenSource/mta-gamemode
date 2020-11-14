@@ -18,7 +18,7 @@ function GroupManager:constructor()
 	self.m_BankAccountServer = BankServer.get("group")
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupRespawnAllVehicles", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan", "groupSetVehicleForRent", "groupRentVehicle", "groupStopVehicleForRent"}
+	addRemoteEvents{"groupRequestInfo", "groupRequestMoney", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupRespawnAllVehicles", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan", "groupSetVehicleForRent", "groupRentVehicle", "groupStopVehicleForRent", "groupShowRentedVehicles"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestMoney", root, bind(self.Event_RequestMoney, self))
@@ -47,6 +47,7 @@ function GroupManager:constructor()
 	addEventHandler("groupStopVehicleForRent", root, bind(self.Event_StopVehicleForRent, self))
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
 	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
+	addEventHandler("groupShowRentedVehicles", root, bind(self.Event_ShowRentedVehicles, self))
 
 	self.m_RentedVehicle = {}
 
@@ -790,6 +791,42 @@ end
 
 function GroupManager:addRentedVehicle(vehicle)
 	table.insert(self.m_RentedVehicle, vehicle)
+end
+
+function GroupManager:removeRentedVehicle(vehicle)
+	table.removevalue(self.m_RentedVehicle, vehicle)
+end
+
+function GroupManager:Event_ShowRentedVehicles()
+	for k, vehicle in pairs(self.m_RentedVehicle) do
+		if vehicle.m_RentedBy == client.m_Id then
+			local name = vehicle:getName()
+			local groupName = vehicle:getGroup():getName()
+
+			if vehicle:getPositionType() == VehiclePositionType.World then
+				if not isVehicleBlown(vehicle) then
+					local x, y, z = getElementPosition(vehicle)
+					local blip = Blip:new("Marker.png", x, y, client, 9999, {200, 0, 0})
+					blip:setZ(z)
+
+					client:sendShortMessage(_("Das Fahrzeug (%s von %s) befindet sich in %s!", client, name, groupName, getZoneName(x, y, z, false)))
+					setTimer(function () delete(blip) end, 60000, 1)
+				else
+					client:sendShortMessage(_("Das Fahrzeug (%s von %s) ist zerstört!", client, name, groupName))
+				end
+			elseif vehicle:getPositionType() == VehiclePositionType.Garage then
+				client:sendShortMessage(_("Das Fahrzeug (%s von %s) befindet sich in deiner Garage!", client, name, groupName))
+			elseif vehicle:getPositionType() == VehiclePositionType.Mechanic then
+				client:sendShortMessage(_("Das Fahrzeug (%s von %s) befindet sich im Autohof (Mechanic Base)!", client, name, groupName))
+			elseif vehicle:getPositionType() == VehiclePositionType.Hangar then
+				client:sendShortMessage(_("Das Fahrzeug (%s von %s) befindet sich im Hangar!", client, name, groupName))
+			elseif vehicle:getPositionType() == VehiclePositionType.Harbor then
+				client:sendShortMessage(_("Das Boot (%s von %s) befindet sich im Industrie-Hafen (Logistik-Job)!", client, name, groupName))
+			else
+				client:sendShortMessage(_"Es ist ein interner Fehler aufgetreten!", client)
+			end
+		end
+	end
 end
 
 function GroupManager:addActiveGroup(group)

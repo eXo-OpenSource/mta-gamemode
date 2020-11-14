@@ -562,7 +562,6 @@ function StatisticsLogger:addPricePoolLog(pricepoolId, player, entries, entryPri
 end
 
 function StatisticsLogger:addVehicleRentLog(groupId, playerId, vehicleId, rental, duration)
-	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	sqlLogs:queryExec("INSERT INTO ??_PricePool (PricePoolId, UserId, Entries, EntryPrice, Price, Date) VALUES (?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
-		pricepoolId, userId, entries, entryPrice, price)
+	sqlLogs:queryExec("INSERT INTO ??_RentedVehicles (GroupId, UserId, VehicleId, Rental, Duration) VALUES (?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+		groupId, playerId, vehicleId, rental, duration)
 end

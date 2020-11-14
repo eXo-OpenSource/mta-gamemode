@@ -788,14 +788,14 @@ function VehicleManager:destroyGroupVehicles(group)
 				if veh.m_ForSale then triggerClientEvent("groupSaleVehiclesDestroyBubble", root, veh) end
 				if veh.m_ForRent then triggerClientEvent("groupRentVehiclesDestroyBubble", root, veh) end
 
+				table.removevalue(self.m_GroupVehicles, veh)
+
 				veh:save()
 				veh:destroy()
-			else
-				outputServerLog("Did not destroy rented vehicle")
 			end
 		end
 	end
-	self.m_GroupVehicles[groupId] = nil
+	-- self.m_GroupVehicles[groupId] = {}
 end
 
 function VehicleManager:loadGroupVehicles(group)

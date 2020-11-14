@@ -46,7 +46,7 @@ function GroupRentVehicles.loadSpeekBubble(veh)
 		delete(SpeakBubble3D.Map[veh])
 	end
 
-	SpeakBubble3D.Map[veh] = SpeakBubble3D:new(veh, _"Zu verdeanchestern!", _("Preis: %d$ pro Stunde", getElementData(veh, "forRentRate")))
+	SpeakBubble3D.Map[veh] = SpeakBubble3D:new(veh, _"Zu vermieten!", _("Preis: %d$ pro Stunde", getElementData(veh, "forRentRate")))
 end
 
 

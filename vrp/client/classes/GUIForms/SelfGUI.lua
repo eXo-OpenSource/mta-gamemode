@@ -198,7 +198,7 @@ function SelfGUI:constructor()
 	--self.m_VehicleHangarButton.onHover = function () self.m_VehicleHangarButton:setColor(Color.White) end
 	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.Accent) end
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
-	--self.m_VehicleSellButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", tabVehicles):setBarEnabled(true)
+	self.m_VehicleShowRentedButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"gemietete Fahrzeuge", tabVehicles):setBarEnabled(true)
  	--self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
 	 GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
  	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
@@ -207,6 +207,7 @@ function SelfGUI:constructor()
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	--self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
+	self.m_VehicleShowRentedButton.onLeftClick = bind(self.VehicleRentedVehiclesButton_Click, self)
 
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 	self.m_VehicleWorldRespawnButton.onLeftClick = bind(self.VehicleWorldRespawnButton_Click, self)
@@ -653,6 +654,10 @@ function SelfGUI:VehicleHangarButton_Click()
 	else
 		outputChatBox("Not implemented!", 255, 0, 0)
 	end
+end
+
+function SelfGUI:VehicleRentedVehiclesButton_Click()
+	triggerServerEvent("groupShowRentedVehicles", localPlayer)
 end
 
 function SelfGUI:VehicleLocateButton_Click()
