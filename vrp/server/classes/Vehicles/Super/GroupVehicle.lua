@@ -419,6 +419,10 @@ function GroupVehicle:rentEnd()
 
 		GroupManager:getSingleton():removeRentedVehicle(self)
 		self:respawn(true, true)
+
+		if not group.m_VehiclesSpawned then
+			VehicleManager:getSingleton():destroyGroupVehicles(group)
+		end
 	end
 end
 

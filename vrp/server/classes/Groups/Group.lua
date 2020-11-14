@@ -763,8 +763,8 @@ function Group:payDay()
 		if not isTowed then
 			outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getVehicleTaxForGroup()
 		else
-			if not outgoingSeperated["Abstellhof Gebühren"] then 
-				outgoingSeperated["Abstellhof Gebühren"] = 0 
+			if not outgoingSeperated["Abstellhof Gebühren"] then
+				outgoingSeperated["Abstellhof Gebühren"] = 0
 			end
 			outgoingSeperated["Abstellhof Gebühren"] = outgoingSeperated["Abstellhof Gebühren"] + vehicle:getVehicleTaxForGroup()
 		end
