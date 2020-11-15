@@ -29,7 +29,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Handel starten",
 		function()
 			if self:getElement() then
-				TradeGUI:new(self:getElement())
+				triggerServerEvent("onServerRequestTrade", localplayer, self:getElement())
 			end
 		end
 	):setIcon(FontAwesomeSymbols.Handshake)

@@ -19,7 +19,8 @@ function GUIItemDragging:render()
 		if not getKeyState("mouse1") then
 			local hoveredInventory = InventoryManager:getSingleton():isHovering()
 			if self.m_CurrentSlot and hoveredInventory then
-				triggerServerEvent("onItemMove", localPlayer, self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData.Id, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot)
+				--triggerServerEvent("onItemMove", localPlayer, self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData.Id, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot)
+				InventoryManager:getSingleton():onItemDrop(self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData.Id, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot)
 				playSound("files/audio/Inventory/move-drop.mp3")
 			elseif not hoveredInventory then
 				--self.m_Slot:setItem(nil, nil)
@@ -54,9 +55,11 @@ function GUIItemDragging:prerender()
 end
 
 function GUIItemDragging:setItem(item, slot)
-	self.m_Item = item
-	self.m_Slot = slot
-	self.m_Slot:setMoving(true)
+	if slot.m_MovingEnabled then
+		self.m_Item = item
+		self.m_Slot = slot
+		self.m_Slot:setMoving(true)
+	end
 end
 
 function GUIItemDragging:clearItem()

@@ -8,9 +8,7 @@
 
 - [ ] Faction - Equipment & Item storage
 
-- [ ] Create new GUI for trading
-- [ ] Reimplement trading
-- [p] Add item owner (only change if item has been traded by the owner?)
+- [p] Add item owner (only change if item has been traded by the owner? If yes needs to be added to trading system)
 
 - [ ] Check if fishing works
 - [ ] Add logic for cooling box size!!!
@@ -41,6 +39,8 @@
 - [x] Rework WorldItems
 - [x] Implement inventory change events
 - [x] Fix StaticWorldItems
+- [x] Create new GUI for trading
+- [x] Reimplement trading
 
 ## Bug List
 

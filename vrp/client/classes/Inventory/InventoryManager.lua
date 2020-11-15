@@ -22,6 +22,7 @@ function InventoryManager:constructor()
 			if id and id ~= 0 then
 				localPlayer:setPrivateSyncChangeHandler("Id", nil)
 				InventoryManager:getSingleton().m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, id)
+				InventoryManager:getSingleton().m_PlayerInventoryGUI:setAbsolutePosition(screenWidth-InventoryManager:getSingleton().m_PlayerInventoryGUI.m_Width-5, screenHeight-InventoryManager:getSingleton().m_PlayerInventoryGUI.m_Height-5)
 				InventoryManager:getSingleton().m_PlayerInventoryGUI:hide()
 
 
@@ -36,6 +37,10 @@ function InventoryManager:constructor()
 	addEventHandler("openInventory", root, bind(self.Event_openInventory, self))
 
 	WearableHelmet:new()
+
+	--Initialize other Manager classes
+	InventoryTradingManager:new()
+
 	--Initialize Item Manager classes
 	NailWorldItemManager:new()
 end
@@ -46,8 +51,8 @@ function InventoryManager:Event_openInventory(title, elementType, elementId)
 		screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2
 	]]
 	self.m_PlayerInventoryGUI:open()
-	self.m_PlayerInventoryGUI:setAbsolutePosition(screenWidth/2-self.m_PlayerInventoryGUI.m_Width - 5, screenHeight/2-self.m_PlayerInventoryGUI.m_Height/2)
-	inventory:setAbsolutePosition(screenWidth/2 + 5, screenHeight/2-inventory.m_Height/2)
+	--self.m_PlayerInventoryGUI:setAbsolutePosition(screenWidth/2-self.m_PlayerInventoryGUI.m_Width - 5, screenHeight/2-self.m_PlayerInventoryGUI.m_Height/2)
+	--inventory:setAbsolutePosition(screenWidth/2 + 5, screenHeight/2-inventory.m_Height/2)
 
 	self.m_PlayerInventoryGUI:bringToFront()
 	inventory:bringToFront()
@@ -95,6 +100,9 @@ function InventoryManager:onItemRight(inventoryId, item)
 	end
 end
 
+function InventoryManager:onItemDrop(inventoryId, itemId, newInventoryId, newSlot)
+	triggerServerEvent("onItemMove", localPlayer, inventoryId, itemId, newInventoryId, newSlot)
+end
 
 function InventoryManager:isHovering()
 	return true

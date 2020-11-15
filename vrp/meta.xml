@@ -150,6 +150,7 @@
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryTradingManager.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
 
@@ -723,6 +724,7 @@
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/InventoryManager.lua" type="client"/>
+	<script src="client/classes/Inventory/InventoryTradingManager.lua" type="client"/>
 	<script src="client/classes/Inventory/InventoryOld.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemPlant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
@@ -826,6 +828,7 @@
 	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/InventoryTradingGUI.lua" type="client"/>
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 

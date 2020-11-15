@@ -9,7 +9,7 @@ GUIItemSlot = inherit(GUIElement)
 inherit(GUIFontContainer, GUIItemSlot)
 inherit(GUIColorable, GUIItemSlot)
 
-function GUIItemSlot:constructor(posX, posY, width, height, slot, inventoryId, parent)
+function GUIItemSlot:constructor(posX, posY, width, height, slotList, slot, inventoryId, parent)
 	checkArgs("GUIItemSlot:constructor", "number", "number", "number")
 	posX, posY = math.floor(posX), math.floor(posY)
 	width, height = math.floor(width), math.floor(height)
@@ -25,7 +25,9 @@ function GUIItemSlot:constructor(posX, posY, width, height, slot, inventoryId, p
 	self.m_InventoryId = inventoryId
 	self.m_ItemData = nil
 	self.m_IsMoving = false
+	self.m_SlotList = slotList
 	self.m_Slot = slot
+	self.m_Enabled = true
 end
 
 function GUIItemSlot:setItem(item)
@@ -82,7 +84,7 @@ function GUIItemSlot:drawThis(incache)
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width * progress, 4, durabilityLevelColor)
 		end
 
-		if self.m_IsMoving then
+		if self.m_IsMoving or not self.m_Enabled then
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150))
 		end
 	end
@@ -103,13 +105,11 @@ function GUIItemSlot:onUnhover(cursorX, cursorY)
 end
 
 function GUIItemSlot:onLeftClickDown()
-	InventoryManager:getSingleton():onItemLeft(self.m_InventoryId, self.m_ItemData, self)
+	self.m_SlotList:onItemLeftClickDown(self)
 end
 
 function GUIItemSlot:onRightClick()
-	if self.m_ItemData ~= nil then
-		InventoryManager:getSingleton():onItemRight(self.m_InventoryId, self.m_ItemData, self)
-	end
+	self.m_SlotList:onItemRightClick(self)
 end
 
 function GUIItemSlot:setMoving(state)
@@ -174,4 +174,13 @@ function GUIItemSlot:setClickable(state)
 		self.onInternalUnhover = nil
 	end
 	return self
+end
+
+function GUIItemSlot:setEnabled(state)
+	self.m_Enabled = state
+	return self
+end
+
+function GUIItemSlot:isEnabled()
+	return self.m_Enabled
 end

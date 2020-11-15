@@ -113,6 +113,9 @@ function InventoryManager:constructor()
 		self.m_InventorySubscriptions[v] = {}
 	end
 
+	--Initialize other Manager classes
+	InventoryTradingManager:new()
+
 	--Initialize Item Manager classes
 	ItemCanManager:new()
 	ItemNailsManager:new()
@@ -151,49 +154,7 @@ end
 
 function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInventoryId, toSlot)
 	if client ~= source then return end
-
-	local fromInventory = self:getInventory(fromInventoryId)
-	local toInventory = self:getInventory(toInventoryId)
-	local fromItem = fromInventory:getItem(fromItemId)
-	local toItem = toInventory:getItemFromSlot(toSlot)
-
-	if toSlot < 1 or toInventory.m_Slots < toSlot then return end
-	if fromInventory == toInventory then
-		if toItem then
-			toItem.Slot = fromItem.Slot
-			fromItem.Slot = toSlot
-		else
-			fromItem.Slot = toSlot
-		end
-		fromInventory:onInventoryChanged()
-	else
-		-- Event_onItemMove
-		local fromSlot = fromItem.Slot
-		fromItem.Slot = toSlot
-
-		for k, v in pairs(fromInventory.m_Items) do
-			if v == fromItem then
-				table.remove(fromInventory.m_Items, k)
-				break
-			end
-		end
-
-		table.insert(toInventory.m_Items, fromItem)
-
-		if toItem then
-			toItem.Slot = fromItem.Slot
-			table.insert(fromInventory.m_Items, toItem)
-		end
-
-		toInventory:onInventoryChanged()
-		fromInventory:onInventoryChanged()
-
-		StatisticsLogger:getSingleton():addItemTrancactionLog(client, fromInventory.m_Id, toInventory.m_Id, fromSlot, toSlot, fromItem)
-
-		if toItem then
-			StatisticsLogger:getSingleton():addItemTrancactionLog(client, toInventory.m_Id, fromInventory.m_Id, toSlot, fromSlot, toItem)
-		end
-	end
+	self:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot)
 end
 
 function InventoryManager:syncInventory(inventoryId, target)
@@ -605,6 +566,51 @@ function InventoryManager:takeItem(inventory, itemId, amount, all)
     return false, reason
 end
 
+function InventoryManager:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot)
+	local fromInventory = self:getInventory(fromInventoryId)
+	local toInventory = self:getInventory(toInventoryId)
+	local fromItem = fromInventory:getItem(fromItemId)
+	local toItem = toInventory:getItemFromSlot(toSlot)
+
+	if toSlot < 1 or toInventory.m_Slots < toSlot then return end
+	if fromInventory == toInventory then
+		if toItem then
+			toItem.Slot = fromItem.Slot
+			fromItem.Slot = toSlot
+		else
+			fromItem.Slot = toSlot
+		end
+		fromInventory:onInventoryChanged()
+	else
+		-- Event_onItemMove
+		local fromSlot = fromItem.Slot
+		fromItem.Slot = toSlot
+
+		for k, v in pairs(fromInventory.m_Items) do
+			if v == fromItem then
+				table.remove(fromInventory.m_Items, k)
+				break
+			end
+		end
+
+		table.insert(toInventory.m_Items, fromItem)
+
+		if toItem then
+			toItem.Slot = fromItem.Slot
+			table.insert(fromInventory.m_Items, toItem)
+		end
+
+		toInventory:onInventoryChanged()
+		fromInventory:onInventoryChanged()
+
+		StatisticsLogger:getSingleton():addItemTrancactionLog(client, fromInventory.m_Id, toInventory.m_Id, fromSlot, toSlot, fromItem)
+
+		if toItem then
+			StatisticsLogger:getSingleton():addItemTrancactionLog(client, toInventory.m_Id, fromInventory.m_Id, toSlot, fromSlot, toItem)
+		end
+	end
+end
+
 function InventoryManager:getNextFreeSlot(inventory)
 	local inventory = inventory
 
@@ -632,6 +638,36 @@ function InventoryManager:getNextFreeSlot(inventory)
 	end
 
     return false, reason
+end
+
+function InventoryManager:getFreeSlots(inventory)
+	local inventory = inventory
+
+	if type(inventory) == "number" then
+		inventory = self:getInventory(inventory)
+	end
+
+	if not inventory then
+		return false
+	end
+	local totalSlots = inventory.m_Slots
+	local freeSlots = {}
+
+	for i = 1, totalSlots, 1 do
+		local found = false
+		for k, v in pairs(inventory.m_Items) do
+			if v.Slot == i then
+				found = true
+				break
+			end
+		end
+
+		if not found then
+			table.insert(freeSlots, i)
+		end
+	end
+
+    return freeSlots
 end
 
 function InventoryManager:transactItem(fromInventoryId, toInventoryId, itemId, amount)

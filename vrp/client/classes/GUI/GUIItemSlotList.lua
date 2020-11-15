@@ -46,7 +46,7 @@ function GUIItemSlotList:setSlots(slots, inventoryId)
 		local row = 1
 		local column = 1
 		for i = 1, self.m_SlotCount, 1  do
-			self.m_Slots[i] = GUIItemSlot:new(self.m_Spacing * row + self.m_SlotSize * (row - 1), self.m_Spacing * column + self.m_SlotSize * (column - 1), self.m_SlotSize, self.m_SlotSize, i, inventoryId, self.m_ScrollArea)
+			self.m_Slots[i] = GUIItemSlot:new(self.m_Spacing * row + self.m_SlotSize * (row - 1), self.m_Spacing * column + self.m_SlotSize * (column - 1), self.m_SlotSize, self.m_SlotSize, self, i, inventoryId, self.m_ScrollArea)
 
 			row = row + 1
 
@@ -136,4 +136,26 @@ function GUIItemSlotList:setClickable(state)
 		self.onInternalUnhover = nil
 	end
 	return self
+end
+
+function GUIItemSlotList:onItemLeftClickDown(slot)
+	InventoryManager:getSingleton():onItemLeft(slot.m_InventoryId, slot.m_ItemData, slot)
+end
+
+function GUIItemSlotList:onItemRightClick(slot)
+	if slot.m_ItemData ~= nil then
+		InventoryManager:getSingleton():onItemRight(slot.m_InventoryId, slot.m_ItemData, slot)
+	end
+end
+
+function GUIItemSlotList:getSlots()
+	return self.m_Slots
+end
+
+function GUIItemSlotList:getItems()
+	local items = {}
+	for key, slot in pairs(self.m_Slots) do
+		items[key] = slot.m_ItemData
+	end
+	return items
 end
