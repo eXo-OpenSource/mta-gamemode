@@ -151,8 +151,8 @@ function LocalPlayer:Event_PreRender()
 	end
 end
 
-function LocalPlayer:Event_onGetTime( realtime )
-	setTime(realtime.hour, realtime.minute)
+function LocalPlayer:Event_onGetTime(hour, minute)
+	setTime(hour, minute)
 	setMinuteDuration(60000)
 end
 

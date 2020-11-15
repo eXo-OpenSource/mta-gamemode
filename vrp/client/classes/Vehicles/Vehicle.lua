@@ -31,7 +31,7 @@ function Vehicle:constructor()
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
 	end
-	
+
 end
 
 function Vehicle:getMaxHealth()
@@ -266,7 +266,7 @@ addEventHandler("onClientVehicleDamage", root,
 			if source:getHealth() < 300 then
 				triggerServerEvent("vehicleBlow", source, weapon)
 				return
-			end		
+			end
 		end
 		if totalLossVehicleTypes[source:getVehicleType()] then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
@@ -447,11 +447,20 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
-	if localPlayer.m_Entrance and player == localPlayer then 
-		if localPlayer.m_Entrance:check() and localPlayer.m_Entrance:isCancelEnter() then 
+	if localPlayer.m_Entrance and player == localPlayer then
+		if localPlayer.m_Entrance:check() and localPlayer.m_Entrance:isCancelEnter() then
 			cancelEvent()
 		end
 	end
+
+	if player == localPlayer then
+		if localPlayer:getData("PreventFlyingVehicles") and (source.vehicleType == "Plane" or source.vehicleType == "Helicopter") then
+			cancelEvent()
+			ErrorBox:new(_("Du kannst derzeit nicht in Fluggeräte einsteigen!"))
+			return
+		end
+	end
+
 	if seat == 0 and player == localPlayer then
 		if VehiclesToDisableShooting[source:getModel()] then
 			if not isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then

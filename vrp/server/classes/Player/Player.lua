@@ -19,6 +19,7 @@ addEvent("characterInitialized")
 function Player:constructor()
 	self:setVoiceBroadcastTo(nil)
 
+	self.m_Ready = false
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncUpdate = {}
 	self.m_PublicSync = {}
@@ -33,6 +34,9 @@ function Player:constructor()
 	self.m_Crimes = {}
 	self.m_LastPlayTime = 0
 	self.m_LastJobAction = 0
+	self.m_VirtualTime = false
+	self.m_VirtualTimeHour = 0
+	self.m_VirtualTimeMinute = 0
 
 	self.m_LastDamagedBy = {}
 
@@ -104,8 +108,25 @@ function Player:connect()
 end
 
 
+function Player:setVirtualTime(hour, minute)
+	self.m_VirtualTime = true
+	self.m_VirtualTimeHour = hour
+	self.m_VirtualTimeMinute = minute
+	if self.m_Ready then
+		self:Event_requestTime()
+	end
+end
+
+function Player:clearVirtualTime()
+	self.m_VirtualTime = false
+
+	if self.m_Ready then
+		self:Event_requestTime()
+	end
+end
+
 function Player:Event_requestTime()
-	self:triggerEvent("setClientTime",getRealTime())
+	self:triggerEvent("setClientTime", self.m_VirtualTime and self.m_VirtualTimeHour or getRealTime().hour, self.m_VirtualTime and self.m_VirtualTimeMinute or getRealTime().minute)
 end
 
 function Player:join()
@@ -1316,7 +1337,7 @@ function Player:getPlayersInChatRange( irange)
 	return playersInRange
 end
 
-function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprint, blockJump, blockVehicle)
+function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprint, blockJump, blockVehicle, blockFlyingVehicle)
 	--if bool == true --enable controls, else, disable controls
 	if (bool and (blockWeapons and not getElementData(self,"schutzzone")) or (not bool and blockWeapons)) then
 		toggleControl(self, "fire", bool )
@@ -1329,9 +1350,14 @@ function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprin
 		toggleControl(self, "enter_exit", bool)
 		toggleControl(self, "enter_passenger", bool)
 	end
+	if blockFlyingVehicle then
+		self:setData("PreventFlyingVehicles", not bool, true)
+		setElementData(self, "preventHeliGrab", not bool)
+	end
 end
 
-function Player:attachPlayerObject(object)
+function Player:attachPlayerObject(object, settingsOverride)
+	local settingsOverride = settingsOverride or {}
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		if not self:getPlayerAttachedObject() then
@@ -1354,7 +1380,14 @@ function Player:attachPlayerObject(object)
 				self:setAnimation(unpack(settings["animationData"]))
 			end
 
-			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
+			local blockJump = settings["blockJump"]
+			if settingsOverride["blockJump"] ~= nil then blockJump = settingsOverride["blockJump"] end
+
+			local blockFlyingVehicles = settings["blockFlyingVehicles"]
+			if settingsOverride["blockFlyingVehicles"] ~= nil then blockFlyingVehicles = settingsOverride["blockFlyingVehicles"] end
+
+			self.m_PlayerAttachedObjectSettings = {settings["blockWeapons"], settings["blockSprint"], blockJump, settings["blockVehicle"], blockFlyingVehicles}
+			self:toggleControlsWhileObjectAttached(false, unpack(self.m_PlayerAttachedObjectSettings))
 
 			if settings.placeDown then
 				self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
@@ -1403,7 +1436,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 		local model = object.model
 		if PlayerAttachObjects[model] then
 			local settings = PlayerAttachObjects[model]
-			self:toggleControlsWhileObjectAttached(true, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
+			self:toggleControlsWhileObjectAttached(true, unpack(self.m_PlayerAttachedObjectSettings))
 			object:detach(self)
 			removeEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
 			if settings["bone"] then

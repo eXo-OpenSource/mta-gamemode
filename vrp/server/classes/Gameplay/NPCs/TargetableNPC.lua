@@ -11,6 +11,7 @@ function TargetableNPC:constructor(skinId, x, y, z, rotation)
 	NPC.constructor(self, skinId, x, y, z, rotation)
 	self:setFrozen(true)
 	self.m_InTarget = false
+	self.m_IsTargetAble = true
 	self.m_TargettedBy = {}
 	self.m_RefreshAttackersFunc = bind(self.refreshAttackers, self)
 	self.m_Warning = "Du überfällst den Verkäufer in 5 Sekunden, wenn du weiter auf ihn zielst!"
@@ -18,11 +19,16 @@ function TargetableNPC:constructor(skinId, x, y, z, rotation)
 end
 
 function TargetableNPC:onInternalTargetted(playerBy)
+	if not self.m_IsTargetAble then
+		return false
+	end
+
 	if not NO_MUNITION_WEAPONS[playerBy:getWeapon()] and not THROWABLE_WEAPONS[playerBy:getWeapon()] then
 		self.m_TargettedBy[playerBy] = true
 	else
 		return false
 	end
+
 	if not self.m_InTarget and self.onTargetted then -- the npc isn't been targetted
 		playerBy:sendWarning(self.m_Warning)
 
@@ -44,7 +50,19 @@ function TargetableNPC:onInternalTargetted(playerBy)
 	end
 end
 
+function TargetableNPC:setTargetAble(state)
+	self.m_IsTargetAble = state
+	if self.m_InTarget then
+		self:setAnimation()
+	end
+	self.m_InTarget = false
+end
+
 function TargetableNPC:refreshAttackers()
+	if not self.m_IsTargetAble then
+		return false
+	end
+
 	local count = 0
 	for player in pairs(self.m_TargettedBy) do
 		if player and isElement(player) and getElementType(player) == "player" and player:getTarget() == self then

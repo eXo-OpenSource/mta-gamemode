@@ -242,7 +242,7 @@ function HUDRadar:draw()
 		self.m_NorthBlip:setPosition(x, y + 10000, 0) -- update north blip position so it always stays north
 	end
 
-	local isNotInInterior = getElementInterior(localPlayer) == 0
+	local isNotInInterior = getElementInterior(localPlayer) == 0 and getElementDimension(localPlayer) <= 60000
 	local isInWater = isElementInWater(localPlayer)
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
 		MessageBoxManager.onRadarPositionChange()

@@ -12,7 +12,7 @@ function DimensionManager:constructor()
       [1] = true, -- reserved
       [2] = true, -- reserved
       [PRIVATE_DIMENSION_SERVER] = true, -- reserved
-    }
+	}
 
     -- Reserve interiors
     if SERVER then
@@ -23,11 +23,15 @@ function DimensionManager:constructor()
 end
 
 function DimensionManager:getFreeDimension()
-    local dim = 0 
-	repeat 
- 		dim = dim + 1 
+    local dim = 0
+	repeat
+		dim = dim + 1
+		if dim > 60000 then
+			error("No free dimension")
+			return false
+		end
  	until not self.m_Dimensions[dim]
- 	
+
  	self.m_Dimensions[dim] = true
     return dim
 end

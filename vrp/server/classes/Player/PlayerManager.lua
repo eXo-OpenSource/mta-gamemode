@@ -413,6 +413,7 @@ end
 
 function PlayerManager:Event_playerReady(tblClientSettings)
 	local player = client
+	player.m_Ready = true
 	player.m_tblClientSettings = tblClientSettings or {}
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 
@@ -420,7 +421,7 @@ function PlayerManager:Event_playerReady(tblClientSettings)
 	-- sometimes there are invalid players in the ready table, so let's see if there is some kind of
 	-- race condition between playerQuit and playerReady
 	nextframe(function()
-		if not player or not isElement(player) or getElementType(player) ~= "player" then 
+		if not player or not isElement(player) or getElementType(player) ~= "player" then
 			outputDebugString(("invalid player @Event_playerReady (got '%s')"):format(inspect(player)), 1)
 			local index = table.find(self.m_ReadyPlayers, player)
 			if index then
@@ -835,6 +836,7 @@ function PlayerManager:Event_startAnimation(animation)
 	if client.vehicle then return end
 	if client:isOnFire() then return end
 	if client:getData("isInDeathMatch") then return end
+	if not isControlEnabled(client, "forwards") then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 	if client:isInGangwar() then client:sendError(_("Du kannst im Gangwar keine Animationen ausführen!", client)) return end
 

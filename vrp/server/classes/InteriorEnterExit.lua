@@ -7,11 +7,11 @@
 -- ****************************************************************************
 InteriorEnterExit = inherit(Object)
 
-function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, enterInterior, enterDimension)
+function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorInterior, interiorDimension, enterInterior, enterDimension)
 	self.m_Locked = 0 -- || 0 = unlocked, 1 = entry-locked; 2 = exit-locked; -1 any locked
 	InteriorEnterExitManager.Map[#InteriorEnterExitManager.Map+1] = self
 	self.m_Id = #InteriorEnterExitManager.Map
-	
+
 	self.m_EnterMarker = createMarker(Vector3(entryPosition.x, entryPosition.y, entryPosition.z-1), "cylinder", 1.2, 255, 255, 255, 200)
 	self.m_EnterMarker:setInterior(enterInterior or 0)
 
@@ -26,14 +26,12 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 
 	ElementInfo:new(self.m_ExitMarker, "Ausgang", 1.2, "Walking", true)
 
-  	interiorId = interiorId or 0
-  	dimension = dimension or 0
-  	self.m_ExitMarker:setInterior(interiorId)
-  	self.m_ExitMarker:setDimension(dimension)
+  	self.m_ExitMarker:setInterior(interiorInterior or 0)
+  	self.m_ExitMarker:setDimension(interiorDimension or 0)
 	--colExit:setInterior(interiorId)
 	--colExit:setDimension(dimension)
 
-	self.m_EntranceData =  {interiorPosition, enterRotation, interiorId, dimension}
+	self.m_EntranceData =  {interiorPosition, enterRotation, interiorInterior or 0, interiorDimension or 0}
 	self.m_ExitData = {entryPosition, exitRotation, enterInterior or 0, enterDimension or 0}
 	--[[addEventHandler("onColShapeHit", colEnter,
 	function(hitElement, matchingDimension)
@@ -56,13 +54,13 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		end
 	end
 )	]]
-	
+
 	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {entryPosition.x, entryPosition.y, entryPosition.z+0.2}, self.m_EnterMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onEnterColHit", "InteriorEnterExit:onEnterColLeave")
 	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "ColshapeStreamer:registerColshape", resourceRoot, {interiorPosition.x, interiorPosition.y, interiorPosition.z+0.2}, self.m_ExitMarker, "enterexit", self.m_Id, 2, "InteriorEnterExit:onExitColHit", "InteriorEnterExit:onExitColLeave")
 
 end
 
-function InteriorEnterExit:setCustomText(enter, exit) 
+function InteriorEnterExit:setCustomText(enter, exit)
 	self.m_EntryText = enter
 	self.m_ExitText = exit
 end
@@ -70,7 +68,7 @@ end
 function InteriorEnterExit:enter(player)
 	if self.m_Locked == 0 or self.m_Locked == 2 then
 		self:teleport(player, "enter", unpack(self.m_EntranceData))
-	else 
+	else
 		player:sendInfo(_("Der Eingang ist verschlossen!", client))
 	end
 end
@@ -78,7 +76,7 @@ end
 function InteriorEnterExit:exit(player)
 	if self.m_Locked == 0  or self.m_Locked == 1 then
 		self:teleport(player, "exit", unpack(self.m_ExitData))
-	else 
+	else
 		player:sendInfo(_("Der Ausgang ist verschlossen!", client))
 	end
 end
@@ -123,7 +121,7 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 			player:setCameraTarget(player)
 			player:setGhostMode(true)
 			fadeCamera(player, true)
-			
+
 			setTimer(function() --map glitch fix
 				if isElement(player) then --check if player maybe went offline
 					setElementFrozen(player, false)
@@ -204,7 +202,7 @@ function InteriorEnterExit:onExitColLeave(leaveElement)
 			if not leaveElement:isInGhostMode() then
 				return
 			end
-			
+
 			if leaveElement.LastPortType == "enter" then
 				leaveElement:setGhostMode(false)
 			end

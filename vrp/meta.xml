@@ -419,6 +419,8 @@
 	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/CasinoHeist.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobberyManager.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/JewelryStoreRobbery/JewelryStoreRobbery.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/JewelryStoreRobbery/JewelryStoreRobberyManager.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
 	<script src="server/classes/Faction/StateEvidence.lua" type="server"/>
@@ -1175,6 +1177,7 @@
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/JewelryStoreRobbery/JewelryStoreRobberyManager.lua" type="client"/>
 
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
@@ -1314,6 +1317,16 @@
 	<vrpfile src="files/images/Textures/Spielbunker/white_window.png"/>
 	<vrpfile src="files/images/Textures/Spielbunker/carpet.jpg"/>
 
+	<!-- JewelryStoreRobbery -->
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/floor.jpg"/>
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/walls.jpg"/>
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/ceiling.jpg"/>
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/cat.jpg"/>
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/fisher.jpg"/>
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/dog1.jpg"/>
+	<vrpfile src="files/images/Textures/JewelryStoreRobbery/dog2.jpg"/>
+	<vrpfile src="files/audio/JewelryStoreRobbery/money.mp3" />
+	<vrpfile src="files/audio/JewelryStoreRobbery/glass_break.mp3" />
 
 	<!-- blackjack -->
 	<vrpfile src="files/images/Textures/BlackJack/sbmyst.jpg"/>
