@@ -1,19 +1,41 @@
 JewelryStoreRobbery = inherit(Object)
 
-function JewelryStoreRobbery:constructor(maxBags)
+function JewelryStoreRobbery:constructor(attacker, maxBags)
 	triggerClientEvent("jewelryStoreRobberyAlarmStart", root)
 	triggerClientEvent("jewelryStoreRobberyPedAnimation", JewelryStoreRobberyManager:getSingleton().m_ShopPed, "VRP.OTHER", "cowerHandsBehindHead", -1, true, false, false, true)
 
-	PlayerManager:getSingleton():breakingNews("Die Alarmanlage des Juweliers wurde ausgelöst!")
+	local messages = {
+		"Ein Juweliergeschäft meldet einen Überfall!",
+		"Der Juwelier in West Los Santos wird überfallen!",
+		"Unbekannte lösten die Alarmanlage eines Juweliers aus.",
+		"Ein Notruf eines Juweliers erreichte das Police Department!"
+	}
 
+	PlayerManager:getSingleton():breakingNews(math.randomchoice(messages))
+
+	FactionState:getSingleton():sendWarning("Das Juweliergeschäft wird ausgeraubt!", "Neuer Einsatz", true, Vector3(561.292, -1506.786, 14.548))
+
+	self.m_Attacker = attacker
+	self.m_Faction = attacker:getFaction()
 	self.m_MaxBags = maxBags
 	self.m_PendingBags = maxBags
 	self.m_BagsGivenOut = 0
 
-	self.m_MaxMoney = 50000
+	self.m_MaxMoney = 96969
+	self.m_ShelveDestructionTime = 3500
 
 	self.m_Players = {}
 	self.m_Bags = {}
+
+	self.m_Vehicle = TemporaryVehicle.create(493, 146.514, 164.884, 0.100, 33.591)
+	self.m_Vehicle:toggleRespawn(false)
+	self.m_Vehicle:setRepairAllowed(false)
+	self.m_Vehicle:setVariant(0, 0)
+	self.m_Vehicle:setAlwaysDamageable(true)
+
+	self.m_VehicleBlip = Blip:new("Marker.png", self.m_Vehicle.position.x, self.m_Vehicle.position.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Blue)
+	self.m_VehicleBlip:setDisplayText("Boot Spawn")
+	self.m_VehicleBlip:setZ(self.m_Vehicle.position.z)
 
 	self.m_BreakGlass = bind(self.Event_BreakGlass, self)
 	self.m_BagClick = bind(self.Event_BagClick, self)
@@ -22,11 +44,24 @@ function JewelryStoreRobbery:constructor(maxBags)
     self.m_EvilDeliveryPed:setImmortal(true)
 	self.m_EvilDeliveryPed:setFrozen(true)
 	self.m_EvilDeliveryPed:setData("clickable", true, true)
+	self.m_EvilDeliveryPed:setData("Ped:Name", "Carlos Peralta")
+	self.m_EvilDeliveryPed:setData("Ped:greetText", "Du siehst mir aus wie jemand der etwas loswerden will!")
+	setElementData(self.m_EvilDeliveryPed, "Ped:fakeNameTag", "Carlos Peralta")
+
+	self.m_EvilDeliveryPedBlip = Blip:new("Marker.png", self.m_EvilDeliveryPed.position.x, self.m_EvilDeliveryPed.position.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_EvilDeliveryPedBlip:setDisplayText("Juwelierraub-Abgabe")
+	self.m_EvilDeliveryPedBlip:setZ(self.m_EvilDeliveryPed.position.z)
 
 	self.m_StateDeliveryPed = NPC:new(281, 1578.373, -1620.275, 13.547, 270)
     self.m_StateDeliveryPed:setImmortal(true)
 	self.m_StateDeliveryPed:setFrozen(true)
 	self.m_StateDeliveryPed:setData("clickable", true, true)
+	self.m_StateDeliveryPed:setData("Ped:Name", "Marco Richter")
+	setElementData(self.m_StateDeliveryPed, "Ped:fakeNameTag", "Marco Richter")
+
+	self.m_StateDeliveryPedBlip = Blip:new("Marker.png", self.m_StateDeliveryPed.position.x, self.m_StateDeliveryPed.position.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_StateDeliveryPedBlip:setDisplayText("Juwelierraub-Abgabe Staat")
+	self.m_StateDeliveryPedBlip:setZ(self.m_StateDeliveryPed.position.z)
 
 	self.m_BankAccountServer = BankServer.get("action.jewelry_store_robbery")
 	self.m_BreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 20000, 0)
@@ -41,6 +76,7 @@ function JewelryStoreRobbery:constructor(maxBags)
 		end
 	end
 	ActionsCheck:getSingleton():setAction("Juwelier-Raub")
+	StatisticsLogger:getSingleton():addActionLog("JewelryStoreRobbery", "start", self.m_Attacker, self.m_Faction, "faction")
 end
 
 function JewelryStoreRobbery:destructor()
@@ -57,11 +93,24 @@ function JewelryStoreRobbery:destructor()
 		end
 	end
 
+	if isElement(self.m_Vehicle) then
+		self.m_Vehicle:destroy()
+	end
+
+	delete(self.m_VehicleBlip)
+	delete(self.m_EvilDeliveryPedBlip)
+	delete(self.m_StateDeliveryPedBlip)
+
 	self.m_EvilDeliveryPed:destroy()
 	self.m_StateDeliveryPed:destroy()
 	killTimer(self.m_BreakingNewsTimer)
 	killTimer(self.m_TimeUpTimer)
 	ActionsCheck:getSingleton():endAction()
+	StatisticsLogger:getSingleton():addActionLog("JewelryStoreRobbery", "stop", self.m_Attacker, self.m_Faction, "faction")
+end
+
+function JewelryStoreRobbery:getBlipVisibleTo()
+	return {faction = self.m_Faction:getId(), factionType = "State", duty = true}
 end
 
 function JewelryStoreRobbery:Event_BreakGlass(player)
@@ -101,7 +150,7 @@ function JewelryStoreRobbery:Event_BreakGlass(player)
 		player:setRotation(0, 0, rotation)
 		toggleAllControls(player, false)
 
-		player:setAnimation("sword", "sword_4", 2000, true, false, false, false)
+		player:setAnimation("sword", "sword_4", self.m_ShelveDestructionTime, true, false, false, false)
 		player.m_IsGlassBreaking = true
 
 		local timer = setTimer(function()
@@ -131,7 +180,7 @@ function JewelryStoreRobbery:Event_BreakGlass(player)
 					player:attachPlayerObject(bag, {blockJump = false, blockFlyingVehicles = true})
 				end
 			end
-		end, 2000, 1)
+		end, self.m_ShelveDestructionTime, 1)
 	end
 end
 
@@ -250,11 +299,28 @@ function JewelryStoreRobbery:updateBreakingNews()
 
 	if evilCount > 0 then
 		if evilCount > stateCount then
-			PlayerManager:getSingleton():breakingNews(("Es befinden sich derzeit %d Räuber im Juwelier!"):format(evilCount))
+			local messageId = math.random(1, 3)
+
+			if messageId == 1 then
+				PlayerManager:getSingleton():breakingNews(("Die Räuber gehören der Fraktion %s an."):format(self.m_Faction:getName()))
+			elseif messageId == 2 then
+				PlayerManager:getSingleton():breakingNews(("Laut Überwachungskameras sind %s Täter am Geschäft."):format(evilCount))
+			else
+				PlayerManager:getSingleton():breakingNews("Vermeiden Sie die Geschäfte im Westen der Stadt!")
+			end
 		else
 			PlayerManager:getSingleton():breakingNews(("Es befinden sich derzeit %d Beamte im Juwelier!"):format(stateCount))
 		end
 	else
-		PlayerManager:getSingleton():breakingNews(("Die Räuber befinden sind mit der Beute auf der Flucht!"))
+		local messages = {
+			"Die Täter haben Beute entwendet und sind auf der Flucht!",
+			"Die Räuber sind weiter auf der Flucht.",
+			"Verdächtige des Überfalls wurden auf einem Boot gesichtet!",
+			"Die Polizei zieht Luftunterstützung hinzu!",
+			"Die Täter befinden sich auf einem Containerschiff.",
+			"Schüsse fallen auf einem Containerschiff nahe San Fierro!"
+		}
+
+		PlayerManager:getSingleton():breakingNews(math.randomchoice(messages))
 	end
 end

@@ -96,7 +96,7 @@ function JewelryStoreRobberyManager:constructor()
 	self.m_ShopPed:setFrozen(true)
     self.m_ShopPed.onTargetted = bind(self.Event_PedTargetted, self)
 
-	self.m_MinJewelryRobberyStateMembers = 1
+	self.m_MinJewelryRobberyStateMembers = 3
 
 	self.m_Players = {}
 	setmetatable(self.m_Players, { __mode = "v" })
@@ -328,13 +328,13 @@ function JewelryStoreRobberyManager:Event_PedTargetted(ped, attacker)
 	end
 end
 
-function JewelryStoreRobberyManager:startRobbery()
-	if self.m_RobberyInstance then
+function JewelryStoreRobberyManager:startRobbery(attacker)
+	if self.m_RobberyInstance or not attacker then
 		return false
 	end
 
 	self.m_ShopPed:setTargetAble(false)
-	self.m_RobberyInstance = JewelryStoreRobbery:new(self.m_ShelveCount)
+	self.m_RobberyInstance = JewelryStoreRobbery:new(attacker, self.m_ShelveCount)
 end
 
 function JewelryStoreRobberyManager:stopRobbery(state)
@@ -350,8 +350,10 @@ function JewelryStoreRobberyManager:stopRobbery(state)
 	self.m_ShopPed:setAnimation()
 
 	if state == "timeup" then
-		PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zu viel Zeit gelassen!")
+		PlayerManager:getSingleton():breakingNews("Die Täter konnten die Beute nicht rechtzeitig abgeben!")
+	elseif state == "state" then
+		PlayerManager:getSingleton():breakingNews("Der Raub wurde abgeschlossen! Die Beute konnte sichergestellt werden!")
 	else
-		PlayerManager:getSingleton():breakingNews(("Der Raub wurde erfolgreich abgeschlossen! %s"):format(state == "state" and "Das Geld konnte sichergestellt werden!" or "Die Täter sind mit der Beute entkommen!"))
+		PlayerManager:getSingleton():breakingNews("Der Raub wurde abgeschlossen! Die Täter sind mit der Beute entkommen!")
 	end
 end
