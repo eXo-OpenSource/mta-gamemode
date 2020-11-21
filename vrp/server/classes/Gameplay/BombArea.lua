@@ -10,19 +10,21 @@ BombArea.Map = {}
 local DEFAULT_TIMEOUT = 60*1000
 
 function BombArea:constructor(position, placeCallback, explodeCallback, timeout)
+    self.m_Id = #BombArea.Map + 1
     self.m_Position = position
     self.m_PlaceCallback = placeCallback
     self.m_ExplodeCallback = explodeCallback
     self.m_Timeout = timeout
     self.m_BombObject = false
 
-    BombArea.Map[#BombArea.Map + 1] = self
+    BombArea.Map[self.m_Id] = self
 end
 
 function BombArea:destructor()
     if self.m_Timer and isTimer(self.m_Timer) then
         killTimer(self.m_Timer)
     end
+    BombArea.Map[self.m_Id] = nil
 end
 
 function BombArea:explode()

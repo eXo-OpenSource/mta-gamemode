@@ -379,6 +379,8 @@
 
 	<script src="server/classes/Gameplay/NPCs/TargetableNPC.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/AtmManager.lua" type="server"/>
+
 	<script src="server/classes/MapEditor/MapLoader.lua" type="server" />
 	<script src="server/classes/MapEditor/MapEditor.lua" type="server" />
 
@@ -1275,6 +1277,8 @@
 
 	<!-- PoliceAnnouncements -->
 	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />
+
+	<script src="client/classes/Gameplay/AtmManager.lua" type="client"/>
 
 	<script src="client/classes/MapEditor/MapEditor.lua" type="client" />
 

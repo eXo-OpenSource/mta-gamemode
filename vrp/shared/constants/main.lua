@@ -685,7 +685,7 @@ CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwa
  "special_control_down", "special_control_up" }
 
 
- LexiconPages = {
+LexiconPages = {
 	VehicleTexture = "38-speziallackierung",
 	VehicleImport = "51-fahrzeugimport",
 	Cinema = "52-kino",
@@ -706,3 +706,6 @@ CONTROL_NAMES = { "fire", "aim_weapon", "next_weapon", "previous_weapon", "forwa
 	ActionWeaponTruck = "7-waffentruck",
 	ActionWeedTruck = "8-drogentruck",
 }
+
+ATM_NORMAL_MODEL = 2942
+ATM_BROKEN_MODEL = 2943

@@ -219,6 +219,7 @@ function Core:afterLogin()
 	WheelOfFortune:new()
 	Atrium:new()
 	ElementInfoManager:new()
+	AtmManager:new()
 	if EVENT_HALLOWEEN then
 		HalloweenEasterEggs:new()
 	end

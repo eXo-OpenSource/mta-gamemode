@@ -17,6 +17,7 @@ function BankGUI:constructor(bankAtm)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, bankAtm)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bankautomat", true, true, self)
+	self.m_Window:addTitlebarButton(FontAwesomeSymbols.Bug, function() AtmManager.startHacking(bankAtm) end)
 
 	local tabs = {"Ein/Auszahlen", "Überweisung"}
 	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then table.insert(tabs, localPlayer:getGroupType() == "Firma" and "Firmenkonto" or "Gang-Konto") end
@@ -29,9 +30,9 @@ function BankGUI:constructor(bankAtm)
 
 	-- Ein/Auszahlen
 	GUIGridLabel:new(1, 2, 3, 1, "Betrag:", self.m_Tabs[1])
-	self.m_PlayerAmountEdit = GUIGridEdit:new(3, 2, 4, 1, self.m_Tabs[1]):setNumeric(true, true)
-	local playerDeposit = GUIGridButton:new(1, 3, 3, 1, "Einzahlen", self.m_Tabs[1])
-	local playerWithdraw = GUIGridButton:new(4, 3, 3, 1, "Auszahlen", self.m_Tabs[1])
+	self.m_PlayerAmountEdit = GUIGridEdit:new(3, 2, 8, 1, self.m_Tabs[1]):setNumeric(true, true)
+	local playerDeposit = GUIGridButton:new(1, 3, 5, 1, "Einzahlen", self.m_Tabs[1])
+	local playerWithdraw = GUIGridButton:new(6, 3, 5, 1, "Auszahlen", self.m_Tabs[1])
 
 	playerDeposit.onLeftClick = bind(BankGUI.balanceChange, self, self.m_PlayerAmountEdit, "bankDeposit")
 	playerWithdraw.onLeftClick = bind(BankGUI.balanceChange, self, self.m_PlayerAmountEdit, "bankWithdraw")
@@ -58,10 +59,10 @@ function BankGUI:constructor(bankAtm)
 	-- Gruppen Ein/Auszahlen
 	if self.m_Tabs[3] then
 		GUIGridLabel:new(1, 2, 3, 1, "Betrag:", self.m_Tabs[3])
-		self.m_GroupAmountEdit = GUIGridEdit:new(3, 2, 4, 1, self.m_Tabs[3]):setNumeric(true, true)
+		self.m_GroupAmountEdit = GUIGridEdit:new(3, 2, 8, 1, self.m_Tabs[3]):setNumeric(true, true)
 
-		local groupDeposit = GUIGridButton:new(1, 3, 3, 1, "Einzahlen", self.m_Tabs[3])
-		local groupWithdraw = GUIGridButton:new(4, 3, 3, 1, "Auszahlen", self.m_Tabs[3])
+		local groupDeposit = GUIGridButton:new(1, 3, 5, 1, "Einzahlen", self.m_Tabs[3])
+		local groupWithdraw = GUIGridButton:new(6, 3, 5, 1, "Auszahlen", self.m_Tabs[3])
 		groupDeposit.onLeftClick = bind(BankGUI.balanceChange, self, self.m_GroupAmountEdit, "groupDeposit")
 		groupWithdraw.onLeftClick = bind(BankGUI.balanceChange, self, self.m_GroupAmountEdit, "groupWithdraw")
 	end
