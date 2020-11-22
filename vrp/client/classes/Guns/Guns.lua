@@ -202,7 +202,11 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		if source == localPlayer then
 			if getPedSimplestTask(localPlayer) == "TASK_SIMPLE_CLIMB" then
 				cancelEvent()
-				outputDebugString("canceling edge bug damage")
+				outputDebug("canceling edge bug damage")
+			end
+			if loss <= 5 then
+				cancelEvent()
+				outputDebug("canceling fall damage")
 			end
 		end
 	else
