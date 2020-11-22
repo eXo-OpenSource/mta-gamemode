@@ -39,7 +39,7 @@ function AtmManager:constructor()
     addEventHandler("onAtmHackSuccess", root, bind(self.Event_onHackSuccess, self))
     addEventHandler("onAtmHackFail", root, bind(self.Event_onHackFail, self))
 
-    self.m_FixTimer = setTimer(bind(self.fixAtms, self), 60000, 1)
+    self.m_FixTimer = setTimer(bind(self.fixAtms, self), 60000, 0)
 
     for key, object in pairs(getElementsByType("object")) do
         if object:getModel() == ATM_NORMAL_MODEL then
