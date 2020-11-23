@@ -74,6 +74,7 @@ end
 
 function Group:purge()
 	if sql:queryExec("UPDATE ??_groups SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+		self:save()
 		--remove active props
 		GroupPropertyManager:getSingleton():takePropsFromGroup(self)
 		-- Remove all players
