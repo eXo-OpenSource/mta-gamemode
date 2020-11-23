@@ -256,7 +256,7 @@ function GroupManager:Event_Delete()
 	money = money - leaderAmount
 	local memberAmount = 0
 	local groupSize = table.size(group.m_Players)
-	if groupSize == leaderAmount then
+	if groupSize == leaderCount then
 		leaderAmount = (leaderAmount + money)/leaderCount
 	else
 		memberAmount = money/(groupSize - leaderCount)
