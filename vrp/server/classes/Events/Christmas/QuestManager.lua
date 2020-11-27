@@ -42,7 +42,7 @@ QuestManager.Quests = {
 	},
 	[9] = {
 		["Name"] = "Glücksrad-Master",
-		["Description"] = "Spiele 3 mal am Glücksrad! Der Quest muss während dessen von dir gestartet sein!",
+		["Description"] = "Spiele 3 mal am Glücksrad! Die Quest muss währenddessen von dir gestartet sein!",
 		["Packages"] = 5,
 	},
 	[10] = {
@@ -87,7 +87,7 @@ QuestManager.Quests = {
 	},
 	[18] = {
 		["Name"] = "Glücksrad-Master",
-		["Description"] = "Spiele 3 mal am Glücksrad! Der Quest muss während dessen von dir gestartet sein!",
+		["Description"] = "Spiele 3 mal am Glücksrad! Die Quest muss während dessen von dir gestartet sein!",
 		["Packages"] = 5,
 	},
 	[19] = {
@@ -112,7 +112,7 @@ QuestManager.Quests = {
 	},
 	[23] = {
 		["Name"] = "Glücksrad-Master",
-		["Description"] = "Spiele 3 mal am Glücksrad! Der Quest muss während dessen von dir gestartet sein!",
+		["Description"] = "Spiele 3 mal am Glücksrad! Die Quest muss während dessen von dir gestartet sein!",
 		["Packages"] = 5,
 	},
 	[24] = {
@@ -125,7 +125,6 @@ QuestManager.Quests = {
 function QuestManager:constructor()
 	-- Also add it client side if the quest requires a clientside script
 	-- The client side quest automatically starts on startQuestForPlayer if the class is setted on clientside Questmanager
-
 	self.m_Quests = {
 		[1] = QuestNPCTransport,
 		[2] = QuestPhotography,
@@ -164,9 +163,19 @@ function QuestManager:constructor()
 	PlayerManager:getSingleton():getWastedHook():register(bind(self.onPlayerQuit, self))
 	PlayerManager:getSingleton():getAFKHook():register(bind(self.onPlayerQuit, self))
 
-
-	self:getTodayQuest()
-	--self:startQuest(4)
+	if DEBUG then
+		addCommandHandler("quest", function(player, cmd, id)
+			local id = tonumber(id)
+			if (id and id >= 1 and id <= 24) then
+				self:startQuest(id)
+				player:sendInfo(_("Quest %s gestartet", player, id))
+			else
+				player:sendError(_("Bitte eine valide Quest-Nummer (1-24) angeben!", player))
+			end
+		end)
+	else
+		self:getTodayQuest()
+	end
 	GlobalTimer:getSingleton():registerEvent(bind(self.getTodayQuest, self), "Christmas-Quests", nil, 00, 5)
 
 end
@@ -212,7 +221,7 @@ end
 
 function QuestManager:onStartClick()
 	if not self.m_CurrentQuest then
-		client:sendError("Aktuell läuft kein Quest!")
+		client:sendError("Aktuell läuft keine Quest!")
 		return false
 	end
 	self:startQuestForPlayer(client)
@@ -220,7 +229,7 @@ end
 
 function QuestManager:onPedClick()
 	if not self.m_CurrentQuest then
-		client:sendError("Aktuell läuft kein Quest!")
+		client:sendError("Aktuell läuft keine Quest!")
 		return false
 	end
 	self.m_CurrentQuest:onClick(client)

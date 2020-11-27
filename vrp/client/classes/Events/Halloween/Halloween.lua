@@ -49,7 +49,7 @@ function Halloween:constructor()
 
 	ped:setData("onClickEvent",
 		function()
-			BonusGUI:new()
+			HalloweenBonusGUI:new()
 		end
 	)
 

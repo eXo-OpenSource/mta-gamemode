@@ -10,7 +10,7 @@ function QuestGUI:constructor(Id, Name, Description, Packages)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"eXo Weihnachts-Quests", true, true, self)
 	self.m_Window:deleteOnClose(true)
 
-	self.m_NameLabel = GUIGridLabel:new(1, 7, 24, 1, _("Heutiger Quest: %d. Dezember - %s", Id, Name), self.m_Window)
+	self.m_NameLabel = GUIGridLabel:new(1, 7, 24, 1, _("Heutige Quest: %d. Dezember - %s", Id, Name), self.m_Window)
 	self.m_Description = GUIGridLabel:new(1, 8, 24, 1, _("Beschreibung: %s", Description), self.m_Window)
 	self.m_Packages = GUIGridLabel:new(1, 9, 24, 1, _("Belohnung: %s Päckchen", Packages), self.m_Window)
 

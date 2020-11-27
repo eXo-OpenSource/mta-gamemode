@@ -75,7 +75,7 @@ end
 function QuestPackageTransport:detach(vehicle)
 	if vehicle.christmas and vehicle.owner and isElement(vehicle.owner) then
 		local player = vehicle.owner
-		player:sendError("Du hast die Päckchen verloren! Der Quest wurde beendet!")
+		player:sendError("Du hast die Päckchen verloren! Die Quest wurde beendet!")
 		self:removePlayer(player)
 	end
 end
@@ -83,7 +83,7 @@ end
 function QuestPackageTransport:exit(vehicle)
 	if vehicle.christmas and vehicle.owner and isElement(vehicle.owner) then
 		local player = vehicle.owner
-		player:sendError("Du bist ausgestiegen! Der Quest wurde beendet!")
+		player:sendError("Du bist ausgestiegen! Die Quest wurde beendet!")
 		self:removePlayer(player)
 	end
 end

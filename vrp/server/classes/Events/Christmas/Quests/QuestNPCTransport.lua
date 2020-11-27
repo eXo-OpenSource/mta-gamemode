@@ -66,7 +66,7 @@ function QuestNPCTransport:checkDistance()
 			if self.m_Bots[player] then
 				if (self.m_Bots[player]:getPosition() - player:getPosition()).length > 30 then
 					if not player.christmasBotWarning then
-						player:sendWarning("Vorsicht, dein Weihnachtsmann ist zu weit von dir entfernt! Bleibe bei ihm, ansonsten wird der Quest abgebrochen!")
+						player:sendWarning("Vorsicht, dein Weihnachtsmann ist zu weit von dir entfernt! Bleibe bei ihm, ansonsten wird die Quest abgebrochen!")
 						player.christmasBotWarning = true
 					else
 						player:sendError("Du hast dich zu weit von deinem Weihnachtsmann entfernt!")

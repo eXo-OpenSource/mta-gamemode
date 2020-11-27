@@ -56,7 +56,7 @@ function Christmas:constructor()
 
 	ped:setData("onClickEvent",
 		function()
-			BonusGUI:new()
+			ChristmasBonusGUI:new()
 		end
 	)
 
@@ -76,7 +76,7 @@ function Christmas:constructor()
 
 		ped:setData("onClickEvent",
 			function()
-				AdventCalenderGUI:new()
+				triggerServerEvent("questOnPedClick", localPlayer)
 			end
 		)
 		local blip = Blip:new("Calendar.png", ped.position.x, ped.position.y, 100, nil, {244, 73, 85})
