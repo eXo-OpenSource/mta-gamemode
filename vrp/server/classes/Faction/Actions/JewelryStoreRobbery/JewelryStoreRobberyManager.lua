@@ -1,3 +1,11 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Faction/Actions/JewelryStoreRobbery/JewelryStoreRobberyManager.lua
+-- *  PURPOSE:     Jewelry store robbery manager class
+-- *
+-- ****************************************************************************
+
 JewelryStoreRobberyManager = inherit(Singleton)
 
 JewelryStoreRobberyManager.Shelves = {
@@ -352,7 +360,7 @@ function JewelryStoreRobberyManager:stopRobbery(state)
 	if state == "timeup" then
 		PlayerManager:getSingleton():breakingNews("Die Täter konnten die Beute nicht rechtzeitig abgeben!")
 	elseif state == "state" then
-		PlayerManager:getSingleton():breakingNews("Der Raub wurde abgeschlossen! Die Beute konnte sichergestellt werden!")
+		PlayerManager:getSingleton():breakingNews("Der Raub wurde erfolgreich vereitelt! Die Beute konnte sichergestellt werden!")
 	else
 		PlayerManager:getSingleton():breakingNews("Der Raub wurde abgeschlossen! Die Täter sind mit der Beute entkommen!")
 	end

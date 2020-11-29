@@ -1,3 +1,11 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/Faction/Actions/JewelryStoreRobbery/JewelryStoreRobberyManager.lua
+-- *  PURPOSE:     Jewelry store robbery manager class
+-- *
+-- ****************************************************************************
+
 JewelryStoreRobberyManager = inherit(Singleton)
 
 function JewelryStoreRobberyManager:constructor()

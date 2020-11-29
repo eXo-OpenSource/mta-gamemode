@@ -1,19 +1,35 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Faction/Actions/JewelryStoreRobbery.lua
+-- *  PURPOSE:     Bank robbery class
+-- *
+-- ****************************************************************************
+
 JewelryStoreRobbery = inherit(Object)
+JewelryStoreRobbery.StartMessages = {
+	"Ein Juweliergeschäft meldet einen Überfall!",
+	"Der Juwelier im Westen von Los Santos wird überfallen!",
+	"Unbekannte lösten die Alarmanlage eines Juweliers aus!",
+	"Ein Notruf eines Juweliers erreichte das Police Department!"
+}
+JewelryStoreRobbery.EscapeMessages = {
+	"Die Räuber sind weiter auf der Flucht!",
+	"Die Polizei verfolgt nach wie vor die Räuber des Juweliers!",
+	"Die Räuber versuchen scheinbar aus der Stadt zu flüchten!",
+	"Die Räuber sind nach wie vor auf der Flucht!",
+	"Die Verfolgung der Juweliersräuber dauert weiter an!"
+}
+JewelryStoreRobbery.MinMoney = 50000
+JewelryStoreRobbery.MaxMoney = 65000
 
 function JewelryStoreRobbery:constructor(attacker, maxBags)
 	triggerClientEvent("jewelryStoreRobberyAlarmStart", root)
 	triggerClientEvent("jewelryStoreRobberyPedAnimation", JewelryStoreRobberyManager:getSingleton().m_ShopPed, "VRP.OTHER", "cowerHandsBehindHead", -1, true, false, false, true)
 
-	local messages = {
-		"Ein Juweliergeschäft meldet einen Überfall!",
-		"Der Juwelier in West Los Santos wird überfallen!",
-		"Unbekannte lösten die Alarmanlage eines Juweliers aus.",
-		"Ein Notruf eines Juweliers erreichte das Police Department!"
-	}
+	PlayerManager:getSingleton():breakingNews(math.randomchoice(JewelryStoreRobbery.StartMessages))
 
-	PlayerManager:getSingleton():breakingNews(math.randomchoice(messages))
-
-	FactionState:getSingleton():sendWarning("Das Juweliergeschäft wird ausgeraubt!", "Neuer Einsatz", true, Vector3(561.292, -1506.786, 14.548))
+	FactionState:getSingleton():sendWarning("Ein Juwelier wird ausgeraubt!", "Neuer Einsatz", true, Vector3(561.292, -1506.786, 14.548))
 
 	self.m_Attacker = attacker
 	self.m_Faction = attacker:getFaction()
@@ -21,12 +37,13 @@ function JewelryStoreRobbery:constructor(attacker, maxBags)
 	self.m_PendingBags = maxBags
 	self.m_BagsGivenOut = 0
 
-	self.m_MaxMoney = 96969
+	self.m_MaxMoney = math.random(JewelryStoreRobbery.MinMoney, JewelryStoreRobbery.MaxMoney)
 	self.m_ShelveDestructionTime = 3500
 
 	self.m_Players = {}
 	self.m_Bags = {}
 
+	--[[
 	self.m_Vehicle = TemporaryVehicle.create(493, 146.514, 164.884, 0.100, 33.591)
 	self.m_Vehicle:toggleRespawn(false)
 	self.m_Vehicle:setRepairAllowed(false)
@@ -36,6 +53,7 @@ function JewelryStoreRobbery:constructor(attacker, maxBags)
 	self.m_VehicleBlip = Blip:new("Marker.png", self.m_Vehicle.position.x, self.m_Vehicle.position.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Blue)
 	self.m_VehicleBlip:setDisplayText("Boot Spawn")
 	self.m_VehicleBlip:setZ(self.m_Vehicle.position.z)
+	]]
 
 	self.m_BreakGlass = bind(self.Event_BreakGlass, self)
 	self.m_BagClick = bind(self.Event_BagClick, self)
@@ -93,11 +111,12 @@ function JewelryStoreRobbery:destructor()
 		end
 	end
 
+	--[[
 	if isElement(self.m_Vehicle) then
 		self.m_Vehicle:destroy()
-	end
+	end]]
 
-	delete(self.m_VehicleBlip)
+	--delete(self.m_VehicleBlip)
 	delete(self.m_EvilDeliveryPedBlip)
 	delete(self.m_StateDeliveryPedBlip)
 
@@ -189,7 +208,7 @@ function JewelryStoreRobbery:Event_BagClick(button, state, player)
 		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 			if (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) and player:isFactionDuty() then
 				if getElementData(player, "heligrab.vehicle") or player.vehicle then
-					player:sendError(_("Du kannst die Beute nicht aufeben solange du in einem Fahrzeug bist!", player))
+					player:sendError(_("Du kannst die Beute nicht aufheben solange Du in einem Fahrzeug bist!", player))
 					return
 				end
 
@@ -218,11 +237,11 @@ function JewelryStoreRobbery:Event_EvilDeliveryFaction(button, state, player)
 					local value = bag:getData("Value")
 					local money = math.round(value * (self.m_MaxMoney / self.m_MaxBags), 0)
 					player:detachPlayerObject(bag)
-					player:sendShortMessage(_("Du hast die Beute abgegeben!", player))
+					player:sendSuccess(_("Du hast die Beute abgegeben!", player))
 					bag:destroy()
 
 					self.m_PendingBags = self.m_PendingBags - value
-					self.m_BankAccountServer:transferMoney({"faction", player:getFaction():getId(), true}, money, "Juwelier-Diebstahl", "Action", "JewelryRobbery", {silent = true})
+					self.m_BankAccountServer:transferMoney({"faction", player:getFaction():getId(), true}, money, "Juwelier-Beute abgegeben", "Action", "JewelryRobbery", {silent = true})
 
 					if self.m_PendingBags == 0 or self.m_MaxBags - self.m_BagsGivenOut == self.m_PendingBags then
 						JewelryStoreRobberyManager:getSingleton():stopRobbery("evil")
@@ -231,10 +250,10 @@ function JewelryStoreRobbery:Event_EvilDeliveryFaction(button, state, player)
 					player:sendError(_("Du hast keine Beute dabei!", player))
 				end
 			else
-				player:sendError(_("Du kannst nicht mit diesem NPC interagieren!", player))
+				player:sendError(_("Du kannst keine Beute abgeben!", player))
 			end
 		else
-			player:sendError(_("Du bist zu weit von dem NPC entfernt!", player))
+			player:sendError(_("Du bist zu weit entfernt!", player))
 		end
 	end
 end
@@ -248,11 +267,11 @@ function JewelryStoreRobbery:Event_StateDeliveryFaction(button, state, player)
 					local value = bag:getData("Value")
 					local money = math.round(value * (self.m_MaxMoney / self.m_MaxBags), 0)
 					player:detachPlayerObject(bag)
-					player:sendShortMessage(_("Du hast die Beute abgegeben!", player))
+					player:sendSuccess(_("Du hast die Beute abgegeben!", player))
 					bag:destroy()
 
 					self.m_PendingBags = self.m_PendingBags - value
-					self.m_BankAccountServer:transferMoney({"faction", player:getFaction():getId(), true}, money, "Juwelier-Diebstahl", "Action", "JewelryRobbery", {silent = true})
+					self.m_BankAccountServer:transferMoney({"faction", player:getFaction():getId(), true}, money, "Juwelier-Beute sichergestellt", "Action", "JewelryRobbery", {silent = true})
 
 					if self.m_PendingBags == 0 or self.m_MaxBags - self.m_BagsGivenOut == self.m_PendingBags then
 						JewelryStoreRobberyManager:getSingleton():stopRobbery("state")
@@ -261,10 +280,10 @@ function JewelryStoreRobbery:Event_StateDeliveryFaction(button, state, player)
 					player:sendError(_("Du hast keine Beute dabei!", player))
 				end
 			else
-				player:sendError(_("Du kannst nicht mit diesem NPC interagieren!", player))
+				player:sendError(_("Du kannst keine Beute abgeben!", player))
 			end
 		else
-			player:sendError(_("Du bist zu weit von dem NPC entfernt!", player))
+			player:sendError(_("Du bist zu weit entfernt!", player))
 		end
 	end
 end
@@ -302,25 +321,21 @@ function JewelryStoreRobbery:updateBreakingNews()
 			local messageId = math.random(1, 3)
 
 			if messageId == 1 then
-				PlayerManager:getSingleton():breakingNews(("Die Räuber gehören der Fraktion %s an."):format(self.m_Faction:getName()))
+				PlayerManager:getSingleton():breakingNews("Einige Räuber gehören scheinbar der Fraktion %s an!", self.m_Faction:getName())
 			elseif messageId == 2 then
-				PlayerManager:getSingleton():breakingNews(("Laut Überwachungskameras sind %s Täter am Geschäft."):format(evilCount))
+				PlayerManager:getSingleton():breakingNews("Laut Überwachungskameras sind %d Täter im Juwelier!", evilCount)
 			else
 				PlayerManager:getSingleton():breakingNews("Vermeiden Sie die Geschäfte im Westen der Stadt!")
 			end
 		else
-			PlayerManager:getSingleton():breakingNews(("Es befinden sich derzeit %d Beamte im Juwelier!"):format(stateCount))
+			PlayerManager:getSingleton():breakingNews("Es befinden sich derzeit %d Beamte im Juwelier!", stateCount)
 		end
 	else
-		local messages = {
-			"Die Täter haben Beute entwendet und sind auf der Flucht!",
-			"Die Räuber sind weiter auf der Flucht.",
-			"Verdächtige des Überfalls wurden auf einem Boot gesichtet!",
-			"Die Polizei zieht Luftunterstützung hinzu!",
-			"Die Täter befinden sich auf einem Containerschiff.",
-			"Schüsse fallen auf einem Containerschiff nahe San Fierro!"
-		}
-
-		PlayerManager:getSingleton():breakingNews(math.randomchoice(messages))
+		if not self.m_Escaped then
+			PlayerManager:getSingleton():breakingNews("Die Täter haben Beute entwendet und sind auf der Flucht!")
+			self.m_Escaped = true
+		else
+			PlayerManager:getSingleton():breakingNews(math.randomchoice(JewelryStoreRobbery.EscapeMessages))
+		end
 	end
 end
