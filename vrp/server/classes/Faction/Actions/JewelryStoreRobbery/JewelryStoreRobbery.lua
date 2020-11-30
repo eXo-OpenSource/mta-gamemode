@@ -91,6 +91,7 @@ function JewelryStoreRobbery:constructor(attacker, maxBags)
 	for index, player in pairs(JewelryStoreRobberyManager:getSingleton().m_Players) do
 		if isElement(player) then
 			bindKey(player, "f", "down", self.m_BreakGlass)
+			player:sendShortMessage(_("Drücke '%s', um eine Glasvitrine zu zerschlagen!", player, "F"))
 		end
 	end
 	ActionsCheck:getSingleton():setAction("Juwelier-Raub")
@@ -290,6 +291,7 @@ end
 
 function JewelryStoreRobbery:onShopEnter(player)
 	bindKey(player, "f", "down", self.m_BreakGlass)
+	player:sendShortMessage(_("Drücke '%s', um eine Glasvitrine zu zerschlagen!", player, "F"))
 	triggerClientEvent("jewelryStoreRobberyAlarmStart", root)
 	triggerClientEvent("jewelryStoreRobberyPedAnimation", JewelryStoreRobberyManager:getSingleton().m_ShopPed, "VRP.OTHER", "cowerHandsBehindHead", -1, true, false, false, true)
 end
