@@ -49,6 +49,15 @@ Christmas.ms_Bonus = {
 	}
 }
 
+Christmas.ms_PricePoolPrices = {
+	{"vehicle", 587},
+	{"money", 100000},
+
+	{"vehicle", 463},
+	{"money", 100000},
+	
+	{"VIP", 1},
+}
 
 function Christmas:constructor()
 	self.m_QuestManager = QuestManager:new()
@@ -78,6 +87,11 @@ function Christmas:constructor()
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
 	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
 	addEventHandler("Christmas:openDoor", root, bind(self.openDoor, self))
+
+	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Christmas2020-1", "Päckchen", Christmas.ms_PricePoolPrices, 1607274000)
+	if self.m_PricePool then
+		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(1481.55, -1697.34, 14.05), 165)
+	end
 end
 
 function Christmas:Event_requestBonusData()
