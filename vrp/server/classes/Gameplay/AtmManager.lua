@@ -14,6 +14,7 @@ AtmManager.Cooldown = 60 * 60 * 1000
 AtmManager.HackSuccessNotificationChance = 99
 AtmManager.HackSuccessPhotoChance = 75
 
+AtmManager.NotificationCooldown = 30000
 AtmManager.HackFailNotificationChance = 99
 AtmManager.HackFailPhotoChance = 75
 
@@ -43,8 +44,10 @@ function AtmManager:constructor()
 
     for key, object in pairs(getElementsByType("object")) do
         if object:getModel() == ATM_NORMAL_MODEL then
-            object.BombArea = BombArea:new(object:getPosition(), bind(self.onBombPlace, self, object), bind(self.onBombExplode, self, object), AtmManager.BombTime)
-            addEventHandler("onElementDestroy", object, bind(self.onAtmObjectDestroy, self, object))
+            if object:getInterior() == 0 and object:getDimension() == 0 then 
+                object.BombArea = BombArea:new(object:getPosition(), bind(self.onBombPlace, self, object), bind(self.onBombExplode, self, object), AtmManager.BombTime)
+                addEventHandler("onElementDestroy", object, bind(self.onAtmObjectDestroy, self, object))
+            end
         end
     end
 end
@@ -123,10 +126,16 @@ end
 function AtmManager:Event_onHackFail()
     local atm = client.m_LastAtmHacked
     if chance(AtmManager.HackFailNotificationChance) then
-        if chance(AtmManager.HackFailPhotoChance) then
-            FactionState:getSingleton():sendWarning("Ein Bankautomat in %s meldet merkwürdige Aktivitäten! Ein Foto der Überwachungskamera zeigt jemanden, der auf die Personenbeschreibung von %s passt!", "Kontrolle notwendig!", true, serialiseVector(atm:getPosition()), getZoneName(atm:getPosition()), client:getName())
-        else
-            FactionState:getSingleton():sendWarning("Ein Bankautomat in %s meldet merkwürdige Aktivitäten!", "Kontrolle notwendig!", true, serialiseVector(atm:getPosition()), getZoneName(atm:getPosition()))
+        if not atm.LastNotification then 
+            atm.LastNotification = 0
+        end
+        if getTickCount() - atm.LastNotification > AtmManager.NotificationCooldown then
+            atm.LastNotification = getTickCount()
+            if chance(AtmManager.HackFailPhotoChance) then
+                FactionState:getSingleton():sendWarning("Ein Bankautomat in %s meldet merkwürdige Aktivitäten! Ein Foto der Überwachungskamera zeigt jemanden, der auf die Personenbeschreibung von %s passt!", "Kontrolle notwendig!", true, serialiseVector(atm:getPosition()), getZoneName(atm:getPosition()), client:getName())
+            else
+                FactionState:getSingleton():sendWarning("Ein Bankautomat in %s meldet merkwürdige Aktivitäten!", "Kontrolle notwendig!", true, serialiseVector(atm:getPosition()), getZoneName(atm:getPosition()))
+            end
         end
     end
 end
@@ -140,13 +149,14 @@ function AtmManager:onBombPlace(atm, bombArea, player)
     end
     if self.m_PlayerCooldowns[player:getId()] then
         if getTickCount() - self.m_PlayerCooldowns[player:getId()] < AtmManager.Cooldown then
-            player:sendError(_("Du kannst nur alle %d Minuten einen Bankautomaten sprengen!", player, AtmManager.Cooldown/60/1000))
+            player:sendError(_("Du kannst nur alle %d Minuten einen Bankautomaten sabotieren!", player, AtmManager.Cooldown/60/1000))
             return false
         end
     end
 end
 
 function AtmManager:onBombExplode(atm, bombArea, player)
+    if not isElement(player) then return end
     if self.m_AtmCooldowns[atm] then
         if getTickCount() - self.m_AtmCooldowns[atm] < AtmManager.Cooldown then
             return
@@ -168,6 +178,7 @@ function AtmManager:onBombExplode(atm, bombArea, player)
     else
         player:sendError(_("Die Explosion am Bankautomaten hat alle Geldscheine zerfetzt, Du gehst leer aus!", player))
     end
+    FactionState:getSingleton():sendWarning("Ein Bankautomat in %s meldet merkwürdige Aktivitäten!", "Kontrolle notwendig!", true, serialiseVector(atm:getPosition()), getZoneName(atm:getPosition()))
 end
 
 function AtmManager:onAtmObjectDestroy(object)
