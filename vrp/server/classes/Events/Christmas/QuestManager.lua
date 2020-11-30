@@ -12,12 +12,12 @@ QuestManager.Quests = {
 	},
 	[3] = {
 		["Name"] = "Weihnachts-Fotograf",
-		["Description"] = "Schieße ein Foto mit mindestens 10 Spielern darauf!",
+		["Description"] = "Schieße ein Foto mit mindestens 3 Spielern darauf!",
 		["Packages"] = 5,
 	},
 	[4] = {
-		["Name"] = "Zeichne einen Weihnachtsmann",
-		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Weihnachtsmann gezeichnet hast!",
+		["Name"] = "Verschnaufpause",
+		["Description"] = "Heute gibt es nichts zu erledigen! Hier deine Belohnung!",
 		["Packages"] = 5,
 	},
 	[5] = {
@@ -46,8 +46,8 @@ QuestManager.Quests = {
 		["Packages"] = 5,
 	},
 	[10] = {
-		["Name"] = "Zeichne einen Schneemann",
-		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Schneemann gezeichnet hast!",
+		["Name"] = "Feierabend",
+		["Description"] = "Heute gibt es nichts zu erledigen! Hier deine Belohnung!",
 		["Packages"] = 5,
 	},
 	[11] = {
@@ -67,7 +67,7 @@ QuestManager.Quests = {
 	},
 	[14] = {
 		["Name"] = "Mützen-Foto",
-		["Description"] = "Schieße ein Foto mit mindestens 5 Spielern die eine Weihnachtsmütze auf haben!",
+		["Description"] = "Schieße ein Foto mit mindestens 3 Spielern die eine Weihnachtsmütze auf haben!",
 		["Packages"] = 5,
 	},
 	[15] = {
@@ -81,8 +81,8 @@ QuestManager.Quests = {
 		["Packages"] = 5,
 	},
 	[17] = {
-		["Name"] = "Zeichne einen Weihnachtsbaum",
-		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Weihnachtsbaum gezeichnet hast!",
+		["Name"] = "Vorfreude",
+		["Description"] = "Heute gibt es nichts zu erledigen! Hier deine Belohnung!",
 		["Packages"] = 5,
 	},
 	[18] = {
@@ -97,7 +97,7 @@ QuestManager.Quests = {
 	},
 	[20] = {
 		["Name"] = "Administriver Fotograf",
-		["Description"] = "Schieße ein Foto mit mindestens 2 Teammitgliedern!",
+		["Description"] = "Schieße ein Foto mit mindestens 1 Teammitgliedern!",
 		["Packages"] = 5,
 	},
 	[21] = {
@@ -129,20 +129,20 @@ function QuestManager:constructor()
 		[1] = QuestNPCTransport,
 		[2] = QuestPhotography,
 		[3] = QuestPhotography,
-		[4] = QuestDraw,
+		[4] = QuestNoQuest,
 		[5] = QuestNPCTransport,
 		[6] = QuestPackageTransport,
 		[7] = QuestPackageFind,
 		[8] = QuestSantaKill,
 		[9] = QuestFortuneWheel,
-		[10] = QuestDraw,
+		[10] = QuestNoQuest,
 		[11] = QuestPackageTransport,
 		[12] = QuestFerrisRide,
 		[13] = QuestSantaKill,
 		[14] = QuestPhotography,
 		[15] = QuestNPCTransport,
 		[16] = QuestPackageTransport,
-		[17] = QuestDraw,
+		[17] = QuestNoQuest,
 		[18] = QuestFortuneWheel,
 		[19] = QuestPackageFind,
 		[20] = QuestPhotography,
