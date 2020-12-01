@@ -679,7 +679,7 @@ function GroupManager:Event_SetVehicleForRent(amount)
 		if getVehicleEngineState(source) then
 			source:setEngineState(false)
 		end
-		group:addLog(client, "Fahrzeugverleih", "hat das Fahrzeug "..source.getNameFromModel(source:getModel()).." um "..amount.."$ pro Stunde zum vermieten angeboten!")
+		group:addLog(client, "Fahrzeugverleih", "hat das Fahrzeug "..source.getNameFromModel(source:getModel()).." für "..amount.."$ pro Stunde zum Mieten angeboten!")
 		client:sendInfo(_("Du hast das Fahrzeug für %d$ pro Stunde angeboten!", client, amount))
 		source:setForRent(true, tonumber(amount))
 	end
@@ -773,15 +773,17 @@ end
 
 function GroupManager:rentedVehiclePulse()
 	for key, vehicle in pairs(self.m_RentedVehicle) do
-		if vehicle.m_RentedUntil < getRealTime().timestamp then
-			vehicle:rentEnd()
-		else
-			if vehicle.m_RentedUntil < getRealTime().timestamp + 60 * 10 then
-				local player = DatabasePlayer.Map[vehicle.m_RentedBy]
-				local minutes = math.ceil((vehicle.m_RentedUntil - getRealTime().timestamp) / 60)
-				if minutes == 10 or minutes == 5 or minutes == 2 then
-					if player and isElement(player) then
-						outputChatBox(_("Dein gemietet Fahrzeug despawnt in %s Minuten.", player, minutes), player, 244, 182, 66)
+		if vehicle and isElement(vehicle) then
+			if vehicle.m_RentedUntil < getRealTime().timestamp then
+				vehicle:rentEnd()
+			else
+				if vehicle.m_RentedUntil < getRealTime().timestamp + 60 * 10 then
+					local player = DatabasePlayer.Map[vehicle.m_RentedBy]
+					local minutes = math.ceil((vehicle.m_RentedUntil - getRealTime().timestamp) / 60)
+					if minutes == 10 or minutes == 5 or minutes == 2 then
+						if player and isElement(player) then
+							outputChatBox(_("Dein gemietetes Fahrzeug despawnt in %s Minuten.", player, minutes), player, 244, 182, 66)
+						end
 					end
 				end
 			end

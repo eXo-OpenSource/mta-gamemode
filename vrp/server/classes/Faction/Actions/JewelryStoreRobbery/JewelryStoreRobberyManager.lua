@@ -326,7 +326,9 @@ function JewelryStoreRobberyManager:Event_PedTargetted(ped, attacker)
 			self:startRobbery(attacker)
 
 			for key, player in pairs(self.m_Players) do
-				outputChatBox(_("Geschäftsbesitzer sagt: Bitte tun sie mir nichts!", player), player, 255, 255, 255)
+				if player and isElement(player) then
+					outputChatBox(_("Geschäftsbesitzer sagt: Bitte tun sie mir nichts!", player), player, 255, 255, 255)
+				end
 			end
 		else
 			attacker:sendError(_("Nur Mitglieder im Fraktionsdienst können die Juwelier ausrauben!", attacker))
