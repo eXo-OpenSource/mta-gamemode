@@ -5,13 +5,13 @@ QuestPhotography.Targets = {
 		["SantaClaus"] = 1,
 	},
 	[3] = {
-		["Players"] = 10,
+		["Players"] = 3,
 	},
 	[14] = {
-		["PlayersWithHat"] = 5,
+		["PlayersWithHat"] = 3,
 	},
 	[20] = {
-		["Admins"] = 2,
+		["Admins"] = 1,
 	}
 }
 
@@ -61,7 +61,7 @@ function QuestPhotography:onTakePhoto(playersOnPhoto, pedsOnPhoto)
 			return
 		elseif self.m_Target["Players"] then
 			if #playersOnPhoto >= self.m_Target["Players"] then
-				client:sendSuccess(_("Du hast erfolgreich 10 Spieler fotografiert!", client))
+				client:sendSuccess(_("Du hast erfolgreich 3 Spieler fotografiert!", client))
 				self:success(client)
 				return
 			else
@@ -76,7 +76,7 @@ function QuestPhotography:onTakePhoto(playersOnPhoto, pedsOnPhoto)
 				end
 			end
 			if count >= self.m_Target["PlayersWithHat"] then
-				client:sendSuccess(_("Du hast erfolgreich 5 Spieler mit Weihnachtsmütze fotografiert!", client))
+				client:sendSuccess(_("Du hast erfolgreich 3 Spieler mit Weihnachtsmütze fotografiert!", client))
 				self:success(client)
 				return
 			else
@@ -91,7 +91,7 @@ function QuestPhotography:onTakePhoto(playersOnPhoto, pedsOnPhoto)
 				end
 			end
 			if count >= self.m_Target["Admins"] then
-				client:sendSuccess(_("Du hast erfolgreich 2 Teammitglieder fotografiert!", client))
+				client:sendSuccess(_("Du hast erfolgreich ein Teammitglied fotografiert!", client))
 				self:success(client)
 				return
 			else

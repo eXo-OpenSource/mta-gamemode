@@ -63,6 +63,10 @@ function AtmManager.onAtmClick(atm)
 end
 
 function AtmManager.startHacking(atm)
-    triggerServerEvent("onAtmStartHacking", localPlayer, atm)
-    delete(BankGUI:getSingleton())
+    if atm:getInterior() == 0 and atm:getDimension() == 0 then
+        triggerServerEvent("onAtmStartHacking", localPlayer, atm)
+        delete(BankGUI:getSingleton())
+    else
+        ErrorBox:new(_"Du kannst hier keine Bankautomaten sabotieren!")
+    end
 end

@@ -18,12 +18,12 @@ function InactivityManager:clearHouses()
 
 	if rows then
 		for k, v in ipairs(rows) do
-			local price = math.floor(HouseManager:getSingleton().m_Houses[v.HouseID].m_Price*0.75)
+			local house = HouseManager:getSingleton().m_Houses[v.HouseID]
+			local price = math.floor(house.m_Price*0.75)
 
-			HouseManager:getSingleton().m_Houses[v.HouseID]:clearHouse()
-
-			sql:queryExec("UPDATE ??_character SET Money = Money + ? WHERE Id = ?;",
-				sql:getPrefix(), price, v.UserID)
+			BankServer.get("server.house"):transferMoney({"player", v.UserID, true}, price, "Hausräumung durch Inaktivität", "House", "Cleared")
+			house.m_BankAccount:transferMoney({"player", v.UserID, true}, house.m_BankAccount:getMoney(), "Auszahlung der Hauskasse", "House", "Cleared")
+			house:clearHouse()
 
 			sqlLogs:queryExec("INSERT INTO ??_HousesFreed (Date, UserID, HouseID) VALUES (Now(), ?, ?)",
 				sqlLogs:getPrefix(), v.UserID, v.HouseID)

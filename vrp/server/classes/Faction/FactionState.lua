@@ -756,10 +756,10 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
         reason = "Beleidigung"
         amount = 1
-    elseif string.lower(reason) == "block" or string.lower(reason) == "hindern" then
+    elseif string.lower(reason) == "block" then
         reason = "Beamtenbehinderung"
         amount = 1
-    elseif string.lower(reason) == "lästig" or string.lower(reason) == "stress" then
+    elseif string.lower(reason) == "stress" then
         reason = "Beamtenbelästigung"
         amount = 1
     elseif string.lower(reason) == "bv" then
@@ -777,13 +777,16 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "illad" or string.lower(reason) == "werbung" then
         reason = "Illegale Werbung"
         amount = 1
-    elseif string.lower(reason) == "eöä" then
+    elseif string.lower(reason) == "illrace" or string.lower(reason) == "rennen" then
+        reason = "Illegales Straßenrennen"
+        amount = 1
+    elseif string.lower(reason) == "eöä" or string.lower(reason) == "ärger" then
         reason = "Erregung öffentlichen Ärgernisses"
         amount = 1
-    elseif string.lower(reason) == "pew" then
+    elseif string.lower(reason) == "pew" or string.lower(reason) == "feuerwerk" then
         reason = "Benutzung von Feuerwerkskörpern"
         amount = 1
-    elseif string.lower(reason) == "ds" then
+    elseif string.lower(reason) == "ds" or string.lower(reason) == "diebstahl" then
         reason = "Diebstahl"
         amount = 1
     elseif string.lower(reason) == "vd" then
@@ -792,6 +795,9 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "fof" then
         reason = "Fahren ohne Führerschein"
         amount = 1
+    elseif string.lower(reason) == "bribe" then
+        reason = "Bestechung"
+        amount = 2
     elseif string.lower(reason) == "wd" then
         reason = "Waffendrohung"
         amount = 2
@@ -811,7 +817,7 @@ function FactionState:getFullReasonFromShortcut(reason)
         reason = "Körperverletzung"
         amount = 2
     elseif string.lower(reason) == "sds" then
-        reason = "Diebstahl von Staatsfahrzeugen"
+        reason = "(Versuchter) Diebstahl von Staatsfahrzeugen"
         amount = 2
     elseif string.lower(reason) == "wvk" then
         reason = "Waffenverkauf"
@@ -819,6 +825,9 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "handel" then
         reason = "Handel mit verbotenen Gegenständen/Drogen"
         amount = 2
+    elseif string.lower(reason) == "waffen" or string.lower(reason) == "illweap" then
+        reason = "Besitz illegaler Waffen"
+        amount = 3
     elseif string.lower(reason) == "bs" or string.lower(reason) == "wn" then
         reason = "Beschuss/Waffennutzung"
         amount = 3
@@ -826,13 +835,16 @@ function FactionState:getFullReasonFromShortcut(reason)
         reason = "Betreten der Polizeiwache/Garage"
         amount = 3
     elseif string.lower(reason) == "hinterhof" then
-        reason = "Betreten des SAPD Hinterhof"
+        reason = "Betreten des SAPD-Hinterhofs"
         amount = 3
     elseif string.lower(reason) == "feldweg" then
         reason = "Betreten des Army-Geländes"
         amount = 3
     elseif string.lower(reason) == "rts" or string.lower(reason) == "shop" then
         reason = "Shop-Überfall"
+        amount = 3
+    elseif string.lower(reason) == "atm" then
+        reason = "Sabotage von Geldautomaten"
         amount = 3
     elseif string.lower(reason) == "haus" then
         reason = "Hauseinbruch"
@@ -864,14 +876,17 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "dt" or string.lower(reason) == "weed" then
         reason = "Drogentruck"
         amount = 5
-    elseif string.lower(reason) == "army" then
+    elseif string.lower(reason) == "army" or string.lower(reason) == "area" or string.lower(reason) == "sasf" then
         reason = "Einbruch in die SASF-Basis"
         amount = 6
     elseif string.lower(reason) == "swt" then
         reason = "Angriff auf den Staatswaffentruck"
         amount = 6
-    elseif string.lower(reason) == "br" or string.lower(reason) == "bank" then
+    elseif string.lower(reason) == "br" or string.lower(reason) == "cr" then
         reason = "Überfall auf Bank/Casino"
+        amount = 6
+    elseif string.lower(reason) == "juwe" or string.lower(reason) == "jr" or string.lower(reason) == "juwelier" then
+        reason = "Überfall auf Juwelier"
         amount = 6
     elseif string.lower(reason) == "gn" then
         reason = "Geiselnahme"
