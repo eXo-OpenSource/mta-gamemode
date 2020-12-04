@@ -454,7 +454,12 @@ addEventHandler("onClientVehicleStartEnter", root, function(player, seat)
 	end
 
 	if player == localPlayer then
-		if localPlayer:getData("PreventFlyingVehicles") and (source.vehicleType == "Plane" or source.vehicleType == "Helicopter") then
+		if localPlayer:getData("PreventVehicles") then
+			cancelEvent()
+			ErrorBox:new(_("Du kannst derzeit nicht in Fahrzeuge einsteigen!"))
+			return
+		end
+		if localPlayer:getData("PreventFlyingVehicles") and source:isAirVehicle() then
 			cancelEvent()
 			ErrorBox:new(_("Du kannst derzeit nicht in Fluggeräte einsteigen!"))
 			return

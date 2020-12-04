@@ -1347,10 +1347,9 @@ function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprin
 	if blockSprint then		toggleControl(self, "sprint", bool)	end
 	if blockJump then	toggleControl(self, "jump", bool)	end
 	if blockVehicle then
-		toggleControl(self, "enter_exit", bool)
-		toggleControl(self, "enter_passenger", bool)
+		self:setData("PreventVehicles", not bool, true)
 	end
-	if blockFlyingVehicle then
+	if blockFlyingVehicle or blockVehicle then
 		self:setData("PreventFlyingVehicles", not bool, true)
 		setElementData(self, "preventHeliGrab", not bool)
 	end
@@ -1362,9 +1361,17 @@ function Player:attachPlayerObject(object, settingsOverride)
 	if PlayerAttachObjects[model] then
 		if not self:getPlayerAttachedObject() then
 			local settings = PlayerAttachObjects[model]
-			if settings.blockVehicle and self.vehicle then
-				self:sendError(_("Mit diesem Objekt kannst du nicht in Fahrzeuge einsteigen!", self))
+			-- first, check if the player is in any blocked vehicle and stop attaching the object
+			if settings.blockVehicle and (self.vehicle or (getElementAttachedTo(self) and getElementType(getElementAttachedTo(self)) == "vehicle")) then
+				self:sendError(_("Mit diesem Objekt kannst du dich nicht in Fahrzeugen befinden!", self))
 				return false
+			end
+			if settings.blockFlyingVehicles then
+				local veh = self.vehicle or (getElementAttachedTo(self) and getElementType(getElementAttachedTo(self)) == "vehicle")
+				if veh and veh:isAirVehicle() then
+					self:sendError(_("Mit diesem Objekt kannst du dich nicht in Fluggeräten befinden!", self))
+					return false
+				end
 			end
 			self.m_PlayerAttachedObject = object
 			self:setPrivateSync("attachedObject", object)
@@ -1487,6 +1494,8 @@ function Player:attachToVehicle(forceDetach)
 		self:detach()
 		return
 	end
+
+	if self:getData("PreventVehicles") then return self:sendError(_("Du kannst dich mit deinem Objekt nicht am Fahrzeug festhalten!", self)) end
 
 	if forceDetach or not self.contactElement or self.contactElement:getType() ~= "vehicle" then return end
 	if self.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[self.contactElement:getModel()] then
