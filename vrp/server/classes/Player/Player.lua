@@ -1355,8 +1355,7 @@ function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprin
 	end
 end
 
-function Player:attachPlayerObject(object, settingsOverride)
-	local settingsOverride = settingsOverride or {}
+function Player:attachPlayerObject(object)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		if not self:getPlayerAttachedObject() then
@@ -1387,13 +1386,7 @@ function Player:attachPlayerObject(object, settingsOverride)
 				self:setAnimation(unpack(settings["animationData"]))
 			end
 
-			local blockJump = settings["blockJump"]
-			if settingsOverride["blockJump"] ~= nil then blockJump = settingsOverride["blockJump"] end
-
-			local blockFlyingVehicles = settings["blockFlyingVehicles"]
-			if settingsOverride["blockFlyingVehicles"] ~= nil then blockFlyingVehicles = settingsOverride["blockFlyingVehicles"] end
-
-			self.m_PlayerAttachedObjectSettings = {settings["blockWeapons"], settings["blockSprint"], blockJump, settings["blockVehicle"], blockFlyingVehicles}
+			self.m_PlayerAttachedObjectSettings = {settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"], settings["blockFlyingVehicles"]}
 			self:toggleControlsWhileObjectAttached(false, unpack(self.m_PlayerAttachedObjectSettings))
 
 			if settings.placeDown then

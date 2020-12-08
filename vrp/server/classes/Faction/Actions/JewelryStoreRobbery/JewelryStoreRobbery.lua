@@ -197,7 +197,7 @@ function JewelryStoreRobbery:Event_BreakGlass(player)
 					table.insert(self.m_Bags, bag)
 					addEventHandler("onElementClicked", bag, self.m_BagClick)
 
-					player:attachPlayerObject(bag, {blockJump = false, blockFlyingVehicles = true})
+					player:attachPlayerObject(bag)
 				end
 			end
 		end, self.m_ShelveDestructionTime, 1)
@@ -219,7 +219,7 @@ function JewelryStoreRobbery:Event_BagClick(button, state, player)
 					source:destroy()
 					return
 				end
-				player:attachPlayerObject(source, {blockJump = false, blockFlyingVehicles = true})
+				player:attachPlayerObject(source)
 			else
 				player:sendError(_("Du bist nicht an diesem Raub beteiligt!", player))
 			end
