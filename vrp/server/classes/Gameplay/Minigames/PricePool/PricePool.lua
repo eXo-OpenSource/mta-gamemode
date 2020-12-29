@@ -128,6 +128,11 @@ function PricePool:addRaffleCountdown()
 end
 
 function PricePool:getWinner(entryTable)
+    local totalEntries = 0
+    for playerId, entry in pairs(entryTable) do
+        totalEntries = totalEntries + entry.entries
+    end
+
     local admins = {}
 
     if not DEBUG and not self.m_AdminsAllowedToWin then
@@ -140,7 +145,7 @@ function PricePool:getWinner(entryTable)
     local winner
 
     repeat
-        local random = math.random(1, self:getEntryAmount())
+        local random = math.random(1, totalEntries)
         local entryAmount = 0
         for playerId, entry in pairs(entryTable) do
             entryAmount = entryAmount + entry.entries
