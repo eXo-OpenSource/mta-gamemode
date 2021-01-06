@@ -55,11 +55,9 @@ function GUIItemDragging:prerender()
 end
 
 function GUIItemDragging:setItem(item, slot)
-	if slot.m_MovingEnabled then
-		self.m_Item = item
-		self.m_Slot = slot
-		self.m_Slot:setMoving(true)
-	end
+	self.m_Item = item
+	self.m_Slot = slot
+	self.m_Slot:setMoving(true)
 end
 
 function GUIItemDragging:clearItem()
