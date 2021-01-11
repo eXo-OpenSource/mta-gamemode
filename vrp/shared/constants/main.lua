@@ -469,6 +469,7 @@ VehicleTypeName = {
 
 
 DbElementType = {
+	Temporary = -1,
 	Player = 1;
 	Faction = 2;
 	Company = 3;
@@ -486,6 +487,7 @@ DbElementType = {
 }
 
 DbElementTypeName = {
+	[DbElementType.Temporary] = "temporary";
 	[DbElementType.Player] = "player";
 	[DbElementType.Faction] = "faction";
 	[DbElementType.Company] = "company";

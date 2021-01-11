@@ -444,6 +444,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local shopIndex = shopIndex or 1
 
 	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
+		InventoryManager:getSingleton():createPermanentInventory(sql:lastInsertId(), DBElementType.Vehicle, 30, 4)
 		return self:createVehicle(sql:lastInsertId(), template)
 	end
 	return false

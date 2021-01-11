@@ -189,7 +189,12 @@ function Player:loadCharacter()
 	-- Add Payday
 	self:setNextPayday()
 	self.m_InventoryOld = InventoryManagerOld:getSingleton():loadInventory(self)
-	self.m_Inventory = InventoryManager:getSingleton():getInventory(self)
+
+	local inventory = InventoryManager:getSingleton():getInventory(self)
+	if not inventory then
+		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Player, 40, 1)
+	end
+	self.m_Inventory = inventory
 
 	-- Add binds
 	self:initialiseBinds()

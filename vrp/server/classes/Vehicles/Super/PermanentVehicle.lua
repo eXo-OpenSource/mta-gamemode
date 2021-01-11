@@ -178,7 +178,7 @@ function PermanentVehicle:virtual_constructor(data)
 			self.m_TrunkId = data.TrunkId
 			self.m_Trunk:setVehicle(self)
 
-			self.m_TrunkMe = InventoryManager:getSingleton():getInventory(DbElementType.Vehicle, self.m_Id, true)
+			self.m_Inventory = InventoryManager:getSingleton():getInventory(DbElementType.Vehicle, self.m_Id, true)
 		end
 
 		if health and health <= 300 then

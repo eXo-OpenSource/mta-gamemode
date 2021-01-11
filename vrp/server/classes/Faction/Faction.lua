@@ -42,14 +42,18 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_RankSkins = fromJSON(rankSkins)
 	self.m_Type = factionType
 
-	self.m_Depot = Depot.load(depotId, self, "faction")
-
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
 	self.m_VehicleTexture = false
 
 	self.m_DiplomacyJSON = diplomacy
+
+	local inventory = InventoryManager:getSingleton():getInventory(self, nil, true)
+	if not inventory then
+		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Faction, 10000, 5)
+	end
+	self.m_Inventory = inventory
 
 	if not DEBUG then
 		Async.create(
@@ -224,8 +228,8 @@ function Faction:getRankNames()
 	return self.m_RankNames
 end
 
-function Faction:getDepot()
-	return self.m_Depot
+function Faction:getInventory()
+	return self.m_Inventory
 end
 
 function Faction:getPhoneNumber()

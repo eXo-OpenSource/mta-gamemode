@@ -6,38 +6,36 @@
 -- *
 -- ****************************************************************************
 Inventory = inherit(Object)
---[[
-function Inventory.create()
+Inventory.TemporaryCount = 0
 
+function Inventory.createTemporary(slots, typeId)
+	Inventory.TemporaryCount = Inventory.TemporaryCount - 1
+
+	return Inventory:new(Inventory.TemporaryCount, Inventory.TemporaryCount, DbElementType.Temporary, slots, typeId)
 end
 
-function Inventory.load(inventoryId, player, sync)
-	local inventory
+function Inventory.createPermanent(elementId, elementType, slots, typeId)
+	sql:queryExec("INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES (?, ?, ?, ?)", 
+		sql:getPrefix(), elementId, elementType, slots, typeId)
+	local inventoryId = sql:lastInsertId()
 
-	if sync then
-		inventory = sql:queryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
-	else
-		inventory = sql:asyncQueryFetchSingle("SELECT * FROM ??_inventories WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), inventoryId)
-	end
-
-	if not inventory then
-		return false
-	end
-
-	local items
-	if sync then
-		items = sql:queryFetch("SELECT i.*, IF(a.Name IS NULL, 'Unbekannt', a.Name) AS OwnerName FROM ??_inventory_items i LEFT JOIN ??_account a ON a.Id = i.OwnerId WHERE i.InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
-	else
-		items = sql:asyncQueryFetch("SELECT i.*, IF(a.Name IS NULL, 'Unbekannt', a.Name) AS OwnerName FROM ??_inventory_items i LEFT JOIN ??_account a ON a.Id = i.OwnerId WHERE i.InventoryId = ?", sql:getPrefix(), sql:getPrefix(), inventory.Id)
-	end
-
-	return Inventory:new(inventory, items, true, player)
+	return Inventory:new(inventoryId, elementId, elementType, slots, typeId)
 end
-]]
 
-function Inventory:constructor(inventoryId, player)
+function Inventory:constructor(inventoryId, elementId, elementType, slots, typeId)
 	self.m_Id = inventoryId
-	self.m_Player = player
+
+	self.m_ElementId = elementId
+	self.m_ElementType = elementType
+
+	self.m_Slots = slots
+
+	self.m_TypeId = typeId or 0
+	self.m_Type = typeId and InventoryManager:getSingleton().m_InventoryTypes[typeId].TechnicalName or "Unknown"
+
+	self.m_Items = {}
+	self.m_NextItemId = 1
+
 	self.m_Persistent = false
 end
 
@@ -63,7 +61,6 @@ function Inventory:loadData(sync)
 
 	self.m_ElementId = inventory.ElementId
 	self.m_ElementType = inventory.ElementType
-	self.m_Size = inventory.Size
 	self.m_Slots = inventory.Slots
 	self.m_TypeId = inventory.TypeId
 	self.m_Type = InventoryManager:getSingleton().m_InventoryTypes[inventory.TypeId].TechnicalName
@@ -99,11 +96,19 @@ function Inventory:destructor()
 end
 
 function Inventory:getPlayer()
-	if self.m_Player and isElement(self.m_Player)then
-		return self.m_Player
+	if self.m_ElementType == DbElementType.Player then
+		return Player.getFromId(self.m_ElementId) or false
 	end
 	return false
 end
+
+function Inventory:getPlayerId()
+	if self.m_ElementType == DbElementType.Player then
+		return self.m_ElementId
+	end
+	return false
+end
+
 --[[
 	Checks to do:
 		* Does the item exists?

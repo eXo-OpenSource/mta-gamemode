@@ -7,9 +7,24 @@
 -- **************************************************************************
 
 InventoryGUI = inherit(GUIForm)
+InventoryGUI.Map = {}
 -- inherit(Singleton, InventoryGUI)
 
 addRemoteEvents{"syncInventory"}
+
+function InventoryGUI.create(title, elementType, elementId)
+	if not InventoryGUI.Map[elementType] then
+		InventoryGUI.Map[elementType] = {}
+	end
+
+	if not InventoryGUI.Map[elementType][elementId] then
+		InventoryGUI.Map[elementType][elementId] = InventoryGUI:new(title, elementType, elementId)
+
+		return InventoryGUI.Map[elementType][elementId]
+	end
+
+	return false
+end
 
 function InventoryGUI:constructor(title, elementType, elementId)
 	GUIWindow.updateGrid()
@@ -43,6 +58,7 @@ function InventoryGUI:Event_syncInventory(data, items)
 end
 
 function InventoryGUI:destructor()
+	InventoryGUI.Map[self.m_ElementType][self.m_ElementId] = nil
 	triggerServerEvent("unsubscribeFromInventory", localPlayer, self.m_ElementType, self.m_ElementId)
 	GUIForm.destructor(self)
 end

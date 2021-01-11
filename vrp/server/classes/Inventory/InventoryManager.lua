@@ -157,8 +157,8 @@ function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInvent
 	self:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot)
 end
 
-function InventoryManager:syncInventory(inventoryId, target)
-	local inventory = self:getInventory(inventoryId)
+function InventoryManager:syncInventory(inventoryId, target, sync)
+	local inventory = self:getInventory(inventoryId, nil, sync)
 	local target = target
 
 	local inventoryData = {
@@ -176,9 +176,9 @@ function InventoryManager:syncInventory(inventoryId, target)
 		end
 
 		for k, v in pairs(self.m_InventorySubscriptions[inventory.m_ElementType][inventory.m_ElementId]) do
-			local player = DatabasePlayer.Map[k]
+			local player = Player.getFromId(k)
 
-			if player and isElement(player) and not player.m_Disconnecting then
+			if player and not player.m_Disconnecting then
 				table.insert(target, player)
 			end
 		end
@@ -250,10 +250,18 @@ function InventoryManager:loadInventoryTypes()
 	end
 end
 
-function InventoryManager:createInventory(elementId, elementType, size, allowedCategories)
-	local inventory = Inventory.create(elementId, elementType, size, allowedCategories)
+function InventoryManager:createPermanentInventory(elementId, elementType, size, typeId)
+	local inventory = Inventory.createPermanent(elementId, elementType, size, typeId)
 
-	self.m_Inventories[inventory.Id] = inventory
+	self.m_Inventories[inventory.m_Id] = inventory
+
+    return inventory
+end
+
+function InventoryManager:createTemporaryInventory(slots, typeId)
+	local inventory = Inventory.createTemporary(slots, typeId)
+
+	self.m_Inventories[inventory.m_Id] = inventory
 
     return inventory
 end
@@ -262,12 +270,12 @@ function InventoryManager:getInventory(inventoryIdOrElementType, elementId, sync
 	local inventoryId = inventoryIdOrElementType
 	local elementType = inventoryId
 
-	local inventoryId, player = self:getInventoryId(inventoryIdOrElementType, elementId, sync)
-	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId, sync)
-
-	if player then
-		inventory.m_Player = player
+	local inventoryId = self:getInventoryId(inventoryIdOrElementType, elementId, sync)
+	if not inventoryId then
+		return false
 	end
+
+	local inventory = self.m_Inventories[inventoryId] and self.m_Inventories[inventoryId] or self:loadInventory(inventoryId, sync)
 
     return inventory
 end
@@ -305,27 +313,28 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId, sy
 		local elementType = 0
 
 		if type(inventoryId) == "table" then
-			if not DbElementTypeName[inventoryId[1]] or table.size(inventoryId) ~= 2 then
-				return false
+			if instanceof(inventoryId, Player) then
+				elementId = inventoryId.m_Id
+				elementType = DbElementType.Player
+			elseif instanceof(inventoryId, Faction) then
+				elementId = inventoryId.m_Id
+				elementType = DbElementType.Faction
+			elseif instanceof(inventoryId, Company) then
+				elementId = inventoryId.m_Id
+				elementType = DbElementType.Company
+			elseif instanceof(inventoryId, Group) then
+				elementId = inventoryId.m_Id
+				elementType = DbElementType.Group
+			elseif instanceof(inventoryId, PermanentVehicle) then
+				elementId = inventoryId.m_Id
+				elementType = DbElementType.Vehicle
+			else
+				if not DbElementTypeName[inventoryId[1]] or table.size(inventoryId) ~= 2 then
+					return false
+				end
+				elementId = inventoryId[2]
+				elementType = DbElementTypeName[inventoryId[1]]
 			end
-			elementId = inventoryId[2]
-			elementType = DbElementTypeName[inventoryId[1]]
-		elseif instanceof(inventoryId, Player) then
-			elementId = inventoryId.m_Id
-			elementType = DbElementType.Player
-			player = inventoryId
-		elseif instanceof(inventoryId, Faction) then
-			elementId = inventoryId.m_Id
-			elementType = DbElementType.Faction
-		elseif instanceof(inventoryId, Company) then
-			elementId = inventoryId.m_Id
-			elementType = DbElementType.Company
-		elseif instanceof(inventoryId, Group) then
-			elementId = inventoryId.m_Id
-			elementType = DbElementType.Group
-		elseif instanceof(inventoryId, PermanentVehicle) then
-			elementId = inventoryId.m_Id
-			elementType = DbElementType.Vehicle
 		end
 
 		local row
@@ -340,18 +349,20 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId, sy
 			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
 			return false
 		end
-		return row.Id, player
+		return row.Id
 	end
 	return inventoryId
 end
 
 function InventoryManager:loadInventory(inventoryId, sync)
-	local player = nil
 	if type(inventoryId) ~= "number" then
-		inventoryId, player = self:getInventoryId(inventoryId, nil, sync)
+		inventoryId = self:getInventoryId(inventoryId, nil, sync)
+		if inventoryId then
+			return false
+		end
 	end
 
-	local inventory = Inventory:new(inventoryId, player)
+	local inventory = Inventory:new(inventoryId)
 
 	if inventory then
 		self.m_Inventories[inventoryId] = inventory
@@ -497,7 +508,7 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		end
 
 		local id = inventory.m_NextItemId
-		local player = inventory:getPlayer()
+		local playerId = inventory:getPlayerId()
 		inventory.m_NextItemId = inventory.m_NextItemId + 1
 
 		local data = table.copy(itemData)
@@ -505,8 +516,8 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 		data.Id = self.m_NextItemId
 		data.InventoryId = inventory.m_Id
 		data.ItemId = item
-		data.OwnerId = player and player.m_Id or nil
-		data.OwnerName = player and player.m_Name or "Unbekannt"
+		data.OwnerId = playerId
+		data.OwnerName = playerId and Account.getNameFromId(playerId) or "Unbekannt"
 		data.Slot = slot
 		data.Amount = amount
 		data.Durability = durability or itemData.MaxDurability

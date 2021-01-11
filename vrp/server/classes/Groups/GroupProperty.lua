@@ -32,8 +32,11 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_Pickup.m_PickupType = "GroupProperty" -- used for fire message geration
 	self.m_Pickup.m_PickupName = Name
 	
-	self.m_DepotId = depotId
-	self.m_Depot = Depot.load(depotId, self)
+	local inventory = InventoryManager:getSingleton():loadInventory(self, true)
+	if not inventory then
+		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Property, 40, 6)
+	end
+	self.m_Inventory = inventory
 
 	if elevatorData then
 		local elevatorData = fromJSON(elevatorData)
@@ -375,3 +378,4 @@ function GroupProperty:getName() return self.m_Name end
 function GroupProperty:getPrice() return self.m_Price end
 function GroupProperty:hasOwner() return self.m_Owner ~= false end
 function GroupProperty:getOwner() return self:hasOwner() and self.m_Owner or false end
+function GroupProperty:getInventory() return self.m_Inventory end
