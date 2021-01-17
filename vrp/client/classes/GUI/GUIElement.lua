@@ -29,6 +29,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	end
 
 	local isDirectlyHovered = (not GUIElement.ms_HoveredElement or self.m_Parent == GUIElement.ms_HoveredElement or self.m_Parent.m_ChildrenByObject[GUIElement.ms_HoveredElement])
+	self.m_DirectlyHovered = isDirectlyHovered
 	local absoluteX, absoluteY = self.m_AbsoluteX, self.m_AbsoluteY
 	if self.m_CacheArea then
 		absoluteX = absoluteX + self.m_CacheArea.m_AbsoluteX
@@ -39,6 +40,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	local leftState, leftClickHandled, leftX, leftY = Cursor:getLeftMouseState()
 	local leftInside = leftState and (absoluteX <= leftX and absoluteY <= leftY and absoluteX + self.m_Width > leftX and absoluteY + self.m_Height > leftY) or false
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy) and isDirectlyHovered
+	self.m_MouseInside = inside
 
 	if self.m_LActive and not mouse1 and (not self.ms_ClickProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onLeftClick			then self:onLeftClick(cx, cy)			end
@@ -73,13 +75,23 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			self.m_RActive = false
 
 			-- Unhover down the tree (otherwise the unhover routine won't be executed)
-			for k, child in ipairs(self.m_Children) do
-				if child.performChecks then --only update if it it a GUI element (because DxElements don't have checks)
-					if child.onUnhover		  then child:onUnhover(cx, cy)         end
-					if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
-					child.m_Hover = false
+			unhoverChildren = function(parent)
+				if parent and type(parent) == "table" then
+					if parent.m_Children then
+						for k, child in ipairs(parent.m_Children) do
+							if child.performChecks then --only update if it it a GUI element (because DxElements don't have checks)
+								if child.onUnhover		   then child:onUnhover(cx, cy)         end
+								if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
+								child.m_Hover = false
+								if child.m_Children then
+									unhoverChildren(child)
+								end
+							end
+						end
+					end
 				end
 			end
+			unhoverChildren(self)
 		end
 
 		return

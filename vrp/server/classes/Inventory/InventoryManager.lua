@@ -194,11 +194,15 @@ end
 function InventoryManager:Event_subscribeToInventory(elementType, elementId)
 	local player = client
 	if DbElementTypeName[elementType] then
+		local inventory = self:getInventory(elementType, elementId)
+		if not inventory then
+			outputDebugString("Inventory not found (elementType or elementId invalid)", 1)
+			return
+		end
+
 		if not self.m_InventorySubscriptions[elementType][elementId] then
 			self.m_InventorySubscriptions[elementType][elementId] = {}
 		end
-
-		local inventory = self:getInventory(elementType, elementId)
 
 		self.m_InventorySubscriptions[elementType][elementId][player.m_Id] = true
 
@@ -312,7 +316,7 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId, sy
 		local elementId = 0
 		local elementType = 0
 
-		if type(inventoryId) == "table" then
+		if type(inventoryId) == "table" or type(inventoryId) == "userdata" then
 			if instanceof(inventoryId, Player) then
 				elementId = inventoryId.m_Id
 				elementType = DbElementType.Player
@@ -1458,28 +1462,6 @@ function InventoryManager:migrate()
 
 	outputServerLog("[MIGRATION - " .. (getTickCount() - st) .. "ms] FINISH PLAYER WEAPONS " .. tostring(count) .. "/" .. tostring(total))
 
-	for _, player in pairs(players) do
-		-- Normal inventory
-		inventories[player.Id] = {
-			ElementId = player.Id,
-			ElementType = DbElementType.Player,
-			Slots = 40, -- TODO: Adjust default slot count
-			TypeId = 1,
-			items = {}
-		}
-		table.insert(newInventories, inventories[player.Id])
-
-		-- Weapon box
-		inventoriesWeapon[player.Id] = {
-			ElementId = player.Id,
-			ElementType = DbElementType.WeaponBox,
-			Slots = 8, -- TODO: Maybe increase it slightly?
-			TypeId = 2,
-			items = {}
-		}
-		table.insert(newInventories, inventoriesWeapon[player.Id])
-	end
-
 	local vehicles = sql:queryFetch("SELECT Id, TrunkId, Model FROM ??_vehicles", sql:getPrefix())
 	local inventories = {}
 	local trunkVehicleId = {}
@@ -1621,7 +1603,7 @@ function InventoryManager:migrate()
 					inventories[item.Id] = {
 						ElementId = v.Id,
 						ElementType = DbElementType.Faction,
-						Slots = 10000, -- TODO: Maybe add infinity option?
+						Slots = 500, -- TODO: Maybe add infinity option?
 						TypeId = 5,
 						items = {}
 					}

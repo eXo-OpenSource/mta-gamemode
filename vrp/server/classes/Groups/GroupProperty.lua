@@ -8,7 +8,7 @@
 GroupProperty = inherit(Object)
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId, elevatorData)
+function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, elevatorData)
 
 	self.m_Id = Id
 	self.m_Name = Name
@@ -32,7 +32,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_Pickup.m_PickupType = "GroupProperty" -- used for fire message geration
 	self.m_Pickup.m_PickupName = Name
 	
-	local inventory = InventoryManager:getSingleton():loadInventory(self, true)
+	local inventory = InventoryManager:getSingleton():getInventory(self, nil, true)
 	if not inventory then
 		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Property, 40, 6)
 	end
@@ -97,20 +97,11 @@ function GroupProperty:destructor()
 			end
 		end
 	end
-	sql:queryExec("UPDATE ??_group_property SET open=?, DepotId=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_DepotId, self.m_Id)
-	if self.m_Depot then
-		self.m_Depot:save()
-	else
-		outputDebugString("Save Depot for Group Property "..self.m_Id.." failed! (Not found)")
-	end
+	sql:queryExec("UPDATE ??_group_property SET open=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_Id)
 end
 
-function GroupProperty:setDepotId(Id)
-	self.m_DepotId = Id
-end
-
-function GroupProperty:getDepot()
-	return self.m_Depot
+function GroupProperty:getInventory()
+	return self.m_Inventory
 end
 
 function GroupProperty:Event_requestImmoPanel( client )

@@ -177,7 +177,6 @@ function Core:constructor()
 		VehicleSpawner.initializeAll()
 		PayNSpray.initializeAll()
 		TollStation.initializeAll()
-		Depot.initalize()
 		QuestionBox.initalize()
 		ShortMessageQuestion.initalize()
 

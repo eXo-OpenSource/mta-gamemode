@@ -18,6 +18,7 @@ function Inventory.createPermanent(elementId, elementType, slots, typeId)
 	sql:queryExec("INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES (?, ?, ?, ?)", 
 		sql:getPrefix(), elementId, elementType, slots, typeId)
 	local inventoryId = sql:lastInsertId()
+	outputServerLog("NEW INVENTORY! ID: "..tostring(elementId)..", TYPE: "..tostring(elementType))
 
 	return Inventory:new(inventoryId, elementId, elementType, slots, typeId)
 end

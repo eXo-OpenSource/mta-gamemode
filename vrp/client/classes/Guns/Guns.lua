@@ -781,5 +781,5 @@ function Guns:changeWeapon(key, keyState)
 end
 
 function Guns:updateCurrentWeapon()
-	triggerServerEvent("onPlayerSlotSwitch")
+	--triggerServerEvent("onPlayerSlotSwitch")
 end

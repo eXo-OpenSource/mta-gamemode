@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, factionType, diplomacy)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_ShorterName = name_shorter
@@ -28,7 +28,6 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	for i, v in pairs(self.m_Skins) do if tonumber(self:getSetting("Skin", i, 0)) == -1 then self.m_SpecialSkin = i end end
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
-	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 	self.m_Countdowns = {}
 
 	self.m_Vehicles = {}
@@ -69,7 +68,6 @@ function Faction:destructor()
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
 	end
-	self.m_Depot:save()
 	self:save()
 end
 
@@ -155,10 +153,6 @@ function Faction:isStateFaction()
 		return true
 	end
 	return false
-end
-
-function Faction:setDepotId(Id)
-	self.m_Depot = Depot.load(Id, self, "faction")
 end
 
 function Faction:isRescueFaction()

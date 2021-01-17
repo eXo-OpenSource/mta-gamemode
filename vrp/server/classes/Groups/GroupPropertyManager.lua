@@ -9,7 +9,7 @@ function GroupPropertyManager:constructor( )
 	self.m_BankAccountServer = BankServer.get("group.properties")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 	for k, row in ipairs(result) do
-		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId, row.ElevatorData)
+		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.ElevatorData)
 		count = count + 1
 	end
 
