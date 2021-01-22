@@ -7,7 +7,6 @@
 -- ****************************************************************************
 
 GUIElement = inherit(DxElement)
-inherit(GUITooltip, GUIElement)
 
 function GUIElement:constructor(posX, posY, width, height, parent)
 	DxElement.constructor(self, posX, posY, width, height, parent)
@@ -19,7 +18,6 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 end
 
 function GUIElement:destructor(...)
-	self:updateTooltip(false)
 	DxElement.destructor(self, ...)
 end
 
@@ -70,6 +68,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		if self.m_Hover then
 			if self.onUnhover		  then self:onUnhover(cx, cy)         end
 			if self.onInternalUnhover then self:onInternalUnhover(cx, cy) end
+			if self.m_TooltipInfo	  then self:hideTooltip()             end
 			self.m_Hover = false
 			self.m_LActive = false
 			self.m_RActive = false
@@ -82,6 +81,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 							if child.performChecks then --only update if it it a GUI element (because DxElements don't have checks)
 								if child.onUnhover		   then child:onUnhover(cx, cy)         end
 								if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
+								if child.m_TooltipInfo	   then child:hideTooltip()             end
 								child.m_Hover = false
 								if child.m_Children then
 									unhoverChildren(child)
@@ -105,8 +105,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		-- Call on*Events (enabling)
 		if not self.m_Hover then
 			if self.onHover			then self:onHover(cx, cy)			end
-			if self.onInternalHover then self:onInternalHover(cx, cy) end
-			if self.m_TooltipText then self:updateTooltip(true) end
+			if self.onInternalHover then self:onInternalHover(cx, cy)   end
+			if self.m_TooltipInfo   then self:showTooltip() 			end
 			self.m_Hover = true
 		end
 		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) and leftInside and leftClickHandled + 2 >= tick then
@@ -170,6 +170,7 @@ function GUIElement.unhoverAll()
 
 			if self.onUnhover		  then self:onUnhover(cursorX, cursorY)         end
 			if self.onInternalUnhover then self:onInternalUnhover(cursorX, cursorY) end
+			if self.m_TooltipInfo     then self:hideTooltip()						end
 			self.m_Hover = false
 		end
 		self = self.m_Parent
@@ -193,4 +194,21 @@ end
 
 function GUIElement:isHovered()
 	return self.m_Hover
+end
+
+function GUIElement:setTooltip(text, position, lineColor)
+	if text then
+		self.m_TooltipInfo = {text=text, position=position, lineColor=lineColor}
+		return self
+	end
+end
+
+function GUIElement:showTooltip()
+	self.m_Tooltip = GUITooltip.create(self.m_TooltipInfo.text, self, self.m_TooltipInfo.position, self.m_TooltipInfo.lineColor)
+end
+
+function GUIElement:hideTooltip()
+	if self.m_Tooltip then
+		delete(self.m_Tooltip)
+	end
 end

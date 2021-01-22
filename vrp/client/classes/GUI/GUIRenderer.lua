@@ -49,8 +49,6 @@ function GUIRenderer.updateAll(elapsedTime)
 		end
 	end
 
-	GUITooltip.checkTooltip()
-
 	if not GUIElement.ms_ClickProcessed then
 		GUIRenderer.process3DMouse()
 	end
