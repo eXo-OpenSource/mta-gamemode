@@ -77,6 +77,24 @@ function InventoryManager:constructor()
 		WearableClothes = WearableClothes;
 	}
 
+	DbElementTypeClass = {
+		[DbElementType.Temporary] = false,
+		[DbElementType.Player] = Player,
+		[DbElementType.Faction] = Faction,
+		[DbElementType.Company] = Company,
+		[DbElementType.Group] = Group,
+		[DbElementType.Vehicle] = PermanentVehicle,
+		[DbElementType.House] = House,
+		[DbElementType.Property] = GroupProperty,
+		[DbElementType.WeaponBox] = false,
+		[DbElementType.CoolingBox] = false,
+		[DbElementType.FactionDepot] = false,
+		[DbElementType.Server] = false,
+		[DbElementType.Shop] = false,
+		[DbElementType.VehicleShop] = false,
+		[DbElementType.Admin] = false,
+	}
+
 	if sql:queryFetchSingle("SHOW TABLES LIKE ?;", sql:getPrefix() .. "_items") and false then -- skip it for now
 		-- REDO migration
 		outputServerLog("========================================")
@@ -317,22 +335,14 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId, sy
 		local elementType = 0
 
 		if type(inventoryId) == "table" or type(inventoryId) == "userdata" then
-			if instanceof(inventoryId, Player) then
-				elementId = inventoryId.m_Id
-				elementType = DbElementType.Player
-			elseif instanceof(inventoryId, Faction) then
-				elementId = inventoryId.m_Id
-				elementType = DbElementType.Faction
-			elseif instanceof(inventoryId, Company) then
-				elementId = inventoryId.m_Id
-				elementType = DbElementType.Company
-			elseif instanceof(inventoryId, Group) then
-				elementId = inventoryId.m_Id
-				elementType = DbElementType.Group
-			elseif instanceof(inventoryId, PermanentVehicle) then
-				elementId = inventoryId.m_Id
-				elementType = DbElementType.Vehicle
-			else
+			for index, dbElementType in pairs(DbElementType) do
+				if DbElementTypeClass[dbElementType] and instanceof(inventoryId, DbElementTypeClass[dbElementType]) then
+					elementId = inventoryId.m_Id
+					elementType = dbElementType
+				end
+			end
+
+			if elementId == 0 then
 				if not DbElementTypeName[inventoryId[1]] or table.size(inventoryId) ~= 2 then
 					return false
 				end
@@ -350,7 +360,7 @@ function InventoryManager:getInventoryId(inventoryIdOrElementType, elementId, sy
 		end
 
 		if not row then
-			outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType))
+			if DEBUG then outputDebugString("No inventory for elementId " .. tostring(elementId) .. " and elementType " .. tostring(elementType)) end
 			return false
 		end
 		return row.Id
@@ -863,6 +873,7 @@ function InventoryManager:migrate()
 			`ElementType` int NOT NULL,
 			`TypeId` int NOT NULL,
 			`Slots` int NOT NULL,
+			`Permissions` text NULL DEFAULT NULL,
 			`Deleted` datetime NULL DEFAULT NULL,
 			PRIMARY KEY (`Id`),
 			FOREIGN KEY (`TypeId`) REFERENCES ??_inventory_types (`Id`)

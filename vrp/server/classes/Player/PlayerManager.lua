@@ -7,10 +7,9 @@
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
-"requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
+"requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt","onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
 "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle",
 "requestGunBox"}
 
@@ -42,10 +41,7 @@ function PlayerManager:constructor()
 	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
 	addEventHandler("changeWalkingstyle", root, bind(self.Event_changeWalkingstyle, self))
 	addEventHandler("passwordChange", root, bind(self.Event_passwordChange, self))
-	addEventHandler("requestGunBoxData", root, bind(self.Event_requestGunBoxData, self))
 	addEventHandler("requestGunBox", root, bind(self.Event_requestGunBox, self))
-	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
-	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
 	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
 	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
 	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
@@ -887,111 +883,8 @@ function PlayerManager:Event_passwordChange(old, new1, new2)
 	end
 end
 
-function PlayerManager:Event_requestGunBoxData(gunBoxX, gunBoxY, gunBoxZ)
-	client.m_CurrentGunBoxPosition = Vector3(gunBoxX, gunBoxY, gunBoxZ)
-	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-end
-
 function PlayerManager:Event_requestGunBox()
-	client:triggerEvent("openInventory", _("Waffenbox", client), DbElementType.WeaponBox, client:getId())
-end
-
-function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
-	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
-		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
-		return
-	end
-
-	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
-
-	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
-
-	for i= 1, 6 do
-		if not client.m_GunBox[tostring(i)] then
-			client.m_GunBox[tostring(i)] = {}
-			client.m_GunBox[tostring(i)]["WeaponId"] = 0
-			client.m_GunBox[tostring(i)]["Amount"] = 0
-			if i >= 4 then
-				client.m_GunBox[tostring(i)]["VIP"] = true
-			else
-				client.m_GunBox[tostring(i)]["VIP"] = false
-			end
-		end
-
-		local slot = client.m_GunBox[tostring(i)]
-		if slot["WeaponId"] == 0 then
-			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
-				local weaponSlot = getSlotFromWeapon(weaponId)
-				if client:getWeapon(weaponSlot) == weaponId then
-					if client:getTotalAmmo(weaponSlot) >= math.abs(muni) then
-						takeWeapon(client, weaponId)
-						slot["WeaponId"] = weaponId
-						slot["Amount"] = math.abs(muni)
-						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], math.abs(muni), i))
-						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-						return
-					else
-						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponId]))
-						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-						return
-					end
-				else
-					client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponId]))
-					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-					return
-				end
-			end
-		end
-	end
-
-	client:sendError(_("Du hast keinen freien Waffen-Slot in deiner Waffenbox!", client))
-end
-
-function PlayerManager:Event_gunBoxTakeWeapon(slotId)
-	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
-		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
-		return
-	end
-
-	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
-
-	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
-
-	local slot = client.m_GunBox[tostring(slotId)]
-	if slot then
-		if slot["WeaponId"] > 0 then
-			--if slot["Amount"] >= 0 then
-				local weaponId = slot["WeaponId"]
-				local amount = slot["Amount"]
-
-				if client:getWeaponLevel() < MIN_WEAPON_LEVELS[weaponId] then
-					client:sendError(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", client, MIN_WEAPON_LEVELS[weaponId]))
-					return
-				end
-
-				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
-					slot["WeaponId"] = 0
-					slot["Amount"] = 0
-					client:giveWeapon(weaponId, amount)
-					client:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!", client, WEAPON_NAMES[weaponId], amount, slotId))
-					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-					return
-				else
-					client:sendError(_("Du hast bereits eine Waffe dieser Art dabei!", client))
-					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-					return
-				end
-			--else
-			--	client:sendError("Internal Error Amount to low", client)
-			--	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-			--	return
-			--end
-		else
-			client:sendError(_("Du hast keine Waffe in diesem Slot!", client))
-			client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-			return
-		end
-	end
+	client:triggerEvent("openInventory", _("Waffenbox", client), DbElementType.WeaponBox, client:getId(), "tiny")
 end
 
 function PlayerManager:Event_getIDCardData(target)

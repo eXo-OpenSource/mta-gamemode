@@ -21,7 +21,7 @@ function InventoryManager:constructor()
 			local id = localPlayer:getPrivateSync("Id")
 			if id and id ~= 0 then
 				localPlayer:setPrivateSyncChangeHandler("Id", nil)
-				InventoryManager:getSingleton().m_PlayerInventoryGUI = InventoryGUI:new(_"Inventory", DbElementType.Player, id)
+				InventoryManager:getSingleton().m_PlayerInventoryGUI = InventoryGUI.create(_"Inventar", DbElementType.Player, id, "small")
 				InventoryManager:getSingleton().m_PlayerInventoryGUI:setAbsolutePosition(screenWidth-InventoryManager:getSingleton().m_PlayerInventoryGUI.m_Width-5, screenHeight-InventoryManager:getSingleton().m_PlayerInventoryGUI.m_Height-5)
 				InventoryManager:getSingleton().m_PlayerInventoryGUI:hide()
 
@@ -45,8 +45,8 @@ function InventoryManager:constructor()
 	NailWorldItemManager:new()
 end
 
-function InventoryManager:Event_openInventory(title, elementType, elementId)
-	local inventory = InventoryGUI.create(title, elementType, elementId)
+function InventoryManager:Event_openInventory(title, elementType, elementId, size)
+	local inventory = InventoryGUI.create(title, elementType, elementId, size)
 
 	if inventory then
 		--[[

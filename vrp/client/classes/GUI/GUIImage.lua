@@ -51,3 +51,29 @@ function GUIImage:fitBySize(width, height)
     end
     return self
 end
+
+function GUIImage.fitImageSizeToCenter(path, maxWidth, maxHeight)
+	local imageWidth, imageHeight = getImageSize(path)
+	local x, y, width, height = 0, 0, maxWidth, maxHeight
+
+	if imageWidth < maxWidth or imageHeight < maxHeight then
+		x = (maxWidth - imageWidth) / 2
+		y = (maxHeight - imageHeight) / 2
+		width = imageWidth
+		height = imageHeight
+	elseif imageWidth > maxWidth or imageHeight > maxHeight then
+		if imageWidth > imageHeight then
+			local scale = maxWidth / imageWidth
+
+			y = (maxHeight - imageHeight * scale) / 2
+			height = imageHeight * scale
+		else
+			local scale = maxHeight / imageHeight
+
+			x = (maxWidth - imageWidth * scale) / 2
+			width = imageWidth * scale
+		end
+	end
+
+	return x, y, width, height
+end

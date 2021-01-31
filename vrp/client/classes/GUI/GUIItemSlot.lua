@@ -15,7 +15,7 @@ function GUIItemSlot:constructor(posX, posY, width, height, slotList, slot, inve
 	width, height = math.floor(width), math.floor(height)
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, "99", 0.6, VRPFont(height))
+	GUIFontContainer.constructor(self, "99", 0.5, VRPFont(height))
 	GUIColorable.constructor(self, Color.white, rgb(97, 129, 140))
 
 	self.m_Multiline = false
@@ -70,12 +70,14 @@ function GUIItemSlot:drawThis(incache)
 			icon = "files/images/Inventory/items/missing.png"
 		end
 
-		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, icon, 0, 0, 0, tocolor(255, 255, 255, 255))
+		local xOffset, yOffset, width, height = GUIImage.fitImageSizeToCenter(icon, self.m_Width, self.m_Height)
+		dxDrawImage(self.m_AbsoluteX + xOffset, self.m_AbsoluteY + yOffset, width, height, icon, 0, 0, 0, tocolor(255, 255, 255, 255))
 
-		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and not (self.m_ItemData.MaxDurability > 0) then
+		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and self.m_ItemData.Amount > 1 and not (self.m_ItemData.MaxDurability > 0) then
 			local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
 			local height = dxGetFontHeight(self:getFontSize(), self:getFont()) / 1.5
-			dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2, width, height, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
+			dxDrawRectangle(self.m_AbsoluteX + self.m_Width - width - 4, self.m_AbsoluteY + self.m_Height - height + 1, width + 4, height - 1, Color.Background, incache ~= true)
+			dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
 		elseif self.m_ItemData.MaxDurability > 0 then
 			local progress = self.m_ItemData.Durability / self.m_ItemData.MaxDurability
 			local durabilityLevelColor = tocolor(255*(1-progress), 255*progress, 0)

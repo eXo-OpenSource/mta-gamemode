@@ -36,8 +36,8 @@ function GUIItemDragging:render()
 		if not fileExists(icon) then
 			icon = "files/images/Inventory/items/missing.png"
 		end
-
-		dxDrawImage(self.m_PositionX, self.m_PositionY, 40, 40, icon)
+		local xOffset, yOffset, width, height = GUIImage.fitImageSizeToCenter(icon, 40, 40)
+		dxDrawImage(self.m_PositionX, self.m_PositionY, width, height, icon)
 	end
 end
 

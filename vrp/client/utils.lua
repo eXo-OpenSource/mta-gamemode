@@ -325,6 +325,17 @@ function getLineAngle( cx, cy, r, t)
 	return x,y
 end
 
+local imageSizes = {}
+function getImageSize(path) -- function to cache image sizes
+	if not imageSizes[path] then
+		local texture = dxCreateTexture(path)
+		local imageWidth, imageHeight = dxGetMaterialSize(texture)
+		destroyElement(texture)
+		imageSizes[path] = {imageWidth, imageHeight}
+	end
+	return imageSizes[path][1], imageSizes[path][2]
+end
+
 addEvent("onClientElementInteriorChange", true )
 _setElementInterior = setElementInterior
 function setElementInterior(element, interior, x, y, z)

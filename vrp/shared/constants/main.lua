@@ -468,7 +468,7 @@ VehicleTypeName = {
 }
 
 
-DbElementType = {
+DbElementType = { -- When adding a new type, please add it here too: shared/constants/lastToLoad.lua
 	Temporary = -1,
 	Player = 1;
 	Faction = 2;
