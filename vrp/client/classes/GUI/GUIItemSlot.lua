@@ -28,6 +28,7 @@ function GUIItemSlot:constructor(posX, posY, width, height, slotList, slot, inve
 	self.m_SlotList = slotList
 	self.m_Slot = slot
 	self.m_Enabled = true
+	self.m_KeyChangeBind = bind(self.onKeyChange, self)
 end
 
 function GUIItemSlot:setItem(item)
@@ -35,19 +36,8 @@ function GUIItemSlot:setItem(item)
 
 	if item then
 		self.m_Text = item.Amount
-
-		local suffix = ""
-
-		if DEBUG then
-			suffix = "\n\nDEBUG\n"
-			suffix = suffix .. "TechnicalName: " .. item.TechnicalName .. "\n"
-			suffix = suffix .. "Class: " .. item.Class
-		end
-
-		self:setTooltip(item.Name .. "\nBesitzer: " .. item.OwnerName .. "\n" .. item.Description .. suffix, nil, true)
-	else
-		self:setTooltip(nil)
 	end
+	self:updateTooltipText()
 
 	self:anyChange()
 end
@@ -65,6 +55,9 @@ function GUIItemSlot:drawThis(incache)
 		local alpha = self.m_IsMoving and 100 or 255
 
 		local icon = "files/images/Inventory/items/" .. self.m_ItemData.Icon
+		if string.sub(self.m_ItemData.Icon, 1, 1) == "/" then -- if the icon is laying outside files/images/Inventory/items folder
+			icon = self.m_ItemData.Icon
+		end
 
 		if not fileExists(icon) then
 			icon = "files/images/Inventory/items/missing.png"
@@ -73,17 +66,21 @@ function GUIItemSlot:drawThis(incache)
 		local xOffset, yOffset, width, height = GUIImage.fitImageSizeToCenter(icon, self.m_Width, self.m_Height)
 		dxDrawImage(self.m_AbsoluteX + xOffset, self.m_AbsoluteY + yOffset, width, height, icon, 0, 0, 0, tocolor(255, 255, 255, 255))
 
-		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and self.m_ItemData.Amount > 1 and not (self.m_ItemData.MaxDurability > 0) then
-			local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
-			local height = dxGetFontHeight(self:getFontSize(), self:getFont()) / 1.5
-			dxDrawRectangle(self.m_AbsoluteX + self.m_Width - width - 4, self.m_AbsoluteY + self.m_Height - height + 1, width + 4, height - 1, Color.Background, incache ~= true)
-			dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
-		elseif self.m_ItemData.MaxDurability > 0 then
+		if self.m_ItemData.MaxDurability > 0 then
 			local progress = self.m_ItemData.Durability / self.m_ItemData.MaxDurability
 			local durabilityLevelColor = tocolor(255*(1-progress), 255*progress, 0)
 
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width, 4, Color.Background)
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 4, self.m_Width * progress, 4, durabilityLevelColor)
+		end
+
+		if not self.m_ItemData.IsUnique and not self.m_ItemData.IsStackable and self.m_ItemData.Amount > 1 then
+			local width = dxGetTextWidth(self.m_Text, self:getFontSize(), self:getFont())
+			local height = dxGetFontHeight(self:getFontSize(), self:getFont()) / 1.5
+			local itemAmountOffset = self.m_ItemData.MaxDurability > 0 and 4 or 0
+
+			dxDrawRectangle(self.m_AbsoluteX + self.m_Width - width - 4, self.m_AbsoluteY + self.m_Height - height + 1 - itemAmountOffset, width + 4, height - 1, Color.Background, incache ~= true)
+			dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2 - itemAmountOffset, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height - itemAmountOffset, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
 		end
 
 		if self.m_IsMoving or not self.m_Enabled then
@@ -97,6 +94,8 @@ end
 function GUIItemSlot:onHover(cursorX, cursorY)
 	self:setBackgroundColor(rgb(50, 200, 255)):anyChange()
 	GUIItemDragging:getSingleton():setCurrentSlot(self)
+	self:updateTooltipText()
+	addEventHandler("onClientKey", root, self.m_KeyChangeBind)
 end
 
 function GUIItemSlot:onUnhover(cursorX, cursorY)
@@ -104,6 +103,8 @@ function GUIItemSlot:onUnhover(cursorX, cursorY)
 	if GUIItemDragging:getSingleton():getCurrentSlot() == self then
 		GUIItemDragging:getSingleton():setCurrentSlot(nil)
 	end
+	self:updateTooltipText()
+	removeEventHandler("onClientKey", root, self.m_KeyChangeBind)
 end
 
 function GUIItemSlot:onLeftClickDown()
@@ -185,4 +186,44 @@ end
 
 function GUIItemSlot:isEnabled()
 	return self.m_Enabled
+end
+
+function GUIItemSlot:onKeyChange(button, state)
+	self:updateTooltipText()
+end
+
+function GUIItemSlot:updateTooltipText()
+	local item = self.m_ItemData
+	local tooltipText
+	local showDebug = getKeyState("lalt") and localPlayer:getRank() > 2
+
+	if item then
+		tooltipText = {}
+
+		table.insert(tooltipText, {text = item.Name, size = 24, color = Color.White})
+
+		if item.Tradeable == 0 then
+			table.insert(tooltipText, {text = "Accountgebunden", size = 20, color = Color.Accent})
+		end
+
+		if item.IsUnique then
+			table.insert(tooltipText, {text = "Einzigartig", size = 20, color = Color.White})
+		end
+
+		if item.Description and item.Description ~= "" then
+			table.insert(tooltipText, {text = "", size = 20, color = Color.White})
+			table.insert(tooltipText, {text = item.Description, size = 20, color = Color.White})
+		end
+
+
+		if showDebug then
+			table.insert(tooltipText, {text = "", size = 20, color = Color.White})
+			table.insert(tooltipText, {text = "DEBUG", size = 24, color = Color.White})
+			for key, value in pairs(item) do
+				table.insert(tooltipText, {text = ("%s: %s"):format(tostring(key), inspect(value)), size = 20, color = Color.White})
+			end
+		end
+	end
+
+	self:setTooltip(tooltipText)
 end

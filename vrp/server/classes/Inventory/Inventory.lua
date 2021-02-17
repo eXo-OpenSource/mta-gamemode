@@ -18,7 +18,6 @@ function Inventory.createPermanent(elementId, elementType, slots, typeId)
 	sql:queryExec("INSERT INTO ??_inventories (ElementId, ElementType, Slots, TypeId) VALUES (?, ?, ?, ?)", 
 		sql:getPrefix(), elementId, elementType, slots, typeId)
 	local inventoryId = sql:lastInsertId()
-	outputServerLog("NEW INVENTORY! ID: "..tostring(elementId)..", TYPE: "..tostring(elementType))
 
 	return Inventory:new(inventoryId, elementId, elementType, slots, typeId)
 end
@@ -71,7 +70,6 @@ function Inventory:loadData(sync)
 	self.m_DirtySince = 0
 	self.m_NextItemId = 1
 
-	self.m_Items = items
 	for _, item in pairs(items) do
 		local itemData = ItemManager.get(item.ItemId)
 		for k, v in pairs(itemData) do
@@ -85,6 +83,14 @@ function Inventory:loadData(sync)
 				end
 			end
 		end
+		if item.Metadata then
+			item.Metadata = fromJSON(item.Metadata)
+		end
+	end
+	self.m_Items = items
+
+	if inventory.ItemSettings then
+		self.m_ItemSettings = fromJSON(inventory.ItemSettings)
 	end
 
 	InventoryManager:getSingleton():syncInventory(self.m_Id)
@@ -117,8 +123,8 @@ end
 		* Has the inventory still enough space?
 		* Is the item unique and is it already in the inventory?
 ]]
-function Inventory:giveItem(item, amount, durability, metadata)
-	return InventoryManager:getSingleton():giveItem(self, item, amount, durability, metadata)
+function Inventory:giveItem(item, amount, durability, metadata, forceNewSlot, setInSlot)
+	return InventoryManager:getSingleton():giveItem(self, item, amount, durability, metadata, forceNewSlot, setInSlot)
 end
 
 function Inventory:takeItem(itemId, amount, all)
@@ -143,9 +149,9 @@ function Inventory:onInventoryChanged()
 	InventoryManager:getSingleton():syncInventory(self.m_Id)
 end
 
-function Inventory:getItem(id)
+function Inventory:getItem(idOrName)
 	for k, v in pairs(self.m_Items) do
-		if v.Id == id then
+		if (type(idOrName) == "number" and v.Id or v.TechnicalName) == idOrName then
 			return v
 		end
 	end
@@ -252,6 +258,18 @@ function Inventory:hasPlayerAccessTo(player)
 	--  Fraktion: ist der Spieler OnDuty in der Besitzerfraktion
 	--  Kofferrraum: hat Spieler einen Schlüssel für das Fahrzeug / ist CopDuty
 	--  Haus: ist der Spieler Mieter / Besitzer des Hauses
+
+	-- Diese Funktion sollte von der Klasse, die das Inventar benötigt, überschrieben werden.
+
+	return true
+end
+
+function Inventory:hasPlayerAccessToItem(player, item)
+	-- Check, ob ein Spieler Zugriff auf ein bestimmtest Item im Inventar hat.
+
+	-- Diese Funktion sollte von der Klasse, die das Inventar benötigt, überschrieben werden.
+
+	return true
 end
 
 function Inventory:isCompatibleWithCategory(category)
@@ -266,15 +284,33 @@ function Inventory:isCompatibleWithCategory(category)
 	return false
 end
 
+function Inventory:setItemSetting(item, setting, value)
+	if not self.m_ItemSettings then self.m_ItemSettings = {} end
+	if not self.m_ItemSettings[item] then self.m_ItemSettings[item] = {} end
+	self.m_ItemSettings[item][setting] = value
+
+	return true
+end
+
+function Inventory:getItemSetting(item, setting)
+	if not self.m_ItemSettings then return false end
+	if not self.m_ItemSettings[item] then return false end
+	
+	return self.m_ItemSettings[item][setting]
+end
+
 function Inventory:save(sync)
 	if not self.m_IsDirty then
 		return false
 	end
+	local inventory
 	local items
 
 	if sync then
+		inventory = sql:queryFetch("SELECT * FROM ??_inventories WHERE Id = ?", sql:getPrefix(), self.m_Id)
 		items = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), self.m_Id)
 	else
+		inventory = sql:asyncQueryFetch("SELECT * FROM ??_inventories WHERE Id = ?", sql:getPrefix(), self.m_Id)
 		items = sql:asyncQueryFetch("SELECT * FROM ??_inventory_items WHERE InventoryId = ?", sql:getPrefix(), self.m_Id)
 	end
 	local changes = {
@@ -334,9 +370,9 @@ function Inventory:save(sync)
 			end
 
 			-- Check metadata
-			if dbItem.Metadata ~= v.Metadata then
+			if type(v.Metadata) == "table" and not equals(dbItem.Metadata and fromJSON(dbItem.Metadata), v.Metadata) then
 				needsUpdate = true
-				update.Metadata = v.Metadata
+				update.Metadata = toJSON(v.Metadata)
 			end
 
 			if needsUpdate then
@@ -352,7 +388,7 @@ function Inventory:save(sync)
 				Amount = v.Amount;
 				Durability = v.Durability;
 				Slot = v.Slot;
-				Metadata = v.Metadata;
+				Metadata = type(v.Metadata) == "table" and toJSON(v.Metadata);
 			})
 		end
 	end
@@ -480,6 +516,34 @@ function Inventory:save(sync)
 			queries = queries .. ";"
 		end
 	end
+
+	if inventory.ItemSettings then
+		local query = ""
+
+		if self.m_ItemSettings and table.size(self.m_ItemSettings) == 0 then
+			query = "UPDATE ??_inventories SET ItemSettings = NULL WHERE Id = ?;"
+			table.insert(queriesParams, sql:getPrefix())
+			table.insert(queriesParams, self.m_Id)
+		elseif not equals(fromJSON(inventory.ItemSettings), self.m_ItemSettings) then
+			query = "UPDATE ??_inventories SET ItemSettings = ? WHERE Id = ?;"
+			table.insert(queriesParams, sql:getPrefix())
+			table.insert(queriesParams, toJSON(self.m_ItemSettings))
+			table.insert(queriesParams, self.m_Id)
+		end
+
+		if queries ~= "" then queries = queries .. " " end
+		queries = queries .. query
+
+	elseif self.m_ItemSettings and table.size(self.m_ItemSettings) > 0 then
+		local query = "UPDATE ??_inventories SET ItemSettings = ? WHERE Id = ?;"
+		table.insert(queriesParams, sql:getPrefix())
+		table.insert(queriesParams, toJSON(self.m_ItemSettings))
+		table.insert(queriesParams, self.m_Id)
+
+		if queries ~= "" then queries = queries .. " " end
+		queries = queries .. query
+	end
+			
 
 	if queries ~= "" then
 		sql:queryExec(queries, unpack(queriesParams))

@@ -436,22 +436,25 @@ end
 
 function FactionManager:Event_receiveFactionWeaponShopInfos()
 	local faction = client:getFaction()
-	local depot = faction.m_Depot
+	local inventory = faction.m_WeaponInventory
 	local playerId = client:getId()
 	local rank = faction.m_Players[playerId]
-	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,faction.m_ValidWeapons, faction.m_WeaponDepotInfo, depot:getWeaponTable(id), faction:getRankWeapons(rank))
+	local weaponTable = {}
+	for weapon, info in pairs(faction.m_WeaponDepotInfo) do
+		weaponTable[weapon] = {Waffe = inventory:getItemAmount(INVENTORY_WEAPON_ID_TO_NAME[weapon]), Munition = inventory:getItemAmount(INVENTORY_MUNITION_ID_TO_NAME[weapon])}
+	end
+	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,faction.m_ValidWeapons, faction.m_WeaponDepotInfo, weaponTable, faction:getRankWeapons(rank))
 end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	if not client.m_WeaponStoragePosition then return outputDebug("no weapon storage position for this faction implemented") end
 	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
 		local faction = client:getFaction()
-		local depot = faction.m_Depot
 		if faction:isStateFaction() and not client:isFactionDuty() then
 			client:sendError(_("Du bist nicht im Dienst!", client))
 			return
 		end
-		depot:takeWeaponsFromDepot(client,weaponTable)
+		faction:takeWeapons(client,weaponTable)
 	else
 		client:sendError(_("Du bist zu weit entfernt", client))
 	end

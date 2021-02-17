@@ -55,7 +55,8 @@ function ItemManager:loadItems()
 			Name = row.Name;
 			Description = row.Description;
 			Icon = row.Icon;
-			Size = row.Size;
+			StackSize = row.StackSize;
+			MaxAmount = row.MaxAmount;
 			ModelId = row.ModelId;
 			MaxDurability = row.MaxDurability;
 			DurabilityDestroy = row.DurabilityDestroy == 1;

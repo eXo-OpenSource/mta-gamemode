@@ -170,9 +170,11 @@ function InventoryManager:Event_onItemUseSecondary(inventoryId, itemId)
 	end
 end
 
-function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInventoryId, toSlot)
+function InventoryManager:Event_onItemMove(fromInventoryId, fromItemId, toInventoryId, toSlot, moveType)
 	if client ~= source then return end
-	self:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot)
+
+	local amount = moveType == "half" and math.floor(item.Amount/2) or moveType == "single" and 1
+	self:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot, amount)
 end
 
 function InventoryManager:syncInventory(inventoryId, target, sync)
@@ -418,7 +420,7 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 	end
 
 	if type(item) == "string" then
-		item = InventoryManager:getSingleton().m_ItemIdToName[item]
+		item = ItemManager:getSingleton().m_ItemIdToName[item]
 	end
 
 	if not ItemManager.get(item) then
@@ -427,18 +429,18 @@ function InventoryManager:isItemGivable(inventory, item, amount)
 
 	local itemData = ItemManager.get(item)
 
-	--[[
-	local cSize = inventory:getCurrentSize()
-
 	if amount < 1 then
 		return false, "amount"
 	end
 
-	if inventory.m_Size < cSize + itemData.Size * amount then
-		return false, "size"
+	local maxItemAmount = inventory:getItemSetting(itemData.TechnicalName, "MaxAmount") or itemData.MaxAmount
+	if inventory:getItemAmount(itemData.TechnicalName) + amount > maxItemAmount then
+		return false, "maxAmount"
 	end
-	]]
-	-- TODO: Add free slot check
+	
+	if not self:getNextFreeSlot(inventory) then
+		return false, "slot"
+	end
 
 	if not inventory:isCompatibleWithCategory(itemData.Category) then
 		return false, "category"
@@ -483,7 +485,7 @@ function InventoryManager:isItemTakeable(inventory, itemId, amount, all)
 	return true
 end
 
-function InventoryManager:giveItem(inventory, item, amount, durability, metadata)
+function InventoryManager:giveItem(inventory, item, amount, durability, metadata, forceNewSlot, setInSlot)
 	local inventory = inventory
 	local item = item
 
@@ -503,22 +505,28 @@ function InventoryManager:giveItem(inventory, item, amount, durability, metadata
 	if isGivable then
 		local itemData = ItemManager.get(item)
 
-		for k, v in pairs(inventory.m_Items) do
-			if v.ItemId == item then
-				if (v.Metadata and #v.Metadata > 0) or metadata or itemData.MaxDurability > 0 then
-					iprint({v.Metadata, metadata, itemData.MaxDurability}) -- TODO: Implement Metadata comparision
-				else
-					v.Amount = v.Amount + amount
-					inventory:onInventoryChanged()
-					return true
+		if not forceNewSlot and not setInSlot then
+			for k, v in pairs(inventory.m_Items) do
+				if v.ItemId == item then
+					if self:compareItems({TechnicalName = item, Metadata = metadata, Durability = durability or itemData.MaxDurability}, v) then
+						v.Amount = v.Amount + amount
+						v.Durability = v.Durability == itemData.MaxDurability and (durability and durability or v.Durability) or v.Durability
+						inventory:onInventoryChanged()
+						return true
+					end
 				end
 			end
 		end
 
-		local slot = self:getNextFreeSlot(inventory)
+		local slot
+		if setInSlot and not inventory:getItemFromSlot(setInSlot) then
+			slot = setInSlot
+		else
+			slot = self:getNextFreeSlot(inventory)
 
-		if not slot then
-			return false, "slot"
+			if not slot then
+				return false, "slot"
+			end
 		end
 
 		local id = inventory.m_NextItemId
@@ -591,17 +599,60 @@ function InventoryManager:takeItem(inventory, itemId, amount, all)
     return false, reason
 end
 
-function InventoryManager:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot)
+function InventoryManager:moveItem(fromInventoryId, fromItemId, toInventoryId, toSlot, amount)
+	local fromInventoryId = type(fromInventoryId) == "table" and fromInventoryId.m_Id or fromInventoryId
 	local fromInventory = self:getInventory(fromInventoryId)
+	local toInventoryId = type(toInventoryId) == "table" and toInventoryId.m_Id or toInventoryId
 	local toInventory = self:getInventory(toInventoryId)
 	local fromItem = fromInventory:getItem(fromItemId)
+	if not fromItem then return false, "noItem" end
+	if type(fromItemId) == "string" then fromItemId = fromItem.Id end
+	local fromItemData = ItemManager.get(fromItem.TechnicalName)
+	local toSlot = toSlot and toSlot or self:getNextFreeSlot(toInventoryId)
 	local toItem = toInventory:getItemFromSlot(toSlot)
+
+	if amount then
+		if amount == 0 then
+			return false, "invalidAmount"
+		end
+
+		if amount > fromItem.Amount then
+			return false, "amountTooBig"
+		end
+
+		local isTakeable, reason = self:isItemTakeable(fromInventoryId, fromItemId, amount)
+		if isTakeable then
+			local result, reason = self:giveItem(toInventoryId, fromItem.TechnicalName, amount, false, fromItem.Metadata, false, toSlot)
+
+			if result then
+				self:takeItem(fromInventoryId, fromItemId, amount)
+				if fromInventory ~= toInventory then
+					StatisticsLogger:getSingleton():addItemTrancactionLog(client, fromInventory.m_Id, toInventory.m_Id, fromSlot, toSlot, fromItem, amount)
+				end
+				return true
+			end
+			return false, reason
+		end
+
+		return false, reason
+	end
 
 	if toSlot < 1 or toInventory.m_Slots < toSlot then return end
 	if fromInventory == toInventory then
 		if toItem then
-			toItem.Slot = fromItem.Slot
-			fromItem.Slot = toSlot
+			if self:compareItems(fromItem, toItem) then
+				toItem.Amount = toItem.Amount + fromItem.Amount
+				toItem.Durability = toItem.Durability == fromItemData.MaxDurability and fromItem.Durability or toItem.Durability
+				for k, v in pairs(fromInventory.m_Items) do
+					if v == fromItem then
+						table.remove(fromInventory.m_Items, k)
+						break
+					end
+				end
+			else
+				toItem.Slot = fromItem.Slot
+				fromItem.Slot = toSlot
+			end
 		else
 			fromItem.Slot = toSlot
 		end
@@ -634,6 +685,7 @@ function InventoryManager:moveItem(fromInventoryId, fromItemId, toInventoryId, t
 			StatisticsLogger:getSingleton():addItemTrancactionLog(client, toInventory.m_Id, fromInventory.m_Id, toSlot, fromSlot, toItem)
 		end
 	end
+	return true
 end
 
 function InventoryManager:getNextFreeSlot(inventory)
@@ -793,6 +845,23 @@ function InventoryManager:useItemSecondary(inventory, id)
 	return true
 end
 
+function InventoryManager:compareItems(item, itemToCompare) --are two items stackable on each other?
+	local itemData = ItemManager.get(item.TechnicalName)
+	if item.TechnicalName ~= itemToCompare.TechnicalName then
+		return false
+	end
+
+	if ((not item.Metadata or table.size(item.Metadata) == 0) and (not itemToCompare.Metadata or table.size(itemToCompare.Metadata) == 0)) or not equals(item.Metadata, itemToCompare.Metadata) then
+		return false
+	end
+
+	if (itemData.MaxDurability > 0 and (item.Durability ~= itemData.MaxDurability and itemToCompare.Durability ~= itemData.MaxDurability)) then
+		return false
+	end
+
+	return true
+end
+
 function InventoryManager:migrate()
 	local h1, h2, h3, h4 = debug.gethook()
 	debug.sethook() -- disable infinity loop check
@@ -840,6 +909,7 @@ function InventoryManager:migrate()
 			`Breakable` tinyint(4) NOT NULL DEFAULT 0,
 			`IsStackable` tinyint(1) NOT NULL DEFAULT 0,
 			`StackSize` tinyint(4) NOT NULL DEFAULT 0,
+			`MaxAmount` int(11) NOT NULL DEFAULT 0,
 			PRIMARY KEY (`Id`) USING BTREE,
 			INDEX `CategoryId`(`CategoryId`) USING BTREE,
 			CONSTRAINT ??_items_ibfk_1 FOREIGN KEY (`CategoryId`) REFERENCES ??_item_categories (`Id`) ON DELETE RESTRICT ON UPDATE RESTRICT
@@ -874,6 +944,7 @@ function InventoryManager:migrate()
 			`TypeId` int NOT NULL,
 			`Slots` int NOT NULL,
 			`Permissions` text NULL DEFAULT NULL,
+			`ItemSettings` text NULL DEFAULT NULL,
 			`Deleted` datetime NULL DEFAULT NULL,
 			PRIMARY KEY (`Id`),
 			FOREIGN KEY (`TypeId`) REFERENCES ??_inventory_types (`Id`)
@@ -1116,47 +1187,47 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (178, 'mutantSardine', 6, 'ItemFish', 'Mutantensardine', '', 'mutantSardine.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (179, 'mutantCarp', 6, 'ItemFish', 'Mutantenkarpfen', '', 'mutantCarp.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (180, 'scorpionCarp', 6, 'ItemFish', 'Skorpionkarpfen', '', 'scorpionCarp.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (181, 'brassknuckle', 7, 'ItemWeapon', 'Schlagring', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (182, 'golfclub', 7, 'ItemWeapon', 'Golfschläger', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (183, 'nightstick', 7, 'ItemWeapon', 'Schlagstock', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (184, 'knife', 7, 'ItemWeapon', 'Messer', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (185, 'bat', 7, 'ItemWeapon', 'Baseballschläger', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (186, 'shovel', 7, 'ItemWeapon', 'Schaufel', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (187, 'poolstick', 7, 'ItemWeapon', 'Billiardschläger', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (188, 'katana', 7, 'ItemWeapon', 'Katana', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (189, 'chainsaw', 7, 'ItemWeapon', 'Kettensäge', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (190, 'colt45', 7, 'ItemWeapon', 'Colt 45', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (191, 'deagle', 7, 'ItemWeapon', 'Deagle', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (192, 'shotgun', 7, 'ItemWeapon', 'Schrotflinte', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (193, 'sawedOff', 7, 'ItemWeapon', 'Abgesägte Schrotflinte', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (194, 'combatShotgun', 7, 'ItemWeapon', 'SPAZ-12', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (195, 'uzi', 7, 'ItemWeapon', 'Uzi', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (196, 'mp5', 7, 'ItemWeapon', 'MP5', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (197, 'tec9', 7, 'ItemWeapon', 'Tec-9', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (198, 'ak47', 7, 'ItemWeapon', 'AK-47', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (199, 'm4', 7, 'ItemWeapon', 'M4', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (200, 'rifle', 7, 'ItemWeapon', 'Jagdgewehr', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (201, 'sniper', 7, 'ItemWeapon', 'Scharfschützengewehr', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (202, 'rocketLauncher', 7, 'ItemWeapon', 'Raketenwerfer', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (203, 'rocketLauncherHS', 7, 'ItemWeapon', 'Javelin', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (204, 'flamethrower', 7, 'ItemWeapon', 'Flammenwerfer', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (205, 'minigun', 7, 'ItemWeapon', 'Minigun', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (206, 'grenade', 7, 'ItemWeapon', 'Granate', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (207, 'teargas', 7, 'ItemWeapon', 'Tränengas', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (208, 'molotov', 7, 'ItemWeapon', 'Molotov', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (209, 'satchel', 7, 'ItemWeapon', 'Rucksackbombe', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (210, 'spraycan', 7, 'ItemWeapon', 'Spraydose', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (211, 'fireExtinguisher', 7, 'ItemWeapon', 'Feuerlöscher', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (212, 'camera', 7, 'ItemWeapon', 'Kamera', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (213, 'longDildo', 7, 'ItemWeapon', 'Langer Dildo', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (214, 'shortDildo', 7, 'ItemWeapon', 'Kurzer Dildo', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (215, 'vibrator', 7, 'ItemWeapon', 'Vibrator', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (216, 'flower', 7, 'ItemWeapon', 'Blumenstrauss', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (217, 'cane', 7, 'ItemWeapon', 'Gehstock', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (218, 'nightvision', 7, 'ItemWeapon', 'Nachtsichtgerät', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (219, 'infrared', 7, 'ItemWeapon', 'Wärmesichtgerät', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (220, 'parachute', 7, 'ItemWeapon', 'Fallschirm', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (221, 'satchelDetonator', 7, 'ItemWeapon', 'Fernzünder', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (181, 'brassknuckle', 7, 'ItemWeapon', 'Schlagring', '', '/files/images/Weapons/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (182, 'golfclub', 7, 'ItemWeapon', 'Golfschläger', '', '/files/images/Weapons/2.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (183, 'nightstick', 7, 'ItemWeapon', 'Schlagstock', '', '/files/images/Weapons/3.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (184, 'knife', 7, 'ItemWeapon', 'Messer', '', '/files/images/Weapons/4.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (185, 'bat', 7, 'ItemWeapon', 'Baseballschläger', '', '/files/images/Weapons/5.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (186, 'shovel', 7, 'ItemWeapon', 'Schaufel', '', '/files/images/Weapons/6.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (187, 'poolstick', 7, 'ItemWeapon', 'Billiardschläger', '', '/files/images/Weapons/7.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (188, 'katana', 7, 'ItemWeapon', 'Katana', '', '/files/images/Weapons/8.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (189, 'chainsaw', 7, 'ItemWeapon', 'Kettensäge', '', '/files/images/Weapons/9.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (190, 'colt45', 7, 'ItemWeapon', 'Colt 45', '', '/files/images/Weapons/22.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (191, 'deagle', 7, 'ItemWeapon', 'Deagle', '', '/files/images/Weapons/24.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (192, 'shotgun', 7, 'ItemWeapon', 'Schrotflinte', '', '/files/images/Weapons/25.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (193, 'sawedOff', 7, 'ItemWeapon', 'Abgesägte Schrotflinte', '', '/files/images/Weapons/26.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (194, 'combatShotgun', 7, 'ItemWeapon', 'SPAZ-12', '', '/files/images/Weapons/27.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (195, 'uzi', 7, 'ItemWeapon', 'Uzi', '', '/files/images/Weapons/28.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (196, 'mp5', 7, 'ItemWeapon', 'MP5', '', '/files/images/Weapons/29.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (197, 'tec9', 7, 'ItemWeapon', 'Tec-9', '', '/files/images/Weapons/32.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (198, 'ak47', 7, 'ItemWeapon', 'AK-47', '', '/files/images/Weapons/30.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (199, 'm4', 7, 'ItemWeapon', 'M4', '', '/files/images/Weapons/31.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (200, 'rifle', 7, 'ItemWeapon', 'Jagdgewehr', '', '/files/images/Weapons/33.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (201, 'sniper', 7, 'ItemWeapon', 'Scharfschützengewehr', '', '/files/images/Weapons/34.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (202, 'rocketLauncher', 7, 'ItemWeapon', 'Raketenwerfer', '', '/files/images/Weapons/35.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (203, 'rocketLauncherHS', 7, 'ItemWeapon', 'Javelin', '', '/files/images/Weapons/36.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (204, 'flamethrower', 7, 'ItemWeapon', 'Flammenwerfer', '', '/files/images/Weapons/37.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (205, 'minigun', 7, 'ItemWeapon', 'Minigun', '', '/files/images/Weapons/38.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (206, 'grenade', 7, 'ItemWeapon', 'Granate', '', '/files/images/Weapons/16.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (207, 'teargas', 7, 'ItemWeapon', 'Tränengas', '', '/files/images/Weapons/17.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (208, 'molotov', 7, 'ItemWeapon', 'Molotov', '', '/files/images/Weapons/18.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (209, 'satchel', 7, 'ItemWeapon', 'Rucksackbombe', '', '/files/images/Weapons/39.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (210, 'spraycan', 7, 'ItemWeapon', 'Spraydose', '', '/files/images/Weapons/41.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (211, 'fireExtinguisher', 7, 'ItemWeapon', 'Feuerlöscher', '', '/files/images/Weapons/42.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (212, 'camera', 7, 'ItemWeapon', 'Kamera', '', '/files/images/Weapons/43.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (213, 'longDildo', 7, 'ItemWeapon', 'Langer Dildo', '', '/files/images/Weapons/10.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (214, 'shortDildo', 7, 'ItemWeapon', 'Kurzer Dildo', '', '/files/images/Weapons/11.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (215, 'vibrator', 7, 'ItemWeapon', 'Vibrator', '', '/files/images/Weapons/12.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (216, 'flower', 7, 'ItemWeapon', 'Blumenstrauss', '', '/files/images/Weapons/14.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (217, 'cane', 7, 'ItemWeapon', 'Gehstock', '', '/files/images/Weapons/15.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (218, 'nightvision', 7, 'ItemWeapon', 'Nachtsichtgerät', '', '/files/images/Weapons/44.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (219, 'infrared', 7, 'ItemWeapon', 'Wärmesichtgerät', '', '/files/images/Weapons/45.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (220, 'parachute', 7, 'ItemWeapon', 'Fallschirm', '', '/files/images/Weapons/46.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (221, 'satchelDetonator', 7, 'ItemWeapon', 'Fernzünder', '', '/files/images/Weapons/40.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (222, 'colt45Bullet', 8, 'ItemWeapon', 'Colt 45 Patrone', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (223, 'taserBullet', 8, 'ItemWeapon', 'Taser Patrone', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (224, 'deagleBullet', 8, 'ItemWeapon', 'Deagle Kugel', '', 'Items/1.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -1604,6 +1675,7 @@ function InventoryManager:migrate()
 	local properties = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 
 	local inventories = {}
+	local depotInventories = {}
 	local depotOwners = {}
 
 	for _, item in pairs(items) do
@@ -1618,7 +1690,15 @@ function InventoryManager:migrate()
 						TypeId = 5,
 						items = {}
 					}
+					depotInventories[item.Id] = {
+						ElementId = v.Id,
+						ElementType = DbElementType.FactionDepot,
+						Slots = 500, -- TODO: Maybe add infinity option?
+						TypeId = 5,
+						items = {}
+					}
 					table.insert(newInventories, inventories[item.Id])
+					table.insert(newInventories, depotInventories[item.Id])
 					break
 				end
 			end
@@ -1673,7 +1753,7 @@ function InventoryManager:migrate()
 							end
 						end
 
-						table.insert(inventories[item.Id].items, inventoryItem)
+						table.insert(depotInventories[item.Id].items, inventoryItem)
 					end
 
 
@@ -1687,7 +1767,7 @@ function InventoryManager:migrate()
 							Metadata = nil
 						}
 
-						table.insert(inventories[item.Id].items, inventoryItem)
+						table.insert(depotInventories[item.Id].items, inventoryItem)
 					end
 				end
 			end

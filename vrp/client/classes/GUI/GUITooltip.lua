@@ -61,7 +61,7 @@ function GUITooltip.calculatePosition(textLines, element, pos) -- Please dont ju
 			if x < 0 then x = 0 end
 			if y < 0 then y = 0 end
 			if x + tooltipWidth > screenWidth then x = x - (x + tooltipWidth - screenWidth) end
-			if y + tooltipHeight > screenHeight then y = y + (y + tooltipHeight - screenHeight) end
+			if y + tooltipHeight > screenHeight then y = y - (y + tooltipHeight - screenHeight) end
 
 			return x, y
 		end
@@ -77,7 +77,7 @@ function GUITooltip.calculatePosition(textLines, element, pos) -- Please dont ju
 			return cursorX >= x and cursorY >= y and cursorX < x + width and cursorY < y + height
 		end
 
-		tooltipPosX, tooltipPosY = getRelativePosition(position)
+		tooltipPosX, tooltipPosY = getRelativePosition(pos)
 		if isCursorWithin(tooltipPosX, tooltipPosY, tooltipWidth, tooltipHeight) then
 			for k, position in pairs({"left", "right", "bottom", "up"}) do
 				local x, y = getRelativePosition(position)

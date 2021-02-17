@@ -89,6 +89,17 @@ end
 function InventoryManager:onItemLeft(inventoryId, item, slot)
 	if item ~= nil then
 		playSound("files/audio/Inventory/move-pickup.mp3")
+
+		if item.Amount > 1 then
+			if getKeyState("lshift") then
+				GUIItemDragging:getSingleton():setItem(item, slot, "half")
+				return
+			elseif getKeyState("lctrl") then
+				GUIItemDragging:getSingleton():setItem(item, slot, "single")
+				return
+			end
+		end
+
 		GUIItemDragging:getSingleton():setItem(item, slot)
 	end
 end
@@ -103,8 +114,9 @@ function InventoryManager:onItemRight(inventoryId, item)
 	end
 end
 
-function InventoryManager:onItemDrop(inventoryId, itemId, newInventoryId, newSlot)
-	triggerServerEvent("onItemMove", localPlayer, inventoryId, itemId, newInventoryId, newSlot)
+function InventoryManager:onItemDrop(inventoryId, item, newInventoryId, newSlot, moveType)
+	if inventoryId == newInventoryId and item.Slot == newSlot then return end
+	triggerServerEvent("onItemMove", localPlayer, inventoryId, item.Id, newInventoryId, newSlot, moveType)
 end
 
 function InventoryManager:isHovering()

@@ -34,7 +34,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	
 	local inventory = InventoryManager:getSingleton():getInventory(self, nil, true)
 	if not inventory then
-		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Property, 40, 6)
+		inventory = InventoryManager:getSingleton():createPermanentInventory(DbElementType.Property, self.m_Id, 40, 6)
 	end
 	self.m_Inventory = inventory
 

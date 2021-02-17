@@ -20,7 +20,7 @@ function GUIItemDragging:render()
 			local hoveredInventory = InventoryManager:getSingleton():isHovering()
 			if self.m_CurrentSlot and hoveredInventory then
 				--triggerServerEvent("onItemMove", localPlayer, self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData.Id, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot)
-				InventoryManager:getSingleton():onItemDrop(self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData.Id, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot)
+				InventoryManager:getSingleton():onItemDrop(self.m_Slot.m_InventoryId, self.m_Slot.m_ItemData, self.m_CurrentSlot.m_InventoryId, self.m_CurrentSlot.m_Slot, self.m_MoveType)
 				playSound("files/audio/Inventory/move-drop.mp3")
 			elseif not hoveredInventory then
 				--self.m_Slot:setItem(nil, nil)
@@ -32,12 +32,23 @@ function GUIItemDragging:render()
 		end
 
 		local icon = "files/images/Inventory/items/" .. self.m_Item.Icon
+		if string.sub(self.m_Item.Icon, 1, 1) == "/" then -- if the icon is laying outside files/images/Inventory/items folder
+			icon = self.m_Item.Icon
+		end
 
 		if not fileExists(icon) then
 			icon = "files/images/Inventory/items/missing.png"
 		end
 		local xOffset, yOffset, width, height = GUIImage.fitImageSizeToCenter(icon, 40, 40)
 		dxDrawImage(self.m_PositionX, self.m_PositionY, width, height, icon)
+
+		local amount = self.m_MoveType == "half" and math.floor(self.m_Slot.m_ItemData.Amount/2) or self.m_MoveType == "single" and 1 or self.m_Slot.m_ItemData.Amount
+		if amount > 1 then
+			local textWidth = dxGetTextWidth(amount, 1, getVRPFont(VRPFont(20)))
+			local textHeight = dxGetFontHeight(1, getVRPFont(VRPFont(20))) / 1.5
+			dxDrawRectangle(self.m_PositionX + width - textWidth - 4, self.m_PositionY + height - textHeight + 1, textWidth + 4, textHeight - 1, Color.Background)
+			dxDrawText(amount, self.m_PositionX + width - textWidth - 2, self.m_PositionY + height - textHeight - 2, self.m_PositionX + width, self.m_PositionY + height, Color.white, 1, getVRPFont(VRPFont(20)))
+		end
 	end
 end
 
@@ -54,9 +65,10 @@ function GUIItemDragging:prerender()
 	self.m_PositionY = cy
 end
 
-function GUIItemDragging:setItem(item, slot)
+function GUIItemDragging:setItem(item, slot, moveType)
 	self.m_Item = item
 	self.m_Slot = slot
+	self.m_MoveType = moveType
 	self.m_Slot:setMoving(true)
 end
 

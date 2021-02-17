@@ -28,6 +28,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	for i, v in pairs(self.m_Skins) do if tonumber(self:getSetting("Skin", i, 0)) == -1 then self.m_SpecialSkin = i end end
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
+	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 	self.m_Countdowns = {}
 
 	self.m_Vehicles = {}
@@ -50,9 +51,25 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 
 	local inventory = InventoryManager:getSingleton():getInventory(self, nil, true)
 	if not inventory then
-		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Faction, 10000, 5)
+		inventory = InventoryManager:getSingleton():createPermanentInventory(DbElementType.Faction, self.m_Id, 500, 5)
 	end
 	self.m_Inventory = inventory
+
+	local inventory = InventoryManager:getSingleton():getInventory(DbElementType.FactionDepot, self.m_Id, true)
+	if not inventory then
+		inventory = InventoryManager:getSingleton():createPermanentInventory(DbElementType.FactionDepot, self.m_Id, 500, 5)
+		for weaponId, info in pairs(self.m_WeaponDepotInfo) do
+			local weapon = INVENTORY_WEAPON_ID_TO_NAME[weaponId]
+			local ammo = INVENTORY_MUNITION_ID_TO_NAME[weaponId]
+			inventory:setItemSetting(weapon, "StackSize", info.Waffe)
+			inventory:setItemSetting(weapon, "MaxAmount", info.Waffe)
+			if ammo then
+				inventory:setItemSetting(weapon, "StackSize", info.Munition)
+				inventory:setItemSetting(weapon, "MaxAmount", info.Munition)
+			end
+		end
+	end
+	self.m_WeaponInventory = inventory
 
 	if not DEBUG then
 		Async.create(
@@ -914,77 +931,61 @@ end
 
 
 function Faction:storageWeapons(player)
-	local depot = self:getDepot()
-	local logData = {}
-	for i= 1, 12 do
-		if player:getWeapon(i) > 0 then
-			local weaponId = player:getWeapon(i)
-			local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
-			if WEAPON_CLIPS[weaponId] then
-				clipAmmo = WEAPON_CLIPS[weaponId]
-			end
+	local storageText = _("Du hast folgende Waffen in das Lager gelegt:", player)
+	local wepaponStored = false
+	local failText = _("Für folgende Waffen war kein Platz mehr im Lager:", player)
 
-			local magazines = clipAmmo > 0 and math.floor(player:getTotalAmmo(i)/clipAmmo) or 0
-			if THROWABLE_WEAPONS[weaponId] then -- don't divide by magazine size
-				magazines = player:getTotalAmmo(i)
-			end
+	for i = table.size(player:getInventory().m_Items), 1, -1 do
+		local item = player:getInventory().m_Items[i]
+		if item.Category == "weapon" or item.Category == "ammunition" then
+			
+			if InventoryManager:getSingleton():moveItem(player:getInventory(), item.Id, self.m_WeaponInventory, false) then
+				self:addLog(player, "Waffenlager", ("hat %d %s in das Lager gelegt!"):format(item.Amount, item.Name))
 
-			local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
-			local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
-
-			if depotWeapons == -1 then
-				takeWeapon(player, weaponId)
+				storageText = ("%s\n %d %s"):format(storageText, item.Amount, item.Name)
+				wepaponStored = true
 			else
-
-				if THROWABLE_WEAPONS[weaponId] then -- grenade etc
-					if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
-						depot:addWeaponD(weaponId, magazines)
-						takeWeapon(player, weaponId)
-						logData[WEAPON_NAMES[weaponId]] = magazines
-					elseif magazines > 0 then
-						local weaponsToMax = depotMaxWeapons - depotWeapons
-						depot:addWeaponD(weaponId, weaponsToMax)
-						setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - weaponsToMax)
-						if magsToMax > 0 then
-							logData[WEAPON_NAMES[weaponId]] = weaponsToMax
-							player:sendError(_("Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert.", player, magazines, WEAPON_NAMES[weaponId], weaponsToMax))
-						end
-					end
-				else
-					if depotWeapons+1 <= depotMaxWeapons then
-						if depotMagazines + magazines <= depotMaxMagazines then
-							depot:addWeaponD(weaponId, 1)
-							depot:addMagazineD(weaponId, magazines)
-							takeWeapon(player, weaponId)
-							logData[WEAPON_NAMES[weaponId]] = magazines
-						elseif magazines > 0 then
-							local magsToMax = depotMaxMagazines - depotMagazines
-							depot:addMagazineD(weaponId, magsToMax)
-							setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - magsToMax*clipAmmo)
-							if magsToMax > 0 then
-								logData[WEAPON_NAMES[weaponId]] = magsToMax
-								player:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", player, magazines, WEAPON_NAMES[weaponId], magsToMax))
-							end
-						end
-
-					else
-						player:sendError(_("Im Depot ist nicht Platz für eine/n %s!", player, WEAPON_NAMES[weaponId]))
-					end
-				end
+				failText = ("%s\n %d %s"):format(failText, item.Amount, item.Name)
+				storageFailed = true
 			end
 		end
 	end
-	local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
-	local wepaponsPut = false
-	for i,v in pairs(logData) do
-		wepaponsPut = true
-		textForPlayer = textForPlayer.."\n"..i
-		if v > 0 then
-			textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
-			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
-		else
-			self:addLog(player, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
+
+	if wepaponStored then player:sendInfo(storageText) end
+	if storageFailed then player:sendError(failText) end
+end
+
+function Faction:takeWeapons(player, weaponTable)
+	local count = 0
+	local receivedItems = {}
+	local text = _("Du hast folgende Waffen aus dem Lager genommen:", player)
+
+	for weapon, amount in pairs(weaponTable) do
+		local weaponItem = INVENTORY_WEAPON_ID_TO_NAME[weapon]
+		local weaponName = ItemManager.get(weaponItem).Name
+		local weaponAmount = amount["Waffe"]
+
+		local munitionItem = INVENTORY_MUNITION_ID_TO_NAME[weapon]
+		if munitionItem then
+			munitionName = ItemManager.get(munitionItem).Name
+			munitionAmount = amount["Munition"]
 		end
+
+		if weaponItem and weaponAmount > 0 then
+			if InventoryManager:getSingleton():moveItem(self.m_WeaponInventory, weaponItem, player:getInventory(), false, weaponAmount) then
+				text = ("%s\n %d %s"):format(text, weaponAmount, weaponName)
+				self:addLog(player, "Waffenlager", ("hat %d %s aus dem Lager genommen!"):format(weaponAmount, weaponName))
+			end
+		end
+
+		if munitionItem and munitionAmount > 0 then
+			if InventoryManager:getSingleton():moveItem(self.m_WeaponInventory, munitionItem, player:getInventory(), false, munitionAmount) then
+				text = ("%s mit %d Magazinen"):format(text, munitionAmount)
+				self:addLog(player, "Waffenlager", ("hat %d %s aus dem Lager genommen!"):format(munitionAmount, munitionName))
+			end
+		end
+
 	end
-	if wepaponsPut then player:sendInfo(textForPlayer) end
+
+	player:sendInfo(text)
 end

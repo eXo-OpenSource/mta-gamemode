@@ -38,7 +38,6 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	local leftState, leftClickHandled, leftX, leftY = Cursor:getLeftMouseState()
 	local leftInside = leftState and (absoluteX <= leftX and absoluteY <= leftY and absoluteX + self.m_Width > leftX and absoluteY + self.m_Height > leftY) or false
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy) and isDirectlyHovered
-	self.m_MouseInside = inside
 
 	if self.m_LActive and not mouse1 and (not self.ms_ClickProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onLeftClick			then self:onLeftClick(cx, cy)			end
@@ -109,7 +108,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			if self.m_TooltipInfo   then self:showTooltip() 			end
 			self.m_Hover = true
 		end
-		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) and leftInside and leftClickHandled + 2 >= tick then
+		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) and leftInside then
 			if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end
 			if self.onInternalLeftClickDown then self:onInternalLeftClickDown(cx, cy) 	end
 			self.m_LActive = true
@@ -199,8 +198,15 @@ end
 function GUIElement:setTooltip(text, position, lineColor)
 	if text then
 		self.m_TooltipInfo = {text=text, position=position, lineColor=lineColor}
-		return self
+		if self:isHovered() then
+			self:hideTooltip()
+			self:showTooltip()
+		end
+	else
+		self.m_TooltipInfo = nil
+		self:hideTooltip()
 	end
+	return self
 end
 
 function GUIElement:showTooltip()

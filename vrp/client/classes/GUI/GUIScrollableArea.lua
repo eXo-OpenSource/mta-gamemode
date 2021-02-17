@@ -48,7 +48,7 @@ function GUIScrollableArea:draw(incache)
 	-- Absolute X = Real X for drawing on the render target
 	local refreshAbsolutePosition
 	refreshAbsolutePosition = function(element)
-		for k, v in pairs(element.m_DrawnChildren and element.m_DrawnChildren or element.m_Children) do
+		for k, v in pairs(element.m_Children) do
 			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
 			v.m_AbsoluteY = element.m_AbsoluteY + v.m_PosY
 			refreshAbsolutePosition(v)

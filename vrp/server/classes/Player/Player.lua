@@ -192,7 +192,7 @@ function Player:loadCharacter()
 
 	local inventory = InventoryManager:getSingleton():getInventory(self)
 	if not inventory then
-		inventory = InventoryManager:getSingleton():createPermanentInventory(self.m_Id, DbElementType.Player, 40, 1)
+		inventory = InventoryManager:getSingleton():createPermanentInventory(DbElementType.Player, self.m_Id, 40, 1)
 	end
 	self.m_Inventory = inventory
 

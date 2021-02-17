@@ -536,7 +536,7 @@ function StatisticsLogger:addRouletteLog(player, bet, bets, winningNumber, wonAm
 		sqlLogs:getPrefix(), userId, bet, toJSON(betsInfo, true):sub(2, -2), winningNumber, wonAmount, highStake and 1 or 0)
 end
 
-function StatisticsLogger:addItemTrancactionLog(player, fromInventory, toInventory, fromSlot, toSlot, item)
+function StatisticsLogger:addItemTrancactionLog(player, fromInventory, toInventory, fromSlot, toSlot, item, amount)
 	--[[
 		`UserId` int NOT NULL,
 		`FromInventory` int NULL,
@@ -550,9 +550,10 @@ function StatisticsLogger:addItemTrancactionLog(player, fromInventory, toInvento
 		`Metadata` text NULL,
 	]]
 	local userId = 0
+	local amount = amount and amount or item.Amount
 
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 
 	sqlLogs:queryExec("INSERT INTO ??_ItemTransaction (UserId, FromInventory, ToInventory, FromSlot, ToSlot, InventoryItemId, ItemId, Amount, Durability, Metadata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		sqlLogs:getPrefix(), userId, fromInventory, toInventory, fromSlot, toSlot, item.Id, item.ItemId, item.Amount, item.Durability, item.Metadata or nil)
+		sqlLogs:getPrefix(), userId, fromInventory, toInventory, fromSlot, toSlot, item.Id, item.ItemId, amount, item.Durability, item.Metadata or nil)
 end

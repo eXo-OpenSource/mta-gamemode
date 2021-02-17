@@ -555,37 +555,31 @@ function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 	local insertAmount
 	local shortMessage = {}
 	local money = 0
-	local depot = faction.m_Depot
+	local inventory = faction.m_WeaponInventory
 
 	local depotInfo = faction:isStateFaction() and factionWeaponDepotInfoState or factionWeaponDepotInfo
 	local allowedWeapons = factionWeapons[faction:getId()]
 
-	for weaponID, v in pairs(weaponTable) do
-		for typ, amount in pairs(weaponTable[weaponID]) do
-			insertAmount = 0
-			if not weaponTable[weaponID]["Waffe"] then weaponTable[weaponID]["Waffe"] = 0 end
-			if not weaponTable[weaponID]["Munition"] then weaponTable[weaponID]["Munition"] = 0 end
-			if amount > 0 then
-				if (faction:isStateFaction() and allowedWeapons[weaponID]) or faction:isEvilFaction() then
-					if typ == "Waffe" then
-						if depotInfo[weaponID]["Waffe"] >= depot.m_Weapons[weaponID]["Waffe"] + amount then
-							insertAmount = amount
-						else
-							insertAmount = depotInfo[weaponID]["Waffe"] - depot.m_Weapons[weaponID]["Waffe"]
-						end
-						depot:addWeaponD(weaponID, insertAmount)
-						weaponTable[weaponID]["Waffe"] = weaponTable[weaponID]["Waffe"] - insertAmount
-						shortMessage[#shortMessage+1] = {WEAPON_NAMES[weaponID], insertAmount}
-					elseif typ == "Munition" then
-						if depotInfo[weaponID]["Magazine"] >= depot.m_Weapons[weaponID]["Munition"] + amount then
-							insertAmount = amount
-						else
-							insertAmount = depotInfo[weaponID]["Magazine"] - depot.m_Weapons[weaponID]["Munition"]
-						end
-						depot:addMagazineD(weaponID,insertAmount)
-						weaponTable[weaponID]["Munition"] = weaponTable[weaponID]["Munition"] - insertAmount
-						shortMessage[#shortMessage+1] = {WEAPON_NAMES[weaponID].." Magazin/e", insertAmount}
-					end
+	for weapon, info in pairs(weaponTable) do
+		if not weaponTable[weapon]["Waffe"] then weaponTable[weapon]["Waffe"] = 0 end
+		if not weaponTable[weapon]["Munition"] then weaponTable[weapon]["Munition"] = 0 end
+		
+		if (faction:isStateFaction() and allowedWeapons[weapon]) or faction:isEvilFaction() then
+			for itemType, amount in pairs(info) do
+				local item = itemType == "Waffe" and INVENTORY_WEAPON_ID_TO_NAME[weapon] or INVENTORY_MUNITION_ID_TO_NAME[weapon]
+				local depotInfoType = itemTyp == "Waffe" and "Waffe" or "Magazine" 
+				local name = ItemManager.get(item).Name
+				local insertAmount = 0
+
+				if depotInfo[weapon][depotInfoType] >= inventory:getItemAmount(item) + amount then
+					insertAmount = amount
+				else
+					insertAmount = depotInfo[weapon][depotInfoType] - inventory:getItemAmount(item)
+				end
+
+				if inventory:giveItem(item, insertAmount) then
+					weaponTable[weapon][itemType] = weaponTable[weapon][itemType] - insertAmount
+					shortMessage[#shortMessage+1] = {WEAPON_NAMES[weapon], insertAmount}
 				end
 			end
 		end
@@ -632,6 +626,4 @@ function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 		shortmessageString = shortmessageString..("Geld: %d$"):format(money)
 	end
 	player:sendShortMessage(shortmessageString, "Waffentruck-Kiste", nil, 15000)
-
-	depot:save()
 end
