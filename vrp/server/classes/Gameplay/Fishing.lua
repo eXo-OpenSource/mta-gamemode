@@ -524,8 +524,8 @@ end
 --- EQUIPMENT HANDLING (bait, accessories)
 function Fishing:updateFishingRodEquipments(player, fishingRodName)
 	local fishingRodEquipments = self:getFishingRodEquipments(player, fishingRodName)
-	local baitName = fishingRodEquipments["bait"] or false
-	local accessorieName = fishingRodEquipments["accessories"] or false
+	local baitName = fishingRodEquipments["bait"] and fishingRodEquipments["bait"].TechnicalName or false
+	local accessorieName = fishingRodEquipments["accessories"] and fishingRodEquipments["accessories"].TechnicalName or false
 	player:triggerEvent("onFishingUpdateEquipments", baitName, accessorieName)
 end
 

@@ -17,7 +17,7 @@ function ItemFishingBait:use()
 	for fishingRod, fishingRodData in pairs(FISHING_RODS) do
 		local fishingRodItem = self.m_Inventory:getItem(fishingRod)
 		if fishingRodData.baitSlots > 0 and fishingRodItem then
-			table.insert(fishingRods, fishingRod)
+			table.insert(fishingRods, fishingRodItem)
 		end
 	end
 
