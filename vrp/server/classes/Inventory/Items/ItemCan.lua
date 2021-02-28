@@ -12,4 +12,6 @@ function ItemCan:use()
 	if not player then return false end
 
 	ItemCanManager:getSingleton():toggleCan(player, self.m_Item.Id)
+
+	return true
 end

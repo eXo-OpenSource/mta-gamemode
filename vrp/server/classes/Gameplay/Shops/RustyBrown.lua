@@ -17,8 +17,8 @@ function RustyBrown:constructor(id, name, position, rotation, typeData, dimensio
 		["Big"] = {["Name"] = "Großes Menü", ["Price"] = 80, ["Health"] = 80}
 	}
 	self.m_Items = {
-		["Donutbox"] = 75,
-		["Donut"] = 9
+		["donutBox"] = 75,
+		["donut"] = 9
 	}
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onFoodMarkerHit, self))

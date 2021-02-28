@@ -77,8 +77,8 @@ function HalloweenEasterEggs:giveReward(id)
         if not self.m_DiscoveredAchievents[client:getId()][id] then
             self.m_DiscoveredAchievents[client:getId()][id] = true
             
-            client:getInventory():giveItem("Kürbis", self.m_Rewards.pumpkins)
-            client:getInventory():giveItem("Suessigkeiten", self.m_Rewards.sweets)
+            client:getInventory():giveItem("pumpkin", self.m_Rewards.pumpkins)
+            client:getInventory():giveItem("candies", self.m_Rewards.sweets)
 
             client:sendSuccess(_("Du hast %s Kürbisse und und %s Süßigkeiten erhalten!", client, self.m_Rewards.pumpkins, self.m_Rewards.sweets))
         end

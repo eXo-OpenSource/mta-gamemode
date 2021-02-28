@@ -10,8 +10,6 @@
 
 - [p] Add item owner (only change if item has been traded by the owner? If yes needs to be added to trading system)
 
-- [ ] Check if fishing works
-- [ ] Add logic for cooling box size!!!
 - [ ] Write testing list
 - [ ] Implement new weapon handling with inventory
 - [ ] Rewrite all ItemClasses for new Inventory
@@ -41,6 +39,8 @@
 - [x] Fix StaticWorldItems
 - [x] Create new GUI for trading
 - [x] Reimplement trading
+- [x] Check if fishing works
+- [x] Add logic for cooling box size!!!
 
 ## Bug List
 
@@ -56,7 +56,6 @@
 * ItemTaser = ItemTaser;
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
-* ItemFishing = ItemFishing;
 * WearablePortables = WearablePortables;
 * WearableClothes = WearableClothes;
 * ItemEntrance = ItemEntrance;
@@ -90,6 +89,7 @@
 * ~~ItemEasteregg = ItemEasteregg;~~ - remove
 * ~~ItemPumpkin = ItemPumpkin;~~ - remove
 * ~~ItemSellContract = ItemSellContract;~~ - done (Needs testing)
+* ~~ItemFishing = ItemFishing;
 
 ## Notes
 

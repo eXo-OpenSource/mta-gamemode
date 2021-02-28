@@ -8,30 +8,30 @@ FISHING_INVENTORY_BAG = "Items"
 
 FISHING_EQUIPMENT = {
 	-- Coolingbags
-	["Kühlbox"] = {level = 8},
-	["Kühltasche"] = {level = 4},
-	["Kleine Kühltasche"] = {level = 0},
+	["coolingBoxLarge"] = {level = 8},
+	["coolingBoxMedium"] = {level = 4},
+	["coolingBoxSmall"] = {level = 0},
 
 	-- Fishingrods
-	["Bambusstange"] = {level = 0},
-	["Angelrute"] = {level = 3},
-	["Profi Angelrute"] = {level = 7},
-	["Legendäre Angelrute"] = {level = 13},
+	["bambooFishingRod"] = {level = 0},
+	["fishingRod"] = {level = 3},
+	["expertFishingRod"] = {level = 7},
+	["legendaryFishingRod"] = {level = 13},
 
 	-- Baits
-	["Köder"] = {level = 3},
-	["Leuchtköder"] = {level = 5},
-	["Pilkerköder"] = {level = 11},
+	["bait"] = {level = 3},
+	["glowBait"] = {level = 5},
+	["pilkerBait"] = {level = 11},
 
 	-- Accessories
-	["Schwimmer"] = 	{level = 1},
-	["Spinner"] = 		{level = 10},
+	["swimmer"] = {level = 1},
+	["spinner"] = {level = 10},
 }
 
 FISHING_BAGS = {
-	["Kühlbox"] = {max = 65},
-	["Kühltasche"] = {max = 25},
-	["Kleine Kühltasche"] = {max = 15},
+	["coolingBoxLarge"] = {max = 65},
+	["coolingBoxMedium"] = {max = 25},
+	["coolingBoxSmall"] = {max = 15},
 }
 
 FISHING_RODS = {
@@ -150,7 +150,7 @@ FISHING_BAD_CATCH_MESSAGES_SEWERS = {
 
 FISHING_BAD_CATCH_ITEMS_SEWERS =
 {
-	"Schuh",
-	"Abfall",
-	"Flasche",
+	"shoe",
+	"trash",
+	"bottle",
 }

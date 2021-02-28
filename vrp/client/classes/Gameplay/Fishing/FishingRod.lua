@@ -81,6 +81,7 @@ function FishingRod:reset()
 end
 
 function FishingRod:updateEquipments(baitName, accessorieName)
+	outputChatBox(tostring(baitName)..", "..tostring(accessorieName))
 	self.m_maxFishingBiteTime = 30000 - FISHING_RODS[self.m_FishingRodName].biteTimeReduction - FISHING_BAITS[baitName].biteTimeReduction - FISHING_ACCESSORIES[accessorieName].biteTimeReduction
 	self.m_RenderBobber = FISHING_ACCESSORIES[accessorieName].renderBobber
 end

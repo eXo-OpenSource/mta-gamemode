@@ -20,7 +20,6 @@ function ShopManager:constructor()
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
-	addEventHandler("shopBuyWeapon", root, bind(self.buyWeaponFromItemShop, self))
 	addEventHandler("barBuyDrink", root, bind(self.barBuyDrink, self))
 	addEventHandler("vehicleBuy", root, bind(self.vehicleBuy, self))
 
@@ -145,8 +144,9 @@ function ShopManager:buyItem(shopId, item, amount)
 	if not amount then amount = 1 end
 	local shop = self:getFromId(shopId)
 	if shop.m_Items[item] then
-		if ItemManager:getSingleton():getInstance(item) and ItemManager:getSingleton():getInstance(item).canBuy then
-			local state, reason = ItemManager:getSingleton():getInstance(item):canBuy(client, item)
+		local class = InventoryItemClasses[ItemManager.get(item).Class]
+		if class and class.canBuy then
+			local state, reason = class.canBuy(client, item)
 			if not state then
 				client:sendError(tostring(reason))
 				return false
@@ -155,17 +155,15 @@ function ShopManager:buyItem(shopId, item, amount)
 
 		if client:getMoney() >= shop.m_Items[item]*amount then
 			local value
-			if item == "Kanne" then
-				value = 10
-			elseif item == "Mautpass" then
-				value = getRealTime().timestamp + 7*24*60*60
+			if item == "tollTicket" then
+				data = {ExpireTime = getRealTime().timestamp + 7*24*60*60}
 			end
 
-			if client:getInventoryOld():giveItem(item, amount, value) then
+			if client:getInventory():giveItem(item, amount, data) then
 				client:transferMoney(shop.m_BankAccount, shop.m_Items[item]*amount, "Item-Einkauf", "Gameplay", "Item")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 			else
-				--client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventoryOld():getMaxItemAmount(item)))
+				client:sendError(_("Du hast nicht genug Platz im Inventar!", client))
 				return
 			end
 		else
@@ -204,40 +202,6 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 		else
 			client:sendError(_("Internal Error! Clothe not found!", client))
 			return
-		end
-	else
-		client:sendError(_("Internal Error! Shop not found!", client))
-		return
-	end
-end
-
-function ShopManager:buyWeaponFromItemShop(shopId, weaponId)
-	if client:isDead() then return false end
-	if not weaponId then return end
-	local shop = self:getFromId(shopId)
-	if shop then
-		if MIN_WEAPON_LEVELS[weaponId] <= client:getWeaponLevel() then
-			local price = shop.m_WeaponItems[weaponId]
-
-			if client:getMoney() >= price then
-				local ammo = 20 --getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 1 doesn't work with the camera, at least not for me - MasterM
-
-				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
-					client:giveWeapon(weaponId, ammo)
-					reloadPedWeapon(client)
-
-					StatisticsLogger:addAmmunationLog(client, "Shop", toJSON({[weaponId] = ammo}), price)
-					client:transferMoney(shop.m_BankAccount, price, "Shop-Einkauf", "Gameplay", "Weapon")
-					client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
-				else
-					client:sendError(_("Du hast bereits ein/e(n) %s auf dem Platz der/des %s!", client, WEAPON_NAMES[client:getWeapon(getSlotFromWeapon(weaponId))], WEAPON_NAMES[weaponId]))
-				end
-			else
-				client:sendError(_("Du hast nicht genug Geld dabei!", client))
-				return
-			end
-		else
-			client:sendError(_("Dein Waffenlevel ist zu niedrig!",client))
 		end
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))

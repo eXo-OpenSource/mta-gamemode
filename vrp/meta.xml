@@ -166,7 +166,8 @@
 	<script src="server/classes/Inventory/Items/ItemFood.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemCoolingBox.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishingRod.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemBait.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemFishingAccessorie.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemFishingBait.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishingLexicon.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemAlcohol.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemCan.lua" type="server"/>
@@ -175,7 +176,6 @@
 	<script src="server/classes/Inventory/Items/ItemFuelcan.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemRepairKit.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemPumpkin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
@@ -2219,6 +2219,48 @@
 	<vrpfile src="files/images/Inventory/items/voidSalmon.png" />
 	<vrpfile src="files/images/Inventory/items/walleye.png" />
 	<vrpfile src="files/images/Inventory/items/zander.png" />
+
+	<vrpfile src="files/images/Inventory/items/weapons/1.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/2.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/3.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/4.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/5.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/6.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/7.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/8.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/9.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/10.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/11.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/12.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/14.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/15.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/16.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/17.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/18.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/22.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/24.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/25.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/26.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/27.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/28.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/29.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/30.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/31.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/32.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/33.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/34.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/35.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/36.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/37.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/38.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/39.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/40.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/41.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/42.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/43.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/44.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/45.png"/>
+	<vrpfile src="files/images/Inventory/items/weapons/46.png"/>
 
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />

@@ -7,8 +7,10 @@ function BuyItemBeggar:giveItem(player, item)
 	if self.m_Despawning then return end
 	if not player.vehicle then
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getInventoryOld():getItemAmount(item) >= 1 then
-			player:getInventoryOld():removeItem(item, 1)
+		local name = ItemManager.get(item).Name
+
+		if player:getInventory():getItemAmount(item) >= 1 then
+			player:getInventory():takeItem(item, 1)
 			player:giveCombinedReward("Bettler-Handel", {
 				karma = 5,
 				points = 5,
@@ -21,7 +23,7 @@ function BuyItemBeggar:giveItem(player, item)
 				end, 50, 1
 			)
 		else
-			player:sendError(_("Du hast kein/en %s dabei!", player, item))
+			player:sendError(_("Du hast kein/en %s dabei!", player, name))
 		end
 	else
 		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))

@@ -27,31 +27,17 @@ function SkinShops:Event_skinBuy(skinId)
 	if not SkinInfo[skinId] then return end
 	local name, price = unpack(SkinInfo[skinId])
 
-	if source:getMoney() >= price then
-		source:setSkin(skinId)
-		source:transferMoney(self.m_BankAccountServer, price, "Kleidungs-Kauf", "Gameplay", "Skin")
+	if client:getMoney() >= price then
+		if client:getInventory():giveItem("clothing", 1, {Metadata = {ModelId = skinID}}) then
+			client:setSkin(skinId)
+			client:transferMoney(self.m_BankAccountServer, price, "Kleidungs-Kauf", "Gameplay", "Skin")
 
-		source:triggerEvent("skinBought", skinId)
-		source:giveAchievement(23)
-		self:giveClothItem(source, skinId)
-	else
-		source:sendError(_("Du hast nicht genügend Geld!", source))
-	end
-end
-
-function SkinShops:giveClothItem( player, skinID )
-	local inv = player:getInventoryOld()
-	local pAllSkins = inv:getItemPlacesByName("Kleidung")
-	local place, bag, value
-	for i = 1, #pAllSkins do
-		place = pAllSkins[i][1]
-		bag = pAllSkins[i][2]
-		value = inv:getItemValueByBag( bag, place)
-		if value then
-			if value == skinID then
-				return false
-			end
+			client:triggerEvent("skinBought", skinId)
+			client:giveAchievement(23)
+		else
+			client:sendError(_("Du hast nicht genug Platz in deinem Inventar!", client))
 		end
+	else
+		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end
-	inv:giveItem("Kleidung",1,skinID)
 end

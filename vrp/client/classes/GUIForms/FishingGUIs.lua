@@ -53,23 +53,24 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 	for _, bag in pairs(CoolingBags) do
 		self.m_GridList:addItemNoClick(bag.name)
 
-		table.sort(bag.content, function(a, b) return a.size > b.size end)
+		table.sort(bag.content, function(a, b) return a.Metadata.size > b.Metadata.size end)
 
 		for _, fish in pairs(bag.content) do
-			local item = self.m_GridList:addItem(fish.fishName, fish.size)
-			item.fishId = fish.Id
-			item.fishName = fish.fishName
-			item.fishSize = fish.size
-			item.fishQuality = fish.quality
+			local item = self.m_GridList:addItem(fish.Name, fish.Metadata.size)
+			item.fishId = fish.fishId
+			item.fishName = fish.Name
+			item.fishSize = fish.Metadata.size
+			item.fishQuality = fish.Metadata.quality
+			item.fish = fish
 
 			item.onLeftClick =
 				function()
-					self.m_FishNameLabel:setText(fish.fishName)
-					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or (fish.quality == 2 and Color.Yellow or Color.Purple)))
-					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
-					self.m_QualityBonusLabel:setText(fish.quality == 3 and "100%" or (fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-")))
+					self.m_FishNameLabel:setText(fish.Name)
+					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.Metadata.quality + 1)):setColor(fish.Metadata.quality == 0 and Color.Brown or (fish.Metadata.quality == 1 and Color.LightGrey or (fish.Metadata.quality == 2 and Color.Yellow or Color.Purple)))
+					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.fishId].DefaultPrice))
+					self.m_QualityBonusLabel:setText(fish.Metadata.quality == 3 and "100%" or (fish.Metadata.quality == 2 and "50%" or (fish.Metadata.quality == 1 and "25%" or "-")))
 					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
-					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].RareBonus*100))
+					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.fishId].RareBonus*100))
 				end
 		end
 	end
@@ -84,6 +85,7 @@ function FishingTradeGUI:addFish()
 		sellItem.fishName = item.fishName
 		sellItem.fishSize = item.fishSize
 		sellItem.fishQuality = item.fishQuality
+		sellItem.fish = item.fish
 
 		self:updateTotalPrice()
 		self:resetLabels()
@@ -98,6 +100,7 @@ function FishingTradeGUI:addAllFish()
 			sellItem.fishName = item.fishName
 			sellItem.fishSize = item.fishSize
 			sellItem.fishQuality = item.fishQuality
+			sellItem.fish = item.fish
 		end
 	end
 
@@ -121,12 +124,17 @@ function FishingTradeGUI:updateTotalPrice()
 		end
 	end
 
-	self.m_TotalPaymentLabel:setText(math.floor(totalPrice))
+	self.m_TotalPaymentLabel:setText(("%d$"):format(math.floor(totalPrice)))
 end
 
 function FishingTradeGUI:requestTrade()
 	if #self.m_SellList:getItems() > 0 then
-		triggerServerEvent("clientSendFishTrading", localPlayer, self.m_SellList:getItems())
+		local items = {}
+		for k, v in pairs(self.m_SellList:getItems()) do 
+			table.insert(items, v.fish) 
+		end
+
+		triggerServerEvent("clientSendFishTrading", localPlayer, items)
 		self.m_SellList:clear()
 	else
 		WarningBox:new("Du musst zu erst Fische zum verkaufen hinzufügen!")
@@ -315,15 +323,15 @@ function FishingRodGUI:constructor(fishingRodName, equipments)
 	local infoLabel = GUIGridLabel:new(1, 3, 8, 1, "", window):setFont(VRPFont(22)):setFontSize(1):setAlign("center", "center")
 
 	for i, equipment in ipairs(equipments) do
-		local slot = GUIGridRectangle:new((i-1)*2+1, 1, 2, 2, Inventory.Color.ItemBackground, window)
+		local slot = GUIGridRectangle:new((i-1)*2+1, 1, 2, 2, tocolor(97, 129, 140), window)
 
 		if equipment then
-			local itemIcon = InventoryOld:getSingleton():getItemData()[equipment].Icon
-			local itemAmount = InventoryOld:getSingleton():getItemAmount(equipment)
+			local itemIcon = equipment.Icon
+			local itemAmount = equipment.Amount
 			local amountText = itemAmount > 1 and itemAmount or ""
 			local textWidth = VRPTextWidth(amountText, 22) + 10
 
-			GUIImage:new(5, 5, slot.m_Width - 10, slot.m_Height - 10, "files/images/Inventory/items/" .. itemIcon, slot)
+			GUIImage:new(5, 5, slot.m_Width - 10, slot.m_Height - 10, itemIcon, slot)
 
 			if itemAmount > 1 then
 				GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-15, textWidth, 15, Color.Background, slot)
@@ -332,13 +340,13 @@ function FishingRodGUI:constructor(fishingRodName, equipments)
 
 			slot.onHover =
 				function()
-					slot:setColor(Inventory.Color.ItemBackgroundHover)
-					infoLabel:setText(equipment)
+					slot:setColor(rgb(50, 200, 255))
+					infoLabel:setText(equipment.Name)
 				end
 
 			slot.onUnhover =
 				function()
-					slot:setColor(Inventory.Color.ItemBackground)
+					slot:setColor(tocolor(97, 129, 140))
 					infoLabel:setText("")
 				end
 
@@ -373,12 +381,12 @@ function EquipmentSelectionGUI:constructor(fishingRods, equipmentName, equipment
 	self.m_Height = grid("y", 2 + #fishingRods)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
-	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s (%s)", equipmentName, equipmentAmount), true, true, self)
+	local window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s (%s)", equipmentName.Name, equipmentAmount), true, true, self)
 	self.m_Combobox = GUIGridCombobox:new(1, 1, 6, 1, "Angelrute auswählen", window)
 
 	for _, fishingRod in pairs(fishingRods) do
-		local item = self.m_Combobox:addItem(fishingRod)
-		item.fishingRodName = fishingRod
+		local item = self.m_Combobox:addItem(fishingRod.Name)
+		item.fishingRodName = fishingRod.TechnicalName
 	end
 
 	local button = GUIGridButton:new(7, 1, 3, 1, "Hinzufügen", window)
@@ -387,7 +395,7 @@ function EquipmentSelectionGUI:constructor(fishingRods, equipmentName, equipment
 			if not self.m_Combobox:getSelectedItem() then return end
 			local selectedFishingRod = self.m_Combobox:getSelectedItem().fishingRodName
 			if selectedFishingRod then
-				triggerServerEvent("clientAddFishingRodEquipment", localPlayer, selectedFishingRod, equipmentName)
+				triggerServerEvent("clientAddFishingRodEquipment", localPlayer, selectedFishingRod, equipmentName.TechnicalName)
 				self:delete()
 			end
 		end

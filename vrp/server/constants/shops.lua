@@ -191,119 +191,113 @@ SHOP_TYPES = {
 
 SHOP_ITEMS = {
 	["Gärtnerei"] = {
-		["Weed-Samen"] = 20,
-		["Kanne"] = 500,
-		["Apfelbaum-Samen"] = 40,
-		["Blumen-Samen"] = 80,
+		["weedSeeds"] = 20,
+		["can"] = 500,
+		["appleSeeds"] = 40,
+		["flowerSeeds"] = 80,
 	};
 	["24/7"] = {
-		["Radio"] = 2000,
-		["Zigarette"] = 10,
-		["Wuerfel"] = 10,
-		["Kanne"] = 500,
-		["Mautpass"] = 250,
-		["Reparaturkit"] = 1000,
-		["Motorcross-Helm"] = 2500,
-		["Pot-Helm"] = 3000,
-		["Tragetasche"] = 1000,
+		["radio"] = 2000,
+		["cigarette"] = 10,
+		["dice"] = 10,
+		["can"] = 500,
+		["tollTicket"] = 250,
+		["repairKit"] = 1000,
+		["motoHelmet"] = 2500,
+		["pothelmet"] = 3000,
+		["duffle"] = 1000,
+		["camera"] = 250,
 	};
 	["Tankstelle"] = {
-		["Zigarette"] = 10,
-		["Mautpass"] = 250,
-		["Benzinkanister"] = 250,
-		["Reparaturkit"] = 1000,
-		["Helm"] = 5000,
-		["Motorcross-Helm"] = 2500,
-		["Pot-Helm"] = 3000,
-		["Tragetasche"] = 1000,
+		["cigarette"] = 10,
+		["tollTicket"] = 250,
+		["jerrycan"] = 250,
+		["repairKit"] = 1000,
+		["integralHelmet"] = 5000,
+		["motoHelmet"] = 2500,
+		["pothelmet"] = 3000,
+		["duffle"] = 1000,
 	};
 	["Stadthalle"] = {
-		["Ausweis"] = 400,
-		["Handelsvertrag"] = 200
+		["identityCard"] = 400,
+		["sellContract"] = 200
 	};
 	["Bank"] = {
-		["Handelsvertrag"] = 200
+		["sellContract"] = 200
 	};
 	["Bar"] = {
-		["Bier"] = 7,
-		["Whiskey"] = 9,
-		["Sex on the Beach"] = 15,
-		["Pina Colada"] = 15,
-		["Monster"] = 25,
-		["Shot"] = 8,
-		["Cuba-Libre"] = 12
+		["beer"] = 7,
+		["whiskey"] = 9,
+		["sexOnTheBeach"] = 15,
+		["pinaColada"] = 15,
+		["monster"] = 25,
+		["shot"] = 8,
+		["cubaLibre"] = 12
 	};
 	["Angel- / Outdoor-Shop"] = {
-		["Fischlexikon"] = 12500,
-		["Bambusstange"] = 150,
-		["Angelrute"] = 15000,
-		["Profi Angelrute"] = 40000,
-		["Legendäre Angelrute"] = 120000,
-		["Kleine Kühltasche"] = 50,
-		["Kühltasche"] = 100,
-		["Kühlbox"] = 250,
-		["Motorcross-Helm"] = 2000,
-		["Radio"] = 1700,
-		["Köder"] = 5,
-		["Leuchtköder"] = 40,
-		["Pilkerköder"] = 40,
-		["Schwimmer"] = 2500,
-		["Spinner"] = 5000,
+		["fishLexicon"] = 12500,
+		["bambooFishingRod"] = 150,
+		["fishingRod"] = 15000,
+		["expertFishingRod"] = 40000,
+		["legendaryFishingRod"] = 120000,
+		["coolingBoxSmall"] = 50,
+		["coolingBoxMedium"] = 100,
+		["coolingBoxLarge"] = 250,
+		["motoHelmet"] = 2000,
+		["radio"] = 1700,
+		["bait"] = 5,
+		["glowBait"] = 40,
+		["pilkerBait"] = 40,
+		["swimmer"] = 2500,
+		["spinner"] = 5000,
+		["golfclub"] = 500,
+		["parachute"] = 750,
 	};
 	["Halloween Shop"] = {
-		["Kuheuter mit Pommes"] = 25,
-		["Zombie-Burger"] = 15,
+		["cowUdderWithFries"] = 25,
+		["zombieBurger"] = 15,
 	},
 	["Weihnachtsmarkt"] = {
-		["Gluehwein"] = 15,
-		["Shot"] = 20,
+		["gluvine"] = 15,
+		["shot"] = 20,
 		--["Lebkuchen"] = 15,
-		["Wuerstchen"] = 25,
+		["sausage"] = 25,
 	},
 	["Feuerwerks-Shop"] = {
-		["Rakete"] = 100,
-		["Rohrbombe"] = 100,
-		["Raketen Batterie"] = 200,
-		["Römische Kerze"] = 150,
-		["Römische Kerzen Batterie"] = 250,
-		["Kugelbombe"] = 100,
-		["Böller"] = 50,
+		["fireworksRocket"] = 100,
+		["fireworksPipeBomb"] = 100,
+		["fireworksBattery"] = 200,
+		["fireworksRoman"] = 150,
+		["fireworksRomanBattery"] = 250,
+		["fireworksBomb"] = 100,
+		["fireworksCracker"] = 50,
 	}
-}
-
-SHOP_ITEM_WEAPONS = {
-	["Angel- / Outdoor-Shop"] = {
-		--[weapon id] = price
-		[2] = 500, -- Golfschläger
-		[46] = 750, -- Fallschirm
-	};
-	["24/7"] = {
-		[43] = 250, -- Kamera mit einem Film
-	};
 }
 
 SHOP_ITEM_SORT = {
 	["Angel- / Outdoor-Shop"] = {
-		{"Fischlexikon"},
+		{"fishLexicon"},
 		{true, "Angelruten"}, --GridListItemNoClick
-		{"Bambusstange"},
-		{"Angelrute"},
-		{"Profi Angelrute"},
-		{"Legendäre Angelrute"},
+		{"bambooFishingRod"},
+		{"fishingRod"},
+		{"expertFishingRod"},
+		{"legendaryFishingRod"},
 		{true, "Kühltaschen"}, --GridListItemNoClick
-		{"Kleine Kühltasche"},
-		{"Kühltasche"},
-		{"Kühlbox"},
+		{"coolingBoxSmall"},
+		{"coolingBoxMedium"},
+		{"coolingBoxLarge"},
 		{true, "Köder"},--GridListItemNoClick
-		{"Köder"},
-		{"Leuchtköder"},
-		{"Pilkerköder"},
+		{"bait"},
+		{"glowBait"},
+		{"pilkerBait"},
 		{true, "Zubehör"}, --GridListItemNoClick
-		{"Schwimmer"},
-		{"Spinner"},
+		{"swimmer"},
+		{"spinner"},
 		{true, "Outdoor"}, --GridListItemNoClick
-		{"Motorcross-Helm"},
-		{"Radio"},
+		{"motoHelmet"},
+		{"radio"},
+		{"golfclub"},
+		{"parachute"}
 	}
 }
 

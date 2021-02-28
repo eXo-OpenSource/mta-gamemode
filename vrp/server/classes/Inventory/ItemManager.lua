@@ -71,6 +71,7 @@ function ItemManager:loadItems()
 		}
 
 		self.m_ItemIdToName[row.TechnicalName] = row.Id
+		InventoryItemClasses[row.Class] = not row.Class:find("-") and loadstring(("return %s"):format(row.Class))() or nil
 	end
 end
 
@@ -96,6 +97,16 @@ function ItemManager:Event_onItemBreak()
 			delete(source.m_Super)
 		end
 	end
+end
+
+function ItemManager:createItemDummy(item, data)
+	local itemDummy = table.copy(ItemManager.get(item))
+
+	for key, value in pairs(data or {}) do
+		itemDummy[key] = value
+	end
+
+	return itemDummy
 end
 
 --[[

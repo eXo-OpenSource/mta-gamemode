@@ -31,9 +31,9 @@ function GUIItemDragging:render()
 			return
 		end
 
-		local icon = "files/images/Inventory/items/" .. self.m_Item.Icon
-		if string.sub(self.m_Item.Icon, 1, 1) == "/" then -- if the icon is laying outside files/images/Inventory/items folder
-			icon = self.m_Item.Icon
+		local icon = self.m_Item.Icon
+		if self.m_Item.Metadata and self.m_Item.Metadata.Icon then
+			icon = self.m_Item.Metadata.Icon
 		end
 
 		if not fileExists(icon) then

@@ -79,16 +79,13 @@ end
 function GasStationShopGUI:refreshItemShopGUI(shopId, items)
 	self.m_Shop = shopId or 0
 	local item
-	local itemData = InventoryOld:getSingleton():getItemData()
-	if itemData then
-		self.m_Grid:clear()
-		for name, price in pairs(items) do
-			item = self.m_Grid:addItem(name, tostring(price.."$"))
-			item.Id = name
-			item.onLeftClick = function()
-				self.m_Preview:setImage("files/images/Inventory/items/"..itemData[name]["Icon"])
-				self.m_LabelDescription:setText(itemData[name]["Info"])
-			end
+	self.m_Grid:clear()
+	for technicalName, data in pairs(items) do
+		item = self.m_Grid:addItem(data.name, tostring(data.price.."$"))
+		item.Id = technicalName
+		item.onLeftClick = function()
+			self.m_Preview:setImage(data.icon)
+			self.m_LabelDescription:setText(data.description)
 		end
 	end
 end

@@ -132,7 +132,7 @@ function Christmas:Event_buyBonus(bonusId)
 		client:givePoints(bonus["PointsAmount"])
 		client:sendShortMessage(_("%d Punkte erhalten!", client, bonus["PointsAmount"]))
 	elseif bonus["Type"] == "Skin" then
-		client:getInventoryOld():giveItem("Kleidung", 1, bonus["SkinId"])
+		client:getInventory():giveItem("clothing", 1, {Metadata = {ModelId = bonus["SkinId"]}})
 		client:sendShortMessage("Der Skin wurde in dein Inventar gelegt!")
 	elseif bonus["Type"] == "Special" then
 		if bonus["Text"] == "Schutzweste" then
@@ -160,7 +160,7 @@ end
 
 function Christmas:openDoor()
 	if not self.m_AdventCalender[client:getId()] then
-		if client:getInventory():giveItem("Päckchen", 5) then
+		if client:getInventory():giveItem("packet", 5) then
 			client:sendSuccess("Du hast 5 Päckchen erhalten!")
 			self.m_AdventCalender[client:getId()] = true
 		end

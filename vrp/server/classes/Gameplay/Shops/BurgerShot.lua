@@ -17,7 +17,7 @@ function BurgerShot:constructor(id, name, position, rotation, typeData, dimensio
 		["Big"] = {["Name"] = "Großes Menü", ["Price"] = 80, ["Health"] = 80},
 		["Healthy"] = {["Name"] = "Vegetarier Menü", ["Price"] = 50, ["Health"] = 50}
 	}
-	self.m_Items = {["Burger"] = 50}
+	self.m_Items = {["burger"] = 50}
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onFoodMarkerHit, self))
 

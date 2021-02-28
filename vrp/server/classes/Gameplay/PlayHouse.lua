@@ -167,12 +167,12 @@ function PlayHouse:Event_buyItem(item, price, cardDuration)
         local price = PlayHouse.Items[item]
         if price then 
             if price <= client:getMoney() then 
-                if item:find("karte") and client:getInventory():getItemAmount("Clubkarte") and client:getInventory():getItemAmount("Clubkarte") > 0 then 
+                if item:find("karte") and client:getInventory():getItemAmount("clubCard") > 0 then 
                     return  client:sendError(_("Du besitzt bereits eine Clubkarte!", client))
                 end
-                if client:getInventory():giveItem(item:find("karte") and "Clubkarte" or item, 1, (cardDuration and tonumber(cardDuration) and getRealTime().timestamp + cardDuration) or nil) then 
+                if client:getInventory():giveItem(item:find("karte") and "clubCard" or item, 1, (cardDuration and tonumber(cardDuration) and {Expires = getRealTime().timestamp + cardDuration}) or nil) then 
                     if not client:transferMoney(self.m_BankAccountServer, price, "Item-Kauf (Spielhaus)", "Gameplay", "PlayHouse") then
-                        client:getInventory():removeAllItem("Clubkarte")
+                        client:getInventory():takeItem("clubCard", 1, true)
                         client:sendError(_("Etwas ist fehlgeschlagen!", client))
                     else 
                         self:onPlayerMoney(client, -price)

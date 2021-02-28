@@ -1444,8 +1444,7 @@ function FactionState:Event_FactionRearm()
 		end
 		local inv = client:getInventoryOld()
 		if inv then
-			inv:removeAllItem("Einsatzhelm")
-			inv:giveItem("Einsatzhelm",1)
+			inv:giveItem("swathelmet",1)
 		end
 	end
 end

@@ -146,7 +146,12 @@ function Shop:onFoodMarkerHit(hitElement, dim)
 		if self.m_Robable and self.m_Robable.m_RobActive then return end
 
 		hitElement:triggerEvent("showFoodShopMenu")
-		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
+
+		local items = {}
+		for item, price in pairs(self.m_Items) do
+			items[item] = {name = ItemManager.get(item).Name, icon = ItemManager.get(item).Icon, description = ItemManager.get(item).Description, price = price}
+		end
+		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, items)
 	end
 end
 
@@ -155,7 +160,12 @@ function Shop:onItemMarkerHit(hitElement, dim)
 		if self.m_Robable and self.m_Robable.m_RobActive then return end
 
 		hitElement:triggerEvent("showItemShopGUI")
-		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_SortedItems, self.m_WeaponItems)
+
+		local items = {}
+		for item, price in pairs(self.m_Items) do
+			items[item] = {name = ItemManager.get(item).Name, icon = ItemManager.get(item).Icon, description = ItemManager.get(item).Description, price = price}
+		end
+		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, items, self.m_SortedItems)
 	end
 end
 
@@ -164,7 +174,12 @@ function Shop:onGasStationMarkerHit(hitElement, dim)
 		if self.m_Robable and self.m_Robable.m_RobActive then return end
 
 		hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
-		triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
+
+		local items = {}
+		for item, price in pairs(self.m_Items) do
+			items[item] = {name = ItemManager.get(item).Name, icon = ItemManager.get(item).Icon, description = ItemManager.get(item).Description, price = price}
+		end
+		triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, items)
 	end
 end
 

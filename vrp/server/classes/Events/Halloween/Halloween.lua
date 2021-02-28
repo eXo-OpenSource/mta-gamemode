@@ -266,13 +266,6 @@ function Halloween:Event_buyBonus(bonusId)
 
 	if bonus["Type"] == "Weapon" then
 		client:giveWeapon(bonus["WeaponId"], bonus["Ammo"])
-	elseif bonus["Type"] == "Item" then
-		if client:getInventoryOld():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
-			client:getInventoryOld():giveItem(bonus["ItemName"], bonus["ItemAmount"])
-		else
-			client:sendError(_("Du hast nicht genug Platz in deinem Inventar!", client))
-			return
-		end
 	elseif bonus["Type"] == "Vehicle" then
 		local vehicle = VehicleManager:getSingleton():createNewVehicle(client, VehicleTypes.Player, bonus["VehicleModel"], 956.881, -1115.489, 23.398, 0, 0, 180)
 		if vehicle then
@@ -302,7 +295,7 @@ function Halloween:Event_buyBonus(bonusId)
 			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
 			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)
 		elseif bonus["Text"] == "Zombie Skin" then
-			client:getInventoryOld():giveItem("Kleidung", 1, 310)
+			client:getInventory():giveItem("clothing", 1, {Metadata = {ModelId = 310}})
 			client:sendShortMessage("Der Zombie-Skin wurde in dein Inventar gelegt!")
 		elseif bonus["Text"] == "30 Tage VIP" then
 			client.m_Premium:giveEventMonth()
@@ -397,8 +390,8 @@ end
 function Halloween:requestQuestUpdate(quest)
 	self:setQuestState(client, quest)
 
-	client:getInventory():giveItem("Kürbis", Halloween.ms_QuestRewards[quest].pumpkins)
-    client:getInventory():giveItem("Suessigkeiten", Halloween.ms_QuestRewards[quest].sweets)
+	client:getInventory():giveItem("pumpkin", Halloween.ms_QuestRewards[quest].pumpkins)
+    client:getInventory():giveItem("candies", Halloween.ms_QuestRewards[quest].sweets)
 
     client:sendSuccess(_("Du hast %s Kürbisse und und %s Süßigkeiten erhalten!", client, Halloween.ms_QuestRewards[quest].pumpkins, Halloween.ms_QuestRewards[quest].sweets))
 end

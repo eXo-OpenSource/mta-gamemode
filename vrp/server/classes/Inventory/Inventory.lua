@@ -34,7 +34,6 @@ function Inventory:constructor(inventoryId, elementId, elementType, slots, typeI
 	self.m_Type = typeId and InventoryManager:getSingleton().m_InventoryTypes[typeId].TechnicalName or "Unknown"
 
 	self.m_Items = {}
-	self.m_NextItemId = 1
 
 	self.m_Persistent = false
 end
@@ -68,7 +67,6 @@ function Inventory:loadData(sync)
 
 	self.m_IsDirty = false
 	self.m_DirtySince = 0
-	self.m_NextItemId = 1
 
 	for _, item in pairs(items) do
 		local itemData = ItemManager.get(item.ItemId)
@@ -123,8 +121,8 @@ end
 		* Has the inventory still enough space?
 		* Is the item unique and is it already in the inventory?
 ]]
-function Inventory:giveItem(item, amount, durability, metadata, forceNewSlot, setInSlot)
-	return InventoryManager:getSingleton():giveItem(self, item, amount, durability, metadata, forceNewSlot, setInSlot)
+function Inventory:giveItem(item, amount, data, setInSlot)
+	return InventoryManager:getSingleton():giveItem(self, item, amount, data, setInSlot)
 end
 
 function Inventory:takeItem(itemId, amount, all)
@@ -136,7 +134,7 @@ function Inventory:useItem(id)
 end
 
 function Inventory:useItemSecondary(id)
-	return InventoryManager:getSingleton():useItem(self, id)
+	return InventoryManager:getSingleton():useItemSecondary(self, id)
 end
 
 function Inventory:onInventoryChanged()
@@ -203,7 +201,7 @@ function Inventory:setItemDurability(id, durability)
 	else
 		if durability == 0 and item.DurabilityDestroy then
 			self:takeItem(id, 1)
-			return true
+			return true, true
 		else
 			item.Durability = durability
 		end
@@ -241,7 +239,7 @@ function Inventory:decreaseItemDurability(id, durability)
 	if newDurability < 1 then
 		if item.DurabilityDestroy then
 			self:takeItem(id, 1)
-			return true
+			return true, true
 		else
 			item.Durability = 0
 		end

@@ -10,6 +10,8 @@ ItemFishingLexicon = inherit(ItemNew)
 function ItemFishingLexicon:use()
 	local player = self.m_Inventory:getPlayer()
 
-
-	-- return true, true
+	local playerSpeciesCaught = player:getFishSpeciesCaught()
+	player:triggerEvent("receiveCaughtFishSpecies", Fishing.Fish, playerSpeciesCaught)
+	
+	return true, false, false
 end

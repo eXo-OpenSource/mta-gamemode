@@ -13,7 +13,9 @@ function ItemPlant:use()
 
 	if not GrowableManager:getSingleton():getNextPlant(player, GrowableManager.Types[GrowableManager:getSingleton():getPlantNameFromSeed(self:getTechnicalName())].SizeBetweenPlants) then
 		player:triggerEvent("Plant:sendClientCheck", self:getTechnicalName())
+		return true, true
 	else
 		player:sendInfo(_("Du bist zu nah an einer anderen Pflanze!", player))
+		return false
 	end
 end

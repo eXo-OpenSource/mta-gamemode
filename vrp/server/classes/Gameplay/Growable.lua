@@ -81,13 +81,13 @@ function Growable:harvest(player)
 	--if player:getId() == self.m_OwnerId or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 
 		local amount = self.m_Size*self.ms_ItemPerSize
+		local name = ItemManager.get(self.ms_Item).TechnicalName
 
-		if self.ms_Item == "Blumen" then
+		if self.ms_Item == "flower" then
 			if amount >= 1 then
-				if player:getWeapon(10) ~= 14 then
+				if player:getInventory():giveItem("flower", 1) then
 					player:triggerEvent("hidePlantGUI")
 					player:sendInfo(_("Du hast einen Blumenstrauß geerntet!", player))
-					giveWeapon(player, 14, 1, true)
 					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
 					triggerClientEvent("ColshapeStreamer:deleteColshape", player, "growable", self.m_Id)
 					delete(self)
@@ -111,9 +111,8 @@ function Growable:harvest(player)
 			StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
 			delete(self)
 		elseif amount > 0 then
-			if player:getInventoryOld():getFreePlacesForItem(self.ms_Item) >= amount then
-				player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
-				player:getInventoryOld():giveItem(self.ms_Item, amount)
+			if player:getInventory():giveItem(self.ms_Item, amount) then
+				player:sendInfo(_("Du hast %d %s geerntet!", player, amount, name))
 				player:triggerEvent("hidePlantGUI")
 				self.m_Size = 0
 				self.m_TimesEarned = self.m_TimesEarned + 1
@@ -126,7 +125,7 @@ function Growable:harvest(player)
 				end
 				player:setData("Plant:Current", false)
 			else
-				player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
+				player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, name))
 			end
 		else
 			player:sendError(_("Die Pflanze ist noch nicht gewachsen!", player))

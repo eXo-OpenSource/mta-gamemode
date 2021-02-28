@@ -93,8 +93,8 @@ function FoodShopGUI:refreshFoodShopMenu(shopId, type, menues, items)
 		item.onLeftClick = function() self:onSelectMenu(index, type) end
 	end
 	self.m_FoodList:addItemNoClick("zum mitnehmen", "")
-	for name, price in pairs(items) do
-		item = self.m_FoodList:addItem(name, tostring(price.."$"))
+	for name, data in pairs(items) do
+		item = self.m_FoodList:addItem(data.name, tostring(data.price.."$"))
 		item.Id = name
 		item.Type = "Item"
 		item.onLeftClick = function() self:onSelectItem(name) end

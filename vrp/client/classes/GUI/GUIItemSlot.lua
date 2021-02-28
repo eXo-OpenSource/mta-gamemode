@@ -54,9 +54,9 @@ function GUIItemSlot:drawThis(incache)
 	if self.m_ItemData ~= nil then
 		local alpha = self.m_IsMoving and 100 or 255
 
-		local icon = "files/images/Inventory/items/" .. self.m_ItemData.Icon
-		if string.sub(self.m_ItemData.Icon, 1, 1) == "/" then -- if the icon is laying outside files/images/Inventory/items folder
-			icon = self.m_ItemData.Icon
+		local icon = self.m_ItemData.Icon
+		if self.m_ItemData.Metadata and self.m_ItemData.Metadata.Icon then
+			icon = self.m_ItemData.Metadata.Icon
 		end
 
 		if not fileExists(icon) then
@@ -199,27 +199,34 @@ function GUIItemSlot:updateTooltipText()
 
 	if item then
 		tooltipText = {}
+		local metadata = self.m_ItemData.Metadata
 
-		table.insert(tooltipText, {text = item.Name, size = 24, color = Color.White})
+		local name = (metadata and metadata.Name) and metadata.Name or item.Name
+		table.insert(tooltipText, {text = name, size = 24, color = Color.White})
 
 		if item.Tradeable == 0 then
-			table.insert(tooltipText, {text = "Accountgebunden", size = 20, color = Color.Accent})
+			table.insert(tooltipText, {text = _"Accountgebunden", size = 20, color = Color.Accent})
 		end
 
 		if item.IsUnique then
-			table.insert(tooltipText, {text = "Einzigartig", size = 20, color = Color.White})
+			table.insert(tooltipText, {text = _"Einzigartig", size = 20, color = Color.White})
 		end
 
-		if item.Description and item.Description ~= "" then
+		local description = (metadata and metadata.Description) and metadata.Description or item.Description
+		if description and description ~= "" then
 			table.insert(tooltipText, {text = "", size = 20, color = Color.White})
-			table.insert(tooltipText, {text = item.Description, size = 20, color = Color.White})
+			table.insert(tooltipText, {text = description, size = 20, color = Color.White})
+		end
+
+		if item.Expireable and item.ExpireTime then
+			table.insert(tooltipText, {text = _("Läuft ab: %s", getOpticalTimestamp(item.ExpireTime)), size = 20, color = Color.White})
 		end
 
 
 		if showDebug then
 			table.insert(tooltipText, {text = "", size = 20, color = Color.White})
 			table.insert(tooltipText, {text = "DEBUG", size = 24, color = Color.White})
-			for key, value in pairs(item) do
+			for key, value in kspairs(item) do
 				table.insert(tooltipText, {text = ("%s: %s"):format(tostring(key), inspect(value)), size = 20, color = Color.White})
 			end
 		end
