@@ -264,8 +264,8 @@ factionRankNames[9] = {
 }
 factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
 factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
-factionSkins[9] = {[44]=true, [100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [291]=true,[298]=true,[299]=true}
-factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [291]=true, [298]=true, [299]=true}
+factionWeapons[9] = {[18]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[9] =  Vector3(681.44, -444.98, 16.34)
 factionWTDestination[9] =   Vector3(659.08, -455.65, 16.34)
 factionSpawnpoint[9] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 9}
@@ -282,14 +282,14 @@ factionRankNames[10] = {
 [5] = "Guerriero",
 [6] = "Jefe"
 }
-factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
-factionCarColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170, ["r1"] = 255,["g1"] = 252,["b1"] = 170}
-factionSkins[10] = {[108]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true,[307]=true}
-factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
-evilFactionInteriorEnter[10] =Vector3(2786.59, -1952.59, 13.55)
-factionWTDestination[10] = Vector3(2768.62, -1944.73, 13.36-0.7)
+factionColors[10] = {["r"] = 46,["g"] = 169,["b"] = 186} 
+factionCarColors[10] = {["r"] = 158,["g"] = 250,["b"] = 255, ["r1"] = 158,["g1"] = 250,["b1"] = 255}
+factionSkins[10] = {[114]=true, [115]=true, [116]=true, [173]=true, [174]=true, [175]=true, [108]=true, [109]=true, [110]=true}
+factionWeapons[10] = {[1]=true, [24]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true, [28]=true}
+evilFactionInteriorEnter[10] =Vector3(1888.3, -2000.9, 13.5)
+factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
 factionSpawnpoint[10] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 10}
-factionAirDropPoint[10] = Vector3(2770.33, -1945.15, 13.35)
+factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38+2.71)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
 
 -- ID 11 = Triads
