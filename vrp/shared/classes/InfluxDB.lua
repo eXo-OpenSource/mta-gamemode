@@ -81,6 +81,7 @@ end
 
 function InfluxDB:flush()
 	if #self.m_Data == 0 then return end
+	if DISABLE_INFLUX then return end
 
 	if not self.m_DomainNotBlocked then
 		self.m_DomainNotBlocked = not isBrowserDomainBlocked(self.m_Host, true)
@@ -97,6 +98,9 @@ function InfluxDB:flush()
 
 	fetchRemote(self.m_Host .. "/write?db=" .. self.m_Database, {
 		["method"] = "POST",
+		["queueName"] = "influx",
+		["connectionAttempts"] = 1,
+		["connectTimeout"] = 5000,
 		["username"] = self.m_Username,
 		["password"] = self.m_Password,
 		["postData"] = data
