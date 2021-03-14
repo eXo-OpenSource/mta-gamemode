@@ -17,6 +17,7 @@ end
 
 function Forum:userCreate(username, password, email, callback)
 	fetchRemote(self.m_BaseUrl .. "?user-api&method=create", {
+		queueName = "Forum:userCreate",
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -29,6 +30,7 @@ end
 
 function Forum:userLogin(username, password, callback)
 	fetchRemote(self.m_BaseUrl .. "?user-api&method=login", {
+		queueName = "Forum:userLogin",
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -52,6 +54,7 @@ function Forum:userGet(forumId, callback)
 	end
 
 	fetchRemote(self.m_BaseUrl .. "?user-api&method=get", {
+		queueName = "Forum:userGet",
 		method = "POST",
 		formFields = data
 	}, callback)
@@ -75,6 +78,7 @@ function Forum:userUpdate(forumId, data, callback)
 	end
 
 	fetchRemote(self.m_BaseUrl .. "?user-api&method=update", {
+		queueName = "Forum:userUpdate",
 		method = "POST",
 		formFields = formData
 	}, callback)
@@ -82,6 +86,7 @@ end
 
 function Forum:groupGet(groupId, callback)
 	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=get", {
+		queueName = "Forum:groupGet",
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -105,6 +110,7 @@ function Forum:groupAddMember(forumId, groupId, callback)
 	end
 
 	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=add", {
+		queueName = "Forum:groupAddMember",
 		method = "POST",
 		formFields = data
 	}, callback)
@@ -125,6 +131,7 @@ function Forum:groupRemoveMember(forumId, groupId, callback)
 	end
 
 	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=remove", {
+		queueName = "Forum:groupRemoveMember",
 		method = "POST",
 		formFields = data
 	}, callback)
