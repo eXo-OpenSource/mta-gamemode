@@ -14,6 +14,7 @@ function Sentry:parseDSN()
 end
 
 function Sentry:handleException(message, level, trace)
+	if DISABLE_SENTRY then return end
 	-- bruh skip it for now
 
 	--[[
@@ -105,6 +106,8 @@ function Sentry:handleException(message, level, trace)
 	local options = {
 		queueName = "sentry",
 		method = "POST",
+		connectionAttempts = 1,
+		connectTimeout = 5000,
 		headers = {
             ['X-Sentry-Auth'] = self:generateAuthHeader()
 		},
