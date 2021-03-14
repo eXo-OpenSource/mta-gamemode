@@ -514,6 +514,11 @@ end
 
 
 function PlayerManager:playerChat(message, messageType)
+	if not source:isLoggedIn() then
+		cancelEvent()
+		return
+	end
+
 	if source:isDead() then
 		cancelEvent()
 		return
