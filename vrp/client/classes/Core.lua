@@ -87,11 +87,7 @@ function Core:ready() --onClientResourceStart
 		["LastCompanySkin"] = core:get("Cache", "LastCompanySkin", 0),
 	})
 
-	
-	if not core:get("HUD", "locale") then
-		core:set("HUD", "locale", getLocalization()["code"] == "de" and "de" or "en")
-	end
-	localPlayer:setLocale(core:get("HUD", "locale"))
+	localPlayer:setLocale(core:get("HUD", "locale", getLocalization()["code"] == "de" and "de" or "en"))
 	triggerServerEvent("playerLocale", localPlayer, localPlayer:getLocale())
 
 	-- Request Browser Domains

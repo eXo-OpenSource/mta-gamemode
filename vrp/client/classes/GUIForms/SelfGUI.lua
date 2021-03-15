@@ -1582,20 +1582,105 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
 	elseif setting == "Event" then
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Server-Tour", self.m_SettingBG)
-		local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"
-		self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tourText, self.m_SettingBG):setBarEnabled(true)
-		self.m_ServerTour.onLeftClick = function()
-			if not Tour:getSingleton():isActive() then
-			QuestionBox:new(
-				_("Möchtest du eine Servertour starten? Nach Abschluss erhältst du Erfahrung und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"),
-				function() triggerServerEvent("tourStart", localPlayer, true) end)
-				self:close()
-			else
-				triggerServerEvent("tourStop", localPlayer)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Halloween", self.m_SettingBG)
+
+		self.m_HalloweenDarkness = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, _"Umgebungs-Ambiente", self.m_SettingBG)
+		self.m_HalloweenDarkness:setFont(VRPFont(25))
+		self.m_HalloweenDarkness:setFontSize(1)
+		self.m_HalloweenDarkness:setChecked(core:get("Event", "HalloweenDarkness", true))
+		self.m_HalloweenDarkness.onChange = function (state)
+			core:set("Event", "HalloweenDarkness", state)
+			Halloween:getSingleton():setDarkness()
+		end
+
+		self.m_HalloweenSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.9, self.m_Height*0.04, _"Hintergrundgeräusche am Friedhof", self.m_SettingBG)
+		self.m_HalloweenSound:setFont(VRPFont(25))
+		self.m_HalloweenSound:setFontSize(1)
+		self.m_HalloweenSound:setChecked(core:get("Event", "HalloweenSound", true))
+		self.m_HalloweenSound.onChange = function (state)
+			core:set("Event", "HalloweenSound", state)
+			Halloween:getSingleton():setAmbientSoundEnabled(state)
+		end
+
+		self.m_HalloweenBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.9, self.m_Height*0.04, _"Blut-Hintergrund bei Buttons (Erst nach Reconnect)", self.m_SettingBG)
+		self.m_HalloweenBlood:setFont(VRPFont(25))
+		self.m_HalloweenBlood:setFontSize(1)
+		self.m_HalloweenBlood:setChecked(core:get("Event", "HalloweenBlood", true))
+		self.m_HalloweenBlood.onChange = function (state)
+			core:set("Event", "HalloweenBlood", state)
+		end
+
+		self.m_HalloweenClickBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.30, self.m_Width*0.9, self.m_Height*0.04, _"Blutspritzer bei Klick", self.m_SettingBG)
+		self.m_HalloweenClickBlood:setFont(VRPFont(25))
+		self.m_HalloweenClickBlood:setFontSize(1)
+		self.m_HalloweenClickBlood:setChecked(core:get("Event", "HalloweenBloodClick", true))
+		self.m_HalloweenClickBlood.onChange = function (state)
+			core:set("Event", "HalloweenBloodClick", state)
+		end
+
+		if not EVENT_HALLOWEEN then
+			self.m_HalloweenBlood:setEnabled(false)
+			self.m_HalloweenClickBlood:setEnabled(false)
+			self.m_HalloweenDarkness:setEnabled(false)
+			self.m_HalloweenSound:setEnabled(false)
+		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.8, self.m_Height*0.07, _"Winterzeit", self.m_SettingBG)
+
+		self.m_ChristmasMarketMusic = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.44, self.m_Width*0.9, self.m_Height*0.04, _"Weihnachtsmarkt Musik", self.m_SettingBG)
+		self.m_ChristmasMarketMusic:setFont(VRPFont(25))
+		self.m_ChristmasMarketMusic:setFontSize(1)
+		self.m_ChristmasMarketMusic:setChecked(core:get("Event", "ChristmasMarketMusic", EVENT_CHRISTMAS_MARKET)) --only force enable them during christmas
+		self.m_ChristmasMarketMusic.onChange = function (state)
+			core:set("Event", "ChristmasMarketMusic", state)
+			if Christmas:isInstantiated() then
+				if Christmas:getSingleton().m_Music then
+					Christmas:getSingleton().m_Music:setVolume(fromboolean(state))
+				end
 			end
 		end
-		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
+
+		self.m_SnowFlakes = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.51, self.m_Width*0.9, self.m_Height*0.04, _"Schneeflocken", self.m_SettingBG)
+		self.m_SnowFlakes:setFont(VRPFont(25))
+		self.m_SnowFlakes:setFontSize(1)
+		self.m_SnowFlakes:setChecked(core:get("Event", "SnowFlakes", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowFlakes.onChange = function (state)
+			core:set("Event", "SnowFlakes", state)
+			triggerEvent("switchSnowFlakes", root, state)
+		end
+
+		self.m_SnowGround = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.9, self.m_Height*0.04, _"Schneedecke", self.m_SettingBG)
+		self.m_SnowGround:setFont(VRPFont(25))
+		self.m_SnowGround:setFontSize(1)
+		self.m_SnowGround:setChecked(core:get("Event", "SnowGround", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowGround.onChange = function (state)
+			core:set("Event", "SnowGround", state)
+			triggerEvent("switchSnowGround", root, state, core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
+			self.m_SnowGroundExtra:setEnabled(state)
+		end
+
+		self.m_SnowGroundExtra = GUICheckbox:new(self.m_Width*0.04, self.m_Height*0.65, self.m_Width*0.9, self.m_Height*0.04, _"dynamische Textur (schön, aber FPS-lastig!)", self.m_SettingBG)
+		self.m_SnowGroundExtra:setFont(VRPFont(25))
+		self.m_SnowGroundExtra:setFontSize(1)
+		self.m_SnowGroundExtra:setChecked(core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS)) --only force enable them during christmas
+		self.m_SnowGroundExtra.onChange = function (state)
+			core:set("Event", "SnowGround_Extra", state)
+			triggerEvent("switchSnowGround", root, core:get("Event", "SnowGround", EVENT_CHRISTMAS), state)
+		end
+
+		if not core:get("Event", "SnowGround", EVENT_CHRISTMAS) then
+			self.m_SnowGroundExtra:setEnabled(false)
+		end
+
+		if not SNOW_SHADERS_ENABLED then
+			self.m_SnowFlakes:setEnabled(false)
+			self.m_SnowGround:setEnabled(false)
+			self.m_SnowGroundExtra:setEnabled(false)
+		end
+
+		if not EVENT_CHRISTMAS_MARKET then
+			self.m_ChristmasMarketMusic:setEnabled(false)
+		end
 	elseif setting == "Sprache" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Sprache", self.m_SettingBG)
 		self.m_LanguageChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
