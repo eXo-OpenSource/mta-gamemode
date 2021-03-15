@@ -33,6 +33,7 @@ function POParser:constructor(poPath)
 			end
 		end
 	end
+	file:close()
 end
 
 function POParser:translate(str)

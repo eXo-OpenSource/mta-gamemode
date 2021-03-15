@@ -57,8 +57,10 @@ function TranslationManager:translate(message, locale)
 	if self.m_Translations[locale] then
 		local translatedMsg = self.m_Translations[locale]:translate(message)
 		if not translatedMsg then
-			outputDebugString("There's a missing translation. Please update the .po files")
-			outputDebugString("Missing string: "..message)
+			if DEBUG then
+				outputDebugString("There's a missing translation. Please update the .po files")
+				outputDebugString("Missing string: "..message)
+			end
 			return message
 		end
 		return translatedMsg

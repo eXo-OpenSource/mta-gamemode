@@ -11,7 +11,8 @@ addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestWeap
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
 "premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
-"attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle"}
+"attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle",
+"playerLocale"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -63,6 +64,7 @@ function PlayerManager:constructor()
 	addEventHandler("unfreezePlayer", root, bind(self.Event_onUnfreezePlayer, self))
 	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
 	addEventHandler("removeMeFromVehicle", root, bind(self.Event_removeMeFromVehicle, self))
+	addEventHandler("playerLocale", root, bind(self.Event_playerLocale, self))
 
 	addEventHandler("PlayerManager:onAcceptQuickTrade", root, bind(self.Event_OnStartQuickTrade, self))
 	addEventHandler("PlayerManager:onRequestQuickTrade", root, bind(self.Event_RequestQuickTrade, self))
@@ -116,6 +118,10 @@ function PlayerManager:destructor()
 		delete(v)
 		v:setName(getRandomUniqueNick())
 	end
+end
+
+function PlayerManager:Event_playerLocale(locale)
+	client:setLocale(locale)
 end
 
 function PlayerManager:Event_onUnfreezePlayer()

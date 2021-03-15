@@ -170,3 +170,7 @@ git stash pop
 
 ## Datenbank
 Zugangsdaten stehen in `vrp/server/config/config.json.dist`
+
+## po-Files bereinigen
+
+`Get-Content org_server.en.po | Where { $_ -notmatch "^#" } | Set-Content server.en.po`

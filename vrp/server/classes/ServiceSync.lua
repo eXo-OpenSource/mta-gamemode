@@ -194,6 +194,8 @@ function ServiceSync:syncAllUsers(player, syncType, id)
 
 	local rows = Async.wait()
 
+	if not rows then return end
+
 	local groups = {}
 
 	for _, user in ipairs(rows) do

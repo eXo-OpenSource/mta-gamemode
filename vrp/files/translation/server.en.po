@@ -1,0 +1,4392 @@
+msgid ""
+"Es wurde vor kurzem eine Aktion gestartet! Die Nächste Aktion ist erst um %s "
+"Uhr möglich!"
+msgstr ""
+"A action was recently launched! The next action is only possible at %s clock!"
+
+msgid ""
+"Es läuft derzeit ein %s! Es kann solange keine weitere Aktion gestartet "
+"werden!"
+msgstr ""
+"It is currently running a %s! No further action can be started as long as it "
+"is running!"
+
+msgid "%s hat die Attackier-Zeit des Gebietes %s geändert!"
+msgstr "%s has changed the attack time of the area %s!"
+
+msgid "Das Gebiet wird freigegeben am: "
+msgstr "The area shall be released on: "
+
+msgid "Die Aktion war erfolgreich (ID: %s)"
+msgstr "The action was successful (ID: %s)"
+
+msgid "Der Account (ID %s) ist nicht in Benutzung!"
+msgstr "The account (ID %s) is not in use!"
+
+msgid "Das Gebiet wurde umgesetzt!"
+msgstr "The area has been setted!"
+
+msgid "%s hat das Gebiet %s der Fraktion %s gesetzt!"
+msgstr "%s has set the area %s of the fraction %s!"
+
+msgid "Du bist kein Admin!"
+msgstr "You're not an admin!"
+
+msgid "%s Fahrzeuge respawnt"
+msgstr "%s Vehicles respawnt"
+
+msgid "%s hat die Registration deaktiviert!"
+msgstr "%s has deactivated the registration!"
+
+msgid "%s hat die Registration aktiviert!"
+msgstr "%s has activated the registration!"
+
+msgid "Befehl: /%s [Ziel] [Dauer] [Grund]"
+msgstr "Command: /%s [Destination] [Duration] [Reason]"
+
+msgid "Befehl: /%s [Ziel]"
+msgstr "Command: /%s [Destination]"
+
+msgid "Befehl: /%s [Ziel] [Grund]"
+msgstr "Command: /%s [destination] [reason]"
+
+msgid "Du darfst diese Aktion nicht ausführen!"
+msgstr "You aren't allowed to perform this action!"
+
+msgid "%s den aktuellen Chat gelöscht!"
+msgstr "%s deleted the current chat!"
+
+msgid "%s die aktuelle Werbung gelöscht!"
+msgstr "%s deleted the current advertisement!"
+
+msgid ""
+"%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!"
+msgstr "%s has reset the action cooldown! Actions can be started again!"
+
+msgid "%s hat %d Fahrzeuge in einem Radius von %d respawnt!"
+msgstr "%s has %d vehicles in a radius of %d respawnt!"
+
+msgid "%s hat %d$ in die Eventkasse gelegt!"
+msgstr "%s has put %d$ in the event cash box!"
+
+msgid "Du hast nicht genug Geld dabei!"
+msgstr "You didn't bring enough money!"
+
+msgid "%s hat %d$ aus der Eventkasse genommen!"
+msgstr "%s has taken %d$ out of the event cash box!"
+
+msgid "In der Kasse ist nicht soviel Geld!"
+msgstr "There's not that much money in the till!"
+
+msgid "Betrag oder Grund ungültig!"
+msgstr "Amount or reason invalid!"
+
+msgid "%s hat sich nach %s geportet!"
+msgstr "%s has ported itself to %s!"
+
+msgid "%s hat %s entfreezt!"
+msgstr "%s has freed %s!"
+
+msgid "Du wurdest von %s entfreezt"
+msgstr "You were freezed by %s"
+
+msgid "%s hat %s gefreezt!"
+msgstr "%s has %s freezed!"
+
+msgid "Du wurdest von %s gefreezt"
+msgstr "You were freezed by  %s"
+
+msgid "%s hat %s gekickt! Grund: %s"
+msgstr "%s kicked %s! Reason: %s"
+
+msgid "%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s"
+msgstr "%s put %s for %d minutes into the Prison! Reason: %s"
+
+msgid "%s hat %s aus dem Prison gelassen!"
+msgstr "%s left %s out of the Prison!"
+
+msgid "%s hat %s für %d Stunden gebannt! Grund: %s"
+msgstr "%s banned %s for %d hours! Reason: %s"
+
+msgid "%s hat %s permanent gebannt! Grund: %s"
+msgstr "%s has banned %s permanently! Reason: %s"
+
+msgid "%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s"
+msgstr "%s has warned %s! Expiration in %d days, reason: %s"
+
+msgid "Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s"
+msgstr "You were warned by %s! Expiration in %s days, reason: %s"
+
+msgid "%s hat einen Warn von %s entfernt!"
+msgstr "%s has removed a warning from %s!"
+
+msgid "%s hat das specten von %s beendet!"
+msgstr "%s has finished watching of %s!"
+
+msgid "%s spected %s!"
+msgstr "%s is watching %s!"
+
+msgid "Drücke Leertaste zum beenden!"
+msgstr "Press spacebar to exit!"
+
+msgid "%s hat %s in %s umbenannt!"
+msgstr "%s has renamed %s to %s!"
+
+msgid "Ungültiges Ziel!"
+msgstr "Invalid target!"
+
+msgid ", "
+msgstr ", "
+
+msgid "%s hat dir einen Keks gegeben! Grund: %s"
+msgstr "%s gave you a cookie! Reason: %s"
+
+msgid "%s hat %s einen Keks gegeben! Grund: %s"
+msgstr "%s gave %s a cookie! Reason: %s"
+
+msgid "Es ist kein Platz für einen Keks in %s's Inventar."
+msgstr "There's no room for a cookie in %s' inventory."
+
+msgid "Spieler nicht gefunden!"
+msgstr "Player not found!"
+
+msgid "%s hat %s offline permanent gebannt! Grund: %s"
+msgstr "%s has permanently banned %s offline! Reason: %s"
+
+msgid "%s hat %s offline für %d Stunden gebannt! Grund: %s"
+msgstr "%s has banned %s offline for %d hours! Reason: %s"
+
+msgid "%s hat %s offline entbannt!"
+msgstr "%s has released %s offline!"
+
+msgid "Der Spieler ist online!"
+msgstr "The player is online!"
+
+msgid "%s hat %s offline verwarnt! Ablauf in %d Tagen, Grund: %s"
+msgstr "%s has warned %s offline! Expiration in %d days, reason: %s"
+
+msgid "%s hat einen Warn von %s entfernt! (Offline)"
+msgstr "%s has removed a warning from %s! (Offline)"
+
+msgid "%s hat %s für %d Minuten offline ins Prison gesteckt! Grund: %s"
+msgstr "%s has put %s into the Prison for %d minutes offline! Reason: %s"
+
+msgid "Support Modus aktiviert!"
+msgstr "Support mode activated!"
+
+msgid "%s hat den Support Modus aktiviert!"
+msgstr "%s has activated the support mode!"
+
+msgid "Support Modus deaktiviert!"
+msgstr "Support mode deactivated!"
+
+msgid "%s hat den Support Modus deaktiviert!"
+msgstr "%s has deactivated the support mode!"
+
+msgid "%s hat sich zu %s geportet!"
+msgstr "%s has ported itself to %s!"
+
+msgid "Kein Ziel eingegeben!"
+msgstr "No destination entered!"
+
+msgid "%s hat %s zu sich geportet!"
+msgstr "%s has ported %s to himself!"
+
+msgid "Ungültiger Ort! Tippe /tp um alle Orte zu sehen!"
+msgstr "Invalid location! Type /tp to see all locations!"
+
+msgid "Du hast den Spieler aus seiner Fraktion entfernt!"
+msgstr "You have removed the player from his faction!"
+
+msgid "Du hast den Spieler in die Fraktion "
+msgstr "You have the player into the faction "
+
+msgid "Fraktion nicht gefunden!"
+msgstr "Faction not found!"
+
+msgid "Du hast den Spieler aus seinem Unternehmen entfernt!"
+msgstr "You have removed the player from his company!"
+
+msgid "Du hast den Spieler in das Unternehmen "
+msgstr "You put the player in the company "
+
+msgid "Unternehmen nicht gefunden!"
+msgstr "Company not found!"
+
+msgid "Das Fahrzeug wurde zu dir geportet!"
+msgstr "The vehicle was ported to you!"
+
+msgid "Du wurdest zum Fahrzeug geportet!"
+msgstr "You were ported to the vehicle!"
+
+msgid "Befehl: /addFactionVehicle [FactionID]!"
+msgstr "Command: /addFactionVehicle [FactionID]!"
+
+msgid "Du sitzt in keinem Fahrzeug!"
+msgstr "You're not sitting in any vehicle!"
+
+msgid "Befehl: /addCompanyVehicle [CompanyID]!"
+msgstr "Command: /addCompanyVehicle [CompanyID]!"
+
+msgid "Keine Fahrzeug gefunden!"
+msgstr "No vehicle found!"
+
+msgid "Keine ID Angegeben!"
+msgstr "No ID specified!"
+
+msgid "Dieses Fahrzeug kann nicht despawnt werden!"
+msgstr "This vehicle cannot be despawnt!"
+
+msgid "%s hat das Fahrzeug %s von %s despawnt (Grund: %s)."
+msgstr "%s has the vehicle  %s of %s despawnt (reason: %s)."
+
+msgid "Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s"
+msgstr "Your vehicle (%s) was despawnt by %s! Reason: %s"
+
+msgid "Euer Fahrzeug (%s) wurde von %s despawnt! Grund: %s"
+msgstr "Your vehicle (%s) was despawnt by %s! Reason: %s"
+
+msgid "Du hast das Fahrzeug %s gelöscht!"
+msgstr "You have deleted the vehicle %s!"
+
+msgid "Die F1 Hilfe wurde neu geladen!"
+msgstr "The F1 help was reloaded!"
+
+msgid "Kein Ziel gefunden!"
+msgstr "No target found!"
+
+msgid "Warnung! Diese Funktion ist performance-lastig"
+msgstr "Warning! performance-heavy"
+
+msgid "Syntax: /placeObject [Model-ID]"
+msgstr "Syntax: /placeObject [Model ID]"
+
+msgid "Der Spieler, der Geld abgezogen bekommen soll, existiert nicht!"
+msgstr "The player from whom money is to be withdrawn does not exist!"
+
+msgid "Der Spieler, dem Geld überwiesen werden soll, existiert nicht!"
+msgstr "The player to whom money is to be transferred does not exist!"
+
+msgid "Es existiert kein Spieler mit dem Namen %s!"
+msgstr "There is no player with the name %s!"
+
+msgid "Du hast dafür keine Berechtigung! (Ab Co-Leader)"
+msgstr "You have no authorization to do this! (From Co-Leader and above)"
+
+msgid "Bind erfolgreich geändert!"
+msgstr "Bind successfully changed!"
+
+msgid "Bind nicht gefunden!"
+msgstr "The Bind was not found!"
+
+msgid "Bind erfolgreich gelöscht!"
+msgstr "Bind successfully deleted!"
+
+msgid "Bind erfolgreich hinzugefügt!"
+msgstr "Bind successfully added!"
+
+msgid ""
+"Die Fahrschule wurde kontaktiert. Ein Fahrlehrer wird sich bald bei dir "
+"melden!"
+msgstr ""
+"The driving school was contacted. A driving instructor will contact you soon!"
+
+msgid "Der Spieler %s sucht einen Fahrlehrer! Bitte melden!"
+msgstr ""
+"The player %s is looking for a driving instructor! Please contact him/her!"
+
+msgid "Du hast die Theorieprüfung bereits bestanden!"
+msgstr "You have already passed the theory test!"
+
+msgid "Möchtest du die Theorie-Prüfung starten? Kosten: 300$"
+msgstr "Do you want to start the theory test? Cost: $300"
+
+msgid "Du kannst nun die praktische Prüfung machen!"
+msgstr "You can now take the practical exam!"
+
+msgid "Du hast abgebrochen oder nicht bestanden! Versuche die Prüfung erneut!"
+msgstr "You either cancelled or you failed! Try the exam again!"
+
+msgid "Du hast die Theorieprüfung noch nicht bestanden!"
+msgstr "You have not yet passed the theory test!"
+
+msgid "Es sind genügend Fahrlehrer online!"
+msgstr "There are enough driving instructors online!"
+
+msgid "Du hast bereits den Autoführerschein"
+msgstr "You already have a driver's license"
+
+msgid "Du hast bereits den Motorradführerschein"
+msgstr "You already have a motorcycle license"
+
+msgid "Möchtest du die automatische Fahrprüfung starten? Kosten: %s$"
+msgstr "Do you want to start the automatic driving test? Costs: %s$"
+
+msgid ""
+"Fahre die vorgesehene Strecke ab und achte darauf, dass dein Fahrzeug nicht "
+"beschädigt wird!"
+msgstr ""
+"Drive the intended route and make sure that your vehicle will not be damaged!"
+
+msgid "%s sagt: Mit 'X' schaltest du den Motor an."
+msgstr "%s says: With 'X' you start the engine."
+
+msgid "%s sagt: Anschließend mit 'L' die Lichter."
+msgstr "%s says: Then with 'L' the lights."
+
+msgid ""
+"%s sagt: Und abgeht es! Vergiss nicht den Limiter mit der Taste 'K' "
+"anzuschalten."
+msgstr ""
+"%s says: Let's go! Don't forget to turn on the limiter with the 'K' key."
+
+msgid ""
+"%s sagt: Die Schranke öffnest du mit #C8C800'H'#C8C8C8. Bitte schließe diese "
+"nachher wieder."
+msgstr ""
+"%s says: You open the barrier with #C8C800'H'#C8C8C8. Please close it again "
+"later."
+
+msgid "%s sagt: Nun Anschnallen mit 'M'"
+msgstr "%s says: Now buckle up with 'M"
+
+msgid "%s sagt: Ziehe deinen Helm an."
+msgstr "%s says put your helmet on."
+
+msgid ""
+"Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\n"
+"Diese kostet %d$! Möchtest du die Prüfung starten?"
+msgstr ""
+"The driving instructor %s wants to start the %s test with you!\n"
+"This costs %d$! Do you want to start the exam?"
+
+msgid "Du bist bereits in einer Fahrprüfung!"
+msgstr "You are already in a driving test!"
+
+msgid "Der Spieler %s ist bereits in einer Prüfung!"
+msgstr "The player %s is already in a test!"
+
+msgid "Der Spieler %s hat nicht genug Geld dabei! (%d$)"
+msgstr "The player %s does not have enough money with him! (%d$)"
+
+msgid "Der Spieler %s muss erst die theoretische Fahrprüfung bestehen!"
+msgstr "The player %s must first pass the theoretical driving test!"
+
+msgid "Der Spieler %s hat den %s bereits!"
+msgstr "The player %s already has the %s!"
+
+msgid ""
+"Interner Fehler: Argumente falsch @DrivingSchool:Event_startLessionQuestion!"
+msgstr ""
+"Internal error: Arguments wrong @DrivingSchool:Event_startLessionQuestion!"
+
+msgid "Der Spieler %s hat die %s Prüfung abgelehnt!"
+msgstr "The player %s has rejected the %s driving test!"
+
+msgid "Du hast die %s Prüfung mit %s abgelehnt!"
+msgstr "You rejected the %s test with %s!"
+
+msgid "Du hast die %s Prüfung mit %s gestartet!"
+msgstr "You started the %s test with %s!"
+
+msgid ""
+"Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!"
+msgstr ""
+"Driving instructor %s has started the %s test with you, follow his "
+"instructions!"
+
+msgid "Du bist bereits in einer Prüfung!"
+msgstr "You're already in a test!"
+
+msgid "Du hast nicht genug Geld dabei! (%d$)"
+msgstr "You don't have enough money! (%d$)"
+
+msgid "Du hast den %s bereits!"
+msgstr "You already have the %s!"
+
+msgid "Interner Fehler: Argumente falsch @DrivingSchool:Event_startLession!"
+msgstr "Internal Error: Arguments wrong @DrivingSchool:Event_startLession!"
+
+msgid "Der Fahrlehrer %s ist offline gegangen!"
+msgstr "The driving instructor %s has gone offline!"
+
+msgid "Der Fahrschüler %s ist offline gegangen!"
+msgstr "The driver %s has gone offline!"
+
+msgid "Du hast die %s Prüfung erfolgreich bestanden und den Schein erhalten!"
+msgstr "You have successfully passed the %s test and received the licence!"
+
+msgid "Du hast die %s Prüfung mit %s erfolgreich beendet!"
+msgstr "You have successfully completed the %s test with %s!"
+
+msgid "Du hast die %s Prüfung nicht geschaft! Viel Glück beim nächsten Mal!"
+msgstr "You didn't pass the %s test! Better luck next time!"
+
+msgid "Du hast die %s Prüfung mit %s abgebrochen!"
+msgstr "You cancelled the %s test with %s!"
+
+msgid "Du hast nicht so viele STVO-Punkte!"
+msgstr "You don't have that many citation points!"
+
+msgid "Du hast nicht genügend Geld! ("
+msgstr "You don't have enough money! ("
+
+msgid "Du bist in keiner Gruppe!"
+msgstr "You're not in any group!"
+
+msgid "Keine abholbaren Fahrzeuge vorhanden!"
+msgstr "No pick up vehicles available!"
+
+msgid "Du bist nicht im Dienst!"
+msgstr "You're off duty!"
+
+msgid "Jemand muss sich auf dem Fahrersitz befinden!"
+msgstr "Someone must be on the driver's seat!"
+
+msgid "Steige aus deinem Fahrzeug aus und stelle dich dafür an die Motorhaube!"
+msgstr "Get out of your vehicle and stand against the bonnet for this!"
+
+msgid "Dieses Fahrzeug hat keine nennenswerten Beschädigungen!"
+msgstr "This vehicle has no significant damage!"
+
+msgid "Dieses Fahrzeug kann nicht repariert werden!"
+msgstr "This vehicle cannot be repaired!"
+
+msgid "Du kannst nur alle 20 Sekunden eine Reparatur-Anfrage stellen!"
+msgstr "You can only make a repair request every 20 seconds!"
+
+msgid ""
+"Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\n"
+"Beim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!"
+msgstr ""
+"Is %s allowed to repair your vehicle? This currently costs you %d$!\n"
+"With the next Pay'n'Spray you pay a surcharge of +33%%!"
+
+msgid ""
+"Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!"
+msgstr "You have successfully repaired the vehicle of %s! You have earned %s$!"
+
+msgid "%s hat dein Fahrzeug erfolgreich repariert!"
+msgstr "%s has successfully repaired your vehicle!"
+
+msgid "Du hat dein Fahrzeug erfolgreich repariert!"
+msgstr "You have successfully repaired your vehicle!"
+
+msgid "Du hast nicht genügend Geld! Benötigt werden %d$!"
+msgstr "You don't have enough money! You need %d$!"
+
+msgid "Der Reperaturvorgang wurde von der Gegenseite abgebrochen!"
+msgstr "The repair procedure was aborted by the other side!"
+
+msgid "In der Kasse deiner %s befindet sich nicht genügend Geld! (500$)"
+msgstr "There is not enough money in the cash box of your %s! (500$)"
+
+msgid "Du hast nicht genügend Geld! (500$)"
+msgstr "You don't have enough money! (500$)"
+
+msgid ""
+"Fahrzeug freigekauft, es steht im Hinterhof bereit! Das Geld wurde vom Konto "
+"abgezogen."
+msgstr ""
+"Vehicle bought free, it is ready in the backyard! The money has been "
+"deducted from the bank account."
+
+msgid "Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!"
+msgstr "You have successfully towed a wrecked vehicle!"
+
+msgid "Du kannst hier abgeschleppte Fahrzeuge abladen!"
+msgstr "You can unload towed vehicles here!"
+
+msgid "Dieses Fahrzeug kann nicht abgeschleppt werden!"
+msgstr "This vehicle cannot be towed!"
+
+msgid "Das Fahrzeug ist nun abgeschleppt!"
+msgstr "The vehicle is now towed!"
+
+msgid "%s möchte dein Fahrzeug tanken. %s Liter zum Preis von %s$"
+msgstr "%s would like to refuel your vehicle. %s litre at the price of %s$"
+
+msgid "Der Spieler hat nicht genügend Geld!"
+msgstr "The player does not have enough money!"
+
+msgid ""
+"Der Tankanhänger wurde nicht mehr erkannt, bitte Tankvorgang wiederholen!"
+msgstr ""
+"The tank trailer was not recognized anymore, please repeat the filling "
+"procedure!"
+
+msgid "Der Spieler möchte deinen Service nicht nutzen."
+msgstr "The player does not want to use your service."
+
+msgid "Dieses %s kann nicht abgeschleppt werden!"
+msgstr "This %s cannot be towed!"
+
+msgid "CarShop.png"
+msgstr "CarShop.png"
+
+msgid "Es sitzt kein %s."
+msgstr "There is no %s."
+
+msgid "Es sitzt kein Fahrer im Bus."
+msgstr "There's no driver in the bus."
+
+msgid "Dieser Bus ist nicht im Dienst."
+msgstr "This bus is not in service."
+
+msgid "Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!"
+msgstr "You got out of the cab! It cost you $%d$ for the ride!"
+
+msgid "Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!"
+msgstr "The player %s has dropped out! For the ride you earned %d$!"
+
+msgid "Du hast nicht mehr genügend Geld dabei!"
+msgstr "You don't have enough money left!"
+
+msgid "Der Spieler hat nicht mehr genügend Geld dabei!"
+msgstr "The player has no longer enough money with him!"
+
+msgid "Der Kunde %s ist offline gegangen!"
+msgstr "The customer %s has gone offline!"
+
+msgid "Du musst im Taxi sitzen!"
+msgstr "You have to be in a cab!"
+
+msgid "Der Spieler sitzt nicht mehr im Taxi!"
+msgstr "The player is no longer in the taxi!"
+
+msgid "Der Kunde %s hat sein Ziel auf der Karte markiert! Ziel: %s/%s"
+msgstr "The customer %s has marked his destination on the map! Target: %s/%s"
+
+msgid "Du hast dein Ziel auf der Karte markiert! Ziel: %s/%s"
+msgstr "You have marked your destination on the map! Target: %s/%s"
+
+msgid "Der Kunde %s wird dir sein Ziel mitteilen!"
+msgstr "The customer %s will tell you his destination!"
+
+msgid "Bitte nenne dem Fahrer %s dein Ziel"
+msgstr "Please tell the driver %s your destination"
+
+msgid ""
+"Dieser Bus hat keine Linie mehr - Wenn du weißt, was zuvor mit dem Bus "
+"passiert ist (z.B. wenn der Busfahrer Offline oder Offduty gegangen ist), "
+"dann melde dies bitte im Bugtracker"
+msgstr ""
+"This bus has no line anymore - If you know what happened to the bus before ("
+"e.g. if the bus driver went offline or off-duty), please report this in the "
+"bug tracker"
+
+msgid "Dieser Bus ist nicht mehr auf dieser Route im Dienst."
+msgstr "This bus is no longer in service on this route."
+
+msgid "Du fährst zu schnell!"
+msgstr "You're going too fast!"
+
+msgid "Interner Fehler: Bitte Linie neu starten"
+msgstr "Internal error: Please restart line"
+
+msgid "#FE8D14Reporter %s:#FEDD42 %s"
+msgstr "#FE8D14Reporter %s:#FEDD42 %s"
+
+msgid "Du hast ein Interview mit %s gestartet!"
+msgstr "You started an interview with %s!"
+
+msgid "Reporter %s hat ein Interview mit dir gestartet!"
+msgstr "Reporter %s has started an interview with you!"
+
+msgid ""
+"Interview: Alles was du im Chat schreibst ist nun öffentlich! (Außnahme: @l "
+"[text])"
+msgstr ""
+"Interview: Everything you write in the chat is now public! (Exception: @l "
+"[text])"
+
+msgid "Es findet bereits ein Interview statt!"
+msgstr "An interview is already taking place!"
+
+msgid "Du hast das Interview mit %s beendet!"
+msgstr "You finished the interview with %s!"
+
+msgid "Reporter %s hat das Interview mit dir beendet!"
+msgstr "Reporter %s has finished the interview with you!"
+
+msgid "Interview beendet! Ein Spieler ist offline gegangen!"
+msgstr "Interview over! The player is offline!"
+
+msgid "Interview beendet! Ihr habt euch zu weit entfernt!"
+msgstr "Interview over! You have gone too far away!"
+
+msgid "#FE8D14[Interview] %s:#FEDD42 %s"
+msgstr "#FE8D14 [Interview] %s:#FEDD42 %s"
+
+msgid "Die nächste Werbung kann erst in %d Sekunden gesendet werden!"
+msgstr "The next advertisement can be broadcast in %d seconds!"
+
+msgid "Du hast zu wenig Geld dabei! (%s$)"
+msgstr "You don't have enough money! (%s$)"
+
+msgid "Die SanNews hat /sannews derzeit deaktiviert!"
+msgstr "The SanNews has /sannews currently deactivated!"
+
+msgid ""
+"Nur Leader (Rang %s) des Unternehmens %s können deren Einstellungen ändern!"
+msgstr "Only leaders (rank %s) of company %s can change their settings!"
+
+msgid "Du wurdest aus deinem Unternehmen entlassen!"
+msgstr "You have been dismissed from your company!"
+
+msgid "%s hat dein Unternehmen verlassen!"
+msgstr "%s has left your company!"
+
+msgid "Du hast den Unternehmenschat deaktiviert!"
+msgstr "You deactivated the company chat!"
+
+msgid ""
+"Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine "
+"andere gegeben."
+msgstr ""
+"Your selected clothing is only available from rank %s, you have been given "
+"another one."
+
+msgid "Du bist nicht in diesem Unternehmen!"
+msgstr "You are not in this company!"
+
+msgid "Dein Telefon ist ausgeschaltet!"
+msgstr "Your phone is switched off!"
+
+msgid "Du telefonierst bereits!"
+msgstr "You're already on the phone!"
+
+msgid "Du bist nicht im richtigen Unternehmen!"
+msgstr "You're not in the right company!"
+
+msgid "Als Leader kannst du nicht das Unternehmen verlassen!"
+msgstr "As a leader you cannot leave the company!"
+
+msgid "Du hast das Unternehmen erfolgreich verlassen!"
+msgstr "You have successfully left the company!"
+
+msgid "Du hast nicht genügend Geld!"
+msgstr "You don't have enough money!"
+
+msgid "Du bist nicht berechtigt Geld abzuheben!"
+msgstr "You are not authorized to withdraw money!"
+
+msgid "In der Unternehmenskasse befindet sich nicht genügend Geld!"
+msgstr "There is not enough money in the company till!"
+
+msgid "Du bist nicht berechtigt Mitglieder hinzuzufügen!"
+msgstr "You are not allowed to add members!"
+
+msgid "Dieser Benutzer ist bereits in einem Unternehmen!"
+msgstr "This user is already in a company!"
+
+msgid "Dieser Benutzer hat bereits eine Einladung!"
+msgstr "This user already has an invitation!"
+
+msgid "Dieser Spieler ist bereits im Unternehmen!"
+msgstr "This player is already in the company!"
+
+msgid "Du kannst dich nicht selbst aus dem Unternehmen werfen!"
+msgstr "You can't throw yourself out of the company!"
+
+msgid "Du kannst den Spieler nicht rauswerfen!"
+msgstr "You can't throw the player out!"
+
+msgid "Du kannst den Unternehmensleiter nicht rauswerfen!"
+msgstr "You can't kick the CEO out!"
+
+msgid "Company not found!"
+msgstr "Company not found!"
+
+msgid "#008888Unternehmen: #FFFFFF%s ist soeben dem Unternehmen beigetreten!"
+msgstr "#008888Company: #FFFFFF%s has just joined the company!"
+
+msgid "Du bisd bereits in einem Unternehmen!"
+msgstr "You are already in a company!"
+
+msgid "Du hast keine Einladung für dieses Unternehmen"
+msgstr "You have no invitation for this company"
+
+msgid "%s hat die Unternehmenseinladung abgelehnt"
+msgstr "%s declined the company invitation"
+
+msgid "Du kannst nicht deinen eigenen Rang verändern!"
+msgstr "You cannot change your own rank!"
+
+msgid "Du bist nicht berechtigt den Rang zu verändern!"
+msgstr "You are not allowed to change the rank!"
+
+msgid "Du wurdest von %s auf Rang %d befördert!"
+msgstr "You have been promoted from %s to rank %d!"
+
+msgid "Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!"
+msgstr "With your rank you can promote players to a maximum of rank %d!"
+
+msgid "Du kannst Spieler nicht höher als auf Rang 5 befördern!"
+msgstr "You cannot promote players higher than rank 5!"
+
+msgid "Du oder das Ziel sind nicht mehr im Unternehmen!"
+msgstr "You or the target are no longer in the company!"
+
+msgid "Du wurdest von %s auf Rang %d degradiert!"
+msgstr "You've been demoted from %s to rank %d!"
+
+msgid "Du kannst ranghöhere Mitglieder nicht degradieren!"
+msgstr "You cannot demote higher ranking members!"
+
+msgid "Die Fahrzeuge können erst ab Rang %d respawnt werden!"
+msgstr "The vehicles can only be respawnt from rank %d!"
+
+msgid "Der maximale Lohn für diesen Rang beträgt %d$"
+msgstr "The maximum wage for this rank is %d$"
+
+msgid "Die Einstellungen für Rang %d wurden gespeichert!"
+msgstr "The settings for rank %d have been saved!"
+
+msgid "Du bist nicht mehr im Unternehmens-Dienst!"
+msgstr "You are no longer on company service!"
+
+msgid "Du bist nun im Dienst deines Unternehmens!"
+msgstr "You are now in the service of your company!"
+
+msgid "Du bist zu weit entfernt!"
+msgstr "You're too far away!"
+
+msgid "Du bist in keinem Unternehmen!"
+msgstr "You're not in any company!"
+
+msgid "Dazu bist du nicht berechtigt!"
+msgstr "You are not allowed to do that!"
+
+msgid "Du gehörst keinem Unternehmen an!"
+msgstr "You don't belong to any company!"
+
+msgid "Du bist nicht im Dienst deines Unternehmens aktiv!"
+msgstr "You are not active in the service of your company!"
+
+msgid "Kleidung gewechselt."
+msgstr "Changed clothes."
+
+msgid "Dein Rang ist zu niedrig!"
+msgstr "Your rank is too low!"
+
+msgid "Einstellungen gespeichert!"
+msgstr "Settings saved!"
+
+msgid "Du hast den Event-Teleport Punkt an deine Position gesetzt!"
+msgstr "You have set the event teleport point to your position!"
+
+msgid ""
+"Du nimmst bereits am Admin-Event teil! Bitte warte auf weitere Anweisungen!"
+msgstr ""
+"You are already participating in the Admin-Event! Please wait for further "
+"instructions!"
+
+msgid "Du nimmst am Admin-Event teil! Bitte warte auf weitere Anweisungen!"
+msgstr "You take part in the Admin Event! Please wait for further instructions!"
+
+msgid "Du nimmst nicht mehr am Admin-Event teil!"
+msgstr "You are no longer participating in the Admin Event!"
+
+msgid "Du hast keinen Event-Teleport Punkt gesetzt!"
+msgstr "You have not set an event teleport point!"
+
+msgid "Es wurden %d Spieler teleportiert!"
+msgstr "There were %d players teleported!"
+
+msgid "Ungültige Richtung! Erlaubt sind %s"
+msgstr "Illegal direction! Allowed are %s"
+
+msgid "Du kannst maximal 20 Fahrzeuge estellen!"
+msgstr "You can provide a maximum of 20 vehicles!"
+
+msgid "Du musst in einem Fahrzeug sitzen!"
+msgstr "You must sit in a vehicle!"
+
+msgid "Du hast %d Event-Fahrzege gefreezt!"
+msgstr "You've freezed %d event vehicles!"
+
+msgid "Du hast %d Event-Fahrzege entfreezt!"
+msgstr "You've unfreezed %d event vehicles!"
+
+msgid "Du hast %d Event-Fahrzege gelöscht!"
+msgstr "You have deleted %d event vehicles!"
+
+msgid "%s hat eine Auktions-Runde für %s gestartet!"
+msgstr "%s has started an auction round for %s!"
+
+msgid "Es läuft bereits eine Auktion!"
+msgstr "There is already an auction going on!"
+
+msgid "Du hast %s auf %s geboten und bist somit Höchstbietender!"
+msgstr "You have bid %s on %s and are therefore the highest bidder!"
+
+msgid "Dein Gebot ist zu tief, das Höchstgebot für %s liegt bei %s!"
+msgstr "Your bid is too low, the highest bid for %s is %s!"
+
+msgid "Es läuft keine Auktion!"
+msgstr "There is no auction!"
+
+msgid "%s hat das höchste Gebot entfernt!"
+msgstr "%s has removed the highest bid!"
+
+msgid "Es gibt noch keine Gebote!"
+msgstr "There are no bids yet!"
+
+msgid "%s hat den Aufruf für %s beendet!"
+msgstr "%s has finished the call for %s!"
+
+msgid "Es läuft aktuell kein Event!"
+msgstr "There is currently no event running!"
+
+msgid "Du musst zuerst dem Event teilnehmen (/teilnehmen)!"
+msgstr "You have to participate (/teilnehmen) in the event first!"
+
+msgid "%s hat ein Adminevent beendet!"
+msgstr "%s has finished an admin event!"
+
+msgid "%s hat ein Adminevent gestartet!"
+msgstr "%s has started an admin event!"
+
+msgid "Du hast nicht genug Päckchen! (%d)"
+msgstr "You don't have enough packages! (%d)"
+
+msgid "Du hast nicht genug Zuckerstangen! (%d)"
+msgstr "You don't have enough candy canes! (%d)"
+
+msgid "Du hast nicht genug Platz in deinem Inventar!"
+msgstr "You don't have enough space in your inventory!"
+
+msgid "Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!"
+msgstr "Error in creating the vehicle. Please notify an admin!"
+
+msgid "%d Punkte erhalten!"
+msgstr "Get %d points!"
+
+msgid "Im DEBUG Modus (Testserver) nicht verfügbar!"
+msgstr "Not available in DEBUG mode (test server)!"
+
+msgid ""
+"Du hast erfolgreich den Bonus %s für %d Päckchen und %d Zuckerstange/n "
+"gekauft!"
+msgstr ""
+"You have successfully bought the bonus %s for %d packs and %d candy cane/s!"
+
+msgid "Quest bestanden! Du erhälst %d Päckchen!"
+msgstr "Quest passed! You'll get %d packages!"
+
+msgid "Quest: Du hast das Glücksrad bereits %d/%dx gedreht!"
+msgstr "Quest: You have already turned the wheel of fortune %d/%dx!"
+
+msgid "Du hast %d/%d Päckchen gefunden!"
+msgstr "You have found %d/%d packages!"
+
+msgid "Glückwunsch! Du hast den Weihnachtsmann fotografiert!"
+msgstr "Congratulations! You took a picture of Santa Claus!"
+
+msgid "Auf deinem Foto ist kein Weihnachtsmann!"
+msgstr "There's no Santa in your picture!"
+
+msgid "Du hast erfolgreich 10 Spieler fotografiert!"
+msgstr "You have successfully photographed 10 players!"
+
+msgid "Auf deinem Foto sind zuwenig Spieler (%d/%d)"
+msgstr "There are too few players on your photo (%d/%d)"
+
+msgid "Du hast erfolgreich 5 Spieler mit Weihnachtsmütze fotografiert!"
+msgstr "You have successfully photographed 5 players with Christmas hats!"
+
+msgid "Auf deinem Foto sind zuwenig Spieler mit Weihnachtsmütze! (%d/%d)"
+msgstr "There are too few players with Christmas hats in your photo! (%d/%d)"
+
+msgid "Du hast erfolgreich 2 Teammitglieder fotografiert!"
+msgstr "You have successfully photographed 2 team members!"
+
+msgid "Auf deinem Foto sind zuwenig Teammitglieder! (%d/%d)"
+msgstr "There are not enough team members in your photo! (%d/%d)"
+
+msgid "Dein Foto entspricht nicht der Questaufgabe!"
+msgstr "Your photo does not match the quest task!"
+
+msgid "Glückwunsch! Du hast alle Kobolde getötet!"
+msgstr "Congratulations! You killed all the goblins!"
+
+msgid "Noch "
+msgstr "Still "
+
+msgid "Du hast gewonnen und %d$ bekommen!"
+msgstr "You won and got %d$!"
+
+msgid "Du hast den %d. Platz erreicht und %d$ bekommen!"
+msgstr "You got the %d. Place and get %d$!"
+
+msgid "Zeit abgelaufen!"
+msgstr "Time's up!"
+
+msgid "Du nimmst bereits an diesem Event teil!"
+msgstr "You are already taking part in this event!"
+
+msgid ""
+"Du hast die Eventzone verlassen und nimmst deshalb nicht mehr am Event teil!"
+msgstr ""
+"You have left the event zone and therefore do not take part in the event "
+"anymore!"
+
+msgid "Das Event wurde wegen zu weniger Spieler abgesagt!"
+msgstr "The event was cancelled because of too few players!"
+
+msgid "In 5min startet ein '%s'! Begib dich zum Flaggen-Blip, um teilzunehmen."
+msgstr "In 5min a '%s' will start! Go to the flag blip to participate."
+
+msgid "Dieses Event existiert nicht mehr!"
+msgstr "This event no longer exists!"
+
+msgid "Dieses Event ist schon voll!"
+msgstr "This event is already full!"
+
+msgid ""
+"Du hast dich erfolgreich für dieses Event eingetragen. Bleibe in der Nähe!"
+msgstr "You have successfully registered for this event. Stay close!"
+
+msgid "Du hast %s Kürbisse und und %s Süßigkeiten erhalten!"
+msgstr "You got %s pumpkins and %s candys!"
+
+msgid ""
+"Schreie 'Süßes oder Saures!', um die Bewohner auf dich aufmerksam zu machen."
+msgstr "Shout 'Trick-or-treat!' to get the residents to notice you."
+
+msgid "Hier warst du schon! Komm später wieder."
+msgstr "You've been here! Come back later."
+
+msgid "Du hast %d %s bekommen!"
+msgstr "You got %d %s!"
+
+msgid "Es scheint niemand zu Hause zu sein..."
+msgstr "There doesn't seem to be anyone at home..."
+
+msgid "Du musst in der Nähe der Tür bleiben um Süßigkeiten zu bekommen!"
+msgstr "You have to stay near the door to get candys!"
+
+msgid "Du hast nicht genug Süßigkeiten! (%d)"
+msgstr "You don't have enough candys! (%d)"
+
+msgid "Du hast nicht genug Kürbisse! (%d)"
+msgstr "You don't have enough pumpkins! (%d)"
+
+msgid "Du hast den Payday Bonus bereits aktiviert!"
+msgstr "You have already activated the Payday Bonus!"
+
+msgid ""
+"Du hast erfolgreich den Bonus %s für %d Kürbisse und %d Süßigkeiten gekauft!"
+msgstr ""
+"You have successfully bought the bonus %s for %d pumpkins and %d sweets!"
+
+msgid "Um %d:13 startet ein Halloween Special an der DM-Arena!"
+msgstr "At %d:13 a Halloween Special starts at the DM-Arena!"
+
+msgid "Halloween-DM"
+msgstr "Halloween-DM"
+
+msgid "Die Halloween-Deathmatch Lobby wurde geöffnet!"
+msgstr "The Halloween-Deathmatch Lobby has opened!"
+
+msgid "Du hast beim Straßenrennen %d$ gewonnen!"
+msgstr "You won %d$ on the street racing!"
+
+msgid ""
+"Banken kannst du nur ausrauben wenn du Mitglied einer bösen Fraktion bist"
+msgstr "You can only rob banks if you are a member of an evil faction"
+
+msgid ""
+"Um den Überfall starten zu können müssen mindestens 3 Staats-Fraktionisten "
+"online sein!"
+msgstr "To start the robbery, at least 3 state factionists must be online!"
+
+msgid "%s hat einen Raubüberfall gestartet!"
+msgstr "%s has started a robbery!"
+
+msgid ""
+"Euer Bündnispartner %s hat einen Raubüberfall gestartet! Schaut nach, wie "
+"ihr sie unterstützen könnt!"
+msgstr "Your ally %s has started a robbery! See how you can support them!"
+
+msgid ""
+"%s hat einen Raubüberfall gestartet! Ihr habt 5 Minuten Zeit, bevor das SAPD "
+"alarmiert wird!"
+msgstr "%s has started a robbery! You have 5 minutes before SAPD is alerted!"
+
+msgid "Es müssen mindestens %d Staatsfraktionisten online sein!"
+msgstr "There must be at least %d state factionists online!"
+
+msgid "Es ist noch nicht genug Geld in den Tresoren!"
+msgstr "There's not enough money in the vaults yet!"
+
+msgid "Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!"
+msgstr "Bank clerk says: Help! I'll open the door to the vault for you!"
+
+msgid "Bankangestellter sagt: Bitte tun sie mir nichts!"
+msgstr "Bank clerk says: Please don't hurt me!"
+
+msgid "Nur Mitglieder im Fraktionsdienst können die Bank ausrauben!"
+msgstr "Only members in faction duty can rob the bank!"
+
+msgid "Nur Mitglieder einer bösen Fraktion können die Bank ausrauben!"
+msgstr "Only members of an evil faction can rob the bank!"
+
+msgid "Derzeit läuft kein Bankraub!"
+msgstr "No bank robbery in progress!"
+
+msgid "Du bist nicht an diesem Raub beteiligt!"
+msgstr "You are not involved in this robbery!"
+
+msgid "Du bist zu weit von dem Geldsack entfernt!"
+msgstr "You're too far away from the money bag!"
+
+msgid "%d$ in den Geldsack %d gepackt!"
+msgstr "%d$ in the money bag %d packed!"
+
+msgid "Ihr habt bereits die maximale Anzahl an Geldsäcken!"
+msgstr "You already have the maximum number of moneybags!"
+
+msgid "Den Bank-Überfall Truck können nur Fraktionisten fahren!"
+msgstr "Only factionists can drive the bank robbery truck!"
+
+msgid "%s hat %s Beute sichergestellt!"
+msgstr "%s has secured %s booty!"
+
+msgid "%s hat %s in Sicherheit gebracht!"
+msgstr "%s has taken %s to safety!"
+
+msgid "%s war unvorsichtig und hat beim Hacken die Polizei alarmiert!"
+msgstr "%s was careless and alerted the police while hacking!"
+
+msgid "Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen"
+msgstr "The security system was cracked by %s! The safe door is open"
+
+msgid "Du darfst diese Funktion nicht nutzen!"
+msgstr "You are not allowed to use this function!"
+
+msgid "Feuer mit der ID %d erstellt, du kannst es nun editieren."
+msgstr "Fire created with the ID %d, you can edit it now."
+
+msgid "Neues Feuer konnte nicht in die Datenbank eingefügt werden."
+msgstr "New fire could not be added to the database."
+
+msgid "Feuer %d gespeichert."
+msgstr "Fire %d stored."
+
+msgid "Feuer %d gelöscht."
+msgstr "Fire %d deleted."
+
+msgid "Es müssen mindestens 3 Staatsfraktionisten online sein!"
+msgstr "There must be at least 3 state factionists online!"
+
+msgid "Es müssen mindestens 3 Spieler böser Fraktionen online sein!"
+msgstr "There must be at least 3 players of evil factions online!"
+
+msgid "Den Waffentruck können nur Mitglieder böser Fraktionen starten!"
+msgstr "Only members of evil factions can start the weapon truck!"
+
+msgid ""
+"Den Staats-Waffentruck können nur Mitglieder von Staats-Fraktionen im Dienst "
+"starten!"
+msgstr ""
+"Only members on service of state factions can start the state weapon truck!"
+
+msgid "Den Waffentruck können nur Fraktions-Mitglieder starten!"
+msgstr "Only faction members can start the weapon truck!"
+
+msgid "Du trägst nicht deine Fraktionsfarben!"
+msgstr "You're not wearing your faction colours!"
+
+msgid "Ungültige Fraktion!"
+msgstr "Invalid fraction!"
+
+msgid ""
+"Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-"
+"Truck! Gesamtkosten: %d$"
+msgstr ""
+"The load is ready! Click on the crates and bring them to the weapons truck! "
+"Total cost: %d$"
+
+msgid "Du hast zuwenig augeladen! Mindestens: %d$"
+msgstr "You have charged too few! At least: %d$"
+
+msgid "Ihr hast nicht ausreichend Geld in der Fraktions Kasse! (%d$)"
+msgstr "You don't have enough money in the faction till! (%d$)"
+
+msgid "Du bist in keiner Fraktion!"
+msgstr "You're not in any faction!"
+
+msgid "Möchtest du einen Weed-Truck starten? Kosten: %s"
+msgstr "You want to start a weed truck? Costs: %s"
+
+msgid "Den Weed-Truck können nur Mitglieder böser Fraktionen starten!"
+msgstr "Only members of evil factions can start the weed truck!"
+
+msgid "Den Weed-Truck können nur Fraktions-Mitglieder starten!"
+msgstr "Only faction members can start the Weed-Truck!"
+
+msgid "Du hast nicht genug Geld in der Fraktionskasse! (%s)"
+msgstr "You don't have enough money in the faction till! (%s)"
+
+msgid ""
+"Du kannst nur als Mitglied einer bösen Fraktion in das Gefängnis einbrechen!"
+msgstr "You can only break into the prison as a member of an evil faction!"
+
+msgid "Nur Fraktionisten können den Geldsack aufheben!"
+msgstr "Only factionists can pick up the money bag!"
+
+msgid "Du kannst hier nicht abgeben!"
+msgstr "You can't pass here!"
+
+msgid "Du hast erfolgreich einen Geldsack abgegeben!"
+msgstr "You have successfully delivered a money bag!"
+
+msgid "Du musst die Geldsäcke per Hand abladen!"
+msgstr "You have to unload the money bags by hand!"
+
+msgid "Den Geldtransporter können nur Fraktionisten fahren!"
+msgstr "Only factionists can drive the money transporter!"
+
+msgid "Du hast keine Kiste dabei!"
+msgstr "You dont have a crate!"
+
+msgid "Du bist zu weit von der Kiste entfernt!"
+msgstr "You're too far from the crate!"
+
+msgid "Nur Fraktionisten können Kisten aufheben!"
+msgstr "Only factionists can pick up crates!"
+
+msgid "Alle Kisten aufgeladen! Der Truck ist bereit!"
+msgstr "All crates loaded! The truck is ready!"
+
+msgid "%d/%d Kisten aufgeladen!"
+msgstr "%d/%d crates loaded!"
+
+msgid "Den Waffentruck können nur Fraktionisten fahren!"
+msgstr "Only factionists can drive the weapon truck!"
+
+msgid "Es befindet sich keine Kiste auf dem Truck!"
+msgstr "There are no crates on the truck!"
+
+msgid "Du darfst in keinem Fahrzeug sitzen!"
+msgstr "You are not allowed to sit in any vehicle!"
+
+msgid "Du hast bereits ein Objekt dabei!"
+msgstr "You already have an object with you!"
+
+msgid "Du bist zu weit vom Truck entfernt!"
+msgstr "You're too far from the truck!"
+
+msgid "Dieses Fahrzeug kann nicht entladen werden!"
+msgstr "This vehicle cannot be unloaded!"
+
+msgid "Nur Fraktionisten können Kisten abladen!"
+msgstr "Only factionists can unload crates!"
+
+msgid "Das Fahrzeug ist bereits voll beladen!"
+msgstr "The vehicle is already fully loaded!"
+
+msgid "Dieses Fahrzeug kann nicht beladen werden!"
+msgstr "This vehicle cannot be loaded!"
+
+msgid "Bitte steig aus um die Kisten zu entladen!"
+msgstr "Please get out to unload the crates!"
+
+msgid ""
+"Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-"
+"Depot!"
+msgstr ""
+"You have successfully delivered a crate! The weapons are now in the faction "
+"depot!"
+
+msgid "Du musst die Kisten per Hand abladen!"
+msgstr "You have to unload the crates by hand!"
+
+msgid "Der Weed-Truck wird beladen! Bitte warten!"
+msgstr "The Weed Truck is being loaded! Please wait!"
+
+msgid "Der Weed-Truck ist vollständig beladen!"
+msgstr "The Weed Truck is fully loaded!"
+
+msgid "Den Weed-Truck können nur Fraktionisten fahren!"
+msgstr "Only factionists can drive the Weed Truck!"
+
+msgid "Weed-Truck abgegeben! Du erhälst %d Gramm Weed!"
+msgstr "Weed truck delivered! You get %d gram of weed!"
+
+msgid "Nur Leader (Rang %s) der Fraktion %s können deren Einstellungen ändern!"
+msgstr "Only leaders (rank %s) of the faction %s can change their settings!"
+
+msgid ""
+"%s\n"
+"Du hast %d Karma erhalten!"
+msgstr ""
+"%s\n"
+"You have received %d karma!"
+
+msgid "Du bist nicht im Dienst deiner Fraktion aktiv!"
+msgstr "You are not active in the service of your faction!"
+
+msgid "Du wurdest aus deiner Fraktion entlassen!"
+msgstr "You were dismissed from your faction!"
+
+msgid "%s hat deine Fraktion verlassen!"
+msgstr "%s has left your faction!"
+
+msgid "Du hast den Fraktionschat deaktiviert!"
+msgstr "You deactivated the faction's chat!"
+
+msgid "Du hast den Bündnischat deaktiviert!"
+msgstr "You deactivated the alliance chat!"
+
+msgid "Du bist nicht in der richtigen Fraktion"
+msgstr "You are not in the right faction"
+
+msgid "Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert."
+msgstr "There is no room in the depot for %s %s! Only %s %s were stored."
+
+msgid ""
+"Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine "
+"eingelagert."
+msgstr ""
+"There is no room in the depot for %s %s magazine/s! Only %s %s magazines "
+"were stored."
+
+msgid "Im Depot ist nicht Platz für eine/n %s!"
+msgstr "There is no room for a %s in the depot!"
+
+msgid "Es sind nicht genug %s im Lager (%s)!"
+msgstr "There are not enough %s in stock (%s)!"
+
+msgid "Es sind nicht genug %s-Magazine im Lager (%s)!"
+msgstr "There are not enough %s magazines in stock (%s)!"
+
+msgid "Du hast keine %s für ein Magazin!"
+msgstr "You don't have %s for a magazine!"
+
+msgid "Du hast %d %s ins Depot (Slot %d) gelegt!"
+msgstr "You have put %d %s in the depot (Slot %d)!"
+
+msgid "Du hast nicht genug %s!"
+msgstr "You don't have enough %s!"
+
+msgid "Du kannst dieses Item nicht einlagern!"
+msgstr "You cannot store this item!"
+
+msgid "Es gibt keinen freien Item-Slot in diesem Depot!"
+msgstr "There is no free item slot in this depot!"
+
+msgid "Du hast %d %s aus dem Depot (Slot %d) genommen!"
+msgstr "You have taken %d %s from the depot (slot %d)!"
+
+msgid "Du hast kein Item in diesem Slot!"
+msgstr "You have no item in this slot!"
+
+msgid "Du hast %d %s ins Depot gelegt!"
+msgstr "You put %d %s in the depot!"
+
+msgid "Du bist nicht im Fraktionsmodus!"
+msgstr "You're not in faction mode!"
+
+msgid "Keine Berechtigung erst ab Rang %i!"
+msgstr "No authorization only from rank %i!"
+
+msgid "Du hast %d %s aus dem Depot genommen!"
+msgstr "You took %d %s from the depot!"
+
+msgid "Dieser Waffenverkäufer liefert nicht an deine Fraktion!"
+msgstr "This weapons seller doesn't deliver to your faction!"
+
+msgid "Dieses Depot gehört nicht deiner Fraktion!"
+msgstr "This depot does not belong to your faction!"
+
+msgid "Du kannst nicht aus einem Fahrzeug überfallen!"
+msgstr "You can't mug someone from a vehicle!"
+
+msgid "Du kannst keine aktiven Supporter überfallen!"
+msgstr "You can not mug active supporters!"
+
+msgid "Du kannst Leute nur im Freien überfallen!"
+msgstr "You can only mug people in the open!"
+
+msgid "Spieler unter 10 Spielstunden dürfen nicht überfallen werden!"
+msgstr "Players under 10 playing hours may not be robbed!"
+
+msgid ""
+"Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!"
+msgstr "This player has already been mugged within the last 2 hours!"
+
+msgid "Du wirst von %s (%s) überfallen!"
+msgstr "You'll be mugged by %s (%s)!"
+
+msgid "Lauf weg oder bleibe bis der Überfall beendet ist!"
+msgstr "Run away or stay until the rob is over!"
+
+msgid "überfällt %s!"
+msgstr "robs %s!"
+
+msgid "Der Spieler hat kein Geld dabei!"
+msgstr "The player has no money!"
+
+msgid "Du kannst keine Spieler im Dienst überfallen!"
+msgstr "You cannot rob players on duty!"
+
+msgid "wurde erfolgreich von %s überfallen!"
+msgstr "was successfully robbed by %s!"
+
+msgid "Du bist dem Überfall entkommen!"
+msgstr "You escaped the robbery!"
+
+msgid "Der Spieler ist dem Überfall entkommen!"
+msgstr "The player has escaped the robbery!"
+
+msgid "ist aus dem Überfall von %s entkommen!"
+msgstr "has escaped from the rob from %s!"
+
+msgid "Du bist nun in zivil unterwegs!"
+msgstr "You're now in civilian clothes!"
+
+msgid "Du bist nun als Gangmitglied gekennzeichnet!"
+msgstr "You are now marked as a gang member!"
+
+msgid "Du bist in keiner Gang / Mafia!"
+msgstr "You're not in a gang / mafia!"
+
+msgid "Du hast keine Berechtigung!"
+msgstr "You have no authority!"
+
+msgid "%s %s benötigt Unterstützung!"
+msgstr "%s %s needs support!"
+
+msgid "Dein Handy ist ausgeschaltet!"
+msgstr "Your phone is switched off!"
+
+msgid "Bündnispartner %s benötigt Hilfe!"
+msgstr "Ally %s needs help!"
+
+msgid "%s %s benötigt Hilfe!"
+msgstr "%s %s needs help!"
+
+msgid "Du kannst hier keine Hilfe anfordern!"
+msgstr "You can't call for help here!"
+
+msgid "Du bist nicht in der richtigen Fraktion!"
+msgstr "You are not in the right faction!"
+
+msgid "Als Leader kannst du nicht die Fraktion verlassen!"
+msgstr "As leader you cannot leave the faction!"
+
+msgid "Du hast die Fraktion erfolgreich verlassen!"
+msgstr "You have successfully left the faction!"
+
+msgid "In der Fraktionskasse befindet sich nicht genügend Geld!"
+msgstr "There is not enough money in the faction till!"
+
+msgid "Du bist nicht berechtigt Fraktionnmitglieder hinzuzufügen!"
+msgstr "You are not allowed to add faction members!"
+
+msgid "Dieser Benutzer ist bereits in einer Fraktion!"
+msgstr "This user is already in a faction!"
+
+msgid "Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)"
+msgstr "The player has too little negative karma! (Requires: %s)"
+
+msgid "Der Spieler hat zuwenig positives Karma! (Benötigt: %s)"
+msgstr "The player has too little positive karma! (Requires: %s)"
+
+msgid "Dieser Spieler ist bereits in der Fraktion!"
+msgstr "This player is already in the faction!"
+
+msgid "Du kannst dich nicht selbst aus der Fraktion werfen!"
+msgstr "You can't throw yourself out of the faction!"
+
+msgid "Du kannst den Fraktionnleiter nicht rauswerfen!"
+msgstr "You can't kick the faction leader out!"
+
+msgid "Externer Grund für den Rauswurf muss ausgefüllt werden!"
+msgstr "External reason for ejection must be filled in!"
+
+msgid "Faction not found!"
+msgstr "Faction not found!"
+
+msgid "#008888Fraktion: #FFFFFF%s ist soeben der Fraktion beigetreten!"
+msgstr "#008888Fraction: #FFFFFF%s has just joined the fraction!"
+
+msgid "Du bisd bereits einer Fraktion beigetreten!"
+msgstr "You have already joined a faction!"
+
+msgid "Du hast keine Einladung für diese Fraktion"
+msgstr "You have no invitation for this faction"
+
+msgid "%s hat die Fraktionneinladung abgelehnt"
+msgstr "%s has declined the fraction invitation"
+
+msgid "Du kannst deinen eigenen Rang nicht höher setzen!"
+msgstr "You can't raise your own rank!"
+
+msgid "Du kannst Spieler nicht höher als auf Rang 6 befördern!"
+msgstr "You cannot promote players higher than rank 6!"
+
+msgid "Du oder das Ziel sind nicht mehr in der Fraktion!"
+msgstr "You or the target are no longer in the faction!"
+
+msgid "Du kannst Spieler nicht niedriger als auf Rang 0 setzen!"
+msgstr "You cannot set players lower than rank 0!"
+
+msgid "Du bist zu weit entfernt"
+msgstr "You are too far away"
+
+msgid "Ihr habt bereits ein Bündnis mit der %s!"
+msgstr "You already have an alliance with the %s!"
+
+msgid "Die Fraktion %s hat bereits ein Bündnis mit der %s!"
+msgstr "The faction %s already has an alliance with the %s!"
+
+msgid ""
+"Es läuft aktuell bereits eine Bündnis-Anfrage eurer Fraktion! Ziehe die "
+"andere Anfrage erst zurück!"
+msgstr ""
+"There's already an alliance request from your faction in progress! Withdraw "
+"the other request first!"
+
+msgid ""
+"Es läuft aktuell bereits eine Anfrage an diese Fraktion! Ziehe die andere "
+"Anfrage erst zurück!"
+msgstr ""
+"There is currently already a request to this faction! Withdraw the other "
+"request first!"
+
+msgid "Die Anfrage ist nicht mehr verfügbar!"
+msgstr "The request is no longer available!"
+
+msgid "Du gehörst keiner Fraktion an!"
+msgstr "You do not belong to any fraction!"
+
+msgid "Fehler bei Spezial/Aktionskleidung, bitte wende dich an deinen Leader!"
+msgstr "Error with special/action clothing, please contact your leader!"
+
+msgid "Die Fraktion mit der ID %s ist noch geladen!"
+msgstr "The fraction with the ID %s is still loaded!"
+
+msgid "Die Fraktion mit der ID %s ist nicht geladen!"
+msgstr "The fraction with the ID %s is not loaded!"
+
+msgid ""
+"Die Fraktionsmitglieder der Fraktions ID %d wurden erfolgreich in die "
+"Fraktion %s transferiert!"
+msgstr ""
+"The fraction members of the fraction ID %d were successfully transferred to "
+"the fraction %s!"
+
+msgid "Du darfst nicht in einem Fahrzeug sitzen!"
+msgstr "You can't sit in a vehicle!"
+
+msgid "Du bist nicht mehr im Dienst deiner Fraktion!"
+msgstr "You are no longer in the service of your fraction!"
+
+msgid "Du bist nun im Dienst deiner Fraktion!"
+msgstr "You are now in the service of your fraction!"
+
+msgid "Du bist in nicht im Rescue-Team!"
+msgstr "You're not in the rescue team!"
+
+msgid "Du kannst die Trage nicht so oft hintereinander aus/einladen!"
+msgstr "You cannot unload/load the stretcher so many times in a row!"
+
+msgid "Du bist nicht im Medic-Dienst!"
+msgstr "You're not in medic duty!"
+
+msgid "Du hast den Bürger erfolgreich wiederbelebt!"
+msgstr "You have successfully revived the citizen!"
+
+msgid "Du wurdest erfolgreich wiederbelebt!"
+msgstr "You have been successfully resuscitated!"
+
+msgid "Du hast den Spieler erfolgreich wiederbelebt!"
+msgstr "You have successfully revived the player!"
+
+msgid "Du hast deine Waffen während des Verblutens gesichert!"
+msgstr "You secured your weapons while you were bleeding to death!"
+
+msgid "Der Spieler ist nicht tot!"
+msgstr "The player is not dead!"
+
+msgid ""
+"%s versucht, %s vor dem Verbluten zu retten, ein RTW wird dringend "
+"benötigt!\n"
+"Position: %s - %s"
+msgstr ""
+"%s tries to save %s from bleeding to death, an RTW is urgently needed!\n"
+"Position: %s - %s"
+
+msgid "Drücke 'Leertaste' zum Beenden des Vorgangs!"
+msgstr "Press 'Space' to end the process!"
+
+msgid ""
+"%s benötigt ärztliche Hilfe.\n"
+"Position: %s - %s"
+msgstr ""
+"%s needs medical attention.\n"
+"Position: %s - %s"
+
+msgid "Es liegt bereits ein Spieler auf der Trage! (%s)"
+msgstr "There's already a player on the stretcher! (%s)"
+
+msgid "Du hast kein(e) Defibrillator oder Trage dabei!"
+msgstr "You don't have a defibrillator or a stretcher with you!"
+
+msgid "Der Bürger konnte nicht auf die Trage gelegt werden (%s)!"
+msgstr "The citizen could not be put on the stretcher (%s)!"
+
+msgid "Es liegt bereits ein Bürger auf der Trage! (%s)"
+msgstr "There's already one citizen on the stretcher! (%s)"
+
+msgid "Du hast keine Trage dabei!"
+msgstr "You didn't bring a stretcher!"
+
+msgid ""
+"Der Medic %s bietet Ihnen eine Heilung an! \n"
+"Diese kostet %d$! Annehmen?"
+msgstr ""
+"The Medic %s offers you a cure!\n"
+"This costs %d$! Accept it?"
+
+msgid "Der Spieler hat volles Leben!"
+msgstr "The player has full life!"
+
+msgid ""
+"Interner Fehler: Argumente falsch @FactionRescue:Event_healPlayerQuestion!"
+msgstr ""
+"Internal error: Arguments wrong @FactionRescue:Event_healPlayerQuestion!"
+
+msgid "Der Spieler %s hat die Heilung abgelehnt!"
+msgstr "The player %s has refused the healing!"
+
+msgid "Du hast die Heilung mit %s abgelehnt!"
+msgstr "You rejected the cure with %s!"
+
+msgid "Du hast den Spieler %s für %d$ geheilt!"
+msgstr "You healed the player %s for %d$!"
+
+msgid "Du wurdest vom Medic %s für %d$ geheilt!"
+msgstr "You got heald for $%d from medic %s!"
+
+msgid "Der Spieler hat nicht genug Geld! (%d$)"
+msgstr "The player does not have enough money! (%d$)"
+
+msgid "Du hast nicht genug Geld! (%d$)"
+msgstr "You don't have enough money! (%d$)"
+
+msgid "Interner Fehler: Argumente falsch @FactionRescue:Event_healPlayer!"
+msgstr "Internal error: arguments wrong @FactionRescue:Event_healPlayer!"
+
+msgid "Du wurdest für %s$ von dem Arzt geheilt!"
+msgstr "You got heald by that doctor for %s$!"
+
+msgid "Du hast bereits volles Leben."
+msgstr "You already have a full life."
+
+msgid "Klicke auf das Fahrzeug um die Leiter zu bedienen!"
+msgstr "Click on the vehicle to operate the ladder!"
+
+msgid ""
+"Du befindest dich im Leiter-Modus. Bedienung:\n"
+"W, A, S, D - Leiter drehen, hoch/herunterfahren\n"
+"STRG, SHIFT - Leiter ein/ausfahren\n"
+"Mausrad - Kamera-Zoom ändern\n"
+"Klick auf die Leiter - Modus beenden"
+msgstr ""
+"You are in ladder mode. Handling:\n"
+"W, A, S, D - Ladder turn, up/down\n"
+"CTRL, SHIFT - Retract/extend ladder\n"
+"Mouse wheel - Change camera zoom\n"
+"Click on the ladder - Exit mode"
+
+msgid "Leiterwagen"
+msgstr "Ladder car"
+
+msgid "Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!"
+msgstr "Ladder deactivated! You can drive the vehicle again!"
+
+msgid "Suche dir eine ebenere Fläche!"
+msgstr "Find a flatter surface!"
+
+msgid "Dein Fahrzeug hat Feuer gefangen! Steige schnell aus!"
+msgstr "Your vehicle caught fire! Get out quickly!"
+
+msgid "Du sitzt in keinem Fraktions-Fahrzeug!"
+msgstr "You're not in a faction vehicle!"
+
+msgid "Ungültiges Fahrzeug!"
+msgstr "Invalid vehicle!"
+
+msgid "Du brauchst ein Fahrzeug zum einladen!"
+msgstr "You need a vehicle to load in!"
+
+msgid "Du hast %s ein Ticket für %d$ angeboten!"
+msgstr "You offered %s a ticket for %d$!"
+
+msgid "%s hat nicht genug Geld dabei! (%d$)"
+msgstr "%s doesn't have enough money on him! (%d$)"
+
+msgid "%s hat dein Ticket angenommen und bezahlt!"
+msgstr "%s has accepted and paid your ticket!"
+
+msgid "Du hast das Ticket angenommen! Dir wurde(n) %s Wanted(s) erlassen!"
+msgstr "You accepted the ticket! You have been waived %s Wanted(s)!"
+
+msgid "Du hast den Staatschat deaktiviert!"
+msgstr "You deactivated the state chat!"
+
+msgid "%s hat bereits in den letzten drei Minuten Wanteds wegen %s bekommen!"
+msgstr "%s already got Wanteds in the last three minutes because of %s!"
+
+msgid "Der Grund ist ungültig!"
+msgstr "The reason is invalid!"
+
+msgid "Der Spieler ist tot!"
+msgstr "The player is dead!"
+
+msgid "Die Anzahl muss zwischen 1 und %s liegen!"
+msgstr "The number must be between 1 and %s!"
+
+msgid "Die Kategorie ist ungültig!"
+msgstr "The category is invalid!"
+
+msgid "Die Anzahl muss zwischen 1 und 6 liegen!"
+msgstr "The number must be between 1 and 6!"
+
+msgid "Du kannst dich nicht selbst fesseln!"
+msgstr "You can't tie up yourself!"
+
+msgid "Du hast %s gefesselt"
+msgstr "You have %s tied up"
+
+msgid "Du wurdest von %s gefesselt"
+msgstr "You got tied up by %s"
+
+msgid "Du hast %s entfesselt"
+msgstr "You unleashed %s"
+
+msgid "Du wurdest von %s entfesselt"
+msgstr "You got unleashed by %s"
+
+msgid "Der Spieler ist nicht in deinem Fahrzeug!"
+msgstr "The player is not in your vehicle!"
+
+msgid "Kein Ziel angegeben! Befehl: /tie [NAME]!"
+msgstr "No destination specified! Command: /tie [NAME]!"
+
+msgid "%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$"
+msgstr "%s has just been locked up by %s for %d minutes! Penalty: %d$"
+
+msgid "Der Spieler wird nicht gesucht!"
+msgstr "The player is not wanted!"
+
+msgid "Sie haben sich mit der Kaution von %s$ freigekauft!"
+msgstr "You have bought your way out with the deposit of %s$!"
+
+msgid "Du bist nicht mehr im Dienst!"
+msgstr "You're now off duty!"
+
+msgid "Du bist nun im Dienst!"
+msgstr "You're now on duty !"
+
+msgid "Du bist in keiner Staatsfraktion!"
+msgstr "You're not in any state faction!"
+
+msgid "%s wurde in dein Fahrzeug gezogen!"
+msgstr "%s got pulled into your vehicle!"
+
+msgid "Du wurdest von %s in das Fahrzeug gezogen!"
+msgstr "You were pulled into the vehicle by %s!"
+
+msgid "Du hast keinen Platz in deinem Fahrzeug!"
+msgstr "You have no space in your vehicle!"
+
+msgid "Der Spieler ist nicht getazert oder Tod!"
+msgstr "The player is not tazered or dead!"
+
+msgid "So kannst du den Spieler nicht durchsuchen!"
+msgstr "You can't search the player like this!"
+
+msgid "Der Staatsbeamte %s durchsucht dich!"
+msgstr "The state servant %s is searching you!"
+
+msgid "Du kannst den Spieler nicht in einem Fahrzeug auf Alkohol testen!"
+msgstr "You cannot test the player for alcohol in a vehicle!"
+
+msgid ""
+"Du hast einen Alkoholtest an %s durchgeführt!\n"
+"Ergebnis: %s Promille"
+msgstr ""
+"You have done a alcohol test on %s!\n"
+"Result: %s per thousand"
+
+msgid ""
+"%s hat einen Alkoholtest an dir durchgeführt!\n"
+"Ergebnis: %s Promille"
+msgstr ""
+"%s has done a alcohol test on you!\n"
+"Result: %s per thousand"
+
+msgid ""
+"Staatsbeamter %s fordert dich auf deinen Führerschein zu zeigen! Zeigst du "
+"ihm deinen Führerschein?"
+msgstr ""
+"State servant %s asks you to show your driver's license! Will you show him "
+"your license?"
+
+msgid "nickt."
+msgstr "nods."
+
+msgid "sieht sich den Führerschein von %s an."
+msgstr "is looking at %s' driver's license."
+
+msgid "schüttelt den Kopf."
+msgstr "shakes his head."
+
+msgid "Du bist nicht berechtig GWD-Noten auszuteilen!"
+msgstr "You are not allowed to give BMS grades!"
+
+msgid "Du darfst dir nicht selber eine GWD-Noten setzen!"
+msgstr "You can't set yourself a BMS grade!"
+
+msgid "%s hat dir eine GWD-Note von %d gegeben!"
+msgstr "%s gave you a BMS grade of %d!"
+
+msgid "Du hast %s eine GWD-Note von %d gegeben!"
+msgstr "You gave %s a BMS grade of %d!"
+
+msgid "Ungültige GWD-Note!"
+msgstr "Invalid BMS grade!"
+
+msgid "Du bist nicht im MBT!"
+msgstr "You're not in the MBT!"
+
+msgid "Du hast %s folgende illegale Items abgenommen:"
+msgstr "You took %s following illegal items:"
+
+msgid "%s hat dir folgende illegale Items abgenommen:"
+msgstr "%s has taken the following illegal items from you:"
+
+msgid "%d %s"
+msgstr "%d %s"
+
+msgid "Keine"
+msgstr "None"
+
+msgid "Du hast %s entwaffnet!"
+msgstr "You disarmed %s!"
+
+msgid "%s hat dich entwaffnet!"
+msgstr "%s disarmed you!"
+
+msgid ""
+"Dieses Item kann nur in einen Enforcer, FBI Truck oder Barracks getan werden!"
+msgstr "This item can only be put into an Enforcer, FBI Truck or Barracks!"
+
+msgid "Kein Fahrzeug gefunden!"
+msgstr "No vehicle found!"
+
+msgid "Du bist nicht berechtigt! Ab Rang %d!"
+msgstr "You are not authorized! Rank %d required!"
+
+msgid "Alle verfügbaren Wanzen sind aktiv!"
+msgstr "All available bugs are active!"
+
+msgid "Du hast den Log der Wanze %d gelöscht!"
+msgstr "You deleted the log of the bug %d!"
+
+msgid "Wanze nicht verfügbar!"
+msgstr "Bug not available!"
+
+msgid "deinem Körper"
+msgstr "your body"
+
+msgid "deinem Fahrzeug"
+msgstr "your vehicle"
+
+msgid "Oha! Ich habe eine Wanze von %s entfernt!"
+msgstr "Whoa! I have removed a bug from %s!"
+
+msgid "Ich habe keine Wanze an %s gefunden!"
+msgstr "I haven't found a bug on %s!"
+
+msgid "[Gangwar] #FFFFFFEin Gegner ("
+msgstr "[Gangwar] #FFFFFFAn enemy ("
+
+msgid "Du hast keine Berechtigung die Spieler einzuteielen!"
+msgstr "You do not have the right to assign the players!"
+
+msgid "Alle Mitglieder sind gefallen!"
+msgstr "All members have fallen!"
+
+msgid "Alle Gegner sind eleminiert!"
+msgstr "All opponents are eliminated!"
+
+msgid "Die Flagge wurde nicht gehalten!"
+msgstr "The flag was not held!"
+
+msgid "Die Gegner haben die Flagge nicht gehalten!"
+msgstr "The enemy did not hold the flag!"
+
+msgid "Sie sind kein Angreifer!"
+msgstr "You are not an attacker!"
+
+msgid "Dein Waffenlevel ist zu niedrig! (Benötigt: %i)"
+msgstr "Your weapon level is too low! (Requires %i)"
+
+msgid "Du bist nicht berechtigt am Gangwar teilzunehmen!"
+msgstr "You are not allowed to participate in the Gangwar!"
+
+msgid "Dieses Gebiet ist noch nicht attackierbar!"
+msgstr "This area is not yet attackable!"
+
+msgid "Der Gangwar ist noch für "
+msgstr "The gangwar is still for "
+
+msgid "Es läuft zurzeit ein Gangwar!"
+msgstr "There's a gang war going on right now!"
+
+msgid "Es müssen mind. "
+msgstr "There must be at least "
+
+msgid "Du kannst dich nicht selbst angreifen!"
+msgstr "You can't attack yourself!"
+
+msgid "Du bist an keinem Gebiet!"
+msgstr "You're not in a territory!"
+
+msgid "Nur für Staatsfraktionisten im Dienst!"
+msgstr "State factionists on duty only!"
+
+msgid "In der Asservatenkammer befindet sich zu wenig Material!"
+msgstr "There isn't enough material in the evidence room!"
+
+msgid " .. date .. "
+msgstr " ..date.. "
+
+msgid "Du bist nicht berechtigt!"
+msgstr "You are not authorized!"
+
+msgid ""
+"Es kann nur alle 5 Minuten ein manuelles syncronisieren durchgeführt werden!"
+msgstr "A manual synchronization can only be performed every 5 minutes!"
+
+msgid ""
+"Die synchronisation der Gruppen wurde gestartet und dieser Prozess kann ein "
+"paar Minuten in Anspruch nehmen."
+msgstr ""
+"The synchronization of the groups has started and this process may take a "
+"few minutes."
+
+msgid ""
+"#FE8A00%s: #FFFFFFIch wurde gerade erst ausgeraubt. Bei mir gibts nichts zu "
+"holen."
+msgstr "#FE8A00%s: #FFFFFFFFI just got mugged. I have nothing on me."
+
+msgid "#FE8A00%s: #FFFFFF%s"
+msgstr "#FE8A00%s: #FFFFFF%s"
+
+msgid "Du hast %s Diebesgut von %s erhalten."
+msgstr "You received %s stolen goods from %s."
+
+msgid "Du darfst diese Funktion nicht nutzen!!"
+msgstr "You aren't allowed to use this function!!"
+
+msgid "Du kannst nur ein Objekt zur selben Zeit setzen!"
+msgstr "You can only set one object at a time!"
+
+msgid "Neuen NPC hinzugefügt!"
+msgstr "New NPC added!"
+
+msgid "Dieser Ped hat diese Rolle bereits zugewiesen!"
+msgstr "This Ped has already assigned this role!"
+
+msgid "Du hast dem Ped ID %d die Rolle %s zugewiesen!"
+msgstr "You have assigned the role %s to the ped ID %d!"
+
+msgid "Du hast dem Ped ID %d die Rolle %s entfernt!"
+msgstr "You have removed the roll %s from the Ped ID %d!"
+
+msgid "Ped mit ID %d despawnt!"
+msgstr "Ped with ID %d despawnt!"
+
+msgid "Ped mit ID %d gespawnt!"
+msgstr "Ped with ID %d spawned!"
+
+msgid "Ped-Position mit ID %d gelöscht!"
+msgstr "Ped position with ID %d deleted!"
+
+msgid "Du hast kein/en %s dabei!"
+msgstr "You don't have a %s on you!"
+
+msgid "Steige zuerst aus deinem Fahrzeug aus!"
+msgstr "Get out of your vehicle first!"
+
+msgid "In deinem Inventar ist nicht genug Platz für %d %s!"
+msgstr "There is not enough space in your inventory for %d %s!"
+
+msgid "Du hast %s %s von %s erhalten."
+msgstr "You got %s %s from %s."
+
+msgid "Du hast nicht soviel Geld dabei!"
+msgstr "You don't have that much money!"
+
+msgid "Du hast den Bettler nicht dabei"
+msgstr "You didn't bring the beggar"
+
+msgid "Dein Fahrzeug hat keinen freien Sitzplatz!"
+msgstr "Your vehicle has no free seat!"
+
+msgid "Bettler-Transport fehlgeschlagen"
+msgstr "Beggar transportation failed"
+
+msgid "Du hast nicht so viel Weed dabei!"
+msgstr "You didn't bring that much weed!"
+
+msgid "Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$"
+msgstr "Would you like a round of boxing against %s? Bet: %d$"
+
+msgid "Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$"
+msgstr "You have sent a boxing challenge to %s! Bet: %d$"
+
+msgid "%s hat nicht genug Geld dabei!"
+msgstr "%s doesn't have enough money on him!"
+
+msgid "Der Boxring ist derzeit belegt!"
+msgstr "The boxing ring is currently occupied!"
+
+msgid "Der Spieler ist bereits am Boxen!"
+msgstr "The player is already boxing!"
+
+msgid "%s hat die Boxkampf-Anfrage akzeptiert!"
+msgstr "%s has accepted the boxing request!"
+
+msgid "Du hast die Boxkampfs-Anfrage von %s akzeptiert!"
+msgstr "You have accepted the boxing match request from %s!"
+
+msgid "Du oder dein Partner ist nicht mehr in der Halle!"
+msgstr "You or your partner is no longer in the hall!"
+
+msgid "Dein Boxkampf-Gegner ist offline gegangen!"
+msgstr "Your boxing opponent has gone offline!"
+
+msgid "%s hat die Boxkampf-Anfrage abgelehnt!"
+msgstr "%s has rejected the boxing match request!"
+
+msgid "Du hast die Boxkampf-Anfrage von %s abgelehnt!"
+msgstr "You have rejected the boxing match request from %s!"
+
+msgid "%s und %s haben einen Boxkampf gestartet!"
+msgstr "%s and %s have started a boxing match!"
+
+msgid "Du hast den Boxkampf gegen %s gewonnen!"
+msgstr "You won the boxing match against %s!"
+
+msgid "Du hast den Boxkampf gegen %s verloren!"
+msgstr "You lost the boxing match to %s!"
+
+msgid "%s hat den Boxkampf gegen %s gewonnen!"
+msgstr "%s won the boxing match against %s!"
+
+msgid "Möchtest du mit %s eine Runde %s spielen?"
+msgstr "Would you like to play a round of %s with %s?"
+
+msgid "Du hast eine %s-Anfrage an %s gesendet!"
+msgstr "You have sent a %s request to %s!"
+
+msgid "%s hat die %s-Anfrage akzeptiert!"
+msgstr "%s has accepted the %s request!"
+
+msgid "Du hast die %s-Anfrage von %s akzeptiert!"
+msgstr "You have accepted the %s request from %s!"
+
+msgid "Unbekanntes Spiel!"
+msgstr "Unknown game!"
+
+msgid "Dein Spielpartner ist offline gegangen!"
+msgstr "Your gaming partner has gone offline!"
+
+msgid "%s hat die %s-Anfrage abgelehnt!"
+msgstr "%s has rejected the %s request!"
+
+msgid "Du hast die %s-Anfrage von %s abgelehnt!"
+msgstr "You have rejected the %s request from %s!"
+
+msgid ""
+"Du hast ein eXo-Logo gefunden!\n"
+"Dafür erhälst du %s eXo-Points!"
+msgstr ""
+"You found an eXo logo!\n"
+"For this you will receive %s eXo-Points!"
+
+msgid "Du hast die Lobby verlassen!"
+msgstr "You left the lobby!"
+
+msgid "Du hast nicht genug Geld dabei! (500$)"
+msgstr "You didn't bring enough money! (500$)"
+
+msgid "Du darfst nicht im Dienst in eine DM-Lobby! (Fraktion)"
+msgstr "You are not allowed to enter a DM lobby while on duty! (Faction)"
+
+msgid "Du darfst nicht im Dienst in eine DM-Lobby! (Unternehmen)"
+msgstr "You are not allowed to enter a DM lobby while on duty! (Company)"
+
+msgid "Du wurdest ins Team der %s gesetzt!"
+msgstr "You were put on the %s team!"
+
+msgid "Du hast für deine %d Kills %d Süßigkeiten und %d Kürbisse erhalten!"
+msgstr "You got %d sweets and %d pumpkins for your %d kills!"
+
+msgid "Du wurdest getötet, du hast noch %d Leben"
+msgstr "You were killed, you still have %d lifes left"
+
+msgid "Du hast %d$ gewonnen!"
+msgstr "You won $%d!"
+
+msgid "Unknown Win! %s"
+msgstr "Unknown Win! %s"
+
+msgid "Du hast leider nichts gewonnen!"
+msgstr "You haven't won anything!"
+
+msgid "Du brauchst mind. 2 Ostereier, um spielen zu können"
+msgstr "You need at least two Easter eggs to play"
+
+msgid "Warte, bis die Gondel anhält!"
+msgstr "Wait for the gondola to stop!"
+
+msgid "Diese Gondel ist bereits voll!"
+msgstr "This gondola is already full!"
+
+msgid "Du benötigst 10$!"
+msgstr "You need $10!"
+
+msgid ""
+"Bewege deine Kamera mit der Maus, zoome mit dem Mausrad. Du kannst "
+"frühzeitig aussteigen, wenn du bei angehaltenem Riesenrad auf eine Gondel "
+"klickst."
+msgstr ""
+"Move your camera with the mouse, zoom with the mouse wheel. You can get out "
+"early if you click on a gondola while the Ferris wheel is stopped."
+
+msgid "Riesenrad"
+msgstr "Ferris wheel"
+
+msgid "Vielen Dank für die Mitfahrt, auf wiedersehen!"
+msgstr "Thanks for the ride, goodbye!"
+
+msgid "Deine %s ist kaputt gegangen!"
+msgstr "Your %s broke!"
+
+msgid "Dein %s an der Angel ist kaputt gegangen!"
+msgstr "Your %s on the fishing rod got broken!"
+
+msgid "Das ist der letzte %s!"
+msgstr "This is the last %s!"
+
+msgid "%s an %s angebracht!"
+msgstr "%s attached to %s!"
+
+msgid "Das Fahrzeug wurde getankt!"
+msgstr "The vehicle has been refuelled!"
+
+msgid "%s bedankt sich für deinen Einkauf!"
+msgstr "%s thanks you for your purchase!"
+
+msgid "Du hast einen Blumenstrauß geerntet!"
+msgstr "You harvested a bouquet of flowers!"
+
+msgid "Du hast bereits einen Blumenstrauß dabei!"
+msgstr "You already have a bouquet of flowers!"
+
+msgid "Die Blumen sind noch nicht ausreichend gewachsen!"
+msgstr "The flowers have not yet grown sufficiently!"
+
+msgid "Du hast %d %s geerntet!"
+msgstr "You harvested %d %s!"
+
+msgid "Du hast in deinem Inventar nicht Platz für %d %s!"
+msgstr "You don't have space for %d %s in your inventory!"
+
+msgid "Die Pflanze ist noch nicht gewachsen!"
+msgstr "The plant has not yet grown!"
+
+msgid "Du sitzt in einem Fahrzeug!"
+msgstr "You're in a vehicle!"
+
+msgid "Internal Error: Invalid Plant"
+msgstr "Internal Error: Invalid Plant"
+
+msgid "Du bist im Wasser! Hier kannst du nichts pflanzen!"
+msgstr "You're in the water! You can't plant anything here!"
+
+msgid "Du bist zu nah an einer anderen Pflanze!"
+msgstr "You're too close to another plant!"
+
+msgid ""
+"Dies ist kein guter Untergrund zum Anpflanzen! Suche dir ebene Gras- oder "
+"Erdflächen"
+msgstr "This is not a good substrate for planting! Look for even grass or earth"
+
+msgid "Deine Anfrage wurde an den Spieler gesendet!"
+msgstr "Your request has been sent to the player!"
+
+msgid "Wähle eine oder mehrere Wunden zur Behandlung aus!"
+msgstr "Select one or more wounds for treatment!"
+
+msgid "Dieser Spieler wird bereits behandelt!"
+msgstr "This player is already being treated!"
+
+msgid "Dieser Spieler behandelt zurzeit jemanden!"
+msgstr "This player is currently treating someone!"
+
+msgid "Deine Behandlung wurde abgebrochen!"
+msgstr "Your treatment was terminated!"
+
+msgid "Die Behandlung wurde abgebrochen!"
+msgstr "The treatment was interrupted!"
+
+msgid ""
+"Der verursachte Schaden an deiner Schutzweste wurde zur Hälfte repariert!"
+msgstr "Half of the damage caused to your vest has been repaired!"
+
+msgid "Du bist nicht befugt!"
+msgstr "You're not authorized!"
+
+msgid "ACHTUNG! Ihr wurdet entdeckt!"
+msgstr "ATTENTION! You have been detected!"
+
+msgid "Hierzu muss dein Karma geringer als -20 sein!"
+msgstr "Your karma must be less than -20!"
+
+msgid "Du kannst den Gefängnisausbruch zurzeit nicht starten"
+msgstr "You can't start the jailbreak now"
+
+msgid "ACCESS DENIED. Zu viele falsche Fragen!"
+msgstr "ACCESS DENIED. Too many wrong questions!"
+
+msgid "Du hast nicht genügend Geld für den Einsatz!"
+msgstr "You don't have enough money for the stake!"
+
+msgid "Du hast nicht genügend Geld für die Insurance!"
+msgstr "You don't have enough money for the insurance!"
+
+msgid "Der Tisch ist schon besetzt! Rechtsklick zum Zuschauen!"
+msgstr "The table is already taken! Right click to watch!"
+
+msgid "Warte bis der aktuelle Dreh beendet ist!"
+msgstr "Wait until the current turn is finished!"
+
+msgid "Du kannst an diesem Rad maximal $%s einsetzen!"
+msgstr "You can bet a maximum of $%s on this wheel!"
+
+msgid "Du hast nicht so viel Geld!"
+msgstr "You don't have enough money!"
+
+msgid "Ziehe erst deinen Einsatz zurück!"
+msgstr "First withdraw your bet!"
+
+msgid "Glückwunsch! Du hast gewonnen!"
+msgstr "Congratulations! You won!"
+
+msgid "Der Spieler %s hat abgelehnt!"
+msgstr "The player %s has declined!"
+
+msgid "Du hast bereits eine Anfrage an einen Spieler gesendet"
+msgstr "You have already sent a request to a player"
+
+msgid "Du hast eine Anfrage an %s gesendet!"
+msgstr "You have sent a request to %s!"
+
+msgid "Du hast dem Spieler bereits eine Anfrage gesendet"
+msgstr "You have already sent the player a request"
+
+msgid "Du hast eine Schach-Anfrage an %s gesendet!"
+msgstr "You have sent a chess request to %s!"
+
+msgid "Maximal-Einsatz überschritten! (%s)"
+msgstr "Maximum bet exceeded! (%s)"
+
+msgid "Du hast nichts gesetzt!"
+msgstr "You bet nothing!"
+
+msgid "Du hast nicht genug Geld für deinen Einsatz dabei!"
+msgstr "You didn't bring enough money for your stake!"
+
+msgid "Du hast %s gewonnen!"
+msgstr "You've won %s!"
+
+msgid "Du hast nichts gewonnen!"
+msgstr "You haven't won anything!"
+
+msgid "Pferde-Wetten"
+msgstr "Horse betting"
+
+msgid "Du wurdest für die Liveübertragung angemeldet!"
+msgstr "You have been registered for the live broadcast!"
+
+msgid "Du hast dich bereits für die Liveübertragung angemeldet!"
+msgstr "You have already registered for the live broadcast!"
+
+msgid "Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!"
+msgstr "You bet on the right horse (%d) and won %d$!"
+
+msgid "Du hast auf das falsche Pferd (%d) gesetzt und nichts gewonnen!"
+msgstr "You bet on the wrong horse (%d) and won nothing!"
+
+msgid "Du hast %d$ auf Pferd %d gesetzt!"
+msgstr "You bet %d$ on horse %d!"
+
+msgid "Du hast bereits eine Wette am laufen!"
+msgstr "You already have a bet going on!"
+
+msgid "Das Pferderennen läuft bereits!!"
+msgstr "The horse race is already on!!"
+
+msgid "Kein Pferd oder Einsatz angegeben!"
+msgstr "No horse or stake stated!"
+
+msgid "Aktuell ist der Bonus beim Spielen bei Faktor: %s!"
+msgstr "Currently, the bonus while playing is at factor: %s!"
+
+msgid "Der Automat ist schon in Benutzung!"
+msgstr "The machine is already in use!"
+
+msgid "Du hast nicht genug Geld!"
+msgstr "You don't have enough money!"
+
+msgid "High-Stake Wetten sind zurzeit nicht erlaubt!"
+msgstr "High-stake betting is not allowed at the moment!"
+
+msgid "Warte bis es zu Ende gedreht ist!"
+msgstr "Wait until it's finished!"
+
+msgid "Du hast eine Pong-Anfrage an %s gesendet!"
+msgstr "You sent a Pong request to %s!"
+
+msgid ""
+"Bitte warte einen kurzen Moment bis der Gegner seine Auswahl getroffen hat!"
+msgstr "Please wait a short moment until the opponent has made his choice!"
+
+msgid "Der Spieler %s hat das Schere Stein Papier abgelehnt!"
+msgstr "The player %s has rejected the scissors stone paper!"
+
+msgid "Du hast den Sniper-Bereich verlassen!"
+msgstr "You left the sniper zone!"
+
+msgid "Ein Ped hat die Linie überschritten! Score: %d"
+msgstr "One Ped crossed the line! Score: %d"
+
+msgid "Du hast auf die richtige Schildkröte (%s) gesetzt und %s$ gewonnen!"
+msgstr "You bet on the right turtle (%s) and won %s$!"
+
+msgid "Schildkrötenrennen"
+msgstr "Turtle Race"
+
+msgid "Du hast auf die falsche Schildkröte (%s) gesetzt und nichts gewonnen!"
+msgstr "You bet on the wrong turtle (%s) and did not win anything!"
+
+msgid "Du hast %s auf Schildkröte %s gesetzt!"
+msgstr "You put %s on turtle %s!"
+
+msgid "Du benötigst eine Zuckerstange um am Glücksrad zu drehen!"
+msgstr "You need a candy cane to spin the wheel of fortune!"
+
+msgid "Du drehst bereits an einem Glücksrad."
+msgstr "You're already spinning a wheel of fortune."
+
+msgid "Das Glücksrad wird gerade von %s verwendet."
+msgstr "The wheel of fortune is just used by %s."
+
+msgid "Du hast 2 Zuckerstangen gewonnen!"
+msgstr "You won two candy canes!"
+
+msgid "Du hast 2 Tassen Glühwein gewonnen!"
+msgstr "You won two cups of mulled wine!"
+
+msgid "Du hast eine Weihnachtsmütze gewonnen! Ho ho ho!"
+msgstr "You won a Christmas hat! Ho ho ho!"
+
+msgid "Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d"
+msgstr "You died! The Zombie Survival has been terminated! Score: %d"
+
+msgid "Du hast die Waffe erhalten!"
+msgstr "You got the gun!"
+
+msgid "Deine Spielhaus-Clubkarte ist abgelaufen und wurde entfernt!"
+msgstr "Your Playhouse Club Card has expired and has been removed!"
+
+msgid "Du besitzt bereits eine Clubkarte!"
+msgstr "You already have a club card!"
+
+msgid "Etwas ist fehlgeschlagen!"
+msgstr "Something has failed!"
+
+msgid "Du hast zu wenig Platz!"
+msgstr "You don't have enough space!"
+
+msgid "Du hast zu wenig Geld!"
+msgstr "You don't have enough money!"
+
+msgid "Du kannst dieses Fahrzeug erst ab %d positivem Karma nutzen!"
+msgstr "You can only use this vehicle from %d positive karma!"
+
+msgid "Einführungsrunde abgeschlossen!"
+msgstr "Introduction round completed!"
+
+msgid "Bitte deaktiviere den Support Modus!"
+msgstr "Please deactivate the support mode!"
+
+msgid "Du hast alle Runden abgeschlossen!"
+msgstr "You completed all the rounds!"
+
+msgid ""
+"Ungültige Frequenz! Bitte stelle eine Frequenz zwischen 69.000 MHz und "
+"99.999 MHz ein!"
+msgstr ""
+"Invalid frequency! Please set a frequency between 69.000 MHz and 99.999 MHz!"
+
+msgid "Das Funkgerät ist nun auf die Frequenz %s eingestellt!"
+msgstr "The radio is now set to the frequency %s!"
+
+msgid "Das Funkgerät ist nun in keine Frequenz eingestellt!"
+msgstr "The radio is now not set to any frequency!"
+
+msgid "Keine freie Waffenbox! Bitte warte ein wenig!"
+msgstr "No free gun box! Please wait a little!"
+
+msgid "Treffe %dx eines der Bewegenden Ziele!"
+msgstr "Hit %dx one of the moving targets!"
+
+msgid ""
+"Schaffe die Prüfung in unter %d Sekunden mit einer Trefferquote von mind. %d "
+"Prozent!"
+msgstr ""
+"Pass the exam in under %d seconds with a hit rate of at least %d percent!"
+
+msgid "Schießstand"
+msgstr "Shooting range"
+
+msgid "Sehr gut! Du hast bestanden! Dein Waffenlevel wurde erhöht!"
+msgstr "Very good! You passed! Your weapon level has been increased!"
+
+msgid "Ohje! Du hast nicht genug getroffen! Versuche besser zu zielen!"
+msgstr "Oh dear! You didn't hit enough! Try to aim better!"
+
+msgid "Die Zeit ist abgelaufen! Du hast nicht bestanden!"
+msgstr "Time's up! You didn't pass!"
+
+msgid "%s hat die Musik in der Bar gewechselt!"
+msgstr "%s changed the music in the bar!"
+
+msgid "%s hat die Musik in der Bar gestoppt!"
+msgstr "%s stopped the music in the bar!"
+
+msgid "%s hat Stripperinnen für diese Bar engagiert!"
+msgstr "%s hired strippers for this bar!"
+
+msgid "Es ist nicht genug Geld in der Bar-Kasse!"
+msgstr "There's not enough money in the cash register!"
+
+msgid "Stripperinnen sind in dieser Bar nicht möglich!"
+msgstr "Strippers are not possible in this bar!"
+
+msgid "Es sind bereits Stripperinnen engagiert!"
+msgstr "There are already strippers hired!"
+
+msgid "%s hat Stripperinnen für diese Bar entlassen!"
+msgstr "%s has fired strippers for this bar!"
+
+msgid "Es sind keine Stripperinnen engagiert!"
+msgstr "There are no strippers hired!"
+
+msgid ""
+"Diese Kleidung ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?"
+msgstr "These clothes are only for the %s-Skin do you want to buy it for $%d?"
+
+msgid ""
+"Diese Tattoos sind nur für den %s-Skin möchtest du diesen für %d$ kaufen?"
+msgstr "These tattoos are only for the %s-Skin do you want to buy it for $%d?"
+
+msgid "Herzlich Willkommen im %s!"
+msgstr "Welcome to the %s!"
+
+msgid "Der nächste Shop-Überfall ist am/um möglich: %s!"
+msgstr "The next shop rob is possible on/around: %s!"
+
+msgid "Dieser Shop kann erst am/um überfallen werden: %s!"
+msgstr "This shop can only be robbed on/around: %s!"
+
+msgid "Es ist nicht genug Geld zum ausrauben in der Shopkasse!"
+msgstr "There is not enough money in the  shop cash register to rob!"
+
+msgid "Du bist im Dienst, du darfst keinen Überfall machen!"
+msgstr "You're on duty, you're not supposed to do a robbery!"
+
+msgid "Du bist Polizist, du darfst keinen Überfall machen!"
+msgstr "You're a policeman, you can't do a robbery!"
+
+msgid "Du bist Mitglied einer privaten Firma! Nur Gangs können überfallen!"
+msgstr "You are a member of a private company! Only gangs can rob!"
+
+msgid "Du bist kein Mitglied einer privaten Gang!"
+msgstr "You're not a member of a private gang!"
+
+msgid ""
+"Ziele mit deinen Komplizen weiter auf den Verkäufer, um immer mehr Geld zu "
+"bekommen!"
+msgstr "Keep aiming with your accomplices at the seller to get more money!"
+
+msgid "+%d$ - Tascheninhalt: %d$"
+msgstr "+%d$ - Pocket content: %d$"
+
+msgid "Die Kasse ist nun leer! Du hast die maximale Beute!"
+msgstr "The cash register is now empty! You got the maximum loot!"
+
+msgid ""
+"Mindestens ein Gang-Mitglied muss den Verkäufer bedrohen und dabei den "
+"Geldsack dabei haben!"
+msgstr ""
+"At least one gang member must threaten the seller and have the money bag "
+"with him!"
+
+msgid "Du hast die Beute erhalten!"
+msgstr "You got the loot!"
+
+msgid "Du darfst die Beute nicht besitzen!"
+msgstr "You are not allowed to possess the booty!"
+
+msgid "Du bist zuweit von dem Geldsack entfernt!"
+msgstr "You're too far away from the money bag!"
+
+msgid "Du hast die Beute verloren!"
+msgstr "You lost the loot!"
+
+msgid ""
+"Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!"
+msgstr "Loot secured! The shop, you and the treasury each received %d$!"
+
+msgid "Du darfst die Beute hier nicht abgeben!"
+msgstr "You can't leave your loot here!"
+
+msgid "Drücke 'F6' um das %s-Menü zu öffnen!"
+msgstr "Press 'F6' to open the %s menu!"
+
+msgid "[FIRMA] %s hat den Shop '%s' für %d$ gekauft!"
+msgstr "[COMPANY] %s bought the shop '%s' for %d$!"
+
+msgid "hat den Shop '%s' für %d$ gekauft!"
+msgstr "bought the shop '%s' for %d$!"
+
+msgid "In der Firmenkasse ist nicht genug Geld! (%d$)"
+msgstr "There's not enough money in the company's cash box! (%d$)"
+
+msgid "Nur Leader und Co-Leader deiner Firma können den Shop kaufen!"
+msgstr "Only leaders and co-leaders of your company can buy the shop!"
+
+msgid "Du bist in keiner privaten Firma!"
+msgstr "You're not in a private company!"
+
+msgid "Dieser Shop kann nur von privaten Firmen gekauft werden!"
+msgstr "This shop can only be bought by private companies!"
+
+msgid "Dieser Shop kann nicht gekauft werden!"
+msgstr "This shop can't be bought!"
+
+msgid "[FIRMA] %s hat den Shop '%s' für %d$ verkauft!"
+msgstr "[COMPANY] %s sold the shop '%s' for %d$!"
+
+msgid "hat den Shop '%s' für %d$ verkauft!"
+msgstr "sold the shop '%s' for %d$!"
+
+msgid "Nur Leader und Co-Leader deiner Firma können den Shop verkaufen!"
+msgstr "Only leaders and co-leaders of your company can sell the shop!"
+
+msgid "Dieser Shop gehört nicht deiner Firma!"
+msgstr "This shop doesn't belong to your company!"
+
+msgid "Invalid Shop ID!"
+msgstr "Invalid Shop ID!"
+
+msgid "%s wünscht guten Appetit!"
+msgstr "%s wishes good appetite!"
+
+msgid "Internal Error! Menu not found!"
+msgstr "Internal error! Menu not found!"
+
+msgid "Internal Error! Item not found!"
+msgstr "Internal error! Item not found!"
+
+msgid "Internal Error! Clothe not found!"
+msgstr "Internal error! Clothe not found!"
+
+msgid "Internal Error! Shop not found!"
+msgstr "Internal error! Shop not found!"
+
+msgid "Du hast bereits ein/e(n) %s auf dem Platz der/des %s!"
+msgstr "You already have a %s on the place of the %s!"
+
+msgid "Dein Waffenlevel ist zu niedrig!"
+msgstr "Your weapon level is too low!"
+
+msgid "Du hast nicht die passende Waffe für diese Munition!"
+msgstr "You don't have the right gun for this ammunition!"
+
+msgid "In der Shop-Kasse befindet sich nicht genügend Geld!"
+msgstr "There is not enough money in the shop cash box!"
+
+msgid "Du kannst hier nicht bestellen!"
+msgstr "You can't order here!"
+
+msgid "Du hast keine Artikel im Warenkorb!"
+msgstr "You have no items in your shopping cart!"
+
+msgid "Du hast nicht ausreichend Geld auf deinem Bankkonto! (%d$)"
+msgstr "You do not have enough money in your bank account! (%d$)"
+
+msgid "An Internal Error occured!"
+msgstr "An Internal Error occured!"
+
+msgid "Ein Fehler ist aufgetreten, Fahrzeug nicht gefunden!"
+msgstr "An error has occurred, vehicle not found!"
+
+msgid "Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d"
+msgstr "For this vehicle you need min. vehicle level %d"
+
+msgid "Dieses Fahrzeug ist leider ausverkauft."
+msgstr "This vehicle is unfortunately sold out."
+
+msgid ""
+"Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin (2)!"
+msgstr "Error while creating the vehicle. Please notify an admin (2)!"
+
+msgid "Du hast keinen freien Fahrzeug-Slot! Erhöhe dein Fahrzeuglevel! (%d/%d)"
+msgstr "You have no free vehicle slots! Raise your vehicle level! (%d/%d)"
+
+msgid ""
+"Die angegebene Vorlage ist nicht kompatibel mit dem Modell oder nicht "
+"gefunden worden!"
+msgstr ""
+"The given template is not compatible with the model or has not been found!"
+
+msgid "Das Fahrzeug im Shop %s wurde aktualisiert!"
+msgstr "The vehicle in the shop %s has been updated!"
+
+msgid "Du hast zuwenig Geld dabei! (%d$)"
+msgstr "You didn't have enough money on you! (%d$)"
+
+msgid "Möchtest du die Fallschirm springen? Kosten: %d$"
+msgstr "Do you want to parachute in? Cost: %d$"
+
+msgid "Viel Spaß beim Absprung!"
+msgstr "Have fun at the jump!"
+
+msgid "Du hast 5 Gramm Weed gewonnen!"
+msgstr "You won five grams of weed!"
+
+msgid "Du hast einen Magic Mushroom gewonnen!"
+msgstr "You won a magic mushroom!"
+
+msgid "Du benötigst %d$ um an dieser Slotmachine zu spielen!"
+msgstr "You need %d$ to play at this slot machine!"
+
+msgid "Dieser Automat kann zurzeit nicht ausgeraubt werden!"
+msgstr "This machine cannot be robbed at the moment!"
+
+msgid "%d$/6000$ eingesammelt"
+msgstr "%d$/6000$ collected"
+
+msgid "Da dies eine Aufwärmrunde ist, wird nichts gewertet!"
+msgstr "Since this is a warm-up round, nothing will be scored!"
+
+msgid "Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!"
+msgstr "Since too few players participate, this round is not counted!"
+
+msgid "Du erhälst "
+msgstr "You will receive "
+
+msgid "Das Ware-Event hat begonnen!"
+msgstr "The Ware-Event has begun!"
+
+msgid ""
+"In 10 Minuten startet das Ware-Event, begib dich zum Friedhof um mitzumachen!"
+msgstr "In 10 minutes the Ware Event starts, go to the cemetery to participate!"
+
+msgid "Du darfst nicht im Dienst sein!"
+msgstr "You can't be on duty!"
+
+msgid "Achtung! Eines eurer Gebiete in %s wird angegriffen!"
+msgstr "Look out! One of your areas in %s is under attack!"
+
+msgid ""
+"Dieses Gebiet kann derzeit nicht erobert werden. Versuche es in ein paar "
+"Stunden wieder!"
+msgstr "This area cannot be conquered at present. Try again in a few hours!"
+
+msgid ""
+"Der Gangwar wurde gestartet! Halte nun bis zur Neutralisierung im Gebiet "
+"durch!"
+msgstr "The gangwar was started! Now hold out until the area is neutralized!"
+
+msgid "Fehler beim Starten des Gangwars. Bitte kontaktiere einen Admin"
+msgstr "Error while starting the gangway. Please contact an admin"
+
+msgid "Invalid Group Type"
+msgstr "Invalid Group Type"
+
+msgid "%s ist gejoint!"
+msgstr "%s has joined!"
+
+msgid "Du wurdest aus deiner %s entlassen!"
+msgstr "You were fired from your %s!"
+
+msgid "%s hat deine %s verlassen!"
+msgstr "%s has left your %s!"
+
+msgid "Nur Leader (Rang %s) der Gruppe %s können deren Einstellungen ändern!"
+msgstr "Only leaders (rank %s) of group %s can change their settings!"
+
+msgid "Du hast den Gruppenchat deaktiviert!"
+msgstr "You have deactivated the group chat!"
+
+msgid "Es ist aktuell kein Spieler der %s online!"
+msgstr "There is currently no player of the %s online!"
+
+msgid "Als Staatsfraktionist kannst du keine Häuser ausrauben!"
+msgstr "As a state factionist, you can't rob houses!"
+
+msgid "Ihr könnt noch nicht wieder ein Haus ausrauben!"
+msgstr "You can't rob a house again!"
+
+msgid "Dieses Haus wurde bereits ausgeraubt!"
+msgstr "This house has already been robbed!"
+
+msgid "Du bist bereits in einer Firma/Gang!"
+msgstr "You are already in a company/gang!"
+
+msgid "Der Name muss mindestens 5 Zeichen lang sein!"
+msgstr "The name must be at least 5 characters long!"
+
+msgid "Dein eingegebener Name ist zu lang! (Max. 24 Zeichen)"
+msgstr "Your entered name is too long! (Max. 24 characters)"
+
+msgid "Name enthält ungültige Zeichen!"
+msgstr "Name contains invalid characters!"
+
+msgid "Eine Gang oder Firma mit diesem Namen existiert bereits!"
+msgstr "A gang or company with this name already exists!"
+
+msgid "Ungültiger Typ!"
+msgstr "Invalid type!"
+
+msgid "Herzlichen Glückwunsch! Du bist nun Leiter der %s %s"
+msgstr "Congratulations! You are now leader of the %s %s"
+
+msgid "Interner Fehler beim Erstellen der %s"
+msgstr "Internal error when creating the %s"
+
+msgid "Als Leader kannst du nicht die %s verlassen!"
+msgstr "As leader you cannot leave the %s!"
+
+msgid "%s hat soeben eure %s verlassen!"
+msgstr "%s just left your %s!"
+
+msgid "Du hast die Firma/Gang erfolgreich verlassen!"
+msgstr "You have successfully left the company/gang!"
+
+msgid "Du bist nicht berechtigt die Firma/Gang zu löschen!"
+msgstr "You are not authorized to delete the company/gang!"
+
+msgid "Deine "
+msgstr "Your "
+
+msgid "In der Firma/Gangkasse befindet sich nicht genügend Geld!"
+msgstr "There is not enough money on the company/gang's bank account!"
+
+msgid "Du bist nicht berechtigt Firmen/Gang Mitglieder hinzuzufügen!"
+msgstr "You are not allowed to add companies/gang members!"
+
+msgid "Dieser Benutzer ist bereits in einer Firma oder Gang!"
+msgstr "This user is already in a company or gang!"
+
+msgid "Dieser Spieler ist bereits in deiner Firma/Gang!"
+msgstr "This player is already in your company/gang!"
+
+msgid "Du kannst den Firmen/Gang Leader nicht rauswerfen!"
+msgstr "You can't kick out the company/gang leader!"
+
+msgid "%s ist soeben der %s beigetreten!"
+msgstr "%s has just joined the %s!"
+
+msgid "Du hast keine Einladung für diese %s"
+msgstr "You don't have an invitation for these %s"
+
+msgid "%s hat die Einladung in die %s abgelehnt"
+msgstr "%s has declined the invitation to the %s"
+
+msgid "Du kannst den Spieler nicht up-ranken!"
+msgstr "You can't rank the player up!"
+
+msgid "Du kannst Spieler nicht höher als auf Rang 6 setzen!"
+msgstr "You cannot set players higher than rank 6!"
+
+msgid "Du kannst den Spieler nicht down-ranken!"
+msgstr "You can't rank the player down!"
+
+msgid "Du bist nicht berechtigt den Namen zu verändern!"
+msgstr "You are not allowed to change the name!"
+
+msgid "Es existiert bereits eine Firma/Gang mit diesem Namen!"
+msgstr "A company/gang with this name already exists!"
+
+msgid "Du kannst deine %s nur alle %d Tage umbennen!"
+msgstr "You can only rename your %s every %d days!"
+
+msgid ""
+"Deine %s heißt nun\n"
+"%s!"
+msgstr ""
+"Your %s is now called\n"
+"%s!"
+
+msgid "Es ist ein unbekannter Fehler aufgetreten!"
+msgstr "An unknown error has occurred!"
+
+msgid "Die Einstellungen für Rang "
+msgstr "The settings for rank "
+
+msgid "Das Fahrzeug ist nun im Besitz der Firma/Gang!"
+msgstr "The vehicle is now owned by the company/gang!"
+
+msgid "Es ist ein Fehler aufgetreten!"
+msgstr "An error has occurred!"
+
+msgid "Das ist nicht dein Fahrzeug!"
+msgstr "This is not your vehicle!"
+
+msgid "Error no Vehicle!"
+msgstr "Error no vehicle!"
+
+msgid "Du kannst dieses Premium Fahrzeug nicht entfernen!"
+msgstr "You cannot remove this premium vehicle!"
+
+msgid "Das Fahrzeug ist nun in deinem Besitz!"
+msgstr "The vehicle is now in your possession!"
+
+msgid "Maximaler Fahrzeug-Slot erreicht!"
+msgstr "Maximum vehicle slot reached!"
+
+msgid "Es sitzt jemand im Fahrzeug!"
+msgstr "There's someone in the car!"
+
+msgid "Premium-Fahrzeuge können nicht zum Verkauf angeboten werden!"
+msgstr "Premium vehicles cannot be offered for sale!"
+
+msgid "Du hast das Fahrzeug für %d$ angeboten!"
+msgstr "You offered the vehicle for %d$!"
+
+msgid "Deine Firma besitzt noch Geschäfte! Bitte verkaufe diese erst!"
+msgstr "Your company still owns businesses! Please sell them first!"
+
+msgid "Du bietest noch Fahrzeuge zum Verkauf an! Beende diese erst!"
+msgstr "You still offer vehicles for sale! Finish them first!"
+
+msgid "In der Kasse befindet sich nicht genug Geld! (20.000$)"
+msgstr "There's not enough money in the till! (20.000$)"
+
+msgid "%s hat deine %s in eine %s umgewandelt!"
+msgstr "%s has converted your %s into %s!"
+
+msgid "Diese Immobilie ist bereits vergeben!"
+msgstr "This property is already taken!"
+
+msgid "In deiner Firmen/Gang-Kasse befindet sich nicht genug Geld!"
+msgstr "There's not enough money in your company/gang's till!"
+
+msgid "Immobilie nicht gefunden!"
+msgstr "Property not found!"
+
+msgid "Du hast die Wand erfolgreich übersprüht!"
+msgstr "You have successfully sprayed the wall!"
+
+msgid "Diese Wand wurde bereits von deiner Gang übersprüht!"
+msgstr "This wall has already been sprayed over by your gang!"
+
+msgid "Du wurdest von %s getazert!"
+msgstr "You were tased by %s!"
+
+msgid "Bitte versuchen sie es erneut!"
+msgstr "Please try again!"
+
+msgid "Du hast vor kurzem schon ein Haus ausgeraubt!"
+msgstr "You robbed a house recently!"
+
+msgid "Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!"
+msgstr "Renting failed - this house has no owner!"
+
+msgid "Einmieten fehlgeschlagen - Der Eigentümer erlaubt kein einmieten!"
+msgstr "Renting failed - The owner does not allow renting!"
+
+msgid "Du wurdest erfolgreich eingemietet"
+msgstr "You have successfully inrented"
+
+msgid "Du kannst dich nicht in dein eigenes Haus einmieten!"
+msgstr "You can't rent in your own house!"
+
+msgid "Du bist bereits in diesem Haus eingemietet!"
+msgstr "You are already rented in this house!"
+
+msgid "Du hast deinen Mietvertrag gekündigt!"
+msgstr "You canceled your lease!"
+
+msgid "Du bist in diesem Haus nicht eingemietet!"
+msgstr "You are not rented in this house!"
+
+msgid "Du hast die Miete auf %d$ gesetzt!"
+msgstr "You set the rent at %d$!"
+
+msgid "%s hat die Miete für sein Haus auf %d$ gesetzt!"
+msgstr "%s has set the rent for his house to %d$!"
+
+msgid "Nun kann sich keiner mehr in deinem Haus einmieten!"
+msgstr "Now nobody can rent in your house anymore!"
+
+msgid "%s hat das einmieten für sein Haus deaktiviert!"
+msgstr "%s has deactivated renting for his house!"
+
+msgid "Das ist nicht dein Haus!"
+msgstr "This is not your house!"
+
+msgid "In der Hauskasse ist nicht genug Geld!"
+msgstr "There's not enough money in the house fund!"
+
+msgid "Du hast den Mietvertrag mit %s gekündigt!"
+msgstr "You canceled the lease with %s!"
+
+msgid "%s hat den Mietvertrag mit dir gekündigt!"
+msgstr "%s has terminated the lease with you!"
+
+msgid "Du hast dein Haus für %d$ verkauft!"
+msgstr "You sold your house for %d$!"
+
+msgid "Du darfst dieses Haus nicht betreten (Gangwar) !"
+msgstr "You are not allowed to enter this house (Gangwar) !"
+
+msgid "Du darfst dieses Haus nicht betreten!"
+msgstr "You are not allowed to enter this house!"
+
+msgid "Es klingelt an der Haustür!"
+msgstr "The doorbell's ringing!"
+
+msgid "Du hörst Geräusche im Haus!"
+msgstr "You hear noises in the house!"
+
+msgid "Es scheint niemand zu Hause zu sein."
+msgstr "No one seems to be home."
+
+msgid "Du hast bereits ein Haus!"
+msgstr "You already have a house!"
+
+msgid "Dieses Haus hat schon einen Besitzer!"
+msgstr "This house already has an owner!"
+
+msgid "Du hast das Haus erfolgreich gekauft!"
+msgstr "You have bought the house successfully!"
+
+msgid "Du hast den Haus-Interior erfolgreich in ID: %d geändert!"
+msgstr "You have successfully changed the house interior to ID: %d!"
+
+msgid "Enteignung erfolgreich!"
+msgstr "Expropriation successful!"
+
+msgid "Dieses Haus hat keinen Eigentümer!"
+msgstr "This house has no owner!"
+
+msgid "Kein Haus mit der Nummer %s gefunden."
+msgstr "No house with the number %s found."
+
+msgid "Der Eingang ist verschlossen!"
+msgstr "The entrance is locked!"
+
+msgid "Der Ausgang ist verschlossen!"
+msgstr "The exit is sealed!"
+
+msgid "Dein Mautpass ist abgelaufen und wurde entfernt!"
+msgstr "Your toll pass has expired and been removed!"
+
+msgid "Deine Spiel-Clubkarte ist abgelaufen und wurde entfernt!"
+msgstr "Your game club card has expired and has been removed!"
+
+msgid "Inventar Fehler: Kein Item"
+msgstr "Inventory Error: No Item"
+
+msgid "Dein Mautpass ist noch bis %s gültig!"
+msgstr "Your toll pass is still valid until %s!"
+
+msgid "Dein Mautpass ist abgelaufen!"
+msgstr "Your toll pass has expired!"
+
+msgid "Du hast das Item (%s) weggeworfen!"
+msgstr "You threw away the item (%s)!"
+
+msgid "Du kannst maximal %d %s in dein Inventar legen!"
+msgstr "You can put a maximum %d %s in your inventory!"
+
+msgid "Nicht genug Platz für %d %s in deinem Inventar!"
+msgstr "Not enough room for %d %s in your inventory!"
+
+msgid "Ungültiges Item! (%s)"
+msgstr "Invalid item! (%s)"
+
+msgid "Du bist zu weit von %s entfernt!"
+msgstr "You're too far from %s!"
+
+msgid "%s möchte dir %d %s schenken! Geschenk annehmen?"
+msgstr "%s wants to give you %d %s as a present! Accept gift?"
+
+msgid "%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?"
+msgstr "%s wants to sell you %d %s for %d$! Accept trade?"
+
+msgid "Du hast nicht ausreichend %s!"
+msgstr "You don't have enough %s!"
+
+msgid "Du kannst aktuell keine Waffen handeln!"
+msgstr "You cannot trade weapons at the moment!"
+
+msgid "Der Spieler kann aktuell keine Waffen handeln!"
+msgstr "The player cannot currently trade weapons!"
+
+msgid "Du darfst im Dienst keine Waffen weitergeben!"
+msgstr "You are not allowed to pass weapons while on duty!"
+
+msgid "Das Waffenlevel von %s ist zu niedrig! (Benötigt: %i)"
+msgstr "%s weapon level is too low! (Requires: %i)"
+
+msgid "%s möchte dir eine/n %s mit %d Schuss schenken! Geschenk annehmen?"
+msgstr "%s wants to give you a %s with %d shot! Accept gift?"
+
+msgid ""
+"%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?"
+msgstr "%s wants to sell you a %s with %d shot for %d$! Accept trade?"
+
+msgid "Du hast das Angebot von %s abgelehnt!"
+msgstr "You turned down the offer from %s!"
+
+msgid "%s hat den Handel abgelehnt!"
+msgstr "%s has refused the trade!"
+
+msgid "Du kannst dieses Item nicht handeln!"
+msgstr "You cannot trade this item!"
+
+msgid "Du bist zuweit von %s entfernt!"
+msgstr "You're too far away from %s!"
+
+msgid "Du kannst dieses Item im Dienst nicht an Zivilisten handeln!"
+msgstr "You cannot trade this item to civilians while you are on duty!"
+
+msgid "%s hat den Handel akzeptiert!"
+msgstr "%s has accepted the trade!"
+
+msgid "Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!"
+msgstr "You have accepted the offer of %s and get %d %s for %d$!"
+
+msgid "übergibt %s eine Tüte!"
+msgstr "hands over a bag to %s!"
+
+msgid "übergibt %s ein Päckchen!"
+msgstr "hands over a package to %s!"
+
+msgid "übergibt %s ein Paket!"
+msgstr "hands over a package to %s!"
+
+msgid "Du hast nicht genug Platz für dieses Item!"
+msgstr "You don't have enough space for this item!"
+
+msgid "%s hat nicht genug Platz für dieses Item!"
+msgstr "%s does not have enough space for this item!"
+
+msgid "%s hat nicht ausreichend Geld (%d$)!"
+msgstr "%s has not enough money (%d$)!"
+
+msgid "Du hast nicht ausreichend Geld (%d$)!"
+msgstr "You do not have enough money (%d$)!"
+
+msgid "%s hat nicht mehr ausreichend %s!"
+msgstr "%s has not enough %s!"
+
+msgid "Du hast nicht mehr ausreichend %s!"
+msgstr "You don't have enough %s left!"
+
+msgid ""
+"Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss "
+"für %d$!"
+msgstr "You have accepted the offer from %s and get a %s with %d shot for %d$!"
+
+msgid "%s hat nicht mehr ausreichend Munition!"
+msgstr "%s does not have enough munition anymore!"
+
+msgid "Du hast nicht mehr ausreichend Munition!"
+msgstr "You're out of ammo!"
+
+msgid "%s hat die Waffe nicht mehr!"
+msgstr "%s doesn't have the gun anymore!"
+
+msgid "Du hast die Waffe nicht mehr!"
+msgstr "You don't have the weapon anymore!"
+
+msgid "Du hast einen seltenen Magic-Mushroom gesammelt!"
+msgstr "You have collected a rare Magic Mushroom!"
+
+msgid "Du kannst nicht soviele Shrooms tragen! Maximal %d Stk.!"
+msgstr "You can't wear that many shrooms! Maximum %d pieces!"
+
+msgid "Du hast einen Pilz gesammelt!"
+msgstr "You picked up a mushroom!"
+
+msgid "Du kannst nicht soviele Pilze tragen! Maximal %d Stk.!"
+msgstr "You can't carry that many mushrooms! Maximum %d pieces!"
+
+msgid "Du kannst hier keine Objekte platzieren."
+msgstr "You cannot place objects here."
+
+msgid "%s %s."
+msgstr "%s %s."
+
+msgid "Vorgang abgebrochen."
+msgstr "Process aborted."
+
+msgid "Du hast eine leere Flasche erhalten!"
+msgstr "You received an empty bottle!"
+
+msgid "Du kannst die Bombe hier nicht platzieren!"
+msgstr "You can't plant the bomb here!"
+
+msgid "Du hast ein Osterei gesammelt!"
+msgstr "You collected an Easter egg!"
+
+msgid "Du kannst nicht soviele Ostereier tragen! Maximal %d Stk.!"
+msgstr "You can't wear so many Easter eggs! Maximum %d pieces!"
+
+msgid "Du kannst die %s nicht so knapp hintereinander nutzen!"
+msgstr "You cannot use the %s so close together!"
+
+msgid "zündet eine/n %s!"
+msgstr "ignites a %s!"
+
+msgid "Du brauchst mind. Fischer Level %s um dieses Item zu kaufen!"
+msgstr "You need at least fishing level %s to buy this item!"
+
+msgid "Du hast keine Schutzweste mehr!"
+msgstr "You're out of armor!"
+
+msgid "Du darfst dich während des Boxkampfes nicht heilen!"
+msgstr "You're not allowed to heal yourself during a boxing match!"
+
+msgid "Du kannst in der Luft nichts essen!"
+msgstr "You can't eat in the air!"
+
+msgid "Dein Fahrzeug wurde betankt!"
+msgstr "Your vehicle has been refuelled!"
+
+msgid "Dein Tank ist bereits voll!"
+msgstr "Your tank is already full!"
+
+msgid "Diese Karte ist aktiv und läuft am %s ab!"
+msgstr "This card is active and expires on %s!"
+
+msgid "Diese Karte ist abelaufen am %s!"
+msgstr "This card expires on %s!"
+
+msgid "Du hast einen Kürbis gesammelt!"
+msgstr "You collected a pumpkin!"
+
+msgid "Du kannst nicht soviele Kürbisse tragen! Maximal %d Stk.!"
+msgstr "You can't carry that many pumpkins! Maximum %d pieces!"
+
+msgid "Dein Fahrzeug funktioniert wieder einigermaßen!"
+msgstr "Your vehicle is working reasonably well again!"
+
+msgid "Das Reparaturkit ist zerstört!"
+msgstr "The repair kit is destroyed!"
+
+msgid "Dein Fahrzeug ist nicht kaputt!"
+msgstr "Your vehicle is not broken!"
+
+msgid "Ein Anfrage zum Kauf wurde abgeschickt!"
+msgstr "A request to purchase was sent!"
+
+msgid "Ungültiger Betrag!"
+msgstr "Invalid amount!"
+
+msgid "Du sitzt nicht im Fahrzeug!"
+msgstr "You're not in the car!"
+
+msgid "Der Handel wurde abgeschlossen!"
+msgstr "The deal is done!"
+
+msgid "Der Käufer hat zu wenig Geld!"
+msgstr "The buyer has not enough money!"
+
+msgid "Vertrag abgelaufen!"
+msgstr "Contract expired!"
+
+msgid "Sie können nicht selbst ihr Fahrzeug kaufen!"
+msgstr "You cannot buy your own vehicle!"
+
+msgid "Dies ist nicht dein Fahrzeug!"
+msgstr "This is not your vehicle!"
+
+msgid "Du musst in einem Fahrzeug drinnen sitzen!"
+msgstr "You have to be in a vehicle inside!"
+
+msgid "Du bist nicht berechtigt! Das Item wurde abgenommen!"
+msgstr "You are not authorized! The item has been removed!"
+
+msgid ""
+"Du kannst deine Kleidung nicht während des Aufenthaltes in einer DM-Lobby "
+"wechseln!"
+msgstr "You cannot change your clothes while you are in a DM lobby!"
+
+msgid "Du musst die Farben deiner Fraktion tragen!"
+msgstr "You must wear the colors of your fraction!"
+
+msgid "Du kannst im Dienst nicht deine Kleidung wechseln!"
+msgstr "You can't change your clothes on duty!"
+
+msgid "Du bist nicht im Dienst! Das Item wurde abgenommen."
+msgstr "You're off duty! The item has been removed."
+
+msgid "Licht angeschaltet"
+msgstr "Light switched on"
+
+msgid "Licht ausgeschaltet"
+msgstr "Light switched off"
+
+msgid "%s hinzugefügt!"
+msgstr "%s added!"
+
+msgid "Ein Fehler trat auf beim Platzieren!"
+msgstr "An error occurred during placement!"
+
+msgid "Das Tor mit der ID %s wurde gelöscht!"
+msgstr "The gate with the ID %s was deleted!"
+
+msgid "Tor wurde aktualisiert!"
+msgstr "Tor has been updated!"
+
+msgid "Der Eingang mit der ID %s wurde gelöscht!"
+msgstr "The entrance with the ID %s was deleted!"
+
+msgid "Der Eingang wurde aktualisiert!"
+msgstr "The entrance has been updated!"
+
+msgid "Das Möbelstück mit der ID %s wurde gelöscht!"
+msgstr "The piece of furniture with the ID %s was deleted!"
+
+msgid "Du hast den Pin des Keypads eingestellt: %s"
+msgstr "You have set the pin of the keypad: %s"
+
+msgid "Code akzeptiert!"
+msgstr "Code accepted!"
+
+msgid "Falscher Code!"
+msgstr "Wrong code!"
+
+msgid "Der Keypad mit der ID %s wurde gelöscht!"
+msgstr "The keypad with the ID %s was deleted!"
+
+msgid "Du musst in der Nähe der Zielposition sein!"
+msgstr "You must be close to the target position!"
+
+msgid "%s hat ein Nagelband bei %s/%s hingelegt!"
+msgstr "%s has put a nail tape at %s/%s!"
+
+msgid "Es sind bereits %d/%d Nagelbänder ausgelegt!"
+msgstr "There are already %d/%d nail bands laid out!"
+
+msgid "Du bist nicht im News-Dienst!"
+msgstr "You're not News Duty!"
+
+msgid "%s hat einen Blitzer bei %s/%s aufgestellt!"
+msgstr "%s has set up a speed camera at %s/%s!"
+
+msgid "Dafür brauchst du mind. Rang %d!"
+msgstr "For this you need at least the rank %d!"
+
+msgid "Es sind bereits %d/%d Anlagen aufgestellt!"
+msgstr "There are already %d/%d plants placed!"
+
+msgid ""
+"Du wurdest mit %d km/h geblitzt!\n"
+"Strafe: %d$"
+msgstr ""
+"You were flashed at %d km/h!\n"
+"Fines: %d$"
+
+msgid "Möchtest du diesen Transmitter (# "
+msgstr "Would you like this transmitter (# "
+
+msgid "Der Transmitter wurde aktualisiert!"
+msgstr "The transmitter has been updated!"
+
+msgid "Der Transmitter mit der ID %s wurde gelöscht!"
+msgstr "The transmitter with the ID %s was deleted!"
+
+msgid "Ungültiger Typ! (%s)"
+msgstr "invalid type! (%s)"
+
+msgid "%s entfernt!"
+msgstr "%s removed!"
+
+msgid "Osterei nicht gefunden!"
+msgstr "Easter egg not found!"
+
+msgid "Pack erst deine Angel weg!"
+msgstr "Put your fishing rod away first!"
+
+msgid "Die Flasche ist bereit!"
+msgstr "The bottle is ready!"
+
+msgid "Die Flasche wurde zurückgelegt!"
+msgstr "The bottle was put back!"
+
+msgid "Der Schuh ist bereit!"
+msgstr "The shoe is ready!"
+
+msgid "Der Schuh wurde zurückgelegt!"
+msgstr "The shoe was put back!"
+
+msgid "Der Beutel ist bereit!"
+msgstr "The bag is ready!"
+
+msgid "Der Müllsack wurde zurückgelegt!"
+msgstr "The trash bag has been put back!"
+
+msgid "Dazu benötigst du mindestens Rang %d."
+msgstr "You need at least rank %d for this."
+
+msgid "Dieses Objekt gehört dem Unternehmen %s."
+msgstr "This property belongs to the company %s."
+
+msgid "Um das Objekt %s zu löschen benötigst du mindestens Rang %d"
+msgstr "To delete the object %s you need at least rank %d"
+
+msgid "Dieses Objekt gehört dem Unternehmen %s"
+msgstr "This property belongs to the company %s"
+
+msgid "Dieses Objekt gehört der Fraktion %s."
+msgstr "This object belongs to the fraction %s."
+
+msgid "Dieses Objekt gehört der Fraktion %s"
+msgstr "This object belongs to the fraction %s"
+
+msgid "Dieses Objekt gehört nicht dir!"
+msgstr "This object does not belong to you!"
+
+msgid "%s %s hat dein Objekt %s in %s, %s gelöscht!"
+msgstr "%s %s has deleted your object %s in %s, %s!"
+
+msgid "Dieses Objekt wird von %s verwendet."
+msgstr "This object is used by %s."
+
+msgid "Dieses Objekt existiert nicht mehr."
+msgstr "This object no longer exists."
+
+msgid "%s aufgehoben."
+msgstr "%s picked up."
+
+msgid "%s gelöscht."
+msgstr "%s deleted."
+
+msgid ""
+"Einige Objekte konnten nicht aufgehoben werden, da sie zu weit von dir "
+"entfernt sind!"
+msgstr ""
+"Some objects could not be picked up because they are too far away from you!"
+
+msgid "[JOB] "
+msgstr "[JOB] "
+
+msgid "Für diesen Job benötigst du mindestens Joblevel %d"
+msgstr "For this job you need at least job level %d"
+
+msgid "Hier kannst du den Walton beladen!"
+msgstr "Here you can load the Walton!"
+
+msgid "Noughty boy"
+msgstr "Naughty boy"
+
+msgid "Du hast die Lieferung abgegeben."
+msgstr "You made the delivery."
+
+msgid "Du hast schon %d Getreide auf deinem Walton!"
+msgstr "You already have %d grain on your Walton!"
+
+msgid ""
+"Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!"
+msgstr "At least %d grain is required for charging. Current grain: %d!"
+
+msgid "Du hast die Lieferung abgegeben, fahre nun zurück zur Farm."
+msgstr "You made the delivery, now go back to the farm."
+
+msgid "Dein Transporter wurde mit Samen beladen."
+msgstr "Your transporter was loaded with seeds."
+
+msgid "Es gibt keine Samen mehr!"
+msgstr "There are no seeds left!"
+
+msgid "Du hast das Jobgebiet unerlaubt mit einem Fahrzeug verlassen!"
+msgstr "You have unauthorized left the job area with a vehicle!"
+
+msgid ""
+"Es können keine weiteren Steine abgebaut werden, bitte mit Dozern die Steine "
+"in die Behälter schieben."
+msgstr ""
+"No further stones can be mined, please use dozers to push the stones into "
+"the containers."
+
+msgid ""
+"Das Lager ist voll! Bitte erst mit einem Dumper die Waren nach oben "
+"befördern!"
+msgstr ""
+"The camp is full! Please transport the goods upstairs with a dumper first!"
+
+msgid "Der vordere Ladevorgang wurde noch nicht beendet! Bitte warten!"
+msgstr "The front charging process has not yet been completed! Please wait!"
+
+msgid "Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!"
+msgstr "Please place the dumper loading area directly under the conveyor belt!"
+
+msgid "Das Lager ist leer! Es können keine weiteren Steine aufgeladen werden"
+msgstr "The camp is empty! No more stones can be loaded"
+
+msgid "Das Lager ist leer! Bitte bau neues Material ab!"
+msgstr "The camp is empty! Please remove new material!"
+
+msgid ""
+"Du hast diesen Dumper bereits beladen, oder deine alte Ladung nicht "
+"abgegeben!"
+msgstr "You already loaded this dumper, or you didn't deliver your old load!"
+
+msgid "Du sitzt in keinem Dumper!"
+msgstr "You're not sitting in any dumper!"
+
+msgid "Du musst im Kiesgruben-Job tätig sein!"
+msgstr "You must be in the gravel pit job!"
+
+msgid "Bitte belade deinen Helikopter am Ladepunkt!"
+msgstr "Please load your helicopter at the loading point!"
+
+msgid "Dein Helikopter ist explodiert! Der Job wurde beendet!"
+msgstr "Your helicopter blew up! The job's finished!"
+
+msgid "Dein Helikopter wurde wieder neu beladen."
+msgstr "Your helicopter was reloaded again."
+
+msgid "Ladung aufgenommen! Liefere Sie nun ab!"
+msgstr "Loaded up! Deliver them now!"
+
+msgid "Falsches Fahrzeug!"
+msgstr "Wrong vehicle!"
+
+msgid "Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!"
+msgstr "You dropped the load! Go back and get your money!"
+
+msgid "Ein Container wird aufgeladen! Bringe ihn nach %s!"
+msgstr "A container is being loaded! Bring it to %s!"
+
+msgid "Du bist am falschen Kran!"
+msgstr "You're on the wrong crane!"
+
+msgid "Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!"
+msgstr "The crane is currently busy! Please wait a little moment!"
+
+msgid "Internal Error! No Crane settet to Marker!"
+msgstr "Internal Error! No Crane settet to Marker!"
+
+msgid "Du sitzt in keinem Job Fahrzeug!"
+msgstr "You're not in a job vehicle!"
+
+msgid "Es darf sich kein Spieler am LKW festhalten!"
+msgstr "No player may hold on to the truck!"
+
+msgid "Bitte benutze einen Flatbed"
+msgstr "Please use a flatbed"
+
+msgid "Aufladen nicht möglich. Nutze einen eigenen Flatbed!"
+msgstr "Charging not possible. Use your own flatbed!"
+
+msgid "Du musst erst Bäume fällen um welche aufladen zu können!"
+msgstr "You have to cut down trees first to be able to load up some!"
+
+msgid "Bitte steige in einen Flatbed ein"
+msgstr "Please get into a flatbed"
+
+msgid "Säge und lade zuerst einige Bäume auf!"
+msgstr "Saw and load some trees first!"
+
+msgid "Du darfst nicht im Dienst jobben! (Fraktion)"
+msgstr "You can't work while on duty! (Faction)"
+
+msgid "Du darfst nicht im Dienst jobben! (Unternehmen)"
+msgstr "You can't work while on duty! (company)"
+
+msgid ""
+"Job angenommen! Gehe zum roten Marker um ein Fahrzeug zu erhalten und die "
+"Schicht zu starten."
+msgstr ""
+"Job accepted! Go to the red marker to get a vehicle and start the shift."
+
+msgid "Liefere die Pizza nun zur Markierung auf der Karte."
+msgstr "Now deliver the pizza to the marker on the map."
+
+msgid "Job angenommen! Gehe zum roten Marker um ein Fahrzeug zu erhalten!"
+msgstr "Job accepted! Go to the red marker to get a vehicle!"
+
+msgid ""
+"%d Abfälle abgegeben!\n"
+"Abfallbehälter: %d/%d"
+msgstr ""
+"%d waste delivered!\n"
+"Waste container: %d/%d"
+
+msgid "Du musst erst den Abfall auf den Straßen einsammeln!"
+msgstr "You have to collect the garbage on the streets first!"
+
+msgid "Abfallbehälter: %d/%d"
+msgstr "Waste containers: %d/%d"
+
+msgid "Dein Abfallbehälter ist voll! Entleere ihn an der Müllstation!"
+msgstr "Your bin is full! Empty it at the garbage station!"
+
+msgid "Du musst im Müll-Fahrzeug sitzen!"
+msgstr "You must be in the garbage truck!"
+
+msgid "Möchtest du weiter arbeiten?"
+msgstr "Do you want to keep working?"
+
+msgid "Du hast keinen Müll aufgeladen!"
+msgstr "You didn't load up trash!"
+
+msgid "Du hast eine%s für %d$ verkauft!"
+msgstr "You sold a%s for %d$!"
+
+msgid "Du hast kein Objekt dabei!"
+msgstr "You don't have an object on you!"
+
+msgid "Du benutzt ein falsches Boot!"
+msgstr "You're using the wrong boat!"
+
+msgid "Du bist im falschen Fahrzeug!"
+msgstr "You're in the wrong vehicle!"
+
+msgid ""
+"Du hast bereits ein Objekt am Schiff!\n"
+"Lade es erst am Startpunkt ab!"
+msgstr ""
+"You already have an object on the ship!\n"
+"Unload it at the starting point first!"
+
+msgid "Das gefundene Objekt wird angehoben! Bitte warten!"
+msgstr "The found object is lifted! Please wait!"
+
+msgid ""
+"Glückwunsch, du hast eine%s gefunden!\n"
+"Bringe das Fundstück zum Startpunkt!"
+msgstr ""
+"Congratulations, you found a%s!\n"
+"Bring the find to the starting point!"
+
+msgid "Schatzsucher-Job"
+msgstr "Treasure hunting job"
+
+msgid "Hier ist kein Objekt!"
+msgstr "There's no object here!"
+
+msgid ""
+"Der Radar registriert ein Objekt unter dir!\n"
+"Drücke Leertaste um es hochzuheben!"
+msgstr ""
+"The radar registers an object below you!\n"
+"Press spacebar to lift it up!"
+
+msgid "%s hat den Map Editor geöffnet!"
+msgstr "%s has opened the map editor!"
+
+msgid "Die Map #%s ist deaktiviert!"
+msgstr "The map #%s is deactivated!"
+
+msgid "Objekt gespeichert!"
+msgstr "Object saved!"
+
+msgid "Fehler beim Speichern des Objektes!"
+msgstr "Error while saving the object!"
+
+msgid "Objekt erstellt!"
+msgstr "Object created!"
+
+msgid "Das Objekt wird gerade von %s kontrolliert!"
+msgstr "The object is currently controlled by %s!"
+
+msgid "Das Objekt gehört zu Map #%s!"
+msgstr "The object belongs to Map #%s!"
+
+msgid "Das World-Object wurde gelöscht!"
+msgstr "The world object has been deleted!"
+
+msgid "Das World-Object wurde mitsamt dem low LOD Object gelöscht!"
+msgstr "The world object was deleted together with the low LOD object!"
+
+msgid "Das World-Object konnte nicht gelöscht werden!"
+msgstr "The world object could not be deleted!"
+
+msgid "Das World-Object wurde wiederhergestellt!"
+msgstr "The World Object has been restored!"
+
+msgid "Das World-Object konnte nicht wiederhergestellt werden!"
+msgstr "The world object could not be restored!"
+
+msgid ""
+"Dieses Objekt gehört zu Map #%s!\n"
+"Klicke hier, um Map #%s zu bearbeiten!"
+msgstr ""
+"This object belongs to Map #%s!\n"
+"Click here to edit Map #%s!"
+
+msgid "Du darfst in dem Map Namen nur alphanumerische Zeichen verwenden!"
+msgstr "You may only use alphanumeric characters in the map name!"
+
+msgid "Es existiert bereits eine Map mit dem Namen \\"
+msgstr "There is already a map with the name \\"
+
+msgid "Map mit dem Namen \\"
+msgstr "Map with the name \\"
+
+msgid "%s editiert nun die Map #%s"
+msgstr "%s now edits the map #%s"
+
+msgid "%s hat dich zum Mappen eingeladen!"
+msgstr "%s invited you to map!"
+
+msgid "%s hat die Map #%s deaktiviert!"
+msgstr "%s has disabled the map #%s!"
+
+msgid "Du kannst diese Map nicht deaktivieren!"
+msgstr "You can't deactivate this map!"
+
+msgid "%s hat die Map #%s aktiviert!"
+msgstr "%s has activated the map #%s!"
+
+msgid "%s hat den Map Editor geschlossen!"
+msgstr "%s has closed the map editor!"
+
+msgid "%s hat den Map Editor von %s geschlossen!"
+msgstr "%s has closed the map editor of %s!"
+
+msgid "Besetzt... Der Spieler ist gerade nicht erreichbar!"
+msgstr "Occupied... The player is currently unavailable!"
+
+msgid "Knack... Das Telefonat wurde abgebrochen!"
+msgstr "Crack... The phone call was aborted!"
+
+msgid "[HANDY] %s hat seine Position aktualisiert."
+msgstr "[HANDY] %s has updated his/her position."
+
+msgid "[HANDY] Du hast deine Position aktualisiert."
+msgstr "[HANDY] You've updated your position."
+
+msgid "[HANDY] %s hat dir seine Position mitgeteilt."
+msgstr "[HANDY] %s has given you his position."
+
+msgid "[HANDY] Du hast %s deine Position mitgeteilt."
+msgstr "[HANDY] You've reported %s your position."
+
+msgid ""
+"Registration ist vorübergehend deaktiviert. Bitte versuchen es später erneut."
+msgstr "Registration is temporarily disabled. Please try again later."
+
+msgid ""
+"Ungültiger Nickname. Dein Name darf nur alphanumerische Zeichen und den "
+"Unterstrich (_) verwenden."
+msgstr ""
+"Invalid nickname. Your name can only use alphanumeric characters and the "
+"underscore (_)."
+
+msgid "Passwort zu kurz! Min. 5 Zeichen!"
+msgstr "Password too short! Min. 5 characters!"
+
+msgid "Ungültige eMail"
+msgstr "Invalid e-mail"
+
+msgid "Du besitzt bereits ein Account!"
+msgstr "You already have an account!"
+
+msgid "Benutzername wird bereits verwendet"
+msgstr "Username is already in use"
+
+msgid "Benutzername enthält nicht erlaubte Zeichen"
+msgstr "Username contains non-permitted characters"
+
+msgid "Diese E-Mail wird bereits verwendet"
+msgstr "This e-mail is already in use"
+
+msgid "Diese E-Mail ist nicht gültig"
+msgstr "This e-mail is not valid"
+
+msgid "Auf deinem Konto befindet sich nicht so viel Geld!"
+msgstr "There's not that much money in your bank account!"
+
+msgid "Du kannst während eines Überfalls kein Geld einzahlen!"
+msgstr "You can't deposit money during a robbery!"
+
+msgid "Nicht genügend Geld!"
+msgstr "Not enough money!"
+
+msgid "Dieser Spieler existiert nicht!"
+msgstr "This player does not exist!"
+
+msgid ""
+"%s hat dir %d$ überwiesen!\n"
+"Zweck: %s"
+msgstr ""
+"%s wired you %d$!\n"
+"Purpose: %s"
+
+msgid ""
+"Du hast an %s %d$ überwiesen!\n"
+"Zweck: %s"
+msgstr ""
+"You transferred to %s %d$!\n"
+"Purpose: %s"
+
+msgid "..index, value"
+msgstr "..index, value"
+
+msgid "..stat, self.m_Statistics[stat]"
+msgstr "..stat, self.m_Statistics[stat]"
+
+msgid "Du wurdest wegen einer Alkoholvergiftung ins Krankenhaus befördert!"
+msgstr "You were promoted to hospital for alcohol poisoning!"
+
+msgid "Aktueller Alkoholgehalt: %s ‰ (%s)"
+msgstr "Current alcohol content: %s ‰ (%s)"
+
+msgid "Id nicht gefunden!"
+msgstr "Id not found!"
+
+msgid "Ungültiger Nickname!"
+msgstr "Invalid nickname!"
+
+msgid "Nickname bereits vergeben!"
+msgstr "Nickname is already in use!"
+
+msgid "Fehler: Es gab ein Problem mit der Schnittstelle"
+msgstr "Error: There was a problem with the interface"
+
+msgid "%s hat dein Nickname von %s in %s geändert!"
+msgstr "%s has changed your nickname from %s to %s!"
+
+msgid "Du hast 20 STVO Punkte! Dein Führerschein wurde abgenommen!"
+msgstr "You have 20 RTR points! Your driver's license has been revoked!"
+
+msgid "Du hattest 20 STVO Punkte dein Führerschein wurde abgenommen!"
+msgstr "You had 20 RTR points your driver's license was revoked!"
+
+msgid "Knast: Du kannst dich mit /bail für %d$ freikaufen!"
+msgstr "Jail: You can buy yourself free with /bail for %d$!"
+
+msgid "Du hast dich %sgeschnallt!"
+msgstr "You're fucking crazy!"
+
+msgid "Eure Allianz hat kein Bündnis!"
+msgstr "Your faction has no alliance!"
+
+msgid "Du bist zu Level %d aufgestiegen"
+msgstr "You have ascended to level %d"
+
+msgid "Der Spieler %s hat sich geheilt! (Zeit: %s Minuten)"
+msgstr "The player %s has healed! (Time: %s minutes)"
+
+msgid "%s-Lohn"
+msgstr "%s wage"
+
+msgid "Halloween-Bonus"
+msgstr "Halloween bonus"
+
+msgid "Weihnachtsgeld"
+msgstr "Christmas bonus"
+
+msgid "Bankzinsen"
+msgstr "Bank phrases"
+
+msgid "Willkommens-Bonus"
+msgstr "Welcome bonus"
+
+msgid "Fahrzeugsteuer"
+msgstr "Vehicle tax"
+
+msgid "Miete an %s von %s"
+msgstr "Rent to %s from %s"
+
+msgid "Miete an %s"
+msgstr "Rent to %s"
+
+msgid "Du konntest die Miete von %s's Haus nicht bezahlen."
+msgstr "You couldn't pay the rent on %s' house."
+
+msgid "Dir wurde ein Wanted erlassen!"
+msgstr "You were deprived of a Wanted!"
+
+msgid "Du hast %s Punkte bekommen."
+msgstr "You got %s points."
+
+msgid "Du hast 5 Ostereier bekommen!"
+msgstr "You got five Easter eggs!"
+
+msgid "Du hast 3 Zuckerstangen bekommen!"
+msgstr "You got three candy canes!"
+
+msgid "Mit diesem Objekt kannst du nicht in Fahrzeuge einsteigen!"
+msgstr "You cannot enter vehicles with this object!"
+
+msgid "Drücke 'n' um den/die %s abzulegen!"
+msgstr "Press 'n' to put down the %s!"
+
+msgid "Drücke 'X' um dich nicht mehr am Fahrzeug festzuhalten."
+msgstr "Press 'X' to stop holding on to the vehicle."
+
+msgid "Dieses Fahrzeug ist zu schnell, um sich daran festzuhalten!"
+msgstr "This vehicle is too fast to hold on to!"
+
+msgid "Du wurdest aus dem Prison entlassen! Benimm dich nun besser!"
+msgstr "You have been dismissed from Prison! You better behave yourself now!"
+
+msgid "Braboy: Du hast einen Stern erhalten!"
+msgstr "Braboy: You got a star!"
+
+msgid "Du wurdest außer Gefecht gesetzt!"
+msgstr "You've been incapacitated!"
+
+msgid "%s (Handy) sagt: %s"
+msgstr "%s (mobile) says: %s"
+
+msgid "Das Gebäude wurde geöffnet!"
+msgstr "The building has been opened!"
+
+msgid "Das Gebäude wurde von außen geschlossen!"
+msgstr "The building was closed from the outside!"
+
+msgid "Du kannst während eines Überfalls niemandem dein Geld geben!"
+msgstr "You cannot give your money to anyone during a robbery!"
+
+msgid "Du hast %d$ von %s bekommen!"
+msgstr "You got $%d by %s!"
+
+msgid "Punkte eingetauscht!"
+msgstr "Points exchanged!"
+
+msgid "Du hast nicht genügend Punkte!"
+msgstr "You don't have enough points!"
+
+msgid "Du hast das zurzeit mögliche Maximallevel erreicht!"
+msgstr "You have reached the currently possible maximum level!"
+
+msgid "Du darfst im Dienst keine Waffen einlagern!"
+msgstr "You can't store weapons while on duty!"
+
+msgid "Du kannst aktuell keine Waffen einlagern!"
+msgstr "You cannot store weapons at the moment!"
+
+msgid "Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!"
+msgstr "You have put a %s with %d ammo in your weapon box (Slot %d)!"
+
+msgid "Du hast nicht genug %s Munition!"
+msgstr "You don't have enough %s ammo!"
+
+msgid "Du hast keine/n %s!"
+msgstr "You don't have a %s!"
+
+msgid "Du hast keinen freien Waffen-Slot in deiner Waffenbox!"
+msgstr "You don't have a free gun slot in your gun box!"
+
+msgid "Du darfst im Dienst keine privaten Waffen verwenden!"
+msgstr "You are not allowed to use private weapons while on duty!"
+
+msgid "Du kannst aktuell keine Waffen entnehmen!"
+msgstr "You cannot remove any weapons at this time!"
+
+msgid ""
+"Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!"
+msgstr "You have taken a %s with %d ammo from your weapon box (slot %d)!"
+
+msgid "Du hast bereits eine Waffe dieser Art dabei!"
+msgstr "You already have a weapon of that kind on you!"
+
+msgid "Du hast keine Waffe in diesem Slot!"
+msgstr "You have no weapon in this slot!"
+
+msgid "Du hast bereits das maximale Waffenlevel!"
+msgstr "You already have the maximum weapon level!"
+
+msgid "Du kannst im Dienst nicht mit Zivilisten tauschen!"
+msgstr "You can't trade with civilians on duty!"
+
+msgid "Du kannst mit Beamten nicht tauschen!"
+msgstr "You can't trade with officials!"
+
+msgid "Du bist zu weit entfernt von dem Spieler!"
+msgstr "You are too far away from the player!"
+
+msgid "Du hast deine Schutzweste mit %s getauscht!"
+msgstr "You swapped your vest with %s!"
+
+msgid "Du hast %s Schuss %s von %s erhalten!"
+msgstr "You got %s ammo %s from %s!"
+
+msgid "Du hast %s Schuss %s an %s vergeben!"
+msgstr "You gave %s ammo %s to %s!"
+
+msgid "Der Spieler hat die Waffe nicht!"
+msgstr "The player does not have the gun!"
+
+msgid "Der Spieler hatte keine Waffe in der Hand!"
+msgstr "The player had no weapon in his hand!"
+
+msgid "Du hast keine Waffe in der Hand!"
+msgstr "You don't have a weapon in your hand!"
+
+msgid "Premium"
+msgstr "premium"
+
+msgid "Du erhälst kostenlos Premium aufgrund deiner Stellung im Team."
+msgstr ""
+"You will receive Premium free of charge due to your position in the team."
+
+msgid "Du wurdest aufgrund von 3 Warns gebannt!"
+msgstr "You were banned because of three warns!"
+
+msgid "Du hast 3 Warns! Der nächste läuft in %d Tagen ab!"
+msgstr "You have three warns! The next one expires in %d days!"
+
+msgid "Vorsicht du hast bereits %d Verwarnung/en!"
+msgstr "Attention you already have %d warn(s)!"
+
+msgid "Die Anfrage ist abgelaufen und kann daher nicht mehr akzeptiert werden!"
+msgstr "The request has expired and can therefore no longer be accepted!"
+
+msgid "Die Anfrage ist abgelaufen und kann daher nicht mehr abgelehnt werden!"
+msgstr "The request has expired and can therefore no longer be rejected!"
+
+msgid "Es wurden "
+msgstr "It was "
+
+msgid ""
+"Du kannst die Tour jederzeit im self-Menü (F2) unter Einstellungen beenden!"
+msgstr "You can end the tour at any time in the self-menu (F2) under settings!"
+
+msgid "Du hast die Server-Tour erfolgreich beendet!"
+msgstr "You have successfully completed the server tour!"
+
+msgid "Du hast bereits die Belohnung für diesen Schritt erhalten!"
+msgstr "You have already received the reward for this step!"
+
+msgid "Du kannst dieses Fahrzeug nicht fahren!"
+msgstr "You can't drive this vehicle!"
+
+msgid "Du kannst dieses Fahrzeug nicht reparieren!"
+msgstr "You can't repair this vehicle!"
+
+msgid "Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren"
+msgstr "You need %d$ on your bank account to repair your vehicle"
+
+msgid "Diese Maut-Stationen ist derzeit geschlossen!"
+msgstr "This toll station is currently closed!"
+
+msgid "Vielen Dank. Wir wünschen dir eine gute Fahrt!"
+msgstr "Thank you very much. Have a good trip!"
+
+msgid "Du hast zu wenig Geld auf deinem Bankkonto! (%s$)"
+msgstr "You don't have enough money in your bank account! (%s$)"
+
+msgid "Du bist zuweit entfernt!"
+msgstr "You're too far away!"
+
+msgid "Du kannst dieses Item in den Kofferraum legen!"
+msgstr "You can put this item in the trunk!"
+
+msgid "Du hast %d %s in den Kofferraum (Slot %d) gelegt!"
+msgstr "You put %d %s in the trunk (slot %d)!"
+
+msgid "Du hast keinen freien Item-Slot in diesem Kofferraum!"
+msgstr "You have no free item slot in this trunk!"
+
+msgid "Du kannst dieses Item aus dem Kofferraum entfernen!"
+msgstr "You can remove this item from the trunk!"
+
+msgid "%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!"
+msgstr "%s confiscated %d %s from the trunk of your car %s!"
+
+msgid "Dieses Item ist nicht illegal!"
+msgstr "This item is not illegal!"
+
+msgid "Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!"
+msgstr "You took %d %s from your trunk (slot %d)!"
+
+msgid ""
+"%s hat eine/n %s mit %d Schuss aus dem Kofferraum deines Fahrzeuges %s "
+"konfisziert!"
+msgstr "%s has confiscated a %s with %d shot from the trunk of your car %s!"
+
+msgid ""
+"Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!"
+msgstr "You took a %s with %d shot from your trunk (Slot %d)!"
+
+msgid "Du hast eine/n %s mit %d Schuss in den Kofferraum (Slot %d) gelegt!"
+msgstr "You put a %s with %d shot in the trunk (slot %d)!"
+
+msgid "Du hast keinen freien Waffen-Slot in diesem Kofferraum!"
+msgstr "You don't have a free gun slot in that trunk!"
+
+msgid "Vorlage wurde angewendet!"
+msgstr "Template was applied!"
+
+msgid "Vorlage nicht kompatibel mit diesem Fahrzeug!"
+msgstr "Template not compatible with this vehicle!"
+
+msgid "Vorlage (%s) wurde überschrieben!"
+msgstr "Template (%s) was overwritten!"
+
+msgid "Vorlage (%s) ist nicht kompatibel mit diesem Modell!"
+msgstr "Template (%s) is not compatible with this model!"
+
+msgid "Vorlage (%s) wurde erstellt!"
+msgstr "Template (%s) was created!"
+
+msgid "Vorlage (%s) wurde gelöscht!"
+msgstr "Template (%s) was deleted!"
+
+msgid "Vorlage (%s) konnte nicht gelöscht werden!"
+msgstr "Template (%s) could not be deleted!"
+
+msgid "Du kannst nur ohne Mitfahrer in deine Garage fahren!"
+msgstr "You can only drive into your garage without passengers!"
+
+msgid ""
+"Nicht-permanente Fahrzeuge können nicht in der Garage abgestellt werden!"
+msgstr "Non-permanent vehicles can not be parked in the garage!"
+
+msgid "Du kannst keine Firmenwagen in der Garage abstellen!"
+msgstr "You can't park company cars in the garage!"
+
+msgid "Du kannst keine Fraktions-Fahrzeuge in der Garage abstellen!"
+msgstr "You can't park faction vehicles in the garage!"
+
+msgid "Du kannst keine Gang-Fahrzeuge in der Garage abstellen!"
+msgstr "You can't park gang vehicles in the garage!"
+
+msgid "Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!"
+msgstr "You can only park your own vehicles in the garage!"
+
+msgid "Du besitzt keine Garage!"
+msgstr "You don't own a garage!"
+
+msgid "Diese Garage bietet keinen Platz für ein weiteres Fahrzeug! Steige aus!"
+msgstr "This garage offers no space for another vehicle! Get out!"
+
+msgid "Keine abholbaren Boote vorhanden!"
+msgstr "No boats available!"
+
+msgid "Du bist kein Soldat im Dienst!"
+msgstr "You're not a soldier on duty!"
+
+msgid "Du hast keine %d Stk. von diesem Item dabei! (%s)"
+msgstr "You don't have %d pieces of this item with you! (%s)"
+
+msgid "Du hast %d %s in das Fahrzeug geladen!"
+msgstr "You have %d %s loaded in the vehicle!"
+
+msgid "Du hast %d %s gekauft! Diese wurden ins Lager abgelegt!"
+msgstr "You bought %d %s! These have been put into storage!"
+
+msgid "Nur Mitglieder des %s dürfen dies beladen!"
+msgstr "Only members of the %s are allowed to load this!"
+
+msgid "Du kannst dieses Item nicht kaufen!"
+msgstr "You can not buy this item!"
+
+msgid "In dieses Fahrzeug passen maximal %d Stk. dieses Items! (%s)"
+msgstr "A maximum of %d pcs. of this item fits into this vehicle! (%s)"
+
+msgid "Du hast 1 %s aus dem Fahrzeug in dein Inventar gepackt!"
+msgstr "You've put 1%s from the vehicle into your inventory!"
+
+msgid "Dieses Item ist nicht mehr im Fahrzeug! (%s)"
+msgstr "This item is no longer in the vehicle! (%s)"
+
+msgid "%s hat ein Fahrzeug für %d$ gekauft! (%s)"
+msgstr "%s bought a vehicle for %d$! (%s)"
+
+msgid "Dieses Fahrzeug steht nicht zum verkauf!"
+msgstr "This vehicle is not for sale!"
+
+msgid "Dein Fahrzeug (%s) wurde in deiner Garage respawnt"
+msgstr "Your vehicle (%s) was respawned in your garage"
+
+msgid "Du hast keinen Platz in deiner Garage!"
+msgstr "You have not enough space in your garage!"
+
+msgid "Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt"
+msgstr "Your vehicle (%s) was respawned in the mechanic base"
+
+msgid "Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt"
+msgstr "Your vehicle (%s) was respawned in the industrial port (logistics job)"
+
+msgid "Dieses Fahrzeug verfügt über eine Wärmesichtkamera!"
+msgstr "This vehicle has a heat vision camera!"
+
+msgid "Achtung: Du hast keinen Führerschein für dieses Fahrzeug!"
+msgstr "Attention: You do not have a driving licence for this vehicle!"
+
+msgid "Du kannst die Spezialhupe mit 'J' benutzen!"
+msgstr "You can use the special horn with 'J'!"
+
+msgid "Das Fahrzeug steht zum Verkauf und kann daher nicht gestartet werden!"
+msgstr "The vehicle is for sale and can therefore not be started!"
+
+msgid "Dein Tank ist leer!"
+msgstr "Your tank is empty!"
+
+msgid "Das Fahrzeug ist kaputt und muss erst repariert werden!"
+msgstr "The vehicle is broken and must be repaired first!"
+
+msgid "Du hast kein Schlüssel für das Fahrradschloss!"
+msgstr "You don't have a key for the bike lock!"
+
+msgid "Du hast kein Schlüssel für das Fahrzeug!"
+msgstr "You don't have a key for the car!"
+
+msgid ""
+"Vorsicht: Steig innerhalb von %d Sekunden wieder ein, oder das Fahrzeug wird "
+"gelöscht!"
+msgstr ""
+"Caution: Get back in the car within %d seconds or the vehicle will be "
+"deleted!"
+
+msgid "Zeit abgelaufen! Das Fahrzeug wurde gelöscht!"
+msgstr "Time's up! The vehicle has been deleted!"
+
+msgid "Dein Fahrzeug wurde in %s/%s respawnt!"
+msgstr "Your vehicle was respawned in %s/%s!"
+
+msgid "Dieser Firmenwagen darf nicht getunt werden!"
+msgstr "This company car can not be tuned!"
+
+msgid "Dieser Fraktions-Wagen darf nicht getunt werden!"
+msgstr "This faction car can not be tuned!"
+
+msgid ""
+"Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü "
+"unter Leader!"
+msgstr ""
+"Your leader must activate the tuning of vehicles! In the company/gang menu "
+"under Leader!"
+
+msgid "Du kannst nur deine eigenen Fahrzeuge tunen!"
+msgstr "You can only tune your own vehicles!"
+
+msgid "Du kannst dieses Fahrzeug nicht tunen!"
+msgstr "You cannot tune this vehicle!"
+
+msgid "Dieses Fahrzeug kann nicht getuned werden!"
+msgstr "This vehicle cannot be tuned!"
+
+msgid "Lasse deine Mitfahrer zuerst aussteigen!"
+msgstr "Let your passengers get out first!"
+
+msgid "Mit diesem Fahrzeugtyp kannst du die Tuningwerkstatt nicht betreten!"
+msgstr "With this type of vehicle you cannot enter the tuning workshop!"
+
+msgid "Du hast nicht genug Geld dabei! (%s)"
+msgstr "You didn't bring enough money! (%s)"
+
+msgid "Du hast alle Texturen entfernt!"
+msgstr "You removed all the textures!"
+
+msgid "Du bist kein Moderator oder höher!"
+msgstr "You are not a moderator or higher!"
+
+msgid "Du hast die Textur bestätigt!"
+msgstr "You've confirmed the texture!"
+
+msgid "Du hast die Textur abgelehnt!"
+msgstr "You rejected the texture!"
+
+msgid "Du hast die Textur zur Überprüfung freigegeben!"
+msgstr "You released the texture for verification!"
+
+msgid "Du kannst nur eigene Texturen zur Überprüfung freigeben!"
+msgstr "You can only release your own textures for review!"
+
+msgid "Ungültiger Status!"
+msgstr "Invalid status!"
+
+msgid "Du reparierst bereits ein Fahrzeug!"
+msgstr "You're already repairing a vehicle!"
+
+msgid "Das Fahrzeug hat keinen Totalschaden!"
+msgstr "The vehicle does not have a total loss!"
+
+msgid "Du hast kein Reparaturkit oder bist kein Mechaniker im Dienst!"
+msgstr "You don't have a repair kit or are not a mechanic on duty!"
+
+msgid "Das Fahrzeug wird repariert! Bitte warten!"
+msgstr "The vehicle is being repaired! Please wait!"
+
+msgid "Das Fahrzeug wurde erfolgreich repariert!"
+msgstr "The vehicle was successfully repaired!"
+
+msgid "%s ist nicht geöffnet!"
+msgstr "%s is not open!"
+
+msgid "Du hast keinen Flugschein!"
+msgstr "You don't have a flight ticket!"
+
+msgid "Du hast keinen Führerschein! Lass dich nicht erwischen!"
+msgstr "You don't have a license! Don't get caught!"
+
+msgid "Die Kamera wird zurzeit von %s bedient!"
+msgstr "The camera is currently operated by %s!"
+
+msgid "Du hast nicht genügend Rechte!"
+msgstr "You don't have enough permissions!"
+
+msgid "ELS aktualisiert"
+msgstr "ELS updated"
+
+msgid "Dieses Fahrzeug hat kein Tuning!"
+msgstr "This vehicle has no tunings!"
+
+msgid "Fahrzeug wurde zurückgesetzt!"
+msgstr "Vehicle has been reset!"
+
+msgid "Dein Fahrzeug ist kaputt und kann nicht geparkt werden!"
+msgstr "Your vehicle is broken and cannot be parked!"
+
+msgid "Das Fahrzeug muss zum Parken stillstehen!"
+msgstr "The vehicle must stand still for parking!"
+
+msgid "Du hast das Fahrzeug erfolgreich in der Garage geparkt!"
+msgstr "You have successfully parked the vehicle in the garage!"
+
+msgid "Du hast das Fahrzeug erfolgreich geparkt!"
+msgstr "You have successfully parked the vehicle!"
+
+msgid "Du kannst dein Fahrzeug hier nicht parken!"
+msgstr "You can't park your car here!"
+
+msgid "Du hast keinen Schlüssel für dieses Fahrzeug"
+msgstr "You do not have a key to this vehicle"
+
+msgid "Dieses Fahrzeug kann nicht geparkt werden!"
+msgstr "This vehicle cannot be parked!"
+
+msgid "Die Handbremse wurde gelöst!"
+msgstr "The hand brake has been released!"
+
+msgid "Die Handbremse ist nicht angezogen!"
+msgstr "The parking brake is not applied!"
+
+msgid "Nur permanente Fahrzeuge können Schlüssel haben!"
+msgstr "Only permanent vehicles can have keys!"
+
+msgid "Du bist nicht der Besitzer dieses Fahrzeugs!"
+msgstr "You are not the owner of this vehicle!"
+
+msgid "Dieser Spieler besitzt bereits einen Schlüssel!"
+msgstr "This player already has a key!"
+
+msgid "Du hast einen Fahrzeugschlüssel von %s erhalten! (%s)"
+msgstr "You have received a vehicle key from %s! (%s)"
+
+msgid "Du hast %s einen Fahrzeugschlüssel gegeben! (%s)"
+msgstr "You gave %s a car key! (%s)"
+
+msgid "The specified player is not in possession of a key"
+msgstr "The specified player is not in possession of a key"
+
+msgid "Du hast dem Spieler einen Fahrzeugschlüssel abgenommen! (%s)"
+msgstr "You took a car key from the player! (%s)"
+
+msgid "%s hat das Fahrzeug %s von %s repariert."
+msgstr "%s has repaired the vehicle %s from %s."
+
+msgid "Dieses Fahrzeug kann nicht respawnt werden!"
+msgstr "This vehicle cannot be respawned!"
+
+msgid "Das Fahrzeug ist nicht leer!"
+msgstr "The vehicle is not empty!"
+
+msgid "Das ist kein permanentes Server Fahrzeug!"
+msgstr "This is not a permanent server vehicle!"
+
+msgid ""
+"Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base "
+"ab!"
+msgstr ""
+"The vehicle was towed away or destroyed! Pick it up at the Mech&Tow Base!"
+
+msgid "Dieses Fahrzeug ist kaputt und kann nicht respawnt werden!"
+msgstr "This vehicle is broken and cannot be respawnt!"
+
+msgid "%s hat das Fahrzeug %s von %s respawnt."
+msgstr "%s has respawnt the vehicle %s from %s."
+
+msgid "Dieses Fahrzeug ist nicht von deiner Fraktion!"
+msgstr "This vehicle is not from your faction!"
+
+msgid "Diese Fahrzeug ist nicht von deiner Firma!"
+msgstr "This vehicle is not from your company!"
+
+msgid "Diese Fahrzeug ist nicht von deiner Gruppe!"
+msgstr "This vehicle is not from your group!"
+
+msgid "%s hat ein Fahrzeug deiner %s respawnt! (%s)"
+msgstr "%s has respawnt a vehicle of your %s! (%s)"
+
+msgid "In eurer %s-Kasse befindet sich nicht genug Geld! (100$)"
+msgstr "There is not enough money in your %s cash box! (100$)"
+
+msgid "Du hast nicht genügend Geld auf deinem Bankkonto (100$)!"
+msgstr "You don't have enough money in your bank account ($100)!"
+
+msgid "Fahrzeug repariert!"
+msgstr "Vehicle repaired!"
+
+msgid "Dein Fahrzeug ist kaputt und kann nicht respawnt werden!"
+msgstr "Your vehicle is broken and cannot be respawnt!"
+
+msgid "Das Fahrzeug hat keine Park-Position!"
+msgstr "The vehicle has no parking position!"
+
+msgid "Dieses Fahrzeug kann nicht gelöscht werden!"
+msgstr "This vehicle cannot be deleted!"
+
+msgid "%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s"
+msgstr "%s by owner %s has been deleted by admin %s! Reason: %s"
+
+msgid "%s hat das Fahrzeug %s von %s gelöscht (Grund: %s)."
+msgstr "%s has deleted the vehicle %s of %s (reason: %s)."
+
+msgid "Möchtest du das Fahrzeug wirklich für %d$ verkaufen?"
+msgstr "Do you really want to sell the vehicle for %d$?"
+
+msgid "Möchtest du dieses Fahrzeug entfernen?"
+msgstr "Do you want to remove this vehicle?"
+
+msgid ""
+"Du hast nicht genügend Geld auf deinem Bankkonto, um die Garage zu kaufen "
+"oder upzugraden"
+msgstr ""
+"You do not have enough money in your bank account to buy or upgrade the "
+"garage"
+
+msgid "Deine Garage ist bereits auf dem höchsten Level"
+msgstr "Your garage is already at the highest level"
+
+msgid "Du besitzt keine gültige Garage!"
+msgstr "You do not own a valid garage!"
+
+msgid "Du hast nicht genügend Geld, um dein Hangar zu upgraden"
+msgstr "You don't have enough money to upgrade your hangar"
+
+msgid "Deine Hangar ist bereits auf dem höchsten Level"
+msgstr "Your hangar is already at the highest level"
+
+msgid "Du besitzt keinen gültigen Hangar!"
+msgstr "You do not own a valid hangar!"
+
+msgid "Dieses Fahrzeug ist kaputt und kann nicht kurzgeschlossen werden!"
+msgstr "This vehicle is broken and cannot be short-circuited!"
+
+msgid "Schließe kurz..."
+msgstr "Short circuiting..."
+
+msgid "Hierfür brauchst du ein Kurzschließkit!"
+msgstr "For this you need a short circuit kit!"
+
+msgid "Mitfahrer wurden herausgeworfen!"
+msgstr "Passengers were thrown out!"
+
+msgid "Hierzu hast du keine Berechtigungen!"
+msgstr "You have no permissions for this!"
+
+msgid "Dein Fahrzeug ist kaputt und muss repariert werden!"
+msgstr "Your vehicle is broken and needs to be repaired!"
+
+msgid "Du hast %s dabei!"
+msgstr "You have %s on you!"
+
+msgid "Du bist zuweit vom Truck entfernt!"
+msgstr "You're too far from the truck!"
+
+msgid "Nur Fraktionisten können dieses Objekt abladen!"
+msgstr "Only factionists can unload this object!"
+
+msgid "Es befindet sich %s im Truck!"
+msgstr "It's %s in the truck!"
+
+msgid "Möchtest du dieses Fahrzeug für $%s verschrotten?"
+msgstr "You want to scrap this vehicle for $%s?"
+
+msgid "Du kannst dieses Fahrzeug nicht Verschrotten!"
+msgstr "You can't scrap this vehicle!"
+
+msgid "Dieses Fahrzeug gehört dir nicht!"
+msgstr "This vehicle is not yours!"
+
+msgid "Möchtest du dieses Fahrzeug wirklich für $%s verschrotten?"
+msgstr "Do you really want to scrap this vehicle for $%s?"
+
+msgid "Dieses Fahrzeug kann nicht verschrottet werden!"
+msgstr "This vehicle cannot be scrapped!"
+
+msgid "Diese Fahrzeug hat keinen richtig ermittelbaren Preis!"
+msgstr "This vehicle does not have a price that can be determined correctly!"
+
+msgid "Diese Fahrzeug gehört nicht dir!"
+msgstr "This vehicle is not yours!"
+
+msgid "Du bist nicht berechtigt dieses Fahrzeug zu erstellen!"
+msgstr "You are not authorized to create this vehicle!"
+
+msgid "Du hast nicht den passenden Führerschein!"
+msgstr "You don't have the right driver's license!"
+
+msgid "Du hast nicht genug Geld dabei! (200$)"
+msgstr "You don't have money! (200$)"
+
+msgid "Du musst im Marker bleiben!"
+msgstr "You have to stay in the marker!"
+
+msgid "Du musst im Fahrzeug sitzen bleiben!"
+msgstr "You must remain in the vehicle!"
+
+msgid "Upgrades gekauft!"
+msgstr "Upgrades bought!"
+
+msgid "Der Spieler %s  wurde von %s gebannt!"
+msgstr "The player %s was banned by %s!"
+
+msgid "Grund: %s"
+msgstr "Reason: %s"
+
+msgid "Der Spieler %s  wurde von %s für %d Stunden gebannt!"
+msgstr "The player %s was banned by %s for %d hours!"
+
+msgid "Der Spieler %s wurde von %s entbannt!"
+msgstr "The player %s was unbanned from %s!"

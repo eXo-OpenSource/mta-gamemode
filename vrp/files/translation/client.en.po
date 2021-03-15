@@ -1,0 +1,4600 @@
+msgid "%s"
+msgstr "%s"
+
+msgid "Privat Fahrzeug"
+msgstr "Private vehicle"
+
+msgid "Firma/Gruppen Fahrzeug"
+msgstr "Company/Groups Vehicle"
+
+msgid "Fahrzeug freikaufen"
+msgstr "Buy out a vehicle"
+
+msgid "Klicke mich an!"
+msgstr "Click on me!"
+
+msgid "Ich kann Wanzen aufspüren"
+msgstr "I can detect bugs"
+
+msgid "Fahrzeugimporteur"
+msgstr "Vehicle importer"
+
+msgid "Starte den Fahrzeugtransport"
+msgstr "Start the vehicle transport"
+
+msgid "Nur Mitglieder des EPT können Fahrzeuge importieren."
+msgstr "Only members of the EPT can import vehicles."
+
+msgid "Du bist nicht im Unternehmensdienst."
+msgstr "You're not in company duty."
+
+msgid "Klicke auf die Bushaltestelle, um den Busfahrplan einzusehen."
+msgstr "Click on the bus stop to view the bus timetable."
+
+msgid "Ein Bus der Linie %d (%s) kommt in Kürze an der Haltestelle %s an."
+msgstr "A bus of the line %d (%s) will soon arrive at the stop %s."
+
+msgid "Public Transport"
+msgstr "Public transport"
+
+msgid "Buslinie %d (%s) wird leider nicht mehr bedient."
+msgstr "Bus line %d (%s) is unfortunately no longer operated."
+
+msgid "Buslinie %d (%s) wird wieder bedient."
+msgstr "Bus line %d (%s) is served again."
+
+msgid "Anzeigetafel ändern"
+msgstr "Changing the destination board"
+
+msgid "Linie 1 nach Blueberry bedienen"
+msgstr "Operate line 1 to Blueberry"
+
+msgid "Linie 1 nach Ganton bedienen"
+msgstr "Operate line 1 to Ganton"
+
+msgid "Linie 2 nach Dillimore bedienen"
+msgstr "Service line 2 to Dillimore"
+
+msgid "Linie 2 nach Jefferson bedienen"
+msgstr "Operate line 2 to Jefferson"
+
+msgid "Sonderfahrt"
+msgstr "Extra trip"
+
+msgid "Dienst beenden"
+msgstr "End service"
+
+msgid "Informationen zur Bedienung der Karte findest du im F1-Hilfemenü"
+msgstr "You can find information on how to use the map in the F1 help menu"
+
+msgid "Code Editor"
+msgstr "Code editor"
+
+msgid "Editor"
+msgstr "编辑"
+
+msgid "Code in der Zwischenablage gespeichert."
+msgstr "Code stored in the clipboard."
+
+msgid "Klasse %s geladen."
+msgstr "Class %s loaded."
+
+msgid "Klasse %s ist bereits geladen"
+msgstr "Class %s is already loaded"
+
+msgid "eXo Adventskalender"
+msgstr "eXo Advent calendar"
+
+msgid "Heutiges Türchen: %d. Dezember"
+msgstr "Today's door: %d. December"
+
+msgid "Belohnung: 5 Päckchen"
+msgstr "Reward: 5 packets"
+
+msgid "X-Mas Bonus Shop"
+msgstr "X-Mas Bonus Shop"
+
+msgid "eXo Weihnachts-Quests"
+msgstr "eXo Christmas Quests"
+
+msgid "Heutiger Quest: %d. Dezember - %s"
+msgstr "Today's quest: %d. December - %s"
+
+msgid "Beschreibung: %s"
+msgstr "Description: %s"
+
+msgid "Belohnung: %s Päckchen"
+msgstr "Reward: %s packages"
+
+msgid "Draw-Quest Admin GUI"
+msgstr "Draw-Quest Admin GUI"
+
+msgid "Zeichnungen"
+msgstr "Drawings"
+
+msgid "Möchtest du das Bild von %s akzeptieren?"
+msgstr "Do you want to accept the image of %s?"
+
+msgid "Möchtest du das Bild von %s ablehnen?"
+msgstr "Do you want to reject the image of %s?"
+
+msgid "Aktuelle Aufgabe: %s"
+msgstr "Current task: %s"
+
+msgid "Events"
+msgstr "Events"
+
+msgid "Halloween Bonus GUI"
+msgstr "Halloween Bonus GUI"
+
+msgid "Halloween Zeichenwettbewerb"
+msgstr "Halloween drawing contest"
+
+msgid "Möchtest du das Bild von %s mit %d Stern/en bewerten?"
+msgstr "Do you want to rate the image of %s with %d star(s)?"
+
+msgid "Admin: Bild deaktivieren"
+msgstr "Admin: Disable image"
+
+msgid "Möchtest du das Bild von %s deaktivieren?"
+msgstr "Do you want to disable %s  image?"
+
+msgid "Aktuelle Phase: %s"
+msgstr "Current phase: %s"
+
+msgid "aktualisierte Feuer"
+msgstr "updated fires"
+
+msgid "Möchtest du dich mit Kaution stellen?"
+msgstr "Do you want to jail yourself with bail?"
+
+msgid "Spielereinteilung - %s"
+msgstr "Player classification - %s"
+
+msgid "Hier können die Teilnehmer des Gangwars eingeteilt werden!"
+msgstr "The participants of the Gangwar can be classified here!"
+
+msgid "Die Gegner teilen ihre Spieler ein!"
+msgstr "The opponents divide their players!"
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Teilnehmer"
+msgstr "Participant"
+
+msgid "Waffen"
+msgstr "Weapons"
+
+msgid "Doppelklick zum Nehmen"
+msgstr "Double click to take"
+
+msgid "Der Tisch ist gesperrt!"
+msgstr "The table is locked!"
+
+msgid "Der maximal Einsatz beträgt %s!"
+msgstr "The maximum bet is %s!"
+
+msgid "Du hast nicht genug Geld dabei!"
+msgstr "You didn't bring enough money!"
+
+msgid "Du hast alle Jetons vom Tisch entfernt!"
+msgstr "You took all the chips off the table!"
+
+msgid "Du hast alle Jetons vom Feld %s entfernt!"
+msgstr "You have removed all chips from the %s field!"
+
+msgid "Das Video ist bereits in der Videoliste!"
+msgstr "The video is already in the video list!"
+
+msgid "Dazu hast du keine Berechtigung!"
+msgstr "You have no authorization to do that!"
+
+msgid "Falsches Passwort!"
+msgstr "Wrong password!"
+
+msgid "Riesenrad"
+msgstr "Ferris wheel"
+
+msgid ""
+"Mit einer Höhe von 32m und 10 Gondeln ist dieses Riesenrad das wohl "
+"spektakulärste in ganz San Andreas! Klicke auf eine Gondel, um für nur 10$ "
+"bis zu 2 Runden mitzufahren."
+msgstr ""
+"With a height of 32m and 10 gondolas, this Ferris wheel is probably the most "
+"spectacular in all of San Andreas! Click on a gondola to ride up to 2 laps "
+"for only 10$."
+
+msgid "Du kannst im Wasser nicht angeln!"
+msgstr "You can't fish in water!"
+
+msgid "Hier ist kein Wasser!"
+msgstr "There's no water here!"
+
+msgid "Du wurdest für %d Minuten ins Gefängnis gesperrt!"
+msgstr "You've been locked in jail for %d minutes!"
+
+msgid "Du hast nichts gesetzt!"
+msgstr "You bet nothing!"
+
+msgid "Du hast deinen %d. %sen Token auf das Feld %s gesetzt!"
+msgstr "You placed your %d. %sen token on the %s field!"
+
+msgid "..id.."
+msgstr "..id.."
+
+msgid "Schere Stein Papier"
+msgstr "scissors stone paper"
+
+msgid "Schere Stein Papier - Ergebnis"
+msgstr "scissors stone paper - Result"
+
+msgid "Du:"
+msgstr "You:"
+
+msgid "Das Schildkrötenrennen startet in 3 Sekunden!"
+msgstr "The turtle race starts in 3 seconds!"
+
+msgid "Schildkrötenrennen"
+msgstr "Turtle Race"
+
+msgid "Das Schildkrötenrennen startet in %s Sekunden!"
+msgstr "The turtle race starts in %s seconds!"
+
+msgid "..customid.."
+msgstr "...customid..."
+
+msgid "Schießstand"
+msgstr "Shooting range"
+
+msgid "Bitte schieße auf die Ziele!"
+msgstr "Please shoot the targets!"
+
+msgid "Treffer: %d/%d"
+msgstr "Hits: %d/%d"
+
+msgid "Zeit: %d/%d"
+msgstr "Time: %d/%d"
+
+msgid "Genauigkeit: %d/%d"
+msgstr "Accuracy: %d/%d"
+
+msgid "Schießstand Ergebnis"
+msgstr "Shooting range result"
+
+msgid "Treffer: %d von benötigten %d"
+msgstr "Hits: %d of required %d"
+
+msgid "Benötigte Zeit: %d/%d"
+msgstr "Required time: %d/%d"
+
+msgid "Genauigkeit: %d Prozent von benötigten %d Prozent"
+msgstr "Accuracy: %d percent of required %d percent"
+
+msgid "Gratuliere! Du hast bestanden!"
+msgstr "Congratulations! You passed!"
+
+msgid "Du hast nicht bestanden!"
+msgstr "You didn't pass!"
+
+msgid "Spielhilfe"
+msgstr "Game help"
+
+msgid "Für mehr Infos klicke mich an!"
+msgstr "Click me for more info!"
+
+msgid "Private Firmen und Gangs"
+msgstr "Private companies and gangs"
+
+msgid "Firmen-/Gangimmobilien"
+msgstr "Company-/ Gang real estate"
+
+msgid "Du hast keine Firma/Gang!"
+msgstr "You have no company/gang!"
+
+msgid "Ausweis / Kaufvertrag"
+msgstr "Identity card / purchase agreement"
+
+msgid "Fahrzeugverleih"
+msgstr "Car Rental"
+
+msgid "Fahrzeug für 200$ ausleihen!"
+msgstr "Rent a car for $200!"
+
+msgid "Ausrüstungsfahrzeug"
+msgstr "Equipment vehicle"
+
+msgid "Hier startet der Waffentruck!"
+msgstr "This is where the weapon truck starts!"
+
+msgid "Illegaler Waffentruck"
+msgstr "Illegal Arms Truck"
+
+msgid "Erste Hilfe"
+msgstr "First aid"
+
+msgid "Klicke mich für Heilung an!"
+msgstr "Click me for healing!"
+
+msgid "Jobliste"
+msgstr "Job list"
+
+msgid "Klicke hier für Informationen!"
+msgstr "Click here for information!"
+
+msgid "Button %d"
+msgstr "Button %d"
+
+msgid "Male in %d verschiedenen Farben!"
+msgstr "Draw in %d different colours!"
+
+msgid ""
+"Du bist durch das Verlassen des Gebiets aus dem Gangwar ausgetreten. Du "
+"kannst jedoch jederzeit wieder eintreten!"
+msgstr ""
+"You left the gang war by leaving the area. However, you can re-enter at any "
+"time!"
+
+msgid "Gangwar beendet! Das Gebiet gehört nun %s"
+msgstr "Gangwar finished! The area now belongs to %s"
+
+msgid "Gangwar beendet! Das Gebiet wurde erfolgreich vor %s verteidigt"
+msgstr "Gangwar finished! The area was successfully defended from %s"
+
+msgid "Du kannst diese Wand mit der Spraydose besprühen!"
+msgstr "You can spray this wall with the spray can!"
+
+msgid "Diese Wand ist bereits mit eurem Ganglogo besprayt!"
+msgstr "This wall is already sprayed with your gang logo!"
+
+msgid "Zahltag"
+msgstr "Payday"
+
+msgid "Leertaste zum Ausblenden"
+msgstr "Space bar to hide"
+
+msgid "Einkommen"
+msgstr "Income"
+
+msgid "Ausgaben"
+msgstr "Expenditure"
+
+msgid "weitere Informationen"
+msgstr "other details"
+
+msgid "Fehler"
+msgstr "Error"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "Erfolgreich"
+msgstr "Successful"
+
+msgid "Warnung"
+msgstr "Warning"
+
+msgid "Achievements"
+msgstr "Achievements"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Erhalten"
+msgstr "Received"
+
+msgid ""
+"Auf eXo-Reallife gibt es viele Achievements mit verschiedenen Belohnungen, "
+"die gefunden bzw. erledigt werden können. Einige davon sind vesteckt und "
+"tauchen erst in der Liste auf wenn du diese findest!"
+msgstr ""
+"On eXo-Reallife there are many Achievements with different rewards that can "
+"be found or done. Some of them are hidden and only appear in the list when "
+"you find them!"
+
+msgid "Sichtbare  Ach."
+msgstr "Visible ah."
+
+msgid "Versteckte Ach."
+msgstr "Hidden ach."
+
+msgid "Erhalten: Ja"
+msgstr "Received: Yes"
+
+msgid "Erhalten: Nein"
+msgstr "Received: No"
+
+msgid "Verstecktes Achievement"
+msgstr "Hidden Achievement"
+
+msgid ""
+"Dieses Achievement wird dir erst angezeigt wenn du es findest bzw. erfüllst!"
+msgstr ""
+"This Achievement will only be shown to you when you find it or fulfill it!"
+
+msgid "Allgemein"
+msgstr "General"
+
+msgid "Spieler"
+msgstr "Player"
+
+msgid "Fahrzeuge"
+msgstr "Vehicles"
+
+msgid "Gefreezt"
+msgstr "Freezed"
+
+msgid "Event beenden"
+msgstr "End event"
+
+msgid "Event starten"
+msgstr "Start Event"
+
+msgid "Ja"
+msgstr "Yes"
+
+msgid "Nein"
+msgstr "No"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Ersteller"
+msgstr "Creator"
+
+msgid "Nachricht"
+msgstr "Message"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "..i] = Blip:new("
+msgstr "..i] = Blip:new("
+
+msgid "..i]:setDisplayText(v.name"
+msgstr "..i]:setDisplayText(v.name"
+
+msgid "Kein Feuer ausgewählt!"
+msgstr "No fire selected!"
+
+msgid ""
+"Möchtest du das Feuer wirklich permanent löschen? Du kannst es auch "
+"deaktivieren, damit es nicht mehr zufällig ausbricht"
+msgstr ""
+"Do you really want to delete the fire permanently? You can also deactivate "
+"it so that it no longer breaks out accidentally"
+
+msgid "Feuer stoppen"
+msgstr "Stop fire"
+
+msgid "Feuer starten"
+msgstr "Start fire"
+
+msgid ""
+"Der gelbe Marker muss die obere rechte Ecke des Feuers markieren (nach "
+"Norden orientiert)."
+msgstr ""
+"The yellow marker must mark the upper right corner of the fire (facing "
+"north)."
+
+msgid "Adminansage:"
+msgstr "Admin announcement:"
+
+msgid "Zu Koordinaten porten: (x,y,z)"
+msgstr "Port to coordinates: (x,y,z)"
+
+msgid "Eventkasse:"
+msgstr "Event cashbox:"
+
+msgid "Momentan: %d$"
+msgstr "Currently: %d$"
+
+msgid "Betrag:"
+msgstr "Amount:"
+
+msgid "Grund:"
+msgstr "Reason:"
+
+msgid "selbst teleportieren:"
+msgstr "teleport yourself:"
+
+msgid "↑"
+msgstr "↑"
+
+msgid "→"
+msgstr "→"
+
+msgid "↓"
+msgstr "↓"
+
+msgid "←"
+msgstr "←"
+
+msgid "Rauf"
+msgstr "Up"
+
+msgid "Runter"
+msgstr "Down"
+
+msgid "Spieler: -"
+msgstr "Player: -"
+
+msgid "Spielstunden: -"
+msgstr "Playtime: -"
+
+msgid "Job: -"
+msgstr "Job: -"
+
+msgid "Geld: -"
+msgstr "Money: -"
+
+msgid "Bank-Geld: -"
+msgstr "Bank money: -"
+
+msgid "Fraktion: -"
+msgstr "Faction: -"
+
+msgid "Unternehmen: -"
+msgstr "Company: -"
+
+msgid "Gang/Firma: -"
+msgstr "Gang/Company: -"
+
+msgid "Strafen:"
+msgstr "Punishments:"
+
+msgid "Sonstiges:"
+msgstr "Miscellaneous:"
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "Bitte gib mindestens 3 Zeichen ein!"
+msgstr "Please enter at least 3 characters!"
+
+msgid "Karma: -"
+msgstr "Karma: -"
+
+msgid "Gebannt: -"
+msgstr "Banished: -"
+
+msgid "Prison: -"
+msgstr "Prison: -"
+
+msgid "Tickets"
+msgstr "Tickets"
+
+msgid "WebPanel"
+msgstr "WebPanel"
+
+msgid "Spieler: %s"
+msgstr "Player: %s"
+
+msgid "Spielzeit: %s:%s h"
+msgstr "Playtime: %s:%s h"
+
+msgid "Fraktion: %s"
+msgstr "Fraction: %s"
+
+msgid "-"
+msgstr "-"
+
+msgid "Unternehmen: %s"
+msgstr "Company: %s"
+
+msgid "Gang/Firma: %s"
+msgstr "Gang/Company: %s"
+
+msgid "Job: %s"
+msgstr "Job: %s"
+
+msgid "Geld: %s$"
+msgstr "Money: %s$"
+
+msgid "Bank-Geld: %s$"
+msgstr "Bank money: %s$"
+
+msgid "Gebannt: %s"
+msgstr "Banned: %s"
+
+msgid "Karma: %s"
+msgstr "Karma: %s"
+
+msgid "Prison: %s"
+msgstr "Prison: %s"
+
+msgid "Der Spieler ist nicht mehr online!"
+msgstr "The player is no longer online!"
+
+msgid "Der Spieler ist nicht eingeloggt!"
+msgstr "The player is not logged in!"
+
+msgid "Geld: %d$"
+msgstr "Money: %d$"
+
+msgid "Bank-Geld: %d$"
+msgstr "Bank money: %d$"
+
+msgid "Du bist nicht berechtigt!"
+msgstr "You are not authorized!"
+
+msgid "Kein Spieler ausgewählt!"
+msgstr "No player selected!"
+
+msgid "Spieler %s time bannen"
+msgstr "Time ban player %s"
+
+msgid "Dauer in Stunden:"
+msgstr "Duration in hours:"
+
+msgid "Spieler %s permanent Bannen"
+msgstr "Ban Player %s permanent"
+
+msgid "Aus welchem Grund möchtest du den Spieler %s permanent bannen?"
+msgstr "For which reason do you want to ban the player %s permanently?"
+
+msgid "Spieler %s entbannen"
+msgstr "Unban player %s"
+
+msgid "Spieler %s umbenennen"
+msgstr "Rename player %s"
+
+msgid "Welchen Usernamen möchtest du dem Spieler %s geben?"
+msgstr "Which username do you want to give to the player %s?"
+
+msgid "Spieler %s offline ins Prison schicken"
+msgstr "Send player %s offline into the Prison"
+
+msgid "Dauer in Minuten:"
+msgstr "Duration in minutes:"
+
+msgid "Spieler %s offline aus dem Prison entlassen?"
+msgstr "Release player %s offline from the Prison?"
+
+msgid "Spieler %s kicken"
+msgstr "Kick player %s"
+
+msgid "Aus welchem Grund möchtest du den Spieler %s vom Server kicken?"
+msgstr "For which reason do you want to kick the player %s from the server?"
+
+msgid "Spieler %s ins Prison schicken"
+msgstr "Send player %s into the Prison"
+
+msgid "Spieler %s aus dem Prison entlassen?"
+msgstr "Release player %s from the Prison?"
+
+msgid "Unternehmen setzten"
+msgstr "Set company"
+
+msgid "Bitte wähle das gewünschte Unternehmen aus:"
+msgstr "Please select the desired company:"
+
+msgid "Fraktion setzten"
+msgstr "Set fraction"
+
+msgid "Bitte wähle die gewünschte Fraktion aus:"
+msgstr "Please select the desired fraction:"
+
+msgid "Unternehmens-Fahrzeuge respawnen"
+msgstr "Respawn company vehicles"
+
+msgid "Fraktions-Fahrzeuge respawnen"
+msgstr "Respawn fractional vehicles"
+
+msgid "Bitte geben einen gültigen Wert ein!"
+msgstr "Please enter a valid value!"
+
+msgid "Admin-Ankündigung senden?"
+msgstr "Send admin announcement?"
+
+msgid "Bestätigen"
+msgstr "Confirm"
+
+msgid "Fahrzeuge von %s"
+msgstr "Vehicles from %s"
+
+msgid "Standort"
+msgstr "Location"
+
+msgid "Fahrzeug her porten"
+msgstr "Porting a vehicle here"
+
+msgid "zum Fahrzeug porten"
+msgstr "port to the vehicle"
+
+msgid "Kein Fahrzeug ausgewählt!"
+msgstr "No vehicle selected!"
+
+msgid "Garage"
+msgstr "Garage"
+
+msgid "Autohof"
+msgstr "Carport"
+
+msgid "Hangar"
+msgstr "Hangar"
+
+msgid "Unbekannt"
+msgstr "Unknown"
+
+msgid "Warns von %s"
+msgstr "Warns from %s"
+
+msgid "Verwarnen"
+msgstr "Warn"
+
+msgid "Warn löschen"
+msgstr "Delete warn"
+
+msgid "Kein Warn ausgewählt!"
+msgstr "No warn selected!"
+
+msgid "Spieler %s verwarnen"
+msgstr "Warn player %s"
+
+msgid "Dauer in Tagen:"
+msgstr "Duration in days:"
+
+msgid "Grund"
+msgstr "Reason"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Datum"
+msgstr "Date"
+
+msgid "Ablauf"
+msgstr "Flow"
+
+msgid "Der Spieler %s hat keine Warns!"
+msgstr "The player %s has no warnings!"
+
+msgid "Zone"
+msgstr "Zone"
+
+msgid "Rollen"
+msgstr "Roles"
+
+msgid "Aktuell"
+msgstr "Current"
+
+msgid "gespawnt"
+msgstr "spawned"
+
+msgid "Kein Ped ausgewählt!"
+msgstr "No ped selected!"
+
+msgid "verfügbare Rollen"
+msgstr "available roles"
+
+msgid "gesetzte Rollen"
+msgstr "set roles"
+
+msgid "Ungültige Rolle ausgewählt!"
+msgstr "Invalid role selected!"
+
+msgid "Mit Serial verknüpfte Accounts"
+msgstr "Accounts linked to serial"
+
+msgid "Admin: Transaktionen"
+msgstr "Admin: Transactions"
+
+msgid "Fahrzeug editieren"
+msgstr "Edit vehicle"
+
+msgid ""
+"Der Besitzer konnte nicht gefunden werden! Die Eingabe muss entweder eine "
+"Fraktion / ein Unternehmen aus der Combo Box oder die ID (Zahl) des "
+"Spielers / der Gruppe sein."
+msgstr ""
+"The owner could not be found! The entry must be either a fraction / company "
+"from the combo box or the ID (number) of the player / group."
+
+msgid "Das Fahrzeugmodell muss zwischen ID 400 und 611 liegen."
+msgstr "The vehicle model must be between ID 400 and 611."
+
+msgid ""
+"Das Fahrzeugmodell %s konnte nicht gefunden werden. Bitte benutze die "
+"Fahrzeug-ID (zwischen 400 und 611) oder nutze die Suchfunktion."
+msgstr ""
+"The vehicle model %s could not be found. Please use the vehicle ID (between "
+"400 and 611) or use the search function."
+
+msgid "ELS"
+msgstr "emergency lights"
+
+msgid "Auswählen"
+msgstr "Select"
+
+msgid "Texturen editieren"
+msgstr "Edit Textures"
+
+msgid "Munition/Schutzweste vergeben!"
+msgstr "Ammunition/Protective vest awarded!"
+
+msgid "Möchtest du %s deiner Munition für deine aktuelle Waffe vergeben?"
+msgstr "Would you like to give %s of your ammunition for your current weapon?"
+
+msgid "Möchtest du deine Schutzweste mit diesem Spieler tauschen?"
+msgstr "Would you like to exchange your protective vest with this player?"
+
+msgid "Preis"
+msgstr "Price"
+
+msgid "Schutzweste"
+msgstr "Protective vest"
+
+msgid "Doppelklick zum Ausführen"
+msgstr "Double click to execute"
+
+msgid "Benutze 'Leertaste' zum Beenden der Animation!"
+msgstr "Use 'Spacebar' to stop the animation!"
+
+msgid "Waffenhandel"
+msgstr "Trade Arms"
+
+msgid "Stück"
+msgstr "Piece"
+
+msgid "✘"
+msgstr "✘"
+
+msgid "Bist du sicher, dass du die folgende Summe zahlen willst: $%s ?"
+msgstr "Are you sure you want to pay the following amount: $%s ?"
+
+msgid "Kontostand:"
+msgstr "Account balance:"
+
+msgid "Auszahlen"
+msgstr "Payout"
+
+msgid "Einzahlen"
+msgstr "Deposit"
+
+msgid "Bitte gib einen gültigen Wert ein!"
+msgstr "Please enter a valid value!"
+
+msgid "Bankautomat"
+msgstr "ATM"
+
+msgid "Binds"
+msgstr "Binds"
+
+msgid "Keine Bind ausgewählt!"
+msgstr "No Bind selected!"
+
+msgid "Keine Belegung in der Liste ausgewählt!"
+msgstr "No assignment selected in the list!"
+
+msgid "Binds verwalten"
+msgstr "Manage Binds"
+
+msgid "An dieser Bushaltestelle halten leider keine Busse"
+msgstr "Unfortunately no buses stop at this bus stop"
+
+msgid "Autoführerschein"
+msgstr "Car driving licence"
+
+msgid "Motorradschein"
+msgstr "Motorcycle licence"
+
+msgid "LKW-Schein"
+msgstr "Truck licence"
+
+msgid "Flugschein"
+msgstr "Pilot's license"
+
+msgid "Kleidung wechseln"
+msgstr "Change clothes"
+
+msgid "Einsatzkleidung"
+msgstr "Operational clothing"
+
+msgid "Ausrüsten"
+msgstr "Equip"
+
+msgid "Waffen einlagern"
+msgstr "Depot weapons"
+
+msgid "Fraktionsfarben ablegen"
+msgstr "Put down fraction colours"
+
+msgid "Aktionskleidung"
+msgstr "Action clothing"
+
+msgid "In Dienst gehen"
+msgstr "Go into service"
+
+msgid "Fraktionstätigkeit beginnen"
+msgstr "Start fraction activities"
+
+msgid "In Sanitäter-Dienst gehen"
+msgstr "Go in paramedic duty"
+
+msgid "In Feuerwehr-Dienst gehen"
+msgstr "Go in fire duty"
+
+msgid "In den Dienst gehen"
+msgstr "Go into service"
+
+msgid "Taxometer aktivieren"
+msgstr "Activate taxometer"
+
+msgid "%s gratis transportieren"
+msgstr "Transport %s free of charge"
+
+msgid "Ziel auf Karte markieren"
+msgstr "Mark destination on map"
+
+msgid "Ziel dem Fahrer mitteilen"
+msgstr "Inform the driver of the destination"
+
+msgid "%s: %s"
+msgstr "%s: %s"
+
+msgid "%s kaufen"
+msgstr "Buy %s"
+
+msgid "%s verkaufen"
+msgstr "sell %s"
+
+msgid "Kasse verwalten"
+msgstr "Manage cash register"
+
+msgid "Musik verwalten"
+msgstr "Manage music"
+
+msgid "Stripperinnen entlassen"
+msgstr "Dismiss strippers"
+
+msgid "Stripperinnen engagieren"
+msgstr "Hire strippers"
+
+msgid "Möchtest du wirklich %s für deine Firma um %d$ kaufen?"
+msgstr "Do you really want to buy %s for your firm for %d$?"
+
+msgid "Möchtest du wirklich %s deiner Firma um %d$ verkaufen?"
+msgstr "Do you really want to sell %s of your firm for %d$?"
+
+msgid ""
+"Möchtest du wirklich Stripperinnen engagieren? (Kosten 15$ pro 15 Minuten!)"
+msgstr "You really want to hire strippers? (Cost 15$ per 15 minutes!)"
+
+msgid "Tattoo-Auswahl"
+msgstr "Tattoo selection"
+
+msgid "Kino Lobby erstellen"
+msgstr "Create cinema lobby"
+
+msgid "Lobby Name:"
+msgstr "Lobby name:"
+
+msgid "Passwort:"
+msgstr "Password:"
+
+msgid "Passwort"
+msgstr "Password"
+
+msgid "*"
+msgstr "*"
+
+msgid "Videos hinzufügen:"
+msgstr "Add videos:"
+
+msgid "Nur Host"
+msgstr "Host only"
+
+msgid "Alle"
+msgstr "All"
+
+msgid "Abspielen / Entfernen:"
+msgstr "Play / Remove:"
+
+msgid "Lobby erstellen"
+msgstr "Create Lobby"
+
+msgid "Der Lobbyname ist zu lang!"
+msgstr "The lobby name is too long!"
+
+msgid "Das Passwort ist zu lang!"
+msgstr "The password is too long!"
+
+msgid "%s's Raum"
+msgstr "%s room"
+
+msgid "Kino Lobbys"
+msgstr "Cinema lobbies"
+
+msgid "Lobby Name"
+msgstr "Lobby Name"
+
+msgid "Host"
+msgstr "Host"
+
+msgid "Beitreten"
+msgstr "Join"
+
+msgid "Lobby löschen"
+msgstr "Delete Lobby"
+
+msgid "Lobby wurde gelöscht!"
+msgstr "Lobby has been deleted!"
+
+msgid "Es ist keine Lobby ausgewählt!"
+msgstr "There is no lobby selected!"
+
+msgid "Passwort eingeben"
+msgstr "Enter password"
+
+msgid "Videoverwaltung"
+msgstr "Video management"
+
+msgid "Videoliste:"
+msgstr "Video list:"
+
+msgid "Videotitel"
+msgstr "Video title"
+
+msgid "Hinzugefügt von"
+msgstr "Added by"
+
+msgid "YouTube URL eingeben:"
+msgstr "Enter YouTube URL:"
+
+msgid "YouTube URL"
+msgstr "YouTube URL"
+
+msgid "Hinzufügen"
+msgstr "Add"
+
+msgid "Abspielen"
+msgstr "Play"
+
+msgid "Entfernen"
+msgstr "Remove"
+
+msgid "Dies ist kein gültiges YouTube Video!"
+msgstr "This is not a valid YouTube video!"
+
+msgid "Bitte wähle ein Video aus!"
+msgstr "Please select a video!"
+
+msgid "Kleidungsshop"
+msgstr "Clothing shop"
+
+msgid "Doppelklick zum Kaufen"
+msgstr "Double click to buy"
+
+msgid "ColorPicker"
+msgstr "ColorPicker"
+
+msgid "zu liefernde Fahrzeuge"
+msgstr "vehicles to be delivered"
+
+msgid "Bedarf"
+msgstr "Demand"
+
+msgid "Fahrzeug"
+msgstr "Vehicle"
+
+msgid "Autohaus"
+msgstr "Car dealership"
+
+msgid "Importance"
+msgstr "Importance"
+
+msgid "Alle Autohäuser sind befüllt."
+msgstr "All car dealer stocks are filled."
+
+msgid "Hinweis: Für die Lieferung benötigst du einen DFT."
+msgstr "Note: You will need a DFT for the delivery."
+
+msgid "Lieferung starten"
+msgstr "Start delivery"
+
+msgid "Rang:"
+msgstr "Rank:"
+
+msgid "Kasse:"
+msgstr "Cash register:"
+
+msgid "Inhalt:"
+msgstr "Content:"
+
+msgid "Funktionen:"
+msgstr "Functions:"
+
+msgid "Fahrzeuge respawnen"
+msgstr "Respawn vehicles"
+
+msgid "/sannews de/aktivieren"
+msgstr "(de-)activate /sannews"
+
+msgid "Straßenrennen starten"
+msgstr "Start a street race"
+
+msgid "Blip hinzufügen"
+msgstr "Add blip"
+
+msgid "Blip Beschreibung"
+msgstr "Blip description"
+
+msgid "Gib einen Namen für den Blip ein, der auf der F11 Karte angezeigt wird:"
+msgstr "Enter a name for the blip that will be displayed on the F11 map:"
+
+msgid "Mitglieder"
+msgstr "Members"
+
+msgid "Rang"
+msgstr "Rank"
+
+msgid "Aktivität"
+msgstr "Activity"
+
+msgid "Spieler hinzufügen"
+msgstr "Add player"
+
+msgid "Spieler rauswerfen"
+msgstr "Kick player"
+
+msgid "Rang hoch"
+msgstr "Rank up"
+
+msgid "Rang runter"
+msgstr "Rank down"
+
+msgid "Gehalt deaktivieren"
+msgstr "Deactivate payday"
+
+msgid "Logs"
+msgstr "Logs"
+
+msgid "Leader"
+msgstr "Leader"
+
+msgid "Ausgewählter Rang:"
+msgstr "Selected rank:"
+
+msgid "Gehalt: (in $)"
+msgstr "Payday: (in $)"
+
+msgid "Rang speichern"
+msgstr "Save rank"
+
+msgid "Spielerakten"
+msgstr "Player history"
+
+msgid "Foren-Gruppen"
+msgstr "Forum groups"
+
+msgid "Bitte gebe einen gültigen Betrag ein!"
+msgstr "Please enter a valid amount!"
+
+msgid "Dieser Spieler ist nicht (mehr) online"
+msgstr "This player is not/no longer online"
+
+msgid "Fisch"
+msgstr "Fish"
+
+msgid "Größe (cm)"
+msgstr "Size (cm)"
+
+msgid "Qualität"
+msgstr "Quality"
+
+msgid "eXo-Krankenhaus"
+msgstr "eXo hospital"
+
+msgid "%d Sekunden"
+msgstr "%d seconds"
+
+msgid "Deathmatch-Lobby erstellen"
+msgstr "Create deathmatch lobby"
+
+msgid "Erstellen (500$)"
+msgstr "Create (500$)"
+
+msgid "Deathmatch"
+msgstr "Deathmatch"
+
+msgid "K"
+msgstr "K"
+
+msgid "D"
+msgstr "D"
+
+msgid "P"
+msgstr "P"
+
+msgid "Lobby verlassen"
+msgstr "Leave the lobby"
+
+msgid "Bitte warte bis du wieder gespawnt bist!"
+msgstr "Please wait until you spawned again!"
+
+msgid "Deathmatch Lobby"
+msgstr "Deathmatch Lobby"
+
+msgid "Map"
+msgstr "Map"
+
+msgid "Modus"
+msgstr "Mode"
+
+msgid "PW"
+msgstr "PW"
+
+msgid "Lobby betreten"
+msgstr "Join the lobby"
+
+msgid "Waffen: %s"
+msgstr "Weapons: %s"
+
+msgid "Diese Lobby ist Passwort geschützt! Gib das Passwort ein:"
+msgstr "This lobby is password protected! Enter the password:"
+
+msgid "Falsches Passwort eingegeben!"
+msgstr "Entered wrong password!"
+
+msgid "Keine Lobby ausgewählt"
+msgstr "No lobby selected"
+
+msgid "Player vs. Zombie"
+msgstr "Player vs. Zombie"
+
+msgid "%s Spieler in der Lobby"
+msgstr "%s players in the lobby"
+
+msgid "Marker gehört: %s"
+msgstr "Marker owner: %s"
+
+msgid "Window title"
+msgstr "Window title"
+
+msgid "S/C"
+msgstr "S/C"
+
+msgid "Typ"
+msgstr "Type"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Die Debug Nachricht ist nun in deiner Zwischenablage!"
+msgstr "The debug message is in your clipboard now!"
+
+msgid "DrawTestGUI"
+msgstr "DrawTestGUI"
+
+msgid "Fahrlehrer-Menü"
+msgstr "Driving instructor menu"
+
+msgid "Prüfung: %s"
+msgstr "Test: %s"
+
+msgid "Schüler: %s"
+msgstr "Learner: %s"
+
+msgid "Anweisungen geben:"
+msgstr "Give instructions:"
+
+msgid "%d km/h"
+msgstr "%d km/h"
+
+msgid "%.1f km"
+msgstr "%.1f km"
+
+msgid "Theorietest"
+msgstr "Theory test"
+
+msgid "Fahrprüfung (Auto)"
+msgstr "Driving test (car)"
+
+msgid "Fahrprüfung (Motorrad)"
+msgstr "Driving test (motorcycle)"
+
+msgid "Fahrlehrer rufen"
+msgstr "Call driving instructor"
+
+msgid "Du hast die Fahrschule bereits kontaktiert!"
+msgstr "You have already contacted the driving school!"
+
+msgid "STVO-Punkte abbauen"
+msgstr "Reduce Traffic points"
+
+msgid "Kategorie:"
+msgstr "Category:"
+
+msgid "Auto"
+msgstr "Auto"
+
+msgid "Motorrad"
+msgstr "Motorcycle"
+
+msgid "Lastkraftwagen"
+msgstr "Truck"
+
+msgid "Pilot"
+msgstr "Pilot"
+
+msgid "aktuell %s Punkte"
+msgstr "current %s Points"
+
+msgid "Anzahl:"
+msgstr "Amount:"
+
+msgid "Theoretische Prüfung"
+msgstr "Theoretical examination"
+
+msgid "Equipment-Rechte"
+msgstr "Equipment rights"
+
+msgid "Event beitreten"
+msgstr "Join event"
+
+msgid "Typ: "
+msgstr "Type: "
+
+msgid "Beschreibung:"
+msgstr "描述:"
+
+msgid ""
+"Das Straßenrennen ist ein cooles Event.\n"
+"Deine Aufgabe ist es an ein Ziel zu fahren!\n"
+"\n"
+"Viel Glück!"
+msgstr ""
+"The street race is a cool event.\n"
+"Your task is to drive to a finish line!\n"
+"\n"
+"Good luck!"
+
+msgid "Abbrechen"
+msgstr "Cancel"
+
+msgid "Fraktion:"
+msgstr "Fraction:"
+
+msgid "Aktions-Status:"
+msgstr "Action status:"
+
+msgid "Fraktions-Logs"
+msgstr "Fraction logs"
+
+msgid "platzierte Objekte"
+msgstr "placed objects"
+
+msgid "Alarm (de-)aktivieren"
+msgstr "(De)activate alarm"
+
+msgid "Gangwar"
+msgstr "Gangwar"
+
+msgid "Diplomatie"
+msgstr "Diplomacy"
+
+msgid "Waffen:"
+msgstr "Guns:"
+
+msgid "Gangwar-Info"
+msgstr "Gangwar info"
+
+msgid "Übersicht"
+msgstr "Overview"
+
+msgid "Attack-Log"
+msgstr "Attack Log"
+
+msgid "Bestenliste"
+msgstr "Top List"
+
+msgid "Gebiete"
+msgstr "Areas"
+
+msgid "Fraktion"
+msgstr "Faction"
+
+msgid "Diplomatische Anfragen:"
+msgstr "Diplomatic requests:"
+
+msgid "Diplomatie der %s"
+msgstr "Diplomacy of the %s"
+
+msgid "(ändern)"
+msgstr "(change)"
+
+msgid "%s - %s"
+msgstr "%s - %s"
+
+msgid "BND darf %sFahrzeuge verwenden"
+msgstr "Allies may use %s vehicles"
+
+msgid "BND darf %sWaffen nehmen"
+msgstr "Allies may take %sweapons"
+
+msgid "Bündnis kündigen"
+msgstr "Stop the alliance"
+
+msgid "Krieg erklären"
+msgstr "Declare war"
+
+msgid "Bündnis anbieten"
+msgstr "Offer an alliance"
+
+msgid "Waffenstillstand anbieten"
+msgstr "Offer a ceasefire"
+
+msgid ""
+"%s der %s an die %s\n"
+"vom %s Uhr"
+msgstr ""
+"%s of the %s to the %s\n"
+"from %s clock"
+
+msgid "Gebiet"
+msgstr "Area"
+
+msgid "Start"
+msgstr "Start"
+
+msgid "Besitzer"
+msgstr "Owner"
+
+msgid "Angreif."
+msgstr "Attacker"
+
+msgid "Schaden"
+msgstr "Damage"
+
+msgid "Damage"
+msgstr "Damage"
+
+msgid "Tötungen"
+msgstr "Kills"
+
+msgid "Kills"
+msgstr "Kills"
+
+msgid "MVP"
+msgstr "MVP"
+
+msgid "Sterne"
+msgstr "Stars"
+
+msgid "Besitzer: %s"
+msgstr "Owner: %s"
+
+msgid "Letzter Angriff: %s"
+msgstr "Last attack: %s"
+
+msgid "Nächster Angriff: %s"
+msgstr "Next attack: %s"
+
+msgid ""
+"Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert "
+"(sofern nicht in den Top-Ten)!"
+msgstr ""
+"Look out! Your own stats are only updated every 30 minutes (if you are not "
+"in the top ten)!"
+
+msgid "bereits möglich"
+msgstr "already possible"
+
+msgid "möglich um %s Uhr"
+msgstr "possible at %s clock"
+
+msgid "%s läuft"
+msgstr "%s runs"
+
+msgid "Fraktions Waffenshop - "
+msgstr "Fractional Arms Shop - "
+
+msgid "Ware"
+msgstr "Goods"
+
+msgid "Anzahl"
+msgstr "Quantity"
+
+msgid "Waffentruck beladen"
+msgstr "Load the gun truck"
+
+msgid "Anz."
+msgstr "Num."
+
+msgid "Beladen"
+msgstr "Load"
+
+msgid "Info: Strg + Klick: Alles aufladen | Shift + Klick: 10 aufladen"
+msgstr "Info: Ctrl + click: recharge all | Shift + Click: recharge 10"
+
+msgid "Gesamtkosten: 0$/%d$"
+msgstr "Total cost: 0$/%d$"
+
+msgid "Kiste %d: %d$/%d$"
+msgstr "Box %d: %d$/%d$"
+
+msgid "Gesamtkosten: %d$/%d$"
+msgstr "Total cost: %d$/%d$"
+
+msgid "Kein Item ausgewählt!"
+msgstr "No item selected!"
+
+msgid "Fischhandel mit Angler Lutz"
+msgstr "Fish trade with fisher Lutz"
+
+msgid "Alle hinzufügen"
+msgstr "Add all"
+
+msgid "Fisch:"
+msgstr "Fish:"
+
+msgid "Qualität:"
+msgstr "品质:"
+
+msgid "Normal Preis:"
+msgstr "Normal price:"
+
+msgid "Qualität Bonus:"
+msgstr "Quality bonus:"
+
+msgid "Level Bonus:"
+msgstr "Level Bonus:"
+
+msgid "Seltenheits Bonus:"
+msgstr "Rarity bonus:"
+
+msgid "Gesamte Vergütung:"
+msgstr "Total remuneration:"
+
+msgid "Verkaufen!"
+msgstr "Sell!"
+
+msgid "Bonus"
+msgstr "Bonus"
+
+msgid "Gefangene Fische"
+msgstr "Captured fish"
+
+msgid "Shop"
+msgstr "Shop"
+
+msgid "Preistabelle ansehen"
+msgstr "View price table"
+
+msgid "Fische verkaufen"
+msgstr "Sell fish"
+
+msgid "Statistiken"
+msgstr "Statistics"
+
+msgid "Mehr informationen"
+msgstr "More information"
+
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
+msgid "Synchronisieren"
+msgstr "Sync Now"
+
+msgid "Illegales"
+msgstr "Illegal"
+
+msgid "Gangwar-Menü"
+msgstr "Gangwar menu"
+
+msgid "Fraktion für das Gebiet"
+msgstr "Fraction for the territory"
+
+msgid "Tankstelle"
+msgstr "Petrol station"
+
+msgid "Kaufen"
+msgstr "Buy"
+
+msgid "Bitte wähle zuerst ein Item aus"
+msgstr "Please select an item first"
+
+msgid "Bitte gebe einen gültige Anzahl ein!"
+msgstr "Please enter a valid number!"
+
+msgid "Private Gang/Firma erstellen"
+msgstr "Create private gang/company"
+
+msgid ""
+"Hier kannst du eine private Firma oder Gang gründen.\n"
+"Eine Gründung kostet %s!"
+msgstr ""
+"Here you can create a private company or gang.\n"
+"A foundation costs %s!"
+
+msgid "Name der Gang/Firma:"
+msgstr "Name of the gang/company:"
+
+msgid "Typ auswählen:"
+msgstr "Select type:"
+
+msgid "Erstellen"
+msgstr "Create"
+
+msgid "Name enthält ungültige Zeichen!"
+msgstr "Name contains invalid characters!"
+
+msgid "Name zu lang! Maximal 24 Zeichen!"
+msgstr "Name too long! Maximum 24 characters!"
+
+msgid "Bitte gib zuerst einen Namen ein!"
+msgstr "Please enter a name first!"
+
+msgid "Firma / Gang:"
+msgstr "Company / Gang:"
+
+msgid "Namen ändern"
+msgstr "Change name"
+
+msgid ""
+"Bitte gib einen neuen Name für deine Firma / Gang ein! Dies kostet dich %d$!"
+msgstr ""
+"Please enter a new name for your company / gang! This will cost you %d$!"
+
+msgid "Achtung: Der Name ist nur alle 30 Tage änderbar!"
+msgstr "Attention: The name can only be changed every 30 days!"
+
+msgid "Karma:"
+msgstr "Karma:"
+
+msgid "Dein Rang:"
+msgstr "Your rank:"
+
+msgid "Verlassen"
+msgstr "Leave"
+
+msgid "Löschen"
+msgstr "Delete"
+
+msgid "Payday:"
+msgstr "Payday:"
+
+msgid "Fahrzeuge:"
+msgstr "Vehicles:"
+
+msgid "Steuer"
+msgstr "tax"
+
+msgid "Optionen:"
+msgstr "Options:"
+
+msgid "Orten"
+msgstr "Locate"
+
+msgid "Respawn"
+msgstr "Respawn"
+
+msgid "Fahrzeug entfernen"
+msgstr "Remove vehicle"
+
+msgid "Privat-Fahrzeuge:"
+msgstr "Private vehicles:"
+
+msgid ""
+"Fahrzeug zur \n"
+"Firma/Gang hinzufügen"
+msgstr ""
+"Add Vehicle to\n"
+"company/gang"
+
+msgid "Geschäfte"
+msgstr "Shops"
+
+msgid "Geschäfte:"
+msgstr "Business:"
+
+msgid "Kasse"
+msgstr "Checkout"
+
+msgid "Kasse(n) gesammt:"
+msgstr "Total cash register(s):"
+
+msgid "0$"
+msgstr "0$"
+
+msgid "Auf Karte anzeigen"
+msgstr "Show on map"
+
+msgid "Informationen:"
+msgstr "Information:"
+
+msgid "Name:"
+msgstr "Name:"
+
+msgid "Standort:"
+msgstr "Location:"
+
+msgid "Letzter Raub:"
+msgstr "Last heist:"
+
+msgid "in %s Minuten"
+msgstr "in %s minutes"
+
+msgid ""
+"Fahrzeug zur\n"
+"%s hinzufügen"
+msgstr ""
+"Add vehicle\n"
+"for %s"
+
+msgid "Hafen"
+msgstr "Harbour"
+
+msgid "Möchtest du deine Firma/Gang wirklich verlassen?"
+msgstr "Do you really want to leave your company/gang?"
+
+msgid ""
+"Möchtest du deine Firma/Gang wirklich löschen\n"
+" Es werden keine Kosten erstattet!"
+msgstr ""
+"Do you really want to delete your firm/gang?\n"
+" Costs will not be refunded!"
+
+msgid "Rangname:"
+msgstr "Rank name:"
+
+msgid "Typ:"
+msgstr "Type:"
+
+msgid "Möchtest du wirklich deine %s in eine %s umwandeln? Kosten: 20.000$"
+msgstr "Do you really want to turn your %s into %s? Cost: $20,000"
+
+msgid "Bitte wähle ein Fahrzeug aus!"
+msgstr "Please select a vehicle!"
+
+msgid "Das Fahrzeug darf sich nicht in der Garage befinden!"
+msgstr "The vehicle can not be in the garage!"
+
+msgid "Das Fahrzeug darf sich nicht im Autohof befinden!"
+msgstr "The vehicle can not be in the carport!"
+
+msgid "Möchtest du das Fahrzeug wirklich in die Firma setzen?"
+msgstr "Do you really want to put the vehicle in the company?"
+
+msgid "Möchtest du das Fahrzeug wirklich aus der Firma entfernen?"
+msgstr "Do you really want to remove the vehicle from the company?"
+
+msgid ""
+"Dieses Fahrzeug befindet sich in %s!\n"
+"(Siehe Blip auf der Karte)\n"
+"(Klicke hier, um das Blip zu löschen!)"
+msgstr ""
+"This vehicle is located in %s!\n"
+"(See blip on the map)\n"
+"(Click here to delete the blip!)"
+
+msgid "Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!"
+msgstr "This vehicle is located in the carport (Mechanic Base)!"
+
+msgid "Es ist ein interner Fehler aufgetreten!"
+msgstr "An internal error has occurred!"
+
+msgid "Bitte wähle ein Geschäft aus!"
+msgstr "Please choose a shop!"
+
+msgid ""
+"Das Geschäft befindet sich in %s!\n"
+"(Siehe Blip auf der Karte)\n"
+"(Klicke hier um das Blip zu löschen!)"
+msgstr ""
+"The business is on %s!\n"
+"(See blip on the map)\n"
+"(Click here to delete the blip!)"
+
+msgid "Erwerbliche Immobilien"
+msgstr "Available real estates"
+
+msgid "Hier kannst du eine Immobilie für deine Firma/Gang erwerben!"
+msgstr "Here you can purchase a property for your company/gang!"
+
+msgid "Anschauen"
+msgstr "View"
+
+msgid "Du hast keine Immobilie ausgewählt!"
+msgstr "You have not chosen a property!"
+
+msgid "Verfügbare Immobilien"
+msgstr "Available properties"
+
+msgid "Verwaltung"
+msgstr "Management"
+
+msgid "Auf-/Abschließen"
+msgstr "Open/close"
+
+msgid "Depot"
+msgstr "Depot"
+
+msgid "Eingangsnachricht"
+msgstr "Incoming message"
+
+msgid "Verkaufen"
+msgstr "Sell"
+
+msgid "Berechtigung"
+msgstr "Authorization"
+
+msgid "Schlüssel-Berechtigung"
+msgstr "Key Authorization"
+
+msgid "Name des Spielers:"
+msgstr "Name of the player:"
+
+msgid "Vergeben"
+msgstr "Assign"
+
+msgid "Abnehmen"
+msgstr "Remove"
+
+msgid "Alle Abnehmen"
+msgstr "Remove all"
+
+msgid "Aktualisieren"
+msgstr "Update"
+
+msgid "Spieler mit Schlüssel"
+msgstr "Player with key"
+
+msgid "Bist du dir sicher, dass du diese Immobilie verkaufen möchtest?"
+msgstr "Are you sure you want to sell this real estate?"
+
+msgid "Drücke F6 für das Immobilien-Panel!"
+msgstr "Press F6 for the real estate panel!"
+
+msgid "Keine Waffe"
+msgstr "No weapon"
+
+msgid "Waffenbox"
+msgstr "Weapon Box"
+
+msgid "Deine Waffen:"
+msgstr "Your weapons:"
+
+msgid "wird geladen..."
+msgstr "Loading ..."
+
+msgid "Waffe"
+msgstr "Weapon"
+
+msgid "Munition"
+msgstr "Ammunition"
+
+msgid "Waffenbox:"
+msgstr "Weapon Box:"
+
+msgid "Items:"
+msgstr "Items:"
+
+msgid "%d Schuss"
+msgstr "%d shots"
+
+msgid "In diesem Slot ist keine Waffe!"
+msgstr "There is no gun in this slot!"
+
+msgid "Hilfe"
+msgstr "Help"
+
+msgid "Zeige Tutorial"
+msgstr "Show tutorial"
+
+msgid "Ticket erstellen"
+msgstr "Create ticket"
+
+msgid "Willst du wirklich das Tutorial ansehen?"
+msgstr "Do you really want to see the tutorial?"
+
+msgid "Score"
+msgstr "Score"
+
+msgid "Spielerakte"
+msgstr "Player history"
+
+msgid "Beitritt"
+msgstr "Accession"
+
+msgid "Austritt"
+msgstr "Resignation"
+
+msgid "Interner Grund für den Rauswurf"
+msgstr "Internal reason for ejection"
+
+msgid "Öffentlicher Grund für den Rauswurf"
+msgstr "Public reason for ejection"
+
+msgid "Rauswerfen"
+msgstr "Eject"
+
+msgid "Öffentlicher Grund für den Rauswurf muss ausgefüllt werden!"
+msgstr "Public reason for ejection must be filled in!"
+
+msgid "Pferdewetten"
+msgstr "Horse betting"
+
+msgid ""
+"Das Pferderennen findet täglich um 20:00 Uhr statt, du kannst es dir Live "
+"ansehen. \n"
+"Natürlich bekommst du auch ohne Ansehen der Live-Übertragung deinen Gewinn, "
+"und ebenso wenn du offline bist!"
+msgstr ""
+"The horse race takes place daily at 08:00 pm, you can watch it live.\n"
+"Of course, you will get your winnings even without watching the live "
+"broadcast, and also when you are offline!"
+
+msgid "Dein Einsatz:"
+msgstr "Your bet:"
+
+msgid "%d$"
+msgstr "%d$"
+
+msgid "Möglicher Gewinn: 3-facher Einsatz!"
+msgstr "Possible win: triple bet!"
+
+msgid "Wette platzieren"
+msgstr "Place a bet"
+
+msgid "Möchtest du wirklich %d$ auf Pferd %d setzen?"
+msgstr "Do you really want to bet %d$ on horse %d?"
+
+msgid "Ungültige Auswahl!"
+msgstr "Invalid selection!"
+
+msgid "Haus editieren"
+msgstr "Edit house"
+
+msgid "Interior ändern"
+msgstr "Change interior"
+
+msgid "Zwangsenteignen"
+msgstr "Force expropriation"
+
+msgid ""
+"Möchtest du das Haus wirklich enteignen? Mietverträge und die Hauskasse "
+"werden gelöscht und der Besitzer nicht entschädigt!"
+msgstr ""
+"Do you really want to expropriate the house? Rental agreements and the "
+"household cash are deleted and the owner will get no refund!"
+
+msgid "Interior (%d) ändern"
+msgstr "Change Interior (%d)"
+
+msgid "Interior Changer"
+msgstr "Interior changer"
+
+msgid "setzen"
+msgstr "set"
+
+msgid "Hausmenü (Hausnr. %d)"
+msgstr "House menu (house no. %d)"
+
+msgid "Preis: %s"
+msgstr "Price: %s"
+
+msgid "Haus kaufen"
+msgstr "Buy the house"
+
+msgid "Mietpreis: %s"
+msgstr "Rental price: %s"
+
+msgid "Ausmieten"
+msgstr "Rent out"
+
+msgid "Einmieten"
+msgstr "Rent"
+
+msgid "(Keine neuen Mieter akzeptiert)"
+msgstr "(No new tenants accepted)"
+
+msgid "Aufschließen"
+msgstr "Unlock"
+
+msgid "Abschließen"
+msgstr "Lock"
+
+msgid "als Spawnpunkt festlegen"
+msgstr "Set as spawn point"
+
+msgid "Raub starten"
+msgstr "Start robbery"
+
+msgid "Betreten"
+msgstr "Enter"
+
+msgid "Besichtigen"
+msgstr "Visit"
+
+msgid "an der Tür klingeln"
+msgstr "Ring at the door"
+
+msgid "Besitzer-Optionen"
+msgstr "Owner Options"
+
+msgid "Kasse: %s"
+msgstr "Cash box: %s"
+
+msgid "Betrag"
+msgstr "Amount"
+
+msgid "Mieter"
+msgstr "Tenant"
+
+msgid "Mieter entfernen"
+msgstr "Remove tenant"
+
+msgid "Miete"
+msgstr "Rent"
+
+msgid "Einmieten verbieten"
+msgstr "Prohibit renting"
+
+msgid "Ungültiger Betrag!"
+msgstr "Invalid amount!"
+
+msgid "Bitte wähle einen Mieter aus!"
+msgstr "Please choose a tenant!"
+
+msgid ""
+"Möchtest du wirklich dieses Haus kaufen? %s werden dir von deinem Konto "
+"abgebucht! Zudem kannst du nur ein Haus besitzen."
+msgstr ""
+"Do you really want to buy this house? %s will be withdrawn from your bank "
+"account! You can only own one house at the same time."
+
+msgid "Diebesgut verkaufen"
+msgstr "Sell stolen goods"
+
+msgid "Ablehnen"
+msgstr "Reject"
+
+msgid "Ausweis"
+msgstr "ID card"
+
+msgid "Levels"
+msgstr "Levels"
+
+msgid "Job:"
+msgstr "Job:"
+
+msgid "Fahrzeug:"
+msgstr "Vehicle:"
+
+msgid "Skin:"
+msgstr "Skin:"
+
+msgid "Lizenzen"
+msgstr "Licenses"
+
+msgid "Auto:"
+msgstr "Vehicle:"
+
+msgid "Motorrad:"
+msgstr "Motorcycle:"
+
+msgid "Lastkraftwagen:"
+msgstr "Trucks:"
+
+msgid "Pilot:"
+msgstr "Pilot:"
+
+msgid "STVO"
+msgstr "Traffic rules"
+
+msgid "Wanteds:"
+msgstr "Wanteds:"
+
+msgid "GWD-Note:"
+msgstr "BMS grade:"
+
+msgid "Wähle eine oder mehrere Wunden per Doppelklick aus!"
+msgstr "Select one or more wounds with a double click!"
+
+msgid "Du wirst zurzeit behandelt oder behandelst bereits einen Spieler!"
+msgstr "You are currently being treated or you are already treating a player!"
+
+msgid "Spieler einladen"
+msgstr "Invite players"
+
+msgid "Bitte wähle einen Spieler aus!"
+msgstr "Please choose a player!"
+
+msgid "Dieser Spieler ist nicht (mehr) online!"
+msgstr "This player is not/no longer online!"
+
+msgid "Kein Item"
+msgstr "No item"
+
+msgid "Item Depot"
+msgstr "Item Depot"
+
+msgid "Inventar:"
+msgstr "Inventory:"
+
+msgid "Item"
+msgstr "Item"
+
+msgid "Item-Anzahl:"
+msgstr "Item count:"
+
+msgid "Depot:"
+msgstr "Depot:"
+
+msgid "%d Stk."
+msgstr "%d pcs."
+
+msgid "Du hast kein Item aus der Liste ausgewält!"
+msgstr "You didn't pick an item from the list!"
+
+msgid "Anzahl zu hoch! Du hast nicht soviel von diesem Item!"
+msgstr "Amount too high! You don't have that much of this item!"
+
+msgid "Ungültige Item-Anzahl!"
+msgstr "Invalid item number!"
+
+msgid "In diesem Slot ist kein Item!"
+msgstr "There is no item in this slot!"
+
+msgid "Ausrüstungslager"
+msgstr "Equipment storage"
+
+msgid "Ausrüstung"
+msgstr "Equipment"
+
+msgid "Bitte gebe eine gültige Anzahl ein!"
+msgstr "Please enter a valid number!"
+
+msgid "Zurück"
+msgstr "Back"
+
+msgid "Weiter"
+msgstr "Next"
+
+msgid "Gewichtsklassen"
+msgstr "Weight classes"
+
+msgid "Verfügbare Kämpfe"
+msgstr "Available fights"
+
+msgid "Informationen"
+msgstr "Information"
+
+msgid "Starten"
+msgstr "Start"
+
+msgid "Platz"
+msgstr "Place"
+
+msgid "Boxerlevel"
+msgstr "Boxer level"
+
+msgid "Akzeptieren"
+msgstr "Accept"
+
+msgid "Ablehnen / Kündigen"
+msgstr "Reject / Quit"
+
+msgid "i"
+msgstr "i"
+
+msgid "Jobs"
+msgstr "Jobs"
+
+msgid "Min. Job-Level"
+msgstr "Min. job level"
+
+msgid "Hilfe, hilfe, große Not!"
+msgstr "Help, help, great distress!"
+
+msgid "Zeitrennen"
+msgstr "Time trial"
+
+msgid "Toptimes"
+msgstr "Toptimes"
+
+msgid "eXo Kart Racing"
+msgstr "eXo Kart Racing"
+
+msgid "Aktuelle Map:"
+msgstr "Current map:"
+
+msgid "Autor:"
+msgstr "Author:"
+
+msgid "Runden"
+msgstr "Rounds"
+
+msgid "Preis:"
+msgstr "Price:"
+
+msgid "Benötigte Zeit:"
+msgstr "Needed time:"
+
+msgid ""
+"ACHTUNG: Du bekommst kein Geld erstattet, wenn du nicht alle runden fährst!"
+msgstr ""
+"ATTENTION: You will not be refunded any money if you do not drive all the "
+"laps!"
+
+msgid "Doppelklick auf eine beliebige Toptime um den Geist zu aktivieren!"
+msgstr "Double click on any top time to activate the ghost!"
+
+msgid "Geist deaktivieren"
+msgstr "Disable ghost"
+
+msgid "Tastenzuordnungen ändern"
+msgstr "Change key assignments"
+
+msgid "Taste"
+msgstr "Key"
+
+msgid ""
+"Hier kannst du deine Tastenzuordnungen ändern. Klicke einfach die gewünschte "
+"Funktion in der Liste an. Mit Klick auf den blauen Button kannst du die "
+"Zuordnung ändern."
+msgstr ""
+"Here you can change your key bindings. Just click on the desired action in "
+"the list. You can change a bind via click on the blue button."
+
+msgid "Standard verwenden (%s)"
+msgstr "Use standard (%s)"
+
+msgid "Filter:"
+msgstr "Filter:"
+
+msgid "Suche:"
+msgstr "Search:"
+
+msgid ""
+"Herzlich willkommen auf eXo Reallife, bitte logge dich mit deinen "
+"Accountdaten ein."
+msgstr "Welcome to eXo Reallife, please log in using your account data."
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Passwort speichern"
+msgstr "Save password"
+
+msgid "(Kein Account? Registriere dich noch heute!)"
+msgstr "(No account? Register today!)"
+
+msgid ""
+"Bitte fülle das Formular aus um einen neuen Account zu erstellen. Pro PC und "
+"Internetanschluss ist nur ein Account zugelassen."
+msgstr ""
+"Please fill out the form to create a new account. Only one account per PC "
+"and internet connection is allowed."
+
+msgid "Passwort wiederholen"
+msgstr "Repeat password"
+
+msgid "Email-Adresse"
+msgstr "Email address"
+
+msgid "(zurück zum Login)"
+msgstr "(back to login)"
+
+msgid "error text gets loaded here"
+msgstr "error text gets loaded here"
+
+msgid ""
+"Da alle Regeln in einem Dokument stehen wirkt der Scrollbalken erscheckend "
+"klein - aber keine Sorge, wichtig für dich sind für den Anfang nur die "
+"Regeln von §1 - §5.\n"
+"Mit gedrückter Shift-Taste kannst du im Dokument schneller scrollen."
+msgstr ""
+"Since all rules are in one forum thread, the scrollbar seems to be small - "
+"but don't worry, the important rules for you are those for now: §1 - §3.\n"
+"You can scroll through the posts faster by holding down the shift key."
+
+msgid ""
+"Für deine Serial existiert bereits ein Account. Wenn du mit anderen Spielern "
+"im gleichen Netzwerk spielen möchtest, musst du einen Multiaccount-Antrag im "
+"Forum (forum.exo-reallife.de) verfassen."
+msgstr ""
+"Your serial is already linked to an account. If you want to play with other "
+"players in the same network, you have to write a multi-account request in "
+"the forum (forum.exo-reallife.de)."
+
+msgid ""
+"Deine Serial wurde zuletzt vom Spieler '%s' benutzt! Wenn du mit anderen "
+"Spielern im gleichen Netzwerk spielen möchtest, musst du einen Multiaccount-"
+"Antrag im Forum (forum.exo-reallife.de) verfassen."
+msgstr ""
+"Your serial was last used by the player '%s'! If you want to play with other "
+"players in the same network, you have to write a multi-account request in "
+"the forum (forum.exo-reallife.de)."
+
+msgid "Regelwerk"
+msgstr "Set of rules"
+
+msgid "Map Editor: bearbeitende Spieler"
+msgstr "Map Editor: editing players"
+
+msgid "Anleitung zum Map Editor"
+msgstr "Guide to the Map Editor"
+
+msgid "Map Editor"
+msgstr "Map editor"
+
+msgid "Map Editor: Map Verwaltung"
+msgstr "Map Editor: Map Management"
+
+msgid "Map Editor: Map Einstellungen"
+msgstr "Map Editor: Map settings"
+
+msgid "Map Editor: Objekt bearbeiten"
+msgstr "Map Editor: Edit Object"
+
+msgid "Karte"
+msgstr "Card"
+
+msgid "Spielen"
+msgstr "Play"
+
+msgid "Highscore zeigen"
+msgstr "Show highscore"
+
+msgid "Bank Computer"
+msgstr "Bank Computer"
+
+msgid "Möchtest du 5g Heroin für 150$ kaufen?"
+msgstr "Do you want to buy 5 grams of heroin for $150?"
+
+msgid "#FE8A00%s: #FFFFFF%s"
+msgstr "#FE8A00%s: #FFFFFF%s"
+
+msgid "Du sitzt in keinem Fahrzeug!"
+msgstr "You're not sitting in any vehicle!"
+
+msgid "Tankstelle: %s"
+msgstr "Petrol station: %s"
+
+msgid "Zapfpistole einhängen"
+msgstr "Re-attach pump nozzle"
+
+msgid "Zapfpistole nehmen (%s)"
+msgstr "Take pump nozzle (%s)"
+
+msgid "Service: Fahrzeug reparieren"
+msgstr "Service: repair vehicle"
+
+msgid "Geld geben"
+msgstr "Give money"
+
+msgid "Handel starten"
+msgstr "Start trading"
+
+msgid "Spielen >>>"
+msgstr "Play >>>"
+
+msgid "Fraktion >>>"
+msgstr "Faction >>>"
+
+msgid "Fraktion: Spieler überfallen"
+msgstr "Faction: rob player"
+
+msgid "Unternehmen >>>"
+msgstr "Company >>>"
+
+msgid "Admin: kicken"
+msgstr "Admin: Kick"
+
+msgid "Admin: ent/freezen"
+msgstr "Admin: Un/freeze"
+
+msgid "Admin: specten"
+msgstr "Admin: Spect"
+
+msgid "Admin: Wegschmeißen"
+msgstr "Admin: Throw away"
+
+msgid "<<< Zurück"
+msgstr "<<< Back"
+
+msgid "Fahrschule: Prüfung starten"
+msgstr "Driving school: Start test"
+
+msgid "Fahrschule: Prüfung abbrechen"
+msgstr "Driving school: Cancel test"
+
+msgid "Fahrschule: Schein geben"
+msgstr "Driving school: Give licence"
+
+msgid "San News: Interview starten"
+msgstr "San News: Start interview"
+
+msgid "San News: Interview beenden"
+msgstr "San News: End interview"
+
+msgid "Fraktion: ins Fahrzeug zerren"
+msgstr "Faction: Drag into the vehicle"
+
+msgid "Fraktion: Spieler durchsuchen"
+msgstr "Faction: Search player"
+
+msgid "Fraktion: Handschellen abnehmen"
+msgstr "Fraction: Remove handcuffs"
+
+msgid "Fraktion: Handschellen anlegen"
+msgstr "Fraction: Putting on handcuffs"
+
+msgid "Fraktion: Alkoholtest durchführen"
+msgstr "Fraction: Perform breathalyzer test"
+
+msgid "Fraktion: nach Lizenz fragen"
+msgstr "Fraction: Ask for license"
+
+msgid "Fraktion: illegales abnehmen"
+msgstr "Fraction: Remove illegal items"
+
+msgid "Fraktion: Waffen abnehmen"
+msgstr "Fraction: Remove weapons"
+
+msgid "Fraktion: GWD-Note vergeben"
+msgstr "Faction: award BMS grade"
+
+msgid "Fraktion: Wanze verstecken"
+msgstr "Faction: hide a bug"
+
+msgid "Schere-Stein-Papier spielen"
+msgstr "Play Rock-Paper-Scissors"
+
+msgid "Pong spielen"
+msgstr "Play pong"
+
+msgid "Schach spielen"
+msgstr "Play chess"
+
+msgid "Fangen spielen"
+msgstr "Play catch"
+
+msgid "Aufgestellt von: %s"
+msgstr "Set up by: %s"
+
+msgid "Einnahmen: %d$"
+msgstr "Income: %d$"
+
+msgid "Abbauen"
+msgstr "Dismantle"
+
+msgid "Fahrzeug-Wrack"
+msgstr "Wrecked vehicle"
+
+msgid "Marke: %s"
+msgstr "Brand: %s"
+
+msgid "%sschließen"
+msgstr "%sclose"
+
+msgid "Letzter Fahrer: %s"
+msgstr "Last driver: %s"
+
+msgid "Firma: Verkauf beenden"
+msgstr "Firm: end sale"
+
+msgid "Firma: zum Verkauf anbieten"
+msgstr "Firm: offer for sale"
+
+msgid "Der Betrag muss zwischen 1$ und 5.000.000$ liegen!"
+msgstr "The amount must be between 1$ and 5.000.000$!"
+
+msgid "Musik abspielen"
+msgstr "Play music"
+
+msgid "Respawnen / Parken >>>"
+msgstr "Respawn / Park >>>"
+
+msgid "Leiter Modus wechseln"
+msgstr "Change ladder mode"
+
+msgid "Taxileuchte bedienen"
+msgstr "Operate a taxi light"
+
+msgid "Laderampe bedienen"
+msgstr "Operate the loading ramp"
+
+msgid "Busfahrer >>>"
+msgstr "Bus driver >>>"
+
+msgid "Fahrplan anzeigen"
+msgstr "Show timetable"
+
+msgid "Items >>>"
+msgstr "Items >>>"
+
+msgid "Wanze anbringen"
+msgstr "Attach a bug"
+
+msgid "Radar %s"
+msgstr "%s speed camera"
+
+msgid "Schlüssel"
+msgstr "Key"
+
+msgid "Fahrzeug leeren"
+msgstr "Empty the vehicle"
+
+msgid "Kiste abladen"
+msgstr "Unload crate"
+
+msgid "Kiste aufladen"
+msgstr "Load crate"
+
+msgid "Geldsack abladen"
+msgstr "Unload money bag"
+
+msgid "Geldsack aufladen"
+msgstr "Load money bag"
+
+msgid "Mechaniker: Reparieren"
+msgstr "Mechanic: Repair"
+
+msgid "Mechaniker: Handbremse lösen"
+msgstr "Mechanic: Release handbrake"
+
+msgid "Mechaniker: %s aufladen"
+msgstr "Mechanic: %s charge"
+
+msgid "Mechaniker: %s abladen"
+msgstr "Mechanic: %s unload"
+
+msgid "Mechaniker: Zapfpistole %s"
+msgstr "Mechanic: pump nozzle %s"
+
+msgid "Mechaniker: Entkoppeln"
+msgstr "Mechanic: decouple"
+
+msgid "Admin >>>"
+msgstr "Admin >>>"
+
+msgid "Insassen >>>"
+msgstr "Passengers >>>"
+
+msgid "Details >>>"
+msgstr "Details >>>"
+
+msgid "Abseilen"
+msgstr "Rope down"
+
+msgid "Fahrzeug kaufen"
+msgstr "Buy vehicle"
+
+msgid "Möchtest du das Fahrzeug für %d$ kaufen?"
+msgstr "Do you want to buy the vehicle for %d$?"
+
+msgid "Als Spawnpunkt festlegen"
+msgstr "Set as spawn point"
+
+msgid "Besitzer: %s (Admin)"
+msgstr "Owner: %s (Admin)"
+
+msgid "Respawnen"
+msgstr "Respawn"
+
+msgid "Parken"
+msgstr "Park"
+
+msgid "Reparieren"
+msgstr "修复"
+
+msgid "Despawnen"
+msgstr "Despawn"
+
+msgid "Fahrzeug despawnen"
+msgstr "Despawn the vehicle"
+
+msgid "Aus welchem Grund möchtest du das Fahrzeug despawnen?"
+msgstr "For which reason do you want to despawn the vehicle?"
+
+msgid "Handbremse lösen"
+msgstr "Release the handbrake"
+
+msgid "Editieren"
+msgstr "Edit"
+
+msgid "Fahrzeug löschen"
+msgstr "Delete the vehicle"
+
+msgid "Aus welchem Grund möchtest du das Fahrzeug löschen?"
+msgstr "For which reason do you want to delete the vehicle?"
+
+msgid "Tunings anzeigen"
+msgstr "Show Tunings"
+
+msgid "Fahrgestellnr: %s"
+msgstr "Chassis no: %s"
+
+msgid "Kategorie: %s"
+msgstr "Category: %s"
+
+msgid "Steuern: %s $ / PayDay"
+msgstr "Taxes: %s $ / PayDay"
+
+msgid "Sprittyp: %s"
+msgstr "Fuel type: %s"
+
+msgid "Tankgröße: %s Liter"
+msgstr "Tank size: %s litre"
+
+msgid "Vmax (Hersteller): %s km/h"
+msgstr "Vmax (manufacturer): %s km/h"
+
+msgid "Tankinhalt: %s  Liter (%s%%)"
+msgstr "Tank capacity: %s litres (%s%%)"
+
+msgid "Verbrauchsmult.: %s"
+msgstr "Consumption mult.: %s"
+
+msgid "%s nehmen"
+msgstr "take %s"
+
+msgid "%s reinlegen"
+msgstr "Put %s in"
+
+msgid "Respawn @ Garage"
+msgstr "Respawn @ Garage"
+
+msgid "Respawn @ Parkposition"
+msgstr "Respawn @ park position"
+
+msgid "Fahrzeug parken"
+msgstr "Park the car"
+
+msgid "Du kannst dein Auto hier nicht parken!"
+msgstr "You can't park your car here!"
+
+msgid "Sprunk-Automat"
+msgstr "Spunk machine"
+
+msgid "Süßigkeiten-Automat"
+msgstr "Candy machine"
+
+msgid "Soda-Automat"
+msgstr "Soda machine"
+
+msgid "Ausrauben"
+msgstr "Rob"
+
+msgid ""
+"Möchtest du wirklich den Automaten ausrauben? Du erhälst dafür 1 Wanted!"
+msgstr "You really want to rob the vending machine? You get a Wanted for it!"
+
+msgid "Objekt: %s"
+msgstr "Object: %s"
+
+msgid "Verschieben"
+msgstr "Move"
+
+msgid "Aufheben"
+msgstr "Pick up"
+
+msgid "Bewegungsmelder"
+msgstr "Motion detector"
+
+msgid "Informationen >>>"
+msgstr "Information >>>"
+
+msgid "Musik ändern"
+msgstr "Change music"
+
+msgid "Sound an/aus"
+msgstr "Sound on/off"
+
+msgid "Warnleuchte"
+msgstr "Warning light"
+
+msgid "Ersteller: %s"
+msgstr "Creator: %s"
+
+msgid "Zeit: %s"
+msgstr "Time: %s"
+
+msgid "min. Rang: %s"
+msgstr "min. Rank: %s"
+
+msgid "Superowner: %s"
+msgstr "Superowner: %s"
+
+msgid "Model: %s"
+msgstr "Model: %s"
+
+msgid "Multi-Accounts"
+msgstr "Multi-accounts"
+
+msgid "Möchtest du den Multi-Account mit der ID %s löschen?"
+msgstr "Do you want to delete the multi-account with the ID %s?"
+
+msgid "Möchtest du einen Multi-Account mit der Serial %s erstellen?"
+msgstr "Do you want to create a multi-account with the serial %s?"
+
+msgid "Multi-Account ID: %s"
+msgstr "Multi-account ID: %s"
+
+msgid "Name: %s"
+msgstr "Name: %s"
+
+msgid "Multi-Account(s): %s"
+msgstr "Multi-account(s): %s"
+
+msgid "Serial: %s"
+msgstr "Serial: %s"
+
+msgid "Kann Multi-Account erstellen: %s"
+msgstr "Can create multi-account: %s"
+
+msgid "Admin: %s"
+msgstr "Admin: %s"
+
+msgid "Spieler herausfordern"
+msgstr "Challenge players"
+
+msgid "Du hast keinen Spieler ausgewählt!"
+msgstr "You have not chosen a player!"
+
+msgid "Einsatz setzen"
+msgstr "Place a bet"
+
+msgid "Um wie viel Geld (in $) wollt ihr kämpfen?"
+msgstr "How much money ($) do you want to fight for?"
+
+msgid "Der Spieler ist nicht mehr in der Halle!"
+msgstr "The player is no longer in the hall!"
+
+msgid "Speziallack - Vorschau"
+msgstr "Special paint - Preview"
+
+msgid "Bitte füge unten deine URL welche mit .png oder .jpg endet ein:"
+msgstr "Please enter your URL below which ends with .png or .jpg:"
+
+msgid "Achtung dies ist nur eine Vorschau welche du selbst siehst!"
+msgstr "Attention, this is only a preview which you can see!"
+
+msgid "URL:"
+msgstr "URL:"
+
+msgid "Vorschau"
+msgstr "Preview"
+
+msgid "Bestägigen"
+msgstr "Confirm"
+
+msgid "Das eingegebene Passwort ist falsch!"
+msgstr "The entered password is wrong!"
+
+msgid "Passwort ändern"
+msgstr "Change password"
+
+msgid "Debug Tools (F10 to close)"
+msgstr "Debug Tools (F10 to close)"
+
+msgid "Folgende Elemente benutzen diese Textur:"
+msgstr "The following elements use this texture:"
+
+msgid "Textur Info (%s)"
+msgstr "Texture Info (%s)"
+
+msgid "Größe: %d/%d"
+msgstr "Size: %d/%d"
+
+msgid "Nächster Wachstum in ~%d Minuten"
+msgstr "Next growth in ~%d minutes"
+
+msgid "Derzeitige Ernte: %d/%d %s"
+msgstr "Current harvest: %d/%d %s"
+
+msgid "Bewässert für %s Stunden"
+msgstr "Irrigated for %s hours"
+
+msgid "nicht bewässert"
+msgstr "unwatered"
+
+msgid "Drücke [E] zum ernten!"
+msgstr "Press [E] to harvest!"
+
+msgid "Theke"
+msgstr "Counter"
+
+msgid "Willkommen, was kann man für dich tun?"
+msgstr "Welcome, what can I do for you?"
+
+msgid "Gegenstand"
+msgstr "Object"
+
+msgid "Polizeicomputer"
+msgstr "Police computer"
+
+msgid "W"
+msgstr "W"
+
+msgid "Firma/Gang"
+msgstr "Company/gang"
+
+msgid "Spielerinformationen"
+msgstr "Player information"
+
+msgid "F"
+msgstr "F"
+
+msgid "G"
+msgstr "G"
+
+msgid "Orten beenden"
+msgstr "End Locating"
+
+msgid "Navi"
+msgstr "Navi"
+
+msgid "Wanteds geben"
+msgstr "Give wanteds"
+
+msgid "Möchtest du wirklich alle Wanteds von %s löschen?"
+msgstr "Do you really want to delete all Wanteds from %s?"
+
+msgid "STVO-Punkte geben"
+msgstr "Give RTR points"
+
+msgid "Setzen"
+msgstr "Set"
+
+msgid "Zeit"
+msgstr "Time"
+
+msgid "Freilassen"
+msgstr "Release"
+
+msgid "Möchtest du %s wirklich aus dem Knast befreien?"
+msgstr "Do you really want to release %s from jail?"
+
+msgid "Ziel"
+msgstr "Destination"
+
+msgid "Log löschen"
+msgstr "Delete log"
+
+msgid "Deaktivieren"
+msgstr "Disable"
+
+msgid "Log"
+msgstr "Log"
+
+msgid ") then skip = true en"
+msgstr ") then skip = true en"
+
+msgid "Die Wanze wurde nicht gefunden!"
+msgstr "No bug has been found!"
+
+msgid ""
+"Ortbar\n"
+"STVO\n"
+" Auto\n"
+" Motorrad\n"
+" LKW\n"
+" Pilot"
+msgstr ""
+"Locatable\n"
+"RTR\n"
+" Car\n"
+" Motorcycle\n"
+" Truck\n"
+" Pilot"
+
+msgid "Du musst einen Spieler auswählen!"
+msgstr "You must choose a player!"
+
+msgid "Der Spieler ist AFK!"
+msgstr "The player is AFK!"
+
+msgid "Der Spieler sitzt gerade eine administrative Strafe ab!"
+msgstr "The player is currently serving an administrative penalty!"
+
+msgid ""
+"Der Spieler konnte nicht geortet werden!\n"
+" Sein Handy ist ausgeschaltet!"
+msgstr ""
+"The player could not be located!\n"
+" The cell phone was switched off!"
+
+msgid "Spieler nicht mehr online!"
+msgstr "Player no longer online!"
+
+msgid "Der Spieler"
+msgstr "The player"
+
+msgid "Die Wanze"
+msgstr "The bug"
+
+msgid "%s wurde geortet! Folge dem Blip auf der Karte!"
+msgstr "%s has been located! Follow the blip on the map!"
+
+msgid "%s ist in einem Gebäude!"
+msgstr "%s is in an interior!"
+
+msgid "Ortung beendet: Die Wanze ist nicht mehr verfügbar!"
+msgstr "Tracking cancelled: The bug is no longer available!"
+
+msgid "Ortung beendet: Der Spieler hat sein Handy ausgeschaltet!"
+msgstr "Tracking cancelled: The player has switched off his cell phone!"
+
+msgid ""
+"Der Spieler konnte nicht geortet werden!\n"
+" Er ist in einem Gebäude!"
+msgstr ""
+"The player could not be located!\n"
+" He's in an interior!"
+
+msgid "%s %s"
+msgstr "%s %s"
+
+msgid "Kategorie"
+msgstr "Category"
+
+msgid "Polizei Sounds"
+msgstr "Police Sounds"
+
+msgid "Fahrzeuge abholen"
+msgstr "Pick up cars"
+
+msgid "Freikaufen (500$)"
+msgstr "Buy out (500$)"
+
+msgid "kein Kunde"
+msgstr "no client"
+
+msgid "Zurückgelegte Strecke:"
+msgstr "Travelled distance:"
+
+msgid "0 km"
+msgstr "0 km"
+
+msgid "Fahrpreis:"
+msgstr "Fare:"
+
+msgid "0 $"
+msgstr "0 $"
+
+msgid "%s km"
+msgstr "%s km"
+
+msgid "%d $"
+msgstr "$ %d"
+
+msgid "Frage"
+msgstr "Question"
+
+msgid "Sitzung erstellen"
+msgstr "Create session"
+
+msgid "Zeitrennen (Solo) (100$)"
+msgstr "Time trial (Solo) ($100)"
+
+msgid "Freeroam (500$)"
+msgstr "Freeroam ($500)"
+
+msgid "Rennstrecke"
+msgstr "Race track"
+
+msgid "Strecke: %s"
+msgstr "Distance: %s"
+
+msgid "- MHz"
+msgstr "- MHz"
+
+msgid "Radio off"
+msgstr "Radio off"
+
+msgid "Unable to play the radio stream. Please try again later."
+msgstr "Unable to play the radio stream. Please try again later."
+
+msgid "Radiosender"
+msgstr "Radio station"
+
+msgid "Standard-Stationen"
+msgstr "Standard stations"
+
+msgid "VIP"
+msgstr "VIP"
+
+msgid "Unternehmen"
+msgstr "Companies"
+
+msgid "Gang/Firma"
+msgstr "Gang/Company"
+
+msgid "Spielzeit"
+msgstr "Playtime"
+
+msgid "Karma"
+msgstr "Karma"
+
+msgid "Ping"
+msgstr "Ping"
+
+msgid "Derzeit sind %d Spieler online"
+msgstr "Currently %d players are online"
+
+msgid "eigener Ping: %dms"
+msgstr "own Ping: %dms"
+
+msgid "Score: %d"
+msgstr "Score: %d"
+
+msgid "Adminmenü"
+msgstr "Admin Menu"
+
+msgid "Aktueller Job:"
+msgstr "Current job:"
+
+msgid "(Job kündigen)"
+msgstr "(Quit job)"
+
+msgid "Unternehmen:"
+msgstr "Company:"
+
+msgid "(anzeigen)"
+msgstr "(display)"
+
+msgid "Aktuelle Fraktion:"
+msgstr "Current faction:"
+
+msgid "(verwalten)"
+msgstr "(manage)"
+
+msgid "Funktionen"
+msgstr "Functions"
+
+msgid "Warns anzeigen"
+msgstr "Show warnings"
+
+msgid "ShortMessage-Log"
+msgstr "ShortMessage Log"
+
+msgid "Fahrzeuge: (%d/%d)"
+msgstr "Vehicles: (%d/%d)"
+
+msgid "Garage:"
+msgstr "Garage:"
+
+msgid "(Kaufen: 0$)"
+msgstr "(Buy: $0)"
+
+msgid "Respawnen:"
+msgstr "Respawn:"
+
+msgid "in Garage"
+msgstr "in garage"
+
+msgid "an Parkposition"
+msgstr "at parking position"
+
+msgid "Punkte"
+msgstr "Points"
+
+msgid "Punkte:"
+msgstr "Points:"
+
+msgid "Skinlevel:"
+msgstr "Skin level:"
+
+msgid "%d/%d"
+msgstr "%d/%d"
+
+msgid "Fahrzeuglevel:"
+msgstr "Vehicle level:"
+
+msgid "Joblevel:"
+msgstr "Job level:"
+
+msgid "Waffenlevel:"
+msgstr "Weapon level:"
+
+msgid "Fischerlevel:"
+msgstr "Fisherman level:"
+
+msgid "Einstellungen"
+msgstr "Settings"
+
+msgid "%s:"
+msgstr "%s:"
+
+msgid ", data.Name)"
+msgstr ", data.Name)"
+
+msgid "- keine Fraktion -"
+msgstr "- no faction -"
+
+msgid "Du wurdest in die Fraktion \\"
+msgstr "You've been invited to the faction \\"
+
+msgid "Du wurdest in das Unternehmen  \\"
+msgstr "You were invited to the company \\"
+
+msgid "Du wurdest in die Gruppe \\"
+msgstr "You've been invited to the group \\"
+
+msgid "- keine Firma/Gang -"
+msgstr "- no firm/gang -"
+
+msgid "(Kaufen: %s$)"
+msgstr "(Buy: %s$)"
+
+msgid "(Upgrade: %s$)"
+msgstr "(Upgrade: %s$)"
+
+msgid ""
+"Bitte bestätige %s deiner Garage. Das Geld wird von deinem Konto abgebucht."
+msgstr ""
+"Please confirm the %s of your garage. The money will be withdrawn from your "
+"bank account."
+
+msgid ""
+"Dieses Fahrzeug befindet sich in %s!\n"
+"(Klicke hier um das Blip auf der Map zu löschen!)"
+msgstr ""
+"This vehicle is located in %s!\n"
+"(Click here to delete the blip on the map!)"
+
+msgid "Dieses Fahrzeug ist zerstört. Respawne es!"
+msgstr "This vehicle is destroyed. Respawne it!"
+
+msgid "Dieses Fahrzeug befindet sich in deiner Garage!"
+msgstr "This vehicle is in your garage!"
+
+msgid "Dieses Flugzeug befindet sich im Hangar!"
+msgstr "This plane is in the hangar!"
+
+msgid "Dieses Boot befindet sich im Industrie-Hafen (Logistik-Job)!"
+msgstr "This boat is located at the industrial harbour (logistics job)!"
+
+msgid "HUD / UI"
+msgstr "HUD / UI"
+
+msgid "UI aktivieren"
+msgstr "Enable UI"
+
+msgid "Chat aktivieren"
+msgstr "Enable chat"
+
+msgid "Hilfeleiste"
+msgstr "Help bar"
+
+msgid "Breaking News-Box (oben links)"
+msgstr "Breaking News Box (top left)"
+
+msgid "Breaking News im Chat anzeigen"
+msgstr "Show Breaking News in chat"
+
+msgid "Payday-Box an Bildschirmgröße anpassen"
+msgstr "Adjust Payday Box to screen size"
+
+msgid "Hilfetext über Objekten"
+msgstr "Help text above objects"
+
+msgid "HUD / Design"
+msgstr "HUD / Design"
+
+msgid "Leben/Weste am HUD"
+msgstr "Health/Armor on HUD"
+
+msgid "Abstand zwischen Balken"
+msgstr "Distance between margins"
+
+msgid "Zone-Name"
+msgstr "Zone name"
+
+msgid "Passbild"
+msgstr "Passport photo"
+
+msgid "blaues Farbschema"
+msgstr "blue color scheme"
+
+msgid "Beschriftungen"
+msgstr "标注"
+
+msgid "Punkte / Level"
+msgstr "Points / Level"
+
+msgid "Spielstunden"
+msgstr "Playtime"
+
+msgid "FPS Anzeigen"
+msgstr "FPS Display"
+
+msgid "HUD-Skalierung"
+msgstr "HUD scaling"
+
+msgid "HUD / Radar, Übersichtskarte"
+msgstr "HUD / radar, general map"
+
+msgid "Radar aktivieren"
+msgstr "Enable Radar"
+
+msgid "Standard-Radar (für Gangwar)"
+msgstr "Standard Radar (for Gangwar)"
+
+msgid "Statusleisten unter dem Radar"
+msgstr "Status bars under the radar"
+
+msgid "Zone-Name im Radar"
+msgstr "Zone name on radar"
+
+msgid "Karten-Transparenz"
+msgstr "map transparency"
+
+msgid "Blips"
+msgstr "blips"
+
+msgid "bunte Blips"
+msgstr "colorful blips"
+
+msgid "Blip-Skalierung"
+msgstr "Blip Scaling"
+
+msgid "Textkanäle aktivieren/deaktivieren!"
+msgstr "Enable/Disable text channels!"
+
+msgid "Fraktionschat aktivieren"
+msgstr "Activate faction chat"
+
+msgid "Unternehmenschat aktivieren"
+msgstr "Activate company chat"
+
+msgid "Firmen/Gangchat aktivieren"
+msgstr "Enable firm/gang chat"
+
+msgid "Bündnischat aktivieren"
+msgstr "Activate alliance chat"
+
+msgid "Staatschat aktivieren"
+msgstr "Activate state chat"
+
+msgid "Spawn"
+msgstr "Spawn"
+
+msgid "Letzter Standort"
+msgstr "Last location"
+
+msgid "Usertreff"
+msgstr "User meeting"
+
+msgid "Fraktionsbase"
+msgstr "Group base"
+
+msgid "Unternehmensbase"
+msgstr "Company base"
+
+msgid "Haus"
+msgstr "House"
+
+msgid "Wohnwagen/Boot"
+msgstr "Caravan/boat"
+
+msgid ""
+"Nutze das Klicksystem bzw. das Hausmenü um den Spawnpunkt für ein Fahrzeug "
+"oder Haus festzulegen!"
+msgstr ""
+"Use the click system/house menu to set up the spawn point for a vehicle/"
+"house!"
+
+msgid "Nametag"
+msgstr "Nametag"
+
+msgid "Rotpunkt aktivieren"
+msgstr "Activate red dot"
+
+msgid "Hitmarker"
+msgstr "Hitmarker"
+
+msgid "Tracers"
+msgstr "Tracers"
+
+msgid "Kill Feedback"
+msgstr "Kill feedback"
+
+msgid "Dienstmarken anzeigen"
+msgstr "Show badges"
+
+msgid "Fahrzeugmarkierung anzeigen"
+msgstr "Show vehicle blip"
+
+msgid "Fahrzeug-Textur Modus"
+msgstr "Vehicle texture mode"
+
+msgid "eXo Texturen aktivieren"
+msgstr "Enable eXo textures"
+
+msgid "Spieler Texturen aktivieren"
+msgstr "Enable player textures"
+
+msgid "Cursor Modus"
+msgstr "Cursor mode"
+
+msgid "Sonstiges"
+msgstr "Other"
+
+msgid "Mit Fraktionsskin spawnen"
+msgstr "Spawn on faction duty"
+
+msgid "Kopf in Kamerarichtung bewegen"
+msgstr "Move head with camera angle"
+
+msgid "Gangwar-Ansicht beim Spielerboard"
+msgstr "Gangwar view on the player board"
+
+msgid "Low-Modus für Rauch"
+msgstr "Low mode for smoke"
+
+msgid "Sichtweite"
+msgstr "Visual range"
+
+msgid "Sichtweite:"
+msgstr "Visual range:"
+
+msgid "Sichtweite zurücksetzen!"
+msgstr "Reset visual range!"
+
+msgid "Thermal-Maussensitivität: %.2f"
+msgstr "Thermal mouse sensitivity: %.2f"
+
+msgid "Thermal Maussensitivität: %s"
+msgstr "Thermal mouse sensitivity: %s"
+
+msgid "Welche Waffen sollen attached werden"
+msgstr "Which weapons should be attached"
+
+msgid "Nahkampfwaffen"
+msgstr "Close Combat Weapons"
+
+msgid "Deagle/Pistole/Taser"
+msgstr "Deagle/Pistol/Taser"
+
+msgid "Schrotflinten"
+msgstr "Shotguns"
+
+msgid "Mp5"
+msgstr "Mp5"
+
+msgid "Mac-10/Tec-9"
+msgstr "Mac-10/Tec-9"
+
+msgid "M4/AK-47"
+msgstr "M4/AK-47"
+
+msgid "Country-Rifle"
+msgstr "Country Rifle"
+
+msgid "Ak-47/M4 im Holster"
+msgstr "Ak-47/M4 in holster"
+
+msgid "Sounds"
+msgstr "声音"
+
+msgid "Halleluja-Sound beim sterben"
+msgstr "Hallelujah sound when you die"
+
+msgid "Sound beim Treffen eines Spielers"
+msgstr "Sound when hitting a player"
+
+msgid "Feuerwerke anderer Spieler"
+msgstr "Fireworks of other players"
+
+msgid "Navigations Sprachansagen"
+msgstr "Navigation voice prompts"
+
+msgid "Interior Sounds"
+msgstr "Interior sounds"
+
+msgid "Funkkanal Rauschen"
+msgstr "Radio channel noise"
+
+msgid "Polizei-Sounds"
+msgstr "Police Sounds"
+
+msgid "Radiostationen"
+msgstr "Radio stations"
+
+msgid "Blinker"
+msgstr "Turn signal"
+
+msgid "Unterbodenbeleuchtung"
+msgstr "Vehicle underbody lights"
+
+msgid "Rundumleuchten (ELS)"
+msgstr "Rotating lights (ELS)"
+
+msgid "Spezialhupe"
+msgstr "Special horn"
+
+msgid "Warnton bei offnem Gurt"
+msgstr "Open belt warning tone"
+
+msgid "Tacho-Transparenz"
+msgstr "Speedometer transparency"
+
+msgid "Tachobeleuchtung bei Licht"
+msgstr "Illuminated speedometer"
+
+msgid "Flugzeug-Display"
+msgstr "Aircraft Display"
+
+msgid "Primäre Fluganzeige (An/Aus)"
+msgstr "Primary flight display (On/Off)"
+
+msgid "Sekundäre Fluganzeige (An/Aus)"
+msgstr "Secondary flight display (On/Off)"
+
+msgid "Tertiäre Fluganzeige (An/Aus)"
+msgstr "Tertiary flight display (On/Off)"
+
+msgid "Shader-Einstellungen"
+msgstr "Shader settings"
+
+msgid "Shadereinstellungen"
+msgstr "Shader settings"
+
+msgid "Blur bei Geschwindigkeit"
+msgstr "Blur at speed"
+
+msgid "Tastenzuordnung"
+msgstr "Key assignment"
+
+msgid "Tastenzuordnungen"
+msgstr "Key assignments"
+
+msgid "Server-Tour"
+msgstr "Server Tour"
+
+msgid "Servertour beenden"
+msgstr "End Server Tour"
+
+msgid "Servertour starten"
+msgstr "Start Server Tour"
+
+msgid ""
+"Möchtest du eine Servertour starten? Nach Abschluss erhältst du Erfahrung "
+"und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"
+msgstr ""
+"Do you want to start a server tour? Upon completion you will receive "
+"experience and a small reward! (If the mouse pointer is not active, press "
+"'B')"
+
+msgid "Halloween"
+msgstr "Halloween"
+
+msgid "Umgebungs-Ambiente"
+msgstr "Ambience"
+
+msgid "Hintergrundgeräusche am Friedhof"
+msgstr "Background noises at the cemetery"
+
+msgid "Blut-Hintergrund bei Buttons (Erst nach Reconnect)"
+msgstr "Blood background for buttons (Only after reconnect)"
+
+msgid "Blutspritzer bei Klick"
+msgstr "Blood splashes at click"
+
+msgid "Winterzeit"
+msgstr "Wintertime"
+
+msgid "Weihnachtsmarkt Musik"
+msgstr "Christmas Market Music"
+
+msgid "Schneeflocken"
+msgstr "Snowflakes"
+
+msgid "Schneedecke"
+msgstr "Snow cover"
+
+msgid "dynamische Textur (schön, aber FPS-lastig!)"
+msgstr "dynamic texture (nice, but FPS-heavy!)"
+
+msgid "Geld senden"
+msgstr "Send money"
+
+msgid "Senden"
+msgstr "Send"
+
+msgid "Du hast nicht genügend Geld!"
+msgstr "You don't have enough money!"
+
+msgid "Bitte gib eine gültige Zahl ein!"
+msgstr "Please enter a valid number!"
+
+msgid "Aktiv"
+msgstr "Active"
+
+msgid "Shader"
+msgstr "Shader"
+
+msgid ""
+"Hier kannst du Shader aktivieren oder deaktivieren. Zu viele aktivierte "
+"Shader können sich möglicherweise auf die Performance auswirken.\n"
+"Probiere einfach ein wenig herum um die ideale Einstellung für dich zu "
+"finden."
+msgstr ""
+"Here you can enable or disable shaders. Too many activated shaders can "
+"possibly affect performance.\n"
+"Just try a little around to find the ideal setting for you."
+
+msgid "Log von letzten Shortmessages (Doppelklick zum kopieren)"
+msgstr "Log of last short messages (double click to copy)"
+
+msgid "Leeren"
+msgstr "Empty"
+
+msgid "Kleidungs-Auswahl"
+msgstr "Skin selection"
+
+msgid ""
+"Einstellungen wurden nicht gespeichert (Bitte zuerst Edit-Modus beenden)!"
+msgstr "Settings have not been saved (please exit editing mode first)!"
+
+msgid "Es darf maximal eine Spezialkleidung ausgewählt werden."
+msgstr "A maximum of one special skin may be selected."
+
+msgid "Es muss mindestens eine Kleidung für Rang 0 festgelegt werden."
+msgstr "At least one skin must be specified for rank 0."
+
+msgid "Skin erfolgreich übernommen!"
+msgstr "Skin successfully changed!"
+
+msgid "Du kannst im Dienst nicht den Skin wechseln!"
+msgstr "You can't change your skin on duty!"
+
+msgid "eXo Skribble"
+msgstr "eXo Skribble"
+
+msgid "Asservatenkammer"
+msgstr "Evidence room"
+
+msgid "Möchtest du wirklich einen Asservaten Geld-Truck starten?"
+msgstr "Do you really want to start an evidence money truck?"
+
+msgid "#"
+msgstr "#"
+
+msgid "Objekt"
+msgstr "Object"
+
+msgid "Von"
+msgstr "From"
+
+msgid "Arrest-Menü"
+msgstr "Arrest menu"
+
+msgid "Wanteds"
+msgstr "Wanteds"
+
+msgid "mit Kaution einknasten"
+msgstr "Imprison with bail"
+
+msgid "ohne Kaution einknasten"
+msgstr "Imprison without bail"
+
+msgid "GWD-Note vergeben"
+msgstr "Award BMS grade"
+
+msgid "Note:"
+msgstr "Note:"
+
+msgid "(Zwischen 1 und 100 erlaubt)"
+msgstr "(Between 1 and 100 allowed)"
+
+msgid "Note vergeben"
+msgstr "Assign the grade"
+
+msgid "Möchtest du dem Spieler %s eine GWD-Note von %d vergeben?"
+msgstr "Do you want to set the player %s a BMS grade of %d?"
+
+msgid "Ungültige GWD-Note!"
+msgstr "Invalid BMS grade!"
+
+msgid "Stream-URL:"
+msgstr "Stream URL:"
+
+msgid "Stoppen"
+msgstr "Stop"
+
+msgid "StyleguideDemonstrationGUI"
+msgstr "StyleguideDemonstrationGUI"
+
+msgid "Überschrift"
+msgstr "Title"
+
+msgid "Zwischenüberschrift"
+msgstr "Subheading"
+
+msgid "Infotext / Label"
+msgstr "Info text / Label"
+
+msgid "Position"
+msgstr "Position"
+
+msgid "Nach oben"
+msgstr "Move up"
+
+msgid "Nach unten"
+msgstr "Move down"
+
+msgid ""
+"Mehrzeiliger\n"
+"Infotext\n"
+"undso"
+msgstr ""
+"Multiline\n"
+"Info text\n"
+"and so"
+
+msgid "irgendwelche Settings"
+msgstr "any settings"
+
+msgid "Fahrzeug-Textur Vorschau"
+msgstr "Vehicle Texture Preview"
+
+msgid "Freischalten"
+msgstr "Unlocking"
+
+msgid "Freischaltung beantragen"
+msgstr "Apply for activation"
+
+msgid ""
+"Möchtest du die Textur wirklich zur Überprüfung einsenden?\n"
+"Vorsicht akzeptierte Texturen können nicht mehr verändert werden!"
+msgstr ""
+"Do you really want to send in the texture for verification?\n"
+"Attention: Accepted textures can not be changed afterwards!"
+
+msgid "Aktivitäten"
+msgstr "Activities"
+
+msgid "Gangs"
+msgstr "Gangs"
+
+msgid "Inventar"
+msgstr "Inventory"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "Build:"
+msgstr "Build:"
+
+msgid "Handel mit %s"
+msgstr "Trade with %s"
+
+msgid "Items"
+msgstr "Items"
+
+msgid "Patronen"
+msgstr "Bullets"
+
+msgid "Handel vorschlagen"
+msgstr "Propose a trade"
+
+msgid "Du hast nicht soviel %s!"
+msgstr "You don't have that many %s!"
+
+msgid "Bitte wähle ein Item aus!"
+msgstr "Please select an item!"
+
+msgid "Bitte gib eine gültige Anzahl ein!"
+msgstr "Please enter a valid number!"
+
+msgid "Du hast kein/e %s ausgewählt!"
+msgstr "You didn't pick a %s!"
+
+msgid "Du nicht ausreichend %s!"
+msgstr "You don't have enough %s!"
+
+msgid "Du hast keine Anzahl eingegeben!"
+msgstr "You didn't enter a value!"
+
+msgid "Training"
+msgstr "Training"
+
+msgid "Fahrzeug-Kofferraum"
+msgstr "Vehicle trunk"
+
+msgid "Item/Waffe"
+msgstr "Item/weapon"
+
+msgid "Kofferraum:"
+msgstr "Trunk:"
+
+msgid "Muni"
+msgstr "Ammu"
+
+msgid ""
+"Du darfst im Dienst keine privaten Waffen benutzen. Möchtest du diese Waffe "
+"stattdessen konfiszieren?"
+msgstr ""
+"You are not allowed to use private firearms on duty. Would you like to "
+"confiscate this weapon instead?"
+
+msgid "(Klicke auf eine Schildkröte um sie auszuwählen)"
+msgstr "(Click on a turtle to select it)"
+
+msgid "Ausgewählte Schildkröte:"
+msgstr "Selected turtle:"
+
+msgid "Fahrzeug-Custom-Textures"
+msgstr "Vehicle Custom Textures"
+
+msgid "Farbe 1"
+msgstr "Colour 1"
+
+msgid "Farbe 2"
+msgstr "Colour 2"
+
+msgid "Textur entfernen"
+msgstr "Remove texture"
+
+msgid "Name (Doppelklick zum Kauf)"
+msgstr "Name (double click to purchase)"
+
+msgid "Möchtest du wirklich alle Texturen von diesem Fahrzeug entfernen?"
+msgstr "Do you really want to remove all textures from this vehicle?"
+
+msgid "Möchtest du die Textur wirklich für $%s kaufen?"
+msgstr "Do you really want to buy the texture for $%s?"
+
+msgid "Hilfe/Info anzeigen"
+msgstr "Display Help/Info"
+
+msgid "Textur testen"
+msgstr "Test texture"
+
+msgid "der #00FF00Motorhaube"
+msgstr "of the #00FF00engine hood"
+
+msgid "des #00FF00Kofferraumes"
+msgstr "of the #00FF00trunk"
+
+msgid "der #00FF00linken Vordertür"
+msgstr "of the #00FF00left front door"
+
+msgid "der #00FF00rechten Vordertür"
+msgstr "of the #00FF00right front door"
+
+msgid "der #00FF00linken hinteren Tür"
+msgstr "of the #00FF00left rear door"
+
+msgid "der #00FF00rechten hinteren Tür"
+msgstr "of the #00FF00right rear door"
+
+msgid "#FFFFFFDrücke #00FF00 %s #FFFFFF zum Öffnen %s#FFFFFF!"
+msgstr "#FFFFFFPress #00FF00%s #FFFFFFto open %s#FFFFFF!"
+
+msgid "#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug abzuschließen!"
+msgstr "#FFFFFFPress #FF0000%s #FFFFFFto lock the vehicle!"
+
+msgid "#FFFFFFDrücke #00FF00 %s #FFFFFF zum Schließen %s#FFFFFF!"
+msgstr "#FFFFFFPress #00FF00%s #FFFFFFto close %s#FFFFFF!"
+
+msgid "#FFFFFFDrücke #FF0000 %s #FFFFFF um den Kofferraum zu durchsuchen!"
+msgstr "#FFFFFFPress #FF0000%s #FFFFFFto search the trunk!"
+
+msgid ""
+"#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen des Defibrillators!"
+msgstr "#FFFFFFPress #00FF00%s #FFFFFFto take out or put in the defibrillator!"
+
+msgid "#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!"
+msgstr "#FFFFFFPress #FF0000%s #FFFFFFto repair the motor!"
+
+msgid "#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!"
+msgstr "#FFFFFFPress #00FF00%s #FFFFFFto take out or put in the stretcher!"
+
+msgid "#FF0000 Fahrzeug ist verschlossen!"
+msgstr "#FF0000Vehicle is locked!"
+
+msgid "#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug aufzuschließen!"
+msgstr "#FFFFFFPress #FF0000 %s #FFFFFF to unlock the vehicle!"
+
+msgid "Schlüsselverwaltung"
+msgstr "Key management"
+
+msgid "Gib einen Spielernamen ein"
+msgstr "Enter a player name"
+
+msgid "Schlüssel:"
+msgstr "Key:"
+
+msgid "Ein Fehler ist aufgetreten!"
+msgstr "An error has occurred!"
+
+msgid "Bitte gib einen Spielernamen ein!"
+msgstr "Please enter a player name!"
+
+msgid "Dieser Spieler ist nicht online!"
+msgstr "This player is not online!"
+
+msgid "Fahrzeugauswahl"
+msgstr "Vehicle selection"
+
+msgid "Fahrzeug-Performance"
+msgstr "Vehicle performance"
+
+msgid "Handling wurde gespeichert!"
+msgstr "Handling was saved!"
+
+msgid "Handling wurde zurückgesetzt!"
+msgstr "Handling was reset!"
+
+msgid "Handling wurde aktualisiert!"
+msgstr "Handling was updated!"
+
+msgid "Handelsvertrag - Handshake"
+msgstr "Trade agreement - Handshake"
+
+msgid "Vertragsangebot:"
+msgstr "Contract offer:"
+
+msgid "Fahrzeug: "
+msgstr "Vehicle: "
+
+msgid "Verkäufer: "
+msgstr "Seller: "
+
+msgid "Verkaufspreis ($): "
+msgstr "Sales price ($): "
+
+msgid "Handelsvertrag - Autoverkauf"
+msgstr "Trade agreement - car sale"
+
+msgid "Vertragsfahrzeug: "
+msgstr "Contract vehicle: "
+
+msgid "Vertragsdatum: "
+msgstr "Contract date: "
+
+msgid "Verkauf an: "
+msgstr "Sell to: "
+
+msgid "Käufer zu weit entfernt!"
+msgstr "Buyer too far away!"
+
+msgid "Käufer nicht gefunden!"
+msgstr "Buyer not found!"
+
+msgid "Bitte gebe einen gültigen Preis an!"
+msgstr "Please enter a valid price!"
+
+msgid "Bitte gebe einen gültigen Spieler an!"
+msgstr "Please enter a valid player!"
+
+msgid "Bitte fülle die Felder aus!"
+msgstr "Please fill out the fields!"
+
+msgid "Möchtest du das Fahrzeug %s wirklich für %s kaufen?"
+msgstr "Do you really want to buy the vehicle %s for %s?"
+
+msgid "Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!"
+msgstr "Congratulations! You are now the owner of a new vehicle!"
+
+msgid "Buffalo"
+msgstr "Buffalo"
+
+msgid "Front-Antrieb"
+msgstr "Front-wheel drive"
+
+msgid "Heck-Antrieb"
+msgstr "Rear-wheel drive"
+
+msgid "Allrad-Antrieb"
+msgstr "All-wheel drive"
+
+msgid "Fahrzeug erstellen"
+msgstr "Create vehicle"
+
+msgid "Fahrzeug-Tuning"
+msgstr "Vehicle tuning"
+
+msgid "Warenkorb"
+msgstr "Shopping cart"
+
+msgid "Upgrade"
+msgstr "Upgrade"
+
+msgid "Standard"
+msgstr "Default"
+
+msgid "Preis: %d$"
+msgstr "Price: %d$"
+
+msgid "Keine Neonröhre"
+msgstr "No neon lamp"
+
+msgid "Neonröhre einbauen"
+msgstr "Install neon tube"
+
+msgid "Du hast keine Neonröhren eingebaut!"
+msgstr "You didn't install any neon tubes!"
+
+msgid "Keine"
+msgstr "None"
+
+msgid "Hupe %d"
+msgstr "Horn %d"
+
+msgid "Keine Variante"
+msgstr "No variant"
+
+msgid "Variante %d"
+msgstr "Variant %d"
+
+msgid "Fahrzeugtunings"
+msgstr "Vehicle tunings"
+
+msgid "Id"
+msgstr "Id"
+
+msgid "Model"
+msgstr "Model"
+
+msgid "Level"
+msgstr "Level"
+
+msgid "Vorlage"
+msgstr "Template"
+
+msgid "Möchtest du diese Vorlage %s überschreiben?"
+msgstr "Do you want to overwrite this template %s?"
+
+msgid "Es wurd kein Fahrzeug gefunden für die Vorlage!"
+msgstr "No vehicle was found for the template!"
+
+msgid "Möchtest du diese Vorlage %s löschen?"
+msgstr "Do you want to delete this template %s?"
+
+msgid ""
+"Möchtest du diese Vorlage %s auf das Fahrzeug anwenden (Sitze drinnen oder "
+"stehe drauf)? "
+msgstr ""
+"Do you want to apply this template %s to the vehicle (seats inside or "
+"standing on it)? "
+
+msgid "Es wurd kein Fahrzeug gefunden zum Anwenden!"
+msgstr "No vehicle has been found to use!"
+
+msgid ""
+"Möchtest du das Handling dieses Fahrzeuges auf die Original-Werte "
+"zurücksetzen? "
+msgstr ""
+"Would you like to reset the handling of this vehicle to the original values? "
+
+msgid "Laufstil geändert!"
+msgstr "Walking style changed!"
+
+msgid "Gewinner"
+msgstr "Winners"
+
+msgid "Verlierer"
+msgstr "Losers"
+
+msgid "Waffenlevel"
+msgstr "Weapon level"
+
+msgid ""
+"Hier kannst du dein Waffenlevel verbessern.\n"
+"Ein besseres Waffenlevel wird benötigt um bessere Waffen zu kaufen und "
+"bessere Waffenskills zu erhalten!"
+msgstr ""
+"Here you can level up your weapon level.\n"
+"Higher weapon levels are required to be able to buy better weapons and "
+"enhance your weapon skills!"
+
+msgid "Aktuelles Level:"
+msgstr "Current level:"
+
+msgid "%d/10"
+msgstr "%d/10"
+
+msgid "Nächstes Level:"
+msgstr "Next level:"
+
+msgid "Kosten: %d$"
+msgstr "Cost: %d$"
+
+msgid "Du hast das maximale Waffenlevel bereits erreicht!"
+msgstr "You have already reached the maximum weapon level!"
+
+msgid "Objektübersicht - %s"
+msgstr "Object overview - %s"
+
+msgid "Erstellzeit"
+msgstr "Creation time"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Optionen"
+msgstr "Options"
+
+msgid "platzierte Objekte (%d)"
+msgstr "placed objects (%d)"
+
+msgid "Dieses Objekt existiert nicht mehr!"
+msgstr "This object no longer exists!"
+
+msgid ""
+"Möchtest du wirklich %d Objekte aufheben? (dazu benötigst du den "
+"entsprechenden Platz im Inventar)"
+msgstr ""
+"Do you really want to pick up %d objects? (you need the respective space in "
+"your inventory)"
+
+msgid "Möchtest du wirklich %d Objekte permanent löschen?"
+msgstr "Do you really want to delete %d objects permanently?"
+
+msgid ""
+"Bitte wähle ein Objekt aus der Liste aus oder ändere deine Auswahl links."
+msgstr ""
+"Please choose an object from the list or change your selection on the left."
+
+msgid "Bitte schließe erst das alte Objektübersichts-Fenster!"
+msgstr "Please close the old object overview window first!"
+
+msgid "Öffne das Fahrradschloss mit 'X'!"
+msgstr "Open the bike lock with 'X'!"
+
+msgid "Löse die Bremse mit 'G'!"
+msgstr "Release the brake with 'G'!"
+
+msgid "Limiter aktiviert!"
+msgstr "Limiter activated!"
+
+msgid "Limiter deaktiviert!"
+msgstr "Limiter deactivated!"
+
+msgid "Cruise-Control aktiviert!"
+msgstr "Cruise control activated!"
+
+msgid "Cruise-Control deaktiviert!"
+msgstr "Cruise control deactivated!"
+
+msgid "..math.random(1, 2).."
+msgstr "...math.random(1, 2)."
+
+msgid "..math.random(1, 3).."
+msgstr "..math.random(1, 3).."
+
+msgid "..event]() end, ms2, 1)"
+msgstr "..event]() end, ms2, 1)"
+
+msgid "Info: Zum Löschen von Items Control und Linksklick!"
+msgstr "Info: Control and left click for deleting items!"
+
+msgid "%s - Menge: %s"
+msgstr "%s - quantity: %s"
+
+msgid "Du kannst dieses Item nicht zerstören!"
+msgstr "You cannot destroy this item!"
+
+msgid "Gießkanne (Taste X)"
+msgstr "Watering can (X key)"
+
+msgid "Füllstand"
+msgstr "Fill level"
+
+msgid "Bodenqualität:"
+msgstr "Quality of soil:"
+
+msgid "zu steil"
+msgstr "too steep"
+
+msgid "zu trocken"
+msgstr "too dry"
+
+msgid "fruchtbar"
+msgstr "fruitful"
+
+msgid "Du kannst deine Gießkanne im Wasser auffüllen (drücke X)"
+msgstr "You can refill your watering can in the water (press X)"
+
+msgid "Tor"
+msgstr "Gate"
+
+msgid "Eingang"
+msgstr "Entrance"
+
+msgid "Keypad"
+msgstr "Keypad"
+
+msgid ""
+"Achtung! Da du den Low-Mode für Rauch benutzt wird dir evtl. kein Motorrauch "
+"angezeigt!"
+msgstr ""
+"Attention! Since you are using the low mode for smoke, you may not be shown "
+"any engine smoke!"
+
+msgid "Transmitter"
+msgstr "Transmitter"
+
+msgid "Für einen Job klicke mich an!"
+msgstr "Click me for a job!"
+
+msgid "Dein Boxerlevel ist zu niedrig!"
+msgstr "Your boxer level is too low!"
+
+msgid "Bitte erst aus dem Fahrzeug aussteigen!"
+msgstr "Please get out of the vehicle first!"
+
+msgid "#0000FF[Farmer]#FFFFFF Es gibt verschiedene Aufgaben auf der Farm."
+msgstr "#0000FF[Farmer]#FFFFFF There are different tasks on the farm."
+
+msgid ""
+"#0000FF[Farmer]#FFFFFF Eine davon ist es mit dem Traktor die Saat auszulegen."
+msgstr ""
+"#0000FF[Farmer]#FFFFFF One of them is to spread the seed with the tractor."
+
+msgid ""
+"#0000FF[Farmer]#FFFFFF Fahrzeuge kannst du hier (Marker sichtbar nach dem "
+"annehmen) abholen."
+msgstr ""
+"You can pick up #0000FF[Farmer]#FFFFFF vehicles here (marker visible after "
+"accepting)."
+
+msgid ""
+"#0000FF[Farmer]#FFFFFF Mit dem Mähdrescher kannst du das Korn ernten und mit "
+"dem Walton"
+msgstr ""
+"#0000FF[Farmer]#FFFFFF With the combine you can harvest the grain and with "
+"the Walton"
+
+msgid "#0000FF[Farmer]#FFFFFF kannst du das Getreide zur Abgabe bringen."
+msgstr "#0000FF [Farmer]#FFFFFF you can bring the grain to the delivery."
+
+msgid "#0000FF[Farmer]#FFFFFF Bringe das Getreide zu diesem Punkt!"
+msgstr "#0000FF[Farmer]#FFFFFF Bring the grain to this point!"
+
+msgid "Willst du das Tutorial zum Kiesgruben-Job ansehen?"
+msgstr "Do you want to watch the tutorial for the gravel pit job?"
+
+msgid "Säge die auf der Karte markierten Bäume mit der Motorsäge um."
+msgstr "Saw down the trees marked on the map with the chainsaw."
+
+msgid "Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk!"
+msgstr "The woodpile is full. Please transport the trees to the sawmill!"
+
+msgid "Bitte verwende die Motorsäge!"
+msgstr "Please use the chainsaw!"
+
+msgid "#0000FF[Trashman]#FFFFFF Während der Arbeit sammelst du Müll."
+msgstr "#0000FF[Trashman]#FFFFFF During work you collect garbage."
+
+msgid "#0000FF[Trashman]#FFFFFF Bei dieser Stelle gibst du ihn ab."
+msgstr "#0000FF[Trashman]#FFFFFF This is where you hand it in."
+
+msgid "#0000FF[Trashman]#FFFFFF Ein Fahrzeug bekommst du von hier."
+msgstr "#0000FF[Trashman]#FFFFFF You can get a vehicle from here."
+
+msgid "#0000FF[Trashman]#FFFFFF Diese Art von Mülltonen sind dein Gebiet."
+msgstr ""
+"#0000FF[Trashman] #FFFFFFThese kinds of trash cans are exactly your style."
+
+msgid "Hierzu musst du ein Müllauto fahren!"
+msgstr "You have to drive a garbage truck for that!"
+
+msgid ""
+"Um die Rundumleuchten zu sehen musst du diese in den Einstellungen (F2) "
+"aktivieren."
+msgstr ""
+"To see the rotating beacons you have to enable them in the settings menu "
+"(F2)."
+
+msgid "..stat"
+msgstr "..stat"
+
+msgid ""
+"Dir konnte leider niemand mehr helfen!\n"
+"But... have a good flight to heaven!"
+msgstr ""
+"I'm sorry, nobody could help you anymore!\n"
+"But... have a good flight to heaven!"
+
+msgid ""
+"Du bist schwer verletzt und verblutest in %s Sekunden...\n"
+"(Drücke hier um dich umzubringen)"
+msgstr ""
+"You're badly hurt and bleed to death in %s seconds...\n"
+"(Press here to kill yourself)"
+
+msgid "Du bist schwer verletzt und verblutest in %s Sekunden..."
+msgstr "You're badly hurt and bleed to death in %s seconds..."
+
+msgid "Du bist nicht mehr tot!"
+msgstr "You're not dead anymore!"
+
+msgid ""
+"Ein Arzt schützt dich vor dem verbluten bis ein Rettungswagen eintrifft!"
+msgstr ""
+"A doctor is protecting you from bleeding to death until an ambulance arrives!"
+
+msgid "Du wurdest ins AFK-Cafe teleportiert!"
+msgstr "You were teleported to the AFK diner!"
+
+msgid "Willkommen zurück, %s!"
+msgstr "Welcome back, %s!"
+
+msgid "Der eingegeben Code ist falsch!"
+msgstr "The entered code is wrong!"
+
+msgid "Der Code ist nicht mehr gültig!"
+msgstr "The code is no longer valid!"
+
+msgid "Clientside Admin konnte nicht verifiziert werden!"
+msgstr "Clientside Admin could not be verified!"
+
+msgid "Du kannst Objekte nicht an Spielern platzieren."
+msgstr "You cannot place objects on players."
+
+msgid "Du kannst Objekte nicht an Fahrzeugen platzieren."
+msgstr "You cannot place objects on vehicles."
+
+msgid "Du musst in der Nähe der Zielposition sein!"
+msgstr "You must be close to the target position!"
+
+msgid "Ammunation"
+msgstr "Ammunition"
+
+msgid "Bestellen"
+msgstr "Order"
+
+msgid "Bestellen:"
+msgstr "Order:"
+
+msgid "In den Warenkorb legen:"
+msgstr "Add to the shopping cart:"
+
+msgid "Im Warenkorb:"
+msgstr "In the shopping cart:"
+
+msgid "Gesamtsumme:"
+msgstr "Total:"
+
+msgid "entfernen"
+msgstr "remove"
+
+msgid "Links-Shift halten um 10-fache Muniton zu bestellen."
+msgstr "Hold left shift key to order 10 times as much ammunition."
+
+msgid "Ammunation App"
+msgstr "Ammunation App"
+
+msgid "Dein Waffenlevel ist zu niedrig! (Benötigt: %i)"
+msgstr "Your weapon level is too low! (Requires %i)"
+
+msgid "Gesamtsumme: %d$"
+msgstr "Total amount: %d$"
+
+msgid "Schutzweste (%d$)"
+msgstr "Protective vest (%d$)"
+
+msgid "Waffe: %s (Level: %i)"
+msgstr "Weapon: %s (Level: %i)"
+
+msgid "Waffe (%d$)"
+msgstr "Weapon (%d$)"
+
+msgid "Magazin (%d$)"
+msgstr "Magazine (%d$)"
+
+msgid "eXo-Bank"
+msgstr "eXo-Bank"
+
+msgid "Bankautomat finden"
+msgstr "Find ATM"
+
+msgid "Überweisen"
+msgstr "Transfer"
+
+msgid "Überweisen:"
+msgstr "Transfer:"
+
+msgid "Empfänger:"
+msgstr "Receiver:"
+
+msgid "Spenden:"
+msgstr "Donations:"
+
+msgid "San News"
+msgstr "San News"
+
+msgid "eXo Event-Team"
+msgstr "eXo Event-Team"
+
+msgid "Kontoauszug"
+msgstr "Account statement"
+
+msgid "Bitte gehe nach draußen, um die Automaten anzuzeigen."
+msgstr "Please go outside to display the ATMs."
+
+msgid "Markierungen entfernen"
+msgstr "Remove markers"
+
+msgid "Bankautomaten in der Nähe von dir wurden auf der Karte markiert."
+msgstr "ATMs near you were marked on the map."
+
+msgid "Ziffernblock"
+msgstr "Number pad"
+
+msgid "Telefon"
+msgstr "Phone"
+
+msgid "Telefonnummer"
+msgstr "Phone number"
+
+msgid "Anrufen"
+msgstr "Call"
+
+msgid "Num."
+msgstr "Num."
+
+msgid "Service"
+msgstr "Service"
+
+msgid "Frak/Untern."
+msgstr "Fac./Comp."
+
+msgid "Firmen/Gangs"
+msgstr "Companies/Gangs"
+
+msgid "Ungültige Telefonnummer eingegeben!"
+msgstr "Entered invalid phone number!"
+
+msgid "Diese Telefonnummer ist nicht vergeben!"
+msgstr "This phone number is not assigned!"
+
+msgid "Der Spieler ist nicht online!"
+msgstr "The player is not online!"
+
+msgid "Du kannst dich nicht selbst anrufen!"
+msgstr "You can't call yourself!"
+
+msgid ""
+"Eingehender Anruf von \n"
+"%s"
+msgstr ""
+"Incoming call from\n"
+"%s"
+
+msgid "Annehmen"
+msgstr "Acceptance"
+
+msgid ""
+"\n"
+"Klicke hier, um abzuheben."
+msgstr ""
+"\n"
+"Click here to take off."
+
+msgid "Dein Handy ist ausgeschaltet!"
+msgstr "Your phone is switched off!"
+
+msgid "Du bist nicht in der Lage den Anruf anzunehmen!"
+msgstr "You're not in a position to take the call!"
+
+msgid "%s hat den Anruf von %s entgegengenommen."
+msgstr "%s answered the call from %s."
+
+msgid "%s hat den Anruf entgegengenommen."
+msgstr "%s answered the call."
+
+msgid "%s hat den Anruf abgebrochen."
+msgstr "%s cancelled the call."
+
+msgid "Der Anruf wurde abgebrochen."
+msgstr "The call was canceled."
+
+msgid "Verbunden mit"
+msgstr "Connected with"
+
+msgid "Drücke z für Voicechat"
+msgstr "Press z for voice chat"
+
+msgid "Position senden"
+msgstr "Send position"
+
+msgid "Bitte warte ein paar Sekunden bevor du deine Position aktualisierst"
+msgstr "Please wait a few seconds before updating your position"
+
+msgid "Auflegen"
+msgstr "Hang up"
+
+msgid "Aufgelegt"
+msgstr "Hung up"
+
+msgid "Anrufen..."
+msgstr "Call..."
+
+msgid "Einladungen"
+msgstr "Invitations"
+
+msgid "Anfragen"
+msgstr "Enquiry"
+
+msgid ""
+"Du hast eine Benachrichtigung erhalten!\n"
+"(Du kannst diese in der Dashboard App ansehen)"
+msgstr ""
+"You have received a notification!\n"
+"(You can view it in the Dashboard app)"
+
+msgid "Der Spieler \\"
+msgstr "The player \\"
+
+msgid ""
+"Herzlich Willkommen bei eXo Public Transport!\n"
+"In dieser App sehen Sie alle aktiven Taxis und unseren aktuellen "
+"Busfahrplan. Möch-\n"
+"ten Sie unseren Limousinen-\n"
+"service in Anspruch nehmen oder uns für Events mieten? Zögern Sie nicht und "
+"rufen Sie uns an - Ihr Weg ist unser Ziel!"
+msgstr ""
+"Welcome to the eXo Public Transport!\n"
+"In this app you can see all active taxi drivers and our current bus "
+"schedule. \n"
+"Would you like to use our limousine-\n"
+"service or rent us for events? Do not hesitate and call us - your way is our "
+"goal!"
+
+msgid "Taxi"
+msgstr "Taxi"
+
+msgid "Taxiservice"
+msgstr "Taxi service"
+
+msgid "Dauer"
+msgstr "Duration"
+
+msgid "Fahrplan"
+msgstr "Timetable"
+
+msgid "Busfahrplan"
+msgstr "Bus schedule"
+
+msgid "Linie 1"
+msgstr "Route 1"
+
+msgid "Linie 2"
+msgstr "Route 2"
+
+msgid "Handy ausschalten"
+msgstr "Switch off cell phone"
+
+msgid "Möchtest du dein Handy ausschalten?"
+msgstr "Do you want to turn off your phone?"
+
+msgid "Ja, ausschalten"
+msgstr "Yes, switch off"
+
+msgid "einschalten!"
+msgstr "Switch on!"
+
+msgid ""
+"Doppelklick um die \n"
+"Navigation zu starten!"
+msgstr ""
+"Double-click to\n"
+"start the GPS route!"
+
+msgid "Keinen Punkt ausgewählt!"
+msgstr "No point selected!"
+
+msgid "Notizen"
+msgstr "Notes"
+
+msgid "Nachrichten"
+msgstr "Messages"
+
+msgid "Werbung"
+msgstr "Advertising"
+
+msgid "Werbung schalten"
+msgstr "Place ads"
+
+msgid "Invalid Text!"
+msgstr "Invalid Text!"
+
+msgid "Dein Werbetext ist zu kurz! Mindestens 5 Zeichen!"
+msgstr "Your ad text is too short! At least 5 characters!"
+
+msgid "Dein Werbetext ist zu lang! Maximal 50 Zeichen!"
+msgstr "Your ad text is too long! Maximum 50 characters!"
+
+msgid "Zeichenanzahl: %d Kosten: %d$"
+msgstr "Amount of characters: %d Cost: %d$"
+
+msgid "Dieser Spieler ist nicht mehr online!"
+msgstr "This player is no longer online!"
+
+msgid "Handy"
+msgstr "Mobile"
+
+msgid "Hintergrund"
+msgstr "Background"
+
+msgid "Klingelton"
+msgstr "Ringtone"
+
+msgid "Klingelton %d"
+msgstr "Ringtone %d"
+
+msgid "Skribble"
+msgstr "Skribble"
+
+msgid "Lobbys"
+msgstr "Lobbies"
+
+msgid "S"
+msgstr "Sv"
+
+msgid "R"
+msgstr "R"
+
+msgid "Achtung: 0 / 1 Custom Textur(en) werden geladen"
+msgstr "Attention: 0 / 1 custom texture(s) are loaded"
+
+msgid "Folgende Custom-Textur konnte nicht geladen werden: {%s, %s}"
+msgstr "The following custom texture could not be loaded: {%s, %s}"
+
+msgid "Achtung: %s / %s Custom Textur(en) werden geladen"
+msgstr "Attention: %s / %s custom texture(s) are loaded"
+
+msgid "Deine lokale Zeit weicht von der Serverzeit um %s Sekunden ab."
+msgstr "Your local time differs from the server time by %s seconds."
+
+msgid ""
+"Möchtest du eine Server-Tour starten? Nach Abschluss erhälst du Erfahrung "
+"und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"
+msgstr ""
+"Do you want to start a server tour? After completion you will get experience "
+"and a small reward! (If the mouse pointer is not active, press 'B')"
+
+msgid ""
+"Das GPS wird vom runden Radar nicht unterstützt! Bitte wechsle das Design"
+msgstr "The GPS is not supported by the round radar! Please change the design"
+
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "Route wird berechnet..."
+msgstr "Calculating route..."
+
+msgid "Route wird neu berechnet..."
+msgstr "Route recalculated..."
+
+msgid "Es wurde keine Route gefunden!"
+msgstr "No route was found!"
+
+msgid "Du hast dein Ziel erreicht!"
+msgstr "You have reached your goal!"
+
+msgid "Zu Verkaufen!"
+msgstr "For sale!"
+
+msgid ""
+"Halte die Linke Maustaste gedrückt und schaue dabei auf das Fahrzeug, um zu "
+"tanken (der Mauszeiger darf nicht aktiv sein). %s"
+msgstr ""
+"Hold down the left mouse button while looking at the vehicle to refuel (the "
+"mouse pointer must not be active) %s"
+
+msgid "In diesen Tank solltest du nur %s füllen."
+msgstr "In this tank you should only fill %s."
+
+msgid "eXo Account-Migrator"
+msgstr "eXo Account-Migrator"
+
+msgid "eXo Ticket-System"
+msgstr "eXo Ticket System"
+
+msgid "eXo Browser"
+msgstr "eXo Browser"
+
+msgid "Du betrittst ein militärisches Sperrgebiet! Sei vorsichtig!"
+msgstr "You are entering a restricted military area! Be careful"

@@ -1285,16 +1285,17 @@
 	<script src="client/classes/ScreenCapture.lua" type="client" />
 
 
+	<vrpfile src="files/translation/client.en.po" />
 
 	<file src="files/data/objects.xml" />
 
 	<!-- white pieces -->
-	<file src="files/images/Chess/Rook.png" />
-	<file src="files/images/Chess/Bishop.png" />
-	<file src="files/images/Chess/King.png" />
-	<file src="files/images/Chess/Queen.png" />
-	<file src="files/images/Chess/Pawn.png" />
-	<file src="files/images/Chess/Knight.png" />
+	<vrpfile src="files/images/Chess/Rook.png" />
+	<vrpfile src="files/images/Chess/Bishop.png" />
+	<vrpfile src="files/images/Chess/King.png" />
+	<vrpfile src="files/images/Chess/Queen.png" />
+	<vrpfile src="files/images/Chess/Pawn.png" />
+	<vrpfile src="files/images/Chess/Knight.png" />
 	<!-- black pieces -->
 	<vrpfile src="files/images/Chess/RookB.png" />
 	<vrpfile src="files/images/Chess/BishopB.png" />
