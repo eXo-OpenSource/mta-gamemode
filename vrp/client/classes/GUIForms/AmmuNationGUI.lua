@@ -44,6 +44,7 @@ function AmmuNationGUI:constructor(ped)
 	self.m_Amount = GUIEdit:new(5+self.m_Width/4, self.m_Height-35, self.m_Width/4-10, 30, self)
 	self.m_AmountLabel:setVisible(false)
 	self.m_Amount:setVisible(false)
+	self.m_Amount:setNumeric(true, true)
 	self.m_Amount:setText("1")
 	self.m_Buy = GUIButton:new(self.m_Width/2, self.m_Height-35, self.m_Width/2-2.5, 30, "Kaufen", self):setBackgroundColor(Color.Green)
 	self.m_Buy.onLeftClick = function() self:buy() end

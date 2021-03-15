@@ -249,6 +249,7 @@ function ShopManager:buyWeapon(shopId, itemType, weaponId, amount)
 	if client:isDead() then return false end
 	if not itemType then return end
 	if not weaponId then return end
+	if amount <= 0 then return end
 	local shop = self:getFromId(shopId)
 	if shop then
 		if MIN_WEAPON_LEVELS[weaponId] <= client:getWeaponLevel() then
