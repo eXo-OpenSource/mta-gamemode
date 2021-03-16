@@ -475,9 +475,9 @@ GAS_STATIONS = {
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	{
-		name = "Vatos Locos",
+		name = "Los Aztecas",
 		stations = {
-			{Vector3(2819.12, -2143.39, 11.68), 90, 1},
+			{Vector3(1828.840, -2019.422, 13.947), 90, 1},
 		},
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
