@@ -1682,7 +1682,7 @@ function SelfGUI:onSettingChange(setting)
 			self.m_ChristmasMarketMusic:setEnabled(false)
 		end
 	elseif setting == "Sprache" then
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Sprache", self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Sprache (Experimentelles Feature)", self.m_SettingBG)
 		self.m_LanguageChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
 		self.m_LanguageChange:addItem("Deutsch/German")
 		self.m_LanguageChange:addItem("Englisch/English")
