@@ -16,8 +16,10 @@ function Forum:destructor()
 end
 
 function Forum:userCreate(username, password, email, callback)
-	fetchRemote(self.m_BaseUrl .. "?user-api&method=create", {
+	return fetchRemote(self.m_BaseUrl .. "?user-api&method=create", {
 		queueName = "Forum:userCreate",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -29,8 +31,10 @@ function Forum:userCreate(username, password, email, callback)
 end
 
 function Forum:userLogin(username, password, callback)
-	fetchRemote(self.m_BaseUrl .. "?user-api&method=login", {
+	return fetchRemote(self.m_BaseUrl .. "?user-api&method=login", {
 		queueName = "Forum:userLogin",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -55,6 +59,8 @@ function Forum:userGet(forumId, callback)
 
 	fetchRemote(self.m_BaseUrl .. "?user-api&method=get", {
 		queueName = "Forum:userGet",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = data
 	}, callback)
@@ -79,6 +85,8 @@ function Forum:userUpdate(forumId, data, callback)
 
 	fetchRemote(self.m_BaseUrl .. "?user-api&method=update", {
 		queueName = "Forum:userUpdate",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = formData
 	}, callback)
@@ -87,6 +95,8 @@ end
 function Forum:groupGet(groupId, callback)
 	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=get", {
 		queueName = "Forum:groupGet",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,
@@ -111,6 +121,8 @@ function Forum:groupAddMember(forumId, groupId, callback)
 
 	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=add", {
 		queueName = "Forum:groupAddMember",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = data
 	}, callback)
@@ -132,6 +144,8 @@ function Forum:groupRemoveMember(forumId, groupId, callback)
 
 	fetchRemote(self.m_BaseUrl .. "?user-group-api&method=remove", {
 		queueName = "Forum:groupRemoveMember",
+		connectionAttempts = FORUM_MAX_CONNECTION_ATTEMPTS,
+		connectTimeout = 5000,
 		method = "POST",
 		formFields = data
 	}, callback)

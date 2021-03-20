@@ -24,6 +24,10 @@ local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
 Account.REGISTRATION_ACTIVATED = true
+Account.PendingRequests = {
+	Logins = {},
+	Registrations = {}
+}
 
 function Account.login(player, username, password, pwhash, enableAutologin)
 	if player:getAccount() then return false end
@@ -84,9 +88,11 @@ function Account.login(player, username, password, pwhash, enableAutologin)
 			Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId, loginToken)
 			return
 		end
-
-	else
+	elseif resData and resData.status and (resData.status == 400 or resData.status == 412) then
 		player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- Error: Invalid username or password2
+		return false
+	else
+		player:triggerEvent("loginInformationUpdate", nil, true)
 		return false
 	end
 end
@@ -225,7 +231,7 @@ function Account.register(player, username, password, email)
 	end
 
 	-- Check if someone uses this username already
-	Forum:getSingleton():userCreate(username, password, email, Async.waitFor(self))
+	Account.createForum(username, password, email, player, Async.waitFor(self))
 	local result = Async.wait()
 	local data = fromJSON(result)
 
@@ -385,3 +391,66 @@ function Account.getBoardIdFromName(name)
 	local row = sql:queryFetchSingle("SELECT ForumId FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
 	return row.ForumId or 0
 end
+
+function Account.createForum(username, password, email, player, callback)
+	local onFinish = function(...)
+		Account.createForumEnd(player)
+		callback(...)
+	end
+
+	local request = Forum:getSingleton():userCreate(username, password, email, onFinish)
+
+	table.insert(Account.PendingRequests.Registrations, {player = player, currentAttempt = 1, currentQueuePosition = 1, request = request})
+end
+
+function Account.createForumEnd(player)
+	for k, login in pairs(Account.PendingRequests.Registrations) do
+		if login.player == player then
+			table.remove(Account.PendingRequests.Registrations, k)
+		end
+	end
+end
+
+function Account.loginForum(username, password, player, callback)
+	local onFinish = function(...)
+		Account.loginForumEnd(player)
+		callback(...)
+	end
+
+	local request = Forum:getSingleton():userLogin(username, password, onFinish)
+
+	table.insert(Account.PendingRequests.Logins, {player = player, currentAttempt = 1, currentQueuePosition = 1, request = request})
+end
+
+function Account.loginForumEnd(player)
+	for k, login in pairs(Account.PendingRequests.Logins) do
+		if login.player == player then
+			table.remove(Account.PendingRequests.Logins, k)
+		end
+	end
+end
+
+function Account.updatePendingLogins()
+	for k, pendingTable in pairs(Account.PendingRequests) do
+
+		for i = #pendingTable, 1, -1 do --check if maybe a player disconnected and abort his request
+			if not isElement(pendingTable[i].player) then
+				abortRemoteRequest(pendingTable[i])
+				table.remove(pendingTable, i)
+			end
+		end
+
+		for pos, login in pairs(pendingTable) do
+			local info = getRemoteRequestInfo(login.request)
+
+			if info and (info.currentAttempt ~= login.currentAttempt or pos ~= currentQueuePosition) then
+				login.currentAttempt = info.currentAttempt
+				login.currentQueuePosition = pos
+
+				login.player:triggerEvent("loginInformationUpdate", login.currentAttempt, pos)
+			end
+		end
+		
+	end
+end
+Account.LoginUpdateTimer = setTimer(Account.updatePendingLogins, 1000, 0)

@@ -15,6 +15,7 @@ if DEBUG then
 end
 
 DOMAINS = {"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), PICUPLOAD_PATH:gsub("https://", ""), "i.imgur.com", "download.exo-reallife.de", "download2.exo-reallife.de", "influxdb.merx.dev", "sentry.exo.merx.dev", "cp.exo-reallife.de", "cp-echo.exo-reallife.de"}
+FORUM_MAX_CONNECTION_ATTEMPTS = 4
 
 -- LEVELS
 MAX_JOB_LEVEL = 10
