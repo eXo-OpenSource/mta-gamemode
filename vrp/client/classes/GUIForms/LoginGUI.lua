@@ -211,12 +211,12 @@ function LoginGUI:loadRegisterElements()
 		:setCaption(_"Email-Adresse")
 		:setIcon(FontAwesomeSymbols.Mail)
 
-	self.m_Elements.checkAcceptRules = GUIGridCheckbox:new(1, 10, 7, 1, "Ich akzeptiere die Serverregeln.", self.m_Window)
-	self.m_Elements.cLblRules = GUIGridLabel:new(8, 10, 2, 1, "(ansehen)", self.m_Window)
+	self.m_Elements.checkAcceptRules = GUIGridCheckbox:new(1, 10, 7, 1, _"Ich akzeptiere die Serverregeln.", self.m_Window)
+	self.m_Elements.cLblRules = GUIGridLabel:new(8, 10, 2, 1, _"(ansehen)", self.m_Window)
 		:setClickable(true)
 		:setAlignX("right")
 
-	self.m_Elements.BtnRegister = GUIGridButton:new(1, 11, 9, 1, "Registrieren", self.m_Window)
+	self.m_Elements.BtnRegister = GUIGridButton:new(1, 11, 9, 1, _"Registrieren", self.m_Window)
 		:setBarEnabled(false)
 
 	self.m_Elements.Label = GUIGridLabel:new(3, 12, 5, 1, _"(zurück zum Login)", self.m_Window)
@@ -242,10 +242,10 @@ function LoginGUI:loadRegisterElements()
 					triggerServerEvent("accountregister", root, self.m_Elements.editName:getText(), self.m_Elements.editPW:getText(), self.m_Elements.editEmail:getText())
 					self.m_Elements.BtnRegister:setEnabled(false)
 				else
-					triggerEvent("registerfailed",localPlayer,"Du musst den Serveregeln zustimmen!")
+					triggerEvent("registerfailed",localPlayer, _"Du musst den Serveregeln zustimmen!")
 				end
 			else
-				triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
+				triggerEvent("registerfailed",localPlayer, _"Passwörter stimmen nicht überein!")
 			end
 		end
 	end, self)
@@ -378,13 +378,15 @@ addEventHandler("closeLogin", root,
 addEvent("loginInformationUpdate", true)
 addEventHandler("loginInformationUpdate", root, 
 	function(queuePosition, connectionAttempt)
-		if connectionAttempt == true then
-			LoginGUI:getSingleton():setLoggingIn(false)
-			ErrorBox:new(_"Verbindung zum Forum nicht möglich!")
-			return 
+		if LoginGUI:isInstantiated() then
+			if connectionAttempt == true then
+				LoginGUI:getSingleton():setLoggingIn(false)
+				ErrorBox:new(_"Verbindung zum Forum nicht möglich!")
+				return
+			end
+			LoginGUI:getSingleton().m_QueuePosition = queuePosition
+			LoginGUI:getSingleton().m_ConnectionAttempt = connectionAttempt
 		end
-		LoginGUI:getSingleton().m_QueuePosition = queuePosition
-		LoginGUI:getSingleton().m_ConnectionAttempt = connectionAttempt
 	end
 )
 
