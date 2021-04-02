@@ -11,7 +11,7 @@ Easter = inherit(Singleton)
 Easter.HidingRabbitPositions = {
     {-793.63, 2266.08, 59.08, 87},      --Hütte LV
     {2005.65, 2929.34, 47.76, 0},       --Wasserpumpe LV
-    {1407.69, -1301.61, 9.90, 181},     --Kanal LS
+    {-1920.1, 951.72, 45.81, 0},        --SF Building
     {2771.18, -1400.64, 27.18, 0},      --East LS
     {2228.90, 171.31, 27.48, 90},       --Palomino Creek Garage
     {-1229.49, 54.32, 14.23, 341},      --SF Airport
@@ -26,7 +26,7 @@ Easter.HidingRabbitPositions = {
 Easter.RabbitHints = {
     {"Gestatten, der Osterhase. Dürfte Ich dich um einen Gefallen Bitten?", "Meine 13 Helferchen sind noch nicht wieder da...", "Einen meiner Helfer habe Ich Richtung Sherman Damm geschickt...", "Könntest Du Ihn suchen gehen?", "Solltest Du Ihn finden, stelle Dich bitte direkt vor ihn, sonst sieht er Dich nicht."},
     {"Hey. Mein nächstes Helferchen habe Ich in die Nähe von Prickle Pine geschickt.", "Viel Glück beim Suchen! Und... Danke..."},
-    {"Hi. Meinem nächsten Helferchen habe Ich gesagt, es solle hier in der Nähe bleiben...", "Wo er wohl ist?"},
+    {"Hi.", "Meinem nächsten Helferchen sagte Ich folgendes:", "\"Begib Dich in den Nord-Osten von San Fierro!\"", "Wo er wohl ist?"},
     {"Schön, dass Du wieder da bist...", "Meinem vierten Helferchen sagte Ich, es solle ein paar Eier im Osten der Stadt verstecken."},
     {"Ich freue mich, Dich zu sehen!", "Ich sagte meinem fünften Helferchen, es solle in die ländlicheren Städte im Norden gehen.", "Würdest Du für mich nachsehen?"},
     {"Hallo erstmal!", "Ich erinnere mich, ein Helferchen in die Hafengegend von San Fierro geschickt zu haben..."},

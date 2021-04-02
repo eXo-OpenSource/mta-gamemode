@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 Easter = inherit(Singleton)
-Easter.startDay = 95
+Easter.startDay = 91
 Easter.today = getRealTime().yearday
 Easter.RabbitObjects = { -- true = createObject ; false = removeWorldModel
     [4] = {
