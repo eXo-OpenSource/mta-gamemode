@@ -55,7 +55,6 @@ function POParser:constructor(poPath)
 				end
 			end
 		else
-			outputConsole(tostring(lastKey) .. " - " .. tostring(self.m_Strings[lastKey]))
 			lastKey = nil
 			lastInstruction = nil
 		end
