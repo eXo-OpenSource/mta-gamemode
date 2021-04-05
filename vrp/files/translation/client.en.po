@@ -3193,7 +3193,7 @@ msgid "blaues Farbschema"
 msgstr "blue color scheme"
 
 msgid "Beschriftungen"
-msgstr "标注"
+msgstr "Labels"
 
 msgid "Punkte / Level"
 msgstr "Points / Level"
