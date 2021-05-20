@@ -100,15 +100,12 @@ if SERVER then
 	end
 else
 	function _(message, ...)
-		if DEBUG then
-			local status, errOrReturn = pcall(function(...) return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...) end, ...)
-			if not status then
-				outputDebug(errOrReturn)
-				outputDebug(debug.traceback())
-			end
-			return errOrReturn
-		else
-			return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...)
+		local status, errOrReturn = pcall(function(...) return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...) end, ...)
+		if not status then
+			outputDebug(errOrReturn)
+			outputDebug(debug.traceback())
+			return message
 		end
+		return errOrReturn
 	end
 end
