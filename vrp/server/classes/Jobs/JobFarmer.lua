@@ -57,6 +57,8 @@ function JobFarmer:giveJobMoney(player)
 
 	if not self.m_PlayerIncomeCache[player] then return end 
 	local income = 0
+	local duration = getRealTime().timestamp - self.m_PlayerIncomeCache[player].lastAction
+	self.m_PlayerIncomeCache[player].lastAction = 0
 	if self.m_PlayerIncomeCache[player].combine > 0 then
 		income = self.m_PlayerIncomeCache[player].combine
 		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
@@ -215,7 +217,7 @@ end
 function JobFarmer:start(player)
 	self:setJobElementVisibility(player,true)
 	self.m_CurrentPlants[player] = 0
-	self.m_PlayerIncomeCache[player] = {combine = 0, tractor = 0}
+	self.m_PlayerIncomeCache[player] = {combine = 0, tractor = 0, lastAction = 0}
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 	self.m_VehicleSpawner2:toggleForPlayer(player, true)
 
@@ -398,6 +400,9 @@ function JobFarmer:createPlant(position, vehicle)
 
 		local income = MONEY_PLANT_TRACTOR * JOB_PAY_MULTIPLICATOR	
 		self.m_PlayerIncomeCache[client].tractor = self.m_PlayerIncomeCache[client].tractor + income
+		if self.m_PlayerIncomeCache[client].lastAction == 0 then
+			self.m_PlayerIncomeCache[client].lastAction = getRealTime().timestamp
+		end
 	end
 end
 
@@ -417,6 +422,9 @@ function JobFarmer:collectPlant(hitElement, matchingDimension)
 
 			local income = MONEY_PLANT_HARVESTER * JOB_PAY_MULTIPLICATOR
 			self.m_PlayerIncomeCache[player].combine = self.m_PlayerIncomeCache[player].combine + income
+			if self.m_PlayerIncomeCache[player].lastAction == 0 then
+				self.m_PlayerIncomeCache[player].lastAction = getRealTime().timestamp
+			end
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 			self:updateClientData()
 		end
