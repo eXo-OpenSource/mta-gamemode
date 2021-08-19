@@ -57,11 +57,10 @@
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
 * WearablePortables = WearablePortables;
-* WearableClothes = WearableClothes;
 * ItemEntrance = ItemEntrance;
 * ItemDoor = ItemDoor; - started
 
-
+* ~~WearableClothes = WearableClothes~~; - done
 * ~~ItemFishingRod = ItemFishingRod;~~ - done
 * ~~WearableShirt = WearableShirt;~~ - done
 * ~~WearableHelmet = WearableHelmet;~~ - done

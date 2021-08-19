@@ -1062,7 +1062,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (61, 'duffle', 3, 'WearableShirt', 'Tragetasche', 'Es passt einiges hier rein!', 'files/images/Inventory/items/Objekte/dufflebag.png', 3915, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (62, 'swatshield', 3, 'WearablePortables', 'Swatschild', 'Ein Einsatzschild für Spezialtruppen!', 'files/images/Inventory/items/Objekte/riot_shield.png', 1631, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (63, 'stolenGoods', 3, '-', 'Diebesgut', 'Eine Beutel voller Gegenstände! Legal\'', 'files/images/Inventory/items/Objekte/diebesgut.png', 3915, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (64, 'clothing', 3, '-', 'Kleidung', 'Ein Set Kleidung.', 'files/images/Inventory/items/Items/Kleidung.png', 1275, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (64, 'clothing', 3, 'WearableClothes', 'Kleidung', 'Ein Set Kleidung.', 'files/images/Inventory/items/Items/Kleidung.png', 1275, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (65, 'bambooFishingRod', 3, 'ItemFishingRod', 'Bambusstange', 'Wollen fangen Fische\'', 'files/images/Inventory/items/Items/Bamboorod.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (66, 'coolingBoxSmall', 3, 'ItemCoolingBox', 'Kleine Kühltasche', 'Kühlt gut, wieder und wieder!', 'files/images/Inventory/items/Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (67, 'coolingBoxMedium', 3, 'ItemCoolingBox', 'Kühltasche', 'Kühlt gut, wieder und wieder!', 'files/images/Inventory/items/Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
