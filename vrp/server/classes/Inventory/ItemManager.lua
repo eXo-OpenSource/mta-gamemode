@@ -68,6 +68,7 @@ function ItemManager:loadItems()
 			IsStackable = row.IsStackable == 1;
 			Throwable = row.Throwable == 1;
 			Breakable = row.Breakable == 1;
+			Quality = row.Quality;
 		}
 
 		self.m_ItemIdToName[row.TechnicalName] = row.Id

@@ -1773,3 +1773,13 @@ function Player:setThrowingObject(object)
 end
 
 function Player:getThrowingObject() return self.m_ThrowingObject end
+
+function Player:setTemporaryInventory(inventory)
+	if inventory then
+		self.m_TemporaryInventory = inventory
+		self:setPrivateSync("TemporaryInventoryId", inventory:getId())
+	else
+		self.m_TemporaryInventory = nil
+		self:setPrivateSync("TemporaryInventoryId", nil)
+	end
+end

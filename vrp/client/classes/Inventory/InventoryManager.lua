@@ -17,20 +17,8 @@ function InventoryManager:constructor()
 	self.m_OpenInventoryGUIs = {}
 
 	setTimer(function()
-		localPlayer:setPrivateSyncChangeHandler("Id", function()
-			local id = localPlayer:getPrivateSync("Id")
-			if id and id ~= 0 then
-				localPlayer:setPrivateSyncChangeHandler("Id", nil)
-				InventoryManager:getSingleton().m_PlayerInventoryGUI = InventoryGUI.create(_"Inventar", DbElementType.Player, id, "small")
-				InventoryManager:getSingleton().m_PlayerInventoryGUI:setAbsolutePosition(screenWidth-InventoryManager:getSingleton().m_PlayerInventoryGUI.m_Width-5, screenHeight-InventoryManager:getSingleton().m_PlayerInventoryGUI.m_Height-5)
-				InventoryManager:getSingleton().m_PlayerInventoryGUI:hide()
-
-
-				bindKey("i", "up", bind(function()
-					self.m_PlayerInventoryGUI:toggle()
-				end, InventoryManager:getSingleton()))
-			end
-		end)
+		localPlayer:setPrivateSyncChangeHandler("Id", bind(self.onInventoryAssigned, self))
+		localPlayer:setPrivateSyncChangeHandler("TemporaryInventoryId", bind(self.onTemporaryInventoryAssigned, self))
 	end, 100, 1)
 
 	addEventHandler("onInventorySync", root, bind(self.Event_onInventorySync, self))
@@ -105,7 +93,7 @@ function InventoryManager:onItemLeft(inventoryId, item, slot)
 end
 
 function InventoryManager:onItemRight(inventoryId, item)
-	if self.m_PlayerInventoryId == inventoryId then
+	if self.m_PlayerInventoryId == inventoryId and not self.m_TemporaryInventory then
 		if not getKeyState("lshift") then
 			triggerServerEvent("onItemUse", localPlayer, inventoryId, item.Id)
 		else
@@ -121,4 +109,37 @@ end
 
 function InventoryManager:isHovering()
 	return true
+end
+
+function InventoryManager:toggleInventory()
+	local inventory = self.m_TemporaryInventory and self.m_TemporaryInventory or self.m_PlayerInventoryGUI
+	inventory:toggle()
+end
+
+function InventoryManager:onInventoryAssigned(id)
+	if id and id ~= 0 then
+		localPlayer:setPrivateSyncChangeHandler("Id", nil)
+
+		self.m_PlayerInventoryGUI = InventoryGUI.create(_"Inventar", DbElementType.Player, id, "small")
+		self.m_PlayerInventoryGUI:setAbsolutePosition(screenWidth-self.m_PlayerInventoryGUI.m_Width-5, screenHeight-self.m_PlayerInventoryGUI.m_Height-5)
+		self.m_PlayerInventoryGUI:close()
+
+		bindKey("i", "up", bind(self.toggleInventory, self))
+	end
+end
+
+function InventoryManager:onTemporaryInventoryAssigned(id)
+	if not id then
+		delete(self.m_TemporaryInventory)
+		self.m_TemporaryInventory = nil
+		return
+	end
+
+	local inventory = InventoryGUI.create(_"Inventar (Temporär)", DbElementType.Temporary, id, "small")
+
+	if inventory then
+		self.m_TemporaryInventory = inventory
+		self.m_TemporaryInventory:close()
+		self.m_PlayerInventoryGUI:close()
+	end
 end

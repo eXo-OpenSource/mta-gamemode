@@ -195,11 +195,15 @@ end
 function GUIItemSlot:updateTooltipText()
 	local item = self.m_ItemData
 	local tooltipText
+	local tooltipColor
 	local showDebug = getKeyState("lalt") and localPlayer:getRank() > 2
 
 	if item then
 		tooltipText = {}
 		local metadata = self.m_ItemData.Metadata
+
+		local quality = (metadata and metadata.Quality) and metadata.Quality or item.Quality
+		tooltipColor = ItemQualities[quality] and ItemQualities[quality].color or Color.Accent
 
 		local name = (metadata and metadata.Name) and metadata.Name or item.Name
 		table.insert(tooltipText, {text = name, size = 24, color = Color.White})
@@ -232,5 +236,5 @@ function GUIItemSlot:updateTooltipText()
 		end
 	end
 
-	self:setTooltip(tooltipText)
+	self:setTooltip(tooltipText, nil, tooltipColor)
 end

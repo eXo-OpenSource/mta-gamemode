@@ -530,6 +530,14 @@ for k, v in pairs(ItemsWeaponMappingAmmunition) do
 	ItemsWeaponMappingAmmunitionName[v] = k
 end
 
+ItemQualities = {
+	[0] = {name = "Standard", color = tocolor(58, 186, 242)},
+	[1] = {name = "Selten", color = tocolor(20, 255, 20)},
+	[2] = {name = "Episch", color = tocolor(125, 0, 125)},
+	[3] = {name = "Legendär", color = tocolor(254, 138, 0)},
+	[4] = {name = "Illegal", color = tocolor(178, 35, 33)},
+}
+
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
