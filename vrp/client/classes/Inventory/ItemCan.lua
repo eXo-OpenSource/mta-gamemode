@@ -38,8 +38,7 @@ function ItemCanGUI:constructor(itemId)
 
 	InventoryManager:getSingleton():getPlayerHook():register(self.m_UpdateEvent)
 
-	local inventory = InventoryManager:getSingleton():getPlayerInventory()
-	self:refresh(inventory.inventoryId, inventory.elementId, inventory.elementType, inventory.size, inventory.items)
+	self:refresh()
 end
 
 function ItemCanGUI:destructor()
@@ -49,7 +48,8 @@ function ItemCanGUI:destructor()
 	if cursor then Cursor:show() end
 end
 
-function ItemCanGUI:refresh(data, items)
+function ItemCanGUI:refresh()
+	local items = InventoryManager:getSingleton():getPlayerInventory().items
 	local durability = 0
 	for k, v in pairs(items) do
 		if v.Id == self.m_ItemId then

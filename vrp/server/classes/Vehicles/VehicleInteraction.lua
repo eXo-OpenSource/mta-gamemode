@@ -64,10 +64,10 @@ function VehicleInteraction:Event_repairVehicle()
 end
 
 function VehicleInteraction:repairVehicle(player, veh)
-	if player:getInventoryOld():getItemAmount("Reparaturkit") > 0 then
+	if player:getInventory():getItemAmount("repairKit") > 0 then
 		if veh.isBroken and veh:isBroken() then
 			player:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", player))
-			player:getInventoryOld():removeItem("Reparaturkit", 1)
+			player:getInventory():takeItem("repairKit", 1)
 			player:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
 			setTimer(function(player, veh)
 				veh:setBroken(false)

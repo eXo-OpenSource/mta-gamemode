@@ -386,6 +386,8 @@ function Inventory:save(sync)
 				Amount = v.Amount;
 				Durability = v.Durability;
 				Slot = v.Slot;
+				Tradeable = v.Tradeable;
+				ExpireTime = v.ExpireTime;
 				Metadata = type(v.Metadata) == "table" and toJSON(v.Metadata);
 			})
 		end

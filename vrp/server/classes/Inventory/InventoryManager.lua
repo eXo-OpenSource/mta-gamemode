@@ -480,7 +480,7 @@ function InventoryManager:giveItem(inventory, item, amount, data, setInSlot)
 				newItem.Slot = setInSlot
 				newItem.Amount = amountToGive
 				newItem.Durability = newItem.Durability or newItem.MaxDurability
-				newItem.ExpireTime = newItem.Expireable and (expires and expires or newItem.MaxExpireTime) or 0
+				newItem.ExpireTime = newItem.Expireable and (newItem.ExpireTime and newItem.ExpireTime or newItem.MaxExpireTime) or 0
 
 				self.m_NextItemId = self.m_NextItemId + 1
 				table.insert(inventory.m_Items, newItem)
@@ -538,7 +538,7 @@ function InventoryManager:giveItem(inventory, item, amount, data, setInSlot)
 			newItem.Slot = slot
 			newItem.Amount = amountToGive
 			newItem.Durability = newItem.Durability or newItem.MaxDurability
-			newItem.ExpireTime = newItem.Expireable and (expires and expires or newItem.MaxExpireTime) or 0
+			newItem.ExpireTime = newItem.Expireable and (newItem.ExpireTime and newItem.ExpireTime or newItem.MaxExpireTime) or 0
 
 			self.m_NextItemId = self.m_NextItemId + 1
 			table.insert(inventory.m_Items, newItem)
@@ -1002,7 +1002,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (1, 'weed', 5, 'ItemDrugs', 'Weed', 'Weed ist geil', 'files/images/Inventory/items/Drogen/Weed.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (2, 'burger', 1, 'ItemFood', 'Burger', 'Fuellt deinen Hunger auf', 'files/images/Inventory/items/Essen/Burger.png', 2880, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (3, 'jerrycan', 3, 'ItemFuelcan', 'Benzinkanister', 'Fuellt den Tank eines Fahrzeuges auf!', 'files/images/Inventory/items/Items/Benzinkanister.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (4, 'chips', 3, '-', 'Chips', 'Casino-Chips', 'files/images/Inventory/items/Items/Chips.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (4, 'chips', 3, 'ItemNotUsable', 'Chips', 'Casino-Chips', 'files/images/Inventory/items/Items/Chips.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (5, 'binoculars', 3, '-', 'Fernglas', 'Augen wie ein Adler', 'files/images/Inventory/items/Items/Fernglas.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (6, 'medkit', 3, 'ItemHealpack', 'Medikit', 'Fuellt deine Gesundheit auf', 'files/images/Inventory/items/Items/Medikit.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (7, 'radio', 4, 'ItemRadio', 'Radio', 'Platzierbares Radio zum Musik abspielen!', 'files/images/Inventory/items/Items/Radio.png', 2226, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
@@ -1018,7 +1018,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (17, 'exoPad', 3, '-', 'eXoPad', 'Tablet von eXo-Reallife', 'files/images/Inventory/items/Items/eXoPad.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (18, 'gameBoy', 3, '-', 'Gameboy', 'Spiele Tetris und knacke den Highscore', 'files/images/Inventory/items/Items/Gameboy.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (19, 'materials', 3, '-', 'Mats', 'Baue Waffen aus diesen illegalen Materialien', 'files/images/Inventory/items/Items/Mats.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (20, 'fish', 3, '-', 'Fische', 'Fische, frisch ausm Meer', 'files/images/Inventory/items/Items/Fische.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (20, 'fish', 3, 'ItemNotUsable', 'Fische', 'Fische, frisch ausm Meer', 'files/images/Inventory/items/Items/Fische.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (21, 'newspaper', 3, '-', 'Zeitung', 'Neuigkeiten der SAN-News', 'files/images/Inventory/items/Items/Zeitung.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (22, 'ecstasy', 5, '-', 'Ecstasy', 'Finger weg von den Drogen!', 'files/images/Inventory/items/Drogen/Ecstasy.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (23, 'heroin', 5, 'ItemDrugs', 'Heroin', 'Finger weg von den Drogen!', 'files/images/Inventory/items/Drogen/Heroin.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
@@ -1026,13 +1026,13 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (25, 'repairKit', 3, 'ItemRepairKit', 'Reparaturkit', 'Zum reparieren von Totalschaeden', 'files/images/Inventory/items/Items/Reparaturkit.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (26, 'candies', 1, 'ItemFood', 'Suessigkeiten', 'Was zum Naschen fuer Zwischendurch', 'files/images/Inventory/items/Essen/Suessigkeiten.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (27, 'pumpkin', 3, 'WearableHelmet', 'Kürbis', 'Sammle diese und Kauf dir wundervolle Praemien davon!', 'files/images/Inventory/items/Items/Kuerbis.png', 1935, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (28, 'packet', 3, '-', 'Päckchen', 'Nettes Päckchen vom Weihnachtsmann', 'files/images/Inventory/items/Items/Paeckchen.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (28, 'packet', 3, 'ItemNotUsable', 'Päckchen', 'Nettes Päckchen vom Weihnachtsmann', 'files/images/Inventory/items/Items/Paeckchen.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (29, 'gluvine', 1, 'ItemAlcohol', 'Glühwein', 'Gibts was besseres zur kalten Adventzeit\'', 'files/images/Inventory/items/Essen/Gluehwein.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (30, 'coffee', 1, 'ItemFood', 'Kaffee', 'Warmer Kaffee, nicht vor dem Schlafen gehen trinken!', 'files/images/Inventory/items/Essen/Kaffee.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (31, 'gingerbread', 1, 'ItemFood', 'Lebkuchen', 'Nette Jause zwischendurch in den kalten Monaten', 'files/images/Inventory/items/Essen/Lebkuchen.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (32, 'shot', 1, 'ItemAlcohol', 'Shot', 'alkoholhaltiges Getraenk, das in 2-cl- oder 4-cl-Glaesern serviert und zumeist in einem Zug getrunken wird', 'files/images/Inventory/items/Essen/Shot.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (33, 'sousage', 1, 'ItemFood', 'Würstchen', 'Lecker Wuerstchen mit Senf!', 'files/images/Inventory/items/Essen/Wuerstchen.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (34, 'tollTicket', 3, '-', 'Mautpass', 'Damit kommst du kostenlos durch Mautstellen. 1 Woche gueltig!', 'files/images/Inventory/items/Items/Mautpass.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0);
+		INSERT INTO `vrp_items` VALUES (34, 'tollTicket', 3, 'ItemNotUsable', 'Mautpass', 'Damit kommst du kostenlos durch Mautstellen. 1 Woche gueltig!', 'files/images/Inventory/items/Items/Mautpass.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (35, 'cookie', 1, 'ItemFood', 'Keks', 'Verliehen von Entwicklern für besondere Verdienste', 'files/images/Inventory/items/Items/Keks.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (36, 'helmet', 3, 'WearableHelmet', 'Helm', 'Safty First! Setze ihn auf wann immer du möchtest!', 'files/images/Inventory/items/Items/Helm.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (37, 'mask', 3, '-', 'Maske', 'Verleihe dir ein nie dargewesenes Aussehen mit einer tollen Maske!', 'files/images/Inventory/items/Items/Maske.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
@@ -1061,7 +1061,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (60, 'kevlar', 3, 'WearableShirt', 'Kevlar', 'Egal ob 9mm oder .45, alles wird gestoppt!', 'files/images/Inventory/items/Objekte/kevlar.png', 3916, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (61, 'duffle', 3, 'WearableShirt', 'Tragetasche', 'Es passt einiges hier rein!', 'files/images/Inventory/items/Objekte/dufflebag.png', 3915, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (62, 'swatshield', 3, 'WearablePortables', 'Swatschild', 'Ein Einsatzschild für Spezialtruppen!', 'files/images/Inventory/items/Objekte/riot_shield.png', 1631, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
-		INSERT INTO `vrp_items` VALUES (63, 'stolenGoods', 3, '-', 'Diebesgut', 'Eine Beutel voller Gegenstände! Legal\'', 'files/images/Inventory/items/Objekte/diebesgut.png', 3915, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (63, 'stolenGoods', 3, 'ItemNotUsable', 'Diebesgut', 'Eine Beutel voller Gegenstände! Legal\'', 'files/images/Inventory/items/Objekte/diebesgut.png', 3915, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (64, 'clothing', 3, 'WearableClothes', 'Kleidung', 'Ein Set Kleidung.', 'files/images/Inventory/items/Items/Kleidung.png', 1275, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (65, 'bambooFishingRod', 3, 'ItemFishingRod', 'Bambusstange', 'Wollen fangen Fische\'', 'files/images/Inventory/items/Items/Bamboorod.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (66, 'coolingBoxSmall', 3, 'ItemCoolingBox', 'Kleine Kühltasche', 'Kühlt gut, wieder und wieder!', 'files/images/Inventory/items/Items/Coolbag.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
@@ -1069,7 +1069,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (68, 'coolingBoxLarge', 3, 'ItemCoolingBox', 'Kühlbox', 'Kühlt gut, wieder und wieder!', 'files/images/Inventory/items/Items/Coolbox.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (69, 'swathelmet', 3, 'WearableHelmet', 'Einsatzhelm', 'Falls es hart auf hart kommt.', 'files/images/Inventory/items/Objekte/einsatzhelm.png', 3911, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0);
 		INSERT INTO `vrp_items` VALUES (70, 'bait', 3, 'ItemFishingBait', 'Köder', 'Lockt ein paar Fische an und vereinfacht das Angeln', 'files/images/Inventory/items/Items/Bait.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (71, 'easterEgg', 3, '-', 'Osterei', 'Event-Special: Osterei', 'files/images/Inventory/items/Items/Osterei.png', 1933, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (71, 'easterEgg', 3, 'ItemNotUsable', 'Osterei', 'Event-Special: Osterei', 'files/images/Inventory/items/Items/Osterei.png', 1933, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (72, 'bunnyEars', 3, 'WearableHelmet', 'Hasenohren', 'Event-Special Hasenohren', 'files/images/Inventory/items/Objekte/Hasenohren.png', 1934, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (73, 'warningCones', 4, 'ItemBarricade', 'Warnkegel', 'zum Markieren von Einsatzorten', 'files/images/Inventory/items/Objekte/Warnkegel.png', 1238, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (74, 'apple', 1, 'ItemFood', 'Apfel', 'gesundes Obst', 'files/images/Inventory/items/Essen/Apfel.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
@@ -1092,7 +1092,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (91, 'smokeGrenade', 3, 'ItemSmokeGrenade', 'Rauchgranate', 'Eine Rauchgranate um Sicht zu verhindern.', 'files/images/Inventory/items/Items/Smokegrenade.png', 1672, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (92, 'transmitter', 4, '-', 'Transmitter', 'Ein Radiosender der über Ultrakurzwelle empfängt.', 'files/images/Inventory/items/Objekte/transmitter.png', 3031, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (93, 'star', 4, 'WearableHelmet', 'Stern', 'Ein Stern erhalten durch den Braboy!', 'files/images/Inventory/items/Objekte/star.png', 902, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (94, 'keycard', 3, '-', 'Keycard', 'Benutze die Keycard um Knasttüren zu öffnen', 'files/images/Inventory/items/Items/Keycard.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (94, 'keycard', 3, 'ItemNotUsable', 'Keycard', 'Benutze die Keycard um Knasttüren zu öffnen', 'files/images/Inventory/items/Items/Keycard.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (95, 'flowerSeed', 1, 'ItemPlant', 'Blumen-Samen', 'Pflanze diese Samen um einen wunderschönen Blumenstrauß zu ernten', 'files/images/Inventory/items/Drogen/Samen.png', 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (96, 'defuseKit', 3, 'ItemDefuseKit', 'DefuseKit', 'Zum Entschärfen von SLAMs', 'files/images/Inventory/items/Items/DefuseKit.png', 2886, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (97, 'fishLexicon', 3, 'ItemFishingLexicon', 'Fischlexikon', 'Sammelt Informationen über deine geangelte Fische!', 'files/images/Inventory/items/Items/FishEncyclopedia.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
@@ -1103,7 +1103,7 @@ function InventoryManager:migrate()
 		INSERT INTO `vrp_items` VALUES (102, 'pilkerBait', 3, 'ItemFishingBait', 'Pilkerköder', 'Spezieller Köder für Meeresangeln', 'files/images/Inventory/items/Items/Pilkerbait.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (103, 'swimmer', 3, 'ItemFishingAccessorie', 'Schwimmer', 'Zubehör. Auf der Wasseroberfläche treibender Bissanzeiger', 'files/images/Inventory/items/Items/Bobber.png', 0, 500, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (104, 'spinner', 3, 'ItemFishingAccessorie', 'Spinner', 'Zubehör. Eine rotierende Metallscheibe für ein einfaches und effektives fangen von kleinen als auch große Fische', 'files/images/Inventory/items/Items/Spinner.png', 0, 350, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
-		INSERT INTO `vrp_items` VALUES (105, 'clubCard', 3, '-', 'Clubkarte', 'Willkommen im Club der Riskanten.', 'files/images/Inventory/items/Items/Clubcard.png', 2886, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+		INSERT INTO `vrp_items` VALUES (105, 'clubCard', 3, 'ItemNotUsable', 'Clubkarte', 'Willkommen im Club der Riskanten.', 'files/images/Inventory/items/Items/Clubcard.png', 2886, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (106, 'albacore', 6, 'ItemFish', 'Weißer Thun', '', 'files/images/Inventory/items/albacore.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (107, 'anchovy', 6, 'ItemFish', 'Sardelle', '', 'files/images/Inventory/items/anchovy.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		INSERT INTO `vrp_items` VALUES (108, 'bream', 6, 'ItemFish', 'Brasse', '', 'files/images/Inventory/items/bream.png', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

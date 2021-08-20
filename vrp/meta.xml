@@ -184,6 +184,7 @@
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemThrowable.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemPlayHouseCard.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemNotUsable.lua" type="server"/>
 
 	<!-- throwable -->
 	<script src="server/classes/Inventory/Throwable/ItemThrowShoe.lua" type="server"/>

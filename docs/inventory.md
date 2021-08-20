@@ -45,6 +45,11 @@
 ## Bug List
 
 - [ ] Depot with item amount zero?
+- [ ] Splitting items onto other items involving 3 or more stacks results in items appearing on the wrong stack.
+- [ ] Moving items into an inventory which doesn't support the item category the item still gets transfered. The category check only occurs when an item is split.
+- [ ] If you move an item onto the same item in another Inventory duplicates the item onto other slots in your own inventory (only visually?) and also stacks them on top of each other in the other inventory
+- [ ] Moving fishes from one cooling box to another doesn't work (intended?)
+- [ ] When you move items into a trunk you automatically click through the inventory onto the vehicle
 
 ## Needs checking
 
@@ -56,10 +61,10 @@
 * ItemTaser = ItemTaser;
 * ItemSmokeGrenade = ItemSmokeGrenade;
 * ItemDefuseKit = ItemDefuseKit;
-* WearablePortables = WearablePortables;
 * ItemEntrance = ItemEntrance;
 * ItemDoor = ItemDoor; - started
 
+* ~~WearablePortables = WearablePortables~~; - done
 * ~~WearableClothes = WearableClothes~~; - done
 * ~~ItemFishingRod = ItemFishingRod;~~ - done
 * ~~WearableShirt = WearableShirt;~~ - done

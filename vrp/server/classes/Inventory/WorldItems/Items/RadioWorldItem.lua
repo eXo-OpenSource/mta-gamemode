@@ -24,6 +24,10 @@ function RadioWorldItem:constructor(itemData, placedBy, elementId, elementType, 
 	addEventHandler("itemRadioStopSound", self:getObject(), bind(self.Event_onRadioStopSound, self))
 end
 
+function RadioWorldItem:destructor()
+	triggerClientEvent("itemRadioRemove", self:getObject())
+end
+
 function RadioWorldItem:Event_onRadioChangeSound(url)
 	if self:hasPlayerPermissionTo(client, WorldItem.Action.Move) then
 		triggerClientEvent("itemRadioChangeURLClient", self:getObject(), url)
