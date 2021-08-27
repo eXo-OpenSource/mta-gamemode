@@ -23,12 +23,16 @@ function Vehicle:virtual_constructor()
 	self.m_EngineState = false
 	self.m_Fuel = 100
 	self.m_Mileage = 0
+	self.m_FuelDisabled = false
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
 	self.m_HandbrakeHook = Hook:new()
 	self.m_RespawnHook = Hook:new()
 	self.m_DamageHook = Hook:new()
+	self:setData("canUseCruiseControl", true, true)
+	self:setData("canUseLimiter", true, true)
+	self:setData("vehicleCanBreak", true, true)
 
 	self.m_LastDrivers = {}
 
@@ -536,6 +540,14 @@ function Vehicle:getFuel()
 	return self.m_Fuel
 end
 
+function Vehicle:setFuelDisabled(state)
+	self.m_FuelDisabled = state
+end
+
+function Vehicle:getFuelDisabled()
+	return self.m_FuelDisabled 
+end
+
 function Vehicle:setMileage(mileage)
 	self.m_Mileage = mileage
 	setElementData(self, "mileage", self:getMileage())
@@ -574,6 +586,14 @@ end
 
 function Vehicle:isBroken()
 	return self:getData("vehicleEngineBroken")
+end
+
+function Vehicle:canBreak()
+	return self:getData("vehicleCanBreak")
+end
+
+function Vehicle:setCanBreak(state)
+	self:setData("vehicleCanBreak", state, true)
 end
 
 function Vehicle:toggleInternalSmoke()

@@ -191,7 +191,7 @@ end
 function PlayerManager:Event_onToggleSeatBelt( )
 	if client then
 		local vehicle = getPedOccupiedVehicle(client)
-		if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then
+		if vehicle and vehicle:getVehicleType() == VehicleType.Automobile and not vehicle:getData("disableSeatBelt") then
 			client:buckleSeatBelt(vehicle)
 		end
 	end

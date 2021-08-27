@@ -300,6 +300,9 @@
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchDefault.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchHalloween.lua" type="server"/>
+	<script src="server/classes/Gameplay/SuperSweeper/SuperSweeperManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/SuperSweeper/SuperSweeperLobby.lua" type="server"/>
+	<script src="server/classes/Gameplay/SuperSweeper/Modes/SuperSweeperDefault.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
@@ -465,6 +468,7 @@
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/WeaponVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/CompanyVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/FactionVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/GroupVehicle.lua" type="server"/>
@@ -791,6 +795,7 @@
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
+	<script src="client/classes/HUD/HUDSuperSweeper.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/HUDAviation.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
@@ -885,6 +890,7 @@
 	<script src="client/classes/GUIForms/ItemShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ChangerBox.lua" type="client"/>
+	<script src="client/classes/GUIForms/ListEditBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ChangerBoxWithCheck.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolPedGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolTheoryGUI.lua" type="client"/>
@@ -988,6 +994,9 @@
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SuperSweeper/SuperSweeperLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SuperSweeper/SuperSweeperCreateLobby.lua" type="client"/>
+	<script src="client/classes/GUIForms/SuperSweeper/SuperSweeperGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PoliceSoundsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MultiAccountWindow.lua" type="client"/>
 	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectGUI.lua" type="client" />
@@ -1120,6 +1129,7 @@
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGuns.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleWeapon.lua" type="client"/>
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -1207,6 +1217,7 @@
 	<script src="client/classes/Gameplay/CasinoWheelBet.lua" type="client"/>
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
+	<script src="client/classes/Gameplay/SuperSweeperManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/Sewers.lua" type="client"/>
 	<script src="client/classes/Gameplay/PlayHouse.lua" type="client"/>
@@ -1705,6 +1716,14 @@
 	<vrpfile src="files/images/Deathmatch/death_img.png"/>
 	<vrpfile src="files/images/Deathmatch/death_round.png"/>
 
+	<vrpfile src="files/images/SuperSweeper/health_bar.png"/>
+	<vrpfile src="files/images/SuperSweeper/gps.png"/>
+	<vrpfile src="files/images/SuperSweeper/invisible.png"/>
+	<vrpfile src="files/images/SuperSweeper/oil.png"/>
+	<vrpfile src="files/images/SuperSweeper/smoke.png"/>
+
+	<vrpfile src="files/images/Textures/SuperSweeper/sweeper_decal.png"/>
+
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>
 	<vrpfile src="files/images/Minigames/SideSwipe.png"/>
@@ -1865,6 +1884,7 @@
 	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
 	<vrpfile src="files/images/Radar/Blips/BunnyHead.png"/>
 	<vrpfile src="files/images/Radar/Blips/Cinema.png"/>
+	<vrpfile src="files/images/Radar/Blips/SuperSweeper.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -3337,6 +3357,8 @@
 	<vrpfile src="files/models/vehicles/dumper.dff" />
 	<vrpfile src="files/models/vehicles/reindeerSledge.txd" />
 	<vrpfile src="files/models/vehicles/reindeerSledge.dff" />
+	<vrpfile src="files/models/vehicles/rccar.dff" />
+	<vrpfile src="files/models/vehicles/rccar.txd" />
 
 	<!-- Easter Event Start-->
 	<file src="files/models/objects/worldItems/easter_egg.txd" />

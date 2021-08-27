@@ -148,6 +148,7 @@ function Core:ready() --onClientResourceStart
 	CompanyManager:new()
 	VehicleImportManager:new()
 	DeathmatchManager:new()
+	SuperSweeperManager:new()
 	HorseRace:new()
 	Townhall:new()
 	Sewers:new()
@@ -201,6 +202,7 @@ function Core:ready() --onClientResourceStart
 	CasinoWheel:new()
 	PedScale:new()
 	VehicleGuns:new()
+	VehicleWeapon:new()
 	HelicopterDrivebyManager:new()
 end
 

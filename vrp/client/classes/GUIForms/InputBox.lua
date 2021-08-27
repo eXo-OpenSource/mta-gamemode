@@ -7,7 +7,7 @@
 -- ****************************************************************************
 InputBox = inherit(GUIForm)
 
-function InputBox:constructor(title, text, callback, integerOnly, offsetY)
+function InputBox:constructor(title, text, callback, integerOnly, offsetY, value)
 	local offsetY = offsetY or 0
 
 	GUIWindow.updateGrid()
@@ -20,8 +20,9 @@ function InputBox:constructor(title, text, callback, integerOnly, offsetY)
 	self.m_Label = GUIGridLabel:new(1, 1, 20, 1 + offsetY, text, self.m_Window)
 	self.m_EditBox = GUIGridEdit:new(1, 2 + offsetY, 20, 1, self.m_Window)
 	if integerOnly then	self.m_EditBox:setNumeric(true, true) end
+	if value then self.m_EditBox:setText(value) end
 
-	self.m_SubmitButton = GUIGridButton:new(1, 3 + offsetY, 7, 1, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_SubmitButton = GUIGridButton:new(16, 3 + offsetY, 5, 1, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 
 	if callback then
 		self.m_SubmitButton.onLeftClick = function() if callback then callback(self.m_EditBox:getText()) end delete(self) end

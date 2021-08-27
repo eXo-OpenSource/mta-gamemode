@@ -268,7 +268,7 @@ addEventHandler("onClientVehicleDamage", root,
 				return
 			end
 		end
-		if totalLossVehicleTypes[source:getVehicleType()] then
+		if totalLossVehicleTypes[source:getVehicleType()] and source:getData("vehicleCanBreak") then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
 					source.m_LastBroken = getTickCount()

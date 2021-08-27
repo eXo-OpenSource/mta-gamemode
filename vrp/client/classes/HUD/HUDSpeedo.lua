@@ -75,6 +75,10 @@ function HUDSpeedo:draw()
 		self:hide()
 		return
 	end
+	if vehicle:getData("speedoDisabled") then
+		self:hide()
+		return
+	end
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
 	local speed = vehicle:getSpeed()
@@ -226,7 +230,11 @@ end
 
 function HUDSpeedo:Bind_SpeedLimit(key, state)
 	-- Don't do anything if we're in a vehicle
-	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
+	if not localPlayer.vehicle or localPlayer.vehicleSeat > 0 then
+		return
+	end
+
+	if not localPlayer.vehicle:getData("canUseLimiter") then
 		return
 	end
 
@@ -286,7 +294,11 @@ end
 
 function HUDSpeedo:Bind_CruiseControl(key, state)
 	-- Don't do anything if we're in a vehicle
-	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
+	if not localPlayer.vehicle or localPlayer.vehicleSeat > 0 then
+		return
+	end
+
+	if not localPlayer.vehicle:getData("canUseCruiseControl") then
 		return
 	end
 

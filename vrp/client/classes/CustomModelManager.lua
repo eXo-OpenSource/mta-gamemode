@@ -176,6 +176,8 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/vehicles/uranus.txd", 558)
 	self:loadImportDFF("files/models/vehicles/uranus.dff", 558)
 	self:loadImportDFF("files/models/vehicles/dft30.dff", 578)
+	self:loadImportTXD("files/models/vehicles/rccar.txd", 441)
+	self:loadImportDFF("files/models/vehicles/rccar.dff", 441)
 
 	-- Firework
 	self:loadImportCOL("files/models/firework.col", 1941)

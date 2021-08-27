@@ -826,7 +826,7 @@ end
 
 function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
 	for veh, mileage in pairs(self.m_VehiclesWithEngineOn) do --table gets managed on engine switch in Vehicle class
-		if veh and isElement(veh) and veh.getEngineState and veh.getFuel and veh.getSpeed and veh:getEngineState() then
+		if veh and isElement(veh) and veh.getEngineState and veh.getFuel and veh.getSpeed and veh:getEngineState() and not veh:getFuelDisabled() then
 			local curVel = (veh:getMileage()-mileage)/1000*60 --60 because we want km/h from km/min
 			if curVel == 0 then -- fallback on updating with speed if mileage did not change
 				curVel = veh:getSpeed()
@@ -1064,6 +1064,14 @@ end
 function VehicleManager:Event_vehicleRepair()
 	if client:getRank() < ADMIN_RANK_PERMISSION["repairVehicle"] then
 		AntiCheat:getSingleton():report(client, "DisallowedEvent", CheatSeverity.High)
+		return
+	end
+
+	if source:getData("disableAdminRepair") then
+		if source.m_SuperSweeper then
+			source.m_LastHitBy = "Zone"
+			source:blow()
+		end
 		return
 	end
 

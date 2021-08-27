@@ -518,15 +518,17 @@ function LocalPlayer:deathRender(deltaTime)
 	Camera.setMatrix(x, y, z + self.m_Add, x, y, z, roll)
 end
 
-function LocalPlayer:abortDeathGUI(force)
+function LocalPlayer:abortDeathGUI(force, hideUI)
 	if self.m_CanBeRevived or force then
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if self.m_Halleluja and isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
 		if self.m_DeathBleedingMessage then delete(self.m_DeathBleedingMessage) end
 		if isElement(self.m_DeathAudio) then destroyElement(self.m_DeathAudio) end
-		HUDRadar:getSingleton():show()
-		HUDUI:getSingleton():show()
+		if not hideUI then
+			HUDRadar:getSingleton():show()
+			HUDUI:getSingleton():show()
+		end
 		showChat(true)
 		removeEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
