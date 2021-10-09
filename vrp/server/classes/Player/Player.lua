@@ -530,6 +530,9 @@ function Player:spawn()
 	triggerEvent("WeaponAttach:onInititate", self)
 
 	VehicleTexture.requestTextures(self)
+
+	--Inventory equipped items
+	self:getInventory():loadAllEquippedItems()
 end
 
 function Player:respawn(position, rotation, bJailSpawn)

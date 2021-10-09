@@ -31,6 +31,7 @@ function InventoryManager:constructor()
 
 	--Initialize Item Manager classes
 	NailWorldItemManager:new()
+	ItemWeaponManager:new()
 end
 
 function InventoryManager:Event_openInventory(title, elementType, elementId, size)

@@ -8,27 +8,57 @@
 
 ItemWeaponManager = inherit(Singleton)
 
+addRemoteEvents{"ItemWeaponManager:onClientProjectileCreation", "ItemWeaponManager:onClientWeaponReload"}
+
 function ItemWeaponManager:constructor()
+    self.m_OnClientProjectileCreationBind = bind(self.onClientProjectileCreation, self)
+    addEventHandler("ItemWeaponManager:onClientProjectileCreation", root, self.m_OnClientProjectileCreationBind)
 
+    self.m_OnClientWeaponReloadBind = bind(self.onClientWeaponReload, self)
+    addEventHandler("ItemWeaponManager:onClientWeaponReload", root, self.m_OnClientWeaponReloadBind)
+
+    PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
+	PlayerManager:getSingleton():getWastedHook():register(bind(self.onPlayerWasted, self))
 end
 
-function ItemWeaponManager:updatePlayerWeapons(player)
-
+function ItemWeaponManager:onClientProjectileCreation(weaponId)
+    client:getInventory():takeItem(INVENTORY_WEAPON_ID_TO_NAME[weaponId], 1)
 end
 
-function ItemWeaponManager:takePlayerWeapons(player)
-
+function ItemWeaponManager:onClientWeaponReload(weaponId, reloadedAmount)
+    client:getInventory():takeItem(INVENTORY_MUNITION_ID_TO_NAME[weaponId], reloadedAmount)
 end
 
-
-function ItemWeaponManager:removeWeaponsFromPlayerInventory(player, takeFromTemporaryInventory)
-    local inventory = takeFromTemporaryInventory and player:getTemporaryInventory() or player:getInventory()
-    if not inventory then
-        return false
+function ItemWeaponManager:onPlayerQuit(player)
+    local inventory = player:getInventory()
+    for i = 2, 9 do
+        local item = inventory:getItem(INVENTORY_WEAPON_ID_TO_NAME[player:getWeapon(i)])
+        if item then
+            item.Metadata.AmmoInClip = player:getAmmoInClip(i)
+        end
     end
-
-    for weaponId, itemName in pairs(ItemsWeaponMapping) do
-        local ammoItem = ItemsWeaponMappingAmmunition[weaponId]
-        inventory:removeAllItem()
-    end
+    player:getInventory():onInventoryChanged()
 end
+
+function ItemWeaponManager:onPlayerWasted(player)
+    local inventory = player:getInventory()
+    for i = 2, 9 do
+        local item = inventory:getItem(INVENTORY_WEAPON_ID_TO_NAME[player:getWeapon(i)])
+        if item and item.Equipped == 1 then
+            inventory:useItem(item.Id)
+        end
+    end
+    inventory:onInventoryChanged()
+ end
+
+ --[[
+    TODO:
+    - Parachute removal, or sell as "repackable parachutes"?
+    - When ammunition gets traded, remove from equipped weapons
+    - rework migration for weapon ammunition
+    - replace all native weapon functions to work with inventory weapons
+    - rework sniper / rpg showing on back when not equipped
+    - rework weapon pickup on death
+    - add ammunition icons
+    - add function to add / remove ammo from clip to bullet stack
+]]

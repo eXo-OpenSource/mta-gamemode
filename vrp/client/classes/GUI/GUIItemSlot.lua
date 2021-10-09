@@ -83,6 +83,13 @@ function GUIItemSlot:drawThis(incache)
 			dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width - width - 2, self.m_AbsoluteY + self.m_Height - height - 2 - itemAmountOffset, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height - itemAmountOffset, Color.white, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, 0)
 		end
 
+		if self.m_ItemData.Equipped == 1 then
+			dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY, tocolor(0, 255, 0))
+			dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1, tocolor(0, 255, 0))
+			dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height - 1, tocolor(0, 255, 0))
+			dxDrawLine(self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY + self.m_Height, tocolor(0, 255, 0))
+		end
+
 		if self.m_IsMoving or not self.m_Enabled then
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150))
 		end
@@ -226,6 +233,12 @@ function GUIItemSlot:updateTooltipText()
 			table.insert(tooltipText, {text = _("Läuft ab: %s", getOpticalTimestamp(item.ExpireTime)), size = 20, color = Color.White})
 		end
 
+		local weaponId = INVENTORY_WEAPON_NAME_TO_ID[item.TechnicalName]
+		local ammoInClip = weaponId and (item.Equipped == 1 and localPlayer:getAmmoInClip(getSlotFromWeapon(weaponId)) or 0) or 0
+		local ammoInClip = ammoInClip ~= 0 and ammoInClip or metadata and metadata.AmmoInClip or ""
+		if weaponId and ammoInClip and ammoInClip ~= "" and getSlotFromWeapon(weaponId) ~= 8 and getWeaponProperty(weaponId, "poor", "maximum_clip_ammo") then
+			table.insert(tooltipText, {text = _("Munition im Magazin: %d", ammoInClip), size = 20, color = Color.White})
+		end
 
 		if showDebug then
 			table.insert(tooltipText, {text = "", size = 20, color = Color.White})

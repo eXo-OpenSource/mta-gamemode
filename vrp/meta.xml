@@ -184,6 +184,7 @@
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemThrowable.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemPlayHouseCard.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemWeapon.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemNotUsable.lua" type="server"/>
 
 	<!-- throwable -->
@@ -212,6 +213,7 @@
 	<script src="server/classes/Inventory/Items/Managers/ItemCanManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Managers/ItemNailsManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Managers/ItemSellContractManager.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Managers/ItemWeaponManager.lua" type="server"/>
 
 	<!--StaticWorldItems-->
 	<script src="server/classes/Inventory/WorldItems/StaticWorldItem.lua" type="server"/>
@@ -764,6 +766,7 @@
 
 	<!-- Client Item Managers -->
 	<script src="client/classes/Inventory/Managers/NailWorldItemManager.lua" type="client"/>
+	<script src="client/classes/Inventory/Managers/ItemWeaponManager.lua" type="client"/>
 
 	<!-- World Items -->
 	<script src="client/classes/Inventory/WorldItems/SlamWorldItem.lua" type="client"/>

@@ -281,6 +281,11 @@ INVENTORY_WEAPON_ID_TO_NAME = {
 	[46] = "parachute"
 }
 
+INVENTORY_WEAPON_NAME_TO_ID = {}
+for i, v in pairs(INVENTORY_WEAPON_ID_TO_NAME) do
+	INVENTORY_WEAPON_NAME_TO_ID[v] = i
+end
+
 INVENTORY_MUNITION_ID_TO_NAME = {
 	[22] = "colt45Bullet", 
 	[23] = "taserBullet", 
@@ -298,11 +303,26 @@ INVENTORY_MUNITION_ID_TO_NAME = {
 	[35] = "rocketLauncherRocket", 
 	[36] = "rocketLauncherHSRocket", 
 	[37] = "flamethrowerGas", 
-	[38] = "minigunBullet"
+	[38] = "minigunBullet",
+	[41] = "spraycanGas",
+	[42] = "fireExtinguisherGas",
+	[43] = "cameraFilm"
 }
+
+INVENTORY_MUNITION_NAME_TO_ID = {}
+for i, v in pairs(INVENTORY_MUNITION_ID_TO_NAME) do
+	INVENTORY_MUNITION_NAME_TO_ID[v] = i
+end
 
 INVENTORY_MUNITION_IS_DURABILITY = {
 	[41] = true, --"spraycan" 
 	[42] = true, --"fireExtinguisher"
 	[43] = true, --"camera"
+}
+
+INVENTORY_WEAPON_AKIMBO_ID_TO_STAT = {
+	[22] = 69,
+	[26] = 73,
+	[28] = 75,
+	[32] = 75
 }

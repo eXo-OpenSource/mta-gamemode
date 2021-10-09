@@ -251,6 +251,36 @@ function Inventory:decreaseItemDurability(id, durability)
 	return true
 end
 
+function Inventory:loadAllEquippedItems()
+	local player = self:getPlayer()
+	if not player then return false end
+
+	player.m_loadAllEquippedItems = true
+	for k, v in pairs(self.m_Items) do
+		if v.Equipped == 1 then
+			self:useItem(v.Id)
+		end
+	end
+	player.m_loadAllEquippedItems = false
+end
+
+function Inventory:getItemEquipped(id)
+	local item = self:getItem(id)
+	if not item then return false end
+
+	return item.Equipped == 1
+end
+
+function Inventory:setItemEquipped(id, bool)
+	local item = self:getItem(id)
+	if not item then return false end
+
+	item.Equipped = bool and 1 or 0
+
+	self:onInventoryChanged()
+	return true
+end
+
 function Inventory:hasPlayerAccessTo(player)
 	-- Typbasierte Checks, bspw.:
 	--  Fraktion: ist der Spieler OnDuty in der Besitzerfraktion
@@ -367,6 +397,12 @@ function Inventory:save(sync)
 				update.Slot = v.Slot
 			end
 
+			-- Check Equipped
+			if dbItem.Equipped ~= v.Equipped then
+				needsUpdate = true
+				update.Equipped = v.Equipped
+			end
+
 			-- Check metadata
 			if type(v.Metadata) == "table" and not equals(dbItem.Metadata and fromJSON(dbItem.Metadata), v.Metadata) then
 				needsUpdate = true
@@ -388,6 +424,7 @@ function Inventory:save(sync)
 				Slot = v.Slot;
 				Tradeable = v.Tradeable;
 				ExpireTime = v.ExpireTime;
+				Equipped = v.Equipped;
 				Metadata = type(v.Metadata) == "table" and toJSON(v.Metadata);
 			})
 		end
@@ -454,6 +491,12 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.ExpireTime)
 		end
 
+		if v.Equipped then
+			if params ~= "" then params = params .. ", " end
+			params = params .. "Equipped = ?"
+			table.insert(queriesParams, v.Equipped)
+		end
+
 		query = query .. params .. " WHERE Id = ?;"
 		table.insert(queriesParams, v.Id)
 
@@ -473,10 +516,10 @@ function Inventory:save(sync)
 	if #changes.insert > 0 then
 		if queries ~= "" then queries = queries .. " " end
 		for k, v in pairs(changes.insert) do
-			queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, OwnerId, Tradeable, Slot, Amount, Durability, ExpireTime, Metadata) VALUES "
+			queries = queries .. "INSERT INTO ??_inventory_items (Id, InventoryId, ItemId, OwnerId, Tradeable, Slot, Amount, Durability, ExpireTime, Equipped, Metadata) VALUES "
 			table.insert(queriesParams, sql:getPrefix())
-			queries = queries .. "(?, ?, ?, ?, ?, ?, ?, ?, ?, "
-			-- 1 - Id, 2 - InventoryId, 3 - ItemId, 4 - OwnerId, 5 - Tradeable, 6 - Slot, 7 - Amount, 8 - Durability, 9 - ExpireTime, 10 - Metadata
+			queries = queries .. "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			-- 1 - Id, 2 - InventoryId, 3 - ItemId, 4 - OwnerId, 5 - Tradeable, 6 - Slot, 7 - Amount, 8 - Durability, 9 - ExpireTime, 10 - Equipped, 11 - Metadata
 
 			table.insert(queriesParams, v.Id)				-- 1 - Id
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
@@ -486,16 +529,17 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.Slot)				-- 6 - Slot
 			table.insert(queriesParams, v.Amount)			-- 7 - Amount
 			table.insert(queriesParams, v.Durability)		-- 8 - Durability
-			table.insert(queriesParams, v.ExpireTime or 0)		-- 9 - ExpireTime
+			table.insert(queriesParams, v.ExpireTime or 0)	-- 9 - ExpireTime
+			table.insert(queriesParams, v.Equipped)	-- 10 - Equipped
 
 			if not v.Metadata then
 				queries = queries .. "NULL)"
 			else
 				queries = queries .. "?)"
-				table.insert(queriesParams, v.Metadata or nil)	-- 10 - Metadata
+				table.insert(queriesParams, v.Metadata or nil)	-- 11 - Metadata
 			end
 
-			queries = queries .. " ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, "
+			queries = queries .. " ON DUPLICATE KEY UPDATE InventoryId = ?, ItemId = ?, OwnerId = ?, Tradeable = ?, Slot = ?, Amount = ?, Durability = ?, ExpireTime = ?, Equipped = ?, "
 			-- 2 - InventoryId = ?, 3 - ItemId = ?, 4 - OwnerId = ?, 5 - Tradeable = ?, 6 - Slot = ?, 7 - Amount = ?, 8 - Durability = ?, 9 - ExpireTime = ?
 
 			table.insert(queriesParams, self.m_Id)			-- 2 - InventoryId
@@ -505,13 +549,14 @@ function Inventory:save(sync)
 			table.insert(queriesParams, v.Slot)				-- 6 - Slot
 			table.insert(queriesParams, v.Amount)			-- 7 - Amount
 			table.insert(queriesParams, v.Durability)		-- 8 - Durability
-			table.insert(queriesParams, v.ExpireTime or 0)		-- 9 - ExpireTime
+			table.insert(queriesParams, v.ExpireTime or 0)	-- 9 - ExpireTime
+			table.insert(queriesParams, v.Equipped)	-- 10 - Equipped
 
 			if not v.Metadata then
 				queries = queries .. "Metadata = NULL"
 			else
 				queries = queries .. "Metadata = ?"
-				table.insert(queriesParams, v.Metadata or nil)	-- 10 - Metadata
+				table.insert(queriesParams, v.Metadata or nil)	-- 11 - Metadata
 			end
 			queries = queries .. ";"
 		end

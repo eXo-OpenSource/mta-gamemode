@@ -71,6 +71,7 @@ function InventoryManager:constructor()
 	--Initialize Item Manager classes
 	ItemCanManager:new()
 	ItemNailsManager:new()
+	ItemWeaponManager:new()
 
 	addRemoteEvents{"subscribeToInventory", "unsubscribeFromInventory", "onItemUse", "onItemUseSecondary", "onItemMove"}
 
@@ -481,7 +482,7 @@ function InventoryManager:giveItem(inventory, item, amount, data, setInSlot)
 				newItem.Amount = amountToGive
 				newItem.Durability = newItem.Durability or newItem.MaxDurability
 				newItem.ExpireTime = newItem.Expireable and (newItem.ExpireTime and newItem.ExpireTime or newItem.MaxExpireTime) or 0
-
+				newItem.Equipped = 0
 				self.m_NextItemId = self.m_NextItemId + 1
 				table.insert(inventory.m_Items, newItem)
 
@@ -539,6 +540,7 @@ function InventoryManager:giveItem(inventory, item, amount, data, setInSlot)
 			newItem.Amount = amountToGive
 			newItem.Durability = newItem.Durability or newItem.MaxDurability
 			newItem.ExpireTime = newItem.Expireable and (newItem.ExpireTime and newItem.ExpireTime or newItem.MaxExpireTime) or 0
+			newItem.Equipped = 0
 
 			self.m_NextItemId = self.m_NextItemId + 1
 			table.insert(inventory.m_Items, newItem)
@@ -564,6 +566,10 @@ function InventoryManager:takeItem(inventory, itemId, amount, all)
 	local isTakeable, reason = self:isItemTakeable(inventory, itemId, amount)
 
 	if isTakeable then
+		if inventory:getItem(itemId).Equipped == 1 and inventory:getPlayer() then
+			inventory:useItem(itemId)
+		end
+
 		local item = inventory:getItem(itemId)
 		if all then
 			item.Amount = 0
@@ -652,6 +658,10 @@ function InventoryManager:moveItem(fromInventoryId, fromItemId, toInventoryId, t
 		end
 		local fromSlot = fromItem.Slot
 		fromItem.Slot = toSlot
+
+		if fromItem.Equipped == 1 and fromInventory:getPlayer() then
+			fromInventory:useItem(fromItemId)
+		end
 
 		for k, v in pairs(fromInventory.m_Items) do
 			if v == fromItem then
@@ -954,6 +964,7 @@ function InventoryManager:migrate()
 			`Amount` int(0) NOT NULL,
 			`Durability` int(0) NOT NULL,
 			`ExpireTime` int(0) NOT NULL DEFAULT 0,
+			`Equipped` tinyint(1) NOT NULL DEFAULT 0,
 			`Metadata` text NULL DEFAULT NULL,
 			`CreatedAt` datetime NOT NULL DEFAULT NOW(),
 			`UpdatedAt` datetime NOT NULL DEFAULT NOW() ON UPDATE CURRENT_TIMESTAMP,
