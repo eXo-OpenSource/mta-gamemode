@@ -28,27 +28,56 @@ function ItemWeapon:use()
                 takeWeapon(player, currentWeaponIdInSlot)
             end
         end
-        self.m_Inventory:setItemEquipped(self.m_Item.Id, true)
+
         local ammoAmount = self.m_Inventory:getItemAmount(INVENTORY_MUNITION_ID_TO_NAME[weaponId]) or 0
-        if self.m_Item.Metadata.AmmoInClip == 0 and (weaponId == 25 or (weaponSlot ~= 2 and weaponSlot ~= 3 and weaponSlot ~= 4 and weaponSlot ~= 5)) then
-            local weaponSkill = INVENTORY_WEAPON_AKIMBO_ID_TO_STAT[weaponId] and player:getStat(INVENTORY_WEAPON_AKIMBO_ID_TO_STAT[weaponId]) or 0
-            local weaponSkill = weaponSkill >= 999 and "pro" or "poor"
-            local maxAmmoInClip = getWeaponProperty(weaponId, weaponSkill, "maximum_clip_ammo") and getWeaponProperty(weaponId, weaponSkill, "maximum_clip_ammo") or 1
-            local ammoToClip = maxAmmoInClip <= ammoAmount and maxAmmoInClip or ammoAmount
-            local ammoToClip = ammoToClip ~= 0 and ammoToClip or 1
-            self.m_Item.Metadata.AmmoInClip = ammoToClip
+        if self.m_Item.Metadata.AmmoInClip == 0 and INVENTORY_NON_RELOADABLE_WEAPON_ID[weaponId] then
+            local weaponSkill = (INVENTORY_WEAPON_AKIMBO_ID_TO_STAT[weaponId] and player:getStat(INVENTORY_WEAPON_AKIMBO_ID_TO_STAT[weaponId]) or 0) >= 999 and "pro" or "poor"
+            local maximumClipAmmo = getWeaponProperty(weaponId, weaponSkill, "maximum_clip_ammo") or 1
+
+            if maximumClipAmmo <= ammoAmount then
+                self.m_Item.Metadata.AmmoInClip = maximumClipAmmo
+                ammoAmount = ammoAmount - maximumClipAmmo
+            else
+                self.m_Item.Metadata.AmmoInClip = ammoAmount
+                ammoAmount = 0
+            end
+
             if INVENTORY_MUNITION_ID_TO_NAME[weaponId] then
-                if not self.m_Inventory:takeItem(INVENTORY_MUNITION_ID_TO_NAME[weaponId], ammoToClip) then
+                if not self.m_Inventory:takeItem(INVENTORY_MUNITION_ID_TO_NAME[weaponId], self.m_Item.Metadata.AmmoInClip) then
                     self.m_Item.Metadata.AmmoInClip = 0
                 end
+            else
+                self.m_Item.Metadata.AmmoInClip = 1
             end
         end
+
+        if self.m_Item.Metadata.AmmoInClip == 0 and ammoAmount == 0 then
+            return player:sendError(_("Du hast nicht genügend Munition für diese Waffe!"))
+        end
+
         giveWeapon(player, weaponId, 0)
         setWeaponAmmo(player, weaponId, ammoAmount + self.m_Item.Metadata.AmmoInClip, self.m_Item.Metadata.AmmoInClip)
+        self.m_Inventory:setItemEquipped(self.m_Item.Id, true)
     else
-        self.m_Inventory:setItemEquipped(self.m_Item.Id, false)
         self.m_Item.Metadata.AmmoInClip = player:getAmmoInClip(weaponSlot)
         takeWeapon(player, weaponId)
+        self.m_Inventory:setItemEquipped(self.m_Item.Id, false)
     end
+    self.m_Inventory:onInventoryChanged()
+end
+
+function ItemWeapon:useSecondary()
+    if self.m_Inventory:getItemEquipped(self.m_Item.Id) then
+        local player = self.m_Inventory:getPlayer()
+        if player then
+            player:sendError(_("Lege die Waffe zunächst ab bevor du die Munition entnimmst!"))
+        end
+        return false
+    end
+
+    if self.m_Inventory:giveItem(INVENTORY_MUNITION_ID_TO_NAME[INVENTORY_WEAPON_NAME_TO_ID[self:getTechnicalName()]], self.m_Item.Metadata.AmmoInClip) then
+        self.m_Item.Metadata.AmmoInClip = 0
+    end
+
     self.m_Inventory:onInventoryChanged()
 end

@@ -60,5 +60,5 @@ function ItemWeaponManager:onPlayerWasted(player)
     - rework sniper / rpg showing on back when not equipped
     - rework weapon pickup on death
     - add ammunition icons
-    - add function to add / remove ammo from clip to bullet stack
+    - unequip weapon when no ammo left?
 ]]
