@@ -66,12 +66,12 @@ Halloween.ms_Bonus = {
 		["VehicleModel"] = 442
 	},
 	{
-		["Text"] = "Hotknife",
-		["Image"] = "Bonus_Hotknife.png",
+		["Text"] = "Boxville",
+		["Image"] = "Bonus_Boxville.png",
 		["Pumpkin"] = 1000,
 		["Sweets"] = 7500,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 434
+		["VehicleModel"] = 498
 	},
 }
 
@@ -86,21 +86,52 @@ Halloween.ms_QuestRewards = {
 	{pumpkins=25, sweets=50},
 }
 
-Halloween.ms_PricePoolPrices = {
-	{"vehicle", 461},
-	{"points", 1000},
-	{"money", 100000},
+local day = getRealTime().monthday
+local month = getRealTime().month+1
 
-	{"vehicle", 445},
-	{"points", 1000},
-	{"money", 100000},
+if month == 10 and day <= 24 then
+	Halloween.ms_PricePoolName = "Halloween2021-1"
+	Halloween.ms_PricePoolEnd = getTimestamp(2021, 10, 24, 18, 0, 0)
+	Halloween.ms_PricePoolPrices = {
+		{"vehicle", 555},
+		{"money", 100000},
+		{"money", 100000},
 
-	{"vehicle", 567},
-	{"points", 1000},
-	{"money", 100000},
-	
-	{"VIP", 1},
-}
+		{"vehicle", 508},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"VIP", 1},
+	}
+elseif month == 10 and day <= 31 then
+	Halloween.ms_PricePoolName = "Halloween2021-2"
+	Halloween.ms_PricePoolEnd = getTimestamp(2021, 10, 31, 18, 0, 0)
+	Halloween.ms_PricePoolPrices = {
+		{"vehicle", 480},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"vehicle", 503},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"VIP", 1},
+	}
+elseif month == 11 and day <= 7 then
+	Halloween.ms_PricePoolName = "Halloween2021-3"
+	Halloween.ms_PricePoolEnd = getTimestamp(2021, 11, 7, 18, 0, 0)
+	Halloween.ms_PricePoolPrices = {
+		{"vehicle", 572},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"vehicle", 576},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"VIP", 1},
+	}
+end
 
 Halloween.maxPumpkinsToDropPerPlayer = 3
 
@@ -146,7 +177,7 @@ function Halloween:constructor()
 
 	HalloweenEasterEggs:new()
 
-	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Halloween2020-2", "Kürbis", Halloween.ms_PricePoolPrices, 1602086400)
+	self.m_PricePool = PricePoolManager:getSingleton():getPricePool(Halloween.ms_PricePoolName, "Kürbis", Halloween.ms_PricePoolPrices, Halloween.ms_PricePoolEnd)
 	if self.m_PricePool then
 		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(884.832, -1080.05, 24.297), 220)
 		self.m_PricePool:setDailyEntryBuyLimit(100)

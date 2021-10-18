@@ -130,15 +130,15 @@ function Halloween:Event_restore(clear)
 		local color = tocolor(200, 200, 200, 200)
 		dxDrawText("Stumpy", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 55
-		dxDrawText("Opposite", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("sLi", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Sli\nDean-\nWinchester", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Dean-\nWinchester", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Refrigerator\nPeter", xoffs, 20, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Maurice\nAngry", xoffs, 20, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Angry\nMaurice\nChef532\nDonnerHerz-\nArrow", xoffs, 5, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Noir\nWilli\nThresh\nGuNShOtzZ\nDonnerHerz", xoffs, 5, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 		dxDrawText("Renn\nkleiner\nMann", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
