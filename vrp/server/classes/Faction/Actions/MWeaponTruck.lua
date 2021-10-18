@@ -51,17 +51,6 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if (faction:isEvilFaction() and source.type == "evil") or (faction:isStateFaction() and source.type == "state" and hitElement:isFactionDuty()) then
-				if source.type == "evil" then
-					if FactionState:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] and not DEBUG then
-						hitElement:sendError(_("Es müssen mindestens 3 Staatsfraktionisten online sein!",hitElement))
-						return
-					end
-				elseif source.type == "state" then
-					if FactionEvil:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] and not DEBUG then
-						hitElement:sendError(_("Es müssen mindestens 3 Spieler böser Fraktionen online sein!",hitElement))
-						return
-					end
-				end
 
 				if ActionsCheck:getSingleton():isActionAllowed(hitElement) then
 					hitElement:triggerEvent("showFactionWTLoadGUI")
@@ -86,6 +75,10 @@ function MWeaponTruck:Event_onWeaponTruckLoad(boxContentTable)
 
 		if faction:isEvilFaction() then
 			if client:isFactionDuty() then
+				if FactionState:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS["evil"] and not DEBUG then
+					client:sendError(_("Es müssen mindestens 3 Staatsfraktionisten online sein!", client))
+					return
+				end
 				self.m_CurrentType = "evil"
 			else
 				client:sendError(_("Du trägst nicht deine Fraktionsfarben!",client))
@@ -93,6 +86,10 @@ function MWeaponTruck:Event_onWeaponTruckLoad(boxContentTable)
 			end
 		elseif faction:isStateFaction() then
 			if client:isFactionDuty() then
+				if FactionEvil:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS["state"] and not DEBUG then
+					client:sendError(_("Es müssen mindestens 3 Spieler böser Fraktionen online sein!", client))
+					return
+				end
 				self.m_CurrentType = "state"
 			else
 				client:sendError(_("Du bist nicht im Dienst!",client))
