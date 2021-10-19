@@ -68,7 +68,6 @@ deploy_job_bugfixes:
     - /^bugfix\/.*$/
 
 deploy_job_develop:
-  image: ubuntu:latest
   tags:
     - linux
     - dind
@@ -80,7 +79,6 @@ deploy_job_develop:
     - master
 
 deploy_job_testing:
-  image: ubuntu:latest
   tags:
     - linux
     - dind
@@ -91,7 +89,6 @@ deploy_job_testing:
     - release/testing
 
 deploy_job_production:
-  image: ubuntu:latest
   tags:
     - linux
     - dind
