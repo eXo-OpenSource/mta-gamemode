@@ -76,9 +76,6 @@ deploy_job_develop:
   script:
     #- curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz http://ts.exo-reallife.de/upload/upload.php
     - curl http://$DEPLOYRON_IP:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
-  environment:
-    name: development
-    url: http://mta.exo-reallife.de:5002/
   only:
     - master
 
@@ -90,9 +87,6 @@ deploy_job_testing:
   stage: deploy
   script:
     - curl http://$DEPLOYRON_IP:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
-  environment:
-    name: testing
-    url: http://mta.exo-reallife.de:5001/
   only:
     - release/testing
 
@@ -104,9 +98,6 @@ deploy_job_production:
   stage: deploy
   script:
     - curl http://$DEPLOYRON_IP:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
-  environment:
-    name: production
-    url: http://mta.exo-reallife.de:5000/
   only:
     - release/production
   when: manual
