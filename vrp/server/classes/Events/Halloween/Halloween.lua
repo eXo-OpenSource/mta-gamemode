@@ -89,23 +89,9 @@ Halloween.ms_QuestRewards = {
 local day = getRealTime().monthday
 local month = getRealTime().month+1
 
-if month == 10 and day <= 24 then
+if month == 10 and day <= 31 then
 	Halloween.ms_PricePoolName = "Halloween2021-1"
-	Halloween.ms_PricePoolEnd = getTimestamp(2021, 10, 24, 18, 0, 0)
-	Halloween.ms_PricePoolPrices = {
-		{"vehicle", 555},
-		{"money", 100000},
-		{"money", 100000},
-
-		{"vehicle", 508},
-		{"money", 100000},
-		{"money", 100000},
-
-		{"VIP", 1},
-	}
-elseif month == 10 and day <= 31 then
-	Halloween.ms_PricePoolName = "Halloween2021-2"
-	Halloween.ms_PricePoolEnd = getTimestamp(2021, 10, 31, 18, 0, 0)
+	Halloween.ms_PricePoolEnd = 1635699600
 	Halloween.ms_PricePoolPrices = {
 		{"vehicle", 480},
 		{"money", 100000},
@@ -118,8 +104,8 @@ elseif month == 10 and day <= 31 then
 		{"VIP", 1},
 	}
 elseif month == 11 and day <= 7 then
-	Halloween.ms_PricePoolName = "Halloween2021-3"
-	Halloween.ms_PricePoolEnd = getTimestamp(2021, 11, 7, 18, 0, 0)
+	Halloween.ms_PricePoolName = "Halloween2021-2"
+	Halloween.ms_PricePoolEnd = 1633622400
 	Halloween.ms_PricePoolPrices = {
 		{"vehicle", 572},
 		{"money", 100000},
