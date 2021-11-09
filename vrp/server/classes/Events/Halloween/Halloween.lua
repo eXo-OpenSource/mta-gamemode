@@ -163,11 +163,13 @@ function Halloween:constructor()
 
 	HalloweenEasterEggs:new()
 
-	self.m_PricePool = PricePoolManager:getSingleton():getPricePool(Halloween.ms_PricePoolName, "Kürbis", Halloween.ms_PricePoolPrices, Halloween.ms_PricePoolEnd)
-	if self.m_PricePool then
-		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(884.832, -1080.05, 24.297), 220)
-		self.m_PricePool:setDailyEntryBuyLimit(100)
-		self.m_PricePool:addBuyCallback(bind(self.onEntryBuy, self))
+	if Halloween.ms_PricePoolName then
+		self.m_PricePool = PricePoolManager:getSingleton():getPricePool(Halloween.ms_PricePoolName, "Kürbis", Halloween.ms_PricePoolPrices, Halloween.ms_PricePoolEnd)
+		if self.m_PricePool then
+			PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(884.832, -1080.05, 24.297), 220)
+			self.m_PricePool:setDailyEntryBuyLimit(100)
+			self.m_PricePool:addBuyCallback(bind(self.onEntryBuy, self))
+		end
 	end
 end
 
