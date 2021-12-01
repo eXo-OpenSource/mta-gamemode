@@ -21,8 +21,8 @@ function QuestPhotography:constructor(id)
 	self.m_Target = QuestPhotography.Targets[id]
 
 	if id == 2 then
-		setGarageOpen(9, true)
-		self.m_NPC = NPC:new(244, 2505.30, -1695.86, 13.55, 0)
+		--setGarageOpen(9, true)
+		self.m_NPC = NPC:new(244, 2918.653, -1600.370, 14.945, 72.5)
 		self.m_NPC:setImmortal(true)
 		self.m_NPC:setFrozen(true)
 	end

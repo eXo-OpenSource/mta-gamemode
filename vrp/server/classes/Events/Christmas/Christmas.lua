@@ -49,15 +49,49 @@ Christmas.ms_Bonus = {
 	}
 }
 
-Christmas.ms_PricePoolPrices = {
-	{"vehicle", 587},
-	{"money", 100000},
+if month == 12 and day >= 6 and day <= 12 then
+	Christmas.ms_PricePoolName = "Christmas2021-1"
+	Christmas.ms_PricePoolEnd = 1639328400
+	Christmas.ms_PricePoolPrices = {
+		{"vehicle", 571},
+		{"money", 100000},
+		{"money", 100000},
 
-	{"vehicle", 463},
-	{"money", 100000},
-	
-	{"VIP", 1},
-}
+		{"vehicle", 534},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"VIP", 1},
+	}
+elseif month == 12 and day <= 19 then
+	Christmas.ms_PricePoolName = "Christmas2021-2"
+	Christmas.ms_PricePoolEnd = 1639933200
+	Christmas.ms_PricePoolPrices = {
+		{"vehicle", 437},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"vehicle", 586},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"VIP", 1},
+	}
+elseif month == 12 and day <= 26 then
+	Christmas.ms_PricePoolName = "Christmas2021-3"
+	Christmas.ms_PricePoolEnd = 1640538000
+	Christmas.ms_PricePoolPrices = {
+		{"vehicle", 448},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"vehicle", 445},
+		{"money", 100000},
+		{"money", 100000},
+
+		{"VIP", 1},
+	}
+end
 
 function Christmas:constructor()
 	self.m_QuestManager = QuestManager:new()
@@ -88,9 +122,11 @@ function Christmas:constructor()
 	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
 	addEventHandler("Christmas:openDoor", root, bind(self.openDoor, self))
 
-	self.m_PricePool = PricePoolManager:getSingleton():getPricePool("Christmas2020-1", "Päckchen", Christmas.ms_PricePoolPrices, 1607274000)
-	if self.m_PricePool then
-		PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(1481.55, -1697.34, 14.05), 165)
+	if Christmas.ms_PricePoolName then
+		self.m_PricePool = PricePoolManager:getSingleton():getPricePool(Christmas.ms_PricePoolName, "Päckchen", Christmas.ms_PricePoolPrices, Christmas.ms_PricePoolEnd)
+		if self.m_PricePool then
+			PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(1481.55, -1697.34, 14.05), 165)
+		end
 	end
 end
 

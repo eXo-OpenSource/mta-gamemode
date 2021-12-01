@@ -1,9 +1,9 @@
 QuestPackageTransport = inherit(Quest)
 
 QuestPackageTransport.Targets = {
-	[6] = Vector3(626.15, -601.29, 16),
-	[11] = Vector3(-2149.20, -2445.39, 29.9),
-	[16] = Vector3(-1.500, -2514.250, 35.760),
+	[6] = Vector3(101, -223, 0.7),
+	[11] = Vector3(2721.7, -1925.3, 12.7),
+	[16] = Vector3(2034.548, 983.261, 9.9),
 
 
 }
