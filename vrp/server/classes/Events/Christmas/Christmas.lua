@@ -49,6 +49,10 @@ Christmas.ms_Bonus = {
 	}
 }
 
+
+local day = getRealTime().monthday
+local month = getRealTime().month+1
+
 if month == 12 and day >= 6 and day <= 12 then
 	Christmas.ms_PricePoolName = "Christmas2021-1"
 	Christmas.ms_PricePoolEnd = 1639328400
