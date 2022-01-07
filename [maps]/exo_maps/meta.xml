@@ -11,7 +11,7 @@
 
 	<map src="spielbunker.map" />
 	<map src="spielbunker-ext.map" />
-		
+
 	<map src="atm.map" />
 
 	<map src="tiefgarage.map" />
@@ -95,7 +95,7 @@
 	<map src="jobs/helitransport.map" />
 	<map src="jobs/dumper.map" />
 
-	<map src="noobspawn_christmas.map" />
+	<!-- <map src="noobspawn_christmas.map" /> -->
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
 
@@ -120,7 +120,7 @@
 	<map src="Kartbahn.map" />
 	<map src="gasstation.map" />
 	<map src="atrium_outside.map" />
-	
+
 	<map src="stuntfix.map"/>
 
 	<map src="shop/fishshop.map"/>
