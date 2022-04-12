@@ -9,34 +9,38 @@
 Easter = inherit(Singleton)
 
 Easter.HidingRabbitPositions = {
-    {-793.63, 2266.08, 59.08, 87},      --Hütte LV
-    {2005.65, 2929.34, 47.76, 0},       --Wasserpumpe LV
-    {-1920.1, 951.72, 45.81, 0},        --SF Building
-    {2771.18, -1400.64, 27.18, 0},      --East LS
-    {2228.90, 171.31, 27.48, 90},       --Palomino Creek Garage
-    {-1229.49, 54.32, 14.23, 341},      --SF Airport
-    {1715.99, 1303, 11.4, 0},           --LV Airport
-    {-2452.75, -128.38, 26.16, 90},     --Hashburry Savehouse Garage
-    {964.13, 2160.65, 10.82, 270},      --Whitewood Warehouse
-    {-1675.48, 1008.66, 7.92, 270},     --SF Labyrinth
-    {2001.10, -1043.30, 42.04, 210},    --LS Sign
-    {2222.58, 1115.95, 47.65, 152},     --Come-A-Lot
-    {-2648.39, 377.80, 13.53, 132},     --SF Cityhall
+    {2081.79, 1902.12, 14.85, 280},         --The Visage (M)
+    {-1846.37, -1712.12, 41.11, 345},       --Whetstone (M)
+    {-2706.46, 1930.05, 3.22, 142},         --Gant Bridge (M)
+    {1530.45, 1937.2, 10.82, 180},          --Redsands West (D)
+    {-154.94, -256.56, 3.91, 180},          --Fleischberg (M)
+    {-2177.318, 712.2, 53.89, 180},         --Chinatown SF (M)
+    {1635.26, 10.68, 9.24, 160},            --Redcounty Bridge (M)
+    {-2510, -686.774, 139.32, 90},          --Missionary Hill (D)
+    {-2475.60, 1553.74, 33.23, 180},        --SF Bay Boat (M)
+    {249.32, -1465.10, 38.40, 275},         --LS Billboard (M)
+    {2542.94, 1028.45, 10.82, 180},         --Come-A-Lot (M)
+    {1297.765, 2605.634, 10.82, 0},         --Prickle Pine (D)
+    {-1675.48, 1008.66, 7.92, 270},         --SF Labyrinth (SD)
+    {679.17, -2621.65, 2.70, 90},           --Fisher Island (M)
+    {-1528.61, 2656.57, 56.28, 90},         --El Quebrados (M)
 }
 Easter.RabbitHints = {
-    {"Gestatten, der Osterhase. Dürfte Ich dich um einen Gefallen Bitten?", "Meine 13 Helferchen sind noch nicht wieder da...", "Einen meiner Helfer habe Ich Richtung Sherman Damm geschickt...", "Könntest Du Ihn suchen gehen?", "Solltest Du Ihn finden, stelle Dich bitte direkt vor ihn, sonst sieht er Dich nicht."},
-    {"Hey. Mein nächstes Helferchen habe Ich in die Nähe von Prickle Pine geschickt.", "Viel Glück beim Suchen! Und... Danke..."},
-    {"Hi.", "Meinem nächsten Helferchen sagte Ich folgendes:", "\"Begib Dich in den Nord-Osten von San Fierro!\"", "Wo er wohl ist?"},
-    {"Schön, dass Du wieder da bist...", "Meinem vierten Helferchen sagte Ich, es solle ein paar Eier im Osten der Stadt verstecken."},
-    {"Ich freue mich, Dich zu sehen!", "Ich sagte meinem fünften Helferchen, es solle in die ländlicheren Städte im Norden gehen.", "Würdest Du für mich nachsehen?"},
-    {"Hallo erstmal!", "Ich erinnere mich, ein Helferchen in die Hafengegend von San Fierro geschickt zu haben..."},
-    {"Guten Tag!", "Das nächste Helferchen habe Ich zum Flughafen in Las Venturas geschickt!", "Wieso sie sich wohl alle verstecken?"},
-    {"Hi.", "Ich kann mich nur so halb erinnern, wo Ich mein nächstes Helferchen hingeschickt habe...", "Es war irgendeine Hippie-Gegend..."},
-    {"Kennst Du die Industrie Gegend im Nord-Westen von Las Venturas?", "Dort habe Ich ein weiteres Helferchen hingeschickt."},
-    {"Hey.", "Ich habe mich ein bisschen umgehorcht.",  "Ein Helferchen soll sich in einem komischen Labyrinth in San Fierro verlaufen haben...", "Kannst Du es bitte da rausholen?"},
-    {"Ein weiteres Helferchen, sollte sich irgendwo im Nord-Osten von Los Santos aufhalten.", "Er kommt auf die absurdesten Ideen..."},
-    {"Mir wurde etwas zugetragen.", "Eines meiner Helferchen soll sich in der Nähe eines der Hotels in Las Venturas verlaufen haben.", "Bitte finde Ihn... Diese Hotels sind so riesig..."},
-    {"Vielen vielen Dank, dass Du meine Helferchen gefunden hast...", "Ein letztes Helferchen fehlt aber noch. Er sollte eigentlich zum Krankenhaus in San Fierro...", "Ob er dort ist, ist die andere Frage..."},
+    {"Gestatten, der Osterhase. Dürfte Ich Dich um einen Gefallen bitten?", "Meine 15 Helferchen sind noch nicht wieder da...", "Einen meiner Helfer habe ich mitten in die Stadt der Abenteuer im Norden geschickt.", "Könntest Du Ihn suchen gehen? Sonst erkältet er sich noch...", "Meine Helferchen sind auch ein wenig kurzsichtig.", "Solltest Du Ihn finden, stelle Dich bitte direkt vor ihn, sonst sieht er Dich nicht."},
+    {"Ach hallo, den ersten schon gefunden?", "Der Nächste ist leider auf dem Weg nach San Fierro in der Nähe von diesem Berg abhandengekommen...", "Sein Fell war schon richtig schwarz vor Staub. Wo ist es bloß gelandet?"},
+    {"Huch, da bist Du ja wieder.", "Schlechte Neuigkeiten. Ein Helferchen sollte ja in diese Kleinstadt im Nordwesten...", "Jetzt steckt der kleine Mann aber fest und kommt von diesem riesigen Bauwerk nicht mehr weg.", "Kannst du ihn schnellstmöglich ausfindig machen? Bitte bitte bitte."},
+    {"Wieder zurück? Wunderbar, einen Moment, wo war das noch...", "Achja, das nächste Helferchen ist in der Nähe vom Ersten. Du weißt schon, in der Stadt im Norden.", "Nördlich vom Flughafen soll es vor Gangstern geflüchtet sein und sich versteckt haben.", "Mein Helferchen hat sicher Angst, bitte beeil Dich!"},
+    {"Moin moin.", "Also dieses Helferchen wollte ja eigentlich fasten.", "Und ich habs erwischt, wie es sich genüsslich ein paar Dosen Bier reinpfeift!", "Jetzt hat es sich wohl vor Scham versteckt, das Bier war auch ziemlich teuer.", "Hast Du eine Idee, wo es stecken könnte?"},
+    {"Hallo erneut, diesmal wirds knifflig.", "Leider keine Ahnung, wo mein Helferchen aus San Fierro geblieben ist.", "Ich weiß aber, dass dort in der Nähe kulturreiche Leute mit ausländischen Wurzeln leben.", "Vielleicht kannst Du etwas mit dem Hinweis anfangen?"},
+    {"*schnüff schnüff* Oh, Du bist es.", "Ich habe ganz vergessen, dass ein Helferchen noch nördlich von Los Santos verweilt.", "In der Nähe ist die Autobahn und nebenan soll mal das berühmte Rennen einer alten Gang stattgefunden haben...", "Wo könnte das bloß sein?"},
+    {"Juten Tach! Ich hatte gehofft, Dich zu sehen.", "Südlich in San Fierro hat sich wieder eines meiner Helferchen verirrt.", "Soll an einem etwas höher gelegenen Ort sein und man soll da ziemlich guten Empfang haben.", "Sagt Dir das zufällig was?"},
+    {"Ahoi, schön Dich hier zu treffen!", "Dieser kleine Frechdachs... Ein Helferchen hat mir vorhin ein Selfie von sich geschickt.", "Ich weiß nicht, wo es steckt, aber im Hintergrund ist ganz viel Elektronik vor großen Fensterscheiben.", "Und durchs Fenster sieht man...große, farbige Metallkästen oder so?", "Bitte sei so lieb und schau dich mal um."},
+    {"Hallöchen.", "Gestern Abend hatte ich das Helferchen noch gesehen, erinnere mich aber nicht mehr dran.", "Aber das war hier in der Stadt und mir fällt ein, ich habe Werbung für Verbrennungen gesehen...", "Seltsam, hat sich wohl in meine Erinnerung eingebrannt.", "Egal. Könntest Du dich bitte auf den Weg machen?"},
+    {"Da biste ja wieder!", "Diesmal habe ich keine genauen Infos, aber mein Helferlein war kurz vorher noch im Urlaub.", "Es hat sich in Las Venturas einen Hotelaufenthalt gegönnt und ist dann in einem schäbigen Stripties-Schuppen gelandet...", "Bitte bring es zurück bevor ich noch zur Therapie muss, ja?"},
+    {"Moin. Auf ein Neues!", "Ich glaube, eins meiner Helferchen will sich vor seiner Arbeit drücken.", "Er wohnt ebenfalls nördlich in der Stadt der Abenteuer, ruhige Gegend muss man sagen. Bis auf das regelmäßige Quietschen von Rädern.", "Du kannst ihm sicher Beine machen oder?"},
+    {"Ich grüße dich, hallo.", "Au weia, vielleicht ist es diesmal sogar meine Schuld, dass es sich verlaufen hat.", "Ich habe mein Helferchen in ein Labyrinth in San Fierro geschickt, um dort meine versteckten Ostereier zu finden...", "Kannst Du es bitte dort rausholen?"},
+    {"Servus und moin moin!", "Oh, also das könnte schwierig werden.", "Eins meiner Helferchen hat mich angefunkt, dass beim Angeln sein Boot den Geist aufgegeben hat und es jetzt hier feststeckt.", "Wenn Du ihm helfen könntest, wäre das klasse."},
+    {"Einen wunderschönen.", "Puh, fast alle Helferchen sind nun zurückgekehrt, jetzt fehlt nur noch eins.", "Es hat sich in einem Dorf im weiten Bone County verschanzt, nachdem es sich beim Ammunation mit Waffen eingedeckt hat.", "Bring es bitte zur Vernunft und komme dann zurück, ja?"},
 }
 addRemoteEvents{"Easter:loadHidingRabbit"}
 
