@@ -32,6 +32,7 @@ function PricePool:createPed(id, position, rotation)
     self.m_Ped = NPC:new(id, position.x, position.y, position.z, rotation)
 	self.m_Ped:setImmortal(true)
     self.m_Ped:setData("clickable", true, true)
+    self.m_Ped:setFrozen(true)
     ElementInfo:new(self.m_Ped, "NPC", 1.2, "DoubleDown", true)
     addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
         if button == "left" and state == "down" then
