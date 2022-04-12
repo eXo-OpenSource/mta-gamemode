@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 Easter = inherit(Singleton)
-Easter.startDay = 91
+Easter.startDay = 102
 Easter.today = getRealTime().yearday
 Easter.RabbitObjects = { -- true = createObject ; false = removeWorldModel
     [4] = {
@@ -25,6 +25,53 @@ Easter.RabbitObjects = { -- true = createObject ; false = removeWorldModel
 }
 addRemoteEvents{"Easter:requestHidingRabbits", "Easter:onHidingRabbitFound"}
 
+local day = getRealTime().monthday
+local month = getRealTime().month+1
+
+if month == 4 and day <= 17 then
+	Easter.ms_PricePoolName = "Easter2022-1"
+	Easter.ms_PricePoolEnd = 1650211200
+	Easter.ms_PricePoolPrices = {
+		{"money", 150000},
+		{"money", 150000},
+        {"vehicle", 424},
+
+		{"money", 150000},
+		{"money", 150000},
+        {"vehicle", 476},
+
+		{"VIP", 1},
+	}
+elseif month == 4 and day <= 24 then
+	Easter.ms_PricePoolName = "Easter2022-2"
+	Easter.ms_PricePoolEnd = 1650816000
+	Easter.ms_PricePoolPrices = {
+		{"money", 150000},
+		{"money", 150000},
+        {"vehicle", 448},
+
+		{"money", 150000},
+		{"money", 150000},
+        {"vehicle", 495},
+
+		{"VIP", 1},
+	}
+elseif (month == 4 and day <= 30) or (month == 5 and day <= 1) then
+	Easter.ms_PricePoolName = "Easter2022-3"
+	Easter.ms_PricePoolEnd = 1651420800
+	Easter.ms_PricePoolPrices = {
+		{"money", 150000},
+		{"money", 150000},
+        {"vehicle", 474},
+
+		{"money", 150000},
+		{"money", 150000},
+        {"vehicle", 518},
+
+		{"VIP", 1},
+	}
+end
+
 function Easter:constructor()
     self.m_Objects = {}
     for day, data in pairs(Easter.RabbitObjects) do
@@ -38,6 +85,13 @@ function Easter:constructor()
             end
         end
     end
+    if Easter.ms_PricePoolName then
+		self.m_PricePool = PricePoolManager:getSingleton():getPricePool(Easter.ms_PricePoolName, "Osterei", Easter.ms_PricePoolPrices, Easter.ms_PricePoolEnd)
+		if self.m_PricePool then
+            self.m_PricePool:setDailyEntryBuyLimit(50)
+			PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(1483.915, -1750.245, 15.445), 0)
+		end
+	end
     addEventHandler("Easter:requestHidingRabbits", root, bind(self.requestHidingRabbits, self))
     addEventHandler("Easter:onHidingRabbitFound", root, bind(self.onHidingRabbitFound, self))
 end
