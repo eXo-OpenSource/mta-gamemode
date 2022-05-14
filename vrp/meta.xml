@@ -301,6 +301,9 @@
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchDefault.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchHalloween.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/ColorCars/ColorCarsManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/ColorCars/ColorCars.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
@@ -1012,6 +1015,11 @@
 	<script src="client/classes/GUIForms/PricePoolEntryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PricePoolPriceGUI.lua" type="client"/>
 
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsCreateLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsMatchGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsPasswordGUI.lua" type="client"/>
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -1234,6 +1242,8 @@
 
 	<script src="client/classes/Gameplay/Cinema/CinemaLobby.lua" type="client"/>
 	<script src="client/classes/Gameplay/Cinema/CinemaManager.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/ColorCars/ColorCarsManager.lua" type="client"/>
 
 	<!-- Fishing -->
 	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
@@ -1865,6 +1875,7 @@
 	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
 	<vrpfile src="files/images/Radar/Blips/BunnyHead.png"/>
 	<vrpfile src="files/images/Radar/Blips/Cinema.png"/>
+	<vrpfile src="files/images/Radar/Blips/ColorCars.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -3480,6 +3491,7 @@
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
 	<map src="files/maps/Blueberry-Telegraphpole.map"/>
+	<map src="files/maps/ColorCars.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

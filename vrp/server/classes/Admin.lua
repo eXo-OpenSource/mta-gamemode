@@ -1108,6 +1108,7 @@ local tpTable = {
 		["import"] =   		{["pos"] = Vector3(-1684.73, 33.47, 3.55),		["typ"] = "Orte"},
 		["kino"] =   		{["pos"] = Vector3(1291.14, -1154.93, 23.82),   ["typ"] = "Orte"},
         ["juwelier"] =    	{["pos"] = Vector3(550.287, -1507.069, 14.546),  	["typ"] = "Orte"},
+        ["colorcars"] =    	{["pos"] = Vector3(2690.84, -1700.05, 10.44),  	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},

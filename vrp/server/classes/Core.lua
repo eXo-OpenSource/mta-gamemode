@@ -154,6 +154,7 @@ function Core:constructor()
 		CinemaManager:new()
 		CustomAnimationManager:new()
 		PricePoolManager:new()
+		ColorCarsManager:new()
 
 		if EVENT_EASTER then
 			Easter:new()
