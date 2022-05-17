@@ -25,7 +25,7 @@ function ColorCarsCreateLobbyGUI:constructor()
         self.m_MaxPlayerChanger:addItem(i)
     end
 
-    self.m_CreateButton = GUIButton:new(self.m_PosX*0.07, self.m_PosY*1.7, 200, 50, _"Lobby erstellen", self.m_CreateLobbyWindow)
+    self.m_CreateButton = GUIButton:new(self.m_PosX*0.07, self.m_PosY*1.7, 200, 50, _"Lobby erstellen", self.m_CreateLobbyWindow):setBackgroundColor(Color.Green)
 
     self.m_CreateButton.onLeftClick = 
     function()

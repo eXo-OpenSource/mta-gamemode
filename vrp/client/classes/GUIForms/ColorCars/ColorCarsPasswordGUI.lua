@@ -16,7 +16,7 @@ function ColorCarsPasswordGUI:constructor()
     self.m_PasswordLabel = GUILabel:new(self.m_PosX*0.07, self.m_PosY*0.1, 200, 30, _"Lobby Passwort:", self.m_PasswordWindow)
     self.m_PasswordEdit = GUIEdit:new(self.m_PosX*0.07, self.m_PosY*0.2, 200, 30, self.m_PasswordWindow)
 
-    self.m_JoinLobbyButton = GUIButton:new(self.m_PosX*0.07, self.m_PosY*0.375, 200, 50, _"Lobby beitreten", self.m_PasswordWindow)
+    self.m_JoinLobbyButton = GUIButton:new(self.m_PosX*0.07, self.m_PosY*0.375, 200, 50, _"Lobby beitreten", self.m_PasswordWindow)setBackgroundColor(Color.Green)
     
     self.m_JoinLobbyButton.onLeftClick =
     function()
