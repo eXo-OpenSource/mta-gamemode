@@ -25,20 +25,17 @@ function ColorCarsCreateLobbyGUI:constructor()
         self.m_MaxPlayerChanger:addItem(i)
     end
 
-    self.m_CreateButton = GUIButton:new(self.m_PosX*0.07, self.m_PosY*1.7, 200, 50, _"Lobby erstellen", self.m_CreateLobbyWindow):setBackgroundColor(Color.Green)
+    self.m_CreateButton = GUIButton:new(self.m_PosX*0.07, self.m_PosY*1.7, 200, 50, _"Lobby erstellen (1000$)", self.m_CreateLobbyWindow):setBackgroundColor(Color.Green):setFontSize(0.75)
 
     self.m_CreateButton.onLeftClick = 
     function()
-        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen") end
-
         local name = self.m_NameEdit:getText()
         local password = self.m_PasswordEdit:getText()
-        local maxplayers = self.m_MaxPlayerChanger:getIndex()
-        
-        if #name > 20 then
-            return ErrorBox:new(_"Der Name ist zu lang") 
-        end
-        
+        local maxPlayers = self.m_MaxPlayerChanger:getIndex()
+
+        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstelle!n") end
+        if #name > 20 then return ErrorBox:new(_"Der Name ist zu lang.") end
+     
         if #name == 0 then
             name = localPlayer:getName()
         end
