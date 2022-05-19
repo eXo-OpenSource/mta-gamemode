@@ -566,7 +566,7 @@ function StatisticsLogger:addVehicleRentLog(groupId, playerId, vehicleId, rental
 		groupId, playerId, vehicleId, rental, duration)
 end
 
-function StatisticsLogger:addColorCarsLog(creator, lobbyName, password, maxPlayers)
+function StatisticsLogger:addColorCarsLog(creatorId, lobbyName, password, maxPlayers)
     sqlLogs:queryExec("INSERT INTO ??_ColorCars (UserId, LobbyName, Password, MaxPlayers, Date) VALUES(?, ?, ?, ?, NOW())", sqlLogs:getPrefix(), 
-	creator:getId(), lobbyName, password, maxPlayers)
+	creatorId, lobbyName, password, maxPlayers)
 end

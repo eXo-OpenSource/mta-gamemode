@@ -28,7 +28,7 @@ end
 
 function ColorCarsManager:createLobby(lobbyName, lobbyPassword, maxPlayers)
     self.m_ClickedLobby = localPlayer
-    triggerServerEvent("ColorCars:createLobby", resourceRoot, lobbyName, lobbyPassword, maxPlayers)
+    triggerServerEvent("ColorCars:createLobby", resourceRoot, localPlayer, lobbyName, lobbyPassword, maxPlayers)
 end
 
 function ColorCarsManager:addPlayer(lobby)
@@ -114,9 +114,10 @@ end
 
 function ColorCarsManager:refreshLobbyGUI()
     ColorCarsLobbyGUI:getSingleton().m_LobbyGridList:clear()
-    for i, v in pairs(self.m_LobbyInfos) do
-        local ColorCarsLobby = ColorCarsLobbyGUI:getSingleton().m_LobbyGridList:addItem(v["Lobbyname"], ("%s / %s"):format(v["Players"], v["maxPlayers"]), v["hasPassword"] and "Ja" or "Nein")
-        ColorCarsLobby.m_Lobby = i
+    for i = #self.m_LobbyInfos, 1, -1 do
+        v = self.m_LobbyInfos[i]
+        local ColorCarsLobby = ColorCarsLobbyGUI:getSingleton().m_LobbyGridList:addItem(v["LobbyName"], ("%s / %s"):format(v["Players"], v["maxPlayers"]), v["hasPassword"] and "Ja" or "Nein")
+        ColorCarsLobby.m_Lobby = v["LobbyOwner"]
         ColorCarsLobby.m_HasPassword = v["hasPassword"]
     end
 end
@@ -129,7 +130,7 @@ function ColorCarsManager:Event_receivePasswordResult(password)
     if password then
         self:requestMaxPlayersCheck(self.m_ClickedLobby)
     else
-        ErrorBox:new(_"Das eingegebene Passwort ist falsch")
+        ErrorBox:new(_"Das eingegebene Passwort ist falsch.")
     end
 end
 
@@ -142,7 +143,7 @@ function ColorCarsManager:Event_receiveMaxPlayersResult(isFull)
     if not isFull then 
         self:addPlayer(self.m_ClickedLobby)
     else
-        ErrorBox:new(_"Die Lobby ist voll")
+        ErrorBox:new(_"Die Lobby ist voll.")
     end
 end
 
@@ -156,16 +157,20 @@ function ColorCarsManager:Event_receiveLobbyInfos(lobbys)
 end
 
 function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
-    local ghostPlayer = getPlayerFromName(ghostPlayer:getName())
     local state = not state
 
     if self.m_GhostModeTimer[ghostPlayer] then
-        self.m_GhostModeTimer[ghostPlayer]:destroy()
+        if not state then
+            self.m_GhostModeTimer[ghostPlayer]:destroy()
+            self.m_GhostModeTimer[ghostPlayer] = nil
+        else
+            self.m_GhostModeTimer[ghostPlayer] = nil
+        end
     end
     
     localPlayer.vehicle:setCollidableWith(ghostPlayer.vehicle, state)
           
-    if localPlayer:getName() == ghostPlayer:getName() then
+    if localPlayer == ghostPlayer then
         ghostPlayer.vehicle:setAlpha(state and 255 or 100)
         ghostPlayer:setAlpha(state and 255 or 100)
 

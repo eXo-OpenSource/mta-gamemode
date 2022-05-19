@@ -22,7 +22,7 @@ function ColorCarsPasswordGUI:constructor()
     function()
         local password = self.m_PasswordEdit:getText()
         if password == nil then
-            return ErrorBox:new(_"Kein Passwort eingegeben")
+            return ErrorBox:new(_"Kein Passwort eingegeben.")
         end
         ColorCarsManager:getSingleton():requestPasswordCheck(password)
     end

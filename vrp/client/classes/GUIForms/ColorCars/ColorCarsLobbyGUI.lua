@@ -27,7 +27,7 @@ function ColorCarsLobbyGUI:constructor(marker)
 
     self.m_JoinLobbyButton.onLeftClick =
     function()
-        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen") end
+        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen!") end
         
         if self.m_LobbyGridList:getSelectedItem() then
             local lobby = self.m_LobbyGridList:getSelectedItem().m_Lobby
@@ -41,7 +41,7 @@ function ColorCarsLobbyGUI:constructor(marker)
 
     self.m_CreateLobbyButton.onLeftClick =
     function()
-        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen") end
+        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen!") end
         
         ColorCarsManager:getSingleton():openCreateLobbyGUI()
     end

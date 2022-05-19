@@ -33,7 +33,7 @@ function ColorCarsCreateLobbyGUI:constructor()
         local password = self.m_PasswordEdit:getText()
         local maxPlayers = self.m_MaxPlayerChanger:getIndex()
 
-        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstelle!n") end
+        if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen!") end
         if #name > 20 then return ErrorBox:new(_"Der Name ist zu lang.") end
      
         if #name == 0 then

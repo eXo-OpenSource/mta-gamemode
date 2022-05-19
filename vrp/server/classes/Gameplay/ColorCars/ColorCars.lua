@@ -22,20 +22,24 @@ ColorCars.PowerUps =    {["Superboost"] = {["DisplayName"] = "Super Boost", ["St
                         ["Description"] = "Du hast ein Superjump erhalten.\nDu kannst es mit SHIFT aktivieren!", ["Client"] = true},
                         
                         ["Vehiclechange"] = {["DisplayName"] = "Fahrzeug änderung", ["Stackable"] = false, ["InstantActive"] = true, 
-                        ["Description"] = "Du hast ein neues Fahrzeug erhalten\nDies hält für 1 Minute", ["Client"] = false},
+                        ["Description"] = "Du hast ein neues Fahrzeug erhalten\nDies hält für 1 Minute!", ["Client"] = false},
                         
                         ["Ghostmode"] = {["DisplayName"] = "Geist", ["Stackable"] = false, ["InstantActive"] = true, 
-                        ["Description"] = "Du bist nun ein Geist und kannst nicht berührt werden\nDies hält für 30 Sekunden", ["Client"] = true}
+                        ["Description"] = "Du bist nun ein Geist und kannst nicht berührt werden\nDies hält für 30 Sekunden!", ["Client"] = true}
 }
 ColorCars.PowerUpVehicleChange = {411, 415, 560, 503, 530, 574, 559,}
 
 ColorCars.MarkerPosition = {Vector3(-1518.98, 1008.02, 1037.22), Vector3(-1390.19, 1061.36, 1037.89), Vector3(-1278.81, 992.99, 1036.55), Vector3(-1399.42, 1002.50, 1023.58), Vector3(-1410.64, 930.16, 1040.888)}
 
-function ColorCars:constructor(lobbyOwner, lobbyName, password, maxPlayers)
+ColorCars.Types = {[1] = "permanent", [2] = "temporary"}
+
+function ColorCars:constructor(lobbyOwner, lobbyName, password, maxPlayers, isServer)
     self.m_LobbyOwner = lobbyOwner
     self.m_LobbyName = lobbyName
+    self.m_LobbyType = isServer and ColorCars.Types[1] or ColorCars.Types[2]
     self.m_LobbyPassword = password
     self.m_MaxPlayers = maxPlayers
+    self.m_Catcher = isServer and "none" or lobbyOwner
     self.m_LobbyDimension = DimensionManager:getSingleton():getFreeDimension()
     self.m_LastCatch = 0
     self.m_TimeBetweenCatch = 3000
@@ -43,7 +47,6 @@ function ColorCars:constructor(lobbyOwner, lobbyName, password, maxPlayers)
     self.m_PlayerVehicle = {}
     self.m_PlayerCatchScore = {}
     self.m_PlayerPowerUps = {}
-    self.m_Catcher = lobbyOwner
     self.m_PowerUpSpawnTimer = setTimer(bind(self.spawnPowerUpMarker, self), math.random(30000, 40000), 0)
 end
 
@@ -73,13 +76,17 @@ function ColorCars:addPlayer(player)
     player:createStorage(false)
     player.colorCarsLobby = self
 
+    if self.m_Catcher == "none" then
+        self:setCatcher(player)
+    end
+
     self.m_SuportboostPowerUp = bind(self.powerUpSuperBoost, self, player)
     self.m_SuperjumpPowerUp = bind(self.powerUpSuperJump, self, player)
     bindKey(player, "lalt", "down", self.m_SuportboostPowerUp)
     bindKey(player, "lshift", "down", self.m_SuperjumpPowerUp)
 
-    self:sendShortMessage(("%s hat die Lobby betreten"):format(player:getName()))
-    player:sendShortMessage("Du bist der Lobby beigetreten")
+    self:sendShortMessage(("%s hat die Lobby betreten."):format(player:getName()))
+    player:sendShortMessage("Du bist der Lobby beigetreten.")
 end
 
 function ColorCars:removePlayer(player)
@@ -98,10 +105,10 @@ function ColorCars:removePlayer(player)
     player:setInterior(0)
     player:setCameraTarget() -- without the players camera flies over the whole map
     
-    self:sendShortMessage(("%s hat die Lobby verlassen"):format(player:getName()))
-    player:sendShortMessage("Du hast die Lobby verlassen")
+    self:sendShortMessage(("%s hat die Lobby verlassen."):format(player:getName()))
+    player:sendShortMessage("Du hast die Lobby verlassen.")
 
-    if #self.m_Players == 0 then
+    if #self.m_Players == 0 and self.m_LobbyType == ColorCars.Types[2] then
         return delete(self) 
     end
 
@@ -109,8 +116,10 @@ function ColorCars:removePlayer(player)
         self:setLobbyOwner(self.m_Players[1])
     end
     
-    if player == self.m_Catcher then
+    if player == self.m_Catcher and #self.m_Players ~= 0 then
         self:setCatcher(self.m_Players[math.random(1, #self.m_Players)])
+    else 
+        self.m_Catcher = "none" 
     end
     ColorCarsManager:getSingleton():syncMatchGUI(self.m_LobbyOwner)
 end
