@@ -147,15 +147,15 @@ end
 function VehicleSpawner:initializeAll()
 	-- Create 'general' vehicle spawners
 	local function spawnCondition(player)
-		if player:getMoney() >= 200 then
+		if player:getMoney() >= 400 then
 			return true
 		else
-			player:sendError(_("Du hast nicht genug Geld dabei! (200$)", player))
+			player:sendError(_("Du hast nicht genug Geld dabei! (400$)", player))
 		end
 	end
 
 	local function postSpawn(vehicle, player)
-		player:transferMoney({CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT), nil, true}, 200, "Fahrzeugverleih", "Gameplay", "VehicleRent")
+		player:transferMoney({CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT), nil, true}, 400, "Fahrzeugverleih", "Gameplay", "VehicleRent")
 	end
 
 	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- city hall

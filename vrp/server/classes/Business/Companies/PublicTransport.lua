@@ -10,8 +10,8 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 	},
 }
 
-local TAXI_PRICE_PER_KM_CAR = 50
-local TAXI_PRICE_PER_KM_PLANE = 75
+local TAXI_PRICE_PER_KM_CAR = 100
+local TAXI_PRICE_PER_KM_PLANE = 150
 PublicTransport.m_TaxiSigns = {}
 
 function PublicTransport:constructor()

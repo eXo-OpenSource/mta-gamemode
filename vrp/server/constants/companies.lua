@@ -87,7 +87,7 @@ companyRankNames[4] = {
 [5] = "Transportmanager"
 }
 companyColors[4] = {["r"] = 255, ["g"] = 210, ["b"] = 0}
-companySkins[4] = {[61]=true, [147]=true, [240]=true, [253]=true,[255]=true, [76]=true}
+companySkins[4] = {[53]=true, [61]=true, [76]=true, [219]=true, [240]=true, [253]=true, [255]=true}
 companyDutyMarker[4] = Vector3(1234.52, -63.90, 1011.32)
 companyDutyMarkerInterior[4] = 12
 companyDutyMarkerDimension[4] = 4
