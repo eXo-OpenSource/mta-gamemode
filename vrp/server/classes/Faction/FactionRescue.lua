@@ -112,8 +112,8 @@ end
 function FactionRescue:destructor()
 end
 
-function FactionRescue:countPlayers()
-	return #self.m_Faction:getOnlinePlayers()
+function FactionRescue:countPlayers(afkCheck, dutyCheck)
+	return #self.m_Faction:getOnlinePlayers(afkCheck, dutyCheck)
 end
 
 function FactionRescue:getOnlinePlayers(afkCheck, dutyCheck)
