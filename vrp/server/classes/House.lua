@@ -11,9 +11,12 @@ local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, skyscraperId, garageId, bIsRob)
 	if owner == 0 then
 		owner = false
+	end
+	if skyscraperId == 0 then
+		skyscraperId = false
 	end
 
 	self.hasRobbedHouse = {}
@@ -28,9 +31,11 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner
 	self.m_Id = id
+	self.m_SkyscraperId = skyscraperId
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Money = money or 0
 	self.m_IsRob = bIsRob
+	self.m_IsInSkyscraper = skyscraperId
 	self.m_BankAccountServer = BankServer.get("action.house_rob")
 	self.m_BankAccountServer2 = BankServer.get("server.house")
 
@@ -65,12 +70,14 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 end
 
 function House:updatePickup()
-	if self.m_Pickup then
-		setPickupType(self.m_Pickup, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD))
-	else
-		self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD), 10, math.huge)
-		self.m_Pickup.m_PickupType = "House" --only used for fire message creation
-		addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
+	if not self.m_IsInSkyscraper then
+		if self.m_Pickup then
+			setPickupType(self.m_Pickup, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD))
+		else
+			self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD), 10, math.huge)
+			self.m_Pickup.m_PickupType = "House" --only used for fire message creation
+			addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
+		end
 	end
 end
 
@@ -97,6 +104,8 @@ end
 function House:setPosition(position)
 	if position and position.x then
 		self.m_Pos = position
+		self.m_Pickup:destory()
+		self.m_Pickup = nil
 		self:updatePickup()
 	end
 end
@@ -344,10 +353,11 @@ end
 function House:save()
 	self.m_BankAccount:save()
 	local houseID = self.m_Owner or 0
+	local pos = self.m_Pos
 	if not self.m_Keys then self.m_Keys = {} end
 	if not self.m_Elements then self.m_Elements = {} end
-	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ? WHERE id = ?;", sql:getPrefix(),
-		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, self.m_Id)
+	return sql:queryExec("UPDATE ??_houses SET x = ?, y = ?, z = ?, interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ?, skyscraperID = ? WHERE id = ?;", sql:getPrefix(),
+		pos.x, pos.y, pos.z, self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, not self.m_SkyscraperId and 0 or self.m_SkyscraperId, self.m_Id)
 end
 
 function House:sellHouse(player)
@@ -376,6 +386,9 @@ function House:clearHouse()
 		self.m_BankAccount:transferMoney(self.m_BankAccountServer2, self.m_BankAccount:getMoney(), "Hausräumung", "House", "Cleared")
 	end
 	self:updatePickup()
+	if self.m_IsInSkyscraper then
+		SkyscraperManager.Map[self.m_SkyscraperId]:updatePickup()
+	end
 	self:save()
 end
 
@@ -607,6 +620,9 @@ function House:buyHouse(player)
 		player:transferBankMoney(self.m_BankAccountServer2, self.m_Price, "Haus-Kauf", "House", "Buy")
 		self.m_Owner = player:getId()
 		self:updatePickup()
+		if self.m_IsInSkyscraper then
+			SkyscraperManager.Map[self.m_SkyscraperId]:updatePickup()
+		end
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
 		self:save()
 		-- create blip

@@ -113,6 +113,9 @@
 	<script src="server/classes/Time.lua" type="server"/>
 	<script src="server/classes/PedScale.lua" type="server"/>
 	<script src="server/classes/CustomAnimationManager.lua" type="server"/>
+	<script src="server/classes/HouseGarage.lua" type="server"/>
+	<script src="server/classes/Skyscraper.lua" type="server"/>
+	<script src="server/classes/SkyscraperManager.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -864,6 +867,8 @@
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/SkyscraperGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
@@ -947,6 +952,7 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkyscraperEditGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -2024,6 +2030,7 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_FT_Ladder.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Leviathan.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Huntley.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
 
@@ -3469,6 +3476,7 @@
 	<file src="files/fonts/EkMukta-Bold.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome5.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome6.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Chapaza.ttf" /><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>

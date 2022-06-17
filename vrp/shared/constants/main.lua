@@ -228,6 +228,8 @@ ADMIN_RANK_PERMISSION = {
 	--server edit tools
 	["editHouse"] = RANK.Administrator,
 	["freeHouse"] = RANK.Administrator, -- free house from owner, tenants and house bank account money
+	["createSkyscraper"] = RANK.Developer, -- also includes deleting
+	["addHouseToSkyscraper"] = RANK.Developer, -- also includes removing 
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Supporter,
 	["toggleFire"] = RANK.Supporter,
@@ -355,7 +357,7 @@ TURFING_STOPREASON_NEWOWNER = 2
 TURFING_STOPREASON_DEFENDED = 3
 
 SkinInfo = {
-	-- skinId -- skinName -- skinPrice
+	-- skinId -- skinName -- skinPrice -- skinLevel
 	[0] = {"CJ", 5000},
 	[2] = {"Weißer Hut", 50},
 	[7] = {"Jeans-Jacke", 50},
@@ -512,6 +514,7 @@ PlayerAttachObjects = {
 	[2912] = {model = 2912, name = "Waffenkiste", pos = Vector3(0, 0.35, 0.45), rot = Vector3(10, 0, 0), blockJump = true, blockSprint = true, blockWeapons = true, blockVehicle = true, animationData = {"carry", "crry_prtial", 1, true, true, false, true}, placeDown = true},
 	[2919] = {model = 2919, name = "Waffen", pos = Vector3(0, -0.2, 0), rot = Vector3(0, 90, 90), 	blockJump = true, bone = 3, blockSprint = true,  blockVehicle = false, placeDown = true},
 	[1826] = {model = 1826, name = "Angelruten", pos = Vector3(-0.03, 0.02, 0.05), rot = Vector3(180, 120, 0), blockJump = false, bone = 12, blockSprint = true, blockVehicle = true},
+	[1575] = {model = 1575, name = "Drogen", pos = Vector3(0, -0.25, 0.12), rot = Vector3(180, 90, 90), bone = 3, blockSprint = true, blockFlyingVehicle = true, placeDown = true, scale = 1, scaleY = 1.5, scaleZ = 1.4},
 }
 
 
