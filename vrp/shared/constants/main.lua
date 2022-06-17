@@ -230,6 +230,8 @@ ADMIN_RANK_PERMISSION = {
 	["freeHouse"] = RANK.Administrator, -- free house from owner, tenants and house bank account money
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Supporter,
+	["toggleFire"] = RANK.Supporter,
+	["editFire"] = RANK.Supporter,
 	["eventGangwarMenu"] = RANK.Supporter,
 	["transactionMenu"] = RANK.Administrator,
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
@@ -288,41 +290,42 @@ Crime = {
 	ShopRob = {id = 7, text = "Raubüberfall", maxwanted = 5, maxdistance = math.huge}
 }
 
+AMMUNATION_APP_MULTIPLICATOR = 1.5
 AmmuNationInfo = {
-	[30] = { -- AK-47
-		Magazine = {price=30,amount=30},
-		Weapon = 1850
-	},
-	[31] = { -- M4A1
-		Magazine = {price=60,amount=50},
-		Weapon = 2500
-	},
-	[29] = { -- MP5
-		Magazine = {price=40,amount=30},
-		Weapon = 1000
-	},
-	[25] = { -- Shotgun
-		Magazine = {price=2,amount=1},
-		Weapon = 900
-	},
-	[33] = { -- Rifle
-		Magazine = {price=4,amount=1},
-		Weapon = 1250
-	},
-	[22] = { -- Pistol
-		Magazine = {price=15,amount=17},
-		Weapon = 450
-	},
-	[24] = { -- Desert Eagle
-		Magazine = {price=7,amount=7},
-		Weapon = 1150
-	},
-	[1] = { -- Brass Knuckles
-		Weapon = 50
-	},
-	[0] = { -- Armor
-		Weapon = 150
-	},
+    [30] = { -- AK-47
+        Magazine = {price=300,amount=30},
+        Weapon = 2150
+    },
+    [31] = { -- M4A1
+        Magazine = {price=350,amount=50},
+        Weapon = 2850
+    },
+    [29] = { -- MP5
+        Magazine = {price=180,amount=30},
+        Weapon = 1250
+    },
+    [25] = { -- Shotgun
+        Magazine = {price=95,amount=1},
+        Weapon = 1000
+    },
+    [33] = { -- Rifle
+        Magazine = {price=80,amount=1},
+        Weapon = 1250
+    },
+    [22] = { -- Pistol
+        Magazine = {price=75,amount=17},
+        Weapon = 500
+    },
+    [24] = { -- Desert Eagle
+        Magazine = {price=375,amount=7},
+        Weapon = 1450
+    },
+    [1] = { -- Brass Knuckles
+        Weapon = 100
+    },
+    [0] = { -- Armor
+        Weapon = 250
+    },
 }
 
 DEFAULT_GANGAREA_RESOURCES = 500

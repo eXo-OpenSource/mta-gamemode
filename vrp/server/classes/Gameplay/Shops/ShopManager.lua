@@ -471,6 +471,7 @@ function ShopManager:onAmmunationAppOrder(weaponTable)
 		end
 	end
 	if canBuyWeapons then
+		totalAmount = totalAmount * AMMUNATION_APP_MULTIPLICATOR
 		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
 
