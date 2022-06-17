@@ -37,7 +37,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
 		if getElementData(element, "lastDrivers") then
-			local lastDriver = getElementData(element, "lastDrivers")[#getElementData(element, "lastDrivers")]
+			local lastDriver = getElementData(element, "lastDrivers")[#getElementData(element, "lastDrivers")] or nil
 			self:addItem(_("Letzter Fahrer: %s", lastDriver),
 				function()
 						if self:getElement() then
@@ -47,7 +47,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.Player)
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) then
+		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) or table.find(getElementData(element, "VehicleKeys") or {}, localPlayer:getId()) then
 			if (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
 				if getElementData(element, "isRented") ~= true then
 					if getElementData(element, "forRent") ~= true then
@@ -124,7 +124,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Music)
 			end
-			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
+			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" and getElementData(element, "OwnerName") == localPlayer.name then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
 						if self:getElement() then
@@ -137,7 +137,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				self:addItem(_"Respawn",
 					function()
 						if self:getElement() then
-							triggerServerEvent("vehicleRespawn", self:getElement())
+							triggerServerEvent("vehicleRespawnWorld", self:getElement())
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Home)
@@ -235,7 +235,9 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				self:addItem(_"Wanze anbringen",
 						function()
 							if self:getElement() then
-								triggerServerEvent("factionStateAttachBug", self:getElement())
+								if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+									triggerServerEvent("factionStateAttachBug", self:getElement())
+								end
 							end
 						end
 					):setIcon(FontAwesomeSymbols.Bug)

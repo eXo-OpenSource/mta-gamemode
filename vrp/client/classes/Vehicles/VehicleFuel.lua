@@ -19,6 +19,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	self.m_ConfirmWithSpace = confirmWithSpace
 
 	self.m_isServiceStation = localPlayer.usingGasStation and localPlayer.usingGasStation:getData("isServiceStation")
+	self.m_isEvilStation = localPlayer.usingGasStation and localPlayer.usingGasStation:getData("isEvilStation")
 
 	self.m_FuelProgress = CAnimation:new(self, "m_Fuel")
 
@@ -67,7 +68,7 @@ end
 
 function VehicleFuel:getFuelPrice()
 	if not FUEL_PRICE[self.m_Vehicle:getFuelType()] then return 0 end
-	local mult = (self.m_isServiceStation and SERVICE_FUEL_PRICE_MULTIPLICATOR or 1)
+	local mult = ((self.m_isServiceStation and SERVICE_FUEL_PRICE_MULTIPLICATOR) or (self.m_isEvilStation and EVIL_FUEL_PRICE_MULTIPLICATOR) or 1)
 	return math.round(self:getOpticalFuelAmount() * FUEL_PRICE[self.m_Vehicle:getFuelType()] * mult, 2)
 end
 

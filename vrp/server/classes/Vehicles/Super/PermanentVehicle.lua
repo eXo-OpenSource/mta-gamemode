@@ -162,13 +162,19 @@ function PermanentVehicle:virtual_constructor(data)
 		self:setDimension(data.Dimension or 0)
 		self:setInterior(data.Interior or 0)
 		self:setCurrentPositionAsSpawn(data.PositionType)
-
+		
+		if data.LastDriver ~= 0 then
+			table.insert(self.m_LastDrivers, Account.getNameFromId(data.LastDriver))
+			setElementData(self, "lastDrivers", self.m_LastDrivers)
+		end
+		
 		setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
 		setElementData(self, "OwnerID", data.OwnerId) -- Todo: *hide*
 		setElementData(self, "OwnerType", VehicleTypeName[self.m_OwnerType])
 		setElementData(self, "ID", self.m_Id or -1)
 
 		self.m_Keys = data.Keys and fromJSON(data.Keys) or {} -- TODO: check if this works?
+		setElementData(self, "VehicleKeys", self.m_Keys)
 		self.m_PositionType = data.PositionType or VehiclePositionType.World
 
 		if data.TrunkId == 0 or data.TrunkId == nil and (self.m_OwnerType == VehicleTypes.Player or self.m_OwnerType == VehicleTypes.Group) then
@@ -237,8 +243,8 @@ end
 function PermanentVehicle:save()
   local health = getElementHealth(self)
   if self.m_Trunk then self.m_Trunk:save() end
-  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId =? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId =? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers]), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Id)
 end
 
 function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
@@ -292,6 +298,7 @@ function PermanentVehicle:addKey(player)
     player = player:getId()
   end
   table.insert(self.m_Keys, player)
+  setElementData(self, "VehicleKeys", self.m_Keys)
 end
 
 function PermanentVehicle:removeKey(player)
@@ -303,6 +310,7 @@ function PermanentVehicle:removeKey(player)
     return false
   end
   table.remove(self.m_Keys, index)
+  setElementData(self, "VehicleKeys", self.m_Keys)
   return true
 end
 
