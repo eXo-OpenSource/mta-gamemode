@@ -549,7 +549,7 @@ function Company:phoneCall(caller)
 		if not player:getPhonePartner() then
 			if player ~= caller then
 				local color = {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b}
-				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color, "company")
 			end
 		end
 	end

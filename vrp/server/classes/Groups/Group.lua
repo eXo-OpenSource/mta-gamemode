@@ -621,7 +621,7 @@ function Group:phoneCall(caller)
 			if not player:getPhonePartner() then
 				if player ~= caller then
 					local color = self:getColor()
-					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color)
+					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color, "group")
 				end
 			end
 		end

@@ -314,6 +314,10 @@ FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256
 HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512
 
 CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
+CUSTOM_FACTION_RINGSOUND_PATH = "files/audio/Ringtones/customFaction.mp3"
+CUSTOM_COMPANY_RINGSOUND_PATH = "files/audio/Ringtones/customCompany.mp3"
+CUSTOM_GROUP_RINGSOUND_PATH = "files/audio/Ringtones/customGroup.mp3"
+CUSTOM_TUNINGSOUND_PATH = "files/audio/vehicles/VehicleTuning.mp3"
 
 PHONE_MODELS = {
 	{Name = "Nexus 5", Image = "Nexus_5.png", IconPreset = "Android"},

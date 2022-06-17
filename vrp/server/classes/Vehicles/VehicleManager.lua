@@ -1489,8 +1489,8 @@ end
 
 function VehicleManager:Event_TrailerAttach(truck)
 	if not getVehicleOccupant(truck) then return end
-	if not instanceof(truck, PermanentVehicle) or not instanceof(truck, GroupVehicle) then return end
-	if not instanceof(source, PermanentVehicle) or not instanceof(source, GroupVehicle) then return end
+	if not instanceof(truck, PermanentVehicle) and not instanceof(truck, GroupVehicle) then return end
+	if not instanceof(source, PermanentVehicle) and not instanceof(source, GroupVehicle) then return end
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)

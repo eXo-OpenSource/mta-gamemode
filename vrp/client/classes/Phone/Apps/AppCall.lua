@@ -246,12 +246,12 @@ function AppCall:openIncoming(caller, voiceEnabled)
 	self.m_ButtonBusy.onLeftClick = bind(self.ButtonBusy_Click, self)
 
 	-- Play ring sound
-	self:playRingSound(true)
+	self:playRingSound(true, false, "player")
 	showCursor(false)
 end
 
-function AppCall:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
-	self:playRingSound(true,true)
+function AppCall:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor, type)
+	self:playRingSound(true, true, type)
 	local shortMessage = ShortMessage:new(message.._"\nKlicke hier, um abzuheben.", title, tocolor(unpack(tblColor)), -1)
 	shortMessage.m_Callback = function()
 		if not Phone:getSingleton():isOn() then
@@ -302,12 +302,26 @@ function AppCall:removeIncomingCallShortMessage(caller, callee)
 	end
 end
 
-function AppCall:playRingSound(state, singleRing)
+function AppCall:playRingSound(state, singleRing, type)
 	if state and not self.m_RingSound then
 		local ringsound = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3")
-		if ringsound == CUSTOM_RINGSOUND_PATH and not fileExists(CUSTOM_RINGSOUND_PATH) then
-			ringsound = "files/audio/Ringtones/Klingelton1.mp3"
-			core:getConfig():set("Phone", "Ringtone", ringsound)
+		if type == "player" then
+			if ringsound == CUSTOM_RINGSOUND_PATH and not fileExists(CUSTOM_RINGSOUND_PATH) then
+				ringsound = "files/audio/Ringtones/Klingelton1.mp3"
+				core:getConfig():set("Phone", "Ringtone", ringsound)
+			end
+		elseif type == "faction" then
+			if fileExists(CUSTOM_FACTION_RINGSOUND_PATH) then
+				ringsound = CUSTOM_FACTION_RINGSOUND_PATH
+			end
+		elseif type == "company" then
+			if fileExists(CUSTOM_COMPANY_RINGSOUND_PATH) then
+				ringsound = CUSTOM_COMPANY_RINGSOUND_PATH
+			end
+		elseif type == "group" then
+			if fileExists(CUSTOM_GROUP_RINGSOUND_PATH) then
+				ringsound = CUSTOM_GROUP_RINGSOUND_PATH
+			end
 		end
 		self.m_RingSound = playSound(ringsound, not singleRing)
 	elseif not state and self.m_RingSound then
@@ -444,11 +458,11 @@ function AppCall:Event_callIncoming(caller, voiceEnabled)
 end
 
 
-function AppCall:Event_callIncomingSM(caller, voiceEnabled, message, title, tblColor)
+function AppCall:Event_callIncomingSM(caller, voiceEnabled, message, title, tblColor, type)
 	outputDebug(caller, voiceEnabled, message, title, tblColor)
 	if not caller then return end
 
-	self:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
+	self:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor, type)
 end
 
 function AppCall:Event_callRemoveSM(caller, callee)
