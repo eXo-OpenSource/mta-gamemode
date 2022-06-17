@@ -470,7 +470,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 				if killer:isFactionDuty() then
 					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
-						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
+						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)
 						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
@@ -480,7 +480,9 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 						if client:getFaction() and client:getFaction():isEvilFaction() then
 							factionBonus = JAIL_COSTS[wantedLevel]/2
 						end
-						FactionState:getSingleton().m_BankAccountServer:transferMoney(killer:getFaction(), factionBonus, "Arrest", "Faction", "ArrestKill")
+						local splitmoney = (factionBonus / 2)
+						FactionState:getSingleton().m_BankAccountServer:transferMoney(killer:getFaction(), splitmoney, "Arrest", "Faction", "ArrestKill")
+						FactionState:getSingleton():payArrestBonus(killer, splitmoney)
 						killer:givePoints(wantedLevel)
 						PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", client, client:getName(), killer:getName(), jailTime, factionBonus), "Staat")
 						StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, killer, 0)
@@ -860,6 +862,7 @@ function PlayerManager:Event_startAnimation(animation)
 			client.animationObject:setInterior(client:getInterior())
 			client.animationObject:setDimension(client:getDimension())
 			client.animationObject:attach(client)
+			client.animationObject:setAttachedOffsets(0, 0.3)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)

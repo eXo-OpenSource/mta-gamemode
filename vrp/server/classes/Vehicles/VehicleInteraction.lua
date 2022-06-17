@@ -78,7 +78,7 @@ function VehicleInteraction:repairVehicle(player, veh)
 
 	if player:getCompany() and player:getCompany():getId() == CompanyStaticId.MECHANIC and player:isCompanyDuty() then
 		local price = math.floor(((1000 - getElementHealth(veh))*0.5)*0.6)
-		if not player:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, price*0.6, "Eigenreperatur", "Company", "Repair") then
+		if not player:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, price*0.6, "Eigenreparatur", "Company", "Repair") then
 			player:sendError(_("Du hast nicht genug Geld! (%d$)", player, price))
 			return
 		end

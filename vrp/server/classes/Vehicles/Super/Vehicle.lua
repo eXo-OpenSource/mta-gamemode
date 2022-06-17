@@ -200,8 +200,8 @@ end
 
 function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
-	local hbState = getControlState( player, "handbrake")
 	if player:getType() ~= "player" then return end
+	local hbState = getControlState( player, "handbrake")
 
 	if seat == 0 then
 		if hbState then

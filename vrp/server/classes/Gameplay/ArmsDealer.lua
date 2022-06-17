@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 ArmsDealer = inherit(Singleton)
-ARMSDEALER_MIN_MEMBERS = 3
 ArmsDealer.Data = 
 { 
     ["Waffen"] = AmmuNationInfo,
@@ -21,9 +20,9 @@ ArmsDealer.Data =
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {10, 100000, 35}, 
-        ["Granate"] = {10, 80000, 16},
-        ["SLAM"] = {4, 40000}
+        ["RPG-7"] = {7, 100000, 35}, 
+        ["Granate"] = {7, 80000, 16},
+        ["SLAM"] = {3, 40000}
     }
 }
 

@@ -203,7 +203,7 @@ function PhoneInteraction:callSendLocation()
 		end
 
 		local pos = client:getPosition()
-		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_LocationBlips[client] = Blip:new("GPS.png", pos.x, pos.y, partner, 10000, BLIP_COLOR_CONSTANTS.Red)
 		self.m_LocationBlips[client]:setDisplayText("Position von "..client:getName())
 		self.m_LocationBlips[client]:setZ(pos.z)
 	end
