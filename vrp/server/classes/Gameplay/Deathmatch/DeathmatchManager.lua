@@ -96,7 +96,7 @@ function DeathmatchManager:constructor()
 	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
 	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement, dim)
 		if hitElement:getType() == "player" and not hitElement.vehicle and dim and hitElement:isLoggedIn() then
-			hitElement:triggerEvent("deathmatchOpenLobbyGUI")
+			hitElement:triggerEvent("deathmatchOpenLobbyGUI", self.m_Marker)
 		end
 	end)
 	PlayerManager:getSingleton():getWastedHook():register(

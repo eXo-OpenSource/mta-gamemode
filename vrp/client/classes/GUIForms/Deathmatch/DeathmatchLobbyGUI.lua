@@ -10,8 +10,8 @@ inherit(Singleton, DeathmatchLobbyGUI)
 
 addRemoteEvents{"deathmatchOpenLobbyGUI", "deathmatchReceiveLobbys"}
 
-function DeathmatchLobbyGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+function DeathmatchLobbyGUI:constructor(marker)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460, true, false, marker)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, true, self)
 	GUILabel:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.05, "Warnung: Alle deine Waffen werden beim betreten einer Lobby gelöscht!", self.m_Window):setColor(Color.Red)
@@ -28,7 +28,7 @@ function DeathmatchLobbyGUI:constructor()
 	self.m_CreateLobbyButton = GUIButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.17, self.m_Width*0.3, self.m_Height*0.07, _"Lobby erstellen", self.m_Window):setBackgroundColor(Color.Accent):setBarEnabled(true)
 	self.m_CreateLobbyButton:setEnabled(false)
 	self.m_CreateLobbyButton.onLeftClick = function()
-		DeathmatchCreateLobby:getSingleton():open()
+		DeathmatchCreateLobby:getSingleton():open():addClosingRange(marker)
 		delete(self)
 	end
 
@@ -100,6 +100,6 @@ function DeathmatchLobbyGUI:tryJoinLobby()
 end
 
 
-addEventHandler("deathmatchOpenLobbyGUI", root, function()
-	DeathmatchLobbyGUI:new()
+addEventHandler("deathmatchOpenLobbyGUI", root, function(marker)
+	DeathmatchLobbyGUI:new(marker)
 end)

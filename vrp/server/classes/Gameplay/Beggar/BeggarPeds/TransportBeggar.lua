@@ -34,9 +34,11 @@ function TransportBeggar:acceptTransport(player)
 
 				self.m_onTransportExitBind = bind(self.onTransportExit, self)
 				self.m_onTransportDestroyBind = bind(self.onTransportDestroy, self)
+				self.m_onPlayerQuitBind = bind(self.deleteTransportOnQuit, self)
 
 				addEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
 				addEventHandler("onVehicleDestroy", veh, self.m_onTransportDestroyBind)
+				addEventHandler("onPlayerQuit", player, self.m_onPlayerQuitBind)
 
 				addEventHandler("onMarkerHit", player.beggarTransportMarker, function(hitElement, dim)
 					if hitElement:getType() == "player" and dim and source.player == hitElement then
@@ -86,9 +88,20 @@ function TransportBeggar:deleteTransport(player)
 	local veh = player.beggarTransportVehicle
 	removeEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
 	removeEventHandler("onVehicleDestroy", veh, self.m_onTransportExitBind)
+	removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitBind)
 
 	player.beggarTransportMarker:destroy()
 	delete(player.beggarTransportBlip)
+
+	self:removeFromVehicle()
+	setTimer(function() self:despawn() end, 50, 1)
+end
+
+function TransportBeggar:deleteTransportOnQuit()
+	local veh = source.vehicle
+	removeEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
+	removeEventHandler("onVehicleDestroy", veh, self.m_onTransportExitBind)
+	removeEventHandler("onPlayerQuit", source, self.m_onPlayerQuitBind)
 
 	self:removeFromVehicle()
 	setTimer(function() self:despawn() end, 50, 1)

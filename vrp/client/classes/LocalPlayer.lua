@@ -395,11 +395,12 @@ function LocalPlayer:onDeathTimerUp()
 			-- now death gui
 			DeathGUI:new(self:getPublicSync("DeathTime"),
 				function()
+					local spawnAtHospial = core:get("Other", "RescueSpawnAfterDeath", "")
 					HUDRadar:getSingleton():show()
 					HUDUI:getSingleton():show()
 					showChat(true)
 					-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
-					triggerServerEvent("factionRescueWastedFinished", localPlayer)
+					triggerServerEvent("factionRescueWastedFinished", localPlayer, spawnAtHospial)
 				end
 			)
 		end, soundLength*1000, 1

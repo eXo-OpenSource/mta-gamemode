@@ -588,17 +588,19 @@ function FactionRescue:removePedDeathPickup(ped)
 	end
 end
 
-function FactionRescue:Event_OnPlayerWastedFinish()
+function FactionRescue:Event_OnPlayerWastedFinish(spawnAtHospial)
 	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
 
 	if source:getFaction() and source.m_WasOnDuty and not source.m_DeathInJail and source.m_JailTime == 0 then
-		source.m_WasOnDuty = false
-		local position = factionSpawnpoint[source:getFaction():getId()]
-		source:respawn(position[1])
-		source:setInterior(position[2])
-		source:setDimension(position[3])
-		return
+		if not spawnAtHospial then 
+			source.m_WasOnDuty = false
+			local position = factionSpawnpoint[source:getFaction():getId()]
+			source:respawn(position[1])
+			source:setInterior(position[2])
+			source:setDimension(position[3])
+			return
+		end
 	end
 
 	source:respawn()

@@ -1262,6 +1262,14 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 
+		self.m_RescueSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.9, self.m_Height*0.04, _"Am Krankenhaus spawnen", self.m_SettingBG)
+		self.m_RescueSpawn:setFont(VRPFont(25))
+		self.m_RescueSpawn:setFontSize(1)
+		self.m_RescueSpawn:setChecked(core:get("Other", "RescueSpawnAfterDeath", false))
+		self.m_RescueSpawn.onChange = function (state)
+			core:set("Other", "RescueSpawnAfterDeath", state)
+		end
+
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
 
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)

@@ -18,6 +18,7 @@ function FactionState:constructor()
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
+	self:createArrestZone(1194.201, -1822.363, 13.582) -- FBI
 	self.m_StateColor = {r = 3, g = 173, b = 252}
 
 	--self.m_GaragePorter = VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
@@ -92,7 +93,7 @@ function FactionState:constructor()
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
 	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
-	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm"
+	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm", "factionStateTicket"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
@@ -133,6 +134,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateUncuff", root, bind(self.Event_uncuffPlayer, self))
 	addEventHandler("factionStateTie", root, bind(self.Event_tiePlayer, self))
 	addEventHandler("factionStateDeactivateAreaAlarm", root, bind(self.Event_DeactivateAreaAlarm, self))
+	addEventHandler("factionStateTicket", root, bind(self.Event_ticket, self))
 
 
 	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
@@ -168,7 +170,11 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 		if getElementDimension(hE) == getElementDimension(source) then
 			if getElementType(hE) == "player" then
 				if hE:getWanteds() > 0 and not (hE:getFaction() and hE:getFaction():isStateFaction() and hE:isFactionDuty()) then
-					hE:triggerEvent("playerSelfArrest")
+					if hE:getLastGotWantedLevelTime() + 180000 < getTickCount() then
+						hE:triggerEvent("playerSelfArrest")
+					else 
+						hE:sendError(_"Du darfst dich noch nicht stellen!")
+					end
 				end
 			end
 		end
@@ -304,7 +310,7 @@ function FactionState:loadFBI(factionId)
 	self:createDutyPickup(275.85, -40.26, 1032.20, 10) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
 
-	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+	local blip = Blip:new("Police.png", 1219.20, -1812.31, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 294.43, -22.6, 1031.7)
@@ -438,6 +444,10 @@ function FactionState:countPlayers(afkCheck, dutyCheck)
 	local count = #self:getOnlinePlayers(afkCheck, dutyCheck)
 	return count
 end
+
+function FactionState:Event_ticket(target)
+	self:Command_ticket(client, "ticket", target.name)
+end 
 
 function FactionState:Command_ticket(source, cmd, target)
 	if target then
@@ -596,6 +606,7 @@ function FactionState:uncuffPlayer( player)
 	toggleControl(player, "jump", true)
 	toggleControl(player, "fire", true)
 	toggleControl(player, "aim_weapon", true)
+	toggleControl(player, "action", true)
 	player:triggerEvent("updateCuffImage", false)
 	player:setStateCuffed(false)
 	setPedWalkingStyle(player, 0)
@@ -612,6 +623,7 @@ function FactionState:Event_CuffSuccess( target )
 					toggleControl(target, "jump", false)
 					toggleControl(target, "fire", false)
 					toggleControl(target, "aim_weapon", false)
+					toggleControl(target, "action", false)
 					target:setStateCuffed(true)
 					setPedWalkingStyle(target, 123)
 					source:meChat(true,"legt "..target:getName().." Handschellen an!")
@@ -745,100 +757,121 @@ end
 function FactionState:getFullReasonFromShortcut(reason)
 	local amount = false
 	if string.lower(reason) == "db" then
-        reason = "Drogenbesitz (>= 10 Gramm)"
+        reason = "Drogenbesitz (>= 10)"
         amount = 1
     elseif string.lower(reason) == "db2" then
-        reason = "Drogenbesitz (>= 50 Gramm)"
+        reason = "Drogenbesitz (>= 50)"
         amount = 2
     elseif string.lower(reason) == "db3" then
-        reason = "Drogenbesitz (>= 150 Gramm)"
+        reason = "Drogenbesitz (>= 150)"
         amount = 3
     elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
         reason = "Beleidigung"
         amount = 1
-    elseif string.lower(reason) == "block" then
-        reason = "Beamtenbehinderung"
+	elseif string.lower(reason) == "block" then
+        reason = "Behinderung von Einsatzkräften"
         amount = 1
-    elseif string.lower(reason) == "stress" then
-        reason = "Beamtenbelästigung"
+	elseif string.lower(reason) == "stress" then
+        reason = "Belästigung"
         amount = 1
     elseif string.lower(reason) == "bv" then
         reason = "Befehlsverweigerung"
         amount = 1
-    elseif string.lower(reason) == "sb" then
-        reason = "Sachbeschädigung"
-        amount = 1
-    elseif string.lower(reason) == "ff" or string.lower(reason) == "fahrer" then
-        reason = "Fahrerflucht"
-        amount = 1
-    elseif string.lower(reason) == "alk" or string.lower(reason) == "suff" then
-        reason = "Fahren unter Alkoholeinfluss"
-        amount = 1
-    elseif string.lower(reason) == "illad" or string.lower(reason) == "werbung" then
-        reason = "Illegale Werbung"
-        amount = 1
-    elseif string.lower(reason) == "illrace" or string.lower(reason) == "rennen" then
-        reason = "Illegales Straßenrennen"
-        amount = 1
-    elseif string.lower(reason) == "eöä" or string.lower(reason) == "ärger" then
-        reason = "Erregung öffentlichen Ärgernisses"
-        amount = 1
-    elseif string.lower(reason) == "pew" or string.lower(reason) == "feuerwerk" then
+	elseif string.lower(reason) == "pew" or string.lower(reason) == "feuerwerk" then
         reason = "Benutzung von Feuerwerkskörpern"
         amount = 1
     elseif string.lower(reason) == "ds" or string.lower(reason) == "diebstahl" then
         reason = "Diebstahl"
         amount = 1
-    elseif string.lower(reason) == "vd" then
-        reason = "Versuchter Diebstahl"
+    elseif string.lower(reason) == "eöä" or string.lower(reason) == "ärger" then
+        reason = "Erregung öffentlichen Ärgernisses"
         amount = 1
     elseif string.lower(reason) == "fof" then
         reason = "Fahren ohne Führerschein"
         amount = 1
-    elseif string.lower(reason) == "bribe" then
-        reason = "Bestechung"
-        amount = 2
-    elseif string.lower(reason) == "wd" then
-        reason = "Waffendrohung"
-        amount = 2
-    elseif string.lower(reason) == "dk" then
-        reason = "Drogenkonsum"
-        amount = 2
-    elseif string.lower(reason) == "vw" then
-        reason = "Verweigerung zur Durchsuchung"
-        amount = 2
-    elseif string.lower(reason) == "flucht" or string.lower(reason) == "vkk" then
-        reason = "Flucht vor/aus Kontrolle"
-        amount = 2
+	elseif string.lower(reason) == "alk" or string.lower(reason) == "suff" then
+        reason = "Fahren unter Alkoholeinfluss"
+        amount = 1
+    elseif string.lower(reason) == "ff" or string.lower(reason) == "fahrer" then
+        reason = "Fahrerflucht"
+        amount = 1
+    elseif string.lower(reason) == "illad" or string.lower(reason) == "werbung" then
+        reason = "Illegale Werbung"
+        amount = 1
+	elseif string.lower(reason) == "illrace" or string.lower(reason) == "rennen" then
+        reason = "Illegales Straßenrennen"
+        amount = 1
+    elseif string.lower(reason) == "sb" then
+        reason = "Sachbeschädigung"
+        amount = 1
+    elseif string.lower(reason) == "vd" then
+        reason = "Versuchter Diebstahl"
+        amount = 1
     elseif string.lower(reason) == "kanal" then
         reason = "Betreten der Kanalisation"
         amount = 2
-    elseif string.lower(reason) == "kpv" then
-        reason = "Körperverletzung"
+    elseif string.lower(reason) == "bribe" or string.lower(reason) == "schmieren" then
+        reason = "Bestechungsversuch"
         amount = 2
     elseif string.lower(reason) == "sds" then
         reason = "(Versuchter) Diebstahl von Staatsfahrzeugen"
         amount = 2
-    elseif string.lower(reason) == "wvk" then
-        reason = "Waffenverkauf"
+	elseif string.lower(reason) == "da" then
+        reason = "Drogenanbau/-abbau"
         amount = 2
-    elseif string.lower(reason) == "handel" then
+	elseif string.lower(reason) == "dk" then
+        reason = "Drogenkonsum"
+        amount = 2
+    elseif string.lower(reason) == "wd" then
+        reason = "Drohen mit Waffe"
+        amount = 2
+    elseif string.lower(reason) == "drohen" or string.lower(reason) == "threat" then
+        reason = "Drohung"
+        amount = 2
+    elseif string.lower(reason) == "press" or string.lower(reason) == "bm" then
+        reason = "Erpressung"
+        amount = 2
+    elseif string.lower(reason) == "flucht" or string.lower(reason) == "vkk" then
+        reason = "Flucht vor/aus Kontrolle"
+        amount = 2
+	elseif string.lower(reason) == "handel" then
         reason = "Handel mit verbotenen Gegenständen/Drogen"
         amount = 2
+    elseif string.lower(reason) == "kpv" then
+        reason = "Körperverletzung"
+        amount = 2
+    elseif string.lower(reason) == "vw" then
+        reason = "Verweigerung zur Durchsuchung"
+        amount = 2
+    elseif string.lower(reason) == "täuschen" or string.lower(reason) == "pretend" then
+        reason = "Vortäuschen falscher Tatsachen"
+        amount = 2
+	elseif string.lower(reason) == "wvk" then
+        reason = "Waffenverkauf"
+        amount = 2
+	elseif string.lower(reason) == "bs" or string.lower(reason) == "wn" then
+        reason = "Beschuss/Waffennutzung"
+        amount = 3
     elseif string.lower(reason) == "waffen" or string.lower(reason) == "illweap" then
         reason = "Besitz illegaler Waffen"
         amount = 3
-    elseif string.lower(reason) == "bs" or string.lower(reason) == "wn" then
-        reason = "Beschuss/Waffennutzung"
+	elseif string.lower(reason) == "feldweg" then
+        reason = "Betreten des Army-Geländes"
         amount = 3
     elseif string.lower(reason) == "pd" or string.lower(reason) == "garage" then
-        reason = "Betreten der Polizeiwache/Garage"
+        reason = "Betreten der Polizeiwache/-garage"
         amount = 3
-    elseif string.lower(reason) == "hinterhof" then
+	elseif string.lower(reason) == "hinterhof" then
         reason = "Betreten des SAPD-Hinterhofs"
         amount = 3
-    elseif string.lower(reason) == "feldweg" then
-        reason = "Betreten des Army-Geländes"
+    elseif string.lower(reason) == "haus" or string.lower(reason) == "hr" then
+        reason = "Hauseinbruch"
+        amount = 3
+    elseif string.lower(reason) == "bombe" then
+        reason = "Mitführen von Sprengstoff"
+        amount = 3
+    elseif string.lower(reason) == "raub" or string.lower(reason) == "rob" then
+        reason = "Raubüberfall"
         amount = 3
     elseif string.lower(reason) == "rts" or string.lower(reason) == "shop" then
         reason = "Shop-Überfall"
@@ -846,67 +879,58 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "atm" then
         reason = "Sabotage von Geldautomaten"
         amount = 3
-    elseif string.lower(reason) == "haus" then
-        reason = "Hauseinbruch"
-        amount = 3
-    elseif string.lower(reason) == "raub" then
-        reason = "Raubüberfall"
-        amount = 3
-    elseif string.lower(reason) == "bombe" then
-        reason = "Mitführen von Sprengstoff"
-        amount = 3
-    elseif string.lower(reason) == "mord" then
-        reason = "Mord"
-        amount = 4
-    elseif string.lower(reason) == "exe" then
+	elseif string.lower(reason) == "exe" then
         reason = "Exekution"
         amount = 4
-    elseif string.lower(reason) == "sniper" then
+	elseif string.lower(reason) == "mord" then
+        reason = "Mord"
+        amount = 4
+	elseif string.lower(reason) == "sniper" then
         reason = "Sniperbesitz"
         amount = 4
-    elseif string.lower(reason) == "fbi" then
+    elseif string.lower(reason) == "dt" or string.lower(reason) == "weed" then
+        reason = "Drogentruck"
+        amount = 5
+	elseif string.lower(reason) == "fbi" then
         reason = "Einbruch in die FBI-Basis"
+        amount = 5
+	elseif string.lower(reason) == "gt" then
+        reason = "Überfall auf Geldtransport"
         amount = 5
     elseif string.lower(reason) == "wt" then
         reason = "Waffentruck"
         amount = 5
-    elseif string.lower(reason) == "gt" then
-        reason = "Überfall auf Geldtransport"
-        amount = 5
-    elseif string.lower(reason) == "dt" or string.lower(reason) == "weed" then
-        reason = "Drogentruck"
-        amount = 5
-    elseif string.lower(reason) == "army" or string.lower(reason) == "area" or string.lower(reason) == "sasf" then
-        reason = "Einbruch in die SASF-Basis"
-        amount = 6
+	elseif string.lower(reason) == "airdrop" or string.lower(reason) == "air" or string.lower(reason) == "drop" then
+		reason = "Airdrop"
+		amount = 6
     elseif string.lower(reason) == "swt" then
         reason = "Angriff auf den Staatswaffentruck"
         amount = 6
-    elseif string.lower(reason) == "br" or string.lower(reason) == "cr" then
-        reason = "Überfall auf Bank/Casino"
-        amount = 6
-    elseif string.lower(reason) == "juwe" or string.lower(reason) == "jr" or string.lower(reason) == "juwelier" then
-        reason = "Überfall auf Juwelier"
+	elseif string.lower(reason) == "rpg" or string.lower(reason) == "granate" then
+		reason = "Besitz von Explosivwaffen"
+		amount = 6
+	elseif string.lower(reason) == "army" or string.lower(reason) == "area" or string.lower(reason) == "sasf" then
+        reason = "Einbruch in die SASF-Basis"
         amount = 6
     elseif string.lower(reason) == "gn" then
         reason = "Geiselnahme"
         amount = 6
-    elseif string.lower(reason) == "airdrop" or string.lower(reason) == "drop" then
-        reason = "Airdrop"
+    elseif string.lower(reason) == "br" or string.lower(reason) == "cr" then
+        reason = "Überfall auf Bank/Casino"
         amount = 6
-    elseif string.lower(reason) == "rpg" or string.lower(reason) == "ex" then
-        reason = "Besitz von Explosivwaffen"
+    elseif string.lower(reason) == "juwe" or string.lower(reason) == "jr" then
+        reason = "Überfall auf Juwelier"
         amount = 6
+	elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
+		reason = "Gefängisausbruch"
+		amount = 12
     elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
-        amount = 12
-    elseif string.lower(reason) == "knast" or string.lower(reason) == "hack" then
-        reason = "Gefängisausbruch"
-        amount = 12
+		amount = 12
     elseif string.lower(reason) == "bh" then
         reason = "Beihilfe einer Straftat"
         amount = false
-    end
+	end
 	return reason, amount
 end
 
@@ -1266,7 +1290,9 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					end
 
 					-- Pay some money to faction, xp to the policeman
-					self.m_BankAccountServer:transferMoney(policeman:getFaction(), factionBonus, "Arrest", "Faction", "Arrest")
+					local splitmoney = (factionBonus / 2)
+					self.m_BankAccountServer:transferMoney(policeman:getFaction(), splitmoney, "Arrest", "Faction", "Arrest")
+					self:payArrestBonus(policeman, splitmoney)
 					policeman:givePoints(wantedLevel)
 					PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
 					StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
@@ -1332,6 +1358,10 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		end, 14000, 1, player)
 		player.m_DeathInJail = nil
 	end
+end
+
+function FactionState:payArrestBonus(player, bonus)
+	self.m_BankAccountServer:transferMoney({player, true}, bonus, "Inhaftierungsprämie", "Faction", "Arrest Bonus")
 end
 
 function FactionState:Command_bail(player)
@@ -1553,7 +1583,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:setArmor(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
 				client:checkLastDamaged()
-				takeAllWeapons(client)
+				setTimer(takeAllWeapons, 250, 1, client) -- companyForceOffduty is too slow
+				--takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
 				client:getInventory():removeAllItem("Warnkegel")
@@ -2079,6 +2110,7 @@ function FactionState:onAreaColShapeHit(hitElement, match)
 					if not self.m_AreaAlert then
 						self.m_AlertTimer = setTimer(self.m_AlertBind, 10000, 1)
 						triggerClientEvent("playAreaAlertMessage", root, "blue")
+						FactionManager.Map[3]:sendWarning(_"Es wurden unbefugte Personen in der Sperrzone gesichtet!", _"Code Red", false)
 					end
 				end
 				if isTimer(self.m_LeaveTimer) then
@@ -2133,6 +2165,18 @@ function FactionState:forceOpenAreaGates()
 		self.m_AreaGateBack:triggerMovement(false, true)
 	end
 	if self.m_AreaGateSmall.m_Closed == true then
+		self.m_AreaGateSmall:triggerMovement(false, true)
+	end
+end
+
+function FactionState:forceCloseAreaGates()
+	if self.m_AreaGate.m_Closed == false then
+		self.m_AreaGate:triggerMovement(false, true)
+	end
+	if self.m_AreaGateBack.m_Closed == false then
+		self.m_AreaGateBack:triggerMovement(false, true)
+	end
+	if self.m_AreaGateSmall.m_Closed == false then
 		self.m_AreaGateSmall:triggerMovement(false, true)
 	end
 end

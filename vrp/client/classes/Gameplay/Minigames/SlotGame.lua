@@ -73,7 +73,7 @@ SlotGame.Lines  =
     {{1,3}, {2,3}, {3,3}, {4,3}, {5,3}}, -- green bottom
 }
 
-SlotGame.HelpText = "Drehe mit dem Button >>Play<< \nAchtung! Dein Gewinn wird nicht sofort ausgezahlt erst wenn du den Button >Cash out< drückst!\nDein Gewinn steht oben im Feld >Win<.\nDein aktueller Einsatz im Feld >Credits<.\nDu kannst diesen mit dem Button >Bet up< und >Bet down< erhöhen/vermindern.\nGelbe Linie = 1xGewinn |Rote Linie = 2xGewinn\nObere Grüne =3xGewinn | Untere Grüne = 4x Gewinn | Mittlere Grüne = 5x Gewinn\nSymbole = Alarm < Haken < Blume < Geist < Würfel < Schildkröte (< heisst weniger Wert)"
+SlotGame.HelpText = "Drehe mit dem Button >>Play<< \nDein Gewinn steht oben im Feld >Win<.\nDein aktueller Einsatz im Feld >Credits<.\nDu kannst diesen mit dem Button >Bet up< und >Bet down< erhöhen/vermindern.\nGelbe Linie = 1xGewinn |Rote Linie = 2xGewinn\nObere Grüne =3xGewinn | Untere Grüne = 4x Gewinn | Mittlere Grüne = 5x Gewinn\nSymbole = Alarm < Haken < Blume < Geist < Würfel < Schildkröte (< heisst weniger Wert)"
 SlotGame.BetAmount = 
 {
 	[1] = 50, 

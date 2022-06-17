@@ -53,7 +53,7 @@ function BankRobberyManager:stopRob()
 	self.m_IsBankrobRunning = false
 	self.m_CurrentBank = false
 	ActionsCheck:getSingleton():endAction()
-	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
+	--StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 end
 
 function BankRobberyManager:Event_onStartHacking()

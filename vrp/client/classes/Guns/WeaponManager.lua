@@ -52,6 +52,10 @@ function WeaponManager:update()
 		if self:isFiringAllowed() then
 			toggleControl("fire", true)
 			toggleControl("action", true)
+		else
+			toggleControl("fire", false)
+			toggleControl("action", false)
+			return
 		end
 	end
 
