@@ -11,7 +11,7 @@ addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse"
 "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
 "tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
 "houseAdminRequestData", "houseAdminChangeInterior", "houseAdminFree",
-"houseRingDoor", "houseRequestGUI", "breakHouseDoor",
+"houseRingDoor", "houseRequestGUI", "breakHouseDoor", "toggleGarageState",
 }
 
 local ROB_DELAY = DEBUG and 50 or 1000*60*15
@@ -24,7 +24,7 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["garageID"])
 		count = count + 1
 	end
 
@@ -49,6 +49,7 @@ function HouseManager:constructor()
 	addEventHandler("houseAdminChangeInterior", root, bind(self.changeInterior,self))
 	addEventHandler("houseAdminFree", root, bind(self.freeByAdmin,self))
 	addEventHandler("houseRequestGUI", root, bind(self.Event_requestGUI, self))
+	addEventHandler("toggleGarageState", root, bind(self.Event_toggleGarageState, self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
@@ -61,6 +62,18 @@ function HouseManager:createNewHouse(player, cmd, ...)
 		if interior and price and HOUSE_INTERIOR_TABLE[interior] then
 			local pos = player:getPosition()
 			self:newHouse(pos, interior, price)
+		end
+	end
+end
+
+function HouseManager:Event_toggleGarageState()
+	for i, v in pairs(HouseGarage.Garage) do
+		local house = self.m_Houses[HouseGarage.Map[i].m_HouseId]
+		if getDistanceBetweenPoints3D(v, client:getPosition()) <= 10 then
+			if house:isTenant(client:getId()) or house:getOwner() == client:getId() then
+				HouseGarage.Map[i]:toggleGarage()
+				break
+			end
 		end
 	end
 end
