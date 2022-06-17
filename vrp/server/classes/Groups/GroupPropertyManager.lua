@@ -150,6 +150,7 @@ function GroupPropertyManager:BuyProperty( Id )
 				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
 				property.m_Open = 1
 				newOwner:transferMoney(self.m_BankAccountServer, price, "Immobilie "..property.m_Name.." gekauft!", "Group", "PropertyBuy")
+				newOwner:addLog(client, "Immobilien", _("hat die Immobilie '%s' für %d$ gekauft!", client, property.m_Name, property.m_Price))
 				client:sendInfo("Du hast die Immobilie gekauft!")
 				if property.m_Pickup and isElement(property.m_Pickup) then
 					setPickupType(property.m_Pickup, 3, PICKUP_ARROW)
@@ -199,6 +200,7 @@ function GroupPropertyManager:SellProperty(  )
 					setPickupType(property.m_Pickup, 3, PICKUP_FOR_SALE)
 				end
 				self.m_BankAccountServer:transferMoney(group, sellMoney, "Immobilie "..property.m_Name.." verkauft!", "Group", "PropertySell")
+				group:addLog(client, "Immobilien", _("hat die Immobilie '%s' verkauft!", client, property.m_Name))
 				client:sendInfo("Sie haben die Immobilie verkauft! Das Geld befindet sich in der Firmen/Gangkasse!")
 				for key, player in ipairs( pOwner:getOnlinePlayers() ) do
 					player:triggerEvent("destroyGroupBlip",property.m_Id)
@@ -233,6 +235,7 @@ end
 function GroupPropertyManager:takePropsFromGroup(group) --in case the group gets deleted with active props
 	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
 		if v.m_OwnerID == group.m_Id then
+			local property = v
 			v.m_Owner = false
 			v.m_OwnerID = 0
 			sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, v.m_Id)

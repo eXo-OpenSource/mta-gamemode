@@ -359,3 +359,7 @@ VEHICLES_WITH_BULLET_ARMOR = {
 	[425] = 2, --Hunter
     [432] = 2 --Rhino
 }
+
+VEHICLE_MAX_PASSENGER = {
+	[519] = 7
+}
