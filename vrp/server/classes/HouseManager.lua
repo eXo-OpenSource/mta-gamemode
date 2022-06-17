@@ -11,7 +11,7 @@ addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse"
 "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
 "tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
 "houseAdminRequestData", "houseAdminChangeInterior", "houseAdminFree",
-"houseRingDoor", "houseRequestGUI"
+"houseRingDoor", "houseRequestGUI", "breakHouseDoor",
 }
 
 local ROB_DELAY = DEBUG and 50 or 1000*60*15
@@ -41,6 +41,7 @@ function HouseManager:constructor()
 	addEventHandler("houseWithdraw",root,bind(self.withdraw,self))
 	addEventHandler("houseRemoveTenant",root,bind(self.removeTenant,self))
 	addEventHandler("tryRobHouse",root,bind(self.tryRob,self))
+	addEventHandler("breakHouseDoor",root,bind(self.breakDoor,self))
 	addEventHandler("houseRingDoor",root,bind(self.ringDoorBell,self))
 	addEventHandler("playerFindRobableItem",root,bind(self.onFindRobItem,self))
 	addEventHandler("playerRobTryToGiveWanted",root,bind(self.onTryToGiveWanted,self))
@@ -145,6 +146,12 @@ function HouseManager:onTryToGiveWanted()
 	if client.vehicle then return end
 	if not client.m_CurrentHouse then return end
 	client.m_CurrentHouse:tryToCatchRobbers(client)
+end
+
+function HouseManager:breakDoor()
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:breakDoor(client)
 end
 
 function HouseManager:requestAdminData()

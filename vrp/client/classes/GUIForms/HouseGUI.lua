@@ -50,7 +50,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 
 	self.m_LockBtn = GUIGridButton:new(1, 4, 6, 1, isClosed and _"Aufschließen" or _"Abschließen", self.m_Window):setEnabled(hasKey)
 	self.m_SpawnBtn = GUIGridButton:new(1, 5, 6, 1, _"als Spawnpunkt festlegen", self.m_Window):setEnabled(hasKey)
-	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)
+	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, (localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true) and _"Tür aufbrechen" or _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)
 	self.m_EnterLeaveBtn = GUIGridButton:new(1, 7, self.m_isInside and 6 or 5, 1, self.m_isInside and _"Verlassen" or (ownerName and _"Betreten" or _"Besichtigen"), self.m_Window):setBarEnabled(false)
 	if not self.m_isInside then
 		self.m_DoorBellBtn = GUIGridIconButton:new(6, 7, FontAwesomeSymbols.Bell, self.m_Window):setTooltip(_"an der Tür klingeln", "bottom")
@@ -68,7 +68,11 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	end
 
 	self.m_RobBtn.onLeftClick = function()
-		triggerServerEvent("tryRobHouse", localPlayer)
+		if (localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true) then
+			triggerServerEvent("breakHouseDoor", localPlayer)
+		else
+			triggerServerEvent("tryRobHouse", localPlayer)
+		end
 	end
 
 	self.m_EnterLeaveBtn.onLeftClick = function()

@@ -176,6 +176,19 @@ function House:isPlayerNearby(player)
 	end
 end
 
+function House:isCopNearby(player)
+	for i, pplayer in pairs(getElementsByType("player")) do
+		if pplayer ~= player then
+			if pplayer:isFactionDuty() and pplayer:getFaction() and pplayer:getFaction():isStateFaction() == true then
+				if getDistanceBetweenPoints3D(player.position, pplayer.position) < 5 then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
 function House:isValidToEnter(player)
 	return self.m_Keys[player:getId()] or player:getId() == self.m_Owner
 end
@@ -544,6 +557,17 @@ function House:tryToCatchRobbers( player )
 				end
 			end
 		end
+	end
+end
+
+function House:breakDoor(player)
+	if not self:isCopNearby(player) then return player:sendError(_"Du brauchst einen Partner um die Tür aufzubrechen!") end
+	
+	if self.m_LockStatus then
+		self.m_LockStatus = false
+		player:meChat(true, _("bricht die Tür auf!", player))
+	else
+		client:sendError("Die Tür ist bereits auf.")
 	end
 end
 
