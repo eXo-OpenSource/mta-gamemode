@@ -17,6 +17,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Name = name
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]
+	self.m_PlayerWeapons = players[3]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
@@ -296,6 +297,7 @@ function Faction:addPlayer(playerId, rank)
 	rank = rank or 0
 	self.m_Players[playerId] = rank
 	self.m_PlayerLoans[playerId] = 1
+	self.m_PlayerWeapons[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
@@ -322,6 +324,7 @@ function Faction:removePlayer(playerId)
 
 	self.m_Players[playerId] = nil
 	self.m_PlayerLoans[playerId] = nil
+	self.m_PlayerWeapons[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:saveAccountActivity()
@@ -406,6 +409,19 @@ function Faction:setPlayerLoanEnabled(playerId, state)
 
 	self.m_PlayerLoans[playerId] = state
 	sql:queryExec("UPDATE ??_character SET FactionLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
+function Faction:isPlayerWeaponEnabled(playerId)
+	return self.m_PlayerWeapons[playerId] == 1
+end
+
+function Faction:setPlayerWeaponEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerWeapons[playerId] = state
+	sql:queryExec("UPDATE ??_character SET FactionWeaponEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
 end
 
 function Faction:getMoney()
@@ -500,9 +516,10 @@ function Faction:getPlayers(getIDsOnly)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local loanEnabled = self.m_PlayerLoans[playerId]
+		local weaponEnabled = self.m_PlayerWeapons[playerId]
 		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, weaponEnabled = weaponEnabled, activity = activity}
 	end
 	return temp
 end

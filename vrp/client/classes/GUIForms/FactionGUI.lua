@@ -67,6 +67,7 @@ function FactionGUI:constructor()
 
 	if localPlayer:getFaction():getId() == 3 then
 		self.m_AreaAlarmButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.07, _"Alarm (de-)aktivieren", tabAllgemein):setBarEnabled(true)
+		self.m_AreaAlarmButton:setEnabled(false)
 		self.m_AreaAlarmButton.onLeftClick = function()
 			triggerServerEvent("factionStateDeactivateAreaAlarm", localPlayer)
 		end
@@ -82,7 +83,8 @@ function FactionGUI:constructor()
 	self.m_tabMitglieder = tabMitglieder
 	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)
 	self.m_FactionPlayersGrid:addColumn(_"", 0.06)
-	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.44)
+	self.m_FactionPlayersGrid:addColumn(_"", 0.06)
+	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.4)
 	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_FactionPlayersGrid:addColumn(_"Aktivität", 0.27)
 	self.m_FactionPlayersGrid:setSortable{"Spieler", "Rang", "Aktivität"}
@@ -93,6 +95,7 @@ function FactionGUI:constructor()
 	self.m_FactionRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
 	self.m_FactionRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
 	self.m_FactionToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+	self.m_FactionToggleWeaponButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Waffen deaktivieren", tabMitglieder):setBarEnabled(true)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -103,6 +106,7 @@ function FactionGUI:constructor()
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
 	self.m_FactionToggleLoanButton.onLeftClick = bind(self.FactionToggleLoanButton_Click, self)
+	self.m_FactionToggleWeaponButton.onLeftClick = bind(self.FactionToggleWeaponButton_Click, self)
 
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
@@ -162,10 +166,10 @@ function FactionGUI:addLeaderTab()
 
 		self:refreshLeaderTab()
 
-		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
+		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 		self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
 
-		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
+		self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.75, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_FactionForumSyncButton.onLeftClick = bind(self.FactionForumSyncButton_Click, self)
 
 		self.m_Leader = true
@@ -597,14 +601,17 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, ac
 			self.m_FactionPlayersGrid:clear()
 			for playerId, info in pairs(players) do
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
-				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
+				local weaponSymbol = FontAwesomeSymbols.Gun
+				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, weaponSymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
-				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
+				item:setColumnFont(2, FontAwesome(20), 1):setColumnColor(2, info.weaponEnabled == 1 and Color.Green or Color.Red)
+				item:setColumnColor(3, getPlayerFromName(info.name) and Color.Accent or Color.White)
 				item.Id = playerId
 
 				item.onLeftClick =
 					function()
 						self.m_FactionToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+						self.m_FactionToggleWeaponButton:setText(("Waffen %saktivieren"):format(info.weaponEnabled == 1 and "de" or ""))
 					end
 			end
 
@@ -616,6 +623,13 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, ac
 					self.m_ValidWeapons[0] = true
 				end
 				self:addLeaderTab()
+			end
+			if localPlayer:getFaction():getId() == 3 then
+				if rank > FactionRank.Normal then
+					self.m_AreaAlarmButton:setEnabled(true)
+				else
+					self.m_AreaAlarmButton:setEnabled(false)
+				end
 			end
 		end
 	end
@@ -693,6 +707,13 @@ function FactionGUI:FactionToggleLoanButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("factionToggleLoan", root, selectedItem.Id)
+	end
+end
+
+function FactionGUI:FactionToggleWeaponButton_Click()
+	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("factionToggleWeapon", root, selectedItem.Id)
 	end
 end
 
