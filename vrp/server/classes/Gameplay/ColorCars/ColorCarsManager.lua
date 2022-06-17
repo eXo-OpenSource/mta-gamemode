@@ -92,7 +92,7 @@ end
 function ColorCarsManager:addPlayerToLobby(lobby, player)
     ColorCarsManager.Lobbys[lobby]:addPlayer(player)
     self:syncMatchGUI(lobby)
-    player:sendInfo(_"Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", 10000)
+    player:sendInfo(_"Sollte das Match Fenster stören,\n kannst du es jederzeit verschieben.", 10000)
 end
 
 function ColorCarsManager:Event_removePlayerFromLobby(lobby, player)

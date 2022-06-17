@@ -9,8 +9,8 @@
 ColorCarsPasswordGUI = inherit(GUIForm)
 inherit(Singleton, ColorCarsPasswordGUI)
 
-function ColorCarsPasswordGUI:constructor()
-    GUIForm.constructor(self, screenWidth/2 - screenWidth*0.175/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.175, screenHeight*0.2)
+function ColorCarsPasswordGUI:constructor(marker)
+    GUIForm.constructor(self, screenWidth/2 - screenWidth*0.175/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.175, screenHeight*0.2, true, false, marker)
     self.m_PasswordWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Lobby beitreten", true, true, self)
     
     self.m_PasswordLabel = GUILabel:new(self.m_PosX*0.07, self.m_PosY*0.1, 200, 30, _"Lobby Passwort:", self.m_PasswordWindow)

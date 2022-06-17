@@ -9,7 +9,7 @@
 ColorCarsManager = inherit(Singleton)
 
 function ColorCarsManager:constructor()
-    addRemoteEvents{"ColorCars:createLobbyGUI", "ColorCars:receiveClientLobbyInfos", "ColorCars:receivePasswordCheckResult", "ColorCars:receiveMaxPlayersCheckResult", "ColorCars:syncMatchGUI", "ColorCars:bindVehicleCollisionEvent", "ColorCars:syncNewCatcher", "ColorCars:changeLobbyOwner", "ColorCars:powerUpGhostMode", "ColorCars:openMatchGUI"}
+    addRemoteEvents{"ColorCars:createLobbyGUI", "ColorCars:receiveClientLobbyInfos", "ColorCars:receivePasswordCheckResult", "ColorCars:receiveMaxPlayersCheckResult", "ColorCars:syncMatchGUI", "ColorCars:bindVehicleCollisionEvent", "ColorCars:syncNewCatcher", "ColorCars:changeLobbyOwner", "ColorCars:powerUpGhostMode", "ColorCars:openMatchGUI", "ColorCars:syncGhostMode"}
     self.m_LobbyInfos = {}
     self.m_GhostModeTimer = {}
     self.m_TimeBetweenCatch = 3000
@@ -24,6 +24,7 @@ function ColorCarsManager:constructor()
     addEventHandler("ColorCars:syncNewCatcher", root, bind(self.Event_syncNewCatcher, self))
     addEventHandler("ColorCars:changeLobbyOwner", root, bind(self.Event_changeLobbyOwner, self))
     addEventHandler("ColorCars:powerUpGhostMode", root, bind(self.Event_powerUpGhostMode, self))
+    addEventHandler("ColorCars:syncGhostMode", root, bind(self.Event_syncGhostMode, self))
 end
 
 function ColorCarsManager:createLobby(lobbyName, lobbyPassword, maxPlayers)
@@ -59,15 +60,15 @@ function ColorCarsManager:Event_openLobbyGUI(marker)
     self:requestLobbyInfos()
 end
 
-function ColorCarsManager:openCreateLobbyGUI()
+function ColorCarsManager:openCreateLobbyGUI(marker)
     self:deleteGUI()
-    self.m_ColorCarsGUI = ColorCarsCreateLobbyGUI:new()
+    self.m_ColorCarsGUI = ColorCarsCreateLobbyGUI:new(marker)
 end
 
-function ColorCarsManager:openPasswordGUI(lobby)
+function ColorCarsManager:openPasswordGUI(lobby, marker)
     self.m_ClickedLobby = lobby
     self:deleteGUI()
-    self.m_ColorCarsGUI = ColorCarsPasswordGUI:new()
+    self.m_ColorCarsGUI = ColorCarsPasswordGUI:new(marker)
 end
 
 function ColorCarsManager:openMatchGUI()
@@ -157,6 +158,7 @@ function ColorCarsManager:Event_receiveLobbyInfos(lobbys)
 end
 
 function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
+    self.m_Dimension = dim
     local state = not state
 
     if self.m_GhostModeTimer[ghostPlayer] then
@@ -168,12 +170,11 @@ function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
         end
     end
     
+    ghostPlayer.vehicle:setAlpha(state and 255 or 100)
+    ghostPlayer:setAlpha(state and 255 or 100)
     localPlayer.vehicle:setCollidableWith(ghostPlayer.vehicle, state)
           
     if localPlayer == ghostPlayer then
-        ghostPlayer.vehicle:setAlpha(state and 255 or 100)
-        ghostPlayer:setAlpha(state and 255 or 100)
-
         for i , player in pairs(getElementsByType("player")) do
             if player:getDimension() == dim and player:getInterior() == localPlayer:getInterior() then
                 localPlayer.vehicle:setCollidableWith(player.vehicle, state)
@@ -182,5 +183,17 @@ function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
     end
     if not state then
         self.m_GhostModeTimer[ghostPlayer] = setTimer(bind(self.Event_powerUpGhostMode, self), 30000, 1, ghostPlayer, dim, false)
+    end
+end
+
+function ColorCarsManager:Event_syncGhostMode(remainingTime, joinedPlayer, ghostPlayer)
+    if joinedPlayer == localPlayer then
+        self.m_GhostModeTimer[ghostPlayer] = setTimer(bind(self.Event_powerUpGhostMode, self), remainingTime*1000, 1, ghostPlayer, self.m_Dimension, false)
+        ghostPlayer.vehicle:setAlpha(100)
+        ghostPlayer:setAlpha(100)
+        localPlayer.vehicle:setCollidableWith(ghostPlayer.vehicle, false)
+    end
+    if ghostPlayer == localPlayer then
+        localPlayer.vehicle:setCollidableWith(joinedPlayer.vehicle, false)
     end
 end
