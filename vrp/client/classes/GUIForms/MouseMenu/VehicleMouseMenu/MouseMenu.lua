@@ -155,6 +155,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				):setIcon(FontAwesomeSymbols.Arrows)
 			end
 		end
+		if (element:getModel() == 544 or element:getModel() == 407) and localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+			self:addItem(_"Feuerlöscher auffüllen",
+				function()
+					if self:getElement() then 
+						if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+							if localPlayer:getWeapon(9) == 42 then
+								if getPedTotalAmmo(localPlayer, 9)  < 10000 then
+									triggerServerEvent("factionRescueFillFireExtinguisher", self:getElement())
+								end
+							else
+								ErrorBox:new("Du hast kein Feuerlöscher dabei.")
+							end
+						end
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Fire_Extinguisher)
+		end
 		if element:getData("EPT_Taxi") and element:getModel() == 420 or element:getModel() == 438 then -- Taxis
 			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
 				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
