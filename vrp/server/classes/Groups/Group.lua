@@ -554,8 +554,10 @@ function Group:attachPlayerMarkers()
 		self.m_Markers[player]:setInterior(player:getInterior())
 		self.m_Markers[player]:attach(player,0,0,1.5)
 		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 end
 
@@ -566,8 +568,10 @@ function Group:attachPlayerMarker(player)
 	self.m_Markers[player]:setInterior(player:getInterior())
 	self.m_Markers[player]:attach(player,0,0,1.5)
 	self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+	self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 	addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 	addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 end
 
 function Group:removePlayerMarkers()
@@ -576,6 +580,7 @@ function Group:removePlayerMarkers()
 		if self.m_Markers[player] then self.m_Markers[player]:destroy() end
 		removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		removeEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 	self.m_Markers = {}
 end
@@ -586,7 +591,18 @@ function Group:removePlayerMarker(player)
 	self.m_Markers[player]:destroy()
 	removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 	removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	removeEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	self.m_Markers[player] = nil
+end
+
+function Group:Event_RemovePlayerMarkerOnQuit()
+	if not self.m_Markers then return end
+	if not self.m_Markers[source] then return end
+	self.m_Markers[source]:destroy()
+	removeEventHandler("onElementDimensionChange", source, self.m_RefreshAttachedMarker)
+	removeEventHandler("onElementInteriorChange", source, self.m_RefreshAttachedMarker)
+	removeEventHandler("onPlayerQuit", source, self.m_RemovePlayerMarkerOnQuit)
+	self.m_Markers[source] = nil
 end
 
 function Group:refreshAttachedMarker(dimInt)

@@ -54,7 +54,7 @@ function Shamal:createDriver(skinId)
 end
 
 function Shamal:Event_deleteDriver()
-    self.m_ShamalDriver:destory()
+    self.m_ShamalDriver:destroy()
 end
 
 function Shamal:enterExit(player, key, keystate, enter)
