@@ -849,7 +849,7 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 				if isOffline then
 					targetPlayer:load()
 					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target))
-					target:endPrison()
+					targetPlayer:endPrison()
 					self:addPunishLog(admin, targetId, func)
 					delete(targetPlayer)
 				end
@@ -1094,6 +1094,7 @@ local tpTable = {
 		["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
 		["knast"] =   		{["pos"] = Vector3(3543.97, -1608.49, 7.24),  	["typ"] = "Orte"},
 		["kanal"] = 		{["pos"] = Vector3(1483.34, -1760.16, -37.31),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
+		["airdrop"] = 		{["pos"] = Vector3(1282.92, -1759.35, -37.62),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
         --["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
         --["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
@@ -1107,7 +1108,7 @@ local tpTable = {
 		["auktion"] =   	{["pos"] = Vector3(1556.03, -1353.56, 23237.37),["typ"] = "Orte", ["interior"] = 1},
 		["import"] =   		{["pos"] = Vector3(-1684.73, 33.47, 3.55),		["typ"] = "Orte"},
 		["kino"] =   		{["pos"] = Vector3(1291.14, -1154.93, 23.82),   ["typ"] = "Orte"},
-        ["juwelier"] =    	{["pos"] = Vector3(550.287, -1507.069, 14.546),  	["typ"] = "Orte"},
+        ["juwelier"] =    	{["pos"] = Vector3(550.287, -1507.069, 14.546), ["typ"] = "Orte"},
         ["colorcars"] =    	{["pos"] = Vector3(2690.84, -1700.05, 10.44),  	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},

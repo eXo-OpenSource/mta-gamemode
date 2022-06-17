@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 Fonts = {
-	FontAwesome = "files/fonts/FontAwesome5.ttf",					-- Icons
+	FontAwesome = "files/fonts/FontAwesome6.otf",					-- Icons
 	EkMukta = "files/fonts/EkMukta.ttf",							-- Main font
 	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",					-- Toast messages
 	Digital = "files/fonts/digital-7.ttf",							-- Speedo
@@ -176,6 +176,11 @@ FontAwesomeSymbols = {
 	Crosshair = "",
 	Egg = "",
 	HandHoldingUSD = "",
+	Gun = "",
+	Ticket = "",
+	Fire_Extinguisher = "",
+	Ship = "",
+	Plane = "",
 }
 
 -- uncomment this to render a list of all loaded fonts
