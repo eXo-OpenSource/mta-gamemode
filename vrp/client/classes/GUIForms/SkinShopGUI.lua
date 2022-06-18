@@ -14,7 +14,7 @@ function SkinShopGUI:constructor(marker)
 
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2, true, false, marker)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Skin shop", false, true, self)
 	self.m_SkinList = GUIGridList:new(0, self.m_Height*0.22, self.m_Width, self.m_Height*0.72, self.m_Window)
 	self.m_SkinList:addColumn(_"Name", 0.75)
 	self.m_SkinList:addColumn(_"Preis", 0.25)

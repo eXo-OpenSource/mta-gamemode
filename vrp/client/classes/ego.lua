@@ -106,7 +106,7 @@ function ego.toggle()
 		delete(ego:getSingleton())
 		ego.Active = false
 	else
-		if not localPlayer:getPublicSync("gangwarParticipant") then
+		if not localPlayer:getPublicSync("gangwarParticipant") and localPlayer:isLoggedIn() then
 			ego:new()
 		end
 	end

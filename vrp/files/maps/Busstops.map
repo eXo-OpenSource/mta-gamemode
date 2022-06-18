@@ -1,7 +1,7 @@
 <map edf:definitions="vrp_editortools">
     <bus_stop id="bus_stop (2)" markerdistance="4.5" lines="1,2" name="Pershing Square" alpha="255" interior="0" posX="1477.6377" posY="-1725.332" posZ="13.80656" rotX="0" rotY="0" rotZ="89.753"></bus_stop>
     
-	<bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Fundbüro Schatzsucher" alpha="255" interior="0" posX="713.17267" posY="-1745.7576" posZ="14.67861" rotX="0" rotY="0" rotZ="69.177"></bus_stop>
+	<bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Fundbuero Schatzsucher" alpha="255" interior="0" posX="713.17267" posY="-1745.7576" posZ="14.67861" rotX="0" rotY="0" rotZ="69.177"></bus_stop>
     <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Stadtreinigung" alpha="255" interior="0" posX="226.26695" posY="-1436.6731" posZ="13.56707" rotX="0" rotY="0" rotZ="133.306"></bus_stop>
     <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Logistikzentrum" alpha="255" interior="0" posX="-200.53125" posY="-303.01465" posZ="1.66437" rotX="0" rotY="0" rotZ="43.524"></bus_stop>
     <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" name="Blueberry Acres" alpha="255" interior="0" posX="-0.29841" posY="150.84393" posZ="2.68937" rotX="0" rotY="0" rotZ="238.263"></bus_stop>
@@ -9,7 +9,7 @@
     <bus_stop id="bus_stop (26)" markerdistance="4.5" lines="1" name="Blueberry Acres" alpha="255" interior="0" posX="8.51125" posY="164.93271" posZ="2.68937" rotX="0" rotY="0" rotZ="57.979"></bus_stop>
     <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Logistikzentrum" alpha="255" interior="0" posX="-217.10352" posY="-318.4248" posZ="1.63937" rotX="0" rotY="0" rotZ="220.512"></bus_stop>
     <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Stadtreinigung" alpha="255" interior="0" posX="242.354" posY="-1454.6709" posZ="13.77698" rotX="0" rotY="0" rotZ="313.958"></bus_stop>
-    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Fundbüro Schatzsucher" alpha="255" interior="0" posX="700.11285" posY="-1772.1278" posZ="13.72861" rotX="0" rotY="0" rotZ="251.425"></bus_stop>
+    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Fundbuero Schatzsucher" alpha="255" interior="0" posX="700.11285" posY="-1772.1278" posZ="13.72861" rotX="0" rotY="0" rotZ="251.425"></bus_stop>
     
 	<bus_stop id="bus_stop (15)" markerdistance="4.5" lines="2" name="Japantown" posX="1461.7858" posY="-1354.3436" posZ="13.80656" rotX="0" rotY="0" rotZ="359.998"></bus_stop>
     <bus_stop id="bus_stop (30)" markerdistance="4.5" lines="2" name="FBI Headquarters" alpha="255" interior="0" posX="1242.5752" posY="-1845.2349" posZ="13.80656" rotX="0" rotY="0" rotZ="89.444"></bus_stop>

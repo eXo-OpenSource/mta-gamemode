@@ -907,8 +907,10 @@ end
 
 function LocalPlayer:startAnimation(_, ...)
 	if localPlayer:getData("isTasered") then return end
+	if localPlayer:getData("isInDeathMatch") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
+	if localPlayer:isInWater() then return end
 	if isPedAiming(localPlayer) then return end
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
