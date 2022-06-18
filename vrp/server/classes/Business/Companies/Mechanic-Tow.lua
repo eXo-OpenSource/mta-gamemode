@@ -241,6 +241,7 @@ function MechanicTow:onEnterTowLot(hitElement)
 			end
 			self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s)  abgeschleppt!"):format(towingBike:getName()))
 			towingBike:destroy()
+			hitElement.vehicle:setData("towingBike", nil, true)
 			hitElement:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", hitElement))
 			self.m_BankAccountServer:transferMoney(hitElement, 200, "Fahrzeug-Wrack", "Company", "Towed")
 		else
