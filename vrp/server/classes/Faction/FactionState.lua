@@ -1582,6 +1582,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:setHealth(100)
 				client:setArmor(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
+				DamageManager:getSingleton():clearPlayer(client)
 				client:checkLastDamaged()
 				setTimer(takeAllWeapons, 250, 1, client) -- companyForceOffduty is too slow
 				--takeAllWeapons(client)

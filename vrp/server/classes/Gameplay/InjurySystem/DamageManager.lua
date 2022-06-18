@@ -290,6 +290,7 @@ function DamageManager:getInjuryByTextBody(player, bodypart, text)
 end
 
 function DamageManager:addDamage(bodypart, weapon, amount, player)
+	if player:getData("isInDeathMatch") then return end
 	if not player or (not isElement(player) or player:isDead()) then return end
 	self.m_IdCount = self.m_IdCount + 1
 	local instance = Damage:new(self.m_IdCount, bodypart, weapon, amount, player)

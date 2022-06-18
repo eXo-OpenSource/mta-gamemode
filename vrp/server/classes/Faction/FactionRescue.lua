@@ -213,6 +213,7 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
 				client:setHealth(100)
 				client:setArmor(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
+				DamageManager:getSingleton():clearPlayer(client)
 				client:checkLastDamaged()
 			end
 		else

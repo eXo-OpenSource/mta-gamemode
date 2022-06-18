@@ -57,6 +57,8 @@ function ItemFood:use(player)
 		triggerClientEvent(ItemSettings["CustomEvent"], player, item)
 	end
 
+	DamageManager:getSingleton():clearPlayer(player)
+
 	local block, animation, time = unpack(ItemSettings["Animation"])
 	if not player.vehicle then 
 		player:setFrozen(true) --prevent the player from running forwards when eating while laying on ground after fall
