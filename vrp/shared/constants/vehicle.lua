@@ -119,10 +119,25 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
             Vector3(-0.7, -2.52, 0.2),
             Vector3(0.21, -2.51, 0.2),
             Vector3(-0.21, -2.49, 0.2),
-        }
-	}
-}
+        },
+	},
 
+	[456] = { --vehicle model, yankee in this case
+	loadMarkerPos = Vector3(0, -5.25, 0),
+	vehicleDoors = {1},
+	objectId = 1575, -- drug package
+	objectNames = {"Drogenpaket", "Dorgenpakete"},
+	randomRotation = false, --random z-rotaion on attach to provide some variety
+	positions = { -- in loading order, e.g. the first row is the first object position to load
+	Vector3(0.5, -0.1, 0.03), Vector3(-0.6, -0.1, 0.03),
+	Vector3(-0.6, -1.1, 0.03), Vector3(0.5, -1, 0.03),
+	Vector3(0.5, -1.9, 0.03), Vector3(0.5, -2.8, 0.03), 
+	Vector3(-0.6, -1.9, 0.03), Vector3(-0.6, -2.8, 0.03), 
+	Vector3(0.5, -3.7, 0.03), Vector3(-0.6, -3.7, 0.03),	
+	},
+	scale = 1.6 -- the objects scale, when attached
+	},
+}
 
 FUEL_PRICE = { --price per liter
 	["petrol"] = 2.3,
@@ -144,6 +159,7 @@ FUEL_NAME = { --display name
 }
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
+EVIL_FUEL_PRICE_MULTIPLICATOR = 3
 SERVICE_FUEL_PRICE_MULTIPLICATOR = 3
 SERVICE_REPAIR_PRICE_MULTIPLICATOR = 3
 

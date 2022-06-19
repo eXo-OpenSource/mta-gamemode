@@ -123,6 +123,14 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed7
 	
 
+	--// DT PED 
+	local itemSpawnerPed8 = Ped.create(1, Vector3(-1096.38, -1614.74, 76.37))
+	itemSpawnerPed8:setRotation(Vector3(0, 0, 270))
+	itemSpawnerPed8.Name = _"Illegaler Weed-Transport"
+	itemSpawnerPed8.Description = _"Hier startet der Drogentruck!"
+	itemSpawnerPed8.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed8
+
 	local president = Ped.create(153, Vector3(2747.92, -2378.36, 818.9))
 	president:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, false, true)
 	president:setRotation(Vector3(0, 0, 266.67))

@@ -307,6 +307,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 
+		if getElementData(element,"WeedTruck") or VEHICLE_PACKAGE_LOAD[element.model] then
+			if #self:getAttachedElement(1575, element) > 0 then
+				self:addItem(_"Drogenpaket abladen",
+					function()
+						triggerServerEvent("vehicleDeloadObject", self:getElement(), element, "drugPackage")
+					end
+				):setIcon(FontAwesomeSymbols.Double_Down)
+			end
+			if #self:getAttachedElement(1575, localPlayer) > 0 then
+				self:addItem(_"Drogenpaket aufladen",
+					function()
+						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "drugPackage")
+					end
+				):setIcon(FontAwesomeSymbols.Double_Up)
+			end
+		end
+
 		if localPlayer:getCompany() and localPlayer:getCompany():getId() == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") then
 			if element:getHealth() < 950 then
 				self:addItem(_"Mechaniker: Reparieren",
