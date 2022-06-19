@@ -20,6 +20,7 @@ function Damage:destructor()
 end
 
 function Damage:Event_startTreatment(time, isHealer)	
+	self.m_IsHealer = isHealer
 	self.m_InTreatment = true
 	self.m_Input = guiGetInputEnabled()
 	if self.m_Countdown then 
@@ -46,6 +47,7 @@ function Damage:Event_startTreatment(time, isHealer)
 	else 
 		self:Event_cancelTreatment() 		
 	end
+	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_cancelTreatmentOnDeath, self))
 end
 
 function Damage:Event_finishTreatment()
@@ -86,6 +88,11 @@ function Damage:Event_cancelTreatment()
 		killTimer(self.m_CancelTimer)
 		self.m_CancelTimer = nil
 	end
+	removeEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_cancelTreatmentOnDeath, self))
 end
 
 function Damage:isInTreatment() return self.m_InTreatment end
+
+function Damage:Event_cancelTreatmentOnDeath()
+	triggerServerEvent("Damage:onCancelTreat", localPlayer, self.m_IsHealer)
+end

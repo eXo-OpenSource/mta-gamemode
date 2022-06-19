@@ -30,6 +30,15 @@ function CJClothes:constructor(id, name, position, rotation, typeData, dimension
 		end
 	end
 
+	if self.m_Ped then
+		self.m_Ped:setData("clickable",true,true)
+		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
+			if button =="left" and state == "down" then
+				local cjName, cjPrice = unpack(SkinInfo[0])
+				QuestionBox:new(player, _("Dieser Kleidungshändler ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", player, cjName, cjPrice), "skinBuy", nil, source, 10, 0)
+			end
+		end)
+	end
 end
 
 function CJClothes:onCJClothesMarkerHit(hitElement, dim)
