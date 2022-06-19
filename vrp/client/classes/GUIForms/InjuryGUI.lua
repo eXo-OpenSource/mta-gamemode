@@ -145,7 +145,8 @@ function InjuryGUI:onSelectItem(item)
 	self:calculateTreatment()
 end
 
-function InjuryGUI:Event_OnClick() 
+function InjuryGUI:Event_OnClick()
+	if localPlayer:isInWater() then return ErrorBox:new(_"Du kannst im Wasser nicht behandeln") end
 	local data = self:prepareData()
 	if table.size(data) > 0 then
 		triggerServerEvent("Damage:onTryTreat", localPlayer, self.m_Player, data)

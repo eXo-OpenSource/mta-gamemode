@@ -336,9 +336,10 @@ function Faction:removePlayer(playerId)
 		player:setFactionDuty(false)
 		player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 		self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
-		if self:isStateFaction() and player:isFactionDuty() then
+		if (self:isStateFaction() or self:isRescueFaction()) and player:isFactionDuty() then
 			takeAllWeapons(player)
 			player:reloadBlips()
+			RadioCommunication:getSingleton():allowPlayer(player, false)
 		end
 		player:reloadBlips()
 		unbindKey(player, "y", "down", "chatbox", "Fraktion")

@@ -28,7 +28,7 @@ function SkinShops:Event_skinBuy(skinId)
 	local name, price = unpack(SkinInfo[skinId])
 
 	if source:getMoney() >= price then
-		source:setSkin(skinId)
+		source:setSkin(skinId, true)
 		source:transferMoney(self.m_BankAccountServer, price, "Kleidungs-Kauf", "Gameplay", "Skin")
 
 		source:triggerEvent("skinBought", skinId)
