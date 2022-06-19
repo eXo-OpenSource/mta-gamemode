@@ -388,7 +388,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 				client:setPublicSync("Company:Duty",true)
-				client:createStorage()
+				setTimer(function(client) client:createStorage() end, 250 ,1, client) 
 				if company.m_Id == CompanyStaticId.SANNEWS then
 					giveWeapon(client, 43, 50) -- Camera
 				end

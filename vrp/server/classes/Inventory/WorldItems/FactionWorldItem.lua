@@ -22,7 +22,7 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 	local rank = self.m_MinRank or 0
 	if action == WorldItem.Action.Move then
 		if WorldItem.hasPlayerPermissionTo(self, player, action) then -- does the player have superuser rights (admin)?
-			if self:getObject() and (player:getFaction() ~= self:getOwner() or not (player:isFactionDuty())) then --just show it if the player used his moderator rights
+			if self:getObject() and (player:getFaction() ~= self:getOwner() or not (player:isFactionDuty()) or player:getPublicSync("supportMode")) then --just show it if the player used his moderator rights
 				local x, y, z = getElementPosition(self:getObject())
 				local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
 				self:getOwner():sendShortMessage(("%s %s verschiebt euer Objekt %s in %s, %s!"):format(RANK[player:getRank()], player:getName(), self.m_ItemName, zone1, zone2))
