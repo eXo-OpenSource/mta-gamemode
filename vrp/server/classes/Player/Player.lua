@@ -1782,3 +1782,7 @@ end
 function Player:isInGhostMode()
 	return self.m_GhostMode
 end
+
+function Player:isEating()
+	return self.m_IsEating
+end

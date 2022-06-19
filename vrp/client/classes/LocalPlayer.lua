@@ -911,6 +911,8 @@ function LocalPlayer:startAnimation(_, ...)
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
 	if localPlayer:isInWater() then return end
+	if localPlayer:getData("isEating") then return end
+    if localPlayer:isReloadingWeapon() then return end
 	if isPedAiming(localPlayer) then return end
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end

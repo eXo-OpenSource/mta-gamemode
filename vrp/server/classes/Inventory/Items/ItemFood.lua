@@ -64,7 +64,9 @@ function ItemFood:use(player)
 		player:setFrozen(true) --prevent the player from running forwards when eating while laying on ground after fall
 		nextframe(function() 
 			player:setFrozen(false)
-			player:setAnimation(block, animation, time, true, false, false) 
+			player:setAnimation(block, animation, time, true, false, false)
+			player.m_IsEating = true
+			player:setData("isEating", true, true)
 		end)
 	end
 	setTimer(
@@ -73,6 +75,8 @@ function ItemFood:use(player)
 			if not isElement(player) or getElementType(player) ~= "player" then return false end
 			player:setHealth(player:getHealth()+ItemSettings["Health"])
 			player:setAnimation()
+			player.m_IsEating = nil
+			player:setData("isEating", nil, true)
 		end, time, 1
 	)
 

@@ -1318,7 +1318,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 	else
 		local bailcosts = 0
 		local wantedLevel = player:getWanteds()
-		local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
+		local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
 		local factionBonus = JAIL_COSTS[wantedLevel]
 		if player:getFaction() and player:getFaction():isEvilFaction() then
 			factionBonus = JAIL_COSTS[wantedLevel]/2
@@ -1348,6 +1348,15 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		elseif factionBonus > 0 then
 			player:transferMoney(self.m_BankAccountServer, factionBonus, "Knast Strafe (Bar)", "Faction", "Arrest")
 		end
+		
+		local DrugItems = self.ms_IllegalItems
+		local inv = player:getInventory()
+		for index, item in pairs(DrugItems) do
+			if inv:getItemAmount(item) > 0 then
+				inv:removeAllItem(item)
+			end
+		end
+
 		player:setJailTime(jailTime)
 		player:setWanteds(0)
 		player:moveToJail(CUTSCENE, isoCell)
