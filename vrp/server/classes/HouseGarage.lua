@@ -18,9 +18,10 @@ HouseGarage.Garage = {
     [49] = Vector3(785.95, -494.23, 17.34),
 }
 
-function HouseGarage:constructor(houseId, garageId)
+function HouseGarage:constructor(houseId, garageId, posX, posY, posZ)
     self.m_HouseId = houseId
     self.m_GarageId = garageId
+    self.m_GaragePosition = Vector3(posX, posY, posZ)
     self.m_LastInteraction = 0
 end
 

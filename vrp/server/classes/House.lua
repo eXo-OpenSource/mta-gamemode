@@ -57,10 +57,6 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 		self.m_Keys = table.setIndexToInteger(self.m_Keys)
 	end
 
-	if garageId then
-		self:createGarage(garageId)
-	end
-
 	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
@@ -81,10 +77,10 @@ function House:updatePickup()
 	end
 end
 
-function House:createGarage(garageId)
+function House:createGarage(garageId, posX, posY, posZ)
 	self.m_GarageId = garageId
-	self.m_Garage = HouseGarage:new(self.m_Id, self.m_GarageId)
-	HouseGarage.Map[self.m_GarageId] = self.m_Garage
+	self.m_Garage = HouseGarage:new(self.m_Id, self.m_GarageId, posX, posY, posZ)
+	HouseGarage.Map[self.m_Id] = self.m_Garage
 end
 
 function House:getOwner()

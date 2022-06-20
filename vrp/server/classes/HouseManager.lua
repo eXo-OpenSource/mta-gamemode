@@ -24,8 +24,13 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"], value["garageID"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"])
 		count = count + 1
+	end
+
+	local query = sql:queryFetch("SELECT * FROM ??_garage", sql:getPrefix())
+	for key, v in pairs(query) do
+		self.m_Houses[v["HouseId"]]:createGarage(v["GarageId"], v["PosX"], v["PosY"], v["PosZ"])
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -67,9 +72,9 @@ function HouseManager:createNewHouse(player, cmd, ...)
 end
 
 function HouseManager:Event_toggleGarageState()
-	for i, v in pairs(HouseGarage.Garage) do
-		local house = self.m_Houses[HouseGarage.Map[i].m_HouseId]
-		if getDistanceBetweenPoints3D(v, client:getPosition()) <= 10 then
+	for i, v in pairs(HouseGarage.Map) do
+		local house = self.m_Houses[i]
+		if getDistanceBetweenPoints3D(v.m_GaragePosition, client:getPosition()) <= 10 then
 			if house:isTenant(client:getId()) or house:getOwner() == client:getId() then
 				HouseGarage.Map[i]:toggleGarage()
 				break

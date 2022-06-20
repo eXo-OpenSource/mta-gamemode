@@ -736,6 +736,7 @@ function Group:respawnVehicles(player)
 			self:sendShortMessage(("Ihr habt nicht genügend Geld um alle Fahrzeuge zu respawnen"):format(vehicles-fails, vehicles))
 			break;
 		end
+		vehicle:removeAttachedPlayers()
 		if not vehicle:respawn(false, true) then
 			fails = fails + 1
 		end

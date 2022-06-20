@@ -663,6 +663,7 @@ function Faction:respawnVehicles(player)
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
+			vehicle:removeAttachedPlayers()
 			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else

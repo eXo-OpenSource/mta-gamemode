@@ -531,6 +531,7 @@ function Company:respawnVehicles(player)
 	for companyId, vehicle in pairs(companyVehicles) do
 		if vehicle:getCompany() == self then
 			vehicles = vehicles + 1
+			vehicle:removeAttachedPlayers()
 			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
