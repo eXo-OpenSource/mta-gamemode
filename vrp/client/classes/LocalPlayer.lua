@@ -460,15 +460,16 @@ function LocalPlayer:Event_playerWasted(arrestedOnWaste)
 	setSoundVolume(self.m_DeathAudio,1)
 	setSkyGradient(10,10,10,30,30,30)
 	setTimer(setGameSpeed, 5000, 1, 1)
+	local wasGangWar = localPlayer:getPublicSync("gangwarParticipant")
 	self.m_CameraTimer = setTimer(
 		function()
-			if localPlayer:getInterior() == 0 and not arrestedOnWaste then
+			if localPlayer:getInterior() == 0 and not arrestedOnWaste and not wasGangWar then
 				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 			end
 		end
 	, 4500, 1)
 	setTimer(resetSkyGradient,30000,1)
-	if localPlayer:getInterior() > 0 or arrestedOnWaste then
+	if localPlayer:getInterior() > 0 or arrestedOnWaste or localPlayer:getPublicSync("gangwarParticipant") then
 		self.m_OnDeathTimerUp()
 		return
 	end
