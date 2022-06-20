@@ -11,7 +11,7 @@ local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, skyscraperId, garageId, bIsRob)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, skyscraperId, buyPrice, bIsRob)
 	if owner == 0 then
 		owner = false
 	end
@@ -24,6 +24,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
 	self.m_Price = price
+	self.m_BuyPrice = buyPrice
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position
@@ -122,9 +123,9 @@ function House:showGUI(player)
 		tenants[playerId] = Account.getNameFromId(playerId)
 	end
 	if player:getId() == self.m_Owner then
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_BankAccount:getMoney(), true, self.m_Id, self.m_Pickup)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_BankAccount:getMoney(), true, self.m_Id, self.m_Pickup, self.m_Garage and "Ja" or "Nein")
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, false, self:isValidToEnter(player) and true or false, self.m_Id, self.m_Pickup)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, false, self:isValidToEnter(player) and true or false, self.m_Id, self.m_Pickup, self.m_Garage and "Ja" or "Nein")
 	end
 end
 
@@ -223,6 +224,10 @@ function House:rentHouse(player)
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
 			player:sendSuccess(_("Du wurdest erfolgreich eingemietet", player))
+			if self.m_Garage then
+				local garage = self.m_Garage
+				player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+			end
 			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 			self:showGUI(player)
 		else
@@ -240,6 +245,7 @@ function House:unrentHouse(player, noDistanceCheck)
 		if player and isElement(player) then
 			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player))
 			player:triggerEvent("removeHouseBlip", self.m_Id)
+			player:triggerEvent("removeGarageBlip", self.m_Id)
 			if not noDistanceCheck then
 				self:showGUI(player)
 			end
@@ -313,6 +319,7 @@ function House:removeTenant(player, id)
 				local target = getPlayerFromName(name)
 				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()))
 				target:triggerEvent("removeHouseBlip", self.m_Id)
+				player:triggerEvent("removeGarageBlip", self.m_Id)
 			end
 			self:showGUI(player)
 		end
@@ -352,8 +359,8 @@ function House:save()
 	local pos = self.m_Pos
 	if not self.m_Keys then self.m_Keys = {} end
 	if not self.m_Elements then self.m_Elements = {} end
-	return sql:queryExec("UPDATE ??_houses SET x = ?, y = ?, z = ?, interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ?, skyscraperID = ? WHERE id = ?;", sql:getPrefix(),
-		pos.x, pos.y, pos.z, self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, not self.m_SkyscraperId and 0 or self.m_SkyscraperId, self.m_Id)
+	return sql:queryExec("UPDATE ??_houses SET x = ?, y = ?, z = ?, interiorID = ?, `keys` = ?, owner = ?, price = ?, buyPrice = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ?, skyscraperID = ? WHERE id = ?;", sql:getPrefix(),
+		pos.x, pos.y, pos.z, self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_BuyPrice, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, not self.m_SkyscraperId and 0 or self.m_SkyscraperId, self.m_Id)
 end
 
 function House:sellHouse(player)
@@ -361,8 +368,9 @@ function House:sellHouse(player)
 	if player:getId() == self.m_Owner then
 		-- destroy blip
 		player:triggerEvent("removeHouseBlip", self.m_Id)
+		player:triggerEvent("removeGarageBlip", self.m_Id)
 
-		local price = math.floor(self.m_Price*0.75)
+		local price = math.floor(self.m_BuyPrice*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		self.m_BankAccountServer2:transferMoney({player, true}, price, "Haus-Verkauf", "House", "Sell")
 		self.m_BankAccount:transferMoney(player, self.m_BankAccount:getMoney(), "Hauskasse", "House", "Sell")
@@ -378,6 +386,7 @@ function House:clearHouse()
 	self.m_Owner = false
 	self.m_Keys = {}
 	self.m_Money = 0
+	self.m_BuyPrice = 0
 	if self.m_BankAccount:getMoney() > 0 then
 		self.m_BankAccount:transferMoney(self.m_BankAccountServer2, self.m_BankAccount:getMoney(), "Hausräumung", "House", "Cleared")
 	end
@@ -614,6 +623,7 @@ function House:buyHouse(player)
 		player:giveAchievement(34)
 
 		player:transferBankMoney(self.m_BankAccountServer2, self.m_Price, "Haus-Kauf", "House", "Buy")
+		self.m_BuyPrice = self.m_Price
 		self.m_Owner = player:getId()
 		self:updatePickup()
 		if self.m_IsInSkyscraper then
@@ -622,6 +632,10 @@ function House:buyHouse(player)
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
 		self:save()
 		-- create blip
+		if self.m_Garage then
+			local garage = self.m_Garage
+			player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+		end
 		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 		self:showGUI(player)
 	else

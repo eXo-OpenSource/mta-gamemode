@@ -19,7 +19,7 @@ function InactivityManager:clearHouses()
 	if rows then
 		for k, v in ipairs(rows) do
 			local house = HouseManager:getSingleton().m_Houses[v.HouseID]
-			local price = math.floor(house.m_Price*0.75)
+			local price = math.floor(house.m_BuyPrice*0.75)
 
 			BankServer.get("server.house"):transferMoney({"player", v.UserID, true}, price, "Hausräumung durch Inaktivität", "House", "Cleared")
 			house.m_BankAccount:transferMoney({"player", v.UserID, true}, house.m_BankAccount:getMoney(), "Auszahlung der Hauskasse", "House", "Cleared")

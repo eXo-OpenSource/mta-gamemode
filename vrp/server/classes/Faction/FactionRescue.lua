@@ -958,7 +958,7 @@ function FactionRescue:addVehicleFire(veh)
 		end
 		FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 		StatisticsLogger:getSingleton():addFireLog(-1, math.floor(self.m_VehicleFires[veh]:getTimeSinceStart()/1000), toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction)
-		FactionRescue:getSingleton().m_Faction:addLog(false, "Brand", ("Ein brennendes Fahrzeug wurde gelöscht (+%s)"):format(moneyForFaction))
+		FactionRescue:getSingleton().m_Faction:addLog(false, "Brand", ("Ein brennendes Fahrzeug wurde gelöscht (+%s$)"):format(moneyForFaction))
 
 		self.m_VehicleFires[veh] = nil
 	end, zone)

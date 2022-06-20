@@ -178,7 +178,7 @@ function FireManager:stopCurrentFire(stats)
 
 		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction * table.size(stats.pointsByPlayer))
 		
-		local groupLogMessage = self.m_CurrentFire.m_Id == 1000 and ("Brennende Absturztrümmer wurden gelöscht (+%s)") or ("Ein ausgebrochenes Feuer wurde gelöscht (+%s)")
+		local groupLogMessage = self.m_CurrentFire.m_Id == 1000 and ("Brennende Absturztrümmer wurden gelöscht (+%s$)") or ("Ein ausgebrochenes Feuer wurde gelöscht (+%s$)")
 		FactionRescue:getSingleton().m_Faction:addLog(false, "Brand", (groupLogMessage):format(moneyForFaction))
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)

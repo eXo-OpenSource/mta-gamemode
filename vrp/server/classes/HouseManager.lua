@@ -24,7 +24,7 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"], value["buyPrice"])
 		count = count + 1
 	end
 
@@ -278,10 +278,18 @@ end
 function HouseManager:loadBlips(player)
 	local house = self:getPlayerHouse(player)
 	if house then
+		if house.m_Garage then
+			local garage = house.m_Garage
+			player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+		end
 		player:triggerEvent("addHouseBlip", house.m_Id, house.m_Pos.x, house.m_Pos.y)
 	end
 	for index, rentHouse in pairs(self:getPlayerRentedHouses(player)) do
 		if rentHouse then
+			if rentHouse.m_Garage then
+				local garage = rentHouse.m_Garage
+				player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+			end
 			player:triggerEvent("addHouseBlip", rentHouse.m_Id, rentHouse.m_Pos.x, rentHouse.m_Pos.y)
 		end
 	end
@@ -300,3 +308,10 @@ function HouseManager:destructor ()
 		house:save()
 	end
 end
+
+addCommandHandler("insertbuyprice", function()
+	for i, v in pairs (HouseManager:getSingleton().m_Houses) do
+		sql:queryExec("UPDATE ??_houses SET buyPrice = ? WHERE id = ?", sql:getPrefix(), v.m_Price, v.m_Id)
+	end
+end
+)
