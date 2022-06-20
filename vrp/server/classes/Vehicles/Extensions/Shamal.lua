@@ -97,10 +97,12 @@ function Shamal:enterExitInterior(player, enter)
             player:setDimension(self.m_ShamalDimension)
             player:setAnimation("PED", "SEAT_up", -1, false, false, false, false)
         end)
-        setTimer(function()
-        self.m_ShamalDriver:setAnimation("PED", "SEAT_down", -1, false, false, false, true)
-        self.m_ShamalDriver:setAnimationProgress("SEAT_down", 1)
-        end, 150, 1)
+        if self.m_ShamalDriver then
+            setTimer(function()
+            self.m_ShamalDriver:setAnimation("PED", "SEAT_down", -1, false, false, false, true)
+            self.m_ShamalDriver:setAnimationProgress("SEAT_down", 1)
+            end, 150, 1)
+        end
 
         player.shamalInterior = self
     elseif enter == "quit" then

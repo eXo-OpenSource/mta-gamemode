@@ -228,6 +228,8 @@ function PermanentVehicle:virtual_constructor(data)
 			self.m_Shamal = Shamal:new(self)
 			ShamalManager.Map[self.m_Id] = self.m_Shamal
 		end
+
+		self.m_Unregistered = data.Unregistered
 	end
 end
 
@@ -243,8 +245,8 @@ end
 function PermanentVehicle:save()
   local health = getElementHealth(self)
   if self.m_Trunk then self.m_Trunk:save() end
-  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId =? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers]), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId = ?, Unregistered = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers]), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Unregistered or 0, self.m_Id)
 end
 
 function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
@@ -423,5 +425,35 @@ function PermanentVehicle:sendOwnerMessage(msg)
 		else
 			delTarget:sendInfo(_(msg, client))
 		end
+	end
+end
+
+function PermanentVehicle:isUnregistered()
+	return self.m_Unregistered ~= 0
+end
+
+function PermanentVehicle:toggleRegister(player)
+	if self:isUnregistered() then
+		self.m_Unregistered = 0
+		self:setPositionType(VehiclePositionType.World)
+		self:setDimension(0)
+		local x, y, z = unpack(Randomizer:getRandomTableValue(VehicleSpawnPositionAfterRegister))
+		local pickUpText = "Du kannst es hinter der Stadthalle abholen."
+		if self:isAirVehicle() and self:getModel() ~= 460 then
+			pickUpText = "Du kannst es am Flughafen in Los Santos abholen."
+			x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
+		elseif self:isWaterVehicle() or self:getModel() == 460 then
+			pickUpText = "Du kannst es an den Ocean Docks abholen"
+			x, y, z, rotation = 2350.26, -2523.06, 0, 180 -- ls docks
+		end
+		self:setPosition(x, y, z + self:getBaseHeight())
+		self:setRotation(0, 0, 0)
+		player:sendInfo(_("Dein Fahrzeug ist nun wieder angemeldet! %s", player, pickUpText))
+	else
+		self:removeAttachedPlayers()
+		self:setPositionType(VehiclePositionType.Unregistered)
+		self:setDimension(PRIVATE_DIMENSION_SERVER)
+		self:fix()
+		self.m_Unregistered = getRealTime().timestamp
 	end
 end

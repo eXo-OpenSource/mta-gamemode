@@ -478,7 +478,7 @@ VehicleTypeName = {
 	[VehicleTypes.Group] = "group";
 }
 
-VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
+VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4, Unregistered = 5,}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
 VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss

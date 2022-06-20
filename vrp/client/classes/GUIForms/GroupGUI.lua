@@ -199,19 +199,21 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 	self.m_TypeLabel:setText(type..":")
 	self.m_VehicleConvertToGroupButton:setText(_("Fahrzeug zur\n%s hinzufügen", type))
 
-	if getRealTime().timestamp > actionStatus["shopRob"] then
-		self.m_GroupNextShopRobLabel:setText(_"bereits möglich")
-		self.m_GroupNextShopRobLabel:setColor(Color.Green)
-	else
-		self.m_GroupNextShopRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["shopRob"]).hour..":"..getRealTime(actionStatus["shopRob"]).minute))
-		self.m_GroupNextShopRobLabel:setColor(Color.Red)
-	end
-	if getRealTime().timestamp > actionStatus["houseRob"]then
-		self.m_GroupNextHouseRobLabel:setText(_"bereits möglich")
-		self.m_GroupNextHouseRobLabel:setColor(Color.Green)
-	else
-		self.m_GroupNextHouseRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["houseRob"]).hour..":"..getRealTime(actionStatus["houseRob"]).minute))
-		self.m_GroupNextHouseRobLabel:setColor(Color.Red)
+	if localPlayer:getGroupType() == "Gang" then
+		if getRealTime().timestamp > actionStatus["shopRob"] then
+			self.m_GroupNextShopRobLabel:setText(_"bereits möglich")
+			self.m_GroupNextShopRobLabel:setColor(Color.Green)
+		else
+			self.m_GroupNextShopRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["shopRob"]).hour..":"..getRealTime(actionStatus["shopRob"]).minute))
+			self.m_GroupNextShopRobLabel:setColor(Color.Red)
+		end
+		if getRealTime().timestamp > actionStatus["houseRob"]then
+			self.m_GroupNextHouseRobLabel:setText(_"bereits möglich")
+			self.m_GroupNextHouseRobLabel:setColor(Color.Green)
+		else
+			self.m_GroupNextHouseRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["houseRob"]).hour..":"..getRealTime(actionStatus["houseRob"]).minute))
+			self.m_GroupNextHouseRobLabel:setColor(Color.Red)
+		end
 	end
 
 
@@ -300,6 +302,8 @@ function GroupGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
 				positionType = _"Hangar"
 			elseif positionType == VehiclePositionType.Harbor then
 				positionType = _"Hafen"
+			elseif positionType == VehiclePositionType.Unregistered then
+				positionType = _"Stadthalle"
 			else
 				positionType = _"Unbekannt"
 			end

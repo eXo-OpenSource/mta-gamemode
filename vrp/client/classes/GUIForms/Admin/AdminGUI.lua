@@ -695,6 +695,10 @@ function AdminVehicleGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
 				positionType = _"Autohof"
 			elseif positionType == VehiclePositionType.Hangar then
 				positionType = _"Hangar"
+			elseif positionType == VehiclePositionType.Harbor then
+				positionType = _"Hafen"
+			elseif positionType == VehiclePositionType.Unregistered then
+				positionType = _"Stadthalle"
 			else
 				positionType = _"Unbekannt"
 			end

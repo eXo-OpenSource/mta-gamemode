@@ -598,6 +598,8 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 				positionType = _"Hangar"
 			elseif positionType == VehiclePositionType.Harbor then
 				positionType = _"Hafen"
+			elseif positionType == VehiclePositionType.Unregistered then
+				positionType = _"Stadthalle"
 			else
 				positionType = _"Unbekannt"
 			end
