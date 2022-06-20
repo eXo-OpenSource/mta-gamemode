@@ -90,9 +90,22 @@ function AppSettings:onOpen(form)
 
 	local selected = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3")
 	if selected == customRingtonePath then
-		self.m_RingtoneCustom:setChecked(true)
+		if self.m_RingtoneCustom then
+			self.m_RingtoneCustom:setChecked(true)
+		end
 	elseif items[selected] then
 		self.m_RingtoneChanger:setIndex(items[selected], true)
+	end
+
+	self.m_ShowSkinCheckbox = GUICheckbox:new(10, 300, 300, 20, "Bild bei Anruf anzeigen", form):setFont(VRPFont(25)):setFontSize(1)
+	self.m_ShowSkinCheckbox.onChange =
+		function(state)
+			core:getConfig():set("Phone", "ShowSkin", state)
+		end
+
+	local selected = core:getConfig():get("Phone", "ShowSkin", true)
+	if selected then
+		self.m_ShowSkinCheckbox:setChecked(true)
 	end
 end
 

@@ -50,14 +50,26 @@ function PayNSpray:constructor(x, y, z, garageId)
 							self:setCustomGarageOpen(true)
 						end
 						if not isElement(hitElement) then return end
-						if hitElement:getBankMoney() >= costs then
-							vehicle:fix()
-							vehicle:setWheelStates(0, 0, 0, 0)
-							if costs > 0 then
-								hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+						if hitElement:getFaction() and hitElement:isFactionDuty() then
+							if hitElement:getFaction():getMoney() >= costs then
+								vehicle:fix()
+								vehicle:setWheelStates(0, 0, 0, 0)
+								if costs > 0 then
+									hitElement:getFaction():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								hitElement:sendError(_("Deine Fraktion benötigst %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 							end
 						else
-							hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
+							if hitElement:getBankMoney() >= costs then
+								vehicle:fix()
+								vehicle:setWheelStates(0, 0, 0, 0)
+								if costs > 0 then
+									hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
 						end
 						setElementFrozen(vehicle, false)
 						vehicle.m_DisableToggleHandbrake = nil

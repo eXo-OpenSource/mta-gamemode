@@ -500,7 +500,7 @@ function Vehicle:setEngineState(state)
 		self.controller:triggerEvent("vehicleEngineStateChange", self, state)
 	end
 
-	if instanceof(self, PermanentVehicle, true) then return end
+	--if instanceof(self, PermanentVehicle, true) then return end
 	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
 	end
