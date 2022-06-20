@@ -77,9 +77,9 @@ function House:updatePickup()
 	end
 end
 
-function House:createGarage(garageId, posX, posY, posZ)
+function House:createGarage(garageId, posX, posY, posZ, rotX, rotY, rotZ)
 	self.m_GarageId = garageId
-	self.m_Garage = HouseGarage:new(self.m_Id, self.m_GarageId, posX, posY, posZ)
+	self.m_Garage = HouseGarage:new(self.m_Id, self.m_GarageId, posX, posY, posZ, rotX, rotY, rotZ)
 	HouseGarage.Map[self.m_Id] = self.m_Garage
 end
 

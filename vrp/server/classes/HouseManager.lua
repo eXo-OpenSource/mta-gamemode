@@ -30,7 +30,7 @@ function HouseManager:constructor()
 
 	local query = sql:queryFetch("SELECT * FROM ??_garage", sql:getPrefix())
 	for key, v in pairs(query) do
-		self.m_Houses[v["HouseId"]]:createGarage(v["GarageId"], v["PosX"], v["PosY"], v["PosZ"])
+		self.m_Houses[v["HouseId"]]:createGarage(v["GarageId"], v["PosX"], v["PosY"], v["PosZ"], v["RotX"], v["RotY"], v["RotZ"])
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
