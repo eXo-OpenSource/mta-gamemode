@@ -1572,6 +1572,9 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:getInventory():removeAllItem("Nagel-Band")
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
+				client:getInventory():removeItem("Kevlar", 1)
+				WearableManager:getSingleton():removeWearable(client, "Kevlar")
+				client.m_KevlarShotsCount = nil
 				client:takeEquipment(true)
 				client:setBadge()
 				RadioCommunication:getSingleton():allowPlayer(client, false)
@@ -1603,6 +1606,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				client:getInventory():giveItem("Einsatzhelm", 1)
 				client:getInventory():removeAllItem("Taser")
 				client:getInventory():giveItem("Taser", 1)
+				client:getInventory():removeItem("Kevlar", 1)
+
 				if not wasted then faction:updateDutyGUI(client) end
 			end
 		else

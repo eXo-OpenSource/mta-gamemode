@@ -133,7 +133,17 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 		self:killPed(target, attacker, weapon, bodypart)
 		return
 	end
-	
+	if target.m_Shirt then
+		if bodypart == 3 and weapon == 22 and target.m_Shirt:getData("isProtectingChest") then
+			if target.m_KevlarShotsCount >= math.random(40, 70) then
+				self:destroyKevlar(attacker, target)
+				return
+			else
+				target.m_KevlarShotsCount = target.m_KevlarShotsCount + 1
+				return
+			end
+		end
+	end
 	local realLoss = 0
 	if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
 		realLoss = loss * EXPLOSIVE_DAMAGE_MULTIPLIER[weapon]
@@ -161,7 +171,6 @@ end
 function Guns:killPed(target, attacker, weapon, bodypart)
 	target:kill(attacker, weapon, bodypart)
 end
-
 
 function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 	local killer = killer
@@ -562,6 +571,21 @@ function Guns:destroyProtectionHelmet(attacker, target)
 				
 				return true
 			end
+		end
+	end
+end
+
+function Guns:destroyKevlar(attacker, target)
+	if target.m_Shirt then
+		if target.m_Shirt:getData("isProtectingChest") then
+			target:getInventory():removeItem("Kevlar", 1)
+			destroyElement(target.m_Shirt)
+			target:meChat(true, "Kevlarweste wurde aufgrund der zu hohen Belastung unbrauchbar!")
+			target.m_IsWearingShirt = false
+			target.m_Shirt = false
+			target.m_KevlarShotsCount = nil
+			outputChatBox("Dein Schuss zerstörte die Kevlarweste von "..getPlayerName(target).."!", attacker, 200,200,0)
+			target:triggerEvent("clientBloodScreen")
 		end
 	end
 end
