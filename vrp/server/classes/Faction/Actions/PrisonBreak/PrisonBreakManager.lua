@@ -33,7 +33,7 @@ function PrisonBreakManager:constructor()
     antifall3:setInterior(2)
     InstantTeleportArea:new(antifall3, 0, 2, Vector3(2611.23, -1414.81, 1040.36))
 
-    self.m_BombAreaPosition = Vector3(3630.16, -1547.79, 5.19)
+    self.m_BombAreaPosition = Vector3(-719.92, -401.11, 7.48)
 	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), PrisonBreakManager.BombCountdown)
 	self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 20)
 end
@@ -51,8 +51,8 @@ function PrisonBreakManager:stop()
 end
 
 function PrisonBreakManager:createEntrance()
-    self.m_Entrance = createObject(2904, Vector3(3629.8999023438, -1548.0999755859, 5.5999999046326), Vector3(0, 0, 335.49987792969))
-    self.m_Entrance:setScale(1.29999995)
+    self.m_Entrance = createObject(1381, Vector3(-720.17698974609, -402.13763427734, 8.146), Vector3(80.0, 0.00, 342.50))
+    self.m_Entrance:setScale(0.9, 0.85, 0.8)
 end
 
 function PrisonBreakManager:createDummyPoliceman()
@@ -100,8 +100,8 @@ function PrisonBreakManager:BombArea_Place(bombArea, player)
 	return true
 end
 
-function PrisonBreakManager:BombArea_Explode(bombArea, player)
-	self.m_Instance = PrisonBreak:new(player)
+function PrisonBreakManager:BombArea_Explode(bombArea, player, faction)
+	self.m_Instance = PrisonBreak:new(faction)
 end
 
 

@@ -1251,7 +1251,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
 	end
 
  	if source:getPositionType() == VehiclePositionType.World then
-		 if source:getOwner() == client:getId() then
+		 if source:getOwner() == client:getId() or source:hasKey(client) then
 			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)

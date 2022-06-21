@@ -275,6 +275,12 @@ function FactionState:loadLSPD(factionId)
 	local barrier = Gate:new(968, Vector3(1544.70, -1630.90, 13.1), Vector3(0, 90, 90), Vector3(1544.70, -1630.90, 13.1), Vector3(0, 5, 90), false)
 	barrier.onGateHit = bind(self.onBarrierGateHit, self)  -- PD Barrier
 
+	local jailBarrier = Gate:new(968, Vector3(-482.18, -517.71, 25.319), Vector3(0, 270, 0), Vector3(-482.18, -517.71, 25.319), Vector3(0, 344, 0), false)
+	jailBarrier.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local jailBarrier2 = Gate:new(968, Vector3(-497.118, -517.795, 25.319), Vector3(0, 90, 0), Vector3(-497.118, -517.795, 25.319), Vector3(0, 14, 0), false)
+	jailBarrier2.onGateHit = bind(self.onBarrierGateHit, self)
+	
 	local gate = Gate:new(3055, Vector3(1588.5042, -1637.8517, 14.58093), Vector3(0, 0, 0), Vector3(1588.5039, -1639.1016, 16.52393), Vector3(80, 0, 0))
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	gate:setGateScale(1.01)

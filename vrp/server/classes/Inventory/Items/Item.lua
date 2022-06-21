@@ -56,7 +56,7 @@ function Item:startObjectPlacing(player, callback, hideObject, customModel)
 		return false
 	end
 	if player:isDead() then
-		player:senDError(_("Du kannst keine Objekte platzieren", player))
+		player:sendError(_("Du kannst keine Objekte platzieren", player))
 	end
 
 	-- Start the object placer on the client

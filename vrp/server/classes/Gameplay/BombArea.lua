@@ -35,7 +35,7 @@ function BombArea:explode()
     end
 
     if self.m_ExplodeCallback then
-        self.m_ExplodeCallback(self, self.m_Placer)
+        self.m_ExplodeCallback(self, self.m_Placer, self.m_PlacerFaction)
     end
 end
 
@@ -59,6 +59,7 @@ function BombArea:fire(player)
     self.m_BombObject:setInterior(player:getInterior())
     self.m_BombObject:setDimension(player:getDimension())
     self.m_Placer = player
+    self.m_PlacerFaction = player:getFaction()
     self.m_Timer = setTimer(bind(BombArea.explode, self), self.m_Timeout, 1)
 end
 

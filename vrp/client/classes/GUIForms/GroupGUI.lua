@@ -46,14 +46,11 @@ function GroupGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.25, self.m_Height*0.06, _"Payday:", tabGroups)
 	self.m_GroupPayDayLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.43, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
 
-	if localPlayer:getGroupType() == "Gang" then
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Aktion:", tabGroups)
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.06, _"Hausraub-Status:", tabGroups)
-		self.m_GroupNextHouseRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.6, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
-
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.25, self.m_Height*0.06, _"Shopraub-Status:", tabGroups)
-		self.m_GroupNextShopRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.7, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
-	end
+	self.m_ActionLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Aktion:", tabGroups)
+	self.m_HousRobLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.06, _"Hausraub-Status:", tabGroups)
+	self.m_GroupNextHouseRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.6, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
+	self.m_ShopRobLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.25, self.m_Height*0.06, _"Shopraub-Status:", tabGroups)
+	self.m_GroupNextShopRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.7, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
@@ -199,7 +196,12 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 	self.m_TypeLabel:setText(type..":")
 	self.m_VehicleConvertToGroupButton:setText(_("Fahrzeug zur\n%s hinzufügen", type))
 
-	if localPlayer:getGroupType() == "Gang" then
+		self.m_ActionLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_HousRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_GroupNextHouseRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_ShopRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_GroupNextShopRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+
 		if getRealTime().timestamp > actionStatus["shopRob"] then
 			self.m_GroupNextShopRobLabel:setText(_"bereits möglich")
 			self.m_GroupNextShopRobLabel:setColor(Color.Green)
@@ -214,8 +216,6 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 			self.m_GroupNextHouseRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["houseRob"]).hour..":"..getRealTime(actionStatus["houseRob"]).minute))
 			self.m_GroupNextHouseRobLabel:setColor(Color.Red)
 		end
-	end
-
 
 	self.m_GroupPlayersGrid:clear()
 	for playerId, info in pairs(players) do

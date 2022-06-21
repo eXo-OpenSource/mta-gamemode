@@ -11,6 +11,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	local owner = getElementData(element, "OwnerName")
 	local templateName = getElementData(element, "TemplateName") or ""
+	local hasLocalPlayerKey = table.find(getElementData(element, "VehicleKeys") or {}, localPlayer:getId()) ~= ni
 	if owner then
 		self:addItem(_("Besitzer: %s", owner, element:getName())):setTextColor(Color.Red)
 	end
@@ -37,7 +38,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
 		if getElementData(element, "lastDrivers") then
-			local lastDriver = getElementData(element, "lastDrivers")[#getElementData(element, "lastDrivers")] or nil
+			local lastDriver = getElementData(element, "lastDrivers")[#getElementData(element, "lastDrivers")]
 			self:addItem(_("Letzter Fahrer: %s", lastDriver),
 				function()
 						if self:getElement() then
@@ -47,7 +48,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.Player)
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) or table.find(getElementData(element, "VehicleKeys") or {}, localPlayer:getId()) then
+		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) or hasLocalPlayerKey then
 			if (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
 				if getElementData(element, "isRented") ~= true then
 					if getElementData(element, "forRent") ~= true then
@@ -124,7 +125,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Music)
 			end
-			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" and getElementData(element, "OwnerName") == localPlayer.name then
+			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" and not hasLocalPlayerKey then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
 						if self:getElement() then

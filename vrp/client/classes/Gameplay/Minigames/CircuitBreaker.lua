@@ -8,7 +8,7 @@
 CircuitBreaker = inherit(Singleton)
 addRemoteEvents{"startCircuitBreaker", "forceCircuitBreakerClose"}
 
-function CircuitBreaker:constructor(callbackEvent, callbackEventStepFailed, atm)
+function CircuitBreaker:constructor(callbackEvent, callbackEventStepFailed, element)
 	self.WIDTH, self.HEIGHT = 1080, 650
 	self.m_Textures = {}
 	self.m_HeaderHeight = screenHeight/10
@@ -41,8 +41,8 @@ function CircuitBreaker:constructor(callbackEvent, callbackEventStepFailed, atm)
 	toggleControl("backwards",false)
 	showChat(false)
 
-	self.m_RangeColShape = createColSphere(atm:getPosition(), 5)
-	self.m_RangeColShape:attach(atm)
+	self.m_RangeColShape = createColSphere(element:getPosition(), 5)
+	self.m_RangeColShape:attach(element)
 	addEventHandler("onClientColShapeLeave", self.m_RangeColShape,
 		function(leaveElement)
 			if leaveElement == localPlayer then
