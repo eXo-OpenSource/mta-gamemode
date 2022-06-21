@@ -11,6 +11,7 @@ ADMIN_OVERLAP_THRESHOLD = 5
 function Admin:constructor()
     self.m_OnlineAdmins = {}
     self.m_MtaAccounts = {}
+	self.m_TpPoints = {}
 
     self.m_SupportArrow = {}
     self.m_RankNames = {
@@ -115,6 +116,8 @@ function Admin:constructor()
 	addEventHandler("adminRequestSerialAccounts", root, bind(self.Event_adminRequestSerialAccounts, self))
 	addEventHandler("adminDeleteAccountFromSerial", root, bind(self.Event_adminDeleteAccountFromSerial, self))
 	addEventHandler("adminDealSmodeReflectionDamage", root, bind(self.Event_adminDealSmodeReflectionDamage, self))
+
+	self:loadTpPoints()
 
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
@@ -1070,101 +1073,18 @@ function Admin:getHerePlayer(player, cmd, target)
 	end
 end
 
+function Admin:loadTpPoints()	
+	local result = sql:queryFetch("SELECT * FROM ??_tp_locations", sql:getPrefix())
+	for i, v in pairs(result) do
+		self.m_TpPoints[v["Name"]] = {["pos"] = Vector3(v["PosX"], v["PosY"], v["PosZ"]), ["typ"] = v["Type"], ["dimension"] = v["Dimension"] ~= 0 and v["Dimension"] or nil, ["interior"] = v["Interior"] ~= 0 and v["Interior"] or nil}
+	end
+end
+--["noobspawn"] =		{["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
 function Admin:teleportTo(player,cmd,ort)
-local tpTable = {
-		["noobspawn"] =		{["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
-        ["ns"] =     		{["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
-        ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
-        ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
-        ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
-        ["angeln"] =        {["pos"] = Vector3(382.74, -1897.72, 7.52),  	["typ"] = "Orte"},
-        ["casino"] =      	{["pos"] = Vector3(2025.08, 1007.98, 10.82),  	["typ"] = "Orte"},
-        ["casino2"] =      	{["pos"] = Vector3(2188.73, 1677.65, 11.11),  	["typ"] = "Orte"},
-        ["caligulas"] =     {["pos"] = Vector3(2156.73, 1677.19, 10.70),  	["typ"] = "Orte"},
-        ["flughafenls"] =   {["pos"] = Vector3(1993.06, -2187.38, 13.23),  	["typ"] = "Orte"},
-        ["flughafenlv"] =   {["pos"] = Vector3(1427.05, 1558.48,  10.50),  	["typ"] = "Orte"},
-        ["flughafensf"] =   {["pos"] = Vector3(-1559.40, -445.55,  5.73),  	["typ"] = "Orte"},
-        ["bankpc"] =        {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
-        ["bankls"] =        {["pos"] = Vector3(1463.00, -1033.99, 23.66),   ["typ"] = "Orte"},
-        ["garten"] =        {["pos"] = Vector3(2450.16, 110.44, 26.16),  	["typ"] = "Orte"},
-        ["premium"] =       {["pos"] = Vector3(1246.52, -2055.33, 59.53),  	["typ"] = "Orte"},
-		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
-        ["afk"] =           {["pos"] = Vector3(1567.72, -1886.07, 13.24),  	["typ"] = "Orte"},
-        ["drogentruck"] =   {["pos"] = Vector3(-1079.60, -1620.10, 76.19),  ["typ"] = "Orte"},
-		["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
-		["knast"] =   		{["pos"] = Vector3(3543.97, -1608.49, 7.24),  	["typ"] = "Orte"},
-		["kanal"] = 		{["pos"] = Vector3(1483.34, -1760.16, -37.31),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
-		["airdrop"] = 		{["pos"] = Vector3(1282.92, -1759.35, -37.62),	["typ"] = "Orte", ["interior"] = 0, ["dimension"]  = 3},
-        --["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
-        --["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
-        ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
-        ["dm"] =    		{["pos"] = Vector3(1326.55, -1561.04, 13.55), 	["typ"] = "Orte"},
-		["lsdocks"] =       {["pos"] = Vector3(2711.48, -2405.28, 13.49),	["typ"] = "Orte"},
-		["pferderennen"] =  {["pos"] = Vector3(1631.56, -1166.35, 23.66),  	["typ"] = "Orte"},
-		["boxhalle"] =  	{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
-		["boxer"] =  		{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
-		["friedhof"] =   	{["pos"] = Vector3(908.84, -1102.33, 24.30),  	["typ"] = "Orte"},
-		["lsforum"] =   	{["pos"] = Vector3(2798.93, -1830.34, 9.88),	["typ"] = "Orte"},
-		["auktion"] =   	{["pos"] = Vector3(1556.03, -1353.56, 23237.37),["typ"] = "Orte", ["interior"] = 1},
-		["import"] =   		{["pos"] = Vector3(-1684.73, 33.47, 3.55),		["typ"] = "Orte"},
-		["kino"] =   		{["pos"] = Vector3(1291.14, -1154.93, 23.82),   ["typ"] = "Orte"},
-        ["juwelier"] =    	{["pos"] = Vector3(550.287, -1507.069, 14.546), ["typ"] = "Orte"},
-        ["colorcars"] =    	{["pos"] = Vector3(2690.84, -1700.05, 10.44),  	["typ"] = "Orte"},
-        ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
-        ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
-        ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
-        ["lkw1"] =       	{["pos"] = Vector3(2409.07, -2471.10, 13.30),  	["typ"] = "Jobs"},
-        ["lkw2"] =       	{["pos"] = Vector3(-234.96, -254.46,  1.11),  	["typ"] = "Jobs"},
-        ["holzfäller"] = 	{["pos"] = Vector3(1041.02, -343.88,  73.67),  	["typ"] = "Jobs"},
-        ["farmer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
-        ["farmer2"] =     	{["pos"] = Vector3( -2103.7, -2249, 30.6), 		["typ"] = "Jobs"},
-        ["sweeper"] =    	{["pos"] = Vector3(219.49, -1429.61, 13.01),  	["typ"] = "Jobs"},
-		["schatzsucher"] =  {["pos"] = Vector3(706.22, -1699.38, 3.12),  	["typ"] = "Jobs"},
-        ["gabelstapler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
-        ["kiesgrube"] = 	{["pos"] = Vector3(590.71, 868.91, -42.50),  	["typ"] = "Jobs"},
-        ["bikeshop"] =      {["pos"] = Vector3(2857.96, -1536.69, 10.73),  	["typ"] = "Shops"},
-        ["bootshop"] =      {["pos"] = Vector3(1628.25, 597.11, 1.76),  	["typ"] = "Shops"},
-        ["sultanshop"] =    {["pos"] = Vector3(2127.09, -1135.96, 25.20),  	["typ"] = "Shops"},
-        ["lvshop"] =        {["pos"] = Vector3(2198.23, 1386.43,  10.55),  	["typ"] = "Shops"},
-        ["quadshop"] =      {["pos"] = Vector3(117.53, -165.56,  1.31),  	["typ"] = "Shops"},
-        ["infernusshop"] =  {["pos"] = Vector3(545.20, -1278.90, 16.97),  	["typ"] = "Shops"},
-        ["tampashop"] =     {["pos"] = Vector3(1098.83, -1240.20, 15.55),  	["typ"] = "Shops"},
-        ["bulletshop"] =    {["pos"] = Vector3(-1629.03, 1226.92, 7.19),  	["typ"] = "Shops"},
-        ["ammunation"] =    {["pos"] = Vector3(1357.56, -1280.08, 13.30),  	["typ"] = "Shops"},
-        ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
-        ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
-        ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
-        ["tuning"] =    	{["pos"] = Vector3(1050.65, -1031.07, 31.75),  	["typ"] = "Shops"},
-        ["texture"] =    	{["pos"] = Vector3(1844.30, -1861.05, 13.38),  	["typ"] = "Shops"},
-        ["cjkleidung"] =    {["pos"] = Vector3(1128.82, -1452.29, 15.48),  	["typ"] = "Shops"},
-        ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
-        ["fahrschule"] =    {["pos"] = Vector3(1783.92, -1707.39, 13.37),  	["typ"] = "Unternehmen"},
-        ["mechaniker"] =    {["pos"] = Vector3(2406.46, -2089.79, 13.55),  	["typ"] = "Unternehmen"},
-        ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-		["lcn"] =           {["pos"] = Vector3(673.87, -1267.26, 13.63),	["typ"] = "Fraktionen"},
-		["brigada"] =       {["pos"] = Vector3(297.88, -1156.61, 80.9),		["typ"] = "Fraktionen"},
-		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
-        ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
-        ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
-        ["pd"] =            {["pos"] = Vector3(246.39999, 107.6, 1003),  	["typ"] = "Fraktionen", ["interior"] = 10},
-        ["pdgarage"] =      {["pos"] = Vector3(1584.75, -1688.79, 6.22),  	["typ"] = "Fraktionen", ["interior"] = 0, ["dimension"]  = 5},
-        ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
-        ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
-		["vatos"] =         {["pos"] = Vector3(2782.422, -1944.273, 13.547),["typ"] = "Fraktionen"},
-		["aztecas"] =       {["pos"] = Vector3(1883.12, -2030.21, 13.39),	["typ"] = "Fraktionen"},
-		["yakuza"] =       	{["pos"] = Vector3(1447.65, -1328.43, 13.55),	["typ"] = "Fraktionen"},
-		["kartell"] =       {["pos"] = Vector3(2529.555, -1465.829, 23.94), ["typ"] = "Fraktionen"},
-		["biker"] =         {["pos"] = Vector3(681.93, -478.47, 16.34),  	["typ"] = "Fraktionen"},
-        ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
-        ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
-        ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
-		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-	}
-
 	local x,y,z = 0,0,0
 	if player:getRank() >= ADMIN_RANK_PERMISSION["tp"] then
 		if ort then
-			for k,v in pairs(tpTable) do
+			for k,v in pairs(self.m_TpPoints) do
 				if ort == k then
 					if player:isInVehicle() then
 						player:getOccupiedVehicle():setPosition(v["pos"])
@@ -1187,10 +1107,10 @@ local tpTable = {
 			local strings = false
 			local currentTyp = false
 			local already = {}
-			for _, _ in pairs(tpTable) do
+			for _, _ in pairs(self.m_TpPoints) do
 				currentTyp = false
 				strings = false
-				for k,v in pairs(tpTable) do
+				for k,v in pairs(self.m_TpPoints) do
 					if not already[v["typ"]] then
 						if not currentTyp then currentTyp = v["typ"] end
 						if v["typ"] == currentTyp then
