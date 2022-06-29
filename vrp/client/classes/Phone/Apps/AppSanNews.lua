@@ -69,6 +69,7 @@ function AppSanNews:onOpen(form)
 
 	self.m_SubmitButton.onLeftClick =
 		function()
+			if localPlayer:isInPrison() then return ErrorBox:new(_"Du kannst im Prison keine Werbung schalten.") end
 			local senderName = self.m_SenderNameChanger:getIndex()
 			--we have to do this because otherwise we can't get the correct ad type if some options are not added in the first place
 			local senderIndex = 1
