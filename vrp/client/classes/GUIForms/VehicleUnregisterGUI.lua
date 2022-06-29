@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIForms/VehicleUnregisterGUI.lua
--- *  PURPOSE:     Skyscraper GUI
+-- *  PURPOSE:     VehicleUnregister GUI
 -- *
 -- ****************************************************************************
 VehicleUnregisterGUI = inherit(GUIForm)
@@ -10,11 +10,16 @@ inherit(Singleton, VehicleUnregisterGUI)
 addRemoteEvents{"sendRegisteredVehicleList"}
 
 function VehicleUnregisterGUI:constructor(rangeElement)
-    GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.4, screenHeight*0.45, true, false, rangeElement)
+    GUIWindow.updateGrid()
+	self.m_Width = grid("x", 17)
+	self.m_Height = grid("y", 12)
+
+    GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, rangeElement)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug an/abmelden", true, true, self)
-    self.m_UnregisterButton = GUIButton:new(self.m_Width*0.66, self.m_Height*0.09, 200, 50, "Abmelden", self.m_Window):setBackgroundColor(Color.Green)
+
+    self.m_UnregisterButton = GUIGridButton:new(11, 1, 6, 1.5, "Abmelden", self.m_Window):setBackgroundColor(Color.Green)
     self.m_UnregisterButton.onLeftClick = bind(self.unregistereButton_Click, self)
-    self.m_InfoButton = GUIButton:new(self.m_Width*0.66, self.m_Height*0.22, 200, 50, _"Information", self.m_Window):setBackgroundColor(Color.Blue)
+    self.m_InfoButton = GUIGridButton:new(11, 2.5, 6, 1.5, _"Information", self.m_Window):setBackgroundColor(Color.Blue)
     self.m_InfoButton.onLeftClick = bind(self.infoButton_Click, self)
 
     triggerServerEvent("requestVehicles", localPlayer)
@@ -52,7 +57,7 @@ end
 
 function VehicleUnregisterGUI:updateList(vehicles)
     if self.m_VehicleListGrid then delete(self.m_VehicleListGrid) end
-    self.m_VehicleListGrid = GUIGridList:new(self.m_Width*0.03, self.m_Height*0.09, self.m_Width*0.6, self.m_Height*0.88, self.m_Window)
+    self.m_VehicleListGrid = GUIGridGridList:new(1, 1, 10, 11, self.m_Window)
 	self.m_VehicleListGrid:addColumn(_"Fahrzeug", 0.6)
 	self.m_VehicleListGrid:addColumn(_"Status", 0.4)
     for i, v in pairs(vehicles) do

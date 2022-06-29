@@ -595,7 +595,7 @@ function House:breakDoor(player)
 		self.m_LockStatus = false
 		player:meChat(true, _("bricht die Tür auf!", player))
 	else
-		client:sendError("Die Tür ist bereits auf.")
+		player:sendError("Die Tür ist bereits auf.")
 	end
 end
 
