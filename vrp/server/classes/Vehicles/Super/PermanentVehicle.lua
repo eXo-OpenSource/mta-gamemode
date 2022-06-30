@@ -23,7 +23,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 			local id = vehicle:getId()
 			local premium = vehicle.m_Premium and 1 or 0
 
-			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
+			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, RentPrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
 
 			VehicleManager:getSingleton():removeRef(vehicle)
 			vehicle.m_Owner = player:getId()
@@ -249,8 +249,8 @@ function PermanentVehicle:save()
   	if self.m_LastDrivers[#self.m_LastDrivers] and Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers]) then
 		lastDriver = Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers])
 	end
-  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId = ?, Unregistered = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  lastDriver, self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Unregistered or 0, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, RentPrice = ?, TemplateId = ?, Unregistered = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  lastDriver, self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_RentRate or 0, self.m_Template or 0, self.m_Unregistered or 0, self.m_Id)
 end
 
 function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
