@@ -13,7 +13,7 @@ JobGravel = inherit(Job)
 addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission", "gravelOnSync"}
 
 function JobGravel:constructor()
-	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", {190, 160, 4}, "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
+	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", {190, 160, 4}, "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), LexiconPages.JobGravel, self.onInfo)
 	self:setJobLevel(JOB_LEVEL_GRAVEL)
 
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)

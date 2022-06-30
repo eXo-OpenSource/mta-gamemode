@@ -128,7 +128,7 @@ function Townhall:constructor()
 	itemSpawnerPed7.Name = _"Jobliste"
 	itemSpawnerPed7:setInterior(5)
 	itemSpawnerPed7.Description = _"Klicke hier für Informationen!"
-	itemSpawnerPed7.Func = function() JobHelpGUI:new() end
+	itemSpawnerPed7.Func = function() HelpGUI:getSingleton():openLexiconPage(LexiconPages.JobOverview) end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed7
 	
 

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Job = inherit(Singleton)
 
-function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, blipColor, headerImage, name, description, tutorial)
+function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, blipColor, headerImage, name, description, lexiconPage, tutorial)
 	-- Create the customblip
 	self.m_Blip = Blip:new(blipPath, posX, posY,500)
 	self.m_Blip:setDisplayText(name, BLIP_CATEGORY.Job)
@@ -16,6 +16,7 @@ function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, blipColor, head
 	self.m_HeaderImage = headerImage
 	self.m_Description = description
 	self.m_Tutorial = tutorial
+	self.m_LexiconPage = lexiconPage
 	self.m_Level = 0
 	-- Create a job marker
 	self.m_Ped = createPed(skin, posX, posY, posZ, rotZ)
@@ -32,12 +33,12 @@ function Job:onPedClick()
 	jobGUI:setHeaderImage(self.m_HeaderImage)
 	jobGUI:setAcceptCallback(bind(Job.acceptHandler, self))
 	jobGUI:setDeclineCallback(bind(Job.declineHandler, self))
-	jobGUI:setInfoCallback(bind(Job.InfoMessage, self, self.m_Name, self.m_Description, self.m_Tutorial))
+	jobGUI:setInfoCallback(bind(Job.InfoMessage, self, self.m_Name, self.m_Description, self.m_LexiconPage, self.m_Tutorial))
 	jobGUI:open()
 end
 
-function Job:InfoMessage(name, description, tutorial)
-	HelpGUI:getSingleton():openLexiconPage(LexiconPages.JobOverview)
+function Job:InfoMessage(name, description, lexiconPage, tutorial)
+	HelpGUI:getSingleton():openLexiconPage(lexiconPage)
 end
 
 function Job:acceptHandler()
