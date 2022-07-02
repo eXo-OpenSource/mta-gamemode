@@ -128,6 +128,7 @@ function GroupManager:getGangActionState(group)
 	local temp = {}
 	temp["houseRob"] = GroupHouseRob:getSingleton().m_GroupsRobCooldown[group] and GroupHouseRob:getSingleton().m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME or 0
 	temp["shopRob"] = ROBSHOP_LAST_ROB+ROBSHOP_PAUSE
+	temp["shopVehicleRob"] = {SHOP_VEHICLE_ROB_LAST_ROB+SHOP_VEHICLE_ROB_PAUSE, SHOP_VEHICLE_ROB_IS_STARTABLE}
 	return temp
 end
 

@@ -935,7 +935,8 @@ end
 
 function Vehicle:setDriver(player)
 	if not self:getEngineState() then return end
-
+	if not self:isPermanent() then return end
+	
 	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
 		return
 	end

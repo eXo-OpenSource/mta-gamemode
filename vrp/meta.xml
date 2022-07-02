@@ -493,6 +493,8 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/GPS/GPS.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRobManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRob.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -953,6 +955,8 @@
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkyscraperEditGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -1702,6 +1706,7 @@
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
 	<vrpfile src="files/images/Other/Bullet.png"/>
+	<vrpfile src="files/images/Other/LockPick.png"/>
 
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
@@ -3477,6 +3482,7 @@
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome5.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome6.otf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome6.1.0.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Chapaza.ttf" /><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>

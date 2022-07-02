@@ -218,7 +218,7 @@ ADMIN_RANK_PERMISSION = {
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
 	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
-	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
+	["seeRunString"] = RANK.Administrator, --chat and console outputs from above
 
 	--World Items (e.g. Barricade)
 	["moveWorldItem"] 				= RANK.Supporter,
@@ -233,7 +233,7 @@ ADMIN_RANK_PERMISSION = {
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Supporter,
 	["toggleFire"] = RANK.Supporter,
-	["editFire"] = RANK.Supporter,
+	["editFire"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Supporter,
 	["transactionMenu"] = RANK.Administrator,
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts

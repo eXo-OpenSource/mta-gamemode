@@ -89,7 +89,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								function()
 									if self:getElement() then
 										delete(self)
-										QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
+										QuestionBox:new("Möchtest du die Vermietung des Fahrzeuges beenden?",
 										function ()
 											triggerServerEvent("groupStopVehicleForRent", self:getElement())
 										end)
@@ -219,6 +219,49 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Table)
+			end
+		end
+		if element:getVehicleType() == VehicleType.Automobile or element:getVehicleType() == VehicleType.Bike then
+			if element:getData("ShopVehicle") then
+				if localPlayer:getGroupType() == "Gang" then
+					if not element:getData("Vehicle:Stolen") then
+						self:addItem(_"Fahrzeug stehlen",
+							function()
+								if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
+								if not localPlayer.m_IsPickingLock then
+									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
+										triggerServerEvent("ShopVehicleRob:onTryingSteal", self:getElement())
+									end
+								else ErrorBox:new(_"Du knackst bereits ein Schloss")
+								end
+							end
+						):setIcon(FontAwesomeSymbols.Lock_Open)
+					else
+						if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") and not localPlayer.vehicle then
+							self:addItem(_"Fahrzeug entsperren",
+								function()
+									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
+										triggerServerEvent("ShopVehicleRob:onPoliceUnlockVehicle", self:getElement())
+									end
+								end
+							):setIcon(FontAwesomeSymbols.Lock_Open)
+						else
+							if not element:getData("Vehicle:LockIsPicked") then
+								self:addItem(_"Schloss knacken",
+									function()
+										if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
+										if not localPlayer.m_IsPickingLock then
+											if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
+												triggerServerEvent("ShopVehicleRob:continuePickingLock", self:getElement())
+											end
+										else ErrorBox:new(_"Du knackst bereits ein Schloss")
+										end
+									end
+								):setIcon(FontAwesomeSymbols.Lock_Open)
+							end
+						end
+					end
+				end
 			end
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then

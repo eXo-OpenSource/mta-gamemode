@@ -924,7 +924,7 @@ function Admin:toggleSupportMode(player)
 		--player:setWalkingStyle(138)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
-		if player:getRank() >= RANK.Moderator then
+		if player:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 			player:triggerEvent("superman:toggle", true)
 		end
 		player:triggerEvent("disableDamage", true )
@@ -1026,7 +1026,7 @@ function Admin:onlineList(player)
 end
 
 function Admin:goToPlayer(player,cmd,target)
-	if player:getRank() >= RANK.Supporter then
+	if player:getRank() >= ADMIN_RANK_PERMISSION["goto"] then
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
@@ -1050,7 +1050,7 @@ function Admin:goToPlayer(player,cmd,target)
 end
 
 function Admin:getHerePlayer(player, cmd, target)
-	if player:getRank() >= RANK.Supporter then
+	if player:getRank() >= ADMIN_RANK_PERMISSION["gethere"] then
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
@@ -1266,7 +1266,7 @@ function Admin:Event_EditVehicle(veh, changes)
 end
 
 function Admin:addFactionVehicle(player, cmd, factionID)
-	if player:getRank() >= RANK.Supporter then
+	if player:getRank() >= RANK.Administrator then
 		if isPedInVehicle(player) then
 			if factionID then
 				factionID = tonumber(factionID)
@@ -1293,7 +1293,7 @@ function Admin:addFactionVehicle(player, cmd, factionID)
 end
 
 function Admin:addCompanyVehicle(player, cmd, companyID)
-	if player:getRank() >= RANK.Supporter then
+	if player:getRank() >= RANK.Administrator then
 		if isPedInVehicle(player) then
 			if companyID then
 				companyID = tonumber(companyID)

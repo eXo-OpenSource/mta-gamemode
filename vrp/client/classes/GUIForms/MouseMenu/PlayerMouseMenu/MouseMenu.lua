@@ -64,7 +64,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 						end
 					end
 				end
-			):setIcon(FontAwesomeSymbols.Bolt)
+			):setIcon(FontAwesomeSymbols.People_Robbery)
 		end
 	end
 
