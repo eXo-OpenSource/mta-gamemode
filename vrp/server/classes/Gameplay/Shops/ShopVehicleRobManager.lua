@@ -33,6 +33,14 @@ function ShopVehicleRobManager:constructor()
     addEventHandler("ShopVehicleRob:onPoliceUnlockVehicle", root, bind(self.Event_onPoliceUnlockVehicle, self))
 
 	self:createInsiderPed()
+
+	Player.getQuitHook():register(
+		function(player)
+			if player.shopVehicleRob then
+				killTimer(player.shopVehicleRob.m_LockPickingTimer)
+			end
+		end
+	)
 end
 
 function ShopVehicleRobManager:createInsiderPed()
