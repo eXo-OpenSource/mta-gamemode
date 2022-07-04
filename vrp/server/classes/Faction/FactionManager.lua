@@ -801,3 +801,15 @@ function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitch
 
 	admin:sendSuccess(_("Die Fraktionsmitglieder der Fraktions ID %d wurden erfolgreich in die Fraktion %s transferiert!", admin, factionId, factionToSwitchTo:getName()))
 end
+
+function FactionManager:factionForceOffduty(player)
+	if player:getPublicSync("Faction:Duty") and player:getFaction() then
+		if player:getFaction():isStateFaction() then
+			FactionState:getSingleton():Event_toggleDuty(true, false, true, player)
+		elseif player:getFaction():isRescueFaction() then
+			FactionRescue:getSingleton():Event_toggleDuty(false, true, false, true, player)
+		elseif player:getFaction():isEvilFaction() then
+			FactionEvil:getSingleton():Event_toggleDuty(true, false, true, player)
+		end
+	end
+end

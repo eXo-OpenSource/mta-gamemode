@@ -380,7 +380,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				if client:isFactionDuty() then
 					--client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 					--return false
-					client:triggerEvent("factionForceOffduty", true)
+					FactionManager:getSingleton():factionForceOffduty(client)
 				end
 				company:changeSkin(client, preferredSkin) 
 				client:setCompanyDuty(true)
@@ -388,7 +388,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 				client:setPublicSync("Company:Duty",true)
-				setTimer(function(client) client:createStorage() end, 250 ,1, client) 
+				client:createStorage()
 				if company.m_Id == CompanyStaticId.SANNEWS then
 					giveWeapon(client, 43, 50) -- Camera
 				end

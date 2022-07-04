@@ -1547,7 +1547,8 @@ function FactionState:isPlayerInDutyPickup(player)
 	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
-function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
+function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, player)
+	if not client then client = player end
 	if wasted then
 		client:removeFromVehicle()
 		client.m_WasOnDuty = true

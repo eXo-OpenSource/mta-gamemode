@@ -174,7 +174,8 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin)
+function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin, player)
+	if not client then client = player end
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then

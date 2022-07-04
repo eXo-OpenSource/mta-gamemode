@@ -30,7 +30,7 @@ function ShopVehicleRob:constructor(robber, vehicle)
 	StatisticsLogger:getSingleton():addActionLog("ShopVehicle-Rob", "start", self.m_Robber, self.m_Gang, "group")
 	PlayerManager:getSingleton():breakingNews("Autohaus %s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName())
 	Discord:getSingleton():outputBreakingNews(string.format("Autohaus %s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName()))
-	FactionState:getSingleton():sendWarning("Die Alarmanlage vom Autohaus %s meldet einen Überfall! Die Täterbeschreibung passt zur Mitglieder der Gang %s", "Neuer Einsatz", false, serialiseVector(self.m_Vehicle), self.m_Shop:getName(), self.m_Gang:getName())
+	FactionState:getSingleton():sendWarning("Die Alarmanlage vom Autohaus %s meldet einen Überfall! Die Täterbeschreibung passt zu Mitgliedern der Gang %s", "Neuer Einsatz", false, serialiseVector(self.m_Vehicle), self.m_Shop:getName(), self.m_Gang:getName())
 
 	self.m_onVehicleEnter = bind(self.onVehicleEnter, self)
 	self.m_onVehicleExit = bind(self.onVehicleExit, self)
