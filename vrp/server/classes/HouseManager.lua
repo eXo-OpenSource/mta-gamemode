@@ -308,10 +308,3 @@ function HouseManager:destructor ()
 		house:save()
 	end
 end
-
-addCommandHandler("insertbuyprice", function()
-	for i, v in pairs (HouseManager:getSingleton().m_Houses) do
-		sql:queryExec("UPDATE ??_houses SET buyPrice = ? WHERE id = ?", sql:getPrefix(), v.m_Price, v.m_Id)
-	end
-end
-)

@@ -126,7 +126,7 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
 	loadMarkerPos = Vector3(0, -5.25, 0),
 	vehicleDoors = {1},
 	objectId = 1575, -- drug package
-	objectNames = {"Drogenpaket", "Dorgenpakete"},
+	objectNames = {"Drogenpaket", "Drogenpakete"},
 	randomRotation = false, --random z-rotaion on attach to provide some variety
 	positions = { -- in loading order, e.g. the first row is the first object position to load
 	Vector3(0.5, -0.1, 0.03), Vector3(-0.6, -0.1, 0.03),
