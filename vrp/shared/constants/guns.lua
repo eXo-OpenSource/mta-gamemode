@@ -236,3 +236,25 @@ WEAPON_READY_TIME = -- how much time a weapon should need before beeing able to 
 {
 	[34] = 1500 
 }
+
+WEAPONS_KEVLAR_REPELS =
+{
+	[22] = true,
+	[24] = true,
+	[29] = true,
+	[32] = true,
+	[28] = true,
+	[30] = true,
+	[31] = true,
+}
+
+SHOT_STRENGTH_AGAINST_KEVLAR =
+{
+	[22] = 1,
+	[24] = 2,
+	[29] = 1,
+	[32] = 1,
+	[28] = 1,
+	[30] = 2,
+	[31] = 2,
+}

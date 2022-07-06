@@ -134,12 +134,12 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 		return
 	end
 	if target.m_Shirt then
-		if bodypart == 3 and weapon == 22 and target.m_Shirt:getData("isProtectingChest") then
-			if target.m_KevlarShotsCount >= math.random(40, 70) then
+		if bodypart == 3 and WEAPONS_KEVLAR_REPELS[weapon] and target.m_Shirt:getData("isProtectingChest") then
+			if target.m_KevlarShotsCount >= math.random(3, 4) then
 				self:destroyKevlar(attacker, target)
 				return
 			else
-				target.m_KevlarShotsCount = target.m_KevlarShotsCount + 1
+				target.m_KevlarShotsCount = target.m_KevlarShotsCount + SHOT_STRENGTH_AGAINST_KEVLAR[weapon]
 				return
 			end
 		end
