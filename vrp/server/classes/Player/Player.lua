@@ -556,7 +556,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	end
 
 	if self.m_PrisonTime > 0 then
-		self:setPrison(self.m_PrisonTime, true)
+		self:setPrison(self:getRemainingPrisonTime(), true)
 	end
 
 	PickupWeaponManager:getSingleton():detachWeapons(self)
