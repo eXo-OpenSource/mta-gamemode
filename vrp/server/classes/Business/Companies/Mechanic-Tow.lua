@@ -209,6 +209,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	-- Spawn vehicle in non-collision zone
 	source:setPositionType(VehiclePositionType.World)
 	source:setDimension(0)
+	source:setInterior(0)
 	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(MechanicTow.SpawnPositions))
 	if source:isAirVehicle() then
 		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
