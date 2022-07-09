@@ -205,6 +205,7 @@ ADMIN_RANK_PERMISSION = {
 	["despawnVehicle"] = RANK.Supporter, -- despawn
 	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
 	["looseVehicleHandbrake"] = RANK.Supporter,
+	["endVehicleSale"] = RANK.Supporter, -- also for ending rent
 	["editVehicleGeneral"] = RANK.Administrator, -- this is used to just open the window itself
 	["editVehicleModel"] = RANK.Administrator,
 	["editVehicleOwnerType"] = RANK.Administrator,

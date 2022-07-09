@@ -231,6 +231,8 @@ function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
 		self.m_SalePrice = tonumber(price)
+		self.m_HandBrake = true
+		self:setData("Handbrake", true, true)
 		self.m_DisableToggleEngine = true
 		self.m_DisableToggleHandbrake = true
 		self:setFrozen(true)
@@ -248,6 +250,8 @@ function GroupVehicle:setForRent(state, rate)
 	if state then
 		self.m_ForRent = true
 		self.m_RentRate = tonumber(rate)
+		self.m_HandBrake = true
+		self:setData("Handbrake", true, true)
 		self.m_DisableToggleEngine = true
 		self.m_DisableToggleHandbrake = true
 		self:setFrozen(true)

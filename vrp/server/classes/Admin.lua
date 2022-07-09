@@ -81,7 +81,8 @@ function Admin:constructor()
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
 	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck",
 	"onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix", "adminTriggerTransaction", "adminRequestMultiAccounts",
-	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial", "adminDealSmodeReflectionDamage"}
+	"adminDelteMultiAccount", "adminCreateMultiAccount", "adminRequestSerialAccounts", "adminDeleteAccountFromSerial", "adminDealSmodeReflectionDamage", "adminStopVehicleForSale",
+	"adminStopVehicleForRent"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -116,6 +117,8 @@ function Admin:constructor()
 	addEventHandler("adminRequestSerialAccounts", root, bind(self.Event_adminRequestSerialAccounts, self))
 	addEventHandler("adminDeleteAccountFromSerial", root, bind(self.Event_adminDeleteAccountFromSerial, self))
 	addEventHandler("adminDealSmodeReflectionDamage", root, bind(self.Event_adminDealSmodeReflectionDamage, self))
+	addEventHandler("adminStopVehicleForSale", root, bind(self.Event_adminStopVehicleForSale, self))
+	addEventHandler("adminStopVehicleForRent", root, bind(self.Event_adminStopVehicleForRent, self))
 
 	self:loadTpPoints()
 
@@ -1734,3 +1737,36 @@ function Admin:Event_adminDealSmodeReflectionDamage(attacker, weapon, bodypart, 
 		end
 	end
 end
+
+function Admin:Event_adminStopVehicleForSale(reason)
+	if not isElement(source) or getElementType(source) ~= "vehicle" then
+		return
+	end
+
+	if client:getRank() >= ADMIN_RANK_PERMISSION["endVehicleSale"] then
+		if getElementData(source, "GroupType") then
+			source:setForSale(false, 0)
+			source:getGroup():sendShortMessage(_("Der Verkauf vom Fahrzeug (%s) wurde von %s beendet! Grund: %s", client, source:getName(), client:getName(), reason), -1)
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "endSale", source, reason)
+		end
+	else
+		client:sendError("Du bist nicht berechtigt!")
+	end
+end
+
+function Admin:Event_adminStopVehicleForRent(reason)
+	if not isElement(source) or getElementType(source) ~= "vehicle" then
+		return
+	end
+
+	if client:getRank() >= ADMIN_RANK_PERMISSION["endVehicleSale"] then
+		if getElementData(source, "GroupType") then
+			source:setForRent(false, 0)
+			source:getGroup():sendShortMessage(_("Die Vermietung vom Fahrzeug (%s) wurde von %s beendet! Grund: %s", client, source:getName(), client:getName(), reason), -1)
+			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "endRent", source, reason)
+		end
+	else
+		client:sendError("Du bist nicht berechtigt!")
+	end
+end
+

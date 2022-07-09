@@ -891,20 +891,25 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
-		if source.m_HandBrake then
-			source:toggleHandBrake(client)
-			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
-
-			if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC then
-				client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
-			end
-		else
-			client:sendError(_("Die Handbremse ist nicht angezogen!", client))
+	if not source.m_HandBrake then return client:sendError(_("Die Handbremse ist nicht angezogen!", client)) end
+	
+	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC and client:isCompanyDuty() then
+		if getElementData(source, "forSale") then
+			source:setForSale(false, 0)
 		end
+		if getElementData(source, "forRent") then
+			source:setForRent(false, 0)
+		end
+		client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+	elseif client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "looseHandbrake", source)
 	else
 		client:sendError(_("Du bist nicht berechtigt!", client))
+		return
 	end
+
+	source:toggleHandBrake(client)
+	client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
 end
 
 function VehicleManager:setSpeedLimits()
