@@ -9,7 +9,7 @@ SkinShopGUI = inherit(GUIForm)
 inherit(Singleton, SkinShopGUI)
 addRemoteEvents{"skinBought"}
 
-function SkinShopGUI:constructor(marker)
+function SkinShopGUI:constructor(marker, levels)
 	localPlayer:setFrozen(true)
 
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2, true, false, marker)
@@ -23,14 +23,30 @@ function SkinShopGUI:constructor(marker)
 	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center"):setColor(Color.Red)
 
 	-- Load skin info
-	for skinId, info in pairs(SkinInfo) do
-		local name, price = unpack(info)
-		local item = self.m_SkinList:addItem(name, tostring(price).."$")
+	for i, levelInfo in pairs(SkinShopLevel) do
+		if levelInfo >= levels[1] and levelInfo <= levels[2] then
+			self.m_SkinList:addItemNoClick(_("Stufe %d", levelInfo))
+			for skinId, info in pairs(SkinInfo) do
+				if info[3] >= levels[1] and info[3] <= levels[2] then
+					if info[3] == levelInfo then
+						local name, price, level = unpack(info)
+						local item = self.m_SkinList:addItem(name, tostring(price).."$")
 
-		-- Add doubleclick event
-		item.onLeftDoubleClick = function()	triggerServerEvent("skinBuy", localPlayer, skinId) end
-		item.onLeftClick = function () localPlayer:setModel(skinId) end
+						-- Add doubleclick event
+						item.onLeftDoubleClick = function()	
+							if localPlayer:getSkinLevel() >= SkinInfo[skinId][3] then
+								triggerServerEvent("skinBuy", localPlayer, skinId) 
+							else
+								ErrorBox:new(_"Für diese Kleidung benötigst du ein höheres Skin-Level!")
+							end
+						end
+						item.onLeftClick = function () localPlayer:setModel(skinId) end
+					end
+				end
+			end
+		end
 	end
+
 	localPlayer.m_OldSkin = localPlayer:getModel()
 
 
@@ -99,7 +115,7 @@ function SkinShopGUI.initializeAll()
 							localPlayer:setRotation(v.PlayerRot)
 							setCameraMatrix(unpack(v.CameraMatrix))
 
-							SkinShopGUI:new(marker)
+							SkinShopGUI:new(marker, v.Levels)
 						else
 							ErrorBox:new(_"Du kannst im Dienst nicht den Skin wechseln!")
 						end
