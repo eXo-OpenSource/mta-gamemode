@@ -356,7 +356,8 @@ function CompanyManager:Event_changeSkin()
 	end
 end
 
-function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
+function CompanyManager:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, player)
+	if not client then client = player end
 	if getPedOccupiedVehicle(client) and not wasted then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
@@ -483,4 +484,10 @@ function CompanyManager:getFromName(name)
 		end
 	end
 	return false
+end
+
+function CompanyManager:companyForceOffduty(player)
+	if player:getPublicSync("Company:Duty") and player:getCompany() then
+		self:Event_toggleDuty(true, false, true, player)
+	end
 end

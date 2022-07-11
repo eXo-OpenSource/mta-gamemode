@@ -446,7 +446,8 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		if player:getPublicSync("Company:Duty") and player:getCompany() then
 			--player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
 			--return false
-			client:triggerEvent("companyForceOffduty")
+			--client:triggerEvent("companyForceOffduty")
+			CompanyManager:getSingleton():companyForceOffduty(player)
 		end
 		player:setFactionDuty(true)
 		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))

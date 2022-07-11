@@ -196,7 +196,8 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin, 
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					--return false
-					client:triggerEvent("companyForceOffduty")
+					--client:triggerEvent("companyForceOffduty")
+					CompanyManager:getSingleton():companyForceOffduty(client)
 				end
 				takeAllWeapons(client)
 				if type == "fire" then

@@ -1592,7 +1592,8 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, pl
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					--client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					--return false
-					client:triggerEvent("companyForceOffduty")
+					--client:triggerEvent("companyForceOffduty")
+					CompanyManager:getSingleton():companyForceOffduty(client)
 				end
 				client:setFactionDuty(true)
 				client:setBadge(FACTION_STATE_BADGES[faction:getId()], ("%s %s"):format(factionBadgeId[faction:getId()][faction:getPlayerRank(client)], client:getId()), nil)
@@ -1603,8 +1604,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, pl
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Duty Heal")
 				DamageManager:getSingleton():clearPlayer(client)
 				client:checkLastDamaged()
-				setTimer(takeAllWeapons, 250, 1, client) -- companyForceOffduty is too slow
-				--takeAllWeapons(client)
+				takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
 				client:getInventory():removeAllItem("Warnkegel")
