@@ -464,7 +464,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},]]
-	{
+	--[[{
 		name = "Yakuza",
 		stations = {
 			{Vector3(1409.013, -1437.945, 9), 80, 1},
@@ -473,7 +473,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.YAKUZA},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},
+	},]]
 	{
 		name = "Los Aztecas",
 		stations = {
@@ -510,7 +510,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	--[[{
+	{
 		name = "Ballas",
 		stations = {
 			{Vector3(2241.83, -1443.94, 24.63), 90, 1},
@@ -518,7 +518,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.BALLAS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},]]
+	},
 	--[[{
 		name = "Kartell",
 		stations = {
