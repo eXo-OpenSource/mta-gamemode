@@ -1900,16 +1900,16 @@ function VehicleManager:Event_toggleVehicleRegister(type)
 	if source:getOwner() ~= client:getId() then return client:sendError(_("Das Fahrzeug gehört nicht dir.", client)) end 
 	if type == "register" then
 		if source.m_Unregistered <= getRealTime().timestamp - VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN then
-			source:toggleRegister(client)
+			if client:transferBankMoney(self.m_BankAccountServer, 500, "Fahrzeug-Anmeldung", "Vehicle", "Register") then
+				source:toggleRegister(client)
+			else
+				client:sendError(_("Du hast nicht genügend Geld auf deinem Konto. (%s$)", client, 500))
+			end
 		else
 			client:sendError(_("Du kannst dein Fahrzeug noch nicht wieder anmelden.", client))
 		end
 	elseif type == "unregister" then
-		if client:transferBankMoney(self.m_BankAccountServer, 500, "Fahrzeug-Abmeldung", "Vehicle", "Unregister") then
-			source:toggleRegister()
-		else
-			client:sendError(_("Du hast nicht genügend Geld auf deinem Konto. (%s$)", client, 500))
-		end
+		source:toggleRegister()
 	else
 		client:sendError(_("Fehler: Ungültiger Typ.", client))
 	end

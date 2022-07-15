@@ -68,7 +68,7 @@ function WeedTruck:constructor(driver)
 		local pos = factionDTDestination[faction:getId()][1]
 		self:addDestinationPed(faction, "evil")
 		self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", pos.x, pos.y, {factionType = {"State", "Evil"}, duty = true}, 9999, BLIP_COLOR_CONSTANTS.Red)
-		self.m_DestinationBlips[faction:getId()]:setDisplayText("Drogentruck-Abgabepunkt")
+		self.m_DestinationBlips[faction:getId()]:setDisplayText(("Drogentruck-Abgabepunkt (%s)"):format(faction:getShortName()))
 		self.m_DestinationBlips[faction:getId()]:setZ(pos.z)
 	end
 
@@ -255,9 +255,9 @@ function WeedTruck:Event_onDestinationPedClick(button, state, player)
 				if faction then
 					if (player.vehicle and #getAttachedElements(player.vehicle) > 0 ) or player:getPlayerAttachedObject() then
 						if source.type == "evil"  then
-							self:onDestinationPedClick(player, source, false, faction:isEvilFaction() and false or true)
+							self:onDestinationPedClick(player, source, false, faction:isEvilFaction() and "false" or true)
 						elseif source.type == "state" then
-							self:onDestinationPedClick(player, source, true, faction:isStateFaction() and false or true)
+							self:onDestinationPedClick(player, source, true, faction:isStateFaction() and "false" or true)
 						else
 							player:sendError(_("Du kannst hier nicht abgeben!",player))
 						end
@@ -279,15 +279,19 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 	
 	if player:getPlayerAttachedObject() then
 		if player:getPlayerAttachedObject():getModel() == 1575 and player:getPlayerAttachedObject():getData("drugPackage") then
-			if not isSnitch then
+			if isSnitch == "false" then
 				if stateDestination then
 					breakingNewsText = "Paket %d von %d wurde vom %s beschlagnahmt!"
 					PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, faction:getShortName())
 					StateEvidence:getSingleton():addItemToEvidence(player, "Weed", WeedTruck.WeedPerPackage, false)
 				else
-					breakingNewsText = "Paket %d von %d wurde von der/dem %s abgegeben!"
-					PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, faction:getShortName())
-					player:getInventory():giveItem("Weed", WeedTruck.WeedPerPackage)
+					if ped.faction == player:getFaction() then
+						player:getInventory():giveItem("Weed", WeedTruck.WeedPerPackage)
+						breakingNewsText = "Paket %d von %d wurde von der/dem %s abgegeben!"
+					else
+						breakingNewsText = "Paket %d von %d wurde an das/die %s übergeben!"
+					end
+					PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, ped.faction:getShortName())
 				end
 			else 
 				if stateDestination then
