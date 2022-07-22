@@ -12,6 +12,7 @@ function ShopVehicleRob:constructor(robber, vehicle)
 	self.m_Gang = self.m_Robber:getGroup()
 	self.m_Vehicle = vehicle
 	self.m_VehicleEstimated = false
+	self.m_UsedEstimateMarker = {}
 	self.m_VehiclePos = vehicle.position
 	self.m_VehicleRot = vehicle.rotation
 	self.m_Shop = ShopManager.VehicleShopsMap[self.m_Vehicle:getData("ShopId")]
@@ -71,6 +72,10 @@ function ShopVehicleRob:destructor()
 	
 	self.m_Shop.m_Ped:setDimension(0)
 
+	for i, ped in pairs(self.m_MechanicPeds) do
+		ped:destroy()
+	end
+
 	SHOP_VEHICLE_ROB_IS_STARTABLE = true
 	SHOP_VEHICLE_ROB_LAST_ROB =  getRealTime().timestamp
 	self.m_Shop.m_LastRob = getRealTime().timestamp
@@ -102,6 +107,11 @@ function ShopVehicleRob:addMarkerAndBlips()
 	self.m_MechanicFarBlip = Blip:new("PayNSpray.png", mechnaicPos3.x, mechnaicPos3.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
 	self.m_MechanicFarBlip:setDisplayText("Gutachter (weit)")
 	self.m_MechanicFarBlip:setZ(mechnaicPos3.z)
+
+	self.m_MechanicPeds = {}
+	self.m_MechanicPeds[1] = createPed(50, Vector3(2316.70, 327.09, 26.78), 233.81)
+	self.m_MechanicPeds[2] = createPed(309, Vector3(-1861.55, -1610.55, 21.76), 225)
+	self.m_MechanicPeds[3] = createPed(182, Vector3(-1666.58, 2556.98, 85.30), 358.49)
 
 	self.m_MechanicClose = createMarker(mechnaicPos1, "cylinder", 4, 255, 0, 0, 100)
 	self.m_MechanicMedium = createMarker(mechnaicPos2, "cylinder", 4, 255, 0, 0, 100)
@@ -167,24 +177,29 @@ end
 function ShopVehicleRob:onEstimateMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle and hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0  then
-			local freezeTime = 0
-			hitElement:sendInfo(_"Der Preis des Fahrzeugs wird nun geschätzt.")
-			self.m_Vehicle:setFrozen(true)
-			self.m_Vehicle.m_DisableToggleHandbrake = true
-			if source == self.m_MechanicClose then
-				freezeTime = 10000
-				self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.10)
-			elseif source == self.m_MechanicMedium then
-				freezeTime = 18000
-				self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.10, self.m_VehicleShopPrice*0.13)
-			elseif source == self.m_MechanicFar then
-				freezeTime = 28000
-				self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.13, self.m_VehicleShopPrice*0.15)
+			if not self.m_UsedEstimateMarker[source] then
+				local freezeTime = 0
+				hitElement:sendInfo(_"Der Preis des Fahrzeugs wird nun geschätzt.")
+				self.m_Vehicle:setFrozen(true)
+				self.m_Vehicle.m_DisableToggleHandbrake = true
+				self.m_UsedEstimateMarker[source] = true
+				if source == self.m_MechanicClose then
+					freezeTime = 10000
+					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.10)
+				elseif source == self.m_MechanicMedium then
+					freezeTime = 18000
+					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.10, self.m_VehicleShopPrice*0.13)
+				elseif source == self.m_MechanicFar then
+					freezeTime = 28000
+					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.13, self.m_VehicleShopPrice*0.15)
+				end
+				setTimer(function()
+					self.m_Vehicle:setFrozen(false)
+					self.m_Vehicle.m_DisableToggleHandbrake = false
+				end, freezeTime, 1)
+			else
+				hitElement:sendError(_"Du hast das Fahrzeug hier bereits schätzen lassen.")
 			end
-			setTimer(function()
-				self.m_Vehicle:setFrozen(false)
-				self.m_Vehicle.m_DisableToggleHandbrake = false
-			end, freezeTime, 1)
 		end
 	end
 end
