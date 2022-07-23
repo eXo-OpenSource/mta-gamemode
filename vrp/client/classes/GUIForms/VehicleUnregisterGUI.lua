@@ -17,7 +17,7 @@ function VehicleUnregisterGUI:constructor(rangeElement)
     GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, rangeElement)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug an/abmelden", true, true, self)
 
-    self.m_UnregisterButton = GUIGridButton:new(1, 11, 15, 1, "Abmelden", self.m_Window):setBackgroundColor(Color.Green)
+    self.m_UnregisterButton = GUIGridButton:new(1, 11, 15, 1, _"Abmelden", self.m_Window):setBackgroundColor(Color.Green)
     self.m_UnregisterButton.onLeftClick = bind(self.unregistereButton_Click, self)
 
     triggerServerEvent("requestVehicles", localPlayer)
@@ -27,8 +27,8 @@ end
 function VehicleUnregisterGUI:unregistereButton_Click()
     if not self.m_VehicleListGrid:getSelectedItem() then return end
     local vehicle = self.m_VehicleListGrid:getSelectedItem().id
-    if self.m_UnregisterButton:getText() == "Abmelden" then
-        QuestionBox:new("Bist du sicher, dass du dein Fahrzeug abmelden möchtest? Du kannst es dann erst in 3 Tagen wieder anmelden. Außerdem wird bei der Abholung eine Gebühr von 500$ abgebucht.", 
+    if self.m_UnregisterButton:getText() == _"Abmelden" then
+        QuestionBox:new(_"Bist du sicher, dass du dein Fahrzeug abmelden möchtest? Du kannst es dann erst in 3 Tagen wieder anmelden. Außerdem wird bei der Abholung eine Gebühr von 500$ abgebucht.", 
             function()
                 triggerServerEvent("onToggleVehicleRegister", vehicle, "unregister")
                 triggerServerEvent("requestVehicles", localPlayer)
@@ -59,7 +59,7 @@ function VehicleUnregisterGUI:updateList(vehicles)
 	self.m_VehicleListGrid:addColumn(_"Fahrzeug", 0.6)
 	self.m_VehicleListGrid:addColumn(_"Status", 0.4)
     for i, v in pairs(vehicles) do
-        local item = self.m_VehicleListGrid:addItem(v[1]:getName(), v[2] ~= 0 and "Abgemeldet" or "Angemeldet"):setColor(v[2] ~= 0 and Color.Red or Color.Green)
+        local item = self.m_VehicleListGrid:addItem(v[1]:getName(), v[2] ~= 0 and _"Abgemeldet" or _"Angemeldet"):setColor(v[2] ~= 0 and Color.Red or Color.Green)
         item.id = v[1]
         item.registered = v[2]
         item.onLeftClick =

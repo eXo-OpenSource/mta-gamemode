@@ -11,7 +11,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	local owner = getElementData(element, "OwnerName")
 	local templateName = getElementData(element, "TemplateName") or ""
-	local hasLocalPlayerKey = table.find(getElementData(element, "VehicleKeys") or {}, localPlayer:getId()) ~= ni
+	local hasLocalPlayerKey = table.find(getElementData(element, "VehicleKeys") or {}, localPlayer:getId()) ~= nil
 	if owner then
 		self:addItem(_("Besitzer: %s", owner, element:getName())):setTextColor(Color.Red)
 	end
@@ -166,7 +166,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 									triggerServerEvent("factionRescueFillFireExtinguisher", self:getElement())
 								end
 							else
-								ErrorBox:new("Du hast kein Feuerlöscher dabei.")
+								ErrorBox:new(_"Du hast kein Feuerlöscher dabei.")
 							end
 						end
 					end
