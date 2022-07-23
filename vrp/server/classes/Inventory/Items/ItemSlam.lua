@@ -57,7 +57,7 @@ function ItemSlam:deleteSlam(instance)
 		if id then 
 			table.remove(self.EntityMap, id)
 		end
-		for key, player in ipairs(getElementsByType("player")) do 
+		for key, player in pairs(getElementsByType("player")) do 
 			player:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
 		end
 		delete(ItemSlam.Map[instance.m_Object])

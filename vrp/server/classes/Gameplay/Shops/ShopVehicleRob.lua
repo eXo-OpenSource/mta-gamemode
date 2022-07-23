@@ -85,14 +85,12 @@ function ShopVehicleRob:destructor()
 end
 
 function ShopVehicleRob:onTimeUp()
-	self.m_Gang:sendMessage("[ShopVehicle-Rob] Die Zeit für den Rob ist abgelaufen!",200,0,0,true)
-	FactionState:getSingleton():sendMessage("[ShopVehicle-Rob] #EEEEEEDie Zeit für den Rob ist abgelaufen!",200,200,0,true)
+	PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter haben sich zu viel Zeit gelassen!", self.m_Shop:getName())
 	delete(self)
 end
 
 function ShopVehicleRob:Event_onVehicleExplode()
-	self.m_Gang:sendMessage("[ShopVehicle-Rob] Das Fahrzeug wurde zerstört!",200,0,0,true)
-	FactionState:getSingleton():sendMessage("[ShopVehicle-Rob] #EEEEEEDas Fahrzeug wurde zerstört!",200,200,0,true)
+	PlayerManager:getSingleton():breakingNews("%s Überfall: Das Fahrzeug wurde zerstört!", self.m_Shop:getName())
 	
 	for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
 		removePedFromVehicle(v)
