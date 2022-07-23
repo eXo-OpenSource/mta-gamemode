@@ -588,21 +588,17 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 			local vehicleId, vehicleInfo = unpack(vehicleInfo)
 			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
-			if positionType == VehiclePositionType.World then
-				positionType = getZoneName(x, y, z, false)
-			elseif positionType == VehiclePositionType.Garage then
-				positionType = _"Garage"
-			elseif positionType == VehiclePositionType.Mechanic then
-				positionType = _"Autohof"
-			elseif positionType == VehiclePositionType.Hangar then
-				positionType = _"Hangar"
-			elseif positionType == VehiclePositionType.Harbor then
-				positionType = _"Hafen"
-			elseif positionType == VehiclePositionType.Unregistered then
-				positionType = _"Stadthalle"
+
+			if VehiclePositionTypeName[positionType] then
+				if VehiclePositionTypeName[positionType] == VehiclePositionTypeName[0] then
+					positionType = getZoneName(x, y, z, false)
+				else
+					positionType =VehiclePositionTypeName[positionType]
+				end
 			else
 				positionType = _"Unbekannt"
 			end
+			
 			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType, ("%d$"):format(element:getTax() or 0))
 			item.VehicleId = vehicleId
 			item.VehicleElement = element

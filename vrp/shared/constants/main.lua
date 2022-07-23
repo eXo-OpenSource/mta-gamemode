@@ -560,6 +560,7 @@ VehicleTypeName = {
 }
 
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4, Unregistered = 5,}
+VehiclePositionTypeName = {[0] = "World", [1] = "Garage", [2] = "Autohof" , [3]  = "Hangar", [4] = "Hafen", [5] = "Stadthalle",}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
 VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss
