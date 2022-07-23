@@ -25,9 +25,6 @@ end
 
 function QuestionBox:destructor()
 	GUIForm.destructor(self)
-	--if self.m_NoCallBack then 
-	--	self.m_NoCallBack()
-	--end
 end
 
 addEvent("questionBox", true)

@@ -124,7 +124,6 @@ end
 
 function Shamal:Event_onVehicleExplode()
     for i, passenger in pairs(self.m_Passengers) do
-        --createExplosion(passenger:getPosition(), 7)
         self:enterExitInterior(passenger, false)
         self:enterExit(passenger, "g", "down", false)
         passenger:kill()

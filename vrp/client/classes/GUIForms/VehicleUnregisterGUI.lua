@@ -42,16 +42,6 @@ function VehicleUnregisterGUI:unregistereButton_Click()
     end
 end
 
---[[function VehicleUnregisterGUI:infoButton_Click()
-    if not self.m_VehicleListGrid:getSelectedItem() then return end
-    local vehicle = self.m_VehicleListGrid:getSelectedItem().id
-    local timestamp = self.m_VehicleListGrid:getSelectedItem().registered
-    if timestamp == 0 then
-        ShortMessage:new(_("Das Fahrzeug %s ist nicht abgemeldet.", vehicle:getName()))
-    else
-        ShortMessage:new(("Du kannst das Fahrzeug am %s um %s wieder abholen."):format(getOpticalTimestamp(timestamp)))
-    end
-end]]
 
 function VehicleUnregisterGUI:updateList(vehicles)
     if self.m_VehicleListGrid then delete(self.m_VehicleListGrid) end

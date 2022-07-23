@@ -1521,10 +1521,6 @@ function VehicleManager:Event_LoadObject(veh, type)
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_LoadBox(veh)
 			return
 		end
-		--[[if veh:getData("WeedTruck") then
-			MWeedTruck:getSingleton().m_CurrentWeedTruck:Event_LoadPackage(veh)
-			return
-		end]]
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
@@ -1579,10 +1575,6 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_DeloadBox(veh)
 			return
 		end
-		--[[if veh:getData("WeedTruck") then
-			MWeedTruck:getSingleton().m_CurrentWeedTruck:Event_DeloadPackage(veh)
-			return
-		end]]
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryUnloadObject(client)
