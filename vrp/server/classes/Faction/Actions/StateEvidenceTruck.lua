@@ -91,6 +91,9 @@ function StateEvidenceTruck:destructor()
 	end
 
 	TollStation.closeAll()
+	setTimer(function()
+		FactionState:getSingleton():forceCloseAreaGates()
+	end, 300000, 1)
 end
 
 function StateEvidenceTruck:timeUp()

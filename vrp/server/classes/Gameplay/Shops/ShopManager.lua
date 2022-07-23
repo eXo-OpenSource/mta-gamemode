@@ -8,6 +8,7 @@
 ShopManager = inherit(Singleton)
 ShopManager.Map = {}
 ShopManager.VehicleShopsMap = {}
+ShopManager.ShopVehicle = {}
 
 function ShopManager:constructor()
 	self:loadShops()
@@ -98,6 +99,9 @@ function ShopManager:loadVehicleShops()
 
 	local result = sql:queryFetch("SELECT * FROM ??_vehicle_shop_veh", sql:getPrefix())
     for k, row in ipairs(result) do
+		if getVehicleType(row.Model) == VehicleType.Automobile or getVehicleType(row.Model) == VehicleType.Bike then
+			table.insert(ShopManager.ShopVehicle, row.Model)
+		end
 		local shop = self:getFromId(row.ShopId, true)
 		shop:addVehicle(row.Id, row.Model, row.Name, row.Category, row.Price, row.Level, Vector3(row.X, row.Y, row.Z), Vector3(row.RX, row.RY, row.RZ), row.TemplateId, row.CurrentStock, row.MaxStock)
 	end
@@ -471,6 +475,7 @@ function ShopManager:onAmmunationAppOrder(weaponTable)
 		end
 	end
 	if canBuyWeapons then
+		totalAmount = totalAmount * AMMUNATION_APP_MULTIPLICATOR
 		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
 

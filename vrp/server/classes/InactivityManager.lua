@@ -14,12 +14,12 @@ end
 
 function InactivityManager:clearHouses()
 	
-	local rows = sql:queryFetch("SELECT hs.Id as HouseID, ac.Id as UserID FROM ??_houses hs INNER JOIN ??_account ac ON ac.Id = hs.owner WHERE ac.LastLogin < DATE_SUB(DATE(NOW()), INTERVAL 2 MONTH);", sql:getPrefix(), sql:getPrefix())
+	local rows = sql:queryFetch("SELECT hs.Id as HouseID, ac.Id as UserID FROM ??_houses hs INNER JOIN ??_account ac ON ac.Id = hs.owner WHERE ac.LastLogin < DATE_SUB(DATE(NOW()), INTERVAL 1 MONTH);", sql:getPrefix(), sql:getPrefix())
 
 	if rows then
 		for k, v in ipairs(rows) do
 			local house = HouseManager:getSingleton().m_Houses[v.HouseID]
-			local price = math.floor(house.m_Price*0.75)
+			local price = math.floor(house.m_BuyPrice*0.75)
 
 			BankServer.get("server.house"):transferMoney({"player", v.UserID, true}, price, "Hausräumung durch Inaktivität", "House", "Cleared")
 			house.m_BankAccount:transferMoney({"player", v.UserID, true}, house.m_BankAccount:getMoney(), "Auszahlung der Hauskasse", "House", "Cleared")
@@ -32,7 +32,7 @@ function InactivityManager:clearHouses()
 end
 
 function InactivityManager:isGroupInactive(id)
-	local result, numrows = sql:queryFetch("SELECT ac.LastLogin FROM ??_character ch INNER JOIN ??_account ac ON ac.Id = ch.Id AND ch.GroupId = ? WHERE ac.LastLogin > DATE_SUB(DATE(NOW()), INTERVAL 2 MONTH)", sql:getPrefix(), sql:getPrefix(), id)
+	local result, numrows = sql:queryFetch("SELECT ac.LastLogin FROM ??_character ch INNER JOIN ??_account ac ON ac.Id = ch.Id AND ch.GroupId = ? WHERE ac.LastLogin > DATE_SUB(DATE(NOW()), INTERVAL 1 MONTH)", sql:getPrefix(), sql:getPrefix(), id)
 	if numrows == 0 then
 		return true
 	else

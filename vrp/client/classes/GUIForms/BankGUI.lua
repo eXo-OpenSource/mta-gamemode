@@ -17,6 +17,7 @@ function BankGUI:constructor(bankAtm)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, bankAtm)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bankautomat", true, true, self)
+	self.m_Window:addHelpButton(LexiconPages.BankATM)
 	self.m_Window:addTitlebarButton(FontAwesomeSymbols.Bug, function() AtmManager.startHacking(bankAtm) end)
 
 	local tabs = {"Ein/Auszahlen", "Überweisung"}

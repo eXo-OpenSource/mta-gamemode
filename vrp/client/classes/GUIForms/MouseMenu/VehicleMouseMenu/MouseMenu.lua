@@ -11,6 +11,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	local owner = getElementData(element, "OwnerName")
 	local templateName = getElementData(element, "TemplateName") or ""
+	local hasLocalPlayerKey = table.find(getElementData(element, "VehicleKeys") or {}, localPlayer:getId()) ~= nil
 	if owner then
 		self:addItem(_("Besitzer: %s", owner, element:getName())):setTextColor(Color.Red)
 	end
@@ -47,7 +48,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.Player)
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) then
+		if getElementData(element, "OwnerName") == localPlayer.name or (getElementData(element, "GroupType") and localPlayer:getGroupName() == getElementData(element, "OwnerName")) or hasLocalPlayerKey then
 			if (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
 				if getElementData(element, "isRented") ~= true then
 					if getElementData(element, "forRent") ~= true then
@@ -88,7 +89,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								function()
 									if self:getElement() then
 										delete(self)
-										QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
+										QuestionBox:new("Möchtest du die Vermietung des Fahrzeuges beenden?",
 										function ()
 											triggerServerEvent("groupStopVehicleForRent", self:getElement())
 										end)
@@ -124,7 +125,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Music)
 			end
-			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
+			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" and not hasLocalPlayerKey then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
 						if self:getElement() then
@@ -137,7 +138,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				self:addItem(_"Respawn",
 					function()
 						if self:getElement() then
-							triggerServerEvent("vehicleRespawn", self:getElement())
+							triggerServerEvent("vehicleRespawnWorld", self:getElement())
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Home)
@@ -154,6 +155,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Arrows)
 			end
+		end
+		if (element:getModel() == 544 or element:getModel() == 407) and localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+			self:addItem(_"Feuerlöscher auffüllen",
+				function()
+					if self:getElement() then 
+						if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+							if localPlayer:getWeapon(9) == 42 then
+								if getPedTotalAmmo(localPlayer, 9)  < 10000 then
+									triggerServerEvent("factionRescueFillFireExtinguisher", self:getElement())
+								end
+							else
+								ErrorBox:new(_"Du hast kein Feuerlöscher dabei.")
+							end
+						end
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Fire_Extinguisher)
 		end
 		if element:getData("EPT_Taxi") and element:getModel() == 420 or element:getModel() == 438 then -- Taxis
 			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
@@ -203,6 +221,50 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				):setIcon(FontAwesomeSymbols.Table)
 			end
 		end
+		if element:getVehicleType() == VehicleType.Automobile or element:getVehicleType() == VehicleType.Bike then
+			if element:getData("ShopVehicle") then
+				if localPlayer:getGroupType() == "Gang" then
+					if not element:getData("Vehicle:Stolen") then
+						self:addItem(_"Fahrzeug stehlen",
+							function()
+								if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
+								if localPlayer:getPrivateSync("isAttachedToVehicle") then return ErrorBox:new(_"Steige vom Fahrzeug ab, um das Schloss zu knacken.") end
+								if not localPlayer.m_IsPickingLock then
+									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
+										triggerServerEvent("ShopVehicleRob:onTryingSteal", self:getElement())
+									end
+								else ErrorBox:new(_"Du knackst bereits ein Schloss")
+								end
+							end
+						):setIcon(FontAwesomeSymbols.Lock_Open)
+					else
+						if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") and not localPlayer.vehicle then
+							self:addItem(_"Fahrzeug entsperren",
+								function()
+									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
+										triggerServerEvent("ShopVehicleRob:onPoliceUnlockVehicle", self:getElement())
+									end
+								end
+							):setIcon(FontAwesomeSymbols.Lock_Open)
+						else
+							if not element:getData("Vehicle:LockIsPicked") then
+								self:addItem(_"Schloss knacken",
+									function()
+										if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
+										if not localPlayer.m_IsPickingLock then
+											if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
+												triggerServerEvent("ShopVehicleRob:continuePickingLock", self:getElement())
+											end
+										else ErrorBox:new(_"Du knackst bereits ein Schloss")
+										end
+									end
+								):setIcon(FontAwesomeSymbols.Lock_Open)
+							end
+						end
+					end
+				end
+			end
+		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
 				self:addItem(_("Items >>>"),
@@ -218,7 +280,9 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				self:addItem(_"Wanze anbringen",
 						function()
 							if self:getElement() then
-								triggerServerEvent("factionStateAttachBug", self:getElement())
+								if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+									triggerServerEvent("factionStateAttachBug", self:getElement())
+								end
 							end
 						end
 					):setIcon(FontAwesomeSymbols.Bug)
@@ -283,6 +347,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				self:addItem(_"Geldsack aufladen",
 					function()
 						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "moneyBag")
+					end
+				):setIcon(FontAwesomeSymbols.Double_Up)
+			end
+		end
+
+		if getElementData(element,"WeedTruck") or VEHICLE_PACKAGE_LOAD[element.model] then
+			if #self:getAttachedElement(1575, element) > 0 then
+				self:addItem(_"Drogenpaket abladen",
+					function()
+						triggerServerEvent("vehicleDeloadObject", self:getElement(), element, "drugPackage")
+					end
+				):setIcon(FontAwesomeSymbols.Double_Down)
+			end
+			if #self:getAttachedElement(1575, localPlayer) > 0 then
+				self:addItem(_"Drogenpaket aufladen",
+					function()
+						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "drugPackage")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Up)
 			end

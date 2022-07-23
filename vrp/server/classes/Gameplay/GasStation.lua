@@ -8,12 +8,13 @@
 GasStation = inherit(Object)
 GasStation.Map = {}
 
-function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, fuelTypes, blipPosition)
+function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, evilStation, fuelTypes, blipPosition)
 	self.m_Stations = {}
 	self.m_Accessible = accessible
 	self.m_Name = name
 	self.m_NonInterior = nonInterior
 	self.m_ServiceStation = serviceStation
+	self.m_EvilStation = evilStation
 	self.m_FuelTypes = {}
 	for i, v in pairs(fuelTypes) do self.m_FuelTypes[v] = true end -- invert table
 
@@ -30,6 +31,10 @@ function GasStation:constructor(stations, accessible, name, nonInterior, service
 
 		if self.m_ServiceStation then
 			object:setData("isServiceStation", true, true)
+		end
+
+		if self.m_EvilStation then
+			object:setData("isEvilStation", true, true)
 		end
 		object:setData("FuelTypes", self.m_FuelTypes, true, true)
 	end
@@ -85,6 +90,10 @@ end
 
 function GasStation:isServiceStation()
 	return self.m_ServiceStation
+end
+
+function GasStation:isEvilStation()
+	return self.m_EvilStation
 end
 
 function GasStation:takeFuelNozzle(player, element, fuelType)

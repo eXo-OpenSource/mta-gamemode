@@ -452,7 +452,7 @@ end
 function PolicePanel:locateElement(element, locationOf)
 	local elementText = locationOf == "phone" and _"Der Spieler" or _"Die Wanze"
 	local elementBlip = locationOf == "phone" and "GPS.png" or "Bug.png"
-	local elementBlipColor = locationOf == "phone" and BLIP_COLOR_CONSTANTS.Red or {50, 100, 150}
+	local elementBlipColor = locationOf == "phone" and BLIP_COLOR_CONSTANTS.Blue or {50, 100, 150}
 
 	if (getElementDimension(element) == 0 and getElementInterior(element) == 0) or element:getData("inSewer") then
 		self:stopLocating()

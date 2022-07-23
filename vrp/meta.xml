@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.4-9.11413" client="1.5.4-9.11413"/>
+	<min_mta_version server="1.5.8-9.20979" client="1.5.8-9.20979"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -114,6 +114,9 @@
 	<script src="server/classes/Time.lua" type="server"/>
 	<script src="server/classes/PedScale.lua" type="server"/>
 	<script src="server/classes/CustomAnimationManager.lua" type="server"/>
+	<script src="server/classes/HouseGarage.lua" type="server"/>
+	<script src="server/classes/Skyscraper.lua" type="server"/>
+	<script src="server/classes/SkyscraperManager.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -457,7 +460,8 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTransportExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
-
+	<script src="server/classes/Vehicles/Extensions/ShamalManager.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Shamal.lua" type="server"/>
 
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>
@@ -490,6 +494,8 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/GPS/GPS.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRobManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRob.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -864,6 +870,8 @@
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/SkyscraperGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
@@ -947,6 +955,8 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -1696,6 +1706,7 @@
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
 	<vrpfile src="files/images/Other/Bullet.png"/>
+	<vrpfile src="files/images/Other/LockPick.png"/>
 
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
@@ -2024,6 +2035,7 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_FT_Ladder.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Leviathan.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Huntley.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
 
@@ -3469,6 +3481,8 @@
 	<file src="files/fonts/EkMukta-Bold.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome5.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome6.otf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome6.1.0.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Chapaza.ttf" /><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>

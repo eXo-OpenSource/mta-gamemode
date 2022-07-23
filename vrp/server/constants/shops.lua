@@ -391,6 +391,18 @@ ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(-796.35, 1557.02, 26.12), -- las barrancas
 }
 
+ROBABLE_VEHICLE_SHOP_EVIL_TARGETS = {
+	Vector3(-2245.34, -2310.53, 28.90),
+	Vector3(1270.39, 2652.09, 9.82),
+	Vector3(461.34, 966.91, 4.12),
+}
+
+ROBABLE_VEHICLE_SHOP_MECHANIC_POSITION = {
+	Vector3(-1858.15, -1613.90, 20.76),
+	Vector3(2320.44, 324.66, 25.72),
+	Vector3(-1666.38, 2560.95, 84.14),
+}
+
 CJ_CLOTHE_TYPES = {
 	[0] = "Shirt",
 	[1] = "Head",

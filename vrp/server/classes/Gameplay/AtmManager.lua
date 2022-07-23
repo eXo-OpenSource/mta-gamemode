@@ -87,7 +87,7 @@ function AtmManager:Event_onStartHacking(atm)
         end
     end
     client.m_LastAtmHacked = atm
-    triggerClientEvent(client, "startCircuitBreaker", client, "onAtmHackSuccess", "onAtmHackFail")
+    triggerClientEvent(client, "startCircuitBreaker", client, "onAtmHackSuccess", "onAtmHackFail", atm)
 end
 
 function AtmManager:Event_onHackSuccess()

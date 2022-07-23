@@ -18,6 +18,7 @@ end
 function CustomAnimationManager:startAnimation(players, animation)
     if client.isTasered then return	end
 	if client.vehicle then return end
+    if client:isEating() then return end 
 	if client:isOnFire() then return end
 	if client:getData("isInDeathMatch") then return end
 	if not isControlEnabled(client, "forwards") then return end

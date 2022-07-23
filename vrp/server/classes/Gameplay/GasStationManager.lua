@@ -16,7 +16,7 @@ function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
 	for _, station in pairs(GAS_STATIONS) do
-		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.fuelTypes, station.blipPosition)
+		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.evilStation, station.fuelTypes, station.blipPosition)
 
 		if station.name then
 			GasStationManager.Shops[station.name] = instance
@@ -462,6 +462,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.LCN},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},]]
 	--[[{
@@ -472,6 +473,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.YAKUZA},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},]]
 	{
@@ -481,6 +483,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	--[[{
@@ -490,6 +493,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.OUTLAWS},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	{
@@ -499,6 +503,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.TRIAD},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel"},
 	},]]
 	{
@@ -508,6 +513,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.GROVE},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	{
@@ -517,6 +523,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.BALLAS},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
 	--[[{
@@ -526,6 +533,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.TRIAD},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
 	{
@@ -535,6 +543,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {1, FactionStaticId.BRIGADA},
 		nonInterior = true,
+		evilStation = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
 	]]

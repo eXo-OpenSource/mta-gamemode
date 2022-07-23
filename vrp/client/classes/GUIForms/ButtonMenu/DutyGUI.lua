@@ -65,8 +65,14 @@ end
 
 function DutyGUI:itemEvent(eventName, arg1, arg2)
     if type(arg1) ~= "table" then -- prevent triggering whole class instances 
+        if localPlayer:getJob() then 
+            triggerServerEvent("jobQuit", root)
+        end
         triggerServerEvent(eventName, localPlayer, arg1, arg2)
     else
+        if localPlayer:getJob() then 
+            triggerServerEvent("jobQuit", root)
+        end
         triggerServerEvent(eventName, localPlayer)
     end
 end

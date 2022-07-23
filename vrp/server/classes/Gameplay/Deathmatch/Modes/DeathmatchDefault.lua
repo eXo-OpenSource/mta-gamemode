@@ -50,6 +50,8 @@ function DeathmatchDefault:onWasted(player, killer, weapon)
 	if killer then
 		self:increaseKill(killer, weapon, true)
 		self:increaseDead(player, weapon, true)
+		killer:setHealth(100)
+		killer:setArmor(100)
 	end
 	player.deathmatchLobby:respawnPlayer(player, true)
 end

@@ -200,8 +200,8 @@ end
 
 function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
-	local hbState = getControlState( player, "handbrake")
 	if player:getType() ~= "player" then return end
+	local hbState = getControlState( player, "handbrake")
 
 	if seat == 0 then
 		if hbState then
@@ -500,7 +500,7 @@ function Vehicle:setEngineState(state)
 		self.controller:triggerEvent("vehicleEngineStateChange", self, state)
 	end
 
-	if instanceof(self, PermanentVehicle, true) then return end
+	--if instanceof(self, PermanentVehicle, true) then return end
 	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
 	end
@@ -935,7 +935,8 @@ end
 
 function Vehicle:setDriver(player)
 	if not self:getEngineState() then return end
-
+	if not self:isPermanent() then return end
+	
 	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
 		return
 	end

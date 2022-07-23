@@ -32,7 +32,7 @@ function VehicleManager:constructor()
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
-	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight"}
+	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight", "requestVehicles", "onToggleVehicleRegister"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -71,6 +71,8 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleResetHandling", root, bind(self.Event_ResetVehicleHandling, self))
 	addEventHandler("requestVehicleMarks", root, bind(self.Event_RequestVehicleMarks, self))
 	addEventHandler("vehicleToggleLoadingRamp", root, bind(self.Event_ToggleLoadingRamp, self))
+	addEventHandler("requestVehicles", root, bind(self.Event_requestVehicles, self))
+	addEventHandler("onToggleVehicleRegister", root, bind(self.Event_toggleVehicleRegister, self))
 
 	addEventHandler("onVehicleExplode", root,
 		function()
@@ -889,20 +891,25 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
-		if source.m_HandBrake then
-			source:toggleHandBrake(client)
-			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
-
-			if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC then
-				client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
-			end
-		else
-			client:sendError(_("Die Handbremse ist nicht angezogen!", client))
+	if not source.m_HandBrake then return client:sendError(_("Die Handbremse ist nicht angezogen!", client)) end
+	
+	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC and client:isCompanyDuty() then
+		if getElementData(source, "forSale") then
+			source:setForSale(false, 0)
 		end
+		if getElementData(source, "forRent") then
+			source:setForRent(false, 0)
+		end
+		client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+	elseif client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
+		StatisticsLogger:getSingleton():addAdminVehicleAction(client, "looseHandbrake", source)
 	else
 		client:sendError(_("Du bist nicht berechtigt!", client))
+		return
 	end
+
+	source:toggleHandBrake(client)
+	client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
 end
 
 function VehicleManager:setSpeedLimits()
@@ -1249,7 +1256,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
 	end
 
  	if source:getPositionType() == VehiclePositionType.World then
-		 if source:getOwner() == client:getId() then
+		 if source:getOwner() == client:getId() or source:hasKey(client) then
 			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "respawn", source)
@@ -1489,8 +1496,8 @@ end
 
 function VehicleManager:Event_TrailerAttach(truck)
 	if not getVehicleOccupant(truck) then return end
-	if not instanceof(truck, PermanentVehicle) or not instanceof(truck, GroupVehicle) then return end
-	if not instanceof(source, PermanentVehicle) or not instanceof(source, GroupVehicle) then return end
+	if not instanceof(truck, PermanentVehicle) and not instanceof(truck, GroupVehicle) then return end
+	if not instanceof(source, PermanentVehicle) and not instanceof(source, GroupVehicle) then return end
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)
@@ -1506,6 +1513,9 @@ function VehicleManager:Event_LoadObject(veh, type)
 	elseif type == "weaponBox" then
 		model = 2912
 		name = "keine Waffenbox"
+	elseif type == "drugPackage" then
+		model = 1575
+		name = "kein Drogenpaket"
 
 		if veh:getData("WeaponTruck") then
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_LoadBox(veh)
@@ -1557,6 +1567,9 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	elseif type == "weaponBox" then
 		model = 2912
 		name = "keine Waffenbox"
+	elseif type == "drugPackage" then
+		model = 1575
+		name = "kein Drogenpaket"
 
 		if veh:getData("WeaponTruck") then
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_DeloadBox(veh)
@@ -1864,4 +1877,32 @@ function VehicleManager:getStateVehicleCount()
 	local facVehicles = VehicleManager:getSingleton().m_FactionVehicles
 	local count = (facVehicles[1] and #facVehicles[1] or 0) + (facVehicles[2] and #facVehicles[2] or 0) + (facVehicles[3] and #facVehicles[3] or 0)
 	return count
+end
+
+function VehicleManager:Event_requestVehicles()
+	local temp = {}
+	for i, v in pairs(client:getVehicles()) do
+		temp[i] = {v, v.m_Unregistered}
+	end
+	client:triggerEvent("sendRegisteredVehicleList", temp)
+end
+
+function VehicleManager:Event_toggleVehicleRegister(type)
+	if not source:isEmpty() then return client:sendError(_("Das Fahrzeug ist nicht leer.", client)) end
+	if source:getOwner() ~= client:getId() then return client:sendError(_("Das Fahrzeug gehört nicht dir.", client)) end 
+	if type == "register" then
+		if source.m_Unregistered <= getRealTime().timestamp - VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN then
+			if client:transferBankMoney(self.m_BankAccountServer, 500, "Fahrzeug-Anmeldung", "Vehicle", "Register") then
+				source:toggleRegister(client)
+			else
+				client:sendError(_("Du hast nicht genügend Geld auf deinem Konto. (%s$)", client, 500))
+			end
+		else
+			client:sendError(_("Du kannst dein Fahrzeug noch nicht wieder anmelden.", client))
+		end
+	elseif type == "unregister" then
+		source:toggleRegister()
+	else
+		client:sendError(_("Fehler: Ungültiger Typ.", client))
+	end
 end

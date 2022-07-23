@@ -25,8 +25,12 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return hitElement:sendError(_("Du kannst dieses Fahrzeug nicht reparieren!", hitElement))
 				end
 				local costs = (100 - vehicle:getHealthInPercent()) * 5 -- max. 500$, maybe improve this later to get higher costs based on maxHealth (armor)
-				if hitElement:getBankMoney() < costs then
+				if not hitElement:isFactionDuty() and hitElement:getBankMoney() < costs then
 					hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
+					return
+				end
+				if hitElement:getFaction() and hitElement:isFactionDuty() and hitElement:getFaction():getMoney() < costs then
+					hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
 
@@ -49,18 +53,30 @@ function PayNSpray:constructor(x, y, z, garageId)
 						elseif isElement(self.m_CustomDoor) then
 							self:setCustomGarageOpen(true)
 						end
-						if not isElement(hitElement) then return end
-						if hitElement:getBankMoney() >= costs then
-							vehicle:fix()
-							vehicle:setWheelStates(0, 0, 0, 0)
-							if costs > 0 then
-								hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
-							end
-						else
-							hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
-						end
+
 						setElementFrozen(vehicle, false)
 						vehicle.m_DisableToggleHandbrake = nil
+
+						if not isElement(hitElement) then return end
+						if hitElement:getFaction() and hitElement:isFactionDuty() then
+							if hitElement:getFaction():getMoney() >= costs then
+								if costs > 0 then
+									hitElement:getFaction():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								return hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
+						else
+							if hitElement:getBankMoney() >= costs then
+								if costs > 0 then
+									hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								return hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
+						end
+						vehicle:fix()
+						vehicle:setWheelStates(0, 0, 0, 0)
 					end,
 					3000, 1
 				)

@@ -30,7 +30,7 @@ local sellerPeds =
 }
 
 GroupHouseRob = inherit( Singleton )
-GroupHouseRob.COOLDOWN_TIME = 1000*60*15
+GroupHouseRob.COOLDOWN_TIME = 60*15 -- in sec
 addRemoteEvents{"GroupRob:SellRobItems"}
 function GroupHouseRob:constructor()
 	self.m_GroupsRobCooldown = {}
@@ -143,12 +143,11 @@ function GroupHouseRob:startNewRob( house, player )
 				end
 
 				if not self.m_HousesRobbed[house] then
-					local tick = getTickCount()
 					if not self.m_GroupsRobCooldown[group] then
-						self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
+						self.m_GroupsRobCooldown[group]  = getRealTime().timestamp - GroupHouseRob.COOLDOWN_TIME - 1
 					end
-					if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
-						self.m_GroupsRobCooldown[group]  = tick
+					if timestampCoolDown(self.m_GroupsRobCooldown[group], GroupHouseRob.COOLDOWN_TIME) then
+						self.m_GroupsRobCooldown[group]  = getRealTime().timestamp
 						self.m_HousesRobbed[house] = true
 						return true
 					else

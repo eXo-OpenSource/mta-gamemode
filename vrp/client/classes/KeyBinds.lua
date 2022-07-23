@@ -64,12 +64,14 @@ function KeyBinds:constructor()
 		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
 		["KeyToggleInfrared"]		= {["defaultKey"] = "mouse2", ["name"] = "Infrarot-Kamera (Helikopter)", ["func"] = self.m_InfraredVehicle, ["trigger"] = "down"};
 		["KeyToggleHeliDriveby"] 	= {["defaultKey"] = "rshift", ["name"] = "auf Kufen stellen (aus Helikopter)", ["func"] = self.m_ToggleHeliDriveBy, ["trigger"] = "down"};
+		["KeyToggleShamalInteior"] 	= {["defaultKey"] = "rctrl", ["name"] = "Shamal Interior betreten", ["func"] = function() if localPlayer:getData("Shamal:Passenger") then triggerServerEvent("toggleShamalInterior", localPlayer:getData("Shamal")) end end, ["trigger"] = "down"};
 		["KeyToggleThermalLight"] 	= {["defaultKey"] = "h", ["name"] = "Thermalkamera-Scheinwerfer (Helikopter)", ["func"] = self.m_ThermalLightKey, ["trigger"] = "down"};
 		["KeyToggleThermalLock"] 	= {["defaultKey"] = "mouse1", ["name"] = "Thermalkamera-Kontrollmodus (Helikopter)", ["func"] = self.m_ThermaControlModeKey, ["trigger"] = "down"};
 		["KeyToggleThermalMode"] 	= {["defaultKey"] = "m", ["name"] = "Thermalkamera-Suchmodus (Helikopter)", ["func"] = self.m_ThermalModeKey, ["trigger"] = "down"};
 		["KeyToggleThermalSpeed"] 	= {["defaultKey"] = "lalt", ["name"] = "Thermalkamera umschalten (Helikopter)", ["func"] = self.m_ThermalSpeedKey, ["trigger"] = "down"};
 		["KeyNeedhelp"] 			= {["defaultKey"] = "N/A", ["name"] = "Hilferuf senden (Fraktion)", ["func"] = function() triggerServerEvent("factionPlayerNeedhelp",localPlayer) end, ["trigger"] = "down"};
 		["KeyCinemaVideoGUI"] 		= {["defaultKey"] = "x", ["name"] = "Kino Videoverwaltung öffnen", ["func"] = function() if CinemaLobby:isInstantiated() then CinemaLobby:getSingleton():openVideoGUI() end end, ["trigger"] = "down"};
+		["KeyToggleHouseGarage"] 	= {["defaultKey"] = "h", ["name"] = "Haus Garage benutzen", ["func"] = function() triggerServerEvent("toggleGarageState",localPlayer) end, ["trigger"] = "down"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};

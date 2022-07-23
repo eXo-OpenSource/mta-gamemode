@@ -25,6 +25,7 @@ function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisemen
 	self.m_SpawnButton.onLeftClick = bind(self.SpawnButton_Click, self)
 
 	if showEPTAdvertisement then
+		self.m_Window:addHelpButton(LexiconPages.VehicleRental)
 		GUIRectangle:new(5, self.m_Height - 84, self.m_Width - 10, 1, Color.Grey, self.m_Window)
 		GUIRectangle:new(5, self.m_Height - 86, self.m_Width - 10, 1, Color.Grey, self.m_Window)
 		--GUIImage:new(5, self.m_Height - 85, 80, 80, "...", self.m_Window) -- EPT Logo

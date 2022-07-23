@@ -11,6 +11,7 @@ function VehicleTakeGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.2/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.2, screenHeight*0.4)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeuge abholen", true, true, self)
+	self.m_Window:addHelpButton(LexiconPages.VehicleTake)
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.8, self.m_Window)
 		:addColumn("Fahrzeugname", 1)
 

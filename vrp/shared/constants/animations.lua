@@ -1,4 +1,4 @@
-ANIMATION_GROUPS = {"Standard", "Tänze", "Sonstiges", "Vulgär"}
+ANIMATION_GROUPS = {"Standard", "Tänze", "Sonstiges", "Vulgär", "Verletzung"}
 
 ANIMATIONS = {
 	["Hände hoch"] = 			{["group"] = "Standard", ["block"] = "shop", ["animation"] = "SHP_HandsUp_Scr", ["loop"] = false, ["interruptable"] = false, ["freezeLastFrame"] = true},
@@ -38,6 +38,8 @@ ANIMATIONS = {
 	["Sex oben"] =				{["group"] = "Vulgär", ["block"] = "sex", ["animation"] = "sex_1_cum_p", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Sex unten"] =				{["group"] = "Vulgär", ["block"] = "sex", ["animation"] = "sex_1_cum_w", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Kotzen"] =				{["group"] = "Vulgär", ["block"] = "food", ["animation"] = "EAT_Vomit_P", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Seitenlage"] =			{["group"] = "Verletzung", ["block"] = "CRACK", ["animation"] = "crckidle2", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Schmerzen"] =				{["group"] = "Verletzung", ["block"] = "SWEET", ["animation"] = "Sweet_injuredloop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 }
 
 WALKINGSTYLE_GROUPS = {"Standard", "Mann", "Frau", "Sonstiges"}

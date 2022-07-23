@@ -51,6 +51,19 @@ function ItemSlam:detonateSlam( instance, detonatedBy )
 	end
 end
 
+function ItemSlam:deleteSlam(instance) 
+	if instance then 
+		local id = self:getSlamIDFromObj( instance.m_Object ) 
+		if id then 
+			table.remove(self.EntityMap, id)
+		end
+		for key, player in pairs(getElementsByType("player")) do 
+			player:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
+		end
+		delete(ItemSlam.Map[instance.m_Object])
+	end
+end
+
 function ItemSlam:getSlamIDFromObj( instance ) 
 	for i = 1, #ItemSlam.EntityMap do 
 		if ItemSlam.EntityMap[i] == instance then

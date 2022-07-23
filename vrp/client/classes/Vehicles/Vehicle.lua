@@ -371,6 +371,7 @@ addEventHandler("onClientElementStreamIn", root,
 				triggerEvent("rescueLadderUpdateCollision", source, false)
 			end
 			GroupSaleVehicles.VehiclestreamedIn(source)
+			GroupRentVehicles.VehiclestreamedIn(source)
 			Indicator:getSingleton():onVehicleStreamedIn(source)
 			VehicleELS:getSingleton():onVehicleStreamedIn(source)
 			Neon.VehiclestreamedIn(source)
@@ -386,6 +387,7 @@ addEventHandler("onClientElementStreamOut", root,
 		end
 		if getElementType(source) == "vehicle" then
 			GroupSaleVehicles.VehiclestreamedOut(source)
+			GroupRentVehicles.VehiclestreamedOut(source)
 			Indicator:getSingleton():onVehicleStreamedOut(source)
 			VehicleELS:getSingleton():onVehicleStreamedOut(source)
 			Neon.VehiclestreamedOut(source)

@@ -14,7 +14,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionToggleWeapon", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -36,6 +36,7 @@ function FactionManager:constructor()
 	addEventHandler("factionDiplomacyAnswer", root, bind(self.Event_answerDiplomacyRequest, self))
 	addEventHandler("factionChangePermission", root, bind(self.Event_changePermission, self))
 	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
+	addEventHandler("factionToggleWeapon", root, bind(self.Event_ToggleWeapon, self))
 	addEventHandler("factionRequestSkinSelection", root, bind(self.Event_requestSkins, self))
 	addEventHandler("factionPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
@@ -62,14 +63,15 @@ function FactionManager:loadFactions()
   	local st, count = getTickCount(), 0
   	local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
   	for k, row in pairs(result) do
-		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
-		local players, playerLoans = {}, {}
+		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled, FactionWeaponEnabled FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans, playerWeapons = {}, {}, {}
 		for i, factionRow in ipairs(result2) do
 			players[factionRow.Id] = factionRow.FactionRank
 			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
+			playerWeapons[factionRow.Id] = factionRow.FactionWeaponEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans, playerWeapons}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
@@ -352,7 +354,7 @@ function FactionManager:Event_factionInvitationDecline(factionId)
 
 	if faction:hasInvitation(client) then
 		faction:removeInvitation(client)
-		faction:sendMessage(_("%s hat die Fraktionneinladung abgelehnt", client, getPlayerName(client)))
+		faction:sendMessage(_("%s hat die Fraktionseinladung abgelehnt", client, getPlayerName(client)))
 		faction:addLog(client, "Fraktion", "hat die Einladung abgelehnt!")
 
 		self:sendInfosToClient(client)
@@ -416,6 +418,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 befördern!", client))
 				if isOffline then delete(player) end
 			end
+			self:sendInfosToClient(client)
 		end
 	)(client)
 end
@@ -468,6 +471,7 @@ function FactionManager:Event_factionRankDown(playerId)
 				client:sendError(_("Du kannst Spieler nicht niedriger als auf Rang 0 setzen!", client))
 				if isOffline then delete(player) end
 			end
+			self:sendInfosToClient(client)
 		end
 	)(client)
 end
@@ -482,6 +486,7 @@ end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	if not client.m_WeaponStoragePosition then return outputDebug("no weapon storage position for this faction implemented") end
+	if client:getFaction().m_PlayerWeapons[client:getId()] == 0 then return client:sendError(_"Du darfst keine Waffen entnehmen!") end
 	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
 		local faction = client:getFaction()
 		local depot = faction.m_Depot
@@ -654,6 +659,28 @@ function FactionManager:Event_ToggleLoan(playerId)
 	faction:addLog(client, "Fraktion", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end
 
+function FactionManager:Event_ToggleWeapon(playerId)
+	if not playerId then return end
+	local faction = client:getFaction()
+	if not faction then return end
+
+	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
+		return
+	end
+
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = faction:isPlayerWeaponEnabled(playerId)
+	faction:setPlayerWeaponEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	faction:addLog(client, "Fraktion", ("hat die Waffenentnahme von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
+end
+
 function FactionManager:Event_requestSkins()
 	if not client:getFaction() then
 		client:sendError(_("Du gehörst keiner Fraktion an!", client))
@@ -712,8 +739,11 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 	client:sendInfo(_("Kleidung gewechselt.", client))
 	if client:getModel() == client:getFaction().m_SpecialSkin then -- in special duty, stop it
 		client:getFaction():changeSkin(client, skinId)
+		client:getInventory():removeItem("Kevlar", 1)
+		client.m_KevlarShotsCount = nil
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
+		client:getInventory():giveItem("Kevlar", 1)
 	end
 end
 
@@ -770,4 +800,16 @@ function FactionManager:switchFactionMembers(admin, factionId, factionIdToSwitch
 	end
 
 	admin:sendSuccess(_("Die Fraktionsmitglieder der Fraktions ID %d wurden erfolgreich in die Fraktion %s transferiert!", admin, factionId, factionToSwitchTo:getName()))
+end
+
+function FactionManager:factionForceOffduty(player)
+	if player:getPublicSync("Faction:Duty") and player:getFaction() then
+		if player:getFaction():isStateFaction() then
+			FactionState:getSingleton():Event_toggleDuty(true, false, true, player)
+		elseif player:getFaction():isRescueFaction() then
+			FactionRescue:getSingleton():Event_toggleDuty(false, true, false, true, player)
+		elseif player:getFaction():isEvilFaction() then
+			FactionEvil:getSingleton():Event_toggleDuty(true, false, true, player)
+		end
+	end
 end

@@ -87,8 +87,8 @@ function FactionManager:endEvilFactionRaid()
 		else
 			triggerServerEvent("factionEvilFailedRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		end
-		removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 	end
+	removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 end
 
 function FactionManager:endEvilFactionRaidOnDeath()

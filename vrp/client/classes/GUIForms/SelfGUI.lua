@@ -588,19 +588,17 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 			local vehicleId, vehicleInfo = unpack(vehicleInfo)
 			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
-			if positionType == VehiclePositionType.World then
-				positionType = getZoneName(x, y, z, false)
-			elseif positionType == VehiclePositionType.Garage then
-				positionType = _"Garage"
-			elseif positionType == VehiclePositionType.Mechanic then
-				positionType = _"Autohof"
-			elseif positionType == VehiclePositionType.Hangar then
-				positionType = _"Hangar"
-			elseif positionType == VehiclePositionType.Harbor then
-				positionType = _"Hafen"
+
+			if VehiclePositionTypeName[positionType] then
+				if VehiclePositionTypeName[positionType] == VehiclePositionTypeName[0] then
+					positionType = getZoneName(x, y, z, false)
+				else
+					positionType =VehiclePositionTypeName[positionType]
+				end
 			else
 				positionType = _"Unbekannt"
 			end
+			
 			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType, ("%d$"):format(element:getTax() or 0))
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
@@ -1262,6 +1260,14 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 
+		self.m_RescueSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.9, self.m_Height*0.04, _"Am Krankenhaus spawnen", self.m_SettingBG)
+		self.m_RescueSpawn:setFont(VRPFont(25))
+		self.m_RescueSpawn:setFontSize(1)
+		self.m_RescueSpawn:setChecked(core:get("Other", "RescueSpawnAfterDeath", false))
+		self.m_RescueSpawn.onChange = function (state)
+			core:set("Other", "RescueSpawnAfterDeath", state)
+		end
+
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
 
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
@@ -1443,6 +1449,14 @@ function SelfGUI:onSettingChange(setting)
 		self.m_StaticNoiseRadio:setChecked(core:get("Sounds", "StaticNoise", true))
 		self.m_StaticNoiseRadio.onChange = function (state)
 			core:set("Sounds", "StaticNoise", state)
+		end
+
+		self.m_AllowRadioSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.9, self.m_Height*0.04, _"Radio Sounds", self.m_SettingBG)
+		self.m_AllowRadioSound:setFont(VRPFont(25))
+		self.m_AllowRadioSound:setFontSize(1)
+		self.m_AllowRadioSound:setChecked(core:get("Sounds", "RadioSound", true))
+		self.m_AllowRadioSound.onChange = function (state)
+			core:set("Sounds", "RadioSound", state)
 		end
 
 		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)

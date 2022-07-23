@@ -21,7 +21,9 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Geld geben",
 		function()
 			if self:getElement() then
-				SendMoneyGUI:new(function(amount) triggerServerEvent("playerSendMoney", self:getElement(), amount) end)
+				if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+					SendMoneyGUI:new(function(amount) triggerServerEvent("playerSendMoney", self:getElement(), amount) end)
+				end
 			end
 		end
 	):setIcon(FontAwesomeSymbols.Money)
@@ -57,10 +59,12 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			self:addItem(_"Fraktion: Spieler überfallen",
 				function()
 					if self:getElement() then
-						triggerServerEvent("factionEvilStartRaid", localPlayer, self:getElement())
+						if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+							triggerServerEvent("factionEvilStartRaid", localPlayer, self:getElement())
+						end
 					end
 				end
-			):setIcon(FontAwesomeSymbols.Bolt)
+			):setIcon(FontAwesomeSymbols.People_Robbery)
 		end
 	end
 

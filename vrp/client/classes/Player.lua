@@ -104,7 +104,7 @@ function Player:isInJail()
 end
 
 function Player:isInPrison()
-	return self:getData("inJail") or false
+	return self:getData("inAdminPrison") or false
 end
 
 function Player:getFaction()

@@ -56,7 +56,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 						return
 					end
-					if client:transferBankMoney(player, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade") then
+					if client:transferBankMoney({"player", player:getId(), true}, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade") then
 						client:triggerEvent("closeVehicleAccept")
 						client:sendInfo(_("Der Handel wurde abgeschlossen!", client))
 						player:sendInfo(_("Der Handel wurde abgeschlossen!", player))

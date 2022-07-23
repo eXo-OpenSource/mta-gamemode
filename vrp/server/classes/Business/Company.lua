@@ -531,6 +531,7 @@ function Company:respawnVehicles(player)
 	for companyId, vehicle in pairs(companyVehicles) do
 		if vehicle:getCompany() == self then
 			vehicles = vehicles + 1
+			vehicle:removeAttachedPlayers()
 			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
@@ -549,7 +550,7 @@ function Company:phoneCall(caller)
 		if not player:getPhonePartner() then
 			if player ~= caller then
 				local color = {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b}
-				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color, "company")
 			end
 		end
 	end

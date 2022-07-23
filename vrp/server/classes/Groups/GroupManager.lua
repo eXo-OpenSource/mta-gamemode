@@ -124,6 +124,14 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
+function GroupManager:getGangActionState(group)
+	local temp = {}
+	temp["houseRob"] = GroupHouseRob:getSingleton().m_GroupsRobCooldown[group] and GroupHouseRob:getSingleton().m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME or 0
+	temp["shopRob"] = ROBSHOP_LAST_ROB+ROBSHOP_PAUSE
+	temp["shopVehicleRob"] = {SHOP_VEHICLE_ROB_LAST_ROB+SHOP_VEHICLE_ROB_PAUSE, SHOP_VEHICLE_ROB_IS_STARTABLE}
+	return temp
+end
+
 function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
@@ -133,9 +141,9 @@ function GroupManager:sendInfosToClient(player)
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
 		if group:getPlayerRank(player) < GroupRank.Manager then
-			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames)
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), self:getGangActionState(group), group.m_RankNames)
 		else
-			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames, group.m_RankLoans)
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), self:getGangActionState(group), group.m_RankNames, group.m_RankLoans)
 		end
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
@@ -377,11 +385,15 @@ function GroupManager:Event_InvitationAccept(groupId)
 	if not group then return end
 
 	if group:hasInvitation(client) then
-		group:addPlayer(client)
-		group:removeInvitation(client)
-		group:sendMessage(_("%s ist soeben der %s beigetreten!", client, getPlayerName(client), group:getType()),200,200,200)
-		group:addLog(client, "Gang/Firma", "ist der "..group:getType().." beigetreten!")
-		self:sendInfosToClient(client)
+		if not client:getGroup() then
+			group:addPlayer(client)
+			group:removeInvitation(client)
+			group:sendMessage(_("%s ist soeben der %s beigetreten!", client, getPlayerName(client), group:getType()),200,200,200)
+			group:addLog(client, "Gang/Firma", "ist der "..group:getType().." beigetreten!")
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Du bist bereits in einer Firma/Gang!", client))
+		end
 	else
 		client:sendError(_("Du hast keine Einladung für diese %s", client, group:getType()))
 	end
@@ -654,6 +666,9 @@ end
 
 function GroupManager:Event_BuyVehicle()
 	local group = client:getGroup()
+	for i, player in pairs(source:getOccupants()) do
+		player:removeFromVehicle()
+	end
 	source:buy(client)
 end
 
@@ -673,7 +688,7 @@ function GroupManager:Event_SetVehicleForRent(amount)
 			return
 		end
 		if source:isGroupPremiumVehicle() then
-			client:sendError(_("Premium-Fahrzeuge können nicht zum vermietet werden!", client))
+			client:sendError(_("Premium-Fahrzeuge können nicht vermietet werden!", client))
 			return
 		end
 		if getVehicleEngineState(source) then

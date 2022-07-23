@@ -285,6 +285,7 @@ function Group:removePlayer(playerId)
 	end
 	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0, GroupLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 	self:removePlayerMarker(player)
+	self:checkDespawnVehicle()
 end
 
 function Group:invitePlayer(player)
@@ -554,8 +555,10 @@ function Group:attachPlayerMarkers()
 		self.m_Markers[player]:setInterior(player:getInterior())
 		self.m_Markers[player]:attach(player,0,0,1.5)
 		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 end
 
@@ -566,8 +569,10 @@ function Group:attachPlayerMarker(player)
 	self.m_Markers[player]:setInterior(player:getInterior())
 	self.m_Markers[player]:attach(player,0,0,1.5)
 	self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+	self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 	addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 	addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 end
 
 function Group:removePlayerMarkers()
@@ -576,6 +581,7 @@ function Group:removePlayerMarkers()
 		if self.m_Markers[player] then self.m_Markers[player]:destroy() end
 		removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		removeEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 	self.m_Markers = {}
 end
@@ -586,7 +592,18 @@ function Group:removePlayerMarker(player)
 	self.m_Markers[player]:destroy()
 	removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 	removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	removeEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	self.m_Markers[player] = nil
+end
+
+function Group:Event_RemovePlayerMarkerOnQuit()
+	if not self.m_Markers then return end
+	if not self.m_Markers[source] then return end
+	self.m_Markers[source]:destroy()
+	removeEventHandler("onElementDimensionChange", source, self.m_RefreshAttachedMarker)
+	removeEventHandler("onElementInteriorChange", source, self.m_RefreshAttachedMarker)
+	removeEventHandler("onPlayerQuit", source, self.m_RemovePlayerMarkerOnQuit)
+	self.m_Markers[source] = nil
 end
 
 function Group:refreshAttachedMarker(dimInt)
@@ -605,7 +622,7 @@ function Group:phoneCall(caller)
 			if not player:getPhonePartner() then
 				if player ~= caller then
 					local color = self:getColor()
-					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color)
+					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color, "group")
 				end
 			end
 		end
@@ -720,6 +737,7 @@ function Group:respawnVehicles(player)
 			self:sendShortMessage(("Ihr habt nicht genügend Geld um alle Fahrzeuge zu respawnen"):format(vehicles-fails, vehicles))
 			break;
 		end
+		vehicle:removeAttachedPlayers()
 		if not vehicle:respawn(false, true) then
 			fails = fails + 1
 		end

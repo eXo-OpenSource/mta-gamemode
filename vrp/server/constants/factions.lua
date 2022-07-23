@@ -9,6 +9,7 @@ factionWTDestination = {}
 factionNavigationpoint = {}
 factionSpawnpoint = {}
 factionAirDropPoint = {}
+factionDTDestination = {}  -- position, rotation, skinId, name
 EVIL_FACTION_SPAWN_POINT = Vector3(2816.75, -1166.49, 1029.17) -- position inside the standard evil faction interior
 EVIL_FACTION_SPAWN_INTERIOR = 8
 
@@ -22,8 +23,10 @@ WEAPONTRUCK_MIN_MEMBERS = {["evil"] = 3, ["state"] = 3}
 BANKROB_MIN_MEMBERS = DEBUG and 0 or 5
 WEEDTRUCK_MIN_MEMBERS = DEBUG and 0 or 3
 EVIDENCETRUCK_MIN_MEMBERS = DEBUG and 0 or 3
+ARMSDEALER_MIN_MEMBERS = DEBUG and 0 or 3
 SHOPROB_MIN_MEMBERS = DEBUG and 0 or 3
 HOUSEROB_MIN_MEMBERS = DEBUG and 0 or 2
+MIN_PLAYERS_FOR_FIRE = 2
 
 STATEFACTION_EVIDENCE_MAXITEMS = 50
 
@@ -80,6 +83,7 @@ factionWeapons[1] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=tr
 factionWTDestination[1] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[1] = {Vector3(228.09, 110.949, 1003.219), 10, 0}
 factionNavigationpoint[1] = Vector3(1552.278, -1675.725, 12.6)
+factionDTDestination[1] = {Vector3(1209.12, -1752.04, 13.59), 55.41, 155, 166, "Agent K."}
 
 -- ID 2 = FBI:
 factionRankNames[2] = {
@@ -110,6 +114,7 @@ factionWeapons[2] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=tr
 factionWTDestination[2] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[2] = {Vector3(1223.51, -1813.49, 16.59), 0, 0}
 factionNavigationpoint[2] = Vector3(1209.32, -1748.02, 12.6)
+factionDTDestination[2] = {Vector3(1209.12, -1752.04, 13.59), 55.41, 166, "Agent K."}
 
 -- ID 3 = Army:
 factionRankNames[3] = {
@@ -141,6 +146,7 @@ factionWeapons[3] = {[6]=true,[22]=true,[24]=true,[25]=true,[29]=true,[31]=true,
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[3] = {Vector3(221.49, 1865.97, 13.14), 0, 0}
 factionNavigationpoint[3] = Vector3(134.53, 1929.06, 12.6)
+factionDTDestination[3] = {Vector3(1209.12, -1752.04, 13.59), 55.41, 166, "Agent K."}
 
 -- ID 4 = Rescue Team:
 factionRankNames[4] = {
@@ -171,7 +177,6 @@ factionWeapons[4] = {[9]=true}
 factionSpawnpoint[4] = {Vector3(1076.01, -1380.27, 13.71), 0, 0}
 factionNavigationpoint[4] = Vector3(1095.01, -1337.27, 13.71)
 
-
 -- ID 5 = La Cosa Nostra:
 factionRankNames[5] = {
 [0] = "Giovane D'Honore",
@@ -192,6 +197,7 @@ factionWTDestination[5] = Vector3(797.266, -1151.333, 24.039)
 factionSpawnpoint[5] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 5}
 factionAirDropPoint[5] = Vector3(679.589, -1311.815, 13.681)
 factionNavigationpoint[5] = evilFactionInteriorEnter[5]
+factionDTDestination[5] = {Vector3(395.47, -1308.40, 14.86), 110.87, 124, "Gio Vanni"}
 
 -- ID 6 = Yakuza
 factionRankNames[6] = {
@@ -212,6 +218,7 @@ factionWTDestination[6] = Vector3(1454.41, -1328.95, 13.38)
 factionSpawnpoint[6] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 6}
 factionNavigationpoint[6] = evilFactionInteriorEnter[6]
 factionAirDropPoint[6] = Vector3(1449.13, -1304.63, 15)
+factionDTDestination[6] = {Vector3(1546.82, -1384.42, 14.02), 180, 294, "Leis Buddhakopf"}
 
 -- ID 7 = Grove
 factionRankNames[7] = {
@@ -232,6 +239,7 @@ factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625
 factionSpawnpoint[7] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 7}
 factionNavigationpoint[7] = evilFactionInteriorEnter[7]
 factionAirDropPoint[7] = Vector3(2476.883, -1667.080, 13.326)
+factionDTDestination[7] = {Vector3(2491.85, -1783.10, 13.67), 270, 300, "Uncle Tom"}
 
 -- ID 8 = Ballas
 factionRankNames[8] = {
@@ -252,6 +260,7 @@ factionWTDestination[8] = Vector3(2212.42, -1435.53, 21.7)
 factionSpawnpoint[8] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 8}
 factionAirDropPoint[8] = Vector3(2199.05, -1385.16, 23.83)
 factionNavigationpoint[8] = evilFactionInteriorEnter[8]
+factionDTDestination[8] = {Vector3(2335.38, -1324.49, 24.09), 317.26, 102, "Uncle Ben"}
 
 -- ID 9 = Biker
 factionRankNames[9] = {
@@ -272,6 +281,7 @@ factionWTDestination[9] =   Vector3(659.08, -455.65, 16.34)
 factionSpawnpoint[9] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 9}
 factionNavigationpoint[9] = evilFactionInteriorEnter[9]
 factionAirDropPoint[9] = Vector3(664.71, -485.26, 16.19)
+factionDTDestination[9] = {Vector3(808.96, -639.48, 16.34), 186.10, 100, "Popeye Alteisen"} -- Lost MC {Vector(980.18, 274.23, 28.46), 0, 100, "Uwe Cycleangelo"}
 
 -- ID 10 = Vatos
 factionRankNames[10] = {
@@ -292,6 +302,7 @@ factionWTDestination[10] = Vector3(1826.7, -1996, 13.2)
 factionSpawnpoint[10] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 10}
 factionAirDropPoint[10] = Vector3(1824.61, -2052.34, 13.38+2.71)
 factionNavigationpoint[10] = evilFactionInteriorEnter[10]
+factionDTDestination[10] = {Vector3(1996.05, -2070.55, 13.55), 270, 116, "José Pendejo"} --Vatos {Vector3(2764.33, -2235.26, 5.19), 272.27, 116, "José Pendejo"}
 
 -- ID 11 = Triads
 factionRankNames[11] = {
@@ -312,7 +323,7 @@ factionWTDestination[11] = Vector3(1912.89, 935.21, 9.7)
 factionSpawnpoint[11] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 11}
 factionNavigationpoint[11] = evilFactionInteriorEnter[11]
 factionAirDropPoint[11] = Vector3(1877.10, 934.00, 9.67)
-
+factionDTDestination[11] = {Vector3(2285.38, 1015.77, 10.82), 288.26, 186, "Hoo Lee Sheet"}
 
 
 -- ID 12 = Brigada:
@@ -335,7 +346,7 @@ factionWTDestination[12] = Vector3(371.22, -1154.53, 78)
 factionSpawnpoint[12] = {EVIL_FACTION_SPAWN_POINT, EVIL_FACTION_SPAWN_INTERIOR, 12}
 factionAirDropPoint[12] = Vector3(280.24, -1230.52, 74.74)
 factionNavigationpoint[12] = evilFactionInteriorEnter[12]
-
+factionDTDestination[12] = {Vector3(413.39, -1033.81, 96.04), 59.46, 186, "Gio Vanni"}
 
 -- General:
 factionWeaponDepotInfo = {
@@ -369,8 +380,8 @@ factionWeaponDepotInfo = {
 	[32] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 200, ["MagazinPreis"] = 70}, -- Tec9
 	[33] = {["Waffe"] = 20, ["Magazine"] = 120, ["WaffenPreis"] = 400, ["MagazinPreis"] = 5}, -- County Rifle
 	[34] = {["Waffe"] = 5, ["Magazine"] = 15, ["WaffenPreis"] = 5000, ["MagazinPreis"] = 100}, -- Sniper
-	[35] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 2000, ["MagazinPreis"] = 500}, -- Rocket Launcher
-	[36] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 3000, ["MagazinPreis"] = 700}, -- Heat-Seeking RPG
+	[35] = {["Waffe"] = 10, ["Magazine"] = 20, ["WaffenPreis"] = 2000, ["MagazinPreis"] = 500}, -- Rocket Launcher
+	[36] = {["Waffe"] = 10, ["Magazine"] = 20, ["WaffenPreis"] = 3000, ["MagazinPreis"] = 700}, -- Heat-Seeking RPG
 	[37] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Flamethrower
 	[38] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Minigun
 	[39] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Satchel Charges

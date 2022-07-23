@@ -20,7 +20,7 @@ function GroupVehicle.convertVehicle(vehicle, group)
 			local id = vehicle:getId()
 			local premium = vehicle.m_Premium and vehicle.m_Owner or 0
 
-			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
+			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, RentPrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
 
 			VehicleManager:getSingleton():removeRef(vehicle)
 			vehicle.m_Owner = group:getId()
@@ -69,12 +69,17 @@ function GroupVehicle:constructor(data)
 	end
 
 	self.m_IsRented = false
-	self:setForRent(false)
 
 	if data.SalePrice > 0 then
 		self:setForSale(true, data.SalePrice)
 	else
 		self:setForSale(false, 0)
+	end
+
+	if data.RentPrice > 0 then
+		self:setForRent(true, data.RentPrice)
+	else
+		self:setForRent(false)
 	end
 
 	addEventHandler("onVehicleExplode",self, function()
@@ -226,6 +231,8 @@ function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
 		self.m_SalePrice = tonumber(price)
+		self.m_HandBrake = true
+		self:setData("Handbrake", true, true)
 		self.m_DisableToggleEngine = true
 		self.m_DisableToggleHandbrake = true
 		self:setFrozen(true)
@@ -243,6 +250,8 @@ function GroupVehicle:setForRent(state, rate)
 	if state then
 		self.m_ForRent = true
 		self.m_RentRate = tonumber(rate)
+		self.m_HandBrake = true
+		self:setData("Handbrake", true, true)
 		self.m_DisableToggleEngine = true
 		self.m_DisableToggleHandbrake = true
 		self:setFrozen(true)

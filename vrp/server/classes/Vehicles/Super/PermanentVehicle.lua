@@ -23,7 +23,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 			local id = vehicle:getId()
 			local premium = vehicle.m_Premium and 1 or 0
 
-			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
+			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, RentPrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
 
 			VehicleManager:getSingleton():removeRef(vehicle)
 			vehicle.m_Owner = player:getId()
@@ -162,13 +162,19 @@ function PermanentVehicle:virtual_constructor(data)
 		self:setDimension(data.Dimension or 0)
 		self:setInterior(data.Interior or 0)
 		self:setCurrentPositionAsSpawn(data.PositionType)
-
+		
+		if data.LastDriver ~= 0 then
+			table.insert(self.m_LastDrivers, Account.getNameFromId(data.LastDriver))
+			setElementData(self, "lastDrivers", self.m_LastDrivers)
+		end
+		
 		setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
 		setElementData(self, "OwnerID", data.OwnerId) -- Todo: *hide*
 		setElementData(self, "OwnerType", VehicleTypeName[self.m_OwnerType])
 		setElementData(self, "ID", self.m_Id or -1)
 
 		self.m_Keys = data.Keys and fromJSON(data.Keys) or {} -- TODO: check if this works?
+		setElementData(self, "VehicleKeys", self.m_Keys)
 		self.m_PositionType = data.PositionType or VehiclePositionType.World
 
 		if data.TrunkId == 0 or data.TrunkId == nil and (self.m_OwnerType == VehicleTypes.Player or self.m_OwnerType == VehicleTypes.Group) then
@@ -217,23 +223,34 @@ function PermanentVehicle:virtual_constructor(data)
 
 		self.m_HasBeenUsed = 0
 		self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
+
+		if data.Model == 519 then
+			self.m_Shamal = Shamal:new(self)
+			ShamalManager.Map[self.m_Id] = self.m_Shamal
+		end
+
+		self.m_Unregistered = data.Unregistered
 	end
 end
 
 function PermanentVehicle:purge()
-  if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
-    VehicleManager:getSingleton():removeRef(self)
-    destroyElement(self)
-    return true
-  end
-  return false
+  	if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+    	VehicleManager:getSingleton():removeRef(self)
+    	destroyElement(self)
+    	return true
+  	end
+  	return false
 end
 
 function PermanentVehicle:save()
-  local health = getElementHealth(self)
-  if self.m_Trunk then self.m_Trunk:save() end
-  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, TemplateId =? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Template or 0, self.m_Id)
+  	local health = getElementHealth(self)
+ 	local lastDriver = 0
+  	if self.m_Trunk then self.m_Trunk:save() end
+  	if self.m_LastDrivers[#self.m_LastDrivers] and Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers]) then
+		lastDriver = Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers])
+	end
+  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, RentPrice = ?, TemplateId = ?, Unregistered = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  lastDriver, self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_RentRate or 0, self.m_Template or 0, self.m_Unregistered or 0, self.m_Id)
 end
 
 function PermanentVehicle:saveAdminChanges() -- add changes to this query for everything that got changed by admins (and isn't saved anywhere else)
@@ -287,6 +304,7 @@ function PermanentVehicle:addKey(player)
     player = player:getId()
   end
   table.insert(self.m_Keys, player)
+  setElementData(self, "VehicleKeys", self.m_Keys)
 end
 
 function PermanentVehicle:removeKey(player)
@@ -298,6 +316,7 @@ function PermanentVehicle:removeKey(player)
     return false
   end
   table.remove(self.m_Keys, index)
+  setElementData(self, "VehicleKeys", self.m_Keys)
   return true
 end
 
@@ -410,5 +429,35 @@ function PermanentVehicle:sendOwnerMessage(msg)
 		else
 			delTarget:sendInfo(_(msg, client))
 		end
+	end
+end
+
+function PermanentVehicle:isUnregistered()
+	return self.m_Unregistered ~= 0
+end
+
+function PermanentVehicle:toggleRegister(player)
+	if self:isUnregistered() then
+		self.m_Unregistered = 0
+		self:setPositionType(VehiclePositionType.World)
+		self:setDimension(0)
+		local x, y, z = unpack(Randomizer:getRandomTableValue(VehicleSpawnPositionAfterRegister))
+		local pickUpText = "Du kannst es hinter der Stadthalle abholen."
+		if self:isAirVehicle() and self:getModel() ~= 460 then
+			pickUpText = "Du kannst es am Flughafen in Los Santos abholen."
+			x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
+		elseif self:isWaterVehicle() or self:getModel() == 460 then
+			pickUpText = "Du kannst es an den Ocean Docks abholen"
+			x, y, z, rotation = 2350.26, -2523.06, 0, 180 -- ls docks
+		end
+		self:setPosition(x, y, z + self:getBaseHeight())
+		self:setRotation(0, 0, 0)
+		player:sendInfo(_("Dein Fahrzeug ist nun wieder angemeldet! %s", player, pickUpText))
+	else
+		self:removeAttachedPlayers()
+		self:setPositionType(VehiclePositionType.Unregistered)
+		self:setDimension(PRIVATE_DIMENSION_SERVER)
+		self:fix()
+		self.m_Unregistered = getRealTime().timestamp
 	end
 end

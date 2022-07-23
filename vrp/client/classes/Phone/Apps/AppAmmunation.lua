@@ -23,6 +23,7 @@ function AppAmmunation:onOpen(form)
 	GUILabel:new(10, 65, form.m_Width-20, 22, _[[
 		Hier kannst du den Lieferservice von Ammunation nutzen.
 		Wähle einfach die gewünschten Produkte aus und klicke auf bestellen.
+		Für die Lieferung wird ein Aufschlag von 50% berechnet.
 
 		Das Geld wird bequem vom Konto abgebucht!
 	]], self.m_Tabs["Info"]):setMultiline(true)
@@ -139,9 +140,9 @@ function AppAmmunation:updateCart()
 			end
 		end
 	end
-	self.m_TotalCosts = totalCosts
-	self.m_SumLabel:setText(_("Gesamtsumme: %d$", totalCosts))
-	self.m_SumLabelCart:setText(_("Gesamtsumme: %d$", totalCosts))
+	self.m_TotalCosts = totalCosts * AMMUNATION_APP_MULTIPLICATOR
+	self.m_SumLabel:setText(_("Gesamtsumme: %d$", self.m_TotalCosts))
+	self.m_SumLabelCart:setText(_("Gesamtsumme: %d$", self.m_TotalCosts))
 	self:updateButtons()
 
 end

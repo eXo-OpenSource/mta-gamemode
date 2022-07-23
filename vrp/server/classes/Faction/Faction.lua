@@ -17,6 +17,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Name = name
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]
+	self.m_PlayerWeapons = players[3]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
@@ -296,6 +297,7 @@ function Faction:addPlayer(playerId, rank)
 	rank = rank or 0
 	self.m_Players[playerId] = rank
 	self.m_PlayerLoans[playerId] = 1
+	self.m_PlayerWeapons[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
@@ -306,7 +308,7 @@ function Faction:addPlayer(playerId, rank)
 		end
 		bindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1, FactionWeaponEnabled = 1, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
 	Async.create(
 		function(self)
@@ -322,8 +324,13 @@ function Faction:removePlayer(playerId)
 
 	self.m_Players[playerId] = nil
 	self.m_PlayerLoans[playerId] = nil
+	self.m_PlayerWeapons[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
+		if (self:isStateFaction() or self:isRescueFaction()) and player:isFactionDuty() then
+			takeAllWeapons(player)
+			RadioCommunication:getSingleton():allowPlayer(player, false)
+		end
 		player:saveAccountActivity()
 		setElementData(player, "playingTimeFaction", 0)
 		setElementData(player, "dutyTimeFaction", 0)
@@ -333,14 +340,10 @@ function Faction:removePlayer(playerId)
 		player:setFactionDuty(false)
 		player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 		self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
-		if self:isStateFaction() and player:isFactionDuty() then
-			takeAllWeapons(player)
-			player:reloadBlips()
-		end
 		player:reloadBlips()
 		unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0, FactionWeaponEnabled = 0, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
 function Faction:invitePlayer(player)
@@ -406,6 +409,19 @@ function Faction:setPlayerLoanEnabled(playerId, state)
 
 	self.m_PlayerLoans[playerId] = state
 	sql:queryExec("UPDATE ??_character SET FactionLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
+function Faction:isPlayerWeaponEnabled(playerId)
+	return self.m_PlayerWeapons[playerId] == 1
+end
+
+function Faction:setPlayerWeaponEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerWeapons[playerId] = state
+	sql:queryExec("UPDATE ??_character SET FactionWeaponEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
 end
 
 function Faction:getMoney()
@@ -500,9 +516,10 @@ function Faction:getPlayers(getIDsOnly)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local loanEnabled = self.m_PlayerLoans[playerId]
+		local weaponEnabled = self.m_PlayerWeapons[playerId]
 		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, weaponEnabled = weaponEnabled, activity = activity}
 	end
 	return temp
 end
@@ -646,6 +663,7 @@ function Faction:respawnVehicles(player)
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
+			vehicle:removeAttachedPlayers()
 			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
@@ -664,7 +682,7 @@ function Faction:phoneCall(caller)
 		if not player:getPhonePartner() then
 			if player ~= caller then
 				local color = {factionColors[self.m_Id].r, factionColors[self.m_Id].g, factionColors[self.m_Id].b}
-				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color, "faction")
 			end
 		end
 	end

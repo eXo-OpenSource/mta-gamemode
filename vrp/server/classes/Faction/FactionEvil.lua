@@ -201,29 +201,54 @@ function FactionEvil:isSpecialProduct(product)
 end
 
 function FactionEvil:putOrderInDepot(player, box)
+	local insertWeapomAmount = 0
+	local insertAmmoAmount = 0
 	local content = box.m_Content
 	local type, product, amount, price, id = unpack(box.m_Content)
 	local depot = player:getFaction():getDepot()
+	local depotInfo = factionWeaponDepotInfo
 	if type == "Waffe" or self:isSpecialProduct(product) then
 		if not self:isSpecialProduct(product) then
 			if id then
-				depot:addWeaponD(id,amount)
-				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
-				player:getFaction():addLog(player, "Lager", ("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+				if depotInfo[id]["Waffe"] >= depot.m_Weapons[id]["Waffe"] + amount then
+					insertWeapomAmount = amount
+				else
+					insertWeapomAmount = (depotInfo[id]["Waffe"] - depot.m_Weapons[id]["Waffe"] >= 0 and depotInfo[id]["Waffe"] - depot.m_Weapons[id]["Waffe"] or 0)
+				end
+				depot:addWeaponD(id, insertAmount)
+				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), insertWeapomAmount, product))
+				player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), insertAmmoAmount, product))
+				player:getFaction():addLog(player, "Lager", ("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), insertWeapomAmount, product))
 			end
 		else
 			if id then
-				depot:addWeaponD(id,amount)
-				depot:addMagazineD(id,amount)
-				player:getFaction():sendShortMessage(("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
-				player:getFaction():addLog(player, "Lager", ("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
+				if depotInfo[id]["Waffe"] >= depot.m_Weapons[id]["Waffe"] + amount then
+					insertWeapomAmount = amount
+				else
+					insertWeapomAmount = (depotInfo[id]["Waffe"] - depot.m_Weapons[id]["Waffe"] >= 0 and depotInfo[id]["Waffe"] - depot.m_Weapons[id]["Waffe"] or 0)
+				end
+				if depotInfo[id]["Magazine"] >= depot.m_Weapons[id]["Munition"] + amount then
+					insertAmmoAmount = amount
+				else
+					insertAmmoAmount = (depotInfo[id]["Magazine"] - depot.m_Weapons[id]["Munition"] >= 0 and depotInfo[id]["Magazine"] - depot.m_Weapons[id]["Munition"] or 0)
+				end
+				depot:addWeaponD(id,insertWeapomAmount)
+				depot:addMagazineD(id,insertAmmoAmount)
+				player:getFaction():sendShortMessage(("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), insertWeapomAmount, product))
+				player:getFaction():sendShortMessage(("%s hat %s Spezial-Munition [ %s ] ins Lager gelegt!"):format(player:getName(), insertAmmoAmount, product))
+				player:getFaction():addLog(player, "Lager", ("%s hat %s Spezial-Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), insertAmmoAmount, product))
 			end
 		end
 	elseif type == "Munition" then
 		if id then
-			depot:addMagazineD(id,amount)
-			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product))
-			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), amount, product)) 
+			if depotInfo[id]["Magazine"] >= depot.m_Weapons[id]["Munition"] + amount then
+				insertAmmoAmount = amount
+			else
+				insertAmmoAmount = (depotInfo[id]["Magazine"] - depot.m_Weapons[id]["Munition"] >= 0 and depotInfo[id]["Magazine"] - depot.m_Weapons[id]["Munition"] or 0)
+			end
+			depot:addMagazineD(id,insertAmmoAmount)
+			player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), insertAmmoAmount, product))
+			player:getFaction():addLog(player, "Lager", ("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), insertAmmoAmount, product)) 
 		end
 	else
 		depot:addEquipment(player, product, amount, true)
@@ -421,13 +446,15 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		if player:getPublicSync("Company:Duty") and player:getCompany() then
 			--player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
 			--return false
-			client:triggerEvent("companyForceOffduty")
+			--client:triggerEvent("companyForceOffduty")
+			CompanyManager:getSingleton():companyForceOffduty(player)
 		end
 		player:setFactionDuty(true)
 		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
 		player:setHealth(100)
 		player:setArmor(100)
 		StatisticsLogger:getSingleton():addHealLog(player, 100, "Faction Duty Heal")
+		DamageManager:getSingleton():clearPlayer(player)
 		player:checkLastDamaged() 
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
 		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
@@ -439,7 +466,8 @@ function FactionEvil:isPlayerInDutyPickup(player)
 	return getDistanceBetweenPoints3D(player.position, player.m_CurrentDutyPickup.position) <= 10
 end
 
-function FactionEvil:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin)
+function FactionEvil:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, player)
+	if not client then client = player end
 	if wasted then
 		client:removeFromVehicle()
 		client.m_WasOnDuty = true

@@ -119,10 +119,25 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
             Vector3(-0.7, -2.52, 0.2),
             Vector3(0.21, -2.51, 0.2),
             Vector3(-0.21, -2.49, 0.2),
-        }
-	}
-}
+        },
+	},
 
+	[456] = { --vehicle model, yankee in this case
+	loadMarkerPos = Vector3(0, -5.25, 0),
+	vehicleDoors = {1},
+	objectId = 1575, -- drug package
+	objectNames = {"Drogenpaket", "Drogenpakete"},
+	randomRotation = false, --random z-rotaion on attach to provide some variety
+	positions = { -- in loading order, e.g. the first row is the first object position to load
+	Vector3(0.5, -0.1, 0.03), Vector3(-0.6, -0.1, 0.03),
+	Vector3(-0.6, -1.1, 0.03), Vector3(0.5, -1, 0.03),
+	Vector3(0.5, -1.9, 0.03), Vector3(0.5, -2.8, 0.03), 
+	Vector3(-0.6, -1.9, 0.03), Vector3(-0.6, -2.8, 0.03), 
+	Vector3(0.5, -3.7, 0.03), Vector3(-0.6, -3.7, 0.03),	
+	},
+	scale = 1.6 -- the objects scale, when attached
+	},
+}
 
 FUEL_PRICE = { --price per liter
 	["petrol"] = 2.3,
@@ -144,6 +159,7 @@ FUEL_NAME = { --display name
 }
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
+EVIL_FUEL_PRICE_MULTIPLICATOR = 3
 SERVICE_FUEL_PRICE_MULTIPLICATOR = 3
 SERVICE_REPAIR_PRICE_MULTIPLICATOR = 3
 
@@ -358,4 +374,19 @@ VehicleShopColors =  -- unified colors for the vehicle shop
 VEHICLES_WITH_BULLET_ARMOR = {
 	[425] = 2, --Hunter
     [432] = 2 --Rhino
+}
+
+VEHICLE_MAX_PASSENGER = {
+	[519] = 7
+}
+
+VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN = DEBUG and 0 or 3*24*60*60
+
+VehicleSpawnPositionAfterRegister = {
+{1504.75, -1847.58, 12.25},
+{1507.75, -1847.53, 12.25},
+{1510.75, -1847.48, 12.25},
+{1520.74, -1846.97, 12.25},
+{1524.74, -1846.91, 12.25},
+{1531.74, -1846.79, 12.25},
 }

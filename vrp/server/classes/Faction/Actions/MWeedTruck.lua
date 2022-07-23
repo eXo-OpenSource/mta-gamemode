@@ -12,6 +12,7 @@ MWeedTruck.Settings = {["costs"] = 10000}
 function MWeedTruck:constructor()
 	self:createStartPoint(-1095.50, -1614.75, 75.5)
 	self.m_BankAccount = BankServer.get("action.trucks")
+	createObject(3041, -1120.21, -1621.1, 75.3, 0, 0, 90) -- table for the drugs
 
 	self.m_HelpColShape = createColSphere(-1095.50, -1614.75, 75.5, 5)
 	addEventHandler("onColShapeHit", self.m_HelpColShape, bind(self.onHelpColHit, self))

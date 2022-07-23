@@ -125,7 +125,7 @@ function TrunkGUI:loadItems()
         end
     end
     self.m_MyItemsGrid:addItemNoClick(_"Waffe", _"Muni")
-    for i=2,12 do
+    for i=1,12 do
 		local weaponId = getPedWeapon(localPlayer,i)
 		if weaponId and weaponId ~= 0 then
             item = self.m_MyItemsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))

@@ -35,7 +35,7 @@ function ItemSlam:Event_Render( )
 						hit, hitx, hity, hitz, hitElement = processLineOfSight(	x, y, z, x2, y2, z, false, true, true, false)
 						if hit and hitElement then
 							if getElementType(hitElement) == "player" or getElementType(hitElement) == "vehicle" then
-								if hitElement == localPlayer or hitElement == getPedOccupiedVehicle(hitElement) then
+								if hitElement == localPlayer or hitElement == getPedOccupiedVehicle(localPlayer) then
 									triggerServerEvent("onSlamTouchLine", localPlayer, obj)
 								end
 							end
