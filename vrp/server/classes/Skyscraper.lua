@@ -65,7 +65,7 @@ end
 function Skyscraper:setPosition(pos)
     if pos and pos.x then
         self.m_Position = pos
-        self.m_Pickup:destory()
+        self.m_Pickup:destroy()
         self.m_Pickup = nil
         self:updatePickup()
     end

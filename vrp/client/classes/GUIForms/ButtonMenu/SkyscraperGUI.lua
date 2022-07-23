@@ -10,15 +10,15 @@ inherit(Singleton, SkyscraperGUI)
 
 addRemoteEvents{"Skyscraper:showGUI"}
 
-function SkyscraperGUI:constructor(apartments, freeApartments)
+function SkyscraperGUI:constructor(apartments, apartmentsOwner)
     GUIButtonMenu.constructor(self, "Hochhaus")
 
     for i, houseId in pairs(apartments) do
         local floorNumber = i-1
         local floorName = i == 1 and "EG" or "OG"..floorNumber
-        local color = freeApartments[i] and Color.Red or Color.Green
+        local color = apartmentsOwner[i] and Color.Red or Color.Green
         local idPrefix = localPlayer:getRank() >= 4 and "["..houseId.."]" or ""
-        local rentStatus = freeApartments[i] and "vermietet" or "frei"
+        local rentStatus = apartmentsOwner[i] and "vermietet" or "frei"
 
         self:addItem(("%s Wohnung %s - %s"):format(idPrefix, floorName, rentStatus), color, bind(self.itemCallback, self, houseId))
     end
@@ -30,7 +30,7 @@ function SkyscraperGUI:itemCallback(houseId)
 end
 
 addEventHandler("Skyscraper:showGUI", root,
-    function(apartments, freeApartments)
-        SkyscraperGUI:new(apartments, freeApartments)
+    function(apartments, apartmentsOwner)
+        SkyscraperGUI:new(apartments, apartmentsOwner)
     end
     )

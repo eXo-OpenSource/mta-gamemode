@@ -38,7 +38,7 @@ end
 function SkyscraperManager:newSkyscraper(player, cmd)
 	if player:getRank() >= ADMIN_RANK_PERMISSION["createSkyscraper"] then		
 		local pos = player:getPosition()
-		sql:queryExec("INSERT INTO ??_skyscrapers (x,y,z) VALUES (?,?,?)", sql:getPrefix(), pos.x, pos.y, pos.z)
+		sql:queryExec("INSERT INTO ??_skyscrapers (PosX , PosY, PosZ) VALUES (?,?,?)", sql:getPrefix(), pos.x, pos.y, pos.z)
 		local Id = sql:lastInsertId()
 		SkyscraperManager.Map[Id] = Skyscraper:new(Id, pos, false)
 	end

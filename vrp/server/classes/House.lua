@@ -101,8 +101,6 @@ end
 function House:setPosition(position)
 	if position and position.x then
 		self.m_Pos = position
-		self.m_Pickup:destory()
-		self.m_Pickup = nil
 		self:updatePickup()
 	end
 end

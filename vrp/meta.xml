@@ -954,7 +954,6 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/SkyscraperEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
 
