@@ -23,6 +23,7 @@
 	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 	<script src="shared/constants/injury.lua" type="shared"/>
+	<script src="shared/constants/company.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
