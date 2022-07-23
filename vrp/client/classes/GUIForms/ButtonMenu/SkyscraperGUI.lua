@@ -14,7 +14,13 @@ function SkyscraperGUI:constructor(apartments, freeApartments)
     GUIButtonMenu.constructor(self, "Hochhaus")
 
     for i, houseId in pairs(apartments) do
-        self:addItem(("%s Wohnung %s - %s"):format(localPlayer:getRank() >= 4 and "["..houseId.."]" or "",i == 1 and "EG" or "OG"..i-1 ,freeApartments[i] and "vermietet" or "frei"), freeApartments[i] and Color.Red or Color.Green, bind(self.itemCallback, self, houseId))
+        local floorNumber = i-1
+        local floorName = i == 1 and "EG" or "OG"..floorNumber
+        local color = freeApartments[i] and Color.Red or Color.Green
+        local idPrefix = localPlayer:getRank() >= 4 and "["..houseId.."]" or ""
+        local rentStatus = freeApartments[i] and "vermietet" or "frei"
+
+        self:addItem(("%s Wohnung %s - %s"):format(idPrefix, floorName, rentStatus), color, bind(self.itemCallback, self, houseId))
     end
 end
 
