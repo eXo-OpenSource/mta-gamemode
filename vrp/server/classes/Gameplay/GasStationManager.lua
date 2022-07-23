@@ -455,7 +455,7 @@ GAS_STATIONS = {
 		serviceStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	{
+	--[[{
 		name = "LCN",
 		stations = {
 			{Vector3(715.71051, -1199.40308, 19.44590), 239, 1},
@@ -463,8 +463,8 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.LCN},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},
-	{
+	},]]
+	--[[{
 		name = "Yakuza",
 		stations = {
 			{Vector3(1409.013, -1437.945, 9), 80, 1},
@@ -473,7 +473,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.YAKUZA},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},
+	},]]
 	{
 		name = "Los Aztecas",
 		stations = {
@@ -483,7 +483,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	{
+	--[[{
 		name = "Outlaws MC",
 		stations = {
 			{Vector3(693.20, -455.38, 16.84), 270, 1},
@@ -492,7 +492,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	--[[{
+	{
 		name = "Triaden",
 		stations = {
 			{Vector3(1913.78, 964.34, 11.22), 185, 1},
@@ -500,7 +500,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.TRIAD},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
-	},
+	},]]
 	{
 		name = "Grove Street",
 		stations = {
@@ -518,7 +518,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.BALLAS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},]]
+	},
 	--[[{
 		name = "Kartell",
 		stations = {
