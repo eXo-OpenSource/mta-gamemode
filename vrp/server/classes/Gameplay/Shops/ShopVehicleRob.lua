@@ -29,14 +29,16 @@ function ShopVehicleRob:constructor(robber, vehicle)
 	self:startPickingLock(self.m_Robber)
 
 	StatisticsLogger:getSingleton():addActionLog("ShopVehicle-Rob", "start", self.m_Robber, self.m_Gang, "group")
-	PlayerManager:getSingleton():breakingNews("Autohaus %s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName())
-	Discord:getSingleton():outputBreakingNews(string.format("Autohaus %s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName()))
-	FactionState:getSingleton():sendWarning("Die Alarmanlage vom Autohaus %s meldet einen Überfall! Die Täterbeschreibung passt zu Mitgliedern der Gang %s", "Neuer Einsatz", false, serialiseVector(self.m_Vehicle), self.m_Shop:getName(), self.m_Gang:getName())
+	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName())
+	Discord:getSingleton():outputBreakingNews(string.format("%s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName()))
+	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall! Die Täterbeschreibung passt zu Mitgliedern der Gang %s", "Neuer Einsatz", false, serialiseVector(self.m_Vehicle), self.m_Shop:getName(), self.m_Gang:getName())
 
-	self.m_onVehicleEnter = bind(self.onVehicleEnter, self)
-	self.m_onVehicleExit = bind(self.onVehicleExit, self)
+	self.m_onVehicleEnter = bind(self.Event_onVehicleEnter, self)
+	self.m_onVehicleExit = bind(self.Event_onVehicleExit, self)
+	self.m_ExplodeFunc = bind(self.Event_onVehicleExplode, self)
 	addEventHandler("onVehicleEnter", self.m_Vehicle, self.m_onVehicleEnter)
 	addEventHandler("onVehicleExit", self.m_Vehicle, self.m_onVehicleExit)
+	addEventHandler("onVehicleExplode", self.m_Vehicle, self.m_ExplodeFunc)
 end
 
 function ShopVehicleRob:destructor()
@@ -53,7 +55,8 @@ function ShopVehicleRob:destructor()
 	self.m_Vehicle:setData("Vehicle:LockIsPicked", false, true)
 
 	removeEventHandler("onVehicleEnter", self.m_Vehicle, self.m_onVehicleEnter)
-	removeEventHandler("onVehicleExit",self.m_Vehicle, self.m_onVehicleExit)
+	removeEventHandler("onVehicleExit", self.m_Vehicle, self.m_onVehicleExit)
+	removeEventHandler("onVehicleExplode", self.m_Vehicle, self.m_ExplodeFunc)
 
 	StatisticsLogger:getSingleton():addActionLog("ShopVehicle-Rob", "stop", nil, self.m_Gang, "group")
 
@@ -82,7 +85,22 @@ function ShopVehicleRob:destructor()
 end
 
 function ShopVehicleRob:onTimeUp()
+	self.m_Gang:sendMessage("[ShopVehicle-Rob] Die Zeit für den Rob ist abgelaufen!",200,0,0,true)
+	FactionState:getSingleton():sendMessage("[ShopVehicle-Rob] #EEEEEEDie Zeit für den Rob ist abgelaufen!",200,200,0,true)
 	delete(self)
+end
+
+function ShopVehicleRob:Event_onVehicleExplode()
+	self.m_Gang:sendMessage("[ShopVehicle-Rob] Das Fahrzeug wurde zerstört!",200,0,0,true)
+	FactionState:getSingleton():sendMessage("[ShopVehicle-Rob] #EEEEEEDas Fahrzeug wurde zerstört!",200,200,0,true)
+	
+	for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
+		removePedFromVehicle(v)
+	end
+	
+	self.m_Shop:decreaseVehicleStock(self.m_Vehicle:getModel(), self.m_VehicleIndex)
+	delete(self)
+
 end
 
 function ShopVehicleRob:addMarkerAndBlips()
@@ -118,8 +136,8 @@ function ShopVehicleRob:addMarkerAndBlips()
 	self.m_MechanicFar = createMarker(mechnaicPos3, "cylinder", 4, 255, 0, 0, 100)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 4, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 4, 0, 255, 0, 100)
-	self.m_onEstimateMarkerHit = bind(self.onEstimateMarkerHit, self)
-	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
+	self.m_onEstimateMarkerHit = bind(self.Event_onEstimateMarkerHit, self)
+	self.m_onDeliveryMarkerHit = bind(self.Event_onDeliveryMarkerHit, self)
 	addEventHandler("onMarkerHit", self.m_MechanicClose, self.m_onEstimateMarkerHit)
 	addEventHandler("onMarkerHit", self.m_MechanicMedium, self.m_onEstimateMarkerHit)
 	addEventHandler("onMarkerHit", self.m_MechanicFar, self.m_onEstimateMarkerHit)
@@ -127,12 +145,16 @@ function ShopVehicleRob:addMarkerAndBlips()
 	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
 end
 
-function ShopVehicleRob:onVehicleEnter(player)
-	player:triggerEvent("Countdown", math.floor(self.m_StartTime + SHOP_VEHICLE_ROB_MAX_TIME - getRealTime().timestamp), "Fahrzeugdiebstahl")
+function ShopVehicleRob:Event_onVehicleEnter(player, seat)
+	if seat == 0 and player and isElement(player) then
+		player:triggerEvent("Countdown", math.floor(self.m_StartTime + SHOP_VEHICLE_ROB_MAX_TIME - getRealTime().timestamp), "Fahrzeugdiebstahl")
+	end
 end
 
-function ShopVehicleRob:onVehicleExit(player)
-	player:triggerEvent("CountdownStop", "Fahrzeugdiebstahl")
+function ShopVehicleRob:Event_onVehicleExit(player, seat)
+	if seat == 0 and player and isElement(player) then
+		player:triggerEvent("CountdownStop", "Fahrzeugdiebstahl")
+	end
 end
 
 function ShopVehicleRob:getNearestMarker(position, markerPositions)
@@ -174,7 +196,7 @@ function ShopVehicleRob:stopPickingLock(player)
 	player.shopVehicleRob = nil
 end
 
-function ShopVehicleRob:onEstimateMarkerHit(hitElement, matchingDim)
+function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle and hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0  then
 			if not self.m_UsedEstimateMarker[source] then
@@ -204,7 +226,7 @@ function ShopVehicleRob:onEstimateMarkerHit(hitElement, matchingDim)
 	end
 end
 
-function ShopVehicleRob:onDeliveryMarkerHit(hitElement, matchingDim)
+function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if source == self.m_StateMarker then
 			if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
@@ -214,6 +236,7 @@ function ShopVehicleRob:onDeliveryMarkerHit(hitElement, matchingDim)
 					end
 
 					ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney({hitElement, true}, 2500, "Wiederbeschaffungsprämie", "Gameplay", "ShopVehicleRob")
+					PlayerManager:getSingleton():breakingNews("%s Überfall: Das Fahrzeug wurde sichergestellt!", self.m_Shop:getName())
 				elseif hitElement:getGroup() == self.m_Gang then
 					return hitElement:sendError(_"Du kannst hier nicht abgeben!")
 				else return end
@@ -226,6 +249,7 @@ function ShopVehicleRob:onDeliveryMarkerHit(hitElement, matchingDim)
 					end
 
 					ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney(hitElement, self:calcPrice(), "Fahrzeugdiebstahl", "Gameplay", "ShopVehicleRob")
+					PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit dem Fahrzeug entkommen!", self.m_Shop:getName())
 					self.m_Shop:decreaseVehicleStock(self.m_Vehicle:getModel(), self.m_VehicleIndex)
 				elseif hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 					return hitElement:sendError(_"Du kannst hier nicht abgeben!")
