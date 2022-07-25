@@ -1,7 +1,7 @@
 FROM debian:stretch
 
 # Prerequisites
-RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip
+RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip openssl
 
 # Set timezone
 ENV TZ=Europe/Berlin
