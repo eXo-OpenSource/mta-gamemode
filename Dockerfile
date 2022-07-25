@@ -1,7 +1,7 @@
 FROM debian:buster
 
 # Prerequisites
-RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip openssl libncursesw5-dev
+RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip openssl libncursesw
 
 # Set timezone
 ENV TZ=Europe/Berlin
