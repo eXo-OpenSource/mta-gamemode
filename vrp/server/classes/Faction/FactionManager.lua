@@ -739,11 +739,16 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 	client:sendInfo(_("Kleidung gewechselt.", client))
 	if client:getModel() == client:getFaction().m_SpecialSkin then -- in special duty, stop it
 		client:getFaction():changeSkin(client, skinId)
-		client:getInventory():removeItem("Kevlar", 1)
-		client.m_KevlarShotsCount = nil
+		if client:getFaction():isStateFaction() then
+			client:getInventory():removeItem("Kevlar", 1)
+			WearableManager:getSingleton():removeWearable(client, "Kevlar")
+			client.m_KevlarShotsCount = nil
+		end
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
-		client:getInventory():giveItem("Kevlar", 1)
+		if client:getFaction():isStateFaction() then
+			client:getInventory():giveItem("Kevlar", 1)
+		end
 	end
 end
 

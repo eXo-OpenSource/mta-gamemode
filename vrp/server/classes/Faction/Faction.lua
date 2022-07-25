@@ -269,6 +269,9 @@ function Faction:changeSkin(player, skinId)
 			if minRank <= playerRank then
 				player:setModel(skinId)
 				player.m_tblClientSettings["LastFactionSkin"] = skinId
+				player:getInventory():removeItem("Kevlar", 1)
+				WearableManager:getSingleton():removeWearable(player, "Kevlar")
+				player.m_KevlarShotsCount = nil
 			else
 				player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
 				player:setModel(self:getSkinsForRank(playerRank)[1])
@@ -338,6 +341,9 @@ function Faction:removePlayer(playerId)
 		player:giveAchievement(67)
 		player:setCorrectSkin()
 		player:setFactionDuty(false)
+		player:getInventory():removeItem("Kevlar", 1)
+		WearableManager:getSingleton():removeWearable(player, "Kevlar")
+		player.m_KevlarShotsCount = nil
 		player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 		self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
 		player:reloadBlips()
