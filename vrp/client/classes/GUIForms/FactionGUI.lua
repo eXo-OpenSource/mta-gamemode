@@ -65,12 +65,11 @@ function FactionGUI:constructor()
 		self.m_EquipmentPermGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 	end
 
-	if localPlayer:getFaction():getId() == 3 then
-		self.m_AreaAlarmButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.07, _"Alarm (de-)aktivieren", tabAllgemein):setBarEnabled(true)
-		self.m_AreaAlarmButton:setEnabled(false)
-		self.m_AreaAlarmButton.onLeftClick = function()
-			triggerServerEvent("factionStateDeactivateAreaAlarm", localPlayer)
-		end
+	self.m_AreaAlarmButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.07, _"Alarm (de-)aktivieren", tabAllgemein):setBarEnabled(true)
+	self.m_AreaAlarmButton:setVisible(false)
+	self.m_AreaAlarmButton:setEnabled(false)
+	self.m_AreaAlarmButton.onLeftClick = function()
+		triggerServerEvent("factionStateDeactivateAreaAlarm", localPlayer)
 	end
 
 	self.m_SkinChangeButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Kleidung wechseln", tabAllgemein):setBarEnabled(true)
@@ -625,11 +624,15 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, ac
 				self:addLeaderTab()
 			end
 			if localPlayer:getFaction():getId() == 3 then
+				self.m_AreaAlarmButton:setVisible(true)
+
 				if rank > FactionRank.Normal then
 					self.m_AreaAlarmButton:setEnabled(true)
 				else
 					self.m_AreaAlarmButton:setEnabled(false)
 				end
+			else
+				self.m_AreaAlarmButton:setVisible(false)
 			end
 		end
 	end
