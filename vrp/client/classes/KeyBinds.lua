@@ -320,6 +320,8 @@ function KeyBinds:tryEnterEntrance( __, keystate)
 					triggerServerEvent("VehicleScrapper:onVehicleScrapRequest", localPlayer)
 				elseif localPlayer.m_Entrance.m_Text == "FAHRZEUGKAUF" then 
 					triggerServerEvent("onVehicleShopOpen", localPlayer)
+				elseif localPlayer.m_Entrance.m_Text == "HOCHHAUS" then
+					triggerServerEvent("Skyscraper:requestGUI", localPlayer)
 				else
 					triggerServerEvent("GroupPropertyClientInput", localPlayer) 
 					triggerServerEvent("clientTryEnterEntrance", localPlayer)
