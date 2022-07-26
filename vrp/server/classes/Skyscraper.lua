@@ -54,7 +54,7 @@ function Skyscraper:showGUI(player)
     for i, v in pairs(self.m_Houses) do
         table.insert(temp, HouseManager:getSingleton().m_Houses[v].m_Owner)
     end
-    player:triggerEvent("Skyscraper:showGUI", self.m_Houses, temp, player.lastSkyscraperPickup)
+    player:triggerEvent("Skyscraper:showGUI", self.m_Id, self.m_Houses, temp, player.lastSkyscraperPickup)
 end
 
 function Skyscraper:save()

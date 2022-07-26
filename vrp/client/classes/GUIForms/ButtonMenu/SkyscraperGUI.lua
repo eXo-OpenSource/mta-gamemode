@@ -10,8 +10,8 @@ inherit(Singleton, SkyscraperGUI)
 
 addRemoteEvents{"Skyscraper:showGUI"}
 
-function SkyscraperGUI:constructor(apartments, apartmentsOwner, rangeElement)
-    GUIButtonMenu.constructor(self, "Hochhaus", false, false, false, false, rangeElement)
+function SkyscraperGUI:constructor(id, apartments, apartmentsOwner, rangeElement)
+    GUIButtonMenu.constructor(self, _("Hochhaus #%s", id), false, false, false, false, rangeElement)
 
     for i, houseId in pairs(apartments) do
         local floorNumber = i-1
@@ -30,7 +30,7 @@ function SkyscraperGUI:itemCallback(houseId)
 end
 
 addEventHandler("Skyscraper:showGUI", root,
-    function(apartments, apartmentsOwner, rangeElement)
-        SkyscraperGUI:new(apartments, apartmentsOwner, rangeElement)
+    function(id, apartments, apartmentsOwner, rangeElement)
+        SkyscraperGUI:new(id, apartments, apartmentsOwner, rangeElement)
     end
     )

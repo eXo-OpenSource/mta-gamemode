@@ -461,3 +461,7 @@ function PermanentVehicle:toggleRegister(player)
 		self.m_Unregistered = getRealTime().timestamp
 	end
 end
+
+function PermanentVehicle:onEnter()
+	return true -- otherwise last driver will not added
+end
