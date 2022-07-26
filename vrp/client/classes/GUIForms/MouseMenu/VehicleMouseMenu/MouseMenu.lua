@@ -232,8 +232,11 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								if not localPlayer.m_IsPickingLock then
 									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 										triggerServerEvent("ShopVehicleRob:onTryingSteal", self:getElement())
+									else
+										ErrorBox:new(_"Du bist zuweit von der Tür entfernt.")
 									end
-								else ErrorBox:new(_"Du knackst bereits ein Schloss")
+								else 
+									ErrorBox:new(_"Du knackst bereits ein Schloss")
 								end
 							end
 						):setIcon(FontAwesomeSymbols.Lock_Open)
@@ -243,6 +246,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								function()
 									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 										triggerServerEvent("ShopVehicleRob:onPoliceUnlockVehicle", self:getElement())
+									else
+										ErrorBox:new(_"Du bist zuweit von der Tür entfernt.")
 									end
 								end
 							):setIcon(FontAwesomeSymbols.Lock_Open)
@@ -254,8 +259,11 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 										if not localPlayer.m_IsPickingLock then
 											if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 												triggerServerEvent("ShopVehicleRob:continuePickingLock", self:getElement())
+											else
+												ErrorBox:new(_"Du bist zuweit von der Tür entfernt.")
 											end
-										else ErrorBox:new(_"Du knackst bereits ein Schloss")
+										else 
+											ErrorBox:new(_"Du knackst bereits ein Schloss")
 										end
 									end
 								):setIcon(FontAwesomeSymbols.Lock_Open)
