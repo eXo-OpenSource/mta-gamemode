@@ -1513,14 +1513,16 @@ function VehicleManager:Event_LoadObject(veh, type)
 	elseif type == "weaponBox" then
 		model = 2912
 		name = "keine Waffenbox"
-	elseif type == "drugPackage" then
-		model = 1575
-		name = "kein Drogenpaket"
 
 		if veh:getData("WeaponTruck") then
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_LoadBox(veh)
 			return
 		end
+		
+	elseif type == "drugPackage" then
+		model = 1575
+		name = "kein Drogenpaket"
+
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
