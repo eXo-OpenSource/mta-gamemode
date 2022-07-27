@@ -1443,7 +1443,6 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 			object:detach(self)
 			object:setScale(1, 1, 1)
 			removeEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
-			removeEventHandler("onPlayerQuit", self, self.m_DetachOnPlayerQuit)
 			if settings["bone"] then
 				exports.bone_attach:detachElementFromBone(object)
 			else
@@ -1468,6 +1467,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onPlayerQuit", self, self.m_DetachOnPlayerQuit)
 		self.m_PlayerAttachedObject = nil
 		self:setPrivateSync("attachedObject", false)
 	end

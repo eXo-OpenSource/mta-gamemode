@@ -34,6 +34,8 @@ function PickupWeaponManager:checkKey(key)
 		end
 	elseif ( key == "n" and getKeyState("lalt")) or (key == "lalt" and getKeyState("n"))  then
 		if (localPlayer:getFaction():isStateFaction() or localPlayer:getFaction():isRescueFaction()) and localPlayer:getPublicSync("Faction:Duty") then return ErrorBox:new(_"Du darfst im Dienst keine Waffen wegwerfen.") end
+		if localPlayer:isDead() then return end
+		if localPlayer:getData("isInDeathMatch") then return end
 		if getPedWeapon(localPlayer) ~= 0 then
 			self:Event_onDropWeapon()
 		end
