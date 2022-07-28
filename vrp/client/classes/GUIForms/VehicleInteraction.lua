@@ -241,6 +241,8 @@ function VehicleInteraction:isOwner(veh)
 		return true
 	elseif getElementData(veh, "rentedBy") == localPlayer:getId() then
 		return true
+	elseif table.find(getElementData(veh, "VehicleKeys") or {}, localPlayer:getId()) ~= nil then
+		return true
 	end
 
 	return false

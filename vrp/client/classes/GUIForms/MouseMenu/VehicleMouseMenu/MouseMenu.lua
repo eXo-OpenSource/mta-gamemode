@@ -164,6 +164,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							if localPlayer:getWeapon(9) == 42 then
 								if getPedTotalAmmo(localPlayer, 9)  < 10000 then
 									triggerServerEvent("factionRescueFillFireExtinguisher", self:getElement())
+									SuccessBox:new(_"Feuerlöscher aufgefüllt.")
 								end
 							else
 								ErrorBox:new(_"Du hast kein Feuerlöscher dabei.")

@@ -1240,7 +1240,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
- 	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
+ 	if source:getOwner() ~= client:getId() and not source:hasKey(client) and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
 	end
@@ -1250,7 +1250,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
 		return
 	end
 
- 	if source:getOwner() == client:getId() and client:getBankMoney() < 100 then
+ 	if (source:getOwner() == client:getId() or source:hasKey(client)) and client:getBankMoney() < 100 then
  		client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto (100$)!", client))
  		return
 	end
@@ -1459,7 +1459,7 @@ function VehicleManager:Event_vehicleBreak(weapon)
 			end
 			local maxRnd = (weapon and weapon >= 22 and weapon <= 38) and 10 or 20
 			if math.random(1, maxRnd) == 1 then
-				if FactionRescue:getSingleton():countPlayers() >= 3 then
+				if FactionRescue:getSingleton():countPlayers(true, false) >= MIN_PLAYERS_FOR_VEHICLE_FIRE then
 					FactionRescue:getSingleton():addVehicleFire(source)
 				end
 			end
@@ -1894,6 +1894,7 @@ end
 function VehicleManager:Event_toggleVehicleRegister(type)
 	if not source:isEmpty() then return client:sendError(_("Das Fahrzeug ist nicht leer.", client)) end
 	if source:getOwner() ~= client:getId() then return client:sendError(_("Das Fahrzeug gehört nicht dir.", client)) end 
+	if source:getPositionType() ~= VehiclePositionType.World then return client:sendError(_("Das Fahrzeug darf nicht auf dem Autohof oder in der Garage stehen.", client)) end
 	if type == "register" then
 		if source.m_Unregistered <= getRealTime().timestamp - VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN then
 			if client:transferBankMoney(self.m_BankAccountServer, 500, "Fahrzeug-Anmeldung", "Vehicle", "Register") then
