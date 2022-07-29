@@ -88,7 +88,7 @@ end
 
 function VehicleObjectLoadExtension:tryLoadObject(player, object)
     local cooled = (getTickCount() - self.m_LastInteraction) > VehicleObjectLoadExtension.ms_InteractionCooldown
-    if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+    if getDistanceBetweenPoints3D(self.position, player.position) < 7 then
         if self:getObjectCount() < self:getMaxObjects() then
             if self:isValidObjectToLoad(object) then
                 if cooled then
@@ -103,13 +103,13 @@ function VehicleObjectLoadExtension:tryLoadObject(player, object)
             player:sendError("Dieses Fahrzeug ist voll!")
         end
     else
-        client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
+        player:sendError(_("Du bist zu weit vom Truck entfernt!", player))
     end
 end
 
 function VehicleObjectLoadExtension:tryUnloadObject(player)
     local cooled = (getTickCount() - self.m_LastInteraction) > VehicleObjectLoadExtension.ms_InteractionCooldown
-    if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+    if getDistanceBetweenPoints3D(self.position, player.position) < 7 then
         if self:getObjectCount() > 0 then
             if not player:getPlayerAttachedObject() then
                 if cooled then
@@ -124,7 +124,7 @@ function VehicleObjectLoadExtension:tryUnloadObject(player)
             player:sendError("Dieses Fahrzeug ist leer!")
         end
     else
-        client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
+        player:sendError(_("Du bist zu weit vom Truck entfernt!", player))
     end
 end
 

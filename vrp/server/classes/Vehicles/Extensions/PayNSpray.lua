@@ -25,12 +25,15 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return hitElement:sendError(_("Du kannst dieses Fahrzeug nicht reparieren!", hitElement))
 				end
 				local costs = (100 - vehicle:getHealthInPercent()) * 5 -- max. 500$, maybe improve this later to get higher costs based on maxHealth (armor)
-				if not hitElement:isFactionDuty() and hitElement:getBankMoney() < costs then
+				if not hitElement:isFactionDuty() and not hitElement:isCompanyDuty() and hitElement:getBankMoney() < costs then
 					hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
 				if hitElement:getFaction() and hitElement:isFactionDuty() and hitElement:getFaction():getMoney() < costs then
 					hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
+					return
+				elseif hitElement:getCompany() and hitElement:isCompanyDuty() and hitElement:getCompany():getMoney() < costs then
+						hitElement:sendError(_("Dein Unternehmen benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
 
@@ -65,6 +68,14 @@ function PayNSpray:constructor(x, y, z, garageId)
 								end
 							else
 								return hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
+						elseif hitElement:getCompany() and hitElement:isCompanyDuty() then
+							if hitElement:getCompany():getMoney() >= costs then
+								if costs > 0 then
+									hitElement:getCompany():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								return hitElement:sendError(_("Dein Unternehmen benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 							end
 						else
 							if hitElement:getBankMoney() >= costs then
