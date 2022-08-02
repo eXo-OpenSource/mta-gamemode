@@ -189,6 +189,9 @@ function GroupVehicle:respawn(force, suppressMessage)
 		end
 	end
 
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
 
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)

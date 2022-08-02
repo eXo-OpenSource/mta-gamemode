@@ -10,6 +10,8 @@ inherit(VehicleDataExtension, Vehicle)
 inherit(VehicleObjectLoadExtension, Vehicle)
 inherit(VehicleELS, Vehicle)
 inherit(VehicleTransportExtension, Vehicle)
+inherit(VehicleSeatExtension, Vehicle)
+inherit(ShamalExtension, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -743,6 +745,11 @@ function Vehicle:respawnOnSpawnPosition()
 	if self.m_RespawnHook:call(self) then
 		return
 	end
+
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
+
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)

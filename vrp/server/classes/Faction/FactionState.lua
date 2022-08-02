@@ -93,7 +93,7 @@ function FactionState:constructor()
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
 	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
-	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm", "factionStateTicket"
+	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm", "factionStateTicket", "factionStateDragFromVehicle"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
@@ -135,6 +135,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateTie", root, bind(self.Event_tiePlayer, self))
 	addEventHandler("factionStateDeactivateAreaAlarm", root, bind(self.Event_DeactivateAreaAlarm, self))
 	addEventHandler("factionStateTicket", root, bind(self.Event_ticket, self))
+	addEventHandler("factionStateDragFromVehicle", root, bind(self.Event_dragFromVehicle, self))
 
 
 	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
@@ -2214,4 +2215,15 @@ function FactionState:Event_DeactivateAreaAlarm()
 		self.m_AreaAlarmActivated = true
 	end
 	FactionManager.Map[3]:sendShortMessage(("%s hat den Area-Alarm %s!"):format(client:getName(), self.m_AreaAlarmActivated and "aktiviert" or "deaktiviert"))
+end
+
+function FactionState:Event_dragFromVehicle(target)
+	local veh = target:getData("VSE:Vehicle")
+	if veh and isElement(veh) and veh.type == "vehicle" then
+		if target:getData("SE:InShamal") then
+			veh:seEnterExitInterior(target, false)
+		end
+		veh:vseEnterExit(target, false)
+		target:sendShortMessage(_"Du wurdest aus dem Fahrzeug gezerrt!")
+	end
 end

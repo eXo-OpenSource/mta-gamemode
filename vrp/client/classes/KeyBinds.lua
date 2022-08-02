@@ -64,7 +64,7 @@ function KeyBinds:constructor()
 		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
 		["KeyToggleInfrared"]		= {["defaultKey"] = "mouse2", ["name"] = "Infrarot-Kamera (Helikopter)", ["func"] = self.m_InfraredVehicle, ["trigger"] = "down"};
 		["KeyToggleHeliDriveby"] 	= {["defaultKey"] = "rshift", ["name"] = "auf Kufen stellen (aus Helikopter)", ["func"] = self.m_ToggleHeliDriveBy, ["trigger"] = "down"};
-		["KeyToggleShamalInteior"] 	= {["defaultKey"] = "rctrl", ["name"] = "Shamal Interior betreten", ["func"] = function() if localPlayer:getData("Shamal:Passenger") then triggerServerEvent("toggleShamalInterior", localPlayer:getData("Shamal")) end end, ["trigger"] = "down"};
+		["KeyToggleShamalInteior"] 	= {["defaultKey"] = "rctrl", ["name"] = "Shamal Interior betreten", ["func"] = function() if localPlayer:getData("VSE:IsPassenger") and localPlayer:getData("VSE:Vehicle"):getModel() == 519 then triggerServerEvent("toggleShamalInterior", localPlayer:getData("VSE:Vehicle")) end end, ["trigger"] = "down"};
 		["KeyToggleThermalLight"] 	= {["defaultKey"] = "h", ["name"] = "Thermalkamera-Scheinwerfer (Helikopter)", ["func"] = self.m_ThermalLightKey, ["trigger"] = "down"};
 		["KeyToggleThermalLock"] 	= {["defaultKey"] = "mouse1", ["name"] = "Thermalkamera-Kontrollmodus (Helikopter)", ["func"] = self.m_ThermaControlModeKey, ["trigger"] = "down"};
 		["KeyToggleThermalMode"] 	= {["defaultKey"] = "m", ["name"] = "Thermalkamera-Suchmodus (Helikopter)", ["func"] = self.m_ThermalModeKey, ["trigger"] = "down"};

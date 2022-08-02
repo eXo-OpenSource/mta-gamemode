@@ -13,6 +13,7 @@ PassengerMouseMenu.Names = {
 function PassengerMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	local owner = getElementData(element, "OwnerName")
+	local vseTbl
 	if owner then
 		self:addItem(_("Besitzer: %s", owner)):setTextColor(Color.Red)
 	end
@@ -25,7 +26,15 @@ function PassengerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	for seat, occupant in pairs(element.occupants) do
+	
+	if element:getData("VSE:Passengers") then
+		vseTbl = element:getData("VSE:Passengers")
+		for seat, occupant in pairs(element.occupants) do
+			table.insert(vseTbl, occupant)
+		end
+	end
+
+	for seat, occupant in pairs(element:getData("VSE:Passengers") and vseTbl or element.occupants) do
 		if getElementType(occupant) == "player" then
 			if occupant == localPlayer then
 				self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName())):setTextColor(Color.Accent)

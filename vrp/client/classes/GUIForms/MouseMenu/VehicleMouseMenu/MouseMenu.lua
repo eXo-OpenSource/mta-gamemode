@@ -450,7 +450,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Star)
 	end
-	if element.occupants and table.size(element.occupants) > 0 then
+	if (element.occupants and table.size(element.occupants) > 0) or (element:getData("VSE:Passengers") and table.size(element:getData("VSE:Passengers")) > 0) then
 		self:addItem(_"Insassen >>>",
 			function()
 				if self:getElement() then

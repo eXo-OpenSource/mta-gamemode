@@ -460,8 +460,8 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTransportExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/ShamalManager.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/Shamal.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/ShamalExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleSeatExtension.lua" type="server"/>
 
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>
