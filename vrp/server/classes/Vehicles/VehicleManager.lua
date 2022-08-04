@@ -1153,7 +1153,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
+			client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
+			return
+	end
+
+	if source:getPositionType() == VehiclePositionType.Unregistered then
+		client:sendError(_("Dieses Fahrzeug ist abgemeldet und kann nicht respawnt werden!", client))
 		return
 	end
 

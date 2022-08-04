@@ -230,7 +230,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							function()
 								if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
 								if localPlayer:getPrivateSync("isAttachedToVehicle") then return ErrorBox:new(_"Steige vom Fahrzeug ab, um das Schloss zu knacken.") end
-								if not localPlayer.m_IsPickingLock then
+								if Damage:getSingleton().m_InTreatment then return ErrorBox:new(_"Du kannst während einer Behandlung kein Schloss knacken.") end
+								if not localPlayer.m_IsPickingLockand then
 									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 										triggerServerEvent("ShopVehicleRob:onTryingSteal", self:getElement())
 									else
@@ -257,6 +258,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								self:addItem(_"Schloss knacken",
 									function()
 										if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
+										if localPlayer:getPrivateSync("isAttachedToVehicle") then return ErrorBox:new(_"Steige vom Fahrzeug ab, um das Schloss zu knacken.") end
+										if Damage:getSingleton().m_InTreatment then return ErrorBox:new(_"Du kannst während einer Behandlung kein Schloss knacken.") end
 										if not localPlayer.m_IsPickingLock then
 											if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 												triggerServerEvent("ShopVehicleRob:continuePickingLock", self:getElement())
