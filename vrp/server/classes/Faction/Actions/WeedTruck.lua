@@ -276,11 +276,9 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 	local faction = player:getFaction()
 	local package
 	local breakingNewsText
-	if isPedInVehicle(player) and getPedOccupiedVehicle(player) == self.m_Truck then
-		player:sendInfo(_("Bitte steig aus um die Pakete abzugeben!", player))
-		return
-	end
-	
+
+	if player.vehicle then return player:sendInfo(_("Bitte steig aus um die Pakete abzugeben!", player)) end
+
 	if player:getPlayerAttachedObject() then
 		if player:getPlayerAttachedObject():getModel() == 1575 and player:getPlayerAttachedObject():getData("drugPackage") then
 			if isSnitch == "false" then
@@ -312,9 +310,6 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 			player:detachPlayerObject(package)
 			package:destroy()
 		end
-	elseif player:getOccupiedVehicle() then
-		player:sendInfo(_("Du musst die Drogen per Hand abgeben!", player))
-		return
 	end
 
 	if self:getRemainingPackageAmount() == 0  then

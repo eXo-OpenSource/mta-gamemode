@@ -1367,7 +1367,7 @@ function Player:attachPlayerObject(object)
 			end
 			if settings.blockFlyingVehicles then
 				local veh = self.vehicle or (getElementAttachedTo(self) and getElementType(getElementAttachedTo(self)) == "vehicle")
-				if veh and veh:isAirVehicle() then
+				if veh and veh:isAirVehicle() or self:getPublicSync("isDoingHelicopterDriveby") then
 					self:sendError(_("Mit diesem Objekt kannst du dich nicht in Fluggeräten befinden!", self))
 					return false
 				end
