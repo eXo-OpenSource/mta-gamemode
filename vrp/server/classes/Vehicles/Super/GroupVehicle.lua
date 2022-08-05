@@ -438,10 +438,6 @@ function GroupVehicle:rentEnd()
 	end
 end
 
-function GroupVehicle:onEnter()
-	return true -- otherwise last driver will not added
-end
-
 function GroupVehicle:sendOwnerMessage(msg)
 	self.m_Group:sendShortMessage(msg)
 end

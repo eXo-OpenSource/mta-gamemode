@@ -93,8 +93,8 @@ function VehicleSeatExtension:Event_vseVehicleExplode()
     end
 end
 
-function VehicleSeatExtension:vseEnterExit(player, enter)
-    if enter == true then
+function VehicleSeatExtension:vseEnterExit(player, state)
+    if state == true then
         if not self:isLocked() then
             if #self.m_SeatExtensionPassengers < VEHICLE_MAX_PASSENGER[self:getModel()] then
                 if not table.find(self.m_SeatExtensionPassengers, player) then
@@ -122,7 +122,7 @@ function VehicleSeatExtension:vseEnterExit(player, enter)
         else
             player:sendError(_"Das Flugzeug ist abgeschlossen!")
         end
-    elseif enter == "death" then
+    elseif state == "death" then
         table.removevalue(self.m_SeatExtensionPassengers, player)
         self:setData("VSE:Passengers", self.m_SeatExtensionPassengers, true)
         player:setData("VSE:IsPassenger", nil, true)
