@@ -185,7 +185,7 @@ function WeedTruck:Event_onPackageClick(button, state, player)
 	if button == "left" and state == "down" then
 		if player.vehicle then return end
 		if player:isDead() then return end
-		if player:getFaction() and (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) then
+		if player:getFaction() and player:isFactionDuty() and (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) then
 			if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 				player:attachPlayerObject(source)
 			else
@@ -249,18 +249,22 @@ end
 
 function WeedTruck:Event_onDestinationPedClick(button, state, player)
 	if button == "left" and state == "down" then
-		if player.type == "player" then
-			if player.m_PlayerAttachedObject then
-				local faction = player:getFaction()
-				if faction then
-					if (player.vehicle and #getAttachedElements(player.vehicle) > 0 ) or player:getPlayerAttachedObject() then
-						if source.type == "evil"  then
-							self:onDestinationPedClick(player, source, false, faction:isEvilFaction() and "false" or true)
-						elseif source.type == "state" then
-							self:onDestinationPedClick(player, source, true, faction:isStateFaction() and "false" or true)
-						else
-							player:sendError(_("Du kannst hier nicht abgeben!",player))
+		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 7 then
+			if player.type == "player" then
+				if player.m_PlayerAttachedObject then
+					local faction = player:getFaction()
+					if player:getFaction() and player:isFactionDuty() and (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) then
+						if (player.vehicle and #getAttachedElements(player.vehicle) > 0 ) or player:getPlayerAttachedObject() then
+							if source.type == "evil"  then
+								self:onDestinationPedClick(player, source, false, faction:isEvilFaction() and "false" or true)
+							elseif source.type == "state" then
+								self:onDestinationPedClick(player, source, true, faction:isStateFaction() and "false" or true)
+							else
+								player:sendError(_("Du kannst hier nicht abgeben!",player))
+							end
 						end
+					else
+						player:sendError(_("Nur Fraktionisten können Drogenpakete abgeben!",player))
 					end
 				end
 			end
@@ -272,11 +276,9 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 	local faction = player:getFaction()
 	local package
 	local breakingNewsText
-	if isPedInVehicle(player) and getPedOccupiedVehicle(player) == self.m_Truck then
-		player:sendInfo(_("Bitte steig aus um die Pakete abzugeben!", player))
-		return
-	end
-	
+
+	if player.vehicle then return player:sendInfo(_("Bitte steig aus um die Pakete abzugeben!", player)) end
+
 	if player:getPlayerAttachedObject() then
 		if player:getPlayerAttachedObject():getModel() == 1575 and player:getPlayerAttachedObject():getData("drugPackage") then
 			if isSnitch == "false" then
@@ -308,9 +310,6 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 			player:detachPlayerObject(package)
 			package:destroy()
 		end
-	elseif player:getOccupiedVehicle() then
-		player:sendInfo(_("Du musst die Drogen per Hand abgeben!", player))
-		return
 	end
 
 	if self:getRemainingPackageAmount() == 0  then

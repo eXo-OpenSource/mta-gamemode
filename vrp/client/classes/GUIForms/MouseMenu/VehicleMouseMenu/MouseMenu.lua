@@ -164,6 +164,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							if localPlayer:getWeapon(9) == 42 then
 								if getPedTotalAmmo(localPlayer, 9)  < 10000 then
 									triggerServerEvent("factionRescueFillFireExtinguisher", self:getElement())
+									SuccessBox:new(_"Feuerlöscher aufgefüllt.")
 								end
 							else
 								ErrorBox:new(_"Du hast kein Feuerlöscher dabei.")
@@ -229,11 +230,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							function()
 								if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
 								if localPlayer:getPrivateSync("isAttachedToVehicle") then return ErrorBox:new(_"Steige vom Fahrzeug ab, um das Schloss zu knacken.") end
-								if not localPlayer.m_IsPickingLock then
+								if Damage:getSingleton().m_InTreatment then return ErrorBox:new(_"Du kannst während einer Behandlung kein Schloss knacken.") end
+								if not localPlayer.m_IsPickingLockand then
 									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 										triggerServerEvent("ShopVehicleRob:onTryingSteal", self:getElement())
+									else
+										ErrorBox:new(_"Du bist zuweit von der Tür entfernt.")
 									end
-								else ErrorBox:new(_"Du knackst bereits ein Schloss")
+								else 
+									ErrorBox:new(_"Du knackst bereits ein Schloss")
 								end
 							end
 						):setIcon(FontAwesomeSymbols.Lock_Open)
@@ -243,6 +248,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								function()
 									if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 										triggerServerEvent("ShopVehicleRob:onPoliceUnlockVehicle", self:getElement())
+									else
+										ErrorBox:new(_"Du bist zuweit von der Tür entfernt.")
 									end
 								end
 							):setIcon(FontAwesomeSymbols.Lock_Open)
@@ -251,11 +258,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								self:addItem(_"Schloss knacken",
 									function()
 										if localPlayer.vehicle then return ErrorBox:new(_"Steige aus, um das Schloss zu knacken.") end
+										if localPlayer:getPrivateSync("isAttachedToVehicle") then return ErrorBox:new(_"Steige vom Fahrzeug ab, um das Schloss zu knacken.") end
+										if Damage:getSingleton().m_InTreatment then return ErrorBox:new(_"Du kannst während einer Behandlung kein Schloss knacken.") end
 										if not localPlayer.m_IsPickingLock then
 											if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 2 then
 												triggerServerEvent("ShopVehicleRob:continuePickingLock", self:getElement())
+											else
+												ErrorBox:new(_"Du bist zuweit von der Tür entfernt.")
 											end
-										else ErrorBox:new(_"Du knackst bereits ein Schloss")
+										else 
+											ErrorBox:new(_"Du knackst bereits ein Schloss")
 										end
 									end
 								):setIcon(FontAwesomeSymbols.Lock_Open)
@@ -441,7 +453,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Star)
 	end
-	if element.occupants and table.size(element.occupants) > 0 then
+	if (element.occupants and table.size(element.occupants) > 0) or (element:getData("VSE:Passengers") and table.size(element:getData("VSE:Passengers")) > 0) then
 		self:addItem(_"Insassen >>>",
 			function()
 				if self:getElement() then

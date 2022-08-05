@@ -14,7 +14,10 @@ function VehicleScrapper:constructor()
 
 	self.m_VehicleScrapMarker = createMarker(2198.36, -1977.69, 12.5, "cylinder", 4, 58, 186, 242, 100)
 	self.m_BoatScrapMarker = createMarker(2295.95, -2429.16, -1, "cylinder", 4, 58, 186, 242, 100)
+	self.m_BoatScrapCol = createColSphere(2295.71, -2429.60, 2.5, 5)
 	self.m_PlaneScrapMarker = createMarker(2075.95, -2637.55, 12.5, "cylinder", 4, 58, 186, 242, 100)
+	self.m_PlaneScrapCol = createColSphere(2075.95, -2637.55, 14.5, 5)
+
 	ElementInfo:new(self.m_VehicleScrapMarker, "Verschrottung", 1.2, "Car", true)
 	ElementInfo:new(self.m_BoatScrapMarker, "Verschrottung", 1.2, "Ship", true)
 	ElementInfo:new(self.m_PlaneScrapMarker, "Verschrottung", 1.2, "Plane", true)
@@ -23,15 +26,15 @@ function VehicleScrapper:constructor()
 			hE:triggerEvent("onTryEnterExit", self.m_VehicleScrapMarker, "Verschrottung", "files/images/Other/info.png", 5, true) 
 		end
 	end)
-	addEventHandler("onMarkerHit", self.m_BoatScrapMarker, function(hE, dim)
+	addEventHandler("onColShapeHit", self.m_BoatScrapCol, function(hE, dim)
 		if (source:getDimension() == hE:getDimension()) and (hE:getInterior() == source:getInterior()) and hE.vehicle then
-			hE:triggerEvent("onTryEnterExit", self.m_BoatScrapMarker, "Verschrottung", "files/images/Other/info.png", 5, true) 
+			hE:triggerEvent("onTryEnterExit", self.m_BoatScrapCol, "Verschrottung", "files/images/Other/info.png", 10, true) 
 		end
 	end)
-	addEventHandler("onMarkerHit", self.m_PlaneScrapMarker, function(hE, dim)
+	addEventHandler("onColShapeHit", self.m_PlaneScrapCol, function(hE, dim)
 		if (source:getDimension() == hE:getDimension()) and (hE:getInterior() == source:getInterior()) and hE.vehicle then
 			if hE.vehicle:getVehicleType() == VehicleType.Plane or hE.vehicle:getVehicleType() == VehicleType.Helicopter then
-				hE:triggerEvent("onTryEnterExit", self.m_PlaneScrapMarker, "Verschrottung", "files/images/Other/info.png", 5, true) 
+				hE:triggerEvent("onTryEnterExit", self.m_PlaneScrapCol, "Verschrottung", "files/images/Other/info.png", 10, true) 
 			else
 				hE:sendError(_"Du kannst hier nur Flugzeuge und Helikopter verschrotten.")
 			end

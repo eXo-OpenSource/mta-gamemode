@@ -376,9 +376,41 @@ VEHICLES_WITH_BULLET_ARMOR = {
     [432] = 2 --Rhino
 }
 
-VEHICLE_MAX_PASSENGER = {
-	[519] = 7
+VEHICLE_MAX_PASSENGER = { -- Only extra passenger, driver and normal passenger seats are not included
+	[511] = 4, -- Beagle -- normal = 1
+	[519] = 7, -- Shamal -- normal = 0
+	[553] = 10, -- Nevada -- normal = 0
+	[577] = 15, -- AT-400 -- normal = 1
+	[592] = 15, -- Andromada -- normal = 1
 }
+
+VEHICLE_SEAT_EXTENSION_DOOR_OFFSET = {
+	[511] = Vector3(2.5, 2.7, 0),
+	[519] = Vector3(2, 3.6, 0),
+	[553] = Vector3(-2, -3.6, 0),
+	[577] = Vector3(3, 19, 1.4),
+	[592] = Vector3(3, 11.3, 0),
+}
+
+--[[VEHICLE_SEAT_EXTENSION_SEAT_OFFSET = {
+	[511] = {
+		Vector3(-0.4, 1.6, -0.4),
+		Vector3(0.3, 1.6, -0.4),
+		Vector3(-0.4, 0.5, -0.4),
+		Vector3(0.3, 0.5, -0.4),
+	}
+}]]
+
+SHAMAL_EXTENSION_INTERIOR_POSITION = {
+	[0] = {Vector3(0.81, 35.85, 1199.6), 0},
+	[1] = {Vector3(2.57, 35.87, 1199.59), 0},
+	[2] = {Vector3(2.86, 29.80, 1199.59), 180},
+	[3] = {Vector3(0.61, 28.76, 1199.59), 180},
+	[4] = {Vector3(2.84, 28.64, 1199.59), 0},
+	[5] = {Vector3(0.61, 27.60, 1199.59), 0},
+	[6] = {Vector3(2.88, 26.37, 1199.59), 0},
+	[7] = {Vector3(0.57, 25.30, 1199.59), 0},
+   }
 
 VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN = DEBUG and 0 or 3*24*60*60
 

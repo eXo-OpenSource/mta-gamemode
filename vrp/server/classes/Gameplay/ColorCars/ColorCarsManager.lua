@@ -45,6 +45,22 @@ function ColorCarsManager:constructor()
 		end
 	)
 
+    PlayerManager:getSingleton():getWastedHook():register(
+		function(player, killer, weapon)
+			if player.colorCarsLobby then
+                player.colorCarsLobby:removePlayer(player)
+            end
+		end
+	)
+    
+    PlayerManager:getSingleton():getAFKHook():register(
+		function(player)
+			if player.colorCarsLobby then
+				player.colorCarsLobby:removePlayer(player)
+			end
+		end
+	)
+
     core:getStopHook():register(
 		function()
 			for id, lobby in pairs(ColorCarsManager.Lobbys) do
@@ -90,6 +106,11 @@ function ColorCarsManager:deleteLobby(lobby)
 end
 
 function ColorCarsManager:addPlayerToLobby(lobby, player)
+	if player:isFactionDuty() and player:getFaction():isStateFaction() then
+		player:sendError(_("Du darfst im Dienst nicht in eine ColorCars Lobby!", player))
+		return
+	end
+
     ColorCarsManager.Lobbys[lobby]:addPlayer(player)
     self:syncMatchGUI(lobby)
     player:sendInfo(_"Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", 10000)

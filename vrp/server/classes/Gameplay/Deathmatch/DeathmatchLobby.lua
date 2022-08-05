@@ -141,7 +141,7 @@ end
 
 function DeathmatchLobby:addPlayer(player)
 	player:createStorage(true)
-	player:setData("isInDeathMatch",true)
+	player:setData("isInDeathMatch", true, true)
 
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 		setPedStat(player, stat, stat == 69 and 900 or 1000)
@@ -197,7 +197,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(Vector3(1325.21, -1559.48, 13.54))
-		player:setData("isInDeathMatch",false)
+		player:setData("isInDeathMatch", false, true)
 		player:setHeadless(false)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil

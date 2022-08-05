@@ -224,9 +224,8 @@ function PermanentVehicle:virtual_constructor(data)
 		self.m_HasBeenUsed = 0
 		self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
 
-		if data.Model == 519 then
-			self.m_Shamal = Shamal:new(self)
-			ShamalManager.Map[self.m_Id] = self.m_Shamal
+		if VEHICLE_MAX_PASSENGER[data.Model] then
+			self:initVehicleSeatExtension()
 		end
 
 		self.m_Unregistered = data.Unregistered
@@ -460,4 +459,8 @@ function PermanentVehicle:toggleRegister(player)
 		self:fix()
 		self.m_Unregistered = getRealTime().timestamp
 	end
+end
+
+function PermanentVehicle:onEnter()
+	return true -- otherwise last driver will not added
 end

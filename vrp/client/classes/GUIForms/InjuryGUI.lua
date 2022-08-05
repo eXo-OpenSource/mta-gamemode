@@ -148,6 +148,7 @@ end
 function InjuryGUI:Event_OnClick()
 	if localPlayer:isInWater() then return ErrorBox:new(_"Du kannst dich im Wasser nicht behandeln.") end
 	if localPlayer:isInVehicle() then return ErrorBox:new(_"Du kannst dich im Fahrzeug nicht behandeln.") end
+	if localPlayer.m_IsPickingLock then return ErrorBox:new(_"Du kannst dich nicht behandeln, während du ein Schloss knackst.") end
 	local data = self:prepareData()
 	if table.size(data) > 0 then
 		triggerServerEvent("Damage:onTryTreat", localPlayer, self.m_Player, data)

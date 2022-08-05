@@ -1367,7 +1367,7 @@ function Player:attachPlayerObject(object)
 			end
 			if settings.blockFlyingVehicles then
 				local veh = self.vehicle or (getElementAttachedTo(self) and getElementType(getElementAttachedTo(self)) == "vehicle")
-				if veh and veh:isAirVehicle() then
+				if veh and veh:isAirVehicle() or self:getPublicSync("isDoingHelicopterDriveby") then
 					self:sendError(_("Mit diesem Objekt kannst du dich nicht in Fluggeräten befinden!", self))
 					return false
 				end
@@ -1396,10 +1396,12 @@ function Player:attachPlayerObject(object)
 			end
 
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
+			self.m_DetachOnPlayerQuit = bind(self.Event_detachObjectOnQuit, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
+			addEventHandler("onPlayerQuit", self, self.m_DetachOnPlayerQuit)
 			return true
 		else
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
@@ -1465,6 +1467,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onPlayerQuit", self, self.m_DetachOnPlayerQuit)
 		self.m_PlayerAttachedObject = nil
 		self:setPrivateSync("attachedObject", false)
 	end
@@ -1481,6 +1484,10 @@ function Player:dropPlayerAttachedObjectOnDamage()
 	if self.m_PlayerAttachedObject and self.m_PlayerAttachedObject:getModel() == 2912 then
 		self:detachPlayerObject(self:getPlayerAttachedObject(), true)
 	end
+end
+
+function Player:Event_detachObjectOnQuit()
+	self:detachPlayerObject(self:getPlayerAttachedObject(), true)
 end
 
 function Player:attachToVehicle(forceDetach)
@@ -1573,9 +1580,9 @@ function Player:meChat(system, ...)
 		if playersToSend[index] ~= self then
 			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
 		end
-		if not system then  
+		--[[if not system then  
 			StatisticsLogger:getSingleton():addChatLog(self, "me", text, receivedPlayers)
-		end
+		end]]
 	end
 end
 

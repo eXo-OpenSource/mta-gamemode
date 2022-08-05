@@ -31,7 +31,7 @@ function ShopVehicleRob:constructor(robber, vehicle)
 	StatisticsLogger:getSingleton():addActionLog("ShopVehicle-Rob", "start", self.m_Robber, self.m_Gang, "group")
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName())
 	Discord:getSingleton():outputBreakingNews(string.format("%s meldet einen Überfall durch eine Straßengang!", self.m_Shop:getName()))
-	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall! Die Täterbeschreibung passt zu Mitgliedern der Gang %s", "Neuer Einsatz", false, serialiseVector(self.m_Vehicle), self.m_Shop:getName(), self.m_Gang:getName())
+	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall! Die Täterbeschreibung passt zu Mitgliedern der Gang %s", "Neuer Einsatz", false, serialiseVector(self.m_Vehicle:getPosition()), self.m_Shop:getName(), self.m_Gang:getName())
 
 	self.m_onVehicleEnter = bind(self.Event_onVehicleEnter, self)
 	self.m_onVehicleExit = bind(self.Event_onVehicleExit, self)
@@ -128,6 +128,11 @@ function ShopVehicleRob:addMarkerAndBlips()
 	self.m_MechanicPeds[1] = createPed(50, Vector3(2316.70, 327.09, 26.78), 233.81)
 	self.m_MechanicPeds[2] = createPed(309, Vector3(-1861.55, -1610.55, 21.76), 225)
 	self.m_MechanicPeds[3] = createPed(182, Vector3(-1666.58, 2556.98, 85.30), 358.49)
+	for i, v in pairs(self.m_MechanicPeds) do
+		v:setFrozen(true)
+		v:setData("NPC:Immortal", true, true)
+	end
+
 
 	self.m_MechanicClose = createMarker(mechnaicPos1, "cylinder", 4, 255, 0, 0, 100)
 	self.m_MechanicMedium = createMarker(mechnaicPos2, "cylinder", 4, 255, 0, 0, 100)
@@ -198,8 +203,14 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle and hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0  then
 			if not self.m_UsedEstimateMarker[source] then
+
+				if hitElement.vehicle:getSpeed() > 30 then
+					hitElement:sendWarning("Fahre langsamer um das Fahrzeug schätzen zu lassen.")
+					return false
+				end
+
 				local freezeTime = 0
-				hitElement:sendInfo(_"Der Preis des Fahrzeugs wird nun geschätzt.")
+				hitElement:sendInfo(_"Der Wert des Fahrzeugs wird nun geschätzt.")
 				self.m_Vehicle:setFrozen(true)
 				self.m_Vehicle.m_DisableToggleHandbrake = true
 				self.m_UsedEstimateMarker[source] = true
@@ -216,6 +227,7 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 				setTimer(function()
 					self.m_Vehicle:setFrozen(false)
 					self.m_Vehicle.m_DisableToggleHandbrake = false
+					hitElement:sendInfo(_("Der Wert des Fahrzeugs wurde auf %s$ geschätzt.", hitElement, self.m_VehicleEstimated))
 				end, freezeTime, 1)
 			else
 				hitElement:sendError(_"Du hast das Fahrzeug hier bereits schätzen lassen.")
@@ -226,8 +238,14 @@ end
 
 function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
-		if source == self.m_StateMarker then
-			if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
+		if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
+			
+			if hitElement.vehicle:getSpeed() > 30 then
+				hitElement:sendWarning("Fahre langsamer um das Fahrzeug abzugeben.")
+				return false
+			end
+
+			if source == self.m_StateMarker then
 				if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 					for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
 						removePedFromVehicle(v)
@@ -238,9 +256,7 @@ function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 				elseif hitElement:getGroup() == self.m_Gang then
 					return hitElement:sendError(_"Du kannst hier nicht abgeben!")
 				else return end
-			else return end
-		elseif source == self.m_EvilMarker then
-			if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
+			elseif source == self.m_EvilMarker then
 				if hitElement:getGroup() == self.m_Gang and not hitElement:isFactionDuty() then
 					for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
 						removePedFromVehicle(v)
@@ -253,7 +269,7 @@ function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 					return hitElement:sendError(_"Du kannst hier nicht abgeben!")
 				else return end
 			else return end
-		end
+		else return end
 		delete(self)
 	end
 end

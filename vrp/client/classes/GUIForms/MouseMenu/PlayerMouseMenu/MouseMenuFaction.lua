@@ -81,6 +81,20 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 			):setIcon(FontAwesomeSymbols.Hands)
 		end
 
+		if element:getData("VSE:IsPassenger") then
+			self:addItem(_"Fraktion: Aus Fahrzeug zerren",
+				function()
+					if self:getElement() then
+						if element:getData("VSE:Vehicle") then
+							if Vector3(localPlayer:getPosition() - element:getData("VSE:Vehicle"):getPosition()):getLength() < 10 then
+								triggerServerEvent("factionStateDragFromVehicle", localPlayer, self:getElement())
+							end
+						end
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Hands)
+		end
+
 		self:addItem(_"Fraktion: Alkoholtest durchführen",
 			function()
 				if self:getElement() then

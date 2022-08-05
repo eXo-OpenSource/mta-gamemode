@@ -7,7 +7,7 @@
 -- ****************************************************************************
 SkyscraperManager = inherit(Singleton)
 
-addRemoteEvents{"Skyscraper:requestHouseInfos"}
+addRemoteEvents{"Skyscraper:requestHouseInfos", "Skyscraper:requestGUI"}
 SkyscraperManager.Map = {}
 
 function SkyscraperManager:constructor()
@@ -19,6 +19,7 @@ function SkyscraperManager:constructor()
 	end
 	
 	addEventHandler("Skyscraper:requestHouseInfos", root, bind(self.Event_requestHouseInfos, self))
+	addEventHandler("Skyscraper:requestGUI", root, bind(self.Event_requestGUI, self))
 	addCommandHandler("createskyscraper", bind(self.newSkyscraper, self))
 	addCommandHandler("addhousetoskyscraper", bind(self.addHouseToSkyscraper, self))
 	addCommandHandler("removehousefromskyscraper", bind(self.removeHouseFromSkyscraper, self))
@@ -79,5 +80,13 @@ function SkyscraperManager:removeHouseFromSkyscraper(player, cmd, houseId, skysc
 		HouseManager:getSingleton().m_Houses[houseId]:setPosition(pos)
 		table.removevalue(SkyscraperManager.Map[skyscraperId].m_Houses, houseId)
 		SkyscraperManager.Map[skyscraperId]:updatePickup()
+	end
+end
+
+function SkyscraperManager:Event_requestGUI()
+	if client.visitingSkyscraper and client.lastSkyscraperPickup and isElement(client.lastSkyscraperPickup) then
+		if Vector3(client:getPosition() - client.lastSkyscraperPickup:getPosition()):getLength() < 5 then
+			SkyscraperManager.Map[client.visitingSkyscraper]:showGUI(client)
+		end
 	end
 end

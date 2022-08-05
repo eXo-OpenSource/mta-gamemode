@@ -41,16 +41,20 @@ function Skyscraper:updatePickup()
 end
 
 function Skyscraper:onPickupHit(hitElement)
-    local temp = {}
-    for i, v in pairs(self.m_Houses) do
-        table.insert(temp, HouseManager:getSingleton().m_Houses[v].m_Owner)
-    end
     if hitElement:getType() == "player" and (hitElement:getDimension() == source:getDimension()) then
 		if hitElement.vehicle then return end
 		hitElement.visitingSkyscraper = self.m_Id
 		hitElement.lastSkyscraperPickup = source
-		hitElement:triggerEvent("Skyscraper:showGUI", self.m_Houses, temp)
+        hitElement:triggerEvent("onTryEnterExit", source, "Hochhaus")
 	end
+end
+
+function Skyscraper:showGUI(player)
+    local temp = {}
+    for i, v in pairs(self.m_Houses) do
+        table.insert(temp, HouseManager:getSingleton().m_Houses[v].m_Owner)
+    end
+    player:triggerEvent("Skyscraper:showGUI", self.m_Id, self.m_Houses, temp, player.lastSkyscraperPickup)
 end
 
 function Skyscraper:save()

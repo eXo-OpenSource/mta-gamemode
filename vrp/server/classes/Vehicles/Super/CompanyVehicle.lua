@@ -215,6 +215,10 @@ function CompanyVehicle:respawn(force, ignoreCooldown)
 		end
 	end
 
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
+
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setTaxiLightOn(false)

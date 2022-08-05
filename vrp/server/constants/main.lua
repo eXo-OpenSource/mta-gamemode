@@ -178,5 +178,3 @@ JobBoxerMoney = {
     435,
     675
 }
-
-MIN_PLAYERS_FOR_FIRE = 2

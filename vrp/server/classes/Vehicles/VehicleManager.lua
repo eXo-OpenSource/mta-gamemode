@@ -32,7 +32,8 @@ function VehicleManager:constructor()
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
-	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight", "requestVehicles", "onToggleVehicleRegister"}
+	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight", "requestVehicles", "onToggleVehicleRegister",
+	"toggleShamalInterior"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -73,6 +74,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleToggleLoadingRamp", root, bind(self.Event_ToggleLoadingRamp, self))
 	addEventHandler("requestVehicles", root, bind(self.Event_requestVehicles, self))
 	addEventHandler("onToggleVehicleRegister", root, bind(self.Event_toggleVehicleRegister, self))
+	addEventHandler("toggleShamalInterior", root, bind(self.Event_toggleShamalInterior, self))
 
 	addEventHandler("onVehicleExplode", root,
 		function()
@@ -238,14 +240,65 @@ function VehicleManager:constructor()
 		triggerLatentClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "VehicleInfrared:stopLight", vehicle, vehicle)
 	end)
 
+	addEventHandler("onElementModelChange", root, function(old, new)
+		if source.type == "vehicle" then
+			if instanceof(source, PermanentVehicle) then
+				if old == 519 then
+					source:delShamalExtension()
+				elseif new == 519 then
+					source:initShamalExtension()
+				end
+
+				if VEHICLE_MAX_PASSENGER[old] then
+					source:delVehicleSeatExtension()
+				end
+				
+				if VEHICLE_MAX_PASSENGER[new] then
+					source:initVehicleSeatExtension()
+				end
+			end
+		end
+	end)
+
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
 			if player:getData("inInfraredVehicle") then
 				player:setData("inInfraredVehicle", false, true)
 				player:triggerEvent("VehicleInfrared:onWasted")
 			end
+			if player:getData("SE:InShamal") then
+				player:getData("VSE:Vehicle"):seEnterExitInterior(player, "death")
+            end
+			if player:getData("VSE:IsPassenger") then
+				player:getData("VSE:Vehicle"):vseEnterExit(player, "death")
+			end
 		end
 	)
+
+	PlayerManager:getSingleton():getQuitHook():register(
+		function(player)
+			if player:getData("SE:InShamal") then
+				player:getData("VSE:Vehicle"):seEnterExitInterior(player, "quit")
+            end
+			if player:getData("VSE:IsPassenger") then
+				player:getData("VSE:Vehicle"):vseEnterExit(player, false)
+			end
+		end
+	)
+
+    core:getStopHook():register(
+        function()
+            for i, player in pairs(getElementsByType("player")) do
+				if player:getData("SE:InShamal") then
+					player:getData("VSE:Vehicle"):seEnterExitInterior(player, "quit")
+				end
+				if player:getData("VSE:IsPassenger") then
+					player:getData("VSE:Vehicle"):vseEnterExit(player, false)
+				end
+            end
+        end
+    )
+
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
@@ -1100,7 +1153,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
+			client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
+			return
+	end
+
+	if source:getPositionType() == VehiclePositionType.Unregistered then
+		client:sendError(_("Dieses Fahrzeug ist abgemeldet und kann nicht respawnt werden!", client))
 		return
 	end
 
@@ -1240,7 +1298,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
- 	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
+ 	if source:getOwner() ~= client:getId() and not source:hasKey(client) and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
 	end
@@ -1250,7 +1308,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
 		return
 	end
 
- 	if source:getOwner() == client:getId() and client:getBankMoney() < 100 then
+ 	if (source:getOwner() == client:getId() or source:hasKey(client)) and client:getBankMoney() < 100 then
  		client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto (100$)!", client))
  		return
 	end
@@ -1419,6 +1477,14 @@ function VehicleManager:Event_vehicleEmpty()
 				end
 			end
 		end
+
+		if source:hasSeatExtension() then
+			if source:hasShamalExtension() then
+				source:seRemovePlayersFromInterior()
+			end
+			source:vseRemoveAttachedPlayers()
+		end
+
 		client:sendShortMessage(_("Mitfahrer wurden herausgeworfen!", client))
 	else
 		client:sendError(_("Hierzu hast du keine Berechtigungen!", client))
@@ -1459,7 +1525,7 @@ function VehicleManager:Event_vehicleBreak(weapon)
 			end
 			local maxRnd = (weapon and weapon >= 22 and weapon <= 38) and 10 or 20
 			if math.random(1, maxRnd) == 1 then
-				if FactionRescue:getSingleton():countPlayers() >= 3 then
+				if FactionRescue:getSingleton():countPlayers(true, false) >= MIN_PLAYERS_FOR_VEHICLE_FIRE then
 					FactionRescue:getSingleton():addVehicleFire(source)
 				end
 			end
@@ -1513,14 +1579,16 @@ function VehicleManager:Event_LoadObject(veh, type)
 	elseif type == "weaponBox" then
 		model = 2912
 		name = "keine Waffenbox"
-	elseif type == "drugPackage" then
-		model = 1575
-		name = "kein Drogenpaket"
 
 		if veh:getData("WeaponTruck") then
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_LoadBox(veh)
 			return
 		end
+		
+	elseif type == "drugPackage" then
+		model = 1575
+		name = "kein Drogenpaket"
+
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
@@ -1567,14 +1635,16 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	elseif type == "weaponBox" then
 		model = 2912
 		name = "keine Waffenbox"
-	elseif type == "drugPackage" then
-		model = 1575
-		name = "kein Drogenpaket"
 
 		if veh:getData("WeaponTruck") then
 			MWeaponTruck:getSingleton().m_CurrentWT:Event_DeloadBox(veh)
 			return
 		end
+		
+	elseif type == "drugPackage" then
+		model = 1575
+		name = "kein Drogenpaket"
+
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryUnloadObject(client)
@@ -1890,6 +1960,7 @@ end
 function VehicleManager:Event_toggleVehicleRegister(type)
 	if not source:isEmpty() then return client:sendError(_("Das Fahrzeug ist nicht leer.", client)) end
 	if source:getOwner() ~= client:getId() then return client:sendError(_("Das Fahrzeug gehört nicht dir.", client)) end 
+	if source:getPositionType() ~= VehiclePositionType.World then return client:sendError(_("Das Fahrzeug darf nicht auf dem Autohof oder in der Garage stehen.", client)) end
 	if type == "register" then
 		if source.m_Unregistered <= getRealTime().timestamp - VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN then
 			if client:transferBankMoney(self.m_BankAccountServer, 500, "Fahrzeug-Anmeldung", "Vehicle", "Register") then
@@ -1905,4 +1976,9 @@ function VehicleManager:Event_toggleVehicleRegister(type)
 	else
 		client:sendError(_("Fehler: Ungültiger Typ.", client))
 	end
+end
+
+function VehicleManager:Event_toggleShamalInterior()
+    local enter = (client:getInterior() == 0 and client:getDimension() == 0) and true or false
+    source:seEnterExitInterior(client, enter)
 end

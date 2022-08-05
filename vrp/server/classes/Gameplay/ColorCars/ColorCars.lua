@@ -75,6 +75,7 @@ function ColorCars:addPlayer(player)
     self:createColorCar(player)
     player:createStorage(false)
     player.colorCarsLobby = self
+    player:setData("isInColorCars", true, true)
 
     if self.m_Catcher == "none" then
         self:setCatcher(player)
@@ -95,6 +96,7 @@ function ColorCars:removePlayer(player)
     self:deleteColorCar(player)
     player:restoreStorage()
     player.colorCarsLobby = nil
+    player:setData("isInColorCars", false, true)
 
     unbindKey(player, "lalt", "down", self.m_SuportboostPowerUp)
     unbindKey(player, "lshift", "down", self.m_SuperjumpPowerUp)

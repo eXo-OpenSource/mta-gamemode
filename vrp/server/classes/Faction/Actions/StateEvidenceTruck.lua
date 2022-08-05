@@ -179,15 +179,14 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
 	local bag = false
 
+	if hitElement.vehicle then return hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abgeben!", hitElement)) end
+
 	if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
 			--bags = getAttachedElements(hitElement)
 			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcken wurden abgegeben!", self.m_BagAmount-self:getRemainingBagAmount()+1, self.m_BagAmount)
 			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
 			bag = hitElement:getPlayerAttachedObject()
 			hitElement:detachPlayerObject(bag)
-	elseif hitElement:getOccupiedVehicle() then
-		hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abladen!", hitElement))
-		return
 	end
 
 	self.m_BankAccountServer:transferMoney(faction, bag.money, "Geldsack (Geldtransport)", "Action", "EvidenceTruck")
