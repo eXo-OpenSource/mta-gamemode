@@ -33,7 +33,7 @@ function VehicleManager:constructor()
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
 	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight", "requestVehicles", "onToggleVehicleRegister",
-	"toggleShamalInterior"}
+	"toggleShamalInterior", "requestKeyList"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -75,6 +75,7 @@ function VehicleManager:constructor()
 	addEventHandler("requestVehicles", root, bind(self.Event_requestVehicles, self))
 	addEventHandler("onToggleVehicleRegister", root, bind(self.Event_toggleVehicleRegister, self))
 	addEventHandler("toggleShamalInterior", root, bind(self.Event_toggleShamalInterior, self))
+	addEventHandler("requestKeyList", root, bind(self.Event_requestKeyList, self))
 
 	addEventHandler("onVehicleExplode", root,
 		function()
@@ -1981,4 +1982,17 @@ end
 function VehicleManager:Event_toggleShamalInterior()
     local enter = (client:getInterior() == 0 and client:getDimension() == 0) and true or false
     source:seEnterExitInterior(client, enter)
+end
+
+function VehicleManager:Event_requestKeyList()
+	local temp = {}
+	for owner, vehTbl in pairs(self.m_Vehicles) do
+		for i, veh in pairs(vehTbl) do
+			if veh:hasKey(client) and veh:getOwner() ~= client:getId() then
+				table.insert(temp, {veh, veh:getPositionType()})
+			end
+		end
+	end
+
+	client:triggerEvent("showKeyList", temp)
 end

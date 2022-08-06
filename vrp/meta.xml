@@ -825,6 +825,7 @@
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleKeyListGUI.lua" type="client"/>
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 

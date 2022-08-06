@@ -199,15 +199,17 @@ function SelfGUI:constructor()
 	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.Accent) end
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
 	self.m_VehicleShowRentedButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"gemietete Fahrzeuge", tabVehicles):setBarEnabled(true)
+	self.m_VehicleShowKeysButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Schlüssel", tabVehicles):setBarEnabled(true)
  	--self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
-	 GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
- 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
- 	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
+	 GUILabel:new(self.m_Width*0.695, self.m_Height*0.39, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
+ 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
+ 	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.55, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
 
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	--self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleShowRentedButton.onLeftClick = bind(self.VehicleRentedVehiclesButton_Click, self)
+	self.m_VehicleShowKeysButton.onLeftClick = bind(self.VehicleKeysButton_Click, self)
 
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 	self.m_VehicleWorldRespawnButton.onLeftClick = bind(self.VehicleWorldRespawnButton_Click, self)
@@ -656,6 +658,11 @@ end
 
 function SelfGUI:VehicleRentedVehiclesButton_Click()
 	triggerServerEvent("groupShowRentedVehicles", localPlayer)
+end
+
+function SelfGUI:VehicleKeysButton_Click()
+	self:close()
+	VehicleKeyListGUI:new()
 end
 
 function SelfGUI:VehicleLocateButton_Click()
