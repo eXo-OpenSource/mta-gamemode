@@ -328,6 +328,42 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.SignOut)
 		end
+		if element:getModel() == 459 then
+			if (element:getData("OwnerType") == "player" and element:getData("OwnerName") == localPlayer.name) or (element:getData("OwnerType") == "group" and element:getData("OwnerName") == localPlayer:getGroupName()) then 
+				if not  localPlayer:getData("UsingBaron") then
+					if localPlayer.vehicle == element and localPlayer.vehicleSeat ~= 0 then
+						self:addItem(_"RC Baron benutzen",
+							function()
+								if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+									if not element:getData("BaronUser") then
+										if localPlayer.vehicle then
+											if self:getElement() then
+												triggerServerEvent("vehicleToggleBaron", self:getElement(), true)
+											end
+										else
+											ErrorBox:new(_"Du hast im RC Van sitzen.")
+										end
+									else
+										ErrroBox:new(_"Der RC Baron wird derzeit von %s benutzt.", element:getData("BaronUser"):getName())
+									end
+								end
+							end
+						):setIcon(FontAwesomeSymbols.Plane)
+					end
+				else
+					self:addItem(_"RC Baron nicht mehr benutzen",
+					function()
+						if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+							if self:getElement() then
+								triggerServerEvent("vehicleToggleBaron", self:getElement(), false)
+							end
+						end
+					end
+					):setIcon(FontAwesomeSymbols.Plane_Slash)
+				end
+			end
+		end
+
 		if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
 			if #self:getAttachedElement(2912, element) > 0 then
 				self:addItem(_"Kiste abladen",

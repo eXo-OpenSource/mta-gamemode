@@ -12,6 +12,7 @@ inherit(VehicleELS, Vehicle)
 inherit(VehicleTransportExtension, Vehicle)
 inherit(VehicleSeatExtension, Vehicle)
 inherit(ShamalExtension, Vehicle)
+inherit(RcVanExtension, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -748,6 +749,12 @@ function Vehicle:respawnOnSpawnPosition()
 
 	if self:hasSeatExtension() then
 		self:vseRemoveAttachedPlayers()
+	end
+
+	if self:getData("BaronUser") then
+		local player = self:getData("BaronUser")
+		self:toggleBaron(player, false, true)
+		player:removeFromVehicle()
 	end
 
 	if self.m_PositionType == VehiclePositionType.World then

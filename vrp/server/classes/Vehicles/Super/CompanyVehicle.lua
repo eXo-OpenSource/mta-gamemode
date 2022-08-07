@@ -219,6 +219,12 @@ function CompanyVehicle:respawn(force, ignoreCooldown)
 		self:vseRemoveAttachedPlayers()
 	end
 
+	if self:getData("BaronUser") then
+		local player = self:getData("BaronUser")
+		self:toggleBaron(player, false, true)
+		player:removeFromVehicle()
+	end
+
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setTaxiLightOn(false)

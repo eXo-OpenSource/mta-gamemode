@@ -368,6 +368,13 @@ function PermanentVehicle:respawn(garageOnly)
         end
 
         if maxSlots > numVehiclesInGarage then
+
+			if self:getData("BaronUser") then
+				local player = self:getData("BaronUser")
+				self:toggleBaron(player, false, true)
+				player:removeFromVehicle()
+			end
+
 			self:setInGarage(true)
 			self:setDimension(PRIVATE_DIMENSION_SERVER)
 			self:fix()

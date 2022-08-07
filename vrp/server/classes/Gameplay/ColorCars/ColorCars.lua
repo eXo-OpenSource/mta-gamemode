@@ -132,7 +132,8 @@ function ColorCars:removePlayer(player)
 end
 
 function ColorCars:createColorCar(player)
-    self.m_PlayerVehicle[player] = createVehicle(495, ColorCars.SpawnPosition[#self.m_Players][1], 0, 0, ColorCars.SpawnPosition[#self.m_Players][2])
+    local pos = ColorCars.SpawnPosition[#self.m_Players][1]
+    self.m_PlayerVehicle[player] = TemporaryVehicle.create(495, pos.x, pos.y, pos.z, ColorCars.SpawnPosition[#self.m_Players][2])
     self.m_PlayerVehicle[player]:setData("disableCollisionCheck", true, true)
     self.m_PlayerVehicle[player]:setInterior(15)
     self.m_PlayerVehicle[player]:setDimension(self.m_LobbyDimension)

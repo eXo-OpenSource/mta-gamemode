@@ -462,6 +462,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/ShamalExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleSeatExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/RcVanExtension.lua" type="server"/>
 
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>
@@ -958,6 +959,7 @@
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/FactionWeaponStoreGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -1126,6 +1128,7 @@
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/RcVanExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>

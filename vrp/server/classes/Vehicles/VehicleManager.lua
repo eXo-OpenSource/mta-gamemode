@@ -33,7 +33,7 @@ function VehicleManager:constructor()
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
 	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight", "requestVehicles", "onToggleVehicleRegister",
-	"toggleShamalInterior", "requestKeyList"}
+	"toggleShamalInterior", "requestKeyList", "vehicleToggleBaron"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -76,6 +76,7 @@ function VehicleManager:constructor()
 	addEventHandler("onToggleVehicleRegister", root, bind(self.Event_toggleVehicleRegister, self))
 	addEventHandler("toggleShamalInterior", root, bind(self.Event_toggleShamalInterior, self))
 	addEventHandler("requestKeyList", root, bind(self.Event_requestKeyList, self))
+	addEventHandler("vehicleToggleBaron", root, bind(self.Event_vehicleToggleBaron, self))
 
 	addEventHandler("onVehicleExplode", root,
 		function()
@@ -284,6 +285,9 @@ function VehicleManager:constructor()
 			if player:getData("VSE:IsPassenger") then
 				player:getData("VSE:Vehicle"):vseEnterExit(player, false)
 			end
+			if player:getData("UsingBaron") then
+				player:getData("RCVan"):toggleBaron(player, false)
+			end
 		end
 	)
 
@@ -295,6 +299,9 @@ function VehicleManager:constructor()
 				end
 				if player:getData("VSE:IsPassenger") then
 					player:getData("VSE:Vehicle"):vseEnterExit(player, false)
+				end
+				if player:getData("UsingBaron") then
+					player:getData("RCVan"):toggleBaron(player, false)
 				end
             end
         end
@@ -1995,4 +2002,8 @@ function VehicleManager:Event_requestKeyList()
 	end
 
 	client:triggerEvent("showKeyList", temp)
+end
+
+function VehicleManager:Event_vehicleToggleBaron(state)
+	source:toggleBaron(client, state)
 end

@@ -203,6 +203,7 @@ function Core:ready() --onClientResourceStart
 	PedScale:new()
 	VehicleGuns:new()
 	HelicopterDrivebyManager:new()
+	RcVanExtension:new()
 end
 
 function Core:afterLogin()

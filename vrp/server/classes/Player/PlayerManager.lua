@@ -12,7 +12,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestWeap
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
 "premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
 "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle",
-"playerLocale"}
+"playerLocale", "requestPlayerWeapons"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -65,6 +65,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
 	addEventHandler("removeMeFromVehicle", root, bind(self.Event_removeMeFromVehicle, self))
 	addEventHandler("playerLocale", root, bind(self.Event_playerLocale, self))
+	addEventHandler("requestPlayerWeapons", root, bind(self.Event_requestPlayerWeaponInfo, self))
 
 	addEventHandler("PlayerManager:onAcceptQuickTrade", root, bind(self.Event_OnStartQuickTrade, self))
 	addEventHandler("PlayerManager:onRequestQuickTrade", root, bind(self.Event_RequestQuickTrade, self))
@@ -1205,4 +1206,16 @@ function PlayerManager:Event_removeMeFromVehicle(distance)
 	if client == source then
 		removePedFromVehicle(client)
 	end
+end
+
+function PlayerManager:Event_requestPlayerWeaponInfo()
+	local temp = {}
+	for i=1, 12 do
+		if getPedWeapon(client, i) > 0 then
+			local wpn = getPedWeapon(client, i)
+			temp[wpn] =  client:getTotalAmmo(i)
+		end
+	end
+
+	client:triggerEvent("showPlayerWeapons", temp)
 end

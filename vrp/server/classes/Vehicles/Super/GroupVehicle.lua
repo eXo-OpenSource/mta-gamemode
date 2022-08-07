@@ -193,6 +193,12 @@ function GroupVehicle:respawn(force, suppressMessage)
 		self:vseRemoveAttachedPlayers()
 	end
 
+	if self:getData("BaronUser") then
+		local player = self:getData("BaronUser")
+		self:toggleBaron(player, false, true)
+		player:removeFromVehicle()
+	end
+
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)

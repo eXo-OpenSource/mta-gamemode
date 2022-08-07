@@ -14,7 +14,13 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionToggleWeapon", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , "factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", 
+	"factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	
+	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
+	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", 
+	"factionToggleWeapon", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", 
+	"factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , 
+	"factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp", "factionStorageSelecteWeapons"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -44,6 +50,7 @@ function FactionManager:constructor()
 	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	addEventHandler("factionPlayerNeedhelp", root, bind(self.Event_playerNeedhelp, self))
+	addEventHandler("factionStorageSelecteWeapons", root, bind(self.Event_storageSelecteWeapons, self))
 
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 
@@ -817,4 +824,7 @@ function FactionManager:factionForceOffduty(player)
 			FactionEvil:getSingleton():Event_toggleDuty(true, false, true, player)
 		end
 	end
+end
+function FactionManager:Event_storageSelecteWeapons(weapons)
+	client:getFaction():storageWeapons(client, weapons)
 end

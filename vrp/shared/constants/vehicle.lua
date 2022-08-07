@@ -422,3 +422,5 @@ VehicleSpawnPositionAfterRegister = {
 {1524.74, -1846.91, 12.25},
 {1531.74, -1846.79, 12.25},
 }
+
+RC_TOGGLE_COOLDOWN = 60*20
