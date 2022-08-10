@@ -344,7 +344,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 											ErrorBox:new(_"Du hast im RC Van sitzen.")
 										end
 									else
-										ErrroBox:new(_"Der RC Baron wird derzeit von %s benutzt.", element:getData("BaronUser"):getName())
+										ErrorBox:new(_"Der RC Baron wird derzeit von %s benutzt.", element:getData("BaronUser"):getName())
 									end
 								end
 							end

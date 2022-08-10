@@ -139,13 +139,13 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
 	},
 }
 
-FUEL_PRICE = { --price per liter
-	["petrol"] = 2.3,
-	["petrol_plus"] = 3.4,
-	["diesel"] = 1.7,
-	["jetfuel"] = 4.6,
-	["universal"] = 0,
-	["nofuel"] = 0,
+FUEL_PRICE_RANGE = { --price per liter
+	["petrol"] = {2.5, 6},
+	["petrol_plus"] = {2.8, 6.8},
+	["diesel"] = {2.1, 6.5},
+	["jetfuel"] = {7, 12},
+	["universal"] = {0, 0},
+	["nofuel"] = {0, 0},
 
 }
 FUEL_NAME = { --display name

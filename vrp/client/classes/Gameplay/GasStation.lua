@@ -144,7 +144,7 @@ end
 function GasStation:renderDisplay()
 	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") and localPlayer.usingGasStation then
 		self.m_Amount = VehicleFuel:isInstantiated() and VehicleFuel:getSingleton():getOpticalFuelAmount() or 0
-		self.m_Price = VehicleFuel:isInstantiated() and VehicleFuel:getSingleton():getFuelPrice() or 0
+		self.m_Price = VehicleFuel:isInstantiated() and VehicleFuel:getSingleton():getFuelPrice(localPlayer.usingGasStation) or 0
 	else
 		self.m_Amount = "-"
 		self.m_Price = "-"

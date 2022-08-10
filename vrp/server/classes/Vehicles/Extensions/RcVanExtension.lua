@@ -7,13 +7,17 @@
 -- ****************************************************************************
 RcVanExtension = inherit(Object) --gets inherited from vehicle to provide methods to vehicle object
 
+RcVanExtensionLastUse = {}
+RcVanExtensionLoadBatteryTimer = {}
+RcVanExtensionBattery = {}
+
 function RcVanExtension:toggleBaron(player, state, force)
     if state then
-        if not self.m_BaronLastUse then
-            self.m_BaronLastUse = 0
+        if not RcVanExtensionLastUse[self:getId()] then
+            RcVanExtensionLastUse[self:getId()] = 0
         end
 
-        if self.m_BaronLastUse + RC_TOGGLE_COOLDOWN <= getRealTime().timestamp then
+        if RcVanExtensionLastUse[self:getId()] + RC_TOGGLE_COOLDOWN <= getRealTime().timestamp then
             self.m_Baron = TemporaryVehicle.create(464, self.position.x, self.position.y, self.position.z+1.5, self.rotation.z)
 
             self:setData("BaronUser", player, true)
@@ -21,9 +25,9 @@ function RcVanExtension:toggleBaron(player, state, force)
             player:setData("RCVan", self, true)
             player:setPublicSync("isInvisible", true)
             
-            if isTimer(self.m_ChargeBaronBatteryTimer) then killTimer(self.m_ChargeBaronBatteryTimer) end
-            player:triggerEvent("Countdown", self.m_BaronBattery or 15*60, "Battiere")
-            self.m_BaronBatteryTimer = setTimer(bind(self.toggleBaron, self), self.m_BaronBattery and self.m_BaronBattery*1000 or 15*60*1000, 1, player, false, true)
+            if isTimer(RcVanExtensionLoadBatteryTimer[self:getId()]) then killTimer(RcVanExtensionLoadBatteryTimer[self:getId()]) end
+            player:triggerEvent("Countdown", RcVanExtensionBattery[self:getId()] or 15*60, "Batterie")
+            self.m_BaronBatteryTimer = setTimer(bind(self.toggleBaron, self), RcVanExtensionBattery[self:getId()] and RcVanExtensionBattery[self:getId()]*1000 or 15*60*1000, 1, player, false, true)
             
             self.m_BaronRange = createColSphere(0, 0, 0, 500)
             self.m_BaronRange:attach(self)
@@ -51,9 +55,10 @@ function RcVanExtension:toggleBaron(player, state, force)
         end
     else
         if force then
-            self.m_BaronLastUse = getRealTime().timestamp
+            RcVanExtensionLastUse[self:getId()] = getRealTime().timestamp
+            player:sendWarning(_"Dein RC Baron ist zerstört.")
         else
-            self.m_BaronLastUse = getRealTime().timestamp - RC_TOGGLE_COOLDOWN
+            RcVanExtensionLastUse[self:getId()] = getRealTime().timestamp - RC_TOGGLE_COOLDOWN
         end
 
         removeEventHandler("onVehicleDamage", self.m_Baron, self.m_RcVanExtensionVehicleDamage)
@@ -63,16 +68,16 @@ function RcVanExtension:toggleBaron(player, state, force)
         removeEventHandler("onColShapeHit", self.m_BaronRange, self.m_RcVanExtensionColShapeHit)
         removeEventHandler("onColShapeLeave", self.m_BaronRange, self.m_RcVanExtensionColShapeLeave)
 
-        self.m_BaronBattery = self.m_BaronBatteryTimer:getDetails()/1000 
+        RcVanExtensionBattery[self:getId()] = self.m_BaronBatteryTimer:getDetails()/1000 
         if isTimer(self.m_BaronBatteryTimer) then killTimer(self.m_BaronBatteryTimer) end
-        player:triggerEvent("CountdownStop", "Battiere")
+        player:triggerEvent("CountdownStop", "Batterie")
         
-        self.m_ChargeBaronBatteryTimer = setTimer(function()
-            if self.m_BaronBattery < 900 then
-                self.m_BaronBattery = self.m_BaronBattery + 5
+        RcVanExtensionLoadBatteryTimer[self:getId()] = setTimer(function()
+            if RcVanExtensionBattery[self:getId()] < 900 then
+                RcVanExtensionBattery[self:getId()] = tonumber(RcVanExtensionBattery[self:getId()]) + 5
             else
-                self.m_BaronBattery = 900
-                killTimer(self.m_ChargeBaronBatteryTimer)
+                RcVanExtensionBattery[self:getId()] = 900
+                killTimer(RcVanExtensionLoadBatteryTimer[self:getId()])
             end
         end, 10000, 0)
 
@@ -86,8 +91,6 @@ function RcVanExtension:toggleBaron(player, state, force)
         player:setData("UsingBaron", nil, true)
         player:setData("RCVan", nil, true)
         player:setPublicSync("isInvisible", false)
-
-        player:sendWarning(_"Dein RC Baron ist zerstört.")
     end
         
 

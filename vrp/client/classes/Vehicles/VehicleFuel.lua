@@ -53,7 +53,7 @@ end
 
 function VehicleFuel:confirm()
 	if self.m_Fuel > 0 then
-		if self.m_ConfirmCallback then self.m_ConfirmCallback(self.m_Vehicle, self:getFuelAmount(), self.m_GasStation, self:getFuelPrice(), self:getOpticalFuelAmount()) end
+		if self.m_ConfirmCallback then self.m_ConfirmCallback(self.m_Vehicle, self:getFuelAmount(), self.m_GasStation, self:getFuelPrice(self.m_GasStation), self:getOpticalFuelAmount()) end
 	end
 end
 
@@ -66,10 +66,10 @@ function VehicleFuel:getFuelAmount()
 	return self.m_Fuel
 end
 
-function VehicleFuel:getFuelPrice()
-	if not FUEL_PRICE[self.m_Vehicle:getFuelType()] then return 0 end
+function VehicleFuel:getFuelPrice(station)
+	if not station:getData("FuelTypePrices")[self.m_Vehicle:getFuelType()] then return 0 end
 	local mult = ((self.m_isServiceStation and SERVICE_FUEL_PRICE_MULTIPLICATOR) or (self.m_isEvilStation and EVIL_FUEL_PRICE_MULTIPLICATOR) or 1)
-	return math.round(self:getOpticalFuelAmount() * FUEL_PRICE[self.m_Vehicle:getFuelType()] * mult, 2)
+	return math.round(self:getOpticalFuelAmount() * station:getData("FuelTypePrices")[self.m_Vehicle:getFuelType()] * mult, 2)
 end
 
 function VehicleFuel:handleClick(__, state)

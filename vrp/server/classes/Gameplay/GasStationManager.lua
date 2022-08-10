@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
-addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle"}
+addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle", "requestFuelPrices"}
 
 GAS_STATION_SHOP_PLAYER_PAYMENT = 40
 GAS_STATION_SHOP_FCT_CMP_PAYMENT = 30
@@ -23,6 +23,8 @@ function GasStationManager:constructor()
 		end
 	end
 
+	self.m_ChangeFuelPriceTimer = setTimer(bind(self.changeFuelPrice, self),1000*60*60*2 , 0)
+
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 	self.m_BankAccountServer = BankServer.get("vehicle.gasstation")
 
@@ -31,6 +33,7 @@ function GasStationManager:constructor()
 	--addEventHandler("gasStationStartTransaction", root, bind(GasStationManager.startTransaction, self))
 	addEventHandler("gasStationConfirmTransaction", root, bind(GasStationManager.confirmTransaction, self))
 	addEventHandler("gasStationRepairVehicle", root, bind(GasStationManager.serviceStationRepairVehicle, self))
+	addEventHandler("requestFuelPrices", root, bind(self.Event_requestFuelPrices, self))
 end
 
 function GasStationManager:destructor()
@@ -176,6 +179,32 @@ function GasStationManager:serviceStationRepairVehicle(element)
 			client:getFaction():transferMoney(self.m_BankAccountServer, price, "Fahrzeug-Reparatur", "Vehicle", "Repair")
 		end
 	end
+end
+
+function GasStationManager:changeFuelPrice()
+	for name, shop in pairs(GasStationManager.Shops) do
+		for	type, bool  in pairs(shop.m_FuelTypes) do
+			if FUEL_PRICE_RANGE[type][2] > 0 then
+				shop.m_FuelTypePrices[type] = math.round(math.random(FUEL_PRICE_RANGE[type][1], FUEL_PRICE_RANGE[type][2]) + math.random(), 1)
+			else
+				shop.m_FuelTypePrices[type] = 0
+			end
+		end
+		for station, _ in pairs(shop.m_Stations) do
+			station:setData("FuelTypePrices", shop.m_FuelTypePrices, true)
+		end
+	end 
+end
+
+function GasStationManager:Event_requestFuelPrices()
+	local temp = {}
+	for name, station in pairs(GasStationManager.Shops) do
+		if station:hasPlayerAccess(client) then
+			local pos = {station.m_Position.x, station.m_Position.y, station.m_Position.z}  -- dont ask why, it doesnt work otherwise
+			temp[station.m_Name] = {station.m_FuelTypePrices, pos}
+		end
+	end
+	client:triggerEvent("receiveFuelPrices", temp)
 end
 
 -- accessible: {type, id} || type: 0 = all, 1 = faction, 2 = company || id = faction or company id (0 == state faction)
