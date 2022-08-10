@@ -1586,6 +1586,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, pl
 				client:getInventory():removeItem("Kevlar", 1)
 				WearableManager:getSingleton():removeWearable(client, "Kevlar")
 				client.m_KevlarShotsCount = nil
+				client:setData("Faction:InSpecialDuty", nil, true)
 				client:takeEquipment(true)
 				client:setBadge()
 				RadioCommunication:getSingleton():allowPlayer(client, false)
@@ -1618,6 +1619,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, pl
 				client:getInventory():removeAllItem("Taser")
 				client:getInventory():giveItem("Taser", 1)
 				client:getInventory():removeItem("Kevlar", 1)
+				client:setData("Faction:InSpecialDuty", nil, true)
 
 				if not wasted then faction:updateDutyGUI(client) end
 			end

@@ -20,7 +20,7 @@ function FactionManager:constructor()
 	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", 
 	"factionToggleWeapon", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", 
 	"factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , 
-	"factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp", "factionStorageSelecteWeapons"}
+	"factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp", "factionStorageSelectedWeapons"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -50,7 +50,7 @@ function FactionManager:constructor()
 	addEventHandler("factionEquipmentOptionRequest", root, bind(self.Event_factionEquipmentOptionRequest, self))
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	addEventHandler("factionPlayerNeedhelp", root, bind(self.Event_playerNeedhelp, self))
-	addEventHandler("factionStorageSelecteWeapons", root, bind(self.Event_storageSelecteWeapons, self))
+	addEventHandler("factionStorageSelectedWeapons", root, bind(self.Event_storageSelecteWeapons, self))
 
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 
@@ -750,11 +750,17 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 			client:getInventory():removeItem("Kevlar", 1)
 			WearableManager:getSingleton():removeWearable(client, "Kevlar")
 			client.m_KevlarShotsCount = nil
+			client:setData("Faction:InSpecialDuty", nil, true)
+
+			if client:getWeapon(3) == 27 then
+				client:getFaction():storageWeapons(client, {[27] = true})
+			end
 		end
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
 		if client:getFaction():isStateFaction() then
 			client:getInventory():giveItem("Kevlar", 1)
+			client:setData("Faction:InSpecialDuty", true, true)
 		end
 	end
 end

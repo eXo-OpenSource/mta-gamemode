@@ -19,7 +19,7 @@ function VehicleKeyListGUI:constructor()
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Geliehene Zweitschlüssel", true, true, self)
 	self.m_Window:addBackButton(function () delete(self) SelfGUI:getSingleton():show() end)
 
-    GUIGridLabel:new(1,1,12,1, "INFO: Mit einem Doppelklick, kannst du das Fahrzeug orten.", self.m_Window):setColor(Color.Accent)
+    GUIGridLabel:new(1,1,12,1, "INFO: Mit einem Doppelklick kannst du das Fahrzeug orten.", self.m_Window):setColor(Color.Accent)
 
     triggerServerEvent("requestKeyList", localPlayer)
     addEventHandler("showKeyList", localPlayer, bind(self.updateList, self))

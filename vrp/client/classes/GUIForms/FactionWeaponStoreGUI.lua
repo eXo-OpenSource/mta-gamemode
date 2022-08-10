@@ -55,9 +55,9 @@ function FactionWeaponStoreGUI:onSelectItem(item)
 end
 
 function FactionWeaponStoreGUI:onWeaponStore()
-    if self.m_Marked == 0 then return end
+    if table.size(self.m_Marked) == 0 then return end
     
-    triggerServerEvent("factionStorageSelecteWeapons", localPlayer, self.m_Marked)
+    triggerServerEvent("factionStorageSelectedWeapons", localPlayer, self.m_Marked)
     triggerServerEvent("requestPlayerWeapons", localPlayer)
 end
 
