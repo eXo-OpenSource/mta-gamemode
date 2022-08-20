@@ -94,6 +94,7 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 	local price, requiredLevel, shopIndex = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level, self.m_VehicleList[vehicleModel][index].id
 	local template = self.m_VehicleList[vehicleModel][index].templateId
 	if not price then return end
+	if self.m_Ped:getDimension() ~= player:getDimension() or self.m_Ped:getInterior() ~= player:getInterior() then return end
 
 	if player:getVehicleLevel() < requiredLevel then
 		player:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", player, requiredLevel))

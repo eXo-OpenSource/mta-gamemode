@@ -63,5 +63,5 @@ function PickupWeaponManager:Event_onDropWeapon()
 	local int = getElementInterior(localPlayer)
 	local weapon  = getPedWeapon(localPlayer)
 	local ammo  = getPedTotalAmmo(localPlayer) 
-	triggerServerEvent("onPlayerDropWeapon", localPlayer, {x, y, z, dim, int, weapon, ammo})
+	triggerServerEvent("onPlayerDropWeapon", localPlayer, {x, y, z, int, dim, weapon, ammo})
 end

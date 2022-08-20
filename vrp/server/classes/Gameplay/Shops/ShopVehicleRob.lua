@@ -62,14 +62,8 @@ function ShopVehicleRob:destructor()
 
 	if isElement(self.m_StateMarker) then self.m_StateMarker:destroy() end
 	if isElement(self.m_EvilMarker) then self.m_EvilMarker:destroy() end
-	if isElement(self.m_MechanicClose) then self.m_MechanicClose:destroy() end
-	if isElement(self.m_MechanicMedium) then self.m_MechanicMedium:destroy() end
-	if isElement(self.m_MechanicFar) then self.m_MechanicFar:destroy() end
 	if self.m_StateBlip then delete(self.m_StateBlip) end
 	if self.m_EvilBlip then delete(self.m_EvilBlip) end
-	if self.m_MechanicCloseBlip then delete(self.m_MechanicCloseBlip) end
-	if self.m_MechanicMediumBlip then delete(self.m_MechanicMediumBlip) end
-	if self.m_MechanicFarBlip then delete(self.m_MechanicFarBlip) end
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
 	self.m_Gang:removePlayerMarkers()
 	
@@ -77,6 +71,14 @@ function ShopVehicleRob:destructor()
 
 	for i, ped in pairs(self.m_MechanicPeds) do
 		ped:destroy()
+	end
+
+	for i, blip in pairs(self.m_MechanicBlip) do
+		if blip then delete(blip) end
+	end
+
+	for i, marker in pairs(self.m_MechanicMarker) do
+		if isElement(marker) then marker:destroy() end
 	end
 
 	SHOP_VEHICLE_ROB_IS_STARTABLE = true
@@ -103,8 +105,10 @@ end
 
 function ShopVehicleRob:addMarkerAndBlips()
 	local statePos = self:getNearestMarker(self.m_Vehicle.position, ROBABLE_SHOP_STATE_TARGETS)
-	local _, _, evilPos = self:getNearestMarker(self.m_Vehicle.position, ROBABLE_VEHICLE_SHOP_EVIL_TARGETS)
-	local mechnaicPos1, mechnaicPos2, mechnaicPos3 = self:getNearestMarker(evilPos, ROBABLE_VEHICLE_SHOP_MECHANIC_POSITION)
+	
+	local mechanicPos = self:getRandomPos(ROBABLE_VEHICLE_SHOP_MECHANIC_POSITION, 3)
+
+	local evilPos = ROBABLE_VEHICLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_VEHICLE_SHOP_EVIL_TARGETS)]
 
 	self.m_Gang:attachPlayerMarkers()
 	self.m_EvilBlip = Blip:new("Marker.png", evilPos.x, evilPos.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
@@ -114,36 +118,39 @@ function ShopVehicleRob:addMarkerAndBlips()
 	self.m_StateBlip:setDisplayText("Fahrzeug-Abgabe (Staat)")
 	self.m_StateBlip:setZ(statePos.z)
 
-	self.m_MechanicCloseBlip = Blip:new("PayNSpray.png", mechnaicPos1.x, mechnaicPos1.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
-	self.m_MechanicCloseBlip:setDisplayText("Gutachter (nah)")
-	self.m_MechanicCloseBlip:setZ(mechnaicPos1.z)
-	self.m_MechanicMediumBlip = Blip:new("PayNSpray.png", mechnaicPos2.x, mechnaicPos2.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
-	self.m_MechanicMediumBlip:setDisplayText("Gutachter (mittel)")
-	self.m_MechanicMediumBlip:setZ(mechnaicPos2.z)
-	self.m_MechanicFarBlip = Blip:new("PayNSpray.png", mechnaicPos3.x, mechnaicPos3.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
-	self.m_MechanicFarBlip:setDisplayText("Gutachter (weit)")
-	self.m_MechanicFarBlip:setZ(mechnaicPos3.z)
+	self.m_MechanicBlip = {}
+	self.m_MechanicBlip[1] = Blip:new("PayNSpray.png", mechanicPos[1].x, mechanicPos[1].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_MechanicBlip[1]:setDisplayText("Gutachter")
+	self.m_MechanicBlip[1]:setZ(mechanicPos[1].z)
+	self.m_MechanicBlip[2] = Blip:new("PayNSpray.png", mechanicPos[2].x, mechanicPos[2].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_MechanicBlip[2]:setDisplayText("Gutachter")
+	self.m_MechanicBlip[2]:setZ(mechanicPos[2].z)
+	self.m_MechanicBlip[3] = Blip:new("PayNSpray.png", mechanicPos[3].x, mechanicPos[3].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_MechanicBlip[3]:setDisplayText("Gutachter")
+	self.m_MechanicBlip[3]:setZ(mechanicPos[3].z)
 
 	self.m_MechanicPeds = {}
 	self.m_MechanicPeds[1] = createPed(50, Vector3(2316.70, 327.09, 26.78), 233.81)
 	self.m_MechanicPeds[2] = createPed(309, Vector3(-1861.55, -1610.55, 21.76), 225)
-	self.m_MechanicPeds[3] = createPed(182, Vector3(-1666.58, 2556.98, 85.30), 358.49)
+	self.m_MechanicPeds[3] = createPed(182, Vector3(-1231.95, 1836.87, 41.44), 50)
+	self.m_MechanicPeds[4] = createPed(182, Vector3(1782.32, -2346.71, 13.45), 232)
+	self.m_MechanicPeds[5] = createPed(309, Vector3(2459.54, 2483.51, 10.82), 317)
 	for i, v in pairs(self.m_MechanicPeds) do
 		v:setFrozen(true)
 		v:setData("NPC:Immortal", true, true)
 	end
 
-
-	self.m_MechanicClose = createMarker(mechnaicPos1, "cylinder", 4, 255, 0, 0, 100)
-	self.m_MechanicMedium = createMarker(mechnaicPos2, "cylinder", 4, 255, 0, 0, 100)
-	self.m_MechanicFar = createMarker(mechnaicPos3, "cylinder", 4, 255, 0, 0, 100)
+	self.m_MechanicMarker = {}
+	self.m_MechanicMarker[1]= createMarker(mechanicPos[1], "cylinder", 4, 255, 0, 0, 100)
+	self.m_MechanicMarker[2] = createMarker(mechanicPos[2], "cylinder", 4, 255, 0, 0, 100)
+	self.m_MechanicMarker[3] = createMarker(mechanicPos[3], "cylinder", 4, 255, 0, 0, 100)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 4, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 4, 0, 255, 0, 100)
 	self.m_onEstimateMarkerHit = bind(self.Event_onEstimateMarkerHit, self)
 	self.m_onDeliveryMarkerHit = bind(self.Event_onDeliveryMarkerHit, self)
-	addEventHandler("onMarkerHit", self.m_MechanicClose, self.m_onEstimateMarkerHit)
-	addEventHandler("onMarkerHit", self.m_MechanicMedium, self.m_onEstimateMarkerHit)
-	addEventHandler("onMarkerHit", self.m_MechanicFar, self.m_onEstimateMarkerHit)
+	addEventHandler("onMarkerHit", self.m_MechanicMarker[1], self.m_onEstimateMarkerHit)
+	addEventHandler("onMarkerHit", self.m_MechanicMarker[2], self.m_onEstimateMarkerHit)
+	addEventHandler("onMarkerHit", self.m_MechanicMarker[3], self.m_onEstimateMarkerHit)
 	addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
 	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
 end
@@ -165,6 +172,20 @@ function ShopVehicleRob:getNearestMarker(position, markerPositions)
 		return getDistanceBetweenPoints3D(a, position) < getDistanceBetweenPoints3D(b, position)
 	end)
 	return markerPositions[1], markerPositions[2], markerPositions[3]
+end
+
+function ShopVehicleRob:getRandomPos(tbl, number)
+	local temp = {}
+	local i = 0
+	repeat
+		pos = Randomizer:getRandomTableValue(tbl)
+		if not table.find(temp, pos) then
+			i = i + 1
+			table.insert(temp, pos)
+		end
+	until
+		i == number
+	return temp
 end
 
 function ShopVehicleRob:startPickingLock(player)
@@ -204,7 +225,7 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 		if hitElement.vehicle and hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0  then
 			if not self.m_UsedEstimateMarker[source] then
 
-				if hitElement.vehicle:getSpeed() > 30 then
+				if hitElement.vehicle:getSpeed() > 40 then
 					hitElement:sendWarning("Fahre langsamer um das Fahrzeug schätzen zu lassen.")
 					return false
 				end
@@ -214,15 +235,15 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 				self.m_Vehicle:setFrozen(true)
 				self.m_Vehicle.m_DisableToggleHandbrake = true
 				self.m_UsedEstimateMarker[source] = true
-				if source == self.m_MechanicClose then
-					freezeTime = 10000
-					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.10)
-				elseif source == self.m_MechanicMedium then
+				if source == self.m_MechanicMarker[1] then
+					freezeTime = 12000
+					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.15)
+				elseif source == self.m_MechanicMarker[2] then
 					freezeTime = 18000
-					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.10, self.m_VehicleShopPrice*0.13)
-				elseif source == self.m_MechanicFar then
+					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.06, self.m_VehicleShopPrice*0.14)
+				elseif source == self.m_MechanicMarker[3] then
 					freezeTime = 28000
-					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.13, self.m_VehicleShopPrice*0.15)
+					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.04, self.m_VehicleShopPrice*0.17)
 				end
 				setTimer(function()
 					self.m_Vehicle:setFrozen(false)
@@ -240,7 +261,7 @@ function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
 			
-			if hitElement.vehicle:getSpeed() > 30 then
+			if hitElement.vehicle:getSpeed() > 40 then
 				hitElement:sendWarning("Fahre langsamer um das Fahrzeug abzugeben.")
 				return false
 			end
@@ -278,7 +299,7 @@ function ShopVehicleRob:calcPrice()
 	local price = 0
 	if self.m_Vehicle:getModel() == ShopVehicleRobManager:getSingleton().m_DemandedVehicle then	
 		if self.m_VehicleEstimated then
-			price = math.random(self.m_VehicleEstimated*1.05, self.m_VehicleEstimated*1.15)
+			price = math.random(self.m_VehicleEstimated*1.05, self.m_VehicleEstimated*1.17)
 		else
 			price = math.random(self.m_VehicleShopPrice*0.05, self.m_VehicleShopPrice*0.08)
 		end

@@ -65,7 +65,7 @@ function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, dep
 	for k,v in pairs(self.m_ValidWeapons) do
 		if v == true then
 			if k == 27 then
-				if localPlayer:getData("Faction:InSpecialDuty") then
+				if localPlayer:getData("Faction:InSpecialDuty") or localPlayer:getFaction():isEvilFaction() then
 					self:addWeaponToGUI(k, depotWeapons[k]["Waffe"], depotWeapons[k]["Munition"])	
 				end
 			else
@@ -234,7 +234,7 @@ function FactionWeaponShopGUI:factionReceiveWeaponShopInfos()
 end
 
 function FactionWeaponShopGUI:factionWeaponShopBuy()
-	if self.m_Cart[27] and not localPlayer:getData("Faction:InSpecialDuty") then
+	if self.m_Cart[27] and not localPlayer:getData("Faction:InSpecialDuty") and not localPlayer:getFaction():isEvilFaction() then
 		self.m_Cart[27]["Waffe"] = 0
 		self.m_Cart[27]["Munition"] = 0
 		ErrorBox:new("SPAZ-12 konnte nicht entnommen werden")
