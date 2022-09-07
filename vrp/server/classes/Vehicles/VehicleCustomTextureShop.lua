@@ -66,7 +66,7 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
 
         if instanceof(vehicle, CompanyVehicle) then
           if not vehicle:canBeModified() then
-              hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
+              hitElement:sendError(_("Dieser Unternehmens-Wagen darf nicht getunt werden!", hitElement))
               return
           end
 		elseif instanceof(vehicle, FactionVehicle) then
@@ -75,8 +75,16 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
+			if vehicle:getGroup() ~= hitElement:getGroup() then
+                hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+                return
+            end
             if not vehicle:canBeModified() then
                 hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
+                return
+            end
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(hitElement, "group", "editVehicleTexture") then
+                hitElement:sendError(_("Du bist nicht berechtigt Gruppen-Fahrzeuge zu tunen!", hitElement))
                 return
             end
         elseif vehicle:isPermanent() then

@@ -455,7 +455,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {2, CompanyStaticId.MECHANIC}, 
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel", "petrol_plus"},
+		fuelTypes = {"petrol", "diesel", "petrol_plus", "jetfuel"},
 	},
 	-- Faction fuelstations
 	{

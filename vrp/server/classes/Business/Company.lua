@@ -12,7 +12,7 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
+function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins, rankPermissions)
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_ShortName = ShortName
@@ -20,6 +20,7 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_Creator = Creator
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]
+	self.m_PlayerPermissions = players[3]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_LastNameChange = lastNameChange or 0
@@ -33,9 +34,11 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 
 	if rankLoans == "" then rankLoans = {} for i=0,5 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for company "..Id) end
 	if rankSkins == "" then rankSkins = {} for i=0,5 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for company "..Id) end
+	if not rankPermissions or rankPermissions == "" then rankPermissions = {} for i=0,5 do rankPermissions[i] = PermissionsManager:getSingleton():createRankPermissions("company", self.m_Id, i) end rankPermissions = toJSON(rankPermissions) outputDebug("Created RankPermissions for company "..Id) end
 
 	self.m_RankLoans = fromJSON(rankLoans)
 	self.m_RankSkins = fromJSON(rankSkins)
+	self.m_RankPermissions = fromJSON(rankPermissions)
 
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
 	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Company, Id)
@@ -72,7 +75,7 @@ function Company:save()
 	if self.m_Settings then
 		self.m_Settings:save()
 	end
-    sql:queryExec("UPDATE ??_companies SET RankLoans = ?, RankSkins = ?, Settings = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(Settings),self.m_Id)
+    sql:queryExec("UPDATE ??_companies SET RankLoans = ?, RankSkins = ?, Settings = ?, RankPermissions = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(Settings),toJSON(self.m_RankPermissions),self.m_Id)
 end
 
 function Company:virtual_constructor(...)
@@ -159,12 +162,16 @@ function Company:setSetting(category, key, value, responsiblePlayer)
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
 		if not responsiblePlayer:getCompany() then allowed = false end
 		if responsiblePlayer:getCompany() ~= self then allowed = false end
-		if self:getPlayerRank(responsiblePlayer) ~= CompanyRank.Leader then allowed = false end
+		if category == "Equipment" then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "editEquipment") then allowed = false end
+		elseif category == "Skin" then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "editRankSkins") then allowed = false end
+		end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
 	else
-		responsiblePlayer:sendError(_("Nur Leader (Rang %s) des Unternehmens %s können deren Einstellungen ändern!", responsiblePlayer, CompanyRank.Leader, self:getShortName()))
+		responsiblePlayer:sendError(_("Du bist nicht berechtigt die %s Einstellungen zu ändern!", responsiblePlayer, category))
 	end
 end
 
@@ -184,10 +191,12 @@ function Company:addPlayer(playerId, rank)
 	rank = rank or 0
 	self.m_Players[playerId] = rank
 	self.m_PlayerLoans[playerId] = 1
+	self.m_PlayerPermissions[playerId] = {}
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(self)
 		player:reloadBlips()
+		PermissionsManager:getSingleton():syncPermissions(player, "company")
 	end
 
 	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyLoanEnabled = 1, CompanyTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
@@ -210,6 +219,7 @@ function Company:removePlayer(playerId)
 
 	self.m_Players[playerId] = nil
 	self.m_PlayerLoans[playerId] = nil
+	self.m_PlayerPermissions[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:saveAccountActivity()
@@ -219,6 +229,7 @@ function Company:removePlayer(playerId)
 		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deinem Unternehmen entlassen!", player))
 		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
+		PermissionsManager:getSingleton():syncPermissions(player, "company", true)
 	end
 
 	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyLoanEnabled = 0, CompanyTraining = 0 WHERE Id = ?", sql:getPrefix(), playerId)
@@ -323,6 +334,14 @@ function Company:setPlayerLoanEnabled(playerId, state)
 
 	self.m_PlayerLoans[playerId] = state
 	sql:queryExec("UPDATE ??_character SET CompanyLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
+function Company:savePlayerPermissions(playerId)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	sql:queryExec("UPDATE ??_character SET CompanyPermissions = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_PlayerPermissions[tonumber(playerId)]) or toJSON({}), playerId)
 end
 
 function Company:getActivity(force)

@@ -70,15 +70,18 @@ function FactionManager:loadFactions()
   	local st, count = getTickCount(), 0
   	local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
   	for k, row in pairs(result) do
-		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled, FactionWeaponEnabled FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
-		local players, playerLoans, playerWeapons = {}, {}, {}
+		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled, FactionWeaponEnabled, FactionPermissions, FactionWeaponPermissions, FactionActionPermissions FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans, playerWeapons, playerPermissions, playerWeaponPermissions, playerActionPermissions = {}, {}, {}, {}, {}, {}
 		for i, factionRow in ipairs(result2) do
 			players[factionRow.Id] = factionRow.FactionRank
 			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 			playerWeapons[factionRow.Id] = factionRow.FactionWeaponEnabled
+			playerPermissions[factionRow.Id] = fromJSON(factionRow.FactionPermissions)
+			playerWeaponPermissions[factionRow.Id] = fromJSON(factionRow.FactionWeaponPermissions)
+			playerActionPermissions[factionRow.Id] = fromJSON(factionRow.FactionActionPermissions)
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans, playerWeapons}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans, playerWeapons, playerPermissions, playerWeaponPermissions, playerActionPermissions}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy, row.RankPermissions, row.RankActions)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
@@ -103,17 +106,57 @@ function FactionManager:getFromName(name)
 end
 
 function FactionManager:Event_factionSaveRank(rank,loan,rankWeapons)
+	local success = false
 	local faction = client:getFaction()
+	local wpn = {}
 	if faction then
 		if tonumber(loan) > FACTION_MAX_RANK_LOANS[rank] then
 			client:sendError(_("Der maximale Lohn für diesen Rang beträgt %d$", client, FACTION_MAX_RANK_LOANS[rank]))
 			return
 		end
-		faction:setRankLoan(rank,loan)
-		faction:setRankWeapons(rank,rankWeapons)
-		faction:save()
-		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
-		faction:addLog(client, "Fraktion", "hat die Einstellungen für Rang "..rank.." geändert!")
+		if tonumber(faction.m_RankLoans[tostring(rank)]) ~= tonumber(loan) then
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editLoan") then
+				if faction:getPlayerRank(client) > rank or faction:getPlayerRank(client) == FactionRank.Leader then
+					faction:setRankLoan(rank,loan)
+					success = true
+				else
+					client:sendError(_("Du kannst das Gehalt von dem Rang nicht verändern!", client))
+				end
+			else
+				client:sendError(_("Du bist nicht berechtigt das Gehalt zu ändern", client))
+			end
+		end
+
+		local newWeapons = false
+		for i, v in pairs(faction.m_RankWeapons[tostring(rank)]) do
+			if tonumber(rankWeapons[i]) ~= tonumber(v) then
+				newWeapons = true
+				break
+			end
+		end
+		if newWeapons then
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editWeaponPermissions") then
+				if faction:getPlayerRank(client) > rank or (PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "changePermissions") and faction:getPlayerRank(client) >= rank) then
+					for id, state in pairs(rankWeapons) do
+						if not PermissionsManager:getSingleton():isPlayerAllowedToTake(client, "faction", id) then
+							rankWeapons[id] = faction.m_RankWeapons[tostring(rank)][id]
+						end
+					end
+					faction:setRankWeapons(rank,rankWeapons)
+					success = true
+				else
+					client:sendError(_("Du kannst die Waffenrechte von dem Rang nicht verändern!", client))
+				end
+			else
+				client:sendError(_("Du bist nicht berechtigt die Rangwaffen zu ändern", client))
+			end
+		end
+		
+		if success then
+			faction:save()
+			client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
+			faction:addLog(client, "Fraktion", "hat die Einstellungen für Rang "..rank.." geändert!")
+		end
 		self:sendInfosToClient(client)
 	end
 end
@@ -125,11 +168,11 @@ function FactionManager:Event_factionEquipmentOptionRequest()
 end
 
 function FactionManager:Event_factionEquipmentOptionSubmit(update)
-	if client:getFaction() and client:getFaction():getPlayerRank(client) >= 5 then
+	if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editEquipment") then
 		client:getFaction():updateEquipmentPermissions(client, update)
 		client:triggerEvent("onRefreshEquipmentOption", client:getFaction():getEquipmentPermissions())
 	else
-		client:sendError(_("Du hast keine Berechtigung!", client))
+		client:sendError(_("Du bist nicht berechtigt die Equipment Einstellungen zu ändern!", client))
 	end
 end
 
@@ -144,7 +187,7 @@ end
 function FactionManager:Command_needhelp(player)
 	local faction = player:getFaction()
 	local player = player
-	if faction and (faction:isStateFaction() or faction:isEvilFaction()) then
+	if faction then
 		if player:isFactionDuty() then
 			if player:getInterior() == 0 and player:getDimension() == 0 then
 				if player.m_ActiveNeedHelp then return false end
@@ -155,6 +198,11 @@ function FactionManager:Command_needhelp(player)
 					visibility = {factionType = "State", duty = true}
 					for k, onlinePlayer in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
 						onlinePlayer:sendShortMessage(_("%s %s benötigt Unterstützung!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
+					end
+				elseif faction:isRescueFaction() then
+					visibility = {faction = {faction:getId()}, duty = true}
+					for k, onlinePlayer in pairs(FactionRescue:getSingleton():getOnlinePlayers(true, true)) do
+						onlinePlayer:sendShortMessage(_("%s %s fordert weitere Einsatzkräfte an!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
 					end
 				else
 					if not player:isPhoneEnabled() then player:sendError(_("Dein Handy ist ausgeschaltet!", player)) return false end
@@ -198,12 +246,22 @@ end
 
 function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
+	local wpn = {}
+	if faction:isEvilFaction() then
+		for i, v in pairs(factionWeaponDepotInfo) do
+			if v["Waffe"] ~= 0 then
+				wpn[i] = true
+			end
+		end
+	else
+		wpn = faction.m_ValidWeapons
+	end
 
 	if faction then --use triggerLatentEvent to improve serverside performance
-		if faction:getPlayerRank(client) < FactionRank.Manager then
+		if faction:getPlayerRank(client) < FactionRank.Manager and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editLoan") and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editWeaponPermissions") then
 			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames)
 		else
-			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames, faction.m_RankLoans, faction.m_ValidWeapons, faction.m_RankWeapons)
+			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames, faction.m_RankLoans, wpn, faction.m_RankWeapons)
 		end
 	else
 		client:triggerEvent("factionRetrieveInfo")
@@ -246,7 +304,7 @@ function FactionManager:Event_factionWithdraw(amount)
 	if not faction then return end
 	if not amount then return end
 
-	if faction:getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "withdrawMoney") then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -268,8 +326,8 @@ function FactionManager:Event_factionAddPlayer(player)
 	local faction = client:getFaction()
 	if not faction then return end
 
-	if faction:getPlayerRank(client) < FactionRank.Manager then
-		client:sendError(_("Du bist nicht berechtigt Fraktionnmitglieder hinzuzufügen!", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "invite") then
+		client:sendError(_("Du bist nicht berechtigt Fraktionsmitglieder hinzuzufügen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
@@ -303,14 +361,19 @@ function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, rea
 		return
 	end
 
-	if faction:getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "uninvite") then
 		client:sendError(_("Du kannst den Spieler nicht rauswerfen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
 
+	if faction:getPlayerRank(client) <= faction:getPlayerRank(playerId) then
+		client:sendError(_("Du kannst den Spieler nicht rauswerfen!", client))
+		return
+	end
+	
 	if faction:getPlayerRank(playerId) == FactionRank.Leader then
-		client:sendError(_("Du kannst den Fraktionnleiter nicht rauswerfen!", client))
+		client:sendError(_("Du kannst den Fraktionsleiter nicht rauswerfen!", client))
 		return
 	end
 
@@ -370,7 +433,7 @@ function FactionManager:Event_factionInvitationDecline(factionId)
 	end
 end
 
-function FactionManager:Event_factionRankUp(playerId)
+function FactionManager:Event_factionRankUp(playerId, leaderSwitch)
 	Async.create(
 		function (client)
 			if not playerId then return end
@@ -386,15 +449,27 @@ function FactionManager:Event_factionRankUp(playerId)
 				return
 			end
 
-			if faction:getPlayerRank(client) < FactionRank.Manager then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "changeRank") then
 				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 				-- Todo: Report possible cheat attempt
+				return
+			end
+
+			if faction:getPlayerRank(client) ~= FactionRank.Leader and faction:getPlayerRank(client) <= faction:getPlayerRank(playerId) + 1 then
+				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 				return
 			end
 
 			if client:getId() == playerId then
 				client:sendError(_("Du kannst deinen eigenen Rang nicht höher setzen!", client))
 				return
+			end
+
+			if faction:getPlayerRank(playerId) + 1 >= FactionRank.Manager then
+				if LeaderCheck:getSingleton():hasPlayerLeaderBan(playerId) then
+					client:sendError(_"Dieser Spieler kann aufgrund einer Leadersperre nicht befördert werden!")
+					return
+				end
 			end
 
 			local playerRank = faction:getPlayerRank(playerId)
@@ -405,6 +480,10 @@ function FactionManager:Event_factionRankUp(playerId)
 
 			if playerRank < FactionRank.Leader then
 				if playerRank < faction:getPlayerRank(client) then
+					if leaderSwitch then
+						self:switchLeaders(client, playerId)
+					end
+
 					faction:setPlayerRank(playerId, playerRank + 1)
 					HistoryPlayer:getSingleton():setHighestRank(playerId, (playerRank + 1), faction.m_Id, "faction")
 					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
@@ -417,6 +496,7 @@ function FactionManager:Event_factionRankUp(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
+					PermissionsManager:getSingleton():onRankChange("up", client, playerId, "faction")
 					Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 				else
 					client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, faction:getPlayerRank(client)))
@@ -447,11 +527,17 @@ function FactionManager:Event_factionRankDown(playerId)
 				return
 			end
 
-			if faction:getPlayerRank(client) < FactionRank.Manager then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "changeRank") then
 				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 				-- Todo: Report possible cheat attempt
 				return
 			end
+
+			if faction:getPlayerRank(client) ~= FactionRank.Leader and faction:getPlayerRank(client) <= faction:getPlayerRank(playerId) then
+				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
+				return
+			end
+			
 			local player, isOffline = DatabasePlayer.get(playerId)
 			if isOffline then
 				player:load()
@@ -470,6 +556,7 @@ function FactionManager:Event_factionRankDown(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
+					PermissionsManager:getSingleton():onRankChange("down", client, playerId, "faction")
 					Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(playerId)
 				else
 					client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
@@ -483,12 +570,32 @@ function FactionManager:Event_factionRankDown(playerId)
 	)(client)
 end
 
+function FactionManager:switchLeaders(oldLeader, newLeader)
+	Async.create(
+		function(oldLeader)
+			local faction = oldLeader:getFaction()
+			
+			faction:setPlayerRank(oldLeader, faction:getPlayerRank(oldLeader) - 1)
+			faction:addLog(newLeader, "Fraktion", "hat den Spieler "..oldLeader:getName().." auf Rang "..faction:getPlayerRank(oldLeader).." degradiert!")
+
+			if isElement(oldLeader) then
+				oldLeader:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, Account.getNameFromId(newLeader), faction:getPlayerRank(oldLeader)), faction:getName())
+				oldLeader:setPublicSync("FactionRank", faction:getPlayerRank(oldLeader))
+			end
+			
+			self:sendInfosToClient(oldLeader)
+			PermissionsManager:getSingleton():onRankChange("down", oldLeader, oldLeader:getId(), "faction")
+			Async.create(function(id) ServiceSync:getSingleton():syncPlayer(id) end)(oldLeader:getId())
+		end
+	)(oldLeader)
+end
+
 function FactionManager:Event_receiveFactionWeaponShopInfos()
 	local faction = client:getFaction()
 	local depot = faction.m_Depot
 	local playerId = client:getId()
 	local rank = faction.m_Players[playerId]
-	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,faction.m_ValidWeapons, faction.m_WeaponDepotInfo, depot:getWeaponTable(id), faction:getRankWeapons(rank))
+	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,faction.m_ValidWeapons, faction.m_WeaponDepotInfo, depot:getWeaponTable(id), faction:getRankWeapons(rank), faction.m_PlayerWeaponPermissions[playerId])
 end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)
@@ -511,10 +618,10 @@ function FactionManager:Event_factionRespawnVehicles()
 	if client:getFaction() then
 		local faction = client:getFaction()
 
-		if faction:getPlayerRank(client) >= FactionRank.Rank4 or (faction:getPlayerRank(client) >= FactionRank.Rank3 and faction:getId() == 3) then
+		if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "vehicleRespawnAll") then
 			faction:respawnVehicles()
 		else
-			client:sendError(_("Die Fahrzeuge können erst ab Rang %d respawnt werden!", client, FactionRank.Rank4))
+			client:sendError(_("Dazu bist du nicht berechtigt.", client))
 		end
 	end
 end
@@ -533,7 +640,7 @@ function FactionManager:Event_requestDiplomacy(factionId)
 end
 
 function FactionManager:Event_changeDiplomacy(target, diplomacy)
-	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editDiplomacy") then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
@@ -583,7 +690,7 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 		client:sendError(_("Die Anfrage ist nicht mehr verfügbar!", client))
 	end
 
-	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editDiplomacy")  then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
@@ -630,7 +737,7 @@ end
 
 function FactionManager:Event_changePermission(permission)
 	local faction = client:getFaction()
-	if faction:getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editDiplomacy")  then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
@@ -654,12 +761,18 @@ function FactionManager:Event_ToggleLoan(playerId)
 		return
 	end
 
-	if faction:getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "toggleLoan") then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
-
+	
 	local current = faction:isPlayerLoanEnabled(playerId)
+
+	if faction:getPlayerRank(client) <= faction:getPlayerRank(playerId) and faction:getPlayerRank(client) ~= FactionRank.Leader then
+		client:sendError(_("Du kannst das Gehalt vom dem Spieler nicht %saktivieren", client, current and "de" or ""))
+		return
+	end
+
 	faction:setPlayerLoanEnabled(playerId, current and 0 or 1)
 	self:sendInfosToClient(client)
 
@@ -676,12 +789,18 @@ function FactionManager:Event_ToggleWeapon(playerId)
 		return
 	end
 
-	if faction:getPlayerRank(client) < FactionRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "toggleWeapon") then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
 
 	local current = faction:isPlayerWeaponEnabled(playerId)
+
+	if faction:getPlayerRank(client) <= faction:getPlayerRank(playerId) and faction:getPlayerRank(client) ~= FactionRank.Leader then
+		client:sendError(_("Du kannst die Waffenentnahme vom dem Spieler nicht %saktivieren", client, current and "de" or ""))
+		return
+	end
+
 	faction:setPlayerWeaponEnabled(playerId, current and 0 or 1)
 	self:sendInfosToClient(client)
 
@@ -695,7 +814,7 @@ function FactionManager:Event_requestSkins()
 	end
 	local f = client:getFaction()
 	local r = f:getPlayerRank(client)
-	triggerClientEvent(client, "openSkinSelectGUI", client, f:getSkinsForRank(r), f:getId(), "faction", r >= FactionRank.Manager, f:getAllSkins())
+	triggerClientEvent(client, "openSkinSelectGUI", client, f:getSkinsForRank(r), f:getId(), "faction", PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editRankSkins"), f:getAllSkins())
 end
 
 function FactionManager:Event_setPlayerDutySkin(skinId)
@@ -716,8 +835,8 @@ function FactionManager:Event_UpdateSkinPermissions(skinTable)
 		client:sendError(_("Du gehörst keiner Fraktion an!", client))
 		return false
 	end
-	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
-		client:sendError(_("Dein Rang ist zu niedrig!", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editRankSkins") then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return false
 	end
 	for i, v in pairs(skinTable) do
@@ -730,7 +849,7 @@ function FactionManager:Event_UpdateSkinPermissions(skinTable)
 
 	local f = client:getFaction()
 	local r = f:getPlayerRank(client)
-	triggerClientEvent(client, "openSkinSelectGUI", client, f:getSkinsForRank(r), f:getId(), "faction", r >= FactionRank.Manager, f:getAllSkins())
+	triggerClientEvent(client, "openSkinSelectGUI", client, f:getSkinsForRank(r), f:getId(), "faction", PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editRankSkins"), f:getAllSkins())
 end
 
 function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
@@ -833,4 +952,13 @@ function FactionManager:factionForceOffduty(player)
 end
 function FactionManager:Event_storageSelecteWeapons(weapons)
 	client:getFaction():storageWeapons(client, weapons)
+end
+
+function FactionManager:sendPermissionsToClient(faction)
+	local players = faction:getOnlinePlayers()
+	local permissions = faction.m_Permissions
+
+	for index, player in pairs(players) do
+		player:triggerEvent("onClientPermissionsReceive", faction:getId(), permissions)
+	end
 end

@@ -34,12 +34,12 @@ end
 function ForumPermissions:Event_SyncGroups(factionOrCompany, id)
 	if factionOrCompany == "faction" or factionOrCompany == "company" then
 		if factionOrCompany == "faction" then
-			if client:getFaction():getPlayerRank(client) < CompanyRank.Manager then
+			if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt!", client))
 				return
 			end
 		else
-			if client:getCompany():getPlayerRank(client) < FactionRank.Manager then
+			if client:getCompany():getPlayerRank(client) < CompanyRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt!", client))
 				return
 			end

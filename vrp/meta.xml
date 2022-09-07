@@ -24,6 +24,7 @@
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 	<script src="shared/constants/injury.lua" type="shared"/>
 	<script src="shared/constants/company.lua" type="shared"/>
+	<script src="shared/constants/permissions.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -117,6 +118,8 @@
 	<script src="server/classes/HouseGarage.lua" type="server"/>
 	<script src="server/classes/Skyscraper.lua" type="server"/>
 	<script src="server/classes/SkyscraperManager.lua" type="server"/>
+	<script src="server/classes/PermissionsManager.lua" type="server"/>
+	<script src="server/classes/LeaderCheck.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -616,7 +619,8 @@
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
 	<script src="client/classes/CustomAnimationManager.lua" type="client"/>
-
+	<script src="client/classes/PermissionsManager.lua" type="client"/>
+	
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
@@ -838,6 +842,7 @@
 	<script src="client/classes/GUIForms/Admin/AdminTransactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminLeaderBanGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/Company/VehicleImportListGUI.lua" type="client"/>
 
@@ -988,6 +993,8 @@
 	<script src="client/classes/GUIForms/InjuryTreatmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/PlayerPermissionsGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/RankPermissionsGUI.lua" type="client" />
 	<script src="client/classes/Faction/Gangwar/GangwarPickGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>

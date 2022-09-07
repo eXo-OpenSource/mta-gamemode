@@ -225,6 +225,7 @@ function Core:afterLogin()
 	Atrium:new()
 	ElementInfoManager:new()
 	AtmManager:new()
+	PermissionsManager:new()
 	if EVENT_HALLOWEEN then
 		HalloweenEasterEggs:new()
 	end

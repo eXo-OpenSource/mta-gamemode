@@ -209,16 +209,20 @@ function SanNews:Event_toggleMessage()
 end
 
 function SanNews:Event_startStreetrace()
-	if not EventManager:getSingleton():isEvent(self.m_RunningEvent) then
-		self.m_RunningEvent = EventManager:getSingleton():openRandomEvent()
-		self:addLog(client, "Events", "hat ein Straßenrennen gestartet!")
+	if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "startStreetRace") then
+		if not EventManager:getSingleton():isEvent(self.m_RunningEvent) then
+			self.m_RunningEvent = EventManager:getSingleton():openRandomEvent()
+			self:addLog(client, "Events", "hat ein Straßenrennen gestartet!")
+		else
+			client:sendError("Es läuft bereits ein Event!")
+		end
 	else
-		client:sendError("Es läuft bereits ein Event!")
+		client:sendError(_"Du bist nicht berechtigt ein Straßenrennen zu starten!")
 	end
 end
 
 function SanNews:Event_addBlip(posX, posY, text)
-	if self:getPlayerRank(client) == CompanyRank.Normal then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "addBlip") then
 		client:sendError("Du bist nicht berechtigt Marker zu erstellen!")
 		return
 	end
@@ -235,6 +239,11 @@ function SanNews:Event_addBlip(posX, posY, text)
 end
 
 function SanNews:Event_deleteBlips()
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "addBlip") then
+		client:sendError("Du bist nicht berechtigt Marker zu entfernen!")
+		return
+	end
+
 	for _, blip in pairs(self.m_Blips) do
 		blip:delete()
 	end

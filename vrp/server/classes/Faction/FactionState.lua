@@ -1839,7 +1839,7 @@ function FactionState:Event_givePANote(target, note)
 	local faction = client:getFaction()
 	if faction and faction:getId() == 3 then
 		if client:isFactionDuty() then
-			if faction:getPlayerRank(client) < FactionRank.Manager then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "setPaNote") then
 				client:sendError(_("Du bist nicht berechtig GWD-Noten auszuteilen!", client))
 				return
 			end
@@ -1975,7 +1975,7 @@ end
 function FactionState:Event_freePlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
-		if client:isFactionDuty() and faction:getPlayerRank(client) >= FactionRank.Rank3 then
+		if client:isFactionDuty() and PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "releaseFromJail") then
 			if target and isElement(target) then
 				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
 				local msg = ("%s hat %s aus dem Knast entlassen!"):format(client:getName(), target:getName())
@@ -1986,7 +1986,7 @@ function FactionState:Event_freePlayer(target)
 				client:sendError(_("Spieler nicht gefunden!", client))
 			end
 		else
-			client:sendError(_("Du bist nicht berechtigt! Ab Rang %d!", client, FactionRank.Rank3))
+			client:sendError(_("Du bist nicht berechtigt einen Spieler aus dem Knast zu entlassen!", client))
 		end
 	end
 end
@@ -2083,14 +2083,22 @@ end
 function FactionState:Event_bugAction(action, id)
 	if self.m_Bugs[id] then
 		if action == "disable" then
-			self.m_Bugs[id]["element"].BugId = nil
-			self.m_Bugs[id]["element"]:setData("Wanze", false, true)
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "disableBug") then
+				self.m_Bugs[id]["element"].BugId = nil
+				self.m_Bugs[id]["element"]:setData("Wanze", false, true)
 
-			self.m_Bugs[id] = {}
-			self:sendShortMessage(client:getName().." hat Wanze "..id.." deaktiviert!")
+				self.m_Bugs[id] = {}
+				self:sendShortMessage(client:getName().." hat Wanze "..id.." deaktiviert!")
+			else
+				client:sendError(_"Du bist nicht berechtigt Wanzen zu deaktivieren")
+			end
 		elseif action == "clearLog" then
-			self.m_Bugs[id]["log"] = {}
-			client:sendSuccess(_("Du hast den Log der Wanze %d gelöscht!", client, id))
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "clearBugLog") then
+				self.m_Bugs[id]["log"] = {}
+				client:sendSuccess(_("Du hast den Log der Wanze %d gelöscht!", client, id))
+			else
+				client:sendError(_"Du bist nicht berechtigt den Log von Wanzen zu löschen")
+			end
 		end
 		client:triggerEvent("receiveBugs", self.m_Bugs)
 	else
@@ -2210,13 +2218,17 @@ function FactionState:forceCloseAreaGates()
 end
 
 function FactionState:Event_DeactivateAreaAlarm()
-	if self.m_AreaAlarmActivated then
-		self:stopAreaAlert()
-		self.m_AreaAlarmActivated = false
+	if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "toggleAreaAlarm") then
+		if self.m_AreaAlarmActivated then
+			self:stopAreaAlert()
+			self.m_AreaAlarmActivated = false
+		else
+			self.m_AreaAlarmActivated = true
+		end
+		FactionManager.Map[3]:sendShortMessage(("%s hat den Area-Alarm %s!"):format(client:getName(), self.m_AreaAlarmActivated and "aktiviert" or "deaktiviert"))
 	else
-		self.m_AreaAlarmActivated = true
+		client:sendError(_"Du bist nicht berechtigt den Area Alarm zu de/aktivieren!")
 	end
-	FactionManager.Map[3]:sendShortMessage(("%s hat den Area-Alarm %s!"):format(client:getName(), self.m_AreaAlarmActivated and "aktiviert" or "deaktiviert"))
 end
 
 function FactionState:Event_dragFromVehicle(target)

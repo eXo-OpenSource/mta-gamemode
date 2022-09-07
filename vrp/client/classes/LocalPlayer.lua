@@ -30,7 +30,10 @@ function LocalPlayer:constructor()
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
 	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
 	self.m_BikeBug = setTimer(bind(self.checkBikeBug, self), 250, 0)
-
+	self.m_RankPermissions = {}
+	self.m_PlayerPermissions = {}
+	self.m_PlayerActionPermissions = {}
+	self.m_PlayerWeaponPermissions = {}
 
 
 	-- Since the local player exist only once, we can add the events here

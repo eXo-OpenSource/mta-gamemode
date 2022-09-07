@@ -349,6 +349,10 @@ end
 
 function PublicTransport:Event_changeBusDutyState(state, arg, arg2) -- from clientside mouse menu
 	if not client.vehicle then return end
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "startBusTour") then 
+		client:sendError(_"Du bist nicht berechtigt eine Buslinie zu bedienen!") 
+		return 
+	end
 	if state == "dutyLine" then
 		self:startBusTour(client.vehicle, client, arg, arg2)
 	elseif state == "dutySpecial" then

@@ -937,7 +937,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
-	if weaponId == 27 then client:sendError(_("Du kannst diese Waffe nicht einlagern!", client)) return end
+	--if weaponId == 27 then client:sendError(_("Du kannst diese Waffe nicht einlagern!", client)) return end
 
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then

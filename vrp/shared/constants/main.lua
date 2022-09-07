@@ -240,6 +240,7 @@ ADMIN_RANK_PERMISSION = {
 	["multiAccountMenu"] = RANK.Supporter, -- supporters are only allowed to see, administrators are allowed to create and delete multiaccounts
 	["serialAccountMenu"] = RANK.Supporter,
 	["vehicleMenu"] = RANK.Moderator,
+	["leaderBanMenu"] = RANK.Administrator, ---- supporters are only allowed to see, administrators are allowed to create and delete leaderbans
 
 	["openMapEditor"] = RANK.Moderator,
 	["createNewMap"] = RANK.Moderator,

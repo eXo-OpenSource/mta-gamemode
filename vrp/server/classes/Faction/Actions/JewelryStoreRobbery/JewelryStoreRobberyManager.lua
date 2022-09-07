@@ -318,6 +318,11 @@ function JewelryStoreRobberyManager:Event_PedTargetted(ped, attacker)
 				return false
 			end
 
+			if not PermissionsManager:getSingleton():isPlayerAllowedToStart(attacker, "faction", "JewelryStoreRobbery") then
+				attacker:sendError(_("Du bist nicht berechtigt einen Juwelierraub zu starten!", attacker))
+				return false
+			end
+
 			if FactionState:getSingleton():countPlayers() < self.m_MinJewelryRobberyStateMembers and not DEBUG then
 				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!", attacker, self.m_MinJewelryRobberyStateMembers))
 				return false

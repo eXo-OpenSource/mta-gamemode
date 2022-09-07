@@ -414,8 +414,8 @@ function ShopManager:withdraw(amount, shopId)
 	if shop then
 		if not amount then return end
 
-		if not shop:isManageAllowed(client) then
-			client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "withdrawBIZMoney") then
+			client:sendError(_("Du bist nicht berechtigt Geld von Shops abzuheben!", client))
 			-- Todo: Report possible cheat attempt
 			return
 		end

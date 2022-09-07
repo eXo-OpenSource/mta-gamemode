@@ -17,7 +17,7 @@ end
 addRemoteEvents{"showAdminMenu", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney", "adminReceiveOfflineWarns"}
 
 function AdminGUI:constructor(money)
-	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
+	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 580)
 
 	self.m_adminButton = {}
 
@@ -95,6 +95,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("transactionMenu", "Transaktions-Menü", self.onGeneralButtonClick, self.m_Width-225, 390, 200, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("multiAccountMenu", "Multi-Accounts", self.onGeneralButtonClick, self.m_Width-225, 430, 200, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("serialAccountMenu", "Serial-Account-Verknüpfungen", self.onGeneralButtonClick, self.m_Width-225, 470, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("leaderBanMenu", "Leadersperren-Menü", self.onGeneralButtonClick, self.m_Width-225, 510, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -614,6 +615,9 @@ function AdminGUI:onGeneralButtonClick(func)
 		else
 			ErrorBox:new("Ungültige Koordinaten-Angabe")
 		end
+	elseif func == "leaderBanMenu" then
+		self:close()
+		AdminLeaderBanGUI:new()
 	end
 end
 

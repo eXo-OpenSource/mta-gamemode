@@ -129,7 +129,7 @@ function GroupPropertyManager:BuyProperty( Id )
 		client:sendError("Du bist in keiner Firma oder Gang!")
 		return
 	end
-	if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "buyProperty") then
 		client:sendError("Du bist nicht berechtigt eine Immobilie für deine Firma/Gang zu kaufen!")
 		return
 	end
@@ -180,7 +180,7 @@ function GroupPropertyManager:SellProperty(  )
 			client:sendError("Du bist in keiner Firma oder Gang!")
 			return
 		end
-		if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "sellProperty") then
 			client:sendError("Du bist nicht berechtigt diese Immobilie zu verkaufen!")
 			return
 		end

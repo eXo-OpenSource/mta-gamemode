@@ -147,13 +147,15 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 		end
 
 		if localPlayer:getFaction():getId() == 3 then
-			self:addItem(_"Fraktion: GWD-Note vergeben",
-				function()
-					if self:getElement() then
-						StateFactionNoteGUI:new(self:getElement())
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo("faction", "setPaNote") then
+				self:addItem(_"Fraktion: GWD-Note vergeben",
+					function()
+						if self:getElement() then
+							StateFactionNoteGUI:new(self:getElement())
+						end
 					end
-				end
-			):setIcon(FontAwesomeSymbols.File)
+				):setIcon(FontAwesomeSymbols.File)
+			end
 		elseif localPlayer:getFaction():getId() == 2 then
 			self:addItem(_"Fraktion: Wanze verstecken",
 				function()

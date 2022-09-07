@@ -369,7 +369,7 @@ factionWeaponDepotInfo = {
 	[17] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 150, ["MagazinPreis"] = 0}, -- Tear Gas
 	[18] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 80, ["MagazinPreis"] = 0}, -- Molotov Cocktails
 	[22] = {["Waffe"] = 30, ["Magazine"] = 50, ["WaffenPreis"] = 140, ["MagazinPreis"] = 20}, -- Pistol
-	[23] = {["Waffe"] = 10, ["Magazine"] = 40, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Taser
+	[23] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Taser
 	[24] = {["Waffe"] = 30, ["Magazine"] = 60, ["WaffenPreis"] = 550, ["MagazinPreis"] = 100}, -- Deagle
 	[25] = {["Waffe"] = 34, ["Magazine"] = 200, ["WaffenPreis"] = 170, ["MagazinPreis"] = 3}, -- Shotgun
 	[26] = {["Waffe"] = 16, ["Magazine"] = 60, ["WaffenPreis"] = 200, ["MagazinPreis"] = 5}, -- Sawn-Off Shotgun

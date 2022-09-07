@@ -56,6 +56,10 @@ end
 
 function ArmsDealer:checkoutCart(cart)
     if not ActionsCheck:getSingleton():isActionAllowed(client) then return end
+    if not PermissionsManager:getSingleton():isPlayerAllowedToStart(client, "faction", "Airdrop") then
+		client:sendError(_"Du bist nicht berechtigt einen Airdrop zu starten!")
+		return
+	end
 	if FactionState:getSingleton():countPlayers() < ARMSDEALER_MIN_MEMBERS then
        return client:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",client, ARMSDEALER_MIN_MEMBERS))
     end

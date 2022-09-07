@@ -919,7 +919,7 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
+		if source:hasKey(client) or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "vehiclePark")) then
 			if source:isBroken() then
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
@@ -940,6 +940,11 @@ function VehicleManager:Event_vehiclePark()
 			if source:getInterior() == 0 or source.m_InParkGarage or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
+				
+				if (source:getGroup() and client:getGroup()) and (source:getGroup() == client:getGroup()) then
+					client:getGroup():addLog(client, "Fahrzeuge", ("hat das Fahrzeug %s (%d) umgeparkt!"):format(source:getName(), source:getId()))
+				end
+
 			else
 				client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
 			end
@@ -1203,7 +1208,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 			return
 		else
 			if (not client:getCompany()) or source:getCompany():getId() ~= client:getCompany():getId() then
-				client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
+				client:sendError(_("Diese Fahrzeug ist nicht von deinen Unternehmen!", client))
 				return
 			end
 			if client:getCompany():getPlayerRank(client) >= 3 then
@@ -1224,6 +1229,11 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		else
 			if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
 				client:sendError(_("Diese Fahrzeug ist nicht von deiner Gruppe!", client))
+				return
+			end
+
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "vehicleRespawn") then
+				client:sendError(_("Du bist nicht berechtigt Gruppen-Fahrzeuge zu respawnen!", client))
 				return
 			end
 

@@ -41,6 +41,20 @@ function FactionVehicle:constructor(data)
 				if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
 					cancelEvent()
 				end
+				if source:getModel() == 432 then
+					if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useRhino") then
+						return
+					end
+				elseif source:getModel() == 520 then
+					if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useHydra") then
+						return
+					end
+				elseif source:getModel() == 425 then
+					if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useHunter") then
+						return
+					end
+				end
+				cancelEvent()
 			end
 		end)
 	end

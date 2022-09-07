@@ -85,6 +85,11 @@ function PrisonBreakManager:BombArea_Place(bombArea, player)
 		return false
     end
     
+	if not PermissionsManager:getSingleton():isPlayerAllowedToStart(player, "faction", "PrisonBreak") then
+		player:sendError(_"Du bist nicht berechtigt einen Knastausbruch zu starten!")
+		return false
+	end
+
 	if FactionState:getSingleton():countPlayers() < PrisonBreakManager.OfficerCount then
 		player:sendError("Es sind nicht genügend Staatsfraktionisten online!")
 		return false

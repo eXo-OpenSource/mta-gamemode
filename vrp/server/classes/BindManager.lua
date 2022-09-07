@@ -85,8 +85,8 @@ function BindManager:isManager(player, type)
 end
 
 function BindManager:Event_editBind(ownerType, id, func, message)
-	if not self:isManager(client, ownerType) then
-		client:sendError(_("Du hast dafür keine Berechtigung! (Ab Co-Leader)", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, ownerType, "editBinds") then
+		client:sendError(_("Du bist nicht berechtigt Binds zu editieren!", client))
 		return
 	end
 	id = tonumber(id)
@@ -111,8 +111,8 @@ function BindManager:Event_editBind(ownerType, id, func, message)
 end
 
 function BindManager:Event_deleteBind(ownerType, id)
-	if not self:isManager(client, ownerType) then
-		client:sendError(_("Du hast dafür keine Berechtigung! (Ab Co-Leader)", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, ownerType, "editBinds") then
+		client:sendError(_("Du bist nicht berechtigt Binds zu löschen!", client))
 		return
 	end
 	id = tonumber(id)
@@ -134,8 +134,8 @@ function BindManager:Event_deleteBind(ownerType, id)
 end
 
 function BindManager:Event_addBind(ownerType, func, message)
-	if not self:isManager(client, ownerType) then
-		client:sendError(_("Du hast dafür keine Berechtigung! (Ab Co-Leader)", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, ownerType, "editBinds") then
+		client:sendError(_("Du bist nicht berechtigt Binds hinzuzufügen!", client))
 		return
 	end
 	local owner = self:getOwner(client, ownerType)
