@@ -63,6 +63,7 @@ function LeaderCheck:Event_editLeaderBans(type, player, pReason, pValidUntil, pA
                 if result then  
                     self.m_LeaderBans[tonumber(playerId)] = {validUntil = pValidUntil, reason = pReason, admins = nameTable, createdAt = getRealTime().timestamp}
                     Admin:getSingleton():sendShortMessage(_("%s hat %s eine Leadersperre gegeben!", client, client:getName(), Account.getNameFromId(playerId)))
+                    StatisticsLogger:getSingleton():addAdminAction(client, "addLeaderBan", player)
                 end
             else
                 client:sendError(_"Der Spieler hat bereits eine Leadersperre!")
@@ -73,6 +74,7 @@ function LeaderCheck:Event_editLeaderBans(type, player, pReason, pValidUntil, pA
             if result then
                 self.m_LeaderBans[tonumber(playerId)] = nil
                 Admin:getSingleton():sendShortMessage(_("%s hat die Leadersperre von %s entfernt!", client, client:getName(), Account.getNameFromId(playerId)))
+                StatisticsLogger:getSingleton():addAdminAction(client, "removeLeaderBan", player)
             end
         end
         self:requestLeaderBans(client)
