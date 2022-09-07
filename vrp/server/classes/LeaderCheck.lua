@@ -93,6 +93,7 @@ function LeaderCheck:requestLeaderBans(player)
             table.insert(tAdminNames, admin)
         end
         temp[i] = {playerName = player, adminNames = tAdminNames}
+        tAdminNames = {}
     end
     client:triggerEvent("adminSendLeaderBansToClient", self.m_LeaderBans, temp)
 end
