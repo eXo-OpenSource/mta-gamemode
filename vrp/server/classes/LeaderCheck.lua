@@ -50,20 +50,24 @@ function LeaderCheck:Event_editLeaderBans(type, player, pReason, pValidUntil, pA
 
         if type == "add" then
             if not self.m_LeaderBans[tonumber(playerId)] then
-                local nameTable = split(pAdmins, ",")
-                for i, v in pairs(nameTable) do
-                    if Account.getIdFromName(v) then 
-                        nameTable[i] = Account.getIdFromName(v)
-                    else
-                        return client:sendError("Fehler bei eingetragenen Admins (Überprüfe die Namen).")
+                if pValidUntil == 0 or pValidUntil - getRealTime().timestamp > 0 then
+                    local nameTable = split(pAdmins, ",")
+                    for i, v in pairs(nameTable) do
+                        if Account.getIdFromName(v) then 
+                            nameTable[i] = Account.getIdFromName(v)
+                        else
+                            return client:sendError("Fehler bei eingetragenen Admins (Überprüfe die Namen).")
+                        end
                     end
-                end
 
-                local result = sql:queryExec("INSERT INTO ??_leader_bans (PlayerId, AdminId, Admins, CreatedAt, ValidUntil, Reason) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), playerId, client:getId(), toJSON(nameTable), getRealTime().timestamp, pValidUntil, pReason)
-                if result then  
-                    self.m_LeaderBans[tonumber(playerId)] = {validUntil = pValidUntil, reason = pReason, admins = nameTable, createdAt = getRealTime().timestamp}
-                    Admin:getSingleton():sendShortMessage(_("%s hat %s eine Leadersperre gegeben!", client, client:getName(), Account.getNameFromId(playerId)))
-                    StatisticsLogger:getSingleton():addAdminAction(client, "addLeaderBan", player)
+                    local result = sql:queryExec("INSERT INTO ??_leader_bans (PlayerId, AdminId, Admins, CreatedAt, ValidUntil, Reason) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), playerId, client:getId(), toJSON(nameTable), getRealTime().timestamp, pValidUntil, pReason)
+                    if result then  
+                        self.m_LeaderBans[tonumber(playerId)] = {validUntil = pValidUntil, reason = pReason, admins = nameTable, createdAt = getRealTime().timestamp}
+                        Admin:getSingleton():sendShortMessage(_("%s hat %s eine Leadersperre gegeben!", client, client:getName(), Account.getNameFromId(playerId)))
+                        StatisticsLogger:getSingleton():addPunishLog(client, playerId, "addLeaderBan", pReason, pValidUntil == 0 and 0 or pValidUntil - getRealTime().timestamp)
+                    end
+                else
+                    client:sendError(_"Fehler bei eingegebener Dauer (Überprüfe den Timestamp).")
                 end
             else
                 client:sendError(_"Der Spieler hat bereits eine Leadersperre!")
@@ -74,7 +78,7 @@ function LeaderCheck:Event_editLeaderBans(type, player, pReason, pValidUntil, pA
             if result then
                 self.m_LeaderBans[tonumber(playerId)] = nil
                 Admin:getSingleton():sendShortMessage(_("%s hat die Leadersperre von %s entfernt!", client, client:getName(), Account.getNameFromId(playerId)))
-                StatisticsLogger:getSingleton():addAdminAction(client, "removeLeaderBan", player)
+                StatisticsLogger:getSingleton():addPunishLog(client, playerId, "removeLeaderBan", pReason)
             end
         end
         self:requestLeaderBans(client)

@@ -13,7 +13,7 @@ function PermissionsManager:constructor()
 	self.m_Types = {["faction"] = 1, ["company"] = 2, ["group"] = 3}
 	self.m_LeaderRank = {["faction"] = 6, ["company"] = 5, ["group"] = 6}
 
-    triggerServerEvent("syncPermissions", localPlayer, false, "all")
+    triggerServerEvent("syncPermissions", localPlayer, localPlayer, "all")
 
     addEventHandler("recievePermissions", localPlayer, bind(self.Event_recievePermissions, self))
 end

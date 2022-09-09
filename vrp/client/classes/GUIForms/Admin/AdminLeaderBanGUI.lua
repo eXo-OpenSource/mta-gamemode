@@ -44,9 +44,9 @@ function AdminLeaderBanGUI:constructor()
         if self.m_GridList:getSelectedItem() then
             local id = self.m_GridList:getSelectedItem():getColumnText(1)
             local name = self.m_GridList:getSelectedItem():getColumnText(2)
-            QuestionBox:new(_("Möchtest du die Leadersperre von %s aufheben?", name),
-                function()
-                    triggerServerEvent("adminEditLeaderBans", localPlayer, "remove", name)
+            InputBox:new("Leadersperre aufheben", "Aus welchem Grund möchtest du die Sperre aufheben?", 
+                function(text)
+                    triggerServerEvent("adminEditLeaderBans", localPlayer, "remove", name, text)
                 end
             )
         end

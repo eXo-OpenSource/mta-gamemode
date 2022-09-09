@@ -97,7 +97,7 @@ function FactionGUI:constructor()
 	self.m_FactionToggleWeaponButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Waffen deaktivieren", tabMitglieder):setBarEnabled(true)
 	self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 	self.m_FactionForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.75, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
-	self.m_FactionPlayerPermissionsButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.75, self.m_Width*0.3, self.m_Height*0.07, _"Rechteverwaltung", self.m_tabMitglieder):setBarEnabled(true)
+	self.m_FactionPlayerPermissionsButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.75, self.m_Width*0.3, self.m_Height*0.07, _"Rechte bearbeiten", self.m_tabMitglieder):setBarEnabled(true)
 	self.m_FactionAddPlayerButton:setEnabled(false)
 	self.m_FactionRemovePlayerButton:setEnabled(false)
 	self.m_FactionRankUpButton:setEnabled(false)
@@ -176,11 +176,11 @@ function FactionGUI:addLeaderTab()
 		self.m_LeaderLoan:setNumeric(true, true)
 		self.m_LeaderLoan:setVisible(false)
 
-		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rechte bearbeiten", self.m_TabLeader):setBarEnabled(true)
+		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", self.m_TabLeader):setBarEnabled(true)
 		self.m_ChangePermissions.onLeftClick = bind(self.openPermissionsGUI, self, "permission")
 		self.m_ChangePermissions:setEnabled(false)
 
-		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsrechte bearbeiten", self.m_TabLeader):setBarEnabled(true)
+		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsstartberechtigungen", self.m_TabLeader):setBarEnabled(true)
 		self.m_ChangeActionPermissions.onLeftClick = bind(self.openPermissionsGUI, self, "action")
 		self.m_ChangeActionPermissions:setEnabled(false)
 
@@ -605,7 +605,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, ac
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
-			self.m_Id = id
+			self.m_Id = localPlayer:getFaction():isStateFaction() and 1 or id
 			local x, y = self.m_FactionNameLabel:getPosition()
 			self.m_RankNames = rankNames
 			self.m_FactionNameLabel:setText(name)

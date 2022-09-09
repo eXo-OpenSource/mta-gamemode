@@ -334,21 +334,20 @@ function PermissionsManager:isPlayerAllowedToTake(player, type, weapon)
 end
 
 function PermissionsManager:syncPermissions(player, type, uninvite)
-	if not client then client = player end
 	local temp = {}
 
 	if not uninvite then
 		for i, type in pairs(type == "all" and {"faction", "company", "group"} or {type}) do
-			if self:getInstance(client, type) then
-				local instance = self:getInstance(client, type)
+			if self:getInstance(player, type) then
+				local instance = self:getInstance(player, type)
 				temp[type] = {}
 				temp[type]["permission"] = instance.m_RankPermissions
-				temp[type]["playerPermission"] = instance.m_PlayerPermissions[client:getId()]
+				temp[type]["playerPermission"] = instance.m_PlayerPermissions[player:getId()]
 				if type == "faction" then
 					temp[type]["action"] = instance.m_RankActions
 					temp[type]["weapon"] = instance.m_RankWeapons
-					temp[type]["playerAction"] = instance.m_PlayerActionPermissions[client:getId()]
-					temp[type]["playerWeapon"] = instance.m_PlayerWeaponPermissions[client:getId()]
+					temp[type]["playerAction"] = instance.m_PlayerActionPermissions[player:getId()]
+					temp[type]["playerWeapon"] = instance.m_PlayerWeaponPermissions[player:getId()]
 				end 
 			end
 		end
@@ -361,8 +360,7 @@ function PermissionsManager:syncPermissions(player, type, uninvite)
 		temp[type]["playerAction"] = {}
 		temp[type]["playerWeapon"] = {}
 	end
-
-	client:triggerEvent("recievePermissions", temp)
+	player:triggerEvent("recievePermissions", temp)
 end
 
 function PermissionsManager:onRankChange(changeType, changer, playerId, type)

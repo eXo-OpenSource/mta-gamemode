@@ -50,11 +50,11 @@ function PlayerPermissionsGUI:updateList(data, permissionsType)
 	for name, info in pairs(data) do
 		local item
 		if permissionsType == "permission" then
-			item = self.m_PermissionsList:addItem(PERMISSION_NAMES[name], (info == "default" and _"Rangstandart") or (info and _"Erlaubt" or _"Verboten"))
+			item = self.m_PermissionsList:addItem(PERMISSION_NAMES[name], (info == "default" and _"Rangstandard") or (info and _"Erlaubt" or _"Verboten"))
 		elseif permissionsType == "action" then
-			item = self.m_PermissionsList:addItem(ACTION_PERMISSION_NAMES[name], (info == "default" and _"Rangstandart") or (info and _"Erlaubt" or _"Verboten"))
+			item = self.m_PermissionsList:addItem(ACTION_PERMISSION_NAMES[name], (info == "default" and _"Rangstandard") or (info and _"Erlaubt" or _"Verboten"))
 		elseif permissionsType == "weapon" then
-			item = self.m_PermissionsList:addItem(WEAPON_NAMES[name], (info == "default" and _"Rangstandart") or (info and _"Erlaubt" or _"Verboten"))
+			item = self.m_PermissionsList:addItem(WEAPON_NAMES[name], (info == "default" and _"Rangstandard") or (info and _"Erlaubt" or _"Verboten"))
 		end
 		item:setColor((info == "default" and Color.Orange) or (info and Color.Green or Color.Red))
 		item.name = name
@@ -73,7 +73,7 @@ function PlayerPermissionsGUI:onItemDoubleClick()
 			item.info = false
 			self.m_Changes[item.name] = false
 		elseif item.info == false then
-			item:setColumnText(2, _"Rangstandart")
+			item:setColumnText(2, _"Rangstandard")
 			item:setColor(Color.Orange)
 			item.info = "default"
 			self.m_Changes[item.name] = "default"
