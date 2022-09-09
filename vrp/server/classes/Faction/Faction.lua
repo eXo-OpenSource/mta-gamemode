@@ -324,6 +324,9 @@ function Faction:addPlayer(playerId, rank)
 		if self.m_Name_Short == "SAPD" then
 			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
+		if self.m_Name_Short == "Rescue" then
+			player:setPublicSync("RadioStatus", 6)
+		end
 		bindKey(player, "y", "down", "chatbox", "Fraktion")
 		PermissionsManager:getSingleton():syncPermissions(player, "faction")
 	end
@@ -352,6 +355,10 @@ function Faction:removePlayer(playerId)
 		if (self:isStateFaction() or self:isRescueFaction()) and player:isFactionDuty() then
 			takeAllWeapons(player)
 			RadioCommunication:getSingleton():allowPlayer(player, false)
+			
+			if self.m_Name_Short == "Rescue" then
+				player:setPublicSync("RadioStatus", nil)
+			end
 		end
 		player:saveAccountActivity()
 		setElementData(player, "playingTimeFaction", 0)

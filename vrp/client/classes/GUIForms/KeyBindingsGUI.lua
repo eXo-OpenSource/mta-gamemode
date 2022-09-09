@@ -44,9 +44,9 @@ end
 
 function KeyBindings:loadGridList()
     self.m_KeyGridList:clear()
-    self.ms_Keys = KeyBinds:getSingleton():getBindsList()
+    self.ms_Keys = KeyBinds:getSingleton():getBindsList(localPlayer.m_KeyBindType)
     local currKey
-    for index, key in pairs(self.ms_Keys) do
+    for index, key in kspairs(self.ms_Keys, function (a, b) return a:gsub("KeyStatusFMS", "") < b:gsub("KeyStatusFMS", "") end) do
         local currKey = core:get("KeyBindings", index) or key["defaultKey"]
         local item = self.m_KeyGridList:addItem(key.name, currKey:upper())
         item.index = index

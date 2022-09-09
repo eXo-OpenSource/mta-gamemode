@@ -843,6 +843,9 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 	else
 		client:endAFK()
 	end
+	if client:getFaction() and client:getFaction():isRescueFaction() then
+		client:setPublicSync("RadioStatus", 6)
+	end
 end
 
 function PlayerManager:Event_startAnimation(animation)

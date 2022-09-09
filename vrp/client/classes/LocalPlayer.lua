@@ -604,7 +604,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, true)
 			end
 		end
 

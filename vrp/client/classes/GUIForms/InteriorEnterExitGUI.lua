@@ -26,7 +26,7 @@ function InteriorEnterExitGUI:constructor(entry, text, icon, checkRange, allowVe
 		local exceed = (textWidth - self.m_Width*0.6) / (self.m_Width*0.6)
         self.m_Font = VRPFont(math.ceil(60-(60*exceed)))
     end
-    local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
+    local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["general"]["KeyEntranceUse"]["defaultKey"])
     self.m_KeyText = ("Drücke %s[%s]%s zum Benutzen!"):format("#32c8ff", string.upper(key:upper()), "#ffffff")
 
     self:start()

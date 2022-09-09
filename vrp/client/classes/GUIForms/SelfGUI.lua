@@ -1586,7 +1586,17 @@ function SelfGUI:onSettingChange(setting)
 	elseif setting == "Tastenzuordnung" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
 		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen", self.m_SettingBG):setBarEnabled(true)
-		self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
+		self.m_KeyBindingsButton.onLeftClick = function()
+			localPlayer.m_KeyBindType = "general"
+			self:KeyBindsButton_Click()
+		end
+		if localPlayer:getFaction():isRescueFaction() then
+			self.m_FMSKeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen (Funk)", self.m_SettingBG):setBarEnabled(true)
+			self.m_FMSKeyBindingsButton.onLeftClick = function()
+				localPlayer.m_KeyBindType = "FMS"
+				self:KeyBindsButton_Click()
+			end
+		end
 	elseif setting == "Server-Tour" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Server-Tour", self.m_SettingBG)
 		local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"

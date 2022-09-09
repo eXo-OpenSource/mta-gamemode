@@ -232,6 +232,10 @@ function Player:loadCharacter()
 	if self:getFaction() and self:getFaction():isStateFaction() then
 		self:getFaction():takeEquipment(self)
 	end
+	if self:getFaction() and self:getFaction():isRescueFaction() then
+		self:setPublicSync("RadioStatus", 6)
+	end
+
 	FactionState:getSingleton():checkInsideGarage(self)
 	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
 	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
