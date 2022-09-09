@@ -25,7 +25,7 @@ function PermissionsManager:createRankPermissions(type, id, rank)
 	local temp = {}
 	local state = false
 
-	if rank == m_LeaderRank[type] then
+	if rank == self.m_LeaderRank[type] then
 		state = true
 	end
 
