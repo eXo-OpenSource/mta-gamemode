@@ -61,14 +61,14 @@ function PermissionsManager:Event_requestRankPermissionsList(permissionsType, ty
 	
 	if permissionsType == "permission" and type then
 		if not self:hasPlayerPermissionsTo(client, type, "changePermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Rechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Rechte zu verändern!", client))
 			return 
 		end
 		
 		temp = instance.m_RankPermissions
 	elseif permissionsType == "action" and type then
 		if not self:hasPlayerPermissionsTo(client, type, "editActionPermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Aktionsrechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Aktionsrechte zu verändern!", client))
 			return 
 		end
 
@@ -87,7 +87,7 @@ function PermissionsManager:Event_requestPlayerPermissionsList(permissionsType, 
 	
 	if permissionsType == "permission" and type and rank then
 		if not self:hasPlayerPermissionsTo(client, type, "changePermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Rechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Rechte zu verändern!", client))
 			return 
 		end
 		if not instance:isPlayerMember(playerId) then return end
@@ -102,7 +102,7 @@ function PermissionsManager:Event_requestPlayerPermissionsList(permissionsType, 
 		end
 	elseif permissionsType == "action" and type and rank then
 		if not self:hasPlayerPermissionsTo(client, type, "editActionPermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Aktionsrechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Aktionsrechte zu verändern!", client))
 			return 
 		end
 		if not instance:isPlayerMember(playerId) then return end
@@ -117,7 +117,7 @@ function PermissionsManager:Event_requestPlayerPermissionsList(permissionsType, 
 		end
 	elseif permissionsType == "weapon" and type and rank then
 		if not self:hasPlayerPermissionsTo(client, type, "editWeaponPermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Waffenrechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Waffenrechte zu verändern!", client))
 			return 
 		end
 		if not instance:isPlayerMember(playerId) then return end
@@ -149,7 +149,7 @@ function PermissionsManager:Event_changeRankPermissions(permissionsType, tbl, ty
 
 	if permissionsType == "permission" then
 		if not self:hasPlayerPermissionsTo(client, type, "changePermissions") then
-			client:sendError(_"Du bist nicht berechtigt die Rechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Rechte zu verändern!", client))
 			return 
 		end
 
@@ -173,7 +173,7 @@ function PermissionsManager:Event_changeRankPermissions(permissionsType, tbl, ty
 		end
 	elseif permissionsType == "action" then
 		if not self:hasPlayerPermissionsTo(client, type, "editActionPermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Aktionsrechte zu verändern!") 
+			client:sendError(_("Du bist nicht berechtigt die Aktionsrechte zu verändern!", client)) 
 			return 
 		end
 
@@ -209,11 +209,11 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank,
 
 	if permissionsType == "permission" then
 		if not self:hasPlayerPermissionsTo(client, type, "changePermissions") then
-			client:sendError(_"Du bist nicht berechtigt die Rechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Rechte zu verändern!", client))
 			return 
 		end
 		if rank == self.m_LeaderRank[type] or rank > instance:getPlayerRank(client) then 
-			client:sendError(_"Du kannst die Rechte von dem Rang nicht verändern.")
+			client:sendError(_("Du kannst die Rechte von dem Rang nicht verändern.", client))
 			return 
 		end
 
@@ -229,11 +229,11 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank,
 		end
 	elseif permissionsType == "action" then
 		if not self:hasPlayerPermissionsTo(client, type, "editActionPermissions") then 
-			client:sendError(_"Du bist nicht berechtigt die Aktionsrechte zu verändern!") 
+			client:sendError(_("Du bist nicht berechtigt die Aktionsrechte zu verändern!", client)) 
 			return 
 		end
 		if rank == self.m_LeaderRank[type] or rank > instance:getPlayerRank(client) then 
-			client:sendError(_"Du kannst die Aktionsrechte von dem Rang nicht verändern.")
+			client:sendError(_("Du kannst die Aktionsrechte von dem Rang nicht verändern.", client))
 			return
 		end
 		if not instance:isPlayerMember(playerId) then return end
@@ -250,11 +250,11 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank,
 		end
 	elseif permissionsType == "weapon" then
 		if not self:hasPlayerPermissionsTo(client, type, "editWeaponPermissions") then
-			client:sendError(_"Du bist nicht berechtigt die Waffenrechte zu verändern!")
+			client:sendError(_("Du bist nicht berechtigt die Waffenrechte zu verändern!", client))
 			return
 		end
 		if rank == self.m_LeaderRank[type] or rank > instance:getPlayerRank(client) then
-			client:sendError(_"Du kannst die Waffenberechtigung von dem Rang nicht verändern.")
+			client:sendError(_("Du kannst die Waffenberechtigung von dem Rang nicht verändern.", client))
 			return
 		end
 		if not instance:isPlayerMember(playerId) then return end

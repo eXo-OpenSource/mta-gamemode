@@ -217,7 +217,7 @@ function SanNews:Event_startStreetrace()
 			client:sendError("Es läuft bereits ein Event!")
 		end
 	else
-		client:sendError(_"Du bist nicht berechtigt ein Straßenrennen zu starten!")
+		client:sendError(_("Du bist nicht berechtigt ein Straßenrennen zu starten!", client))
 	end
 end
 

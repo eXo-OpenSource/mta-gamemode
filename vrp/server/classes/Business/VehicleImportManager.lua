@@ -78,7 +78,7 @@ function VehicleImportManager:startTransport(shopId, model, variant, reloadListF
 		return 
 	end
 	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "startVehicleImport") then
-		client:sendError(_"Du bist nicht berechtigt einen Fahrzeugimport zu starten!")
+		client:sendError(_("Du bist nicht berechtigt einen Fahrzeugimport zu starten!", client))
 		return
 	end
 	-- check if vehicle is valid shop vehicle

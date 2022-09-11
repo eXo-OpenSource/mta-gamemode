@@ -83,7 +83,7 @@ function ColorCars:addPlayer(player)
 
     player:triggerEvent("ColorCars:openMatchGUI")
     ColorCarsManager:getSingleton():syncMatchGUI(self.m_LobbyOwner)
-    player:sendInfo(_"Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", 10000)
+    player:sendInfo(_("Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", player), 10000)
 
     self.m_SuportboostPowerUp = bind(self.powerUpSuperBoost, self, player)
     self.m_SuperjumpPowerUp = bind(self.powerUpSuperJump, self, player)

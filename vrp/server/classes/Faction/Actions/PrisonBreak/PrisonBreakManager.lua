@@ -86,7 +86,7 @@ function PrisonBreakManager:BombArea_Place(bombArea, player)
     end
     
 	if not PermissionsManager:getSingleton():isPlayerAllowedToStart(player, "faction", "PrisonBreak") then
-		player:sendError(_"Du bist nicht berechtigt einen Knastausbruch zu starten!")
+		player:sendError(_("Du bist nicht berechtigt einen Knastausbruch zu starten!", player))
 		return false
 	end
 

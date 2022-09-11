@@ -74,7 +74,7 @@ function ShopVehicleRobManager:Event_onVehicleSteal()
 						return false
 					end
 					if  not SHOP_VEHICLE_ROB_IS_STARTABLE then
-						client:sendError(_"Es läuft bereits ein Autohaus-Überfall!")
+						client:sendError(_("Es läuft bereits ein Autohaus-Überfall!", client))
 						return false
 					end
 					if FactionState:getSingleton():countPlayers() < SHOP_VEHICLE_ROB_MIN_MEMBERS then
@@ -105,11 +105,11 @@ function ShopVehicleRobManager:Event_continuePickingLock()
 	if self.m_CurrentRob.m_Gang == client:getGroup() then
 		self.m_CurrentRob:startPickingLock(client)
 	else
-		client:sendError(_"Du bist nicht in der am Überfall beteiligten Gang.")
+		client:sendError(_("Du bist nicht in der am Überfall beteiligten Gang.", client))
 	end
 end
 
 function ShopVehicleRobManager:Event_onPoliceUnlockVehicle()
 	self.m_CurrentRob:finishPickingLock(client)
-	client:sendSuccess(_"Fahrzeug aufgesperrt")
+	client:sendSuccess(_("Fahrzeug aufgesperrt", client))
 end

@@ -937,7 +937,7 @@ function GroupManager:Event_ShowRentedVehicles()
 			elseif vehicle:getPositionType() == VehiclePositionType.Harbor then
 				client:sendShortMessage(_("Das Boot (%s von %s) befindet sich im Industrie-Hafen (Logistik-Job)!", client, name, groupName))
 			else
-				client:sendShortMessage(_"Es ist ein interner Fehler aufgetreten!", client)
+				client:sendShortMessage(_("Es ist ein interner Fehler aufgetreten!", client))
 			end
 		end
 	end

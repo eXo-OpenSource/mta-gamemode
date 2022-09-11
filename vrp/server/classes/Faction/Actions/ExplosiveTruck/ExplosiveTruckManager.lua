@@ -43,7 +43,7 @@ function ExplosiveTruckManager:start()
 	end
 
 	if not PermissionsManager:getSingleton():isPlayerAllowedToStart(client, "faction", "ExplosiveTruck") then
-		client:sendError(_"Du bist nicht berechtigt Sprengstoff zu erwerben!")
+		client:sendError(_("Du bist nicht berechtigt Sprengstoff zu erwerben!", client))
 		return
 	end
 

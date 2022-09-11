@@ -36,7 +36,7 @@ function VehicleScrapper:constructor()
 			if hE.vehicle:getVehicleType() == VehicleType.Plane or hE.vehicle:getVehicleType() == VehicleType.Helicopter then
 				hE:triggerEvent("onTryEnterExit", self.m_PlaneScrapCol, "Verschrottung", "files/images/Other/info.png", 10, true) 
 			else
-				hE:sendError(_"Du kannst hier nur Flugzeuge und Helikopter verschrotten.")
+				hE:sendError(_("Du kannst hier nur Flugzeuge und Helikopter verschrotten.", hE))
 			end
 		end
 	end)

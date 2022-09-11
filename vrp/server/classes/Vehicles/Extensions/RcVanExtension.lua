@@ -51,12 +51,12 @@ function RcVanExtension:toggleBaron(player, state, force)
             addEventHandler("onColShapeHit", self.m_BaronRange, self.m_RcVanExtensionColShapeHit)
             addEventHandler("onColShapeLeave", self.m_BaronRange, self.m_RcVanExtensionColShapeLeave)
         else
-            player:sendError(_"Du kannst den RC Baron noch nicht wieder nutzen.")
+            player:sendError(_("Du kannst den RC Baron noch nicht wieder nutzen.", player))
         end
     else
         if force then
             RcVanExtensionLastUse[self:getId()] = getRealTime().timestamp
-            player:sendWarning(_"Dein RC Baron ist zerstört.")
+            player:sendWarning(_("Dein RC Baron ist zerstört.", player))
         else
             RcVanExtensionLastUse[self:getId()] = getRealTime().timestamp - RC_TOGGLE_COOLDOWN
         end

@@ -98,11 +98,11 @@ function ColorCarsManager:createPlayerLobby(lobbyOwner, lobbyName, password, max
     if lobbyOwner:getMoney() >= 1000 then 
         lobbyOwner:transferMoney(self.m_BankServer, 1000, "ColorCars Lobby", "Gameplay", "ColorCars")
     else
-        return lobbyOwner:sendError(_"Du hast nicht genug Geld dabei. (1000$)") 
+        return lobbyOwner:sendError(_("Du hast nicht genug Geld dabei. (1000$)", lobbyOwner)) 
     end
     self:createLobby(lobbyOwner, lobbyName, password, maxPlayers, false)
     ColorCarsManager.Lobbys[lobbyOwner]:addPlayer(lobbyOwner)
-    lobbyOwner:sendSuccess(_"Lobby erstellt!")
+    lobbyOwner:sendSuccess(_("Lobby erstellt!", lobbyOwner))
 end
 
 function ColorCarsManager:deleteLobby(lobby)
@@ -166,7 +166,7 @@ end
 
 function ColorCarsManager:Event_sendCheckPasswordResult(lobby, password)
     if not ColorCarsManager.Lobbys[lobby] then
-        sendError(_"Keine Lobby gefunden.")
+        client:sendError(_("Keine Lobby gefunden.", client))
         client:triggerEvent("ColorCars:createLobbyGUI", self.m_ColorCarsMarker) 
     end
 
@@ -175,7 +175,7 @@ end
 
 function ColorCarsManager:Event_sendCheckIsLobbyFullResult(lobby)
     if not ColorCarsManager.Lobbys[lobby] then
-        sendError(_"Keine Lobby gefunden.")
+        client:sendError(_("Keine Lobby gefunden.", client))
         client:triggerEvent("ColorCars:createLobbyGUI", self.m_ColorCarsMarker) 
     end
 

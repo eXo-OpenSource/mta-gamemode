@@ -467,7 +467,7 @@ function FactionManager:Event_factionRankUp(playerId, leaderSwitch)
 
 			if faction:getPlayerRank(playerId) + 1 >= FactionRank.Manager then
 				if LeaderCheck:getSingleton():hasPlayerLeaderBan(playerId) then
-					client:sendError(_"Dieser Spieler kann aufgrund einer Leadersperre nicht befördert werden!")
+					client:sendError(_("Dieser Spieler kann aufgrund einer Leadersperre nicht befördert werden!", client))
 					return
 				end
 			end
@@ -600,7 +600,7 @@ end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	if not client.m_WeaponStoragePosition then return outputDebug("no weapon storage position for this faction implemented") end
-	if client:getFaction().m_PlayerWeapons[client:getId()] == 0 then return client:sendError(_"Du darfst keine Waffen entnehmen!") end
+	if client:getFaction().m_PlayerWeapons[client:getId()] == 0 then return client:sendError(_("Du darfst keine Waffen entnehmen!", client)) end
 	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
 		local faction = client:getFaction()
 		local depot = faction.m_Depot

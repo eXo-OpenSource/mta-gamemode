@@ -278,7 +278,7 @@ function CompanyManager:Event_companyRankUp(playerId, leaderSwitch)
 
 	if company:getPlayerRank(playerId) + 1 >= CompanyRank.Manager then
 		if LeaderCheck:getSingleton():hasPlayerLeaderBan(playerId) then
-			client:sendError(_"Dieser Spieler kann aufgrund einer Leadersperre nicht befördert werden!")
+			client:sendError(_("Dieser Spieler kann aufgrund einer Leadersperre nicht befördert werden!", client))
 			return
 		end
 	end

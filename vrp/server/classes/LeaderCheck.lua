@@ -46,7 +46,7 @@ function LeaderCheck:Event_editLeaderBans(type, player, pReason, pValidUntil, pA
     if client:getRank() >= RANK.Administrator then
         local playerId
         if isElement(player) then playerId = player:getId() else playerId = Account.getIdFromName(player) end
-        if not playerId then return client:sendError(_"Spieler konnte nicht gefunden werden (Überprüfe den Namen).") end 
+        if not playerId then return client:sendError(_("Spieler konnte nicht gefunden werden (Überprüfe den Namen).", client)) end 
 
         if type == "add" then
             if not self.m_LeaderBans[tonumber(playerId)] then
@@ -67,10 +67,10 @@ function LeaderCheck:Event_editLeaderBans(type, player, pReason, pValidUntil, pA
                         StatisticsLogger:getSingleton():addPunishLog(client, playerId, "addLeaderBan", pReason, pValidUntil == 0 and 0 or pValidUntil - getRealTime().timestamp)
                     end
                 else
-                    client:sendError(_"Fehler bei eingegebener Dauer (Überprüfe den Timestamp).")
+                    client:sendError(_("Fehler bei eingegebener Dauer (Überprüfe den Timestamp).", client))
                 end
             else
-                client:sendError(_"Der Spieler hat bereits eine Leadersperre!")
+                client:sendError(_("Der Spieler hat bereits eine Leadersperre!", client))
             end
             
         elseif type == "remove" then

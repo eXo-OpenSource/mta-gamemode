@@ -114,13 +114,13 @@ function VehicleSeatExtension:vseEnterExit(player, state)
                     player:setData("VSE:Vehicle", self, true)
                     setTimer(function() bindKey(player, "g", "down", self.m_SeatExtensionEnterExit, false) end, 250, 1)
                 else
-                    player:sendError(_"Du kannst nicht 2x einsteigen o.O")
+                    player:sendError(_("Du kannst nicht 2x einsteigen o.O", player))
                 end
             else
-                player:sendInfo(_"Das Flugzeug ist voll.")
+                player:sendInfo(_("Das Flugzeug ist voll.", player))
             end
         else
-            player:sendError(_"Das Flugzeug ist abgeschlossen!")
+            player:sendError(_("Das Flugzeug ist abgeschlossen!", player))
         end
     elseif state == "death" then
         table.removevalue(self.m_SeatExtensionPassengers, player)

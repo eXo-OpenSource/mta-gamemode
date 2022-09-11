@@ -250,7 +250,7 @@ function BankPalomino:BombArea_Place(bombArea, player)
 	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
 
 	if not PermissionsManager:getSingleton():isPlayerAllowedToStart(player, "faction", "BankRobbery") then
-		player:sendError(_"Du bist nicht berechtigt einen Banküberfall zu starten!")
+		player:sendError(_("Du bist nicht berechtigt einen Banküberfall zu starten!", player))
 		return false
 	end
 	

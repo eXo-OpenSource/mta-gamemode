@@ -1015,7 +1015,7 @@ function FactionRescue:Event_changeRadioStatus(status)
 		end
 	else
 		if client:getFaction() and client:getFaction():isRescueFaction() then
-			client:sendError(_"Du bist nicht im Dienst!")
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end

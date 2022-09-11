@@ -300,14 +300,14 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 				end
 			else 
 				if stateDestination then
-					player:sendInfo(_"Vielen Dank für ihren Verrat!")
+					player:sendInfo(_("Vielen Dank für ihren Verrat!", player))
 					StateEvidence:getSingleton():addItemToEvidence(player, "Weed", WeedTruck.WeedPerPackage, false)
 				else 
-					player:sendInfo(_"Vielen Dank für ihren Verrat!\nDie Drogen behalte ich.")
+					player:sendInfo(_("Vielen Dank für ihren Verrat!\nDie Drogen behalte ich.", player))
 				end
 				breakingNewsText = "Paket %d von %d wurde an das/die %s übergeben!"
 				PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, ped.faction:getShortName())
-				player:giveAchievement(111)
+				player:giveAchievement(111) -- Snitch
 			end
 			package = player:getPlayerAttachedObject()
 			player:detachPlayerObject(package)

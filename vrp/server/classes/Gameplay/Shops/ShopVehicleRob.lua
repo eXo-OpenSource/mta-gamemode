@@ -189,7 +189,7 @@ function ShopVehicleRob:getRandomPos(tbl, number)
 end
 
 function ShopVehicleRob:startPickingLock(player)
-	if isTimer(self.m_LockPickingTimer) then return player:sendError(_"Jemand ist bereits dabei das Schloss zu knacken.") end
+	if isTimer(self.m_LockPickingTimer) then return player:sendError(_("Jemand ist bereits dabei das Schloss zu knacken.", player)) end
 	local time = (self.m_Shop.m_VehicleList[self.m_Vehicle:getModel()][self.m_VehicleIndex].price / 2)
 	
 	self.m_LockPickingTimer = setTimer(bind(self.finishPickingLock, self, player), time, 1)
@@ -231,7 +231,7 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 				end
 
 				local freezeTime = 0
-				hitElement:sendInfo(_"Der Wert des Fahrzeugs wird nun geschätzt.")
+				hitElement:sendInfo(_("Der Wert des Fahrzeugs wird nun geschätzt.", hitElement))
 				self.m_Vehicle:setFrozen(true)
 				self.m_Vehicle.m_DisableToggleHandbrake = true
 				self.m_UsedEstimateMarker[source] = true
@@ -251,7 +251,7 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 					hitElement:sendInfo(_("Der Wert des Fahrzeugs wurde auf %s$ geschätzt.", hitElement, self.m_VehicleEstimated))
 				end, freezeTime, 1)
 			else
-				hitElement:sendError(_"Du hast das Fahrzeug hier bereits schätzen lassen.")
+				hitElement:sendError(_("Du hast das Fahrzeug hier bereits schätzen lassen.", hitElement))
 			end
 		end
 	end
@@ -275,7 +275,7 @@ function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 					ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney({hitElement, true}, 2500, "Wiederbeschaffungsprämie", "Gameplay", "ShopVehicleRob")
 					PlayerManager:getSingleton():breakingNews("%s Überfall: Das Fahrzeug wurde sichergestellt!", self.m_Shop:getName())
 				elseif hitElement:getGroup() == self.m_Gang then
-					return hitElement:sendError(_"Du kannst hier nicht abgeben!")
+					return hitElement:sendError(_("Du kannst hier nicht abgeben!", hitElement))
 				else return end
 			elseif source == self.m_EvilMarker then
 				if hitElement:getGroup() == self.m_Gang and not hitElement:isFactionDuty() then
@@ -287,7 +287,7 @@ function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 					PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit dem Fahrzeug entkommen!", self.m_Shop:getName())
 					self.m_Shop:decreaseVehicleStock(self.m_Vehicle:getModel(), self.m_VehicleIndex)
 				elseif hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-					return hitElement:sendError(_"Du kannst hier nicht abgeben!")
+					return hitElement:sendError(_("Du kannst hier nicht abgeben!", hitElement))
 				else return end
 			else return end
 		else return end
