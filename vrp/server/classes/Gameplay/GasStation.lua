@@ -109,7 +109,7 @@ end
 
 function GasStation:takeFuelNozzle(player, element, fuelType)
 	if not self:hasPlayerAccess(player) then
-		player:sendError("Du bist nicht berechtigt diese Tankstelle zu nutzen!")
+		player:sendError(_("Du bist nicht berechtigt diese Tankstelle zu nutzen!", player))
 		return
 	end
 
@@ -122,7 +122,7 @@ function GasStation:takeFuelNozzle(player, element, fuelType)
 		end
 	end
 	if playersInUse >= self.m_Stations[element].maxHoses then
-		player:sendError("Diese Zapfsäule ist bereits belegt!")
+		player:sendError(_("Diese Zapfsäule ist bereits belegt!", player))
 		return
 	end
 

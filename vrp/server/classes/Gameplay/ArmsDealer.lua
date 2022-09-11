@@ -105,10 +105,10 @@ function ArmsDealer:checkoutCart(cart)
                 self.m_LastPlayer = client 
                 self.m_LastFaction = faction
             else 
-                client:sendError("Deine Fraktion hat bereits heute bestellt!")
+                client:sendError(_("Deine Fraktion hat bereits heute bestellt!", client))
             end
         else 
-            client:sendError("Es läuft zurzeit bereits ein Airdrop!")
+            client:sendError(_("Es läuft zurzeit bereits ein Airdrop!", client))
         end
     end
 end

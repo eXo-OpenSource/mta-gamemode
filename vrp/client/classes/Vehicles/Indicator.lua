@@ -423,7 +423,7 @@ function Indicator:switchIndicatorState ( indicator )
                         end
                     end
                 else
-                    outputChatBox("Du hast die Blinker deaktiviert! Aktiviere die Blinker im F2 Menü!",255,0,0)
+                    outputChatBox(_"Du hast die Blinker deaktiviert! Aktiviere die Blinker im F2 Menü!",255,0,0)
                 end
             end
         end

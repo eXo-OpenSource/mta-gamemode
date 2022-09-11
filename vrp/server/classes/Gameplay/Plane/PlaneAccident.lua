@@ -132,22 +132,22 @@ function PlaneAccident:removeRubble(button, state, player)
                                     self.m_TrashTruck:setVariant(4, 2)
                                     self.m_TrashDeliveryMarker:setAlpha(255)
                                     self.m_TrashTruckLoaded = true
-                                    player:sendInfo("Fahre nun die Überreste zurück zur Mech&Tow Base!")
+                                    player:sendInfo(_("Fahre nun die Überreste zurück zur Mech&Tow Base!", player))
                                     self.m_AccidentDeliveryBlip = Blip:new("Marker.png", 2500, -2132.931, {company = 2}, 400, {255, 255, 255}, {175, 175, 175})
                                     self.m_AccidentMechanicBlip:delete()
                                 end
                             , 15100, 1, player)
                         else
-                            player:sendError("Der Flatbed ist zu weit entfernt!")
+                            player:sendError(_("Der Flatbed ist zu weit entfernt!", player))
                         end
                     else
-                        player:sendError("Du musst auf den Wrackteilen stehen!")
+                        player:sendError(_("Du musst auf den Wrackteilen stehen!", player))
                     end
                 else
-                    player:sendError("Die Wrackteile werden bereits verladen!")
+                    player:sendError(_("Die Wrackteile werden bereits verladen!", player))
                 end
             else
-                player:sendError("Du bist kein Mechaniker im Dienst!")
+                player:sendError(_("Du bist kein Mechaniker im Dienst!", player))
             end
         end
     end
@@ -168,10 +168,10 @@ function PlaneAccident:createTrashTruck()
         function(player, seat)
             if player:getCompany() ~= CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC) then
                 cancelEvent()
-                player:sendError("Du bist kein Mechaniker!")
+                player:sendError(_("Du bist kein Mechaniker!", player))
             elseif not player:isCompanyDuty() then
                 cancelEvent()
-                player:sendError("Du bist nicht im Dienst!")
+                player:sendError(_("Du bist nicht im Dienst!", player))
             end
         end
     )
@@ -179,7 +179,7 @@ function PlaneAccident:createTrashTruck()
     addEventHandler("onVehicleEnter", self.m_TrashTruck, 
         function(player)
             if self.m_TrashTruckLoaded == false then
-                player:sendInfo("Fahre die Überreste des Flugzeugunfalls hierher! Klicke auf die Überreste des Flugzeugs um sie auf den Flatbed aufzuladen!")
+                player:sendInfo(_("Fahre die Überreste des Flugzeugunfalls hierher! Klicke auf die Überreste des Flugzeugs um sie auf den Flatbed aufzuladen!", player))
             end
         end
     )

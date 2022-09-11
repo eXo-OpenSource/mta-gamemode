@@ -228,9 +228,9 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 		source.m_TextureCount = 1
 		source:setData("TextureCount", 1, true)
 		if price == 120000 then
-			client:sendInfo("Textur erstmalig gekauft!")
+			client:sendInfo(_("Textur erstmalig gekauft!", client))
 		else
-			client:sendInfo("Textur gekauft!")
+			client:sendInfo(_("Textur gekauft!", client))
 		end
 	else
 		client:sendError(_("Du hast nicht genug Geld dabei! (%s)", client, toMoneyString(price)))

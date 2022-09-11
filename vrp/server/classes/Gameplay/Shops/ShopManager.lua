@@ -519,26 +519,26 @@ end
 
 function ShopManager:giveWeaponsFromOrder(player, weaponTable)
 	local playerWeapons = self:getPlayerWeapons(player)
-	outputChatBox("Du hast folgende Waffen und Magazine erhalten:",player,255,255,255)
+	outputChatBox(_("Du hast folgende Waffen und Magazine erhalten:", player),player,255,255,255)
 	for weaponID,v in pairs(weaponTable) do
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
 				local mag = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
 				if typ == "Waffe" then
 					if weaponID > 0 then
-						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
+						outputChatBox(_("%s %s", player, amount, WEAPON_NAMES[weaponID]),player,255,125,0)
 						giveWeapon(player, weaponID, mag)
 					else
-						outputChatBox("1 Schutzweste",player,255,125,0)
+						outputChatBox(_("1 Schutzweste", player),player,255,125,0)
 						player:setArmor(100)
 					end
 				elseif typ == "Munition" then
 					playerWeapons = self:getPlayerWeapons(player)
 					if playerWeapons[weaponID] then
 						giveWeapon(player,weaponID,amount*mag)
-						outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
+						outputChatBox(_("%s %s Magazin/e", player, amount, WEAPON_NAMES[weaponID]),player,255,125,0)
 					else
-						outputChatBox("Du hast keine "..WEAPON_NAMES[weaponID].." für ein Magazin!",player,255,0,0)
+						outputChatBox(_("Du hast keine %s für ein Magazin!", player, WEAPON_NAMES[weaponID]),player,255,0,0)
 					end
 				end
 			end

@@ -99,7 +99,7 @@ function MapEditor:Event_onClientClick(button, state, absoluteX, absoluteY, worl
                         return 
                     end
 
-                    ErrorBox:new("Dieses Objekt kannst Du nicht bearbeiten!")
+                    ErrorBox:new(_"Dieses Objekt kannst Du nicht bearbeiten!")
                 end
             end
         end

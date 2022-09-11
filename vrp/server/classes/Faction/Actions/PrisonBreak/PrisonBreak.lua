@@ -127,7 +127,7 @@ function PrisonBreak:getWeaponsFromBox(button, state, player)
 	end
 
 	if self.m_WeaponBoxPlayers[player:getId()] then
-		player:sendError("Du hast bereits Waffen aus dem Lager erhalten!");
+		player:sendError(_("Du hast bereits Waffen aus dem Lager erhalten!", player));
 		return
 	end
 
@@ -151,7 +151,7 @@ function PrisonBreak:removeKeycardFromPlayer(player)
 	if player and isElement(player) and player:getInventory() then
 		if player:getInventory():getItemAmount("Keycard") and player:getInventory():getItemAmount("Keycard") > 0 then
 			player:getInventory():removeAllItem("Keycard")
-			player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
+			player:sendError(_("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!", player))
 		end
 	end
 end

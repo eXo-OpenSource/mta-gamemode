@@ -250,7 +250,7 @@ function FactionWeaponShopGUI:factionWeaponShopBuy()
 	if self.m_Cart[27] and not localPlayer:getData("Faction:InSpecialDuty") and not localPlayer:getFaction():isEvilFaction() then
 		self.m_Cart[27]["Waffe"] = 0
 		self.m_Cart[27]["Munition"] = 0
-		ErrorBox:new("SPAZ-12 konnte nicht entnommen werden")
+		ErrorBox:new(_"SPAZ-12 konnte nicht entnommen werden")
 	end
 
 	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)

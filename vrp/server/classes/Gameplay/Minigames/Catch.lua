@@ -87,7 +87,7 @@ addEventHandler("catchQuestionAccept", root,
 		host.catchRequestSend = false
 
 		if CatchGame.Map[host] or CatchGame.Map[client] then
-			host:sendError("Du oder dein Gegner ist noch in einem Spiel!")
+			host:sendError(_("Du oder dein Gegner ist noch in einem Spiel!", host))
 			return
 		end
 

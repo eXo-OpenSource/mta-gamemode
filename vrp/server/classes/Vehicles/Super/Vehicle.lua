@@ -606,7 +606,7 @@ function Vehicle:countdownDestroyStart(player)
 	end
 	self.m_CountdownDestroyPlayer = player
 	player:sendWarning(_("Vorsicht: Steig innerhalb von %d Sekunden wieder ein, oder das Fahrzeug wird gelöscht!", player, self.m_CountdownDestroy))
-	player:triggerEvent("Countdown", self.m_CountdownDestroy, "Fahrzeug")
+	player:triggerEvent("Countdown", self.m_CountdownDestroy, _("Fahrzeug", player))
 	self.m_CountdownDestroyTimer = setTimer(function()
 		player:sendInfo(_("Zeit abgelaufen! Das Fahrzeug wurde gelöscht!", player))
 		if self and isElement(self) then
@@ -845,7 +845,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 				client:getCompany():checkLeviathanTowing(client, self.m_GrabbedVehicle)
 			end
 		else
-			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
+			client:sendError(_("Das Fahrzeug kann nur auf dem Boden abgestellt werden!", client))
 		end
 	else
 		if not self.m_Magnet and not isElement(self.m_Magnet) then
@@ -860,7 +860,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 			if vehicle ~= self then
 				if vehicle:isRespawnAllowed() and (vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike or vehicle:getVehicleType() == VehicleType.Helicopter or magnetPlanes[vehicle:getModel()]) then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
-						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
+						client:sendWarning(_("Bitte löse erst die Handbremse von diesem Fahrzeug!", client))
 					else
 						if table.size(getVehicleOccupants(vehicle)) == 0 then
 							self.m_MagnetActivated = true
@@ -869,7 +869,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 							setElementData(self, "MagnetGrabbedVehicle", vehicle)
 							break
 						else
-							client:sendWarning("Das Fahrzeug ist nicht leer!")
+							client:sendWarning(_("Das Fahrzeug ist nicht leer!", client))
 						end
 					end
 				end

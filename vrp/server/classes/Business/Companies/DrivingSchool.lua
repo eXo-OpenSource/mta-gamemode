@@ -284,7 +284,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 		function(player, seat)
 			if seat ~= 0 then return end
 			if not source.m_IsFinished then
-				outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+				outputChatBox(_("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player), player, 200,0,0)
 			end
 			if DrivingSchool.m_LessonVehicles[player] == source then
 				DrivingSchool.m_LessonVehicles[player] = nil
@@ -316,7 +316,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 			setTimer(setElementPosition,1000,1,player,1759.05, -1690.22, 13.37)
 			setTimer(fadeCamera,1500,1, player,true,0.5)
 			if not alreadyFinished then
-				outputChatBox("Du hast das Fahrzeug zerstört!", player, 200,0,0)
+				outputChatBox(_("Du hast das Fahrzeug zerstört!", player), player, 200,0,0)
 			end
 		end
 	)
@@ -328,7 +328,7 @@ function DrivingSchool:startAutomaticTest(player, type)
 				if DrivingSchool.m_LessonVehicles[player] == source then
 					DrivingSchool.m_LessonVehicles[player] = nil
 					if not source.m_IsFinished then
-						outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+						outputChatBox(_("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player), player, 200,0,0)
 					end
 					if source.m_NPC then
 						if isElement(source.m_NPC) then
@@ -362,7 +362,7 @@ function DrivingSchool:onHitRouteMarker()
 				else
 					client.m_HasBikeLicense = true
 				end
-				outputChatBox("Du hast die Prüfung bestanden und dein Fahrzeug ist in einem ausreichenden Zustand!", client, 0, 200, 0)
+				outputChatBox(_("Du hast die Prüfung bestanden und dein Fahrzeug ist in einem ausreichenden Zustand!", client), client, 0, 200, 0)
 				if veh.m_NPC then
 					destroyElement(veh.m_NPC)
 				end
@@ -371,7 +371,7 @@ function DrivingSchool:onHitRouteMarker()
 				client:triggerEvent("DrivingLesson:endLesson")
 			else
 				client.m_HasDrivingLicense = false
-				outputChatBox("Da dein Fahrzeug zu beschädigt war hast du nicht bestanden!", client, 200, 0, 0)
+				outputChatBox(_("Da dein Fahrzeug zu beschädigt war hast du nicht bestanden!", client), client, 200, 0, 0)
 				if veh.m_NPC then
 					destroyElement(veh.m_NPC)
 				end

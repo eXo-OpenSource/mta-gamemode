@@ -327,8 +327,8 @@ function Halloween:Event_buyBonus(bonusId)
 				return
 			end
 		elseif bonus["Text"] == "Nick Change" then
-			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
-			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)
+			outputChatBox(_("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client), client, 0, 255, 0)
+			outputChatBox(_("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client), client, 0, 255, 0)
 		elseif bonus["Text"] == "Zombie Skin" then
 			client:getInventory():giveItem("Kleidung", 1, 310)
 			client:sendShortMessage("Der Zombie-Skin wurde in dein Inventar gelegt!")

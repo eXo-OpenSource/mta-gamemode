@@ -23,12 +23,12 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 		local car = getPedOccupiedVehicle(client)
 		if car == veh then
 			if car.m_Premium then
-				client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+				client:sendError(_("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!", client))
 				return
 			end
 
 			if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
-				client:sendError("Der Spieler hat die maximalen Fahrzeug-Slots erreicht!")
+				client:sendError(_("Der Spieler hat die maximalen Fahrzeug-Slots erreicht!", client))
 				return
 			end
 
@@ -53,7 +53,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 			if player ~= client then
 				if player.lastContract == client then
 					if car.m_Premium then
-						client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+						client:sendError(_("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!", client))
 						return
 					end
 					if client:transferBankMoney({"player", player:getId(), true}, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade") then

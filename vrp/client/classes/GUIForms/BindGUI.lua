@@ -241,9 +241,9 @@ function BindGUI:saveBind()
 
 		if result then
 			self:loadBinds()
-			SuccessBox:new("Bind erfolgreich geändert!")
+			SuccessBox:new(_"Bind erfolgreich geändert!")
 		else
-			ErrorBox:new("Bind konnte nicht gespeichert werden!")
+			ErrorBox:new(_"Bind konnte nicht gespeichert werden!")
 		end
 	else
 		ErrorBox:new(_"Keine Belegung in der Liste ausgewählt!")
@@ -265,9 +265,9 @@ function BindGUI:deleteBind()
 		local index = self.m_SelectedBind.index
 		if BindManager:getSingleton():removeBind(index) then
 			self:loadBinds()
-			SuccessBox:new("Bind gelöscht!")
+			SuccessBox:new(_"Bind gelöscht!")
 		else
-			ErrorBox:new("Bind konnte nicht gelöscht werden!")
+			ErrorBox:new(_"Bind konnte nicht gelöscht werden!")
 		end
 	else
 		ErrorBox:new(_"Keine Belegung in der Liste ausgewählt!")
@@ -280,13 +280,13 @@ function BindGUI:editAddBind(item)
 	if parameters:len() >= 1 and name then
 		if item then
 			if BindManager:getSingleton():editBind(item.index, name, parameters) then
-				SuccessBox:new("Bind geändert!")
+				SuccessBox:new(_"Bind geändert!")
 			else
-				ErrorBox:new("Bind konnte nicht geändert werden!")
+				ErrorBox:new(_"Bind konnte nicht geändert werden!")
 			end
 		else
 			BindManager:getSingleton():addBind(name, parameters)
-			SuccessBox:new("Bind hinzugefügt! Du kannst nun die Tasten belegen!")
+			SuccessBox:new(_"Bind hinzugefügt! Du kannst nun die Tasten belegen!")
 		end
 		self:loadBinds()
 

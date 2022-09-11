@@ -276,7 +276,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 			player:sendError(_("In dieses Fahrzeug passen maximal %d Stk. dieses Items! (%s)", player, FACTION_TRUNK_MAX_ITEMS[itemName], itemName))
 		end
 	else
-		player:sendError("Ungültiges Element!")
+		player:sendError(_("Ungültiges Element!", player))
 	end
 end
 
@@ -292,7 +292,7 @@ function FactionVehicle:takeFactionItem(player, itemName)
 			player:sendError(_("Dieses Item ist nicht mehr im Fahrzeug! (%s)", player, itemName))
 		end
 	else
-		player:sendError("Ungültiges Element!")
+		player:sendError(_("Ungültiges Element!", player))
 	end
 end
 

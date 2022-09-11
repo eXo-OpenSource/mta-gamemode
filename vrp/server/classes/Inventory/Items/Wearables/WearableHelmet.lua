@@ -31,8 +31,8 @@ end
 function WearableHelmet:use(player, itemId, bag, place, itemName)
 	local inventory = player:getInventory()
 	local value = inventory:getItemValueByBag( bag, place)
-	if player.m_PrisonTime > 0 then player:sendError("Im Prison nicht erlaubt!") return end
-	if player.m_JailTime > 0 then player:sendError("Im Gefängnis nicht erlaubt!") return end
+	if player.m_PrisonTime > 0 then player:sendError(_("Im Prison nicht erlaubt!", player)) return end
+	if player.m_JailTime > 0 then player:sendError(_("Im Gefängnis nicht erlaubt!", player)) return end
 	if value then --// for texture usage later
 
 	end

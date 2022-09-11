@@ -98,13 +98,13 @@ function VehicleObjectLoadExtension:tryLoadObject(player, object)
                         self.m_LastInteraction = getTickCount()
                     end 
                 else
-                    player:sendError("Dieses Fahrzeug kann dein Objekt nicht transportieren!")
+                    player:sendError(_("Dieses Fahrzeug kann dein Objekt nicht transportieren!", player))
                 end
             else
-                player:sendError("Dieses Fahrzeug ist voll!")
+                player:sendError(_("Dieses Fahrzeug ist voll!", player))
             end
         else
-            player:sendError(_("Du darfst in keinem Fahrzeug sitzen!",player))
+            player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
         end
     else
         player:sendError(_("Du bist zu weit vom Truck entfernt!", player))
@@ -123,13 +123,13 @@ function VehicleObjectLoadExtension:tryUnloadObject(player)
                         self.m_LastInteraction = getTickCount()
                     end 
                 else
-                    player:sendError("Du hast bereits ein Objekt dabei!")
+                    player:sendError(_("Du hast bereits ein Objekt dabei!", player))
                 end
             else
-                player:sendError("Dieses Fahrzeug ist leer!")
+                player:sendError(_("Dieses Fahrzeug ist leer!", player))
             end
         else
-            player:sendError(_("Du darfst in keinem Fahrzeug sitzen!",player))
+            player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
         end
     else
         player:sendError(_("Du bist zu weit vom Truck entfernt!", player))

@@ -68,7 +68,7 @@ function ExplosiveTruck:dragBox(button, state, player)
 	end
 
 	if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) > 3 then
-		player:sendError("Du bist zu weit von der Kiste entfernt!")
+		player:sendError(_("Du bist zu weit von der Kiste entfernt!", player))
 
 		return
 	end
@@ -79,7 +79,7 @@ function ExplosiveTruck:dragBox(button, state, player)
 		not faction
 		or not faction:isStateFaction() and not faction:isEvilFaction()
 	then
-		player:sendError("Du kannst diese Kiste nicht aufheben!")
+		player:sendError(_("Du kannst diese Kiste nicht aufheben!", player))
 
 		return
 	end

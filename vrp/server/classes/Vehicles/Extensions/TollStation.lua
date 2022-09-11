@@ -31,14 +31,14 @@ function TollStation:checkRequirements(player)
 			local faction = player:getFaction()
 			if faction:isStateFaction() or faction:isRescueFaction() then
 				if player:isFactionDuty() then
-					player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
+					player:sendShortMessage(_("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt.", player, self.m_Name), _("Maut-Station: %s", player, self.m_Name), {125, 0, 0})
 					return true
 				end
 			end
 		end
 
 		if player:getInventory():getItemAmount("Mautpass") > 0 then
-			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du einen Mautpass besitzt, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
+			player:sendShortMessage(_("Willkommen bei der Maut-Station %s! Da du einen Mautpass besitzt, darfst du kostenlos passieren! Gute Fahrt.", player, self.m_Name), _("Maut-Station: %s", player, self.m_Name), {125, 0, 0})
 			return true
 		end
 
@@ -101,7 +101,7 @@ function TollStation:onBarrierHit(player)
 						player.m_BuyTollFunc = nil
 					end
 
-					player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY:upper()), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
+					player:sendShortMessage(_("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!", player, self.m_Name, TOLL_PAY_KEY:upper()), _("Maut-Station: %s", player, self.m_Name), {125, 0, 0})
 
 					player.m_BuyTollFunc = bind(self.buyToll, self, player)
 					bindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
@@ -121,7 +121,7 @@ function TollStation:buyToll(player)
 			if player:getBankMoney() >= TOLL_KEY_COSTS then
 				player:transferBankMoney({FactionManager:getSingleton():getFromId(1), nil, true}, TOLL_KEY_COSTS, "Mautstation", "Gameplay", "Toll")
 				self.m_Barrier:toggleBarrier(player, true)
-				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
+				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player), _("Maut-Station: %s", player, self.m_Name), {125, 0, 0})
 			else
 				player:sendError(_("Du hast zu wenig Geld auf deinem Bankkonto! (%s$)", player, TOLL_KEY_COSTS))
 			end

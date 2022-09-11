@@ -135,10 +135,10 @@ function GroupProperty:giveKey( player, client )
 				table.remove(self.m_ChangeKeyMap,bCheck2)
 			end
 			self.m_ChangeKeyMap[#self.m_ChangeKeyMap+1] = {"add",id,self.m_Id,Account.getNameFromId(id)}
-			outputChatBox("Du hast einen Schlüssel für die Immobilie "..self.m_Name.." erhalten!",player,0,200,0)
+			outputChatBox(_("Du hast einen Schlüssel für die Immobilie %s erhalten!", player, self.m_Name),player,0,200,0)
 		end
 	else
-		client:sendError("Spieler hat bereits einen Schlüssel!")
+		client:sendError(_("Spieler hat bereits einen Schlüssel!", client))
 	end
 end
 
@@ -160,11 +160,11 @@ function GroupProperty:removeKey( player, client )
 				table.remove(self.m_ChangeKeyMap, bCheck)
 			end
 			self.m_ChangeKeyMap[#self.m_ChangeKeyMap+1] = {"remove",id,self.m_Id,Account.getNameFromId(id)}
-			outputChatBox("Dein Schlüssel für die Immobilie "..self.m_Name.." wurde abgenommen!",player,200,0,0)
+			outputChatBox(_("Dein Schlüssel für die Immobilie %s wurde abgenommen!", player, self.m_Name),player,200,0,0)
 			return
 		end
 	else
-		player:sendError("Spieler hat keinen Schlüssel!")
+		player:sendError(_("Spieler hat keinen Schlüssel!", player))
 	end
 end
 
@@ -226,7 +226,7 @@ function GroupProperty:openForPlayer(player)
 				setTimer( bind( GroupProperty.setInside,self),2500,1, player)
 			end
 		else
-			player:sendError("Tür kann nicht geöffnet werden!")
+			player:sendError(_("Tür kann nicht geöffnet werden!", player))
 		end
 	end
 end
@@ -283,7 +283,7 @@ function GroupProperty:closeForPlayer(player)
 				setTimer( bind( GroupProperty.setOutside,self),2500,1, player)
 			end
 		else
-			player:sendError("Tür kann nicht geöffnet werden!")
+			player:sendError(_("Tür kann nicht geöffnet werden!", player))
 		end
 	end
 end
@@ -337,7 +337,7 @@ function GroupProperty:Event_keyChange( player, action, client )
 				self:removeKey( player, client )
 			end
 			self:Event_RefreshPlayer( client )
-		else client:sendError("Spieler nicht gefunden!")
+		else client:sendError(_("Spieler nicht gefunden!", client))
 		end
 	end
 end

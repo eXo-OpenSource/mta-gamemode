@@ -126,7 +126,7 @@ function ItemFishing:useSecondary(player, itemId, bag, place, itemName)
 			player:triggerEvent("showFishingRodGUI", itemName, {fishingRodEquipments["bait"], fishingRodEquipments["accessories"]})
 			return
 		else
-			player:sendError("Diese Angel bietet keine Interaktion!")
+			player:sendError(_("Diese Angel bietet keine Interaktion!", player))
 		end
 
 		return

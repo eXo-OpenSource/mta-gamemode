@@ -491,7 +491,7 @@ function FactionState:Command_ticket(source, cmd, target)
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
-	else outputChatBox("Syntax: Für Staatsbeamte -> /ticket [ziel]", source, 200, 0,0)
+	else outputChatBox(_("Syntax: Für Staatsbeamte -> /ticket [ziel]", source), source, 200, 0,0)
 	end
 end
 
@@ -565,7 +565,7 @@ function FactionState:Command_cuff(source, cmd, target)
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
-	else outputChatBox("Syntax: /cuff [ziel]", source, 200, 0,0)
+	else outputChatBox(_("Syntax: /cuff [ziel]", source), source, 200, 0,0)
 	end
 end
 
@@ -604,7 +604,7 @@ function FactionState:Command_uncuff( source, cmd, target )
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
-	else outputChatBox("Syntax: /uncuff [ziel]", source, 200, 0,0)
+	else outputChatBox(_("Syntax: /uncuff [ziel]", source), source, 200, 0,0)
 	end
 end
 
@@ -1077,7 +1077,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 							target.m_LastWantedsByReason = {}
 						end
 						target:giveWanteds(amount)
-						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
+						outputChatBox(_("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s", target, reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
@@ -1110,8 +1110,8 @@ function FactionState:Command_stvo(player, cmd, target, category, amount,...)
 					if category then
 						local newSTVO = target:getSTVO(category) + amount
 						target:setSTVO(category, newSTVO)
-						outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
-						outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+						outputChatBox(_("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d", target, amount, player:getName(), newSTVO), target, 255, 255, 0 )
+						outputChatBox(_("Grund: %s", target, reason), target, 255, 255, 0 )
 
 						local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():addLog(player, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
@@ -1137,8 +1137,8 @@ function FactionState:Event_giveSTVO(target, category, amount, reason)
 		if client:isFactionDuty() then
 			local newSTVO = target:getSTVO(category) + amount
 			target:setSTVO(category, newSTVO)
-			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0)
-			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+			outputChatBox(_("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d", target, amount, client:getName(), newSTVO), target, 255, 255, 0)
+			outputChatBox(_("Grund: %s", target, reason), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(client:getName(),target:getName(),amount, reason)
 			client:getFaction():addLog(client, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
 			self:sendMessage(msg, 255,0,0)
@@ -1152,8 +1152,8 @@ function FactionState:Event_setSTVO(target, category, amount, reason)
 		if client:isFactionDuty() then
 			local newSTVO = tonumber(amount)
 			target:setSTVO(category, newSTVO)
-			outputChatBox(("%s hat deine STVO-Punkt/e auf %d gesetzt!"):format(client:getName(), newSTVO), target, 255, 255, 0 )
-			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+			outputChatBox(_("%s hat deine STVO-Punkt/e auf %d gesetzt!", target, client:getName(), newSTVO), target, 255, 255, 0 )
+			outputChatBox(_("Grund: %s", target, reason), target, 255, 255, 0 )
 			local msg = ("%s hat die STVO-Punkte von %s auf %d gesetzt! Grund: %s"):format(client:getName(),target:getName(),amount, reason)
 			client:getFaction():addLog(client, "STVO", "die STVO-Punkte von "..target:getName().." auf "..amount.." gesetzt! Grund: "..reason.."!")
 			self:sendMessage(msg, 255,0,0)
@@ -1396,7 +1396,7 @@ function FactionState:Command_bail(player)
 					player.m_Bail = 0
 					self:freePlayer(player)
 				else
-					player:sendError("Sie haben nicht genügend Geld!")
+					player:sendError(_("Sie haben nicht genügend Geld!", player))
 				end
 			end
 		end
@@ -1559,7 +1559,7 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin, dontChangeSkin, pl
 	end
 
 	if getPedOccupiedVehicle(client) then
-		return client:sendError("Steige erst aus dem Fahrzeug aus!")
+		return client:sendError(_("Steige erst aus dem Fahrzeug aus!", client))
 	end
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
@@ -1709,7 +1709,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			target:giveWanteds(amount)
-			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
+			outputChatBox(_("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s", client, reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
 			PoliceAnnouncements:getSingleton():triggerWantedSound(target, reason)
@@ -1723,7 +1723,7 @@ function FactionState:Event_clearWanteds(target)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			target:takeWanteds(MAX_WANTED_LEVEL)
-			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
+			outputChatBox(_("Dir wurden alle Wanteds von %s erlassen", target, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." alle Wanteds erlassen!")
 			self:sendMessage(msg, 255,0,0)
@@ -1977,7 +1977,7 @@ function FactionState:Event_freePlayer(target)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() and PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "releaseFromJail") then
 			if target and isElement(target) then
-				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
+				outputChatBox(_("Du wurdest von %s aus dem Knast entlassen!", target, client:getName()), target, 255, 255, 0 )
 				local msg = ("%s hat %s aus dem Knast entlassen!"):format(client:getName(), target:getName())
 				self:sendMessage(msg, 255,0,0)
 				faction:addLog(client, "Knast", "hat "..target:getName().." aus dem Knast entlassen!")

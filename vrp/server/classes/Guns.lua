@@ -206,7 +206,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 		if inv then
 			if inv:getItemAmount("Diebesgut") > 0 then
 				inv:removeAllItem("Diebesgut")
-				outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+				outputChatBox(_("Dein Diebesgut ging verloren...", source), source, 200,0,0)
 			end
 		end
 
@@ -566,7 +566,7 @@ function Guns:destroyProtectionHelmet(attacker, target)
 				target.m_IsWearingHelmet = false
 				target.m_Helmet = false
 				target:setData("isFaceConcealed", false)
-				outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", attacker, 200,200,0)
+				outputChatBox(_("Dein Schuss zerstörte den Helm von %s!", attacker, getPlayerName(target)), attacker, 200,200,0)
 				target:triggerEvent("clientBloodScreen")
 				
 				return true
@@ -584,7 +584,7 @@ function Guns:destroyKevlar(attacker, target)
 			target.m_IsWearingShirt = false
 			target.m_Shirt = false
 			target.m_KevlarShotsCount = nil
-			outputChatBox("Dein Schuss zerstörte die Kevlarweste von "..getPlayerName(target).."!", attacker, 200,200,0)
+			outputChatBox(_("Dein Schuss zerstörte die Kevlarweste von %s!", attacker, getPlayerName(target)), attacker, 200,200,0)
 			target:triggerEvent("clientBloodScreen")
 		end
 	end

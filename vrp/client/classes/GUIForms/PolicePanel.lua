@@ -411,10 +411,10 @@ function PolicePanel:bugAction(func)
 				triggerServerEvent("factionStateBugAction", localPlayer, func, id)
 			end
 		else
-			ErrorBox:new("Diese Wanze ist nicht aktiviert!")
+			ErrorBox:new(_"Diese Wanze ist nicht aktiviert!")
 		end
 	else
-		ErrorBox:new("Keine Wanze ausgewählt!")
+		ErrorBox:new(_"Keine Wanze ausgewählt!")
 	end
 end
 

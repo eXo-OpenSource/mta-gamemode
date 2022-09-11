@@ -46,12 +46,12 @@ function BombArea:fire(player)
     end
 
     if not player:getFaction():isEvilFaction() then
-		player:sendError("Nur Spieler in bösen Fraktionen können Bomben legen!")
+		player:sendError(_("Nur Spieler in bösen Fraktionen können Bomben legen!", player))
 		return
 	end
 
 	if not player:getInventory():removeItem("Sprengstoff", 1) then
-		player:sendError("Du hast keine Bombe im Inventar!")
+		player:sendError(_("Du hast keine Bombe im Inventar!", player))
 		return
 	end
 

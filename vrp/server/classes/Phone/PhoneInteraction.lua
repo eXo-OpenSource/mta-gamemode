@@ -158,7 +158,7 @@ function PhoneInteraction:callStartSpecial(number)
 				self.m_LastSpecialCallNumber[client] = number
 				instance:getOwner(instance):phoneCall(client)
 			else
-				client:sendError("Du kannst dich nicht selbst anrufen!")
+				client:sendError(_("Du kannst dich nicht selbst anrufen!", client))
 			end
 		end
 	end

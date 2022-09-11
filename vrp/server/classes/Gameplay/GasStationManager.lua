@@ -80,7 +80,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
 			local fuel = vehicle:getFuel() + fuel > 100 and 100 - vehicle:getFuel() or fuel
 			if fuel == 0 then
-				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
+				client:sendError(_("Dein Fahrzeug ist bereits vollgetankt!", client))
 				return
 			end
 			local price = math.round(price)
@@ -97,7 +97,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 						client:triggerEvent("gasStationReset")
 					else
-						client:sendError("In der Fraktionskasse ist nicht genug Geld!")
+						client:sendError(_("In der Fraktionskasse ist nicht genug Geld!", client))
 						return
 					end
 				elseif company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
@@ -109,7 +109,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 						client:triggerEvent("gasStationReset")
 					else
-						client:sendError("In der Unternehmenskasse ist nicht genug Geld!")
+						client:sendError(_("In der Unternehmenskasse ist nicht genug Geld!", client))
 						return
 					end
 				elseif client:getMoney() >= price then
@@ -119,7 +119,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 					client:triggerEvent("gasStationReset")
 				else
-					client:sendError("Du hast nicht genügend Geld dabei!")
+					client:sendError(_("Du hast nicht genügend Geld dabei!", client))
 					return
 				end
 

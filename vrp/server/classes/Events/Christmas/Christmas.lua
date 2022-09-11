@@ -187,8 +187,8 @@ function Christmas:Event_buyBonus(bonusId)
 		if bonus["Text"] == "Schutzweste" then
 			client:setArmor(100)
 		elseif bonus["Text"] == "Nick Change" then
-			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
-			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Weichnachts Event kostenlos erhälst!", client, 0, 255, 0)
+			outputChatBox(_("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client), client, 0, 255, 0)
+			outputChatBox(_("Schreib unbedingt dazu, dass du diesen durchs Weichnachts Event kostenlos erhälst!", client), client, 0, 255, 0)
 		elseif bonus["Text"] == "30 Tage VIP" then
 			if DEBUG then
 				client:sendError(_("Im DEBUG Modus (Testserver) nicht verfügbar!", client))

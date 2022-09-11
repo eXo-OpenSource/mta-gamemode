@@ -602,7 +602,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 				if not skip then
 					local veh, specialcase = self:createVehicle(row)
 					if veh and specialcase then
-						player:sendShortMessage(("Dein Fahrzeug %s wurde nicht gespawnt, da es sich im Pershing Square befindet, melde dich bei einem Administrator und parke es um!"):format(getVehicleNameFromModel(veh:getModel())),  "Information", nil, 30000)
+						player:sendShortMessage(_("Dein Fahrzeug %s wurde nicht gespawnt, da es sich im Pershing Square befindet, melde dich bei einem Administrator und parke es um!", player, getVehicleNameFromModel(veh:getModel())),  "Information", nil, 30000)
 					end
 				end
 				skip = false
@@ -1390,7 +1390,7 @@ function VehicleManager:Event_vehicleSell()
 	if not instanceof(source, PermanentVehicle, true) then return end
 	if source:getOwner() ~= client:getId() then	return end
 	if source.m_Premium then
-		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		client:sendError(_("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!", client))
 		return
 	end
 
@@ -1398,7 +1398,7 @@ function VehicleManager:Event_vehicleSell()
 	if price > 0 then
 		QuestionBox:new(client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, false, false, source)
 	else
-		client:sendError("Das Fahrzeug ist in keinem Shop erhätlich und kann nicht an den Server verkauft werden!")
+		client:sendError(_("Das Fahrzeug ist in keinem Shop erhätlich und kann nicht an den Server verkauft werden!", client))
 		QuestionBox:new(client, _("Möchtest du dieses Fahrzeug entfernen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, false, false, source)
 	end
 end
@@ -1407,7 +1407,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 	if not instanceof(veh, PermanentVehicle, true) then return end
 	if veh:getOwner() ~= source:getId() then return end
 	if veh.m_Premium then
-		source:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		source:sendError(_("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!", source))
 		return
 	end
 	local price = veh:getBuyPrice()
@@ -1419,7 +1419,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 		self:Event_vehicleRequestInfo(source)
 
 	else
-		source:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
+		source:sendError(_("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!", source))
 	end
 end
 
@@ -1491,7 +1491,7 @@ function VehicleManager:Event_vehicleEmpty()
 					fadeCamera(client,false,0.5)
 					setTimer(setElementPosition,1000,1,client,1759.05, -1690.22, 13.37)
 					setTimer(fadeCamera,1500,1, client,true,0.5)
-					outputChatBox("Du hast den Fahrlehrer rausgeworfen und die Prüfung beendet!", client, 200,0,0)
+					outputChatBox(_("Du hast den Fahrlehrer rausgeworfen und die Prüfung beendet!", client), client, 200,0,0)
 				end
 			end
 		end
@@ -1931,8 +1931,8 @@ function VehicleManager:migrate()
 end
 
 function VehicleManager:Event_ToggleLoadingRamp()
-	if getDistanceBetweenPoints3D(client.position, source.position) > 10 then client:sendError("Du bist zu weit entfernt!") return end
-	if not source:isInVehicleLoadingMode() and (source:isFrozen() or source.m_HandBrake) then client:sendError("Bitte löse zuerst die Handbremse!") return end
+	if getDistanceBetweenPoints3D(client.position, source.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
+	if not source:isInVehicleLoadingMode() and (source:isFrozen() or source.m_HandBrake) then client:sendError(_("Bitte löse zuerst die Handbremse!", client)) return end
 	if client:getCompany() and client:getCompany():getId() == 4 and client:isCompanyDuty() then
 		source:toggleVehicleLoadingMode()
 	end
