@@ -171,13 +171,14 @@ function CompanyGUI:addLeaderTab()
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric(true, true)
 		self.m_LeaderLoan:setVisible(false)
 
-		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", tabLeader):setBarEnabled(true)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
+		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
+		self.m_SaveRank:setEnabled(false)
+
+		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", tabLeader):setBarEnabled(true)
 		self.m_ChangePermissions.onLeftClick = bind(self.openPermissionsGUI, self)
 		self.m_ChangePermissions:setEnabled(false)
 
-		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
-		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
-		self.m_SaveRank:setEnabled(false)
 
 		self:refreshLeaderTab()
 

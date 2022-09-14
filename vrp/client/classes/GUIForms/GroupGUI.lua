@@ -391,17 +391,17 @@ function GroupGUI:addLeaderTab()
 		self.m_LeaderLoan:setNumeric(true, true)
 		self.m_LeaderLoan:setVisible(false)
 
-		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", tabLeader):setBarEnabled(true)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
+		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
+		self.m_SaveRank:setEnabled(false)
+
+		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", tabLeader):setBarEnabled(true)
 		self.m_ChangePermissions.onLeftClick = bind(self.openPermissionsGUI, self)
 		self.m_ChangePermissions:setEnabled(false)
 
-		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsstartberechtigungen", self.m_TabLeader):setBarEnabled(true)
+		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsstartberechtigungen", self.m_TabLeader):setBarEnabled(true)
 		self.m_ChangeActionPermissions.onLeftClick = bind(self.openPermissionsGUI, self)
 		self.m_ChangeActionPermissions:setEnabled(false)
-
-		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
-		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
-		self.m_SaveRank:setEnabled(false)
 
 		GUIRectangle:new(self.m_Width*0.45, self.m_Height*0.46, self.m_Width*0.525, 2, Color.Accent, tabLeader)
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.09, _"Optionen:", tabLeader):setColor(Color.Accent)

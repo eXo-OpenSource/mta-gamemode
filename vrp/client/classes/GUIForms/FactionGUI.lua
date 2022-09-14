@@ -176,17 +176,17 @@ function FactionGUI:addLeaderTab()
 		self.m_LeaderLoan:setNumeric(true, true)
 		self.m_LeaderLoan:setVisible(false)
 
-		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", self.m_TabLeader):setBarEnabled(true)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", self.m_TabLeader):setBarEnabled(true)
+		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
+		self.m_SaveRank:setEnabled(false)
+
+		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", self.m_TabLeader):setBarEnabled(true)
 		self.m_ChangePermissions.onLeftClick = bind(self.openPermissionsGUI, self, "permission")
 		self.m_ChangePermissions:setEnabled(false)
 
-		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsstartberechtigungen", self.m_TabLeader):setBarEnabled(true)
+		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsstartberechtigungen", self.m_TabLeader):setBarEnabled(true)
 		self.m_ChangeActionPermissions.onLeftClick = bind(self.openPermissionsGUI, self, "action")
 		self.m_ChangeActionPermissions:setEnabled(false)
-
-		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", self.m_TabLeader):setBarEnabled(true)
-		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
-		self.m_SaveRank:setEnabled(false)
 
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 
