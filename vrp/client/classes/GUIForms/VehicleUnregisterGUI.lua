@@ -28,12 +28,14 @@ function VehicleUnregisterGUI:unregistereButton_Click()
     if not self.m_VehicleListGrid:getSelectedItem() then return end
     local vehicle = self.m_VehicleListGrid:getSelectedItem().id
     if self.m_UnregisterButton:getText() == _"Abmelden" then
-        QuestionBox:new(_"Bist du sicher, dass du dein Fahrzeug abmelden möchtest? Du kannst es dann erst in 3 Tagen wieder anmelden. Außerdem wird bei der Abholung eine Gebühr von 500$ abgebucht.", 
+        self:hide()
+        QuestionBox:new(_("Bist du sicher, dass du dein Fahrzeug abmelden möchtest? Du kannst es dann erst in 3 Tagen wieder anmelden. Außerdem wird bei der Abholung eine Gebühr von %s$ abgebucht.", 500 + vehicle:getTax()*10), 
             function()
                 triggerServerEvent("onToggleVehicleRegister", vehicle, "unregister")
                 triggerServerEvent("requestVehicles", localPlayer)
+                self:show()
             end,
-            function() end,
+            function() self:show() end,
             localPlayer:getPosition()
         )
     else

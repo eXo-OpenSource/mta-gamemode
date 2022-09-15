@@ -280,10 +280,6 @@ function Faction:changeSkin(player, skinId)
 			if minRank <= playerRank then
 				player:setModel(skinId)
 				player.m_tblClientSettings["LastFactionSkin"] = skinId
-				player:getInventory():removeItem("Kevlar", 1)
-				WearableManager:getSingleton():removeWearable(player, "Kevlar")
-				player.m_KevlarShotsCount = nil
-				player:setData("Faction:InSpecialDuty", nil, true)
 			else
 				player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
 				player:setModel(self:getSkinsForRank(playerRank)[1])
@@ -292,6 +288,17 @@ function Faction:changeSkin(player, skinId)
 			--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
 			-- ^useless if player switches faction
 			player:setModel(self:getSkinsForRank(playerRank)[1])
+		end
+		if self:isStateFaction() then
+			if skinId == 285 then
+				player:getInventory():giveItem("Kevlar", 1)
+				player:setData("Faction:InSpecialDuty", true, true)
+			else
+				player:getInventory():removeItem("Kevlar", 1)
+				WearableManager:getSingleton():removeWearable(player, "Kevlar")
+				player.m_KevlarShotsCount = nil
+				player:setData("Faction:InSpecialDuty", nil, true)
+			end
 		end
 	else
 		player:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", player))
