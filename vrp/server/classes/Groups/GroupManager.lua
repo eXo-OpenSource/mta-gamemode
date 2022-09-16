@@ -177,6 +177,11 @@ function GroupManager:Event_Create(name, type)
 		return
 	end
 
+	if string.find(name, " ") == 1 then
+		client:sendError(_("Der Name darf nicht mit einem Leerzeichen anfangen.", client))
+		return
+	end
+
 	if string.len(name) < GROUP_NAME_MIN then
 		client:sendError(_("Der Name muss mindestens 5 Zeichen lang sein!", client))
 		return
@@ -526,6 +531,11 @@ function GroupManager:Event_ChangeName(name)
 
 	if client:getMoney() < GROUP_RENAME_COSTS then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+
+	if string.find(name, " ") == 1 then
+		client:sendError(_("Der Name darf nicht mit einem Leerzeichen anfangen.", client))
 		return
 	end
 

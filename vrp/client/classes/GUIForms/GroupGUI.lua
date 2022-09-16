@@ -272,7 +272,7 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 	self.m_GroupRankUpButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeRank"))
 	self.m_GroupRankDownButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeRank"))
 	self.m_GroupToggleLoanButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "toggleLoan"))
-	self.m_GroupDeleteButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "deleteGroup"))
+	self.m_GroupDeleteButton:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "deleteGroup"))
 	self.m_GroupsNameChangeLabel:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "renameGroup"))
 	self.m_GroupPlayerPermissionsButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changePermissions"))
 
