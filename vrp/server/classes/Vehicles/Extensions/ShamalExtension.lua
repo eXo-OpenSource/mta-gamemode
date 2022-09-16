@@ -11,22 +11,31 @@ function ShamalExtension:initShamalExtension()
     self.m_ShamalDimension = DimensionManager:getSingleton():getFreeDimension()
     self.m_hasShamalExtension = true
 
+    self.m_ShamalMarker = createMarker(3.732, 23.031, 1198.701, "cylinder", 1)
+    self.m_ShamalMarker:setInterior(1)
+    self.m_ShamalMarker:setDimension(6)
+
     self.m_ShamalExtensionVehicleExplode = bind(self.Event_seOnVehicleExplode, self)
     self.m_ShamalExtensionVehicleEnter = bind(self.Event_seOnVehicleEnter, self)
     self.m_ShamalExtensionDeleteDriver = bind(self.Event_seDeleteDriver, self)
+    self.m_ShamalExtensionMarkerHit = bind(self.Event_seOnSkydivingMarkerHit, self)
     addEventHandler("onVehicleExplode", self, self.m_ShamalExtensionVehicleExplode)
     addEventHandler("onVehicleEnter", self, self.m_ShamalExtensionVehicleEnter)
     addEventHandler("onVehicleExit", self, self.m_ShamalExtensionDeleteDriver)
+    addEventHandler("onMarkerHit", self.m_ShamalMarker, self.m_ShamalExtensionMarkerHit)
 end
 
 function ShamalExtension:delShamalExtension()
     self:seRemovePlayersFromInterior()
     DimensionManager:getSingleton():freeDimension(self.m_ShamalDimension)
     self.m_hasShamalExtension = nil
-    
+
     removeEventHandler("onVehicleExplode", self, self.m_ShamalExtensionVehicleExplode)
     removeEventHandler("onVehicleEnter", self, self.m_ShamalExtensionVehicleEnter)
     removeEventHandler("onVehicleExit", self, self.m_ShamalExtensionDeleteDriver)
+    removeEventHandler("onMarkerHit", self.m_ShamalMarker, self.m_ShamalExtensionMarkerHit)
+
+    self.m_ShamalMarker:destroy()
 end
 
 function ShamalExtension:Event_seOnVehicleEnter(player, seat)
@@ -106,4 +115,15 @@ function ShamalExtension:seRemovePlayersFromInterior()
             self:seEnterExitInterior(v, false)
         end
     end 
+end
+
+function ShamalExtension:Event_seOnSkydivingMarkerHit(hitElement, dim)
+	if hitElement.type == "player" and dim then
+		QuestionBox:new(hitElement, _("Möchtest du Fallschirm springen?", hitElement),
+        function()
+            self:seEnterExitInterior(hitElement, false)
+            self:vseEnterExit(hitElement, false)
+            hitElement:giveWeapon(46, 1, true)
+        end, nil, source, 5)
+	end
 end
