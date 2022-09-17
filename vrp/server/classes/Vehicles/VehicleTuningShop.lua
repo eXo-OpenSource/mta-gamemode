@@ -270,6 +270,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
     end
 	vehicle.m_Tunings:saveGTATuning()
 	vehicle.m_Tunings:applyTuning()
+    client:triggerEvent("syncVehicleTunings", vehicle, vehicle.m_Tunings:getTunings())
 
     client:sendSuccess(_("Upgrades gekauft!", client))
 

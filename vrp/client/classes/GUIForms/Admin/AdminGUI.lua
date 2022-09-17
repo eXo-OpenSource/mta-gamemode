@@ -392,6 +392,7 @@ function AdminGUI:onOfflineButtonClick(func)
 	elseif func == "offlineUnban" then
 		InputBox:new(
 				_("Spieler %s entbannen", selectedPlayer),
+				_("Aus welchem Grund möchtest du den Spieler %s entbannen?", selectedPlayer),
 				function (reason)
 					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
 				end)
