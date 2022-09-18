@@ -941,7 +941,7 @@ function VehicleManager:Event_vehiclePark()
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
 				
-				if (source:getGroup() and client:getGroup()) and (source:getGroup() == client:getGroup()) then
+				if  instanceof(source, GroupVehicle) and (source:getGroup() and client:getGroup()) and (source:getGroup() == client:getGroup()) then
 					client:getGroup():addLog(client, "Fahrzeuge", ("hat das Fahrzeug %s (%d) umgeparkt!"):format(source:getName(), source:getId()))
 				end
 

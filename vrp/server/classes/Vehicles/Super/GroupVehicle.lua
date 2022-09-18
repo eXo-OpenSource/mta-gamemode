@@ -11,7 +11,7 @@ GroupVehicle = inherit(PermanentVehicle)
 function GroupVehicle.convertVehicle(vehicle, group)
 
 	-- don't convert them if they have occupants or are currently towed
-	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") then
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") or (vehicle.m_SeatExtensionPassengers and #vehicle.m_SeatExtensionPassengers ~= 0) then
 		return false
 	end
 
