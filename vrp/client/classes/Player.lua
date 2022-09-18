@@ -179,6 +179,10 @@ function Player:isSurfOnCar(vehicle)
 	return self:getSurfingCar() == vehicle
 end
 
+function Player:getRadioStatus()
+	return self:getPublicSync("RadioStatus") or "-"
+end
+
 addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}
 addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) end)
 addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) end)

@@ -56,10 +56,10 @@ addEventHandler("trunkAddItem", root, function(trunkId, item, amount, value)
 end)
 
 addEventHandler("trunkAddWeapon", root, function(trunkId, weaponId, muni)
-	if weaponId == 27 then 
+	--[[if weaponId == 27 then 
 		client:sendError("Diese Waffe kannst Du nicht einlagern!")
 		return 
-	end
+	end]]
 	if Trunk.getFromId(trunkId) then
 		Trunk.getFromId(trunkId):addWeapon(client, weaponId, muni)
 	else

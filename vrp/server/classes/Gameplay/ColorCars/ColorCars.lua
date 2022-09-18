@@ -81,6 +81,10 @@ function ColorCars:addPlayer(player)
         self:setCatcher(player)
     end
 
+    player:triggerEvent("ColorCars:openMatchGUI")
+    ColorCarsManager:getSingleton():syncMatchGUI(self.m_LobbyOwner)
+    player:sendInfo(_("Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", player), 10000)
+
     self.m_SuportboostPowerUp = bind(self.powerUpSuperBoost, self, player)
     self.m_SuperjumpPowerUp = bind(self.powerUpSuperJump, self, player)
     bindKey(player, "lalt", "down", self.m_SuportboostPowerUp)
@@ -101,6 +105,7 @@ function ColorCars:removePlayer(player)
     unbindKey(player, "lalt", "down", self.m_SuportboostPowerUp)
     unbindKey(player, "lshift", "down", self.m_SuperjumpPowerUp)
 
+    player:triggerEvent("ColorCars:deleteGUI")
 
     player:setPosition(2690.84, -1700.05, 10.44)
     player:setDimension(0)
@@ -127,7 +132,8 @@ function ColorCars:removePlayer(player)
 end
 
 function ColorCars:createColorCar(player)
-    self.m_PlayerVehicle[player] = createVehicle(495, ColorCars.SpawnPosition[#self.m_Players][1], 0, 0, ColorCars.SpawnPosition[#self.m_Players][2])
+    local pos = ColorCars.SpawnPosition[#self.m_Players][1]
+    self.m_PlayerVehicle[player] = TemporaryVehicle.create(495, pos.x, pos.y, pos.z, ColorCars.SpawnPosition[#self.m_Players][2])
     self.m_PlayerVehicle[player]:setData("disableCollisionCheck", true, true)
     self.m_PlayerVehicle[player]:setInterior(15)
     self.m_PlayerVehicle[player]:setDimension(self.m_LobbyDimension)

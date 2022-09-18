@@ -183,6 +183,8 @@ FontAwesomeSymbols = {
 	Plane = "",
 	Lock_Open = "",
 	People_Robbery = "",
+	Plane_Slash = "",
+
 }
 
 -- uncomment this to render a list of all loaded fonts

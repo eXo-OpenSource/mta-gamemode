@@ -23,14 +23,14 @@ end
 function ItemSpeedCam:use(player)
 	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
 		if self:count() < MAX_SPEEDCAMS then
-			if player:getFaction():getPlayerRank(player) >= MIN_RANK then
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useSpeedCam") then
 				local result = self:startObjectPlacing(player,
 					function(item, position, rotation)
 						if item ~= self or not position then return end
 
 						local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
 						worldItem:setFactionSuperOwner(true)
-						worldItem:setMinRank(MIN_RANK)
+						--worldItem:setMinRank(MIN_RANK)
 
 						player:getInventory():removeItem(self:getName(), 1)
 
@@ -49,7 +49,7 @@ function ItemSpeedCam:use(player)
 					end
 				)
 			else
-				player:sendError(_("Dafür brauchst du mind. Rang %d!", player, MIN_RANK))
+				player:sendError(_("Du bist nicht berechtigt Blitzer aufzustellen!", player))
 			end
 		else
 			player:sendError(_("Es sind bereits %d/%d Anlagen aufgestellt!", player, self:count(), MAX_SPEEDCAMS))

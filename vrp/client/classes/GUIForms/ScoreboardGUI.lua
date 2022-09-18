@@ -21,7 +21,8 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:setColumnBackgroundColor(Color.Clear)
 	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
-	self.m_Grid:addColumn(_"Fraktion", 0.14)
+	self.m_Grid:addColumn(_"Fraktion", 0.1)
+	self.m_Grid:addColumn("", 0.04)
 	self.m_Grid:addColumn(_"Unternehmen", 0.15)
 	self.m_Grid:addColumn(_"Gang/Firma", 0.27)
 	self.m_Grid:addColumn(_"Spielzeit", 0.08)
@@ -113,6 +114,12 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
+	if localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() then
+		self.m_Grid:setColumnText(4, _"FMS")
+	else
+		self.m_Grid:setColumnText(4, "")
+	end
+
 	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
 
@@ -194,6 +201,7 @@ function ScoreboardGUI:insertPlayers()
 			(isLoggedIn and player:isPremium()) and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
 			(player.getPublicSync and player:getPublicSync("supportMode") and ("(%s) %s"):format(RANKSCOREBOARD[player.getPublicSync and player:getPublicSync("Rank") or 3] or "Support", player:getName())) or player:getName(),
 			isLoggedIn and (player:getFaction() and player:getFaction():getId() >= 1 and player:getFaction():getId() <= 3 and "Staat" or (player:getFaction() and player:getFaction():getShortName() or "- Keine -")) or "-",
+			isLoggedIn and ((localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction()) and (player:getFaction() and player:getFaction():isRescueFaction() and player:getRadioStatus() or "-")) or "",
 			isLoggedIn and (player:getCompany() and player:getCompany():getShortName()  or "- Keins -") or "-",
 			isLoggedIn and gname or "-",
 			isLoggedIn and playtime or "-",
@@ -209,6 +217,13 @@ function ScoreboardGUI:insertPlayers()
 			else
 				item:setColumnColor(3, tocolor(color.r, color.g, color.b))
 			end
+
+			if (localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction()) and (player:getFaction() and player:getFaction():isRescueFaction()) then
+				if tonumber(player:getRadioStatus()) and FMS_STATUS_COLORS[tonumber(player:getRadioStatus())] then
+					local colorFMS = FMS_STATUS_COLORS[tonumber(player:getRadioStatus())]
+					item:setColumnColor(4, tocolor(colorFMS[1], colorFMS[2], colorFMS[3]))
+				end
+			end
 		end
 
 		if player.getPublicSync and player:getPublicSync("supportMode") then 
@@ -217,16 +232,16 @@ function ScoreboardGUI:insertPlayers()
 
 		if player:getGroupType() then
 			if player:getGroupType() == "Gang" then
-				item:setColumnColor(5, Color.Red)
+				item:setColumnColor(6, Color.Red)
 			elseif player:getGroupType() == "Firma" then
-				item:setColumnColor(5, Color.Accent)
+				item:setColumnColor(6, Color.Accent)
 			end
 		end
 
 		if ping == "AFK" then
-			item:setColumnColor(7, Color.Red)
+			item:setColumnColor(8, Color.Red)
 		elseif ping == "Knast" then
-			item:setColumnColor(7, Color.Yellow)
+			item:setColumnColor(8, Color.Yellow)
 		end
 	end
 end

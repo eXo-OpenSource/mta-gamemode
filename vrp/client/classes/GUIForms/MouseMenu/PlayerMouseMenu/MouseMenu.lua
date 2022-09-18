@@ -89,7 +89,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 							if reason then
 								triggerServerEvent("adminPlayerFunction", localPlayer, "rkick", self:getElement(), reason)
 							else
-								ErrorBox:new("Kein Grund angegeben!")
+								ErrorBox:new(_"Kein Grund angegeben!")
 							end
 						end)
 				end

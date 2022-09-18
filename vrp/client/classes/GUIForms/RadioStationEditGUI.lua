@@ -133,7 +133,7 @@ function RadioStationEditGUI:addStation()
         self:loadList()
         self:setSelectedItemById(#self.m_ModifiedStreams)
     else
-        ErrorBox:new("Ungültige URL (diese muss http oder https beinhalten)")
+        ErrorBox:new(_"Ungültige URL (diese muss http oder https beinhalten)")
     end
 end
 
@@ -156,7 +156,7 @@ function RadioStationEditGUI:preListenStation(state)
             self.m_PreviewSound = playSound(url)
             self.m_PreListenState = true
         else
-            ErrorBox:new("Ungültige URL (diese muss http oder https beinhalten)")
+            ErrorBox:new(_"Ungültige URL (diese muss http oder https beinhalten)")
         end
     else
         setRadioChannel(0)

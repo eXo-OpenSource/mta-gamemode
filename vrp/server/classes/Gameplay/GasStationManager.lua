@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
-addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle"}
+addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle", "requestFuelPrices"}
 
 GAS_STATION_SHOP_PLAYER_PAYMENT = 40
 GAS_STATION_SHOP_FCT_CMP_PAYMENT = 30
@@ -23,6 +23,8 @@ function GasStationManager:constructor()
 		end
 	end
 
+	self.m_ChangeFuelPriceTimer = setTimer(bind(self.changeFuelPrice, self),1000*60*60*2 , 0)
+
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 	self.m_BankAccountServer = BankServer.get("vehicle.gasstation")
 
@@ -31,6 +33,7 @@ function GasStationManager:constructor()
 	--addEventHandler("gasStationStartTransaction", root, bind(GasStationManager.startTransaction, self))
 	addEventHandler("gasStationConfirmTransaction", root, bind(GasStationManager.confirmTransaction, self))
 	addEventHandler("gasStationRepairVehicle", root, bind(GasStationManager.serviceStationRepairVehicle, self))
+	addEventHandler("requestFuelPrices", root, bind(self.Event_requestFuelPrices, self))
 end
 
 function GasStationManager:destructor()
@@ -77,7 +80,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
 			local fuel = vehicle:getFuel() + fuel > 100 and 100 - vehicle:getFuel() or fuel
 			if fuel == 0 then
-				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
+				client:sendError(_("Dein Fahrzeug ist bereits vollgetankt!", client))
 				return
 			end
 			local price = math.round(price)
@@ -94,7 +97,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 						client:triggerEvent("gasStationReset")
 					else
-						client:sendError("In der Fraktionskasse ist nicht genug Geld!")
+						client:sendError(_("In der Fraktionskasse ist nicht genug Geld!", client))
 						return
 					end
 				elseif company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
@@ -106,7 +109,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 						client:triggerEvent("gasStationReset")
 					else
-						client:sendError("In der Unternehmenskasse ist nicht genug Geld!")
+						client:sendError(_("In der Unternehmenskasse ist nicht genug Geld!", client))
 						return
 					end
 				elseif client:getMoney() >= price then
@@ -116,7 +119,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 					client:triggerEvent("gasStationReset")
 				else
-					client:sendError("Du hast nicht genügend Geld dabei!")
+					client:sendError(_("Du hast nicht genügend Geld dabei!", client))
 					return
 				end
 
@@ -176,6 +179,32 @@ function GasStationManager:serviceStationRepairVehicle(element)
 			client:getFaction():transferMoney(self.m_BankAccountServer, price, "Fahrzeug-Reparatur", "Vehicle", "Repair")
 		end
 	end
+end
+
+function GasStationManager:changeFuelPrice()
+	for name, shop in pairs(GasStationManager.Shops) do
+		for	type, bool  in pairs(shop.m_FuelTypes) do
+			if FUEL_PRICE_RANGE[type][2] > 0 then
+				shop.m_FuelTypePrices[type] = math.round(math.random(FUEL_PRICE_RANGE[type][1], FUEL_PRICE_RANGE[type][2]) + math.random(), 1)
+			else
+				shop.m_FuelTypePrices[type] = 0
+			end
+		end
+		for station, _ in pairs(shop.m_Stations) do
+			station:setData("FuelTypePrices", shop.m_FuelTypePrices, true)
+		end
+	end 
+end
+
+function GasStationManager:Event_requestFuelPrices()
+	local temp = {}
+	for name, station in pairs(GasStationManager.Shops) do
+		if station:hasPlayerAccess(client) then
+			local pos = {station.m_Position.x, station.m_Position.y, station.m_Position.z}  -- dont ask why, it doesnt work otherwise
+			temp[station.m_Name] = {station.m_FuelTypePrices, pos}
+		end
+	end
+	client:triggerEvent("receiveFuelPrices", temp)
 end
 
 -- accessible: {type, id} || type: 0 = all, 1 = faction, 2 = company || id = faction or company id (0 == state faction)
@@ -426,7 +455,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {2, CompanyStaticId.MECHANIC}, 
 		nonInterior = true,
-		fuelTypes = {"petrol", "diesel", "petrol_plus"},
+		fuelTypes = {"petrol", "diesel", "petrol_plus", "jetfuel"},
 	},
 	-- Faction fuelstations
 	{

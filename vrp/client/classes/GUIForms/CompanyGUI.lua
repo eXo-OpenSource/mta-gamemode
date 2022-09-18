@@ -46,8 +46,10 @@ function CompanyGUI:constructor()
 
 		self.m_SanNewsStartStreetrace = GUIButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", tabAllgemein):setBarEnabled(true)
 		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
+		self.m_SanNewsStartStreetrace:setEnabled(false)
 
 		self.m_SanNewsAddBlip = GUIButton:new(self.m_Width*0.02, self.m_Height*0.84, self.m_Width*0.3, self.m_Height*0.07, _"Blip hinzufügen", tabAllgemein):setBarEnabled(true)
+		self.m_SanNewsAddBlip:setEnabled(false)
 		self.m_SanNewsAddBlip.onLeftClick =
 		function()
 			self:hide()
@@ -66,6 +68,7 @@ function CompanyGUI:constructor()
 		self.m_SanNewsDeleteBlips = GUIButton:new(self.m_Width*0.33, self.m_Height*0.84, self.m_Height*0.07, self.m_Height*0.07, FontAwesomeSymbols.Trash, tabAllgemein):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Red)
 		self.m_SanNewsDeleteBlips.onLeftClick = function() triggerServerEvent("sanNewsDeleteBlips", localPlayer) end
 		self.m_SanNewsDeleteBlips:setTooltip("Alle Blips löschen")
+		self.m_SanNewsDeleteBlips:setEnabled(false)
 	end
 
 	self.m_BindButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabAllgemein):setBarEnabled(true)
@@ -98,6 +101,17 @@ function CompanyGUI:constructor()
 	self.m_CompanyRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
 	self.m_CompanyRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
 	self.m_CompanyToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
+	self.m_CompanyForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
+	self.m_CompanyPlayerPermissionsButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.75, self.m_Width*0.3, self.m_Height*0.07, _"Rechte bearbeiten", self.m_tabMitglieder):setBarEnabled(true)
+	self.m_CompanyAddPlayerButton:setEnabled(false)
+	self.m_CompanyRemovePlayerButton:setEnabled(false)
+	self.m_CompanyRankUpButton:setEnabled(false)
+	self.m_CompanyRankDownButton:setEnabled(false)
+	self.m_CompanyToggleLoanButton:setEnabled(false)
+	self.m_CompanyPlayerFileButton:setEnabled(false)
+	self.m_CompanyForumSyncButton:setVisible(false)
+	self.m_CompanyPlayerPermissionsButton:setEnabled(false)
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 --	self.m_CompanyQuitButton.onLeftClick = bind(self.CompanyQuitButton_Click, self)
@@ -108,6 +122,9 @@ function CompanyGUI:constructor()
 	self.m_CompanyRankUpButton.onLeftClick = bind(self.CompanyRankUpButton_Click, self)
 	self.m_CompanyRankDownButton.onLeftClick = bind(self.CompanyRankDownButton_Click, self)
 	self.m_CompanyToggleLoanButton.onLeftClick = bind(self.CompanyToggleLoanButton_Click, self)
+	self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
+	self.m_CompanyForumSyncButton.onLeftClick = bind(self.CompanyForumSyncButton_Click, self)
+	self.m_CompanyPlayerPermissionsButton.onLeftClick = bind(self.companyPlayerPermissionsButton_Click, self)
 
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 
@@ -144,7 +161,7 @@ end
 function CompanyGUI:addLeaderTab()
 	if self.m_LeaderTab == false then
 		local tabLeader = self.m_TabPanel:addTab(_"Leader")
-		self.m_CompanyRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabLeader)
+		self.m_CompanyRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.6, tabLeader)
 		self.m_CompanyRangGrid:addColumn(_"Rang", 0.2)
 		self.m_CompanyRangGrid:addColumn(_"Name", 0.8)
 
@@ -152,10 +169,18 @@ function CompanyGUI:addLeaderTab()
 		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric(true, true)
+		self.m_LeaderLoan:setVisible(false)
 
-		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
+
+		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", tabLeader):setBarEnabled(true)
+		self.m_ChangePermissions.onLeftClick = bind(self.openPermissionsGUI, self)
+		self.m_ChangePermissions:setEnabled(false)
+
+
+		self:refreshLeaderTab()
 
 		for rank,name in pairs(self.m_RankNames) do
 			local item = self.m_CompanyRangGrid:addItem(rank, name)
@@ -171,14 +196,16 @@ function CompanyGUI:addLeaderTab()
 			end
 		end
 
-		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
-		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
-
-		self.m_CompanyForumSyncButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Foren-Gruppen", self.m_tabMitglieder):setBarEnabled(true)
-		self.m_CompanyForumSyncButton.onLeftClick = bind(self.CompanyForumSyncButton_Click, self)
-
 		self.m_LeaderTab = true
+	else
+		self:refreshLeaderTab()
 	end
+end
+
+function CompanyGUI:refreshLeaderTab()
+	self.m_LeaderLoan:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "editLoan"))
+	self.m_CompanyPlayerFileButton:setEnabled(localPlayer:getPublicSync("CompanyRank") >= CompanyRank.Manager)
+	self.m_ChangePermissions:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "changePermissions"))
 end
 
 function CompanyGUI:saveRank()
@@ -210,6 +237,7 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, ra
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 				item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
 				item.Id = playerId
+				item.Rank = info.rank
 
 				item.onLeftClick =
 					function()
@@ -217,9 +245,21 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, ra
 					end
 			end
 
-			if rank >= CompanyRank.Manager then
+			if rank >= CompanyRank.Manager or PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "editLoan") then
 				self.m_RankLoans = rankLoans
 				self:addLeaderTab()
+			end
+
+			self.m_CompanyAddPlayerButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "invite"))
+			self.m_CompanyRemovePlayerButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "uninvite"))
+			self.m_CompanyRankUpButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "changeRank"))
+			self.m_CompanyRankDownButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "changeRank"))
+			self.m_CompanyToggleLoanButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "toggleLoan"))
+			self.m_CompanyPlayerPermissionsButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "changePermissions"))
+			if localPlayer:getCompany():getId() == 3 then 
+				self.m_SanNewsAddBlip:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "addBlip"))
+				self.m_SanNewsDeleteBlips:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "addBlip"))
+				self.m_SanNewsStartStreetrace:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "startStreetRace"))
 			end
 		end
 	end
@@ -304,7 +344,18 @@ end
 function CompanyGUI:CompanyRankUpButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("companyRankUp", root, selectedItem.Id)
+		if selectedItem.Rank + 1 == CompanyRank.Leader and localPlayer:getPublicSync("CompanyRank") == CompanyRank.Leader then
+			QuestionBox:new("Bist du sicher, dass du den Spieler befördern und deinen Leaderposten abgeben möchtest?", 
+				function()
+					triggerServerEvent("companyRankUp", root, selectedItem.Id, true)
+				end,
+				function()
+					return
+				end, false, false
+			)
+		else
+			triggerServerEvent("companyRankUp", root, selectedItem.Id, false)
+		end
 	end
 end
 
@@ -328,4 +379,23 @@ end
 
 function CompanyGUI:SanNewsToggleMessage()
 	triggerServerEvent("sanNewsToggleMessage", root)
+end
+
+function CompanyGUI:openPermissionsGUI()
+	RankPermissionsGUI:new("permission", "company")
+end
+
+function CompanyGUI:companyPlayerPermissionsButton_Click()
+	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+
+		self.m_PermissionsManagmentGUI = GUIButtonMenu:new(_("Rechteverwaltung"))
+		if PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "changePermissions") then
+			self.m_PermissionsManagmentGUI:addItem(_"Rechte bearbeiten", Color.Accent,
+				function()
+					PlayerPermissionsGUI:new("permission", selectedItem.Rank, "company", selectedItem.Id)
+				end
+			)
+		end
+	end
 end

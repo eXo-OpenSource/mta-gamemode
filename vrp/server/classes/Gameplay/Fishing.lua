@@ -327,11 +327,11 @@ function Fishing:FishCaught()
 	end
 
 	if allBagsFull then
-		client:sendError("Deine Kühltaschen sind voll!")
+		client:sendError(_("Deine Kühltaschen sind voll!", client))
 		return
 	end
 
-	client:sendError("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!")
+	client:sendError(_("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!", client))
 end
 
 function Fishing:FishEscape()

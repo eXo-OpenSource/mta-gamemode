@@ -12,7 +12,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "unfreezePlayer", "requestWeap
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
 "premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation",
 "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg", "changeWalkingstyle", "PlayerManager:onRequestQuickTrade", "PlayerManager:onAcceptQuickTrade", "removeMeFromVehicle",
-"playerLocale"}
+"playerLocale", "requestPlayerWeapons"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -65,6 +65,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerPrivateMessage", root, function() cancelEvent() end)
 	addEventHandler("removeMeFromVehicle", root, bind(self.Event_removeMeFromVehicle, self))
 	addEventHandler("playerLocale", root, bind(self.Event_playerLocale, self))
+	addEventHandler("requestPlayerWeapons", root, bind(self.Event_requestPlayerWeaponInfo, self))
 
 	addEventHandler("PlayerManager:onAcceptQuickTrade", root, bind(self.Event_OnStartQuickTrade, self))
 	addEventHandler("PlayerManager:onRequestQuickTrade", root, bind(self.Event_RequestQuickTrade, self))
@@ -176,7 +177,7 @@ function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 			local tick = getTickCount()
 			if lastoutput+50000 <=  tick then
 				self.m_AreaDistrictShoots[area] = tick
-				source:districtChat("Schüsse ertönen durch die Gegend! (("..area.."))")
+				source:districtChat(_("Schüsse ertönen durch die Gegend! ((%s))", source, area))
 			end
 		end
 	end
@@ -308,11 +309,11 @@ function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 			return matches[1]
 		elseif #matches >= 2 then
 			if not noOutput then
-				outputChatBox('Es wurden '..#matches..' Spieler gefunden! Bitte genauer angeben!', sourcePlayer, 255, 0, 0)
+				outputChatBox(_("Es wurden %d Spieler gefunden! Bitte genauer angeben!", sourcePlayer, #matches), sourcePlayer, 255, 0, 0)
 			end
 		else
 			if not noOutput then
-				outputChatBox('Es wurde kein Spieler gefunden!', sourcePlayer, 255, 0, 0)
+				outputChatBox(_("Es wurde kein Spieler gefunden!", sourcePlayer), sourcePlayer, 255, 0, 0)
 			end
 		end
 	end
@@ -339,7 +340,7 @@ function PlayerManager:playerJoin()
 		source:join()
 	else
 		outputDebugString( ("PlayerManager.playerJoin: Player-Element %s, inherited by Player-class: %s"):format(inspect(source), tostring(instanceof(source, Player))) )
-		source:kick("Fehler beim Spielbeitritt, melde Dich bitte im Support!")
+		source:kick(_("Fehler beim Spielbeitritt, melde Dich bitte im Support!", source))
 	end
 end
 
@@ -413,7 +414,7 @@ function PlayerManager:playerQuit(quitType, reason, responsibleElement)
 		destroyElement(DrivingSchool.m_LessonVehicles[source])
 		DrivingSchool.m_LessonVehicles[source] = nil
 		source:triggerEvent("DrivingLesson:endLesson")
-		outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", source, 200,0,0)
+		outputChatBox(_("Du hast das Fahrzeug verlassen und die Prüfung beendet!", source), source, 200,0,0)
 	end
 end
 
@@ -487,7 +488,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 						PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", client, client:getName(), killer:getName(), jailTime, factionBonus), "Staat")
 						StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, killer, 0)
 						killer:getFaction():addLog(killer, "Knast", "hat "..client:getName().." für "..jailTime.."min. eingesperrt!")
-						outputChatBox("Du hast den Spieler "..getPlayerName(client).." außer Gefecht gesetzt und er wird ins Gefängnis transportiert!",killer,0,0,190)
+						outputChatBox(_("Du hast den Spieler %s außer Gefecht gesetzt und er wird ins Gefängnis transportiert!", killer, getPlayerName(client)),killer,0,0,190)
 						-- Give Achievements
 						if wantedLevel > 4 then
 							killer:giveAchievement(48)
@@ -842,6 +843,9 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 	else
 		client:endAFK()
 	end
+	if client:getFaction() and client:getFaction():isRescueFaction() then
+		client:setPublicSync("RadioStatus", 6)
+	end
 end
 
 function PlayerManager:Event_startAnimation(animation)
@@ -936,7 +940,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 	if getDistanceBetweenPoints3D(client.m_CurrentGunBoxPosition, client.position) > 10 then client:sendError(_("Du bist zu weit entfernt!", client)) return end
 
 	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
-	if weaponId == 27 then client:sendError(_("Du kannst diese Waffe nicht einlagern!", client)) return end
+	--if weaponId == 27 then client:sendError(_("Du kannst diese Waffe nicht einlagern!", client)) return end
 
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
@@ -1070,9 +1074,9 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 		if HouseManager:getSingleton().m_Houses[client.visitingHouse]:isValidToEnter(client) then
 			client:setSpawnLocation(SPAWN_LOCATIONS.HOUSE)
 			client:setSpawnLocationProperty(client.visitingHouse)
-			client:sendInfo("Spawnposition geändert!")
+			client:sendInfo(_("Spawnposition geändert!", client))
 		else
-			client:sendError("Du kannst dieses Haus nicht als Spawnpunkt festlegen!")
+			client:sendError(_("Du kannst dieses Haus nicht als Spawnpunkt festlegen!", client))
 		end
 	elseif locationId == SPAWN_LOCATIONS.VEHICLE then
 		if VEHICLE_MODEL_SPAWNS[source:getModel()] then
@@ -1082,26 +1086,26 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 
 			client:setSpawnLocation(SPAWN_LOCATIONS.VEHICLE)
 			client:setSpawnLocationProperty(source:getId())
-			client:sendInfo("Spawnposition geändert!")
+			client:sendInfo(_("Spawnposition geändert!", client))
 		end
 	elseif locationId == SPAWN_LOCATIONS.FACTION_BASE then
 		if client:getFaction() then
 			client:setSpawnLocation(locationId)
-			client:sendInfo("Spawnpunkt wurde geändert.")
+			client:sendInfo(_("Spawnpunkt wurde geändert.", client))
 		end
 	elseif locationId == SPAWN_LOCATIONS.COMPANY_BASE then
 		if client:getCompany() then
 			client:setSpawnLocation(locationId)
-			client:sendInfo("Spawnpunkt wurde geändert.")
+			client:sendInfo(_("Spawnpunkt wurde geändert.", client))
 		end
 	elseif locationId ==  SPAWN_LOCATIONS.GROUP_BASE then
 		if client:getGroup() then
 			client:setSpawnLocation(locationId)
-			client:sendInfo("Spawnpunkt wurde geändert.")
+			client:sendInfo(_("Spawnpunkt wurde geändert.", client))
 		end
 	else
 		client:setSpawnLocation(locationId)
-		client:sendInfo("Spawnpunkt wurde geändert.")
+		client:sendInfo(_("Spawnpunkt wurde geändert.", client))
 	end
 end
 
@@ -1205,4 +1209,16 @@ function PlayerManager:Event_removeMeFromVehicle(distance)
 	if client == source then
 		removePedFromVehicle(client)
 	end
+end
+
+function PlayerManager:Event_requestPlayerWeaponInfo()
+	local temp = {}
+	for i=1, 12 do
+		if getPedWeapon(client, i) > 0 then
+			local wpn = getPedWeapon(client, i)
+			temp[wpn] =  client:getTotalAmmo(i)
+		end
+	end
+
+	client:triggerEvent("showPlayerWeapons", temp)
 end

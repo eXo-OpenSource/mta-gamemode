@@ -9,7 +9,8 @@ FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
 	"factionRescueWastedFinished", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
-	"factionRescueReviveAbort", "factionRescueToggleLadder", "factionRescueToggleDefibrillator", "factionRescueFillFireExtinguisher"
+	"factionRescueReviveAbort", "factionRescueToggleLadder", "factionRescueToggleDefibrillator", "factionRescueFillFireExtinguisher",
+	"factionRescueChangeRadioStatus"
 }
 
 function FactionRescue:constructor()
@@ -87,7 +88,7 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueReviveAbort", root, bind(self.destroyDeathBlip, self))
 	addEventHandler("factionRescueToggleLadder", root, bind(self.Event_toggleLadder, self))
 	addEventHandler("factionRescueFillFireExtinguisher", root, bind(self.Event_fillFireExtinguisher, self))
-
+	addEventHandler("factionRescueChangeRadioStatus", root, bind(self.Event_changeRadioStatus, self))
 
 
 	PlayerManager:getSingleton():getQuitHook():register(
@@ -191,6 +192,7 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin, 
 				client:setBadge()
 				takeAllWeapons(client)
 				if not wasted then faction:updateDutyGUI(client) end
+				client:setPublicSync("RadioStatus", 6)
 			else
 				if wasted then return end
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
@@ -993,4 +995,27 @@ function FactionRescue:outputMegaphone(player, ...)
 		end
 	end
 	return false
+end
+
+function FactionRescue:Event_changeRadioStatus(status)
+	if client:getFaction() and client:getFaction():isRescueFaction() and client:isFactionDuty() then
+		if not client.lastStatusChange then client.lastStatusChange = 0 end
+		if client.lastStatusChange + 3 < getRealTime().timestamp then
+			local faction = client:getFaction()
+			local rankName = faction:getRankName(faction:getPlayerRank(client))
+			for i, player in pairs(self:getOnlinePlayers(false, true)) do
+				if player ~= client then
+					player:sendShortMessage(_("%s %s meldet Status %s", player, rankName, client:getName(), status))
+				else
+					client:sendInfo(_("Du meldest Status %s", client, status))
+				end
+			end
+			client.lastStatusChange = getRealTime().timestamp
+			client:setPublicSync("RadioStatus", status)
+		end
+	else
+		if client:getFaction() and client:getFaction():isRescueFaction() then
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	end
 end

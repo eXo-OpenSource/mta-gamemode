@@ -45,6 +45,9 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 	self.m_DestroyFunc = bind(self.Event_OnTruckDestroy,self)
 
+	self.m_WaterCheckTimer = setTimer(bind(self.isStateEvidenceTruckInWater, self), 10000, 0)
+	self.m_IsSubmerged = false
+
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnTruckExit,self))
@@ -225,5 +228,18 @@ function StateEvidenceTruck:Event_OnTruckExit(player, seat)
 	if seat == 0 and player and isElement(player) then
 		player:triggerEvent("CountdownStop", "Geld-Transport")
 		player:triggerEvent("VehicleHealthStop")
+	end
+end
+
+function StateEvidenceTruck:isStateEvidenceTruckInWater()
+	if not self.m_IsSubmerged then
+		if isElementInWater(self.m_Truck) then
+			self.m_WaterNotificationTimer = setTimer(
+				function()
+					PlayerManager:getSingleton():breakingNews("Neueste Quellen berichten, dass der Geldtransporter einen Unfall hatte und ins Wasser gefahren ist!")
+				end
+			, 180000, 1)
+			self.m_IsSubmerged = true
+		end
 	end
 end

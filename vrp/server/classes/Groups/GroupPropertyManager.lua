@@ -126,11 +126,11 @@ end
 
 function GroupPropertyManager:BuyProperty( Id )
 	if not client:getGroup() then
-		client:sendError("Du bist in keiner Firma oder Gang!")
+		client:sendError(_("Du bist in keiner Firma oder Gang!", client))
 		return
 	end
-	if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
-		client:sendError("Du bist nicht berechtigt eine Immobilie für deine Firma/Gang zu kaufen!")
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "buyProperty") then
+		client:sendError(_("Du bist nicht berechtigt eine Immobilie für deine Firma/Gang zu kaufen!", client))
 		return
 	end
 
@@ -138,7 +138,7 @@ function GroupPropertyManager:BuyProperty( Id )
 	local property = GroupPropertyManager:getSingleton().Map[Id]
 	local propCount = self:getPropsForPlayer( client )
 	if #propCount > 0 then
-		return 	client:sendError("Deine Firma/Gang besitzt bereits eine Immobilie")
+		return 	client:sendError(_("Deine Firma/Gang besitzt bereits eine Immobilie", client))
 	end
 	if property then
 		local price = property.m_Price
@@ -177,11 +177,11 @@ end
 function GroupPropertyManager:SellProperty(  )
 	if client then
 		if not client:getGroup() then
-			client:sendError("Du bist in keiner Firma oder Gang!")
+			client:sendError(_("Du bist in keiner Firma oder Gang!", client))
 			return
 		end
-		if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
-			client:sendError("Du bist nicht berechtigt diese Immobilie zu verkaufen!")
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "sellProperty") then
+			client:sendError(_("Du bist nicht berechtigt diese Immobilie zu verkaufen!", client))
 			return
 		end
 

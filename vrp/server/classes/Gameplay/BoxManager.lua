@@ -68,7 +68,7 @@ end
 
 function BoxManager:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
-		if hitElement:isFactionDuty() or hitElement:isCompanyDuty() then hitElement:sendError("Du kannst diese Aktion im Dienst nicht ausüben!") return end
+		if hitElement:isFactionDuty() or hitElement:isCompanyDuty() then hitElement:sendError(_("Du kannst diese Aktion im Dienst nicht ausüben!", hitElement)) return end
 		hitElement:triggerEvent("openBoxingGUI", self.m_BoxHallCol)
 	end
 end
@@ -79,7 +79,7 @@ function BoxManager:requestFight(target, moneyId)
 			local money = BOXING_MONEY[moneyId]
 			if client:getMoney() >= money then
 				if target:getMoney() >= money then
-					if target:isFactionDuty() or target:isCompanyDuty() then client:sendError("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!") return end
+					if target:isFactionDuty() or target:isCompanyDuty() then client:sendError(_("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!", client)) return end
 
 					QuestionBox:new(target, _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", false, false, client, target, money)
 					client:sendShortMessage(_("Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$", client, target:getName(), money))

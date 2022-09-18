@@ -30,12 +30,28 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 			end
 		end
 		if player:getFaction() == self:getOwner() and player:isFactionDuty() then
+			if self.m_ItemName == "Blitzer" then
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useSpeedCam") then
+					return true
+				else 
+					player:sendError(_("Dazu bist du nicht berechtigt!", player))
+					return false
+				end
+			end
 			if player:getFaction():getPlayerRank(player) >= rank then
 				return true
 			else
 				player:sendError(_("Dazu benötigst du mindestens Rang %d.", player, rank))
 			end
 		elseif self:getPlacer() == player and not self.m_SuperOwner then
+			if self.m_ItemName == "Blitzer" then
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useSpeedCam") then
+					return true
+				else 
+					player:sendError(_("Dazu bist du nicht berechtigt!", player))
+					return false
+				end
+			end
 			return true
 		else
 			player:sendError(_("Dieses Objekt gehört der Fraktion %s.", player, self:getOwner():getName()))
@@ -48,6 +64,14 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 			return true 
 		end
 		if player:getFaction() == self:getOwner() and player:isFactionDuty() then
+			if self.m_ItemName == "Blitzer" then
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useSpeedCam") then
+					return true
+				else 
+					player:sendError(_("Dazu bist du nicht berechtigt!", player))
+					return false
+				end
+			end
 			--outputDebug("faction and duty")
 			if player:getFaction():getPlayerRank(player) >= rank then
 				--outputDebug("rank")
@@ -56,6 +80,14 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 				player:sendError(_("Dazu benötigst du mindestens Rang %d.", player, rank))
 			end
 		elseif self:getPlacer() == player and not self.m_SuperOwner then
+			if self.m_ItemName == "Blitzer" then
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useSpeedCam") then
+					return true
+				else 
+					player:sendError(_("Dazu bist du nicht berechtigt!", player))
+					return false
+				end
+			end
 			 --outputDebug("private")
 			return true
 		else

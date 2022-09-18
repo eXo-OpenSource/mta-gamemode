@@ -67,7 +67,7 @@ end
 
 function PrisonBreakManager:PedTargetted(ped, attacker)
     if not self:getCurrent() then
-        attacker:sendError("Derzeit läuft kein Knastausbruch!")
+        attacker:sendError(_("Derzeit läuft kein Knastausbruch!", attacker))
         return false
     end
 end
@@ -85,8 +85,13 @@ function PrisonBreakManager:BombArea_Place(bombArea, player)
 		return false
     end
     
+	if not PermissionsManager:getSingleton():isPlayerAllowedToStart(player, "faction", "PrisonBreak") then
+		player:sendError(_("Du bist nicht berechtigt einen Knastausbruch zu starten!", player))
+		return false
+	end
+
 	if FactionState:getSingleton():countPlayers() < PrisonBreakManager.OfficerCount then
-		player:sendError("Es sind nicht genügend Staatsfraktionisten online!")
+		player:sendError(_("Es sind nicht genügend Staatsfraktionisten online!", player))
 		return false
 	end
 

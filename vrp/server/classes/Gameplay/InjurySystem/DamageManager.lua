@@ -45,7 +45,7 @@ function DamageManager:Event_requestTreat(player, data)
 end
 
 function DamageManager:Event_OnDeclineTreat(healer) 
-	healer:sendInfo("Der Spieler hat eine Behandlung abgelehnt!")
+	healer:sendInfo(_("Der Spieler hat eine Behandlung abgelehnt!", healer))
 end
 
 

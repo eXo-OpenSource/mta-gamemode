@@ -30,7 +30,10 @@ function LocalPlayer:constructor()
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
 	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
 	self.m_BikeBug = setTimer(bind(self.checkBikeBug, self), 250, 0)
-
+	self.m_RankPermissions = {}
+	self.m_PlayerPermissions = {}
+	self.m_PlayerActionPermissions = {}
+	self.m_PlayerWeaponPermissions = {}
 
 
 	-- Since the local player exist only once, we can add the events here
@@ -564,15 +567,15 @@ function LocalPlayer:checkAFK()
 		local afkMinutes = self.m_AFKCheckCount*5/60
 		if afkMinutes == 12 then
 			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
-				outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
-				self:sendTrayNotification("WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", "warning", true)
+				outputChatBox ( _"WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
+				self:sendTrayNotification(_"WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", "warning", true)
 				self:generateAFKCode()
 				return
 			end
 		elseif afkMinutes == 14 then
 			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
-				outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
-				self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
+				outputChatBox ( _"WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+				self:sendTrayNotification(_"WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
 				return
 			end
 		elseif afkMinutes >= 15 then
@@ -601,7 +604,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, true)
 			end
 		end
 
@@ -696,13 +699,13 @@ function LocalPlayer:generateAFKCode()
 	end
 	local fcode = table.concat(code)
 	self.m_AFKCode = fcode
-	outputChatBox("Um nicht ins AFK-Cafe zu kommen, gib folgenden Befehl ein: /noafk "..fcode,255,0,0)
+	outputChatBox(_("Um nicht ins AFK-Cafe zu kommen, gib folgenden Befehl ein: /noafk %s", fcode),255,0,0)
 end
 
 function LocalPlayer:onAFKCodeInput(cmd, code)
 	if self.m_AFKCode then
 		if self.m_AFKCode == code then
-			outputChatBox("Vorgang abgebrochen.", 255, 0, 0)
+			outputChatBox(_"Vorgang abgebrochen.", 255, 0, 0)
 			self.m_AFKCheckCount = 0
 			self.m_AFKCode = false
 		else

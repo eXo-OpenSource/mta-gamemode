@@ -567,12 +567,16 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 	elseif func == "freeze" then
 		if target:isFrozen() then
 			target:setFrozen(false)
+			target:setData("Admin:IsFrozen", false, true)
+			toggleAllControls(target, true, true, false)
 			self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
 			target.m_IsAdminFrozen = false
 		else
 			if target.vehicle then target:removeFromVehicle() end
 			target:setFrozen(true)
+			target:setData("Admin:IsFrozen", true, true)
+			toggleAllControls(target, false, true, false)
 			self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
 			target.m_IsAdminFrozen = true

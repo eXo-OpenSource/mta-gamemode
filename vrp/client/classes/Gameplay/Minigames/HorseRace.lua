@@ -30,7 +30,7 @@ function HorseRace:startRace()
 end
 
 function HorseRace:stopRace()
-	outputChatBox("Die Live-Übertragung wird in 5 Sekunden beendet!",255,0,0)
+	outputChatBox(_"Die Live-Übertragung wird in 5 Sekunden beendet!",255,0,0)
 
 	setTimer(function()
 		removeEventHandler("onClientRender", root, self.m_renderRaceBind)

@@ -203,6 +203,7 @@ function Core:ready() --onClientResourceStart
 	PedScale:new()
 	VehicleGuns:new()
 	HelicopterDrivebyManager:new()
+	RcVanExtension:new()
 end
 
 function Core:afterLogin()
@@ -224,6 +225,7 @@ function Core:afterLogin()
 	Atrium:new()
 	ElementInfoManager:new()
 	AtmManager:new()
+	PermissionsManager:new()
 	if EVENT_HALLOWEEN then
 		HalloweenEasterEggs:new()
 	end

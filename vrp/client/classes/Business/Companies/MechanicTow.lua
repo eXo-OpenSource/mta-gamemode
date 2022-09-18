@@ -82,7 +82,7 @@ end
 
 function MechanicTow:requestFill(vehicle, fuel)
 	if not vehicle.controller then
-		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
+		ErrorBox:new(_"In dem Fahrzeug sitzt kein Spieler")
 		return
 	end
 

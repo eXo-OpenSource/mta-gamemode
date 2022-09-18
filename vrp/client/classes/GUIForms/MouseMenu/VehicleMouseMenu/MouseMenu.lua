@@ -71,7 +71,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 										delete(self)
 										InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
 										function (amount)
-											if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 10000000 then
+											if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 15000000 then
 												triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
 											else
 												ErrorBox:new(_("Der Betrag muss zwischen 1$ und 10.000.000$ liegen!"))
@@ -200,15 +200,17 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 		if element:getData("EPT_Bus") then -- Coach
 			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
-				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
-					self:addItem(_"Busfahrer >>>",
-						function()
-							if self:getElement() then
-								delete(self)
-								ClickHandler:getSingleton():addMouseMenu(BusLineMouseMenu:new(posX, posY, element), element)
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "startBusTour") then
+					if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+						self:addItem(_"Busfahrer >>>",
+							function()
+								if self:getElement() then
+									delete(self)
+									ClickHandler:getSingleton():addMouseMenu(BusLineMouseMenu:new(posX, posY, element), element)
+								end
 							end
-						end
-					):setIcon(FontAwesomeSymbols.Arrows)
+						):setIcon(FontAwesomeSymbols.Arrows)
+					end
 				end
 			end -- don't use elseif as it will prevent the bus driver from seeing the UI
 			if element:getData("EPT_bus_duty") then
@@ -328,6 +330,42 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.SignOut)
 		end
+		if element:getModel() == 459 then
+			if (element:getData("OwnerType") == "player" and element:getData("OwnerName") == localPlayer.name) or (element:getData("OwnerType") == "group" and element:getData("OwnerName") == localPlayer:getGroupName()) then 
+				if not  localPlayer:getData("UsingBaron") then
+					if localPlayer.vehicle == element and localPlayer.vehicleSeat ~= 0 then
+						self:addItem(_"RC Baron benutzen",
+							function()
+								if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+									if not element:getData("BaronUser") then
+										if localPlayer.vehicle then
+											if self:getElement() then
+												triggerServerEvent("vehicleToggleBaron", self:getElement(), true)
+											end
+										else
+											ErrorBox:new(_"Du hast im RC Van sitzen.")
+										end
+									else
+										ErrorBox:new(_"Der RC Baron wird derzeit von %s benutzt.", element:getData("BaronUser"):getName())
+									end
+								end
+							end
+						):setIcon(FontAwesomeSymbols.Plane)
+					end
+				else
+					self:addItem(_"RC Baron nicht mehr benutzen",
+					function()
+						if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
+							if self:getElement() then
+								triggerServerEvent("vehicleToggleBaron", self:getElement(), false)
+							end
+						end
+					end
+					):setIcon(FontAwesomeSymbols.Plane_Slash)
+				end
+			end
+		end
+
 		if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
 			if #self:getAttachedElement(2912, element) > 0 then
 				self:addItem(_"Kiste abladen",

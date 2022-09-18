@@ -58,6 +58,11 @@ function MechanicTow:respawnVehicle(vehicle)
 			occ:removeFromVehicle()
 		end
 	end
+	if vehicle:getData("BaronUser") then
+		local player = vehicle:getData("BaronUser")
+		vehicle:toggleBaron(player, false, true)
+		player:removeFromVehicle()
+	end
 	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
 		vehicle:respawn(true, true)
 		vehicle:getFaction():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})

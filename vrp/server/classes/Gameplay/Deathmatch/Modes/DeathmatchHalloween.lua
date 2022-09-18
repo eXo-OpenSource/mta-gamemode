@@ -197,7 +197,7 @@ end
 
 function DeathmatchHalloween:addPlayer(player)
 	if not self.m_IsOpen then
-		player:sendError("Die Arena ist bereits geschlossen! Bitte komme zur nächsten Runde wieder")
+		player:sendError(_("Die Arena ist bereits geschlossen! Bitte komme zur nächsten Runde wieder", player))
 		return
 	end
 	DeathmatchLobby.addPlayer(self, player)

@@ -202,7 +202,7 @@ function Shop:buy(player)
 		if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
 			if player:getGroup() and player:getGroup():getType() == "Firma" then
 				local group = player:getGroup()
-				if group:getPlayerRank(player) >= GroupRank.Manager then
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "group", "buyBIZ") then
 					if group:getMoney() >= self.m_Price then
 						group:transferMoney(self.m_BankAccountServer, self.m_Price, "Shop-Verkauf", "Shop", "Buy")
 						group:sendMessage(_("[FIRMA] %s hat den Shop '%s' für %d$ gekauft!", player, player:getName(), self.m_Name, self.m_Price), 0, 255, 0)
@@ -214,7 +214,7 @@ function Shop:buy(player)
 						player:sendError(_("In der Firmenkasse ist nicht genug Geld! (%d$)", player, self.m_Price))
 					end
 				else
-					player:sendError(_("Nur Leader und Co-Leader deiner Firma können den Shop kaufen!", player))
+					player:sendError(_("Du bist nicht berechtigt einen Shop zu kaufen!", player))
 				end
 			else
 				player:sendError(_("Du bist in keiner privaten Firma!", player))
@@ -231,7 +231,7 @@ function Shop:sell(player)
 	if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
 		if player:getGroup() and player:getGroup() == self.m_Owner then
 			local group = player:getGroup()
-			if group:getPlayerRank(player) >= GroupRank.Manager then
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "group", "sellBIZ") then
 				local money = math.floor((self.m_Price*0.75))
 				self.m_BankAccountServer:transferMoney(group, money, "Shop-Verkauf", "Shop", "Sell")
 				group:sendMessage(_("[FIRMA] %s hat den Shop '%s' für %d$ verkauft!", player, player:getName(), self.m_Name, money), 255, 0, 0)
@@ -240,7 +240,7 @@ function Shop:sell(player)
 				self:loadOwner()
 				self:save()
 			else
-				player:sendError(_("Nur Leader und Co-Leader deiner Firma können den Shop verkaufen!", player))
+				player:sendError(_("Du bist nicht berechtigt einen Shop zu verkaufen!", player))
 			end
 		else
 			player:sendError(_("Dieser Shop gehört nicht deiner Firma!", player))

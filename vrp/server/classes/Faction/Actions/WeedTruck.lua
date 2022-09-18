@@ -60,6 +60,9 @@ function WeedTruck:constructor(driver)
 	self.m_Destroyed = false
 	self.m_DestroyFunc = bind(self.Event_OnWeedTruckDestroy,self)
 
+	self.m_WaterCheckTimer = setTimer(bind(self.isWeedTruckInWater, self), 10000, 0)
+	self.m_IsSubmerged = false
+	
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
 	Discord:getSingleton():outputBreakingNews("Ein Weed-Transport wurde soeben gestartet!")
 	FactionState:getSingleton():sendWarning("Ein Weed-Transport wurde gestartet!", "Neuer Einsatz", true, serialiseVector(WeedTruck.spawnPos))
@@ -297,14 +300,14 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 				end
 			else 
 				if stateDestination then
-					player:sendInfo(_"Vielen Dank für ihren Verrat!")
+					player:sendInfo(_("Vielen Dank für ihren Verrat!", player))
 					StateEvidence:getSingleton():addItemToEvidence(player, "Weed", WeedTruck.WeedPerPackage, false)
 				else 
-					player:sendInfo(_"Vielen Dank für ihren Verrat!\nDie Drogen behalte ich.")
+					player:sendInfo(_("Vielen Dank für ihren Verrat!\nDie Drogen behalte ich.", player))
 				end
 				breakingNewsText = "Paket %d von %d wurde an das/die %s übergeben!"
 				PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, ped.faction:getShortName())
-				player:giveAchievement(111)
+				player:giveAchievement(111) -- Snitch
 			end
 			package = player:getPlayerAttachedObject()
 			player:detachPlayerObject(package)
@@ -314,5 +317,18 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 
 	if self:getRemainingPackageAmount() == 0  then
 		delete(self)
+	end
+end
+
+function WeedTruck:isWeedTruckInWater()
+	if not self.m_IsSubmerged then
+		if isElementInWater(self.m_Truck) then
+			self.m_WaterNotificationTimer = setTimer(
+				function()
+					PlayerManager:getSingleton():breakingNews("Neueste Quellen berichten, dass der Weed-Transporter einen Unfall hatte und ins Wasser gefahren ist!")
+				end
+			, 180000, 1)
+			self.m_IsSubmerged = true
+		end
 	end
 end

@@ -33,50 +33,59 @@ function KeyBinds:constructor()
 	self.m_ThermalSpeedKey = bind(self.thermalSpeedKey, self)
 
 	self.m_Keys = {
-		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
-		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
-		["KeyToggleRadioComm"]		= {["defaultKey"] = "F5", ["name"] = "Funkgerät (Staat)", ["func"] = self.m_RadioCommunication};
-		["KeyToggleSelfGUI"]		= {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
-		["KeyToggleHelpGUI"]		= {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
-		["KeyToggleAnimationMenu"]	= {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
-		["KeyToggleScoreboard"]		= {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
-		["KeyToggleCustomMap"]		= {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
-		["KeyToggleInventory"]		= {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
-		["KeyIndicatorLeft"]		= {["defaultKey"] = ",", ["name"] = "Blinker Links", ["func"] = function() Indicator:getSingleton():switchIndicatorState("left") end};
-		["KeyIndicatorRight"]		= {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
-		["KeyIndicatorWarn"]		= {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
-		["KeyToggleCursor"]			= {["defaultKey"] = "b", ["name"] = "Mauszeiger", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
-		["KeySpeedLimit"]			= {["defaultKey"] = "k", ["name"] = "Tempolimiter", ["func"] = self.m_SpeedLimit, ["trigger"] = "both"};
-		["KeyCruisingContro"]		= {["defaultKey"] = "c", ["name"] = "Cruise-Control", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
-		["KeyChairSitDown"]			= {["defaultKey"] = "l", ["name"] = "Hinsetzen (auf Objekte)", ["func"] = function() if localPlayer.vehicle then return false end if localPlayer:getWorldObject() then triggerServerEvent("onPlayerChairSitDown", localPlayer, localPlayer:getWorldObject()) end end};
-		["KeyToggleDisplay"]		= {["defaultKey"] = "ralt", ["name"] = "Anzeigen an/aus", ["func"] = self.m_ToggleDisplays};
-		["KeyToggleSeatbelt"]		= {["defaultKey"] = "m", ["name"] = "An/Abschnallen", ["func"] = function() if getPedOccupiedVehicle(localPlayer) then triggerServerEvent("toggleSeatBelt",localPlayer) end end, ["trigger"] =  "up"};
-		["KeyToggleGate"]			= {["defaultKey"] = "h", ["name"] = "Tore benutzen", ["func"] = function() if getElementHealth(localPlayer) > 0 and not localPlayer.m_LastGateInteraction or (getTickCount()-localPlayer.m_LastGateInteraction) > 100 then triggerServerEvent("onPlayerTryGateOpen",localPlayer) localPlayer.m_LastGateInteraction = getTickCount() end end, ["trigger"] = "down"};
-		["KeyMagnetUse"]		 	= {["defaultKey"] = "lctrl", ["name"] = "Magnet benutzen (Leviathan)", ["func"] = function() if localPlayer.vehicle and localPlayer.vehicle:getModel() == 417 then localPlayer.vehicle:magnetVehicleCheck() end end, ["trigger"] = "down"};
-		["KeyVehiclePickUp"]	 	= {["defaultKey"] = "x", ["name"] = "An Boot/Fahrzeug festhalten", ["func"] = self.m_VehiclePickUp, ["trigger"] = "down"};
-		["KeyToggleVehicleEngine"]	= {["defaultKey"] = "x", ["name"] = "Fahrzeug Motor", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleEngine() end end, ["trigger"] = "down"};
-		["KeyToggleVehicleLight"]	= {["defaultKey"] = "l", ["name"] = "Fahrzeug Licht", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleLight() end end, ["trigger"] = "down"};
-		["KeyToggleVehicleBrake"]	= {["defaultKey"] = "g", ["name"] = "Handbremse", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleHandbrake() end end, ["trigger"] = "down"};
-		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Rundumleuchten", ["func"] = self.m_VehicleELS, ["trigger"] = "down"};
-		["KeyToggleReddot"]			= {["defaultKey"] =  "N/A", ["name"] = "Rotpunktvisir umschalten", ["func"] = function() HUDUI:getSingleton().m_RedDot = not HUDUI:getSingleton().m_RedDot end, ["trigger"] = "up"};
-		["KeyEntranceUse"]			= {["defaultKey"] =  "f", ["name"] = "Betreten", ["func"] = self.m_Entrance, ["trigger"] = "up"};
-		["KeyToggleTaser"]			= {["defaultKey"] = "o", ["name"] = "Taser ziehen", ["func"] = function() if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then triggerServerEvent("onPlayerItemUseServer", localPlayer, false, false, "Taser") end end, ["trigger"] = "down"};
-		["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
-		["KeyToggleInfrared"]		= {["defaultKey"] = "mouse2", ["name"] = "Infrarot-Kamera (Helikopter)", ["func"] = self.m_InfraredVehicle, ["trigger"] = "down"};
-		["KeyToggleHeliDriveby"] 	= {["defaultKey"] = "rshift", ["name"] = "auf Kufen stellen (aus Helikopter)", ["func"] = self.m_ToggleHeliDriveBy, ["trigger"] = "down"};
-		["KeyToggleShamalInteior"] 	= {["defaultKey"] = "rctrl", ["name"] = "Shamal Interior betreten", ["func"] = function() if localPlayer:getData("VSE:IsPassenger") and localPlayer:getData("VSE:Vehicle"):getModel() == 519 then triggerServerEvent("toggleShamalInterior", localPlayer:getData("VSE:Vehicle")) end end, ["trigger"] = "down"};
-		["KeyToggleThermalLight"] 	= {["defaultKey"] = "h", ["name"] = "Thermalkamera-Scheinwerfer (Helikopter)", ["func"] = self.m_ThermalLightKey, ["trigger"] = "down"};
-		["KeyToggleThermalLock"] 	= {["defaultKey"] = "mouse1", ["name"] = "Thermalkamera-Kontrollmodus (Helikopter)", ["func"] = self.m_ThermaControlModeKey, ["trigger"] = "down"};
-		["KeyToggleThermalMode"] 	= {["defaultKey"] = "m", ["name"] = "Thermalkamera-Suchmodus (Helikopter)", ["func"] = self.m_ThermalModeKey, ["trigger"] = "down"};
-		["KeyToggleThermalSpeed"] 	= {["defaultKey"] = "lalt", ["name"] = "Thermalkamera umschalten (Helikopter)", ["func"] = self.m_ThermalSpeedKey, ["trigger"] = "down"};
-		["KeyNeedhelp"] 			= {["defaultKey"] = "N/A", ["name"] = "Hilferuf senden (Fraktion)", ["func"] = function() triggerServerEvent("factionPlayerNeedhelp",localPlayer) end, ["trigger"] = "down"};
-		["KeyCinemaVideoGUI"] 		= {["defaultKey"] = "x", ["name"] = "Kino Videoverwaltung öffnen", ["func"] = function() if CinemaLobby:isInstantiated() then CinemaLobby:getSingleton():openVideoGUI() end end, ["trigger"] = "down"};
-		["KeyToggleHouseGarage"] 	= {["defaultKey"] = "h", ["name"] = "Haus Garage benutzen", ["func"] = function() triggerServerEvent("toggleGarageState",localPlayer) end, ["trigger"] = "down"};
+		["general"] = {
+			["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
+			["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
+			["KeyToggleRadioComm"]		= {["defaultKey"] = "F5", ["name"] = "Funkgerät (Staat)", ["func"] = self.m_RadioCommunication};
+			["KeyToggleSelfGUI"]		= {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
+			["KeyToggleHelpGUI"]		= {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
+			["KeyToggleAnimationMenu"]	= {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
+			["KeyToggleScoreboard"]		= {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
+			["KeyToggleCustomMap"]		= {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
+			["KeyToggleInventory"]		= {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
+			["KeyIndicatorLeft"]		= {["defaultKey"] = ",", ["name"] = "Blinker Links", ["func"] = function() Indicator:getSingleton():switchIndicatorState("left") end};
+			["KeyIndicatorRight"]		= {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
+			["KeyIndicatorWarn"]		= {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
+			["KeyToggleCursor"]			= {["defaultKey"] = "b", ["name"] = "Mauszeiger", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
+			["KeySpeedLimit"]			= {["defaultKey"] = "k", ["name"] = "Tempolimiter", ["func"] = self.m_SpeedLimit, ["trigger"] = "both"};
+			["KeyCruisingContro"]		= {["defaultKey"] = "c", ["name"] = "Cruise-Control", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
+			["KeyChairSitDown"]			= {["defaultKey"] = "l", ["name"] = "Hinsetzen (auf Objekte)", ["func"] = function() if localPlayer.vehicle then return false end if localPlayer:getWorldObject() then triggerServerEvent("onPlayerChairSitDown", localPlayer, localPlayer:getWorldObject()) end end};
+			["KeyToggleDisplay"]		= {["defaultKey"] = "ralt", ["name"] = "Anzeigen an/aus", ["func"] = self.m_ToggleDisplays};
+			["KeyToggleSeatbelt"]		= {["defaultKey"] = "m", ["name"] = "An/Abschnallen", ["func"] = function() if getPedOccupiedVehicle(localPlayer) then triggerServerEvent("toggleSeatBelt",localPlayer) end end, ["trigger"] =  "up"};
+			["KeyToggleGate"]			= {["defaultKey"] = "h", ["name"] = "Tore benutzen", ["func"] = function() if getElementHealth(localPlayer) > 0 and not localPlayer.m_LastGateInteraction or (getTickCount()-localPlayer.m_LastGateInteraction) > 100 then triggerServerEvent("onPlayerTryGateOpen",localPlayer) localPlayer.m_LastGateInteraction = getTickCount() end end, ["trigger"] = "down"};
+			["KeyMagnetUse"]		 	= {["defaultKey"] = "lctrl", ["name"] = "Magnet benutzen (Leviathan)", ["func"] = function() if localPlayer.vehicle and localPlayer.vehicle:getModel() == 417 then localPlayer.vehicle:magnetVehicleCheck() end end, ["trigger"] = "down"};
+			["KeyVehiclePickUp"]	 	= {["defaultKey"] = "x", ["name"] = "An Boot/Fahrzeug festhalten", ["func"] = self.m_VehiclePickUp, ["trigger"] = "down"};
+			["KeyToggleVehicleEngine"]	= {["defaultKey"] = "x", ["name"] = "Fahrzeug Motor", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleEngine() end end, ["trigger"] = "down"};
+			["KeyToggleVehicleLight"]	= {["defaultKey"] = "l", ["name"] = "Fahrzeug Licht", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleLight() end end, ["trigger"] = "down"};
+			["KeyToggleVehicleBrake"]	= {["defaultKey"] = "g", ["name"] = "Handbremse", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleHandbrake() end end, ["trigger"] = "down"};
+			["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Rundumleuchten", ["func"] = self.m_VehicleELS, ["trigger"] = "down"};
+			["KeyToggleReddot"]			= {["defaultKey"] =  "N/A", ["name"] = "Rotpunktvisir umschalten", ["func"] = function() HUDUI:getSingleton().m_RedDot = not HUDUI:getSingleton().m_RedDot end, ["trigger"] = "up"};
+			["KeyEntranceUse"]			= {["defaultKey"] =  "f", ["name"] = "Betreten", ["func"] = self.m_Entrance, ["trigger"] = "up"};
+			["KeyToggleTaser"]			= {["defaultKey"] = "o", ["name"] = "Taser ziehen", ["func"] = function() if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then triggerServerEvent("onPlayerItemUseServer", localPlayer, false, false, "Taser") end end, ["trigger"] = "down"};
+			["KeyTriggerChaseSound"]	= {["defaultKey"] = "2", ["name"] = "Polizei-Megafon", ["func"] = self.m_PoliceMegaphone, ["trigger"] = "down"};
+			["KeyToggleInfrared"]		= {["defaultKey"] = "mouse2", ["name"] = "Infrarot-Kamera (Helikopter)", ["func"] = self.m_InfraredVehicle, ["trigger"] = "down"};
+			["KeyToggleHeliDriveby"] 	= {["defaultKey"] = "rshift", ["name"] = "auf Kufen stellen (aus Helikopter)", ["func"] = self.m_ToggleHeliDriveBy, ["trigger"] = "down"};
+			["KeyToggleShamalInteior"] 	= {["defaultKey"] = "rctrl", ["name"] = "Shamal Interior betreten", ["func"] = function() if localPlayer:getData("VSE:IsPassenger") and localPlayer:getData("VSE:Vehicle"):getModel() == 519 then triggerServerEvent("toggleShamalInterior", localPlayer:getData("VSE:Vehicle")) end end, ["trigger"] = "down"};
+			["KeyToggleThermalLight"] 	= {["defaultKey"] = "h", ["name"] = "Thermalkamera-Scheinwerfer (Helikopter)", ["func"] = self.m_ThermalLightKey, ["trigger"] = "down"};
+			["KeyToggleThermalLock"] 	= {["defaultKey"] = "mouse1", ["name"] = "Thermalkamera-Kontrollmodus (Helikopter)", ["func"] = self.m_ThermaControlModeKey, ["trigger"] = "down"};
+			["KeyToggleThermalMode"] 	= {["defaultKey"] = "m", ["name"] = "Thermalkamera-Suchmodus (Helikopter)", ["func"] = self.m_ThermalModeKey, ["trigger"] = "down"};
+			["KeyToggleThermalSpeed"] 	= {["defaultKey"] = "lalt", ["name"] = "Thermalkamera umschalten (Helikopter)", ["func"] = self.m_ThermalSpeedKey, ["trigger"] = "down"};
+			["KeyNeedhelp"] 			= {["defaultKey"] = "N/A", ["name"] = "Hilferuf senden (Fraktion)", ["func"] = function() triggerServerEvent("factionPlayerNeedhelp",localPlayer) end, ["trigger"] = "down"};
+			["KeyCinemaVideoGUI"] 		= {["defaultKey"] = "x", ["name"] = "Kino Videoverwaltung öffnen", ["func"] = function() if CinemaLobby:isInstantiated() then CinemaLobby:getSingleton():openVideoGUI() end end, ["trigger"] = "down"};
+			["KeyToggleHouseGarage"] 	= {["defaultKey"] = "h", ["name"] = "Haus Garage benutzen", ["func"] = function() triggerServerEvent("toggleGarageState",localPlayer) end, ["trigger"] = "down"};
+		},
+		["FMS"] = {},
+
+
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
 	--  ["KeyChatGroup"]           = {["defaultKey"] = "3", ["name"] = "Chat: Firma/Gang", ["func"] = "chatbox", ["extra"] = "Firma/Gang"};
 	}
+
+	for i = 1, 7 do
+		self.m_Keys["FMS"]["KeyStatusFMS"..i] = {["defaultKey"] = "N/A", ["name"] = "Status "..i, ["func"] = function() triggerServerEvent("factionRescueChangeRadioStatus", localPlayer, i) end, ["trigger"] = "down"};
+	end
 
 	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setPedControlState("handbrake", true) end end)
 
@@ -86,16 +95,18 @@ end
 
 function KeyBinds:loadBinds()
 	--outputChatBox("-------------", 0,255,0)
-	for index, key in pairs(self.m_Keys) do
-		--if key["func"] == "chatbox" then
-			--local trigger = key["trigger"] or "down"
-			--local keyName = core:get("KeyBindings", index, key["defaultKey"])
-			--outputChatBox("Bind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
-		--end
-		if not key["load"] then
-			bindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
-		else
-			key["load"]()
+	for index, category in pairs(self.m_Keys) do
+		for i, key in pairs(category) do
+			--if key["func"] == "chatbox" then
+				--local trigger = key["trigger"] or "down"
+				--local keyName = core:get("KeyBindings", index, key["defaultKey"])
+				--outputChatBox("Bind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
+			--end
+			if not key["load"] then
+				bindKey(core:get("KeyBindings", i, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
+			else
+				key["load"]()
+			end
 		end
 	end
 	--outputChatBox("-------------", 0,255,0)
@@ -104,16 +115,18 @@ end
 
 function KeyBinds:unloadBinds()
 	--outputChatBox("-------------", 255,0,0)
-	for index, key in pairs(self.m_Keys) do
-		--if key["func"] == "chatbox" then
-		--	local trigger = key["trigger"] or "down"
-		--	local keyName = core:get("KeyBindings", index, key["defaultKey"])
-		--	outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
-		--end
-		if not key["unload"] then
-			unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
-		else
-			key["unload"]()
+	for index, category in pairs(self.m_Keys) do
+		for i, key in pairs(category) do
+			--if key["func"] == "chatbox" then
+			--	local trigger = key["trigger"] or "down"
+			--	local keyName = core:get("KeyBindings", index, key["defaultKey"])
+			--	outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
+			--end
+			if not key["unload"] then
+				unbindKey(core:get("KeyBindings", i, key["defaultKey"]), key["trigger"] or "down", key["func"])
+			else
+				key["unload"]()
+			end
 		end
 	end
 --	outputChatBox("-------------", 255,0,0)
@@ -125,8 +138,8 @@ function KeyBinds:changeKey(keyName, newKey)
 	self:loadBinds()
 end
 
-function KeyBinds:getBindsList()
-	return self.m_Keys
+function KeyBinds:getBindsList(type)
+	return self.m_Keys[type]
 end
 
 function KeyBinds:inventory()

@@ -72,7 +72,7 @@ function SlotGame:constructor(object)
                 player.m_OnlineSlotMachine = self
                 if SlotGame.Bonus ~= 1 then
                     self.m_TotalPaid = 0
-                    outputChatBox(("[BONUS]#FFFFFF Aktuell ist der Bonus beim Spielen bei Faktor %s"):format(SlotGame.Bonus), player, 200, 200, 0, true)
+                    outputChatBox(_("[BONUS]#FFFFFF Aktuell ist der Bonus beim Spielen bei Faktor %s", player, SlotGame.Bonus), player, 200, 200, 0, true)
                     player:sendInfo(_("Aktuell ist der Bonus beim Spielen bei Faktor: %s!", player, SlotGame.Bonus))
                 end
 			else
@@ -134,9 +134,9 @@ function SlotGame:requestPay(player)
         if self.m_Player == client then 
             self.m_BankAccountServer:transferMoney(client, self.m_Pay, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
             if SlotGame.Bonus ~= 1 then 
-                client:sendShortMessage(("Dir wurden $%s ausgezahlt! (Bonus-Faktor: %s)"):format(self.m_Pay, SlotGame.Bonus), "Spielothek")
+                client:sendShortMessage(_("Dir wurden $%s ausgezahlt! (Bonus-Faktor: %s)",client ,self.m_Pay, SlotGame.Bonus), _("Spielothek", client))
             else
-                client:sendShortMessage(("Dir wurden $%s ausgezahlt!"):format(self.m_Pay), "Spielothek")
+                client:sendShortMessage(_("Dir wurden $%s ausgezahlt!", client, self.m_Pay), _("Spielothek", client))
             end
             self.m_Pay = 0
         end
@@ -149,9 +149,9 @@ function SlotGame:forcePay(player, amount)
     if self.m_Player == player then 
         self.m_BankAccountServer:transferMoney(player, amount, "Spielothek-Gewinn", "Gameplay", "Spielothek-Automat", {allowNegative = true, silent = true})
         if SlotGame.Bonus ~= 1 then 
-            player:sendShortMessage(("Dir wurden $%s ausgezahlt! (Bonus-Faktor: %s)"):format(amount, SlotGame.Bonus), "Spielothek")
+            player:sendShortMessage(_("Dir wurden $%s ausgezahlt! (Bonus-Faktor: %s)",player ,self.m_Pay, SlotGame.Bonus), _("Spielothek", player))
         else
-            player:sendShortMessage(("Dir wurden $%s ausgezahlt!"):format(amount), "Spielothek")
+            player:sendShortMessage(_("Dir wurden $%s ausgezahlt!", player, self.m_Pay), _("Spielothek", player))
         end
         self.m_Pay = 0
     end

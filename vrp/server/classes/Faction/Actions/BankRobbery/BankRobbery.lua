@@ -229,6 +229,10 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, self.ms_MinBankrobStateMembers))
 				return false
 			end
+			if not PermissionsManager:getSingleton():isPlayerAllowedToStart(attacker, "faction", "BankRobbery") then
+				attacker:sendError(_("Du bist nicht berechtigt einen Banküberfall zu starten!",attacker))
+				return false
+			end
 			if self:getDifficulty() < 1 then
 				attacker:sendError(_("Es ist noch nicht genug Geld in den Tresoren!",attacker))
 				return false

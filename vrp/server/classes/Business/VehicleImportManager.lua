@@ -77,6 +77,10 @@ function VehicleImportManager:startTransport(shopId, model, variant, reloadListF
 		if client then client:sendError("Du darfst den Transport nicht starten.") end
 		return 
 	end
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "startVehicleImport") then
+		client:sendError(_("Du bist nicht berechtigt einen Fahrzeugimport zu starten!", client))
+		return
+	end
 	-- check if vehicle is valid shop vehicle
 	if not ShopManager.VehicleShopsMap[shopId] or not ShopManager.VehicleShopsMap[shopId].m_VehicleList[model] or not ShopManager.VehicleShopsMap[shopId].m_VehicleList[model][variant] then
 		client:sendError("Ungültiges Shop-Fahrzeug. Bitte öffne die Fahrzeugliste erneut.")
@@ -320,6 +324,10 @@ function VehicleImportManager:internalOnVehicleExit(player, seat)
 
 	player:triggerEvent("destroyVehicleTransportDestinationBlips")
 	if veh.destinationCol and isElement(veh.destinationCol) and isElementWithinColShape(veh, veh.destinationCol) then
+		if not player:getCompany() or not player:getCompany():getId() == CompanyStaticId.EPT then 
+			player:sendError(_("Du kannst das Fahrzeug nicht abgeben.", player))
+			return false
+		end
 		if veh:getVelocity().length > 0.001 then 
             player:sendWarning("Fahre langsamer um das Fahrzeug abzugeben.")
             return false 

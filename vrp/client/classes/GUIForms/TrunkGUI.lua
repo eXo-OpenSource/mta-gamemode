@@ -234,7 +234,7 @@ function TrunkGUI:toTrunk()
             end
         elseif self.m_SelectedItemType == "weapon" then
             if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-				ErrorBox:new("Du bist im Dienst, du darfst keine Waffen einlagern!")
+				ErrorBox:new(_"Du bist im Dienst, du darfst keine Waffen einlagern!")
 				return
 			end
 			triggerServerEvent("trunkAddWeapon", localPlayer, self.m_Id, self.m_SelectedItem, self.m_SelectedItemAmount)

@@ -57,7 +57,7 @@ function PremiumPlayer:openVehicleList()
 		end
 		client:triggerEvent("vehicleTakeMarkerGUI", vehicles, "premiumTakeVehicle", "abholen")
 	else
-		self.m_Player:sendError("Keine Fahrzeuge zum Abholen bereit!")
+		self.m_Player:sendError(_("Keine Fahrzeuge zum Abholen bereit!", self.m_Player))
 	end
 end
 
@@ -81,7 +81,7 @@ function PremiumPlayer:takeVehicle(model)
 			self.m_Player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", self.m_Player))
 		end
 	else
-		self.m_Player:sendError("Ungültiges Fahrzeug!")
+		self.m_Player:sendError(_("Ungültiges Fahrzeug!", self.m_Player))
 	end
 end
 

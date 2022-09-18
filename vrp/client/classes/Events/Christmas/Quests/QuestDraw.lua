@@ -65,15 +65,15 @@ function QuestDrawGUI:constructor(id, name)
 	local slider = GUIGridSlider:new(13, 11, 5, 1, self.m_Window):setRange(10, 300)
 	slider.onUpdate = function(size) self.m_Skribble:setDrawSize(size) end
 
-	local save = GUIGridButton:new(18, 11, 3, 1, "Einsenden", self.m_Window)
+	local save = GUIGridButton:new(18, 11, 3, 1, _"Einsenden", self.m_Window)
 	save.onLeftClick = function()
 		if not dxGetStatus().AllowScreenUpload then
-			ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
+			ErrorBox:new(_"Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
 			return
 		end
-		QuestionBox:new("Möchtest du das Bild wirklich einsenden? Warnung: Du kannst nur ein einziges Bild für das Event einsenden!", function()
+		QuestionBox:new(_"Möchtest du das Bild wirklich einsenden? Warnung: Du kannst nur ein einziges Bild für das Event einsenden!", function()
 			if not dxGetStatus().AllowScreenUpload then
-				ErrorBox:new("Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
+				ErrorBox:new(_"Bitte aktiviere die Option \"Erlauben von Screenshots\" unter MTA -> Einstellungen um die Quest zu machen!")
 				return
 			end
 			self.m_Skribble:setDrawingEnabled(false)

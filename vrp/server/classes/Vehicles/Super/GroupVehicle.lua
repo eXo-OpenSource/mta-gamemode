@@ -11,7 +11,7 @@ GroupVehicle = inherit(PermanentVehicle)
 function GroupVehicle.convertVehicle(vehicle, group)
 
 	-- don't convert them if they have occupants or are currently towed
-	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") then
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") or (vehicle.m_SeatExtensionPassengers and #vehicle.m_SeatExtensionPassengers ~= 0) then
 		return false
 	end
 
@@ -191,6 +191,12 @@ function GroupVehicle:respawn(force, suppressMessage)
 
 	if self:hasSeatExtension() then
 		self:vseRemoveAttachedPlayers()
+	end
+
+	if self:getData("BaronUser") then
+		local player = self:getData("BaronUser")
+		self:toggleBaron(player, false, true)
+		player:removeFromVehicle()
 	end
 
 	self:setEngineState(false)
@@ -393,7 +399,7 @@ function GroupVehicle:rentEnd()
 			local currentFuel = self:getFuel()
 			if currentFuel < self.m_RentedFuel then
 				local needFuel = self.m_RentedFuel - currentFuel
-				local price = (FUEL_PRICE[self:getFuelType()] or 1)
+				local price = (GasStationManager.Shops["Idlewood"].m_FuelTypePrices[self:getFuelType()] or 1)
 				local tankSize = self:getFuelTankSize()
 				local opticalFuelRequired = tankSize * needFuel
 				local maxFuelWithMoney = deposit / price
@@ -436,10 +442,6 @@ function GroupVehicle:rentEnd()
 			VehicleManager:getSingleton():destroyGroupVehicles(self:getGroup())
 		end
 	end
-end
-
-function GroupVehicle:onEnter()
-	return true -- otherwise last driver will not added
 end
 
 function GroupVehicle:sendOwnerMessage(msg)

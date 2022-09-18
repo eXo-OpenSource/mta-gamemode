@@ -51,7 +51,7 @@ function ShortMessageLogGUI:onShow()
 
 			item.onLeftDoubleClick = function ()
 				setClipboard(("%s \r\n %s \r\n %s"):format(getOpticalTimestamp(data.timestamp, true), data.title, data.text));
-				outputChatBox("[ShortMessage] Log-Zeile wurde in Zwischenablage kopiert!", 200,200,0);
+				outputChatBox(_"[ShortMessage] Log-Zeile wurde in Zwischenablage kopiert!", 200,200,0);
 			end
 		end
 	end

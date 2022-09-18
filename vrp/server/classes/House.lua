@@ -591,13 +591,13 @@ function House:tryToCatchRobbers( player )
 end
 
 function House:breakDoor(player)
-	if not self:isCopNearby(player) then return player:sendError(_"Du brauchst einen Partner um die Tür aufzubrechen!") end
+	if not self:isCopNearby(player) then return player:sendError(_("Du brauchst einen Partner um die Tür aufzubrechen!", player)) end
 	
 	if self.m_LockStatus then
 		self.m_LockStatus = false
 		player:meChat(true, _("bricht die Tür auf!", player))
 	else
-		player:sendError("Die Tür ist bereits auf.")
+		player:sendError(_("Die Tür ist bereits auf.", player))
 	end
 end
 

@@ -119,7 +119,7 @@ end
 
 function getWorldObjectBehindCursor(worldX, worldY, worldZ)
     local x, y, z = getCameraMatrix()
-    local hit, hitX, hitY, hitZ, element, nX, nY, nZ, material, lightning, piece, worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId = processLineOfSight(x, y, z, worldX, worldY, worldZ, true, true, true, true, false, true, true, true, localPlayer, true, false)
+    local hit, hitX, hitY, hitZ, element, nX, nY, nZ, material, lightning, piece, worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId = processLineOfSight(x, y, z, worldX, worldY, worldZ, true, true, true, true, false, false, false, false, localPlayer, true, false)
 
     return worldModelId, wX, wY, wZ, wrX, wrY, wrZ, worldLODModelId
 end

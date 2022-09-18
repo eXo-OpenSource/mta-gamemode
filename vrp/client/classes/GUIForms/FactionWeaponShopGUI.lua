@@ -57,21 +57,28 @@ function FactionWeaponShopGUI:onHide()
 	AntiClickSpam:getSingleton():setEnabled(true)
 end]]
 
-function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons, rankWeapons)
+function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons, rankWeapons, weaponsPermissions)
 	self.m_ValidWeapons = validWeapons
 	self.m_SpecialWeapons = {}
 	self.m_GUIWeapons = {}
-
+	self.m_WeaponPermissions = weaponsPermissions
+	
 	for k,v in pairs(self.m_ValidWeapons) do
 		if v == true then
-			self:addWeaponToGUI(k, depotWeapons[k]["Waffe"], depotWeapons[k]["Munition"])
+			if k == 27 then
+				if localPlayer:getData("Faction:InSpecialDuty") or localPlayer:getFaction():isEvilFaction() then
+					self:addWeaponToGUI(k, depotWeapons[k]["Waffe"], depotWeapons[k]["Munition"])	
+				end
+			else
+				self:addWeaponToGUI(k, depotWeapons[k]["Waffe"], depotWeapons[k]["Munition"])
+			end 
 		end
 	end
 	if localPlayer:getFaction():isEvilFaction() then
 		for weaponId, data in pairs(depotWeapons) do
 			if not self.m_WeaponsName[weaponId] and (data["Waffe"] > 0 or data["Munition"] > 0)  then
 				self:addWeaponToGUI(weaponId, depotWeapons[weaponId]["Waffe"], depotWeapons[weaponId]["Munition"])
-				self.m_SpecialWeapons[weaponId] = true
+				--self.m_SpecialWeapons[weaponId] = true
 			end
 		end
 	end
@@ -123,11 +130,23 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 
 end
 
+function FactionWeaponShopGUI:isPlayerAllowedToTake(weapon)
+	if self.m_WeaponPermissions[tostring(weapon)] == true then
+		return true
+	elseif self.m_WeaponPermissions[tostring(weapon)] == false then
+		return false
+	elseif self.rankWeapons[tostring(weapon)] == 1 then
+		return true
+	end
+
+	return false
+end
+
 function FactionWeaponShopGUI:updateButtons()
 	for weaponID,v in pairs(self.m_GUIWeapons) do
 		if v == true then
 			local skip = false
-			if (self.rankWeapons[tostring(weaponID)] == 1) or (self.m_SpecialWeapons[weaponID] and  self.rankWeapons[tostring(0)] == 1) then
+			if self:isPlayerAllowedToTake(weaponID) then -- or (self.m_SpecialWeapons[weaponID] and  self.rankWeapons[tostring(0)] == 1)
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
@@ -228,6 +247,12 @@ function FactionWeaponShopGUI:factionReceiveWeaponShopInfos()
 end
 
 function FactionWeaponShopGUI:factionWeaponShopBuy()
+	if self.m_Cart[27] and not localPlayer:getData("Faction:InSpecialDuty") and not localPlayer:getFaction():isEvilFaction() then
+		self.m_Cart[27]["Waffe"] = 0
+		self.m_Cart[27]["Munition"] = 0
+		ErrorBox:new(_"SPAZ-12 konnte nicht entnommen werden")
+	end
+
 	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
 	delete(self)
 end

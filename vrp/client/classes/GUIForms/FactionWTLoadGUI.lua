@@ -259,7 +259,7 @@ function FactionWTLoadGUI:addItemToCart(typ, weapon)
 	end
 
 	if not success then
-		ErrorBox:new("Es haben nicht alle Waffen/Magazine in den Kisten Platz!")
+		ErrorBox:new(_"Es haben nicht alle Waffen/Magazine in den Kisten Platz!")
 	end
 
 	self:updateCart()

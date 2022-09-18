@@ -190,7 +190,7 @@ function AppCall:ButtonAddContact_Click()
 
 	for _, contact in pairs(playerContacts) do
 		if contact[1] == item.Owner then
-			ErrorBox:new("Kontakt ist bereits in der Kontaktliste!")
+			ErrorBox:new(_"Kontakt ist bereits in der Kontaktliste!")
 			return
 		end
 	end

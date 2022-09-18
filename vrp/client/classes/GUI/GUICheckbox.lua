@@ -70,7 +70,9 @@ end
 function GUICheckbox:setEnabled(state)
 	self:setColor(state and Color.White or Color.LightGrey)
 	self.m_Enabled = state
+	
 	self:anyChange()
+	return self
 end
 
 function GUICheckbox:isEnabled()

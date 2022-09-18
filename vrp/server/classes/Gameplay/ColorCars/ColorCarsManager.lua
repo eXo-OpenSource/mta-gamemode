@@ -90,15 +90,19 @@ function ColorCarsManager:createLobby(lobbyOwner, lobbyName, password, maxPlayer
 end
 
 function ColorCarsManager:createPlayerLobby(lobbyOwner, lobbyName, password, maxPlayers)
+    if lobbyOwner:isFactionDuty() and lobbyOwner:getFaction():isStateFaction() then
+		lobbyOwner:sendError(_("Du darfst im Dienst nicht in eine ColorCars Lobby!", lobbyOwner))
+		return
+	end
+
     if lobbyOwner:getMoney() >= 1000 then 
         lobbyOwner:transferMoney(self.m_BankServer, 1000, "ColorCars Lobby", "Gameplay", "ColorCars")
     else
-        return lobbyOwner:sendError(_"Du hast nicht genug Geld dabei. (1000$)") 
+        return lobbyOwner:sendError(_("Du hast nicht genug Geld dabei. (1000$)", lobbyOwner)) 
     end
     self:createLobby(lobbyOwner, lobbyName, password, maxPlayers, false)
-    lobbyOwner:triggerEvent("ColorCars:openMatchGUI")
-    self:addPlayerToLobby(lobbyOwner, lobbyOwner)
-    lobbyOwner:sendSuccess(_"Lobby erstellt!")
+    ColorCarsManager.Lobbys[lobbyOwner]:addPlayer(lobbyOwner)
+    lobbyOwner:sendSuccess(_("Lobby erstellt!", lobbyOwner))
 end
 
 function ColorCarsManager:deleteLobby(lobby)
@@ -112,8 +116,7 @@ function ColorCarsManager:addPlayerToLobby(lobby, player)
 	end
 
     ColorCarsManager.Lobbys[lobby]:addPlayer(player)
-    self:syncMatchGUI(lobby)
-    player:sendInfo(_"Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", 10000)
+
 end
 
 function ColorCarsManager:Event_removePlayerFromLobby(lobby, player)
@@ -163,7 +166,7 @@ end
 
 function ColorCarsManager:Event_sendCheckPasswordResult(lobby, password)
     if not ColorCarsManager.Lobbys[lobby] then
-        sendError(_"Keine Lobby gefunden.")
+        client:sendError(_("Keine Lobby gefunden.", client))
         client:triggerEvent("ColorCars:createLobbyGUI", self.m_ColorCarsMarker) 
     end
 
@@ -172,7 +175,7 @@ end
 
 function ColorCarsManager:Event_sendCheckIsLobbyFullResult(lobby)
     if not ColorCarsManager.Lobbys[lobby] then
-        sendError(_"Keine Lobby gefunden.")
+        client:sendError(_("Keine Lobby gefunden.", client))
         client:triggerEvent("ColorCars:createLobbyGUI", self.m_ColorCarsMarker) 
     end
 

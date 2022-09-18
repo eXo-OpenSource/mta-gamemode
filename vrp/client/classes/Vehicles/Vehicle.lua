@@ -22,7 +22,8 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList", "vehicleAdminReceiveTextureList", "vehicleEngineStateChange"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList", "vehicleAdminReceiveTextureList", "vehicleEngineStateChange",
+"syncVehicleTunings"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -487,4 +488,14 @@ addEventHandler("onClientVehicleExit", root, function(player, seat)
 			toggleControl("vehicle_secondary_fire", true)
 		end
 	end
+end)
+
+addEventHandler("syncVehicleTunings", root, function(vehicle, tunings)
+	if not vehicle.m_Tunings then	
+		vehicle.m_Tunings = VehicleTuning:new(vehicle)
+	end
+	
+	if tunings["Neon"] == 1 then tunings["Neon"] = true else tunings["Neon"] = false end
+	vehicle.m_Tunings.m_Tuning = tunings
+	vehicle.m_Tunings:applyTuning()
 end)

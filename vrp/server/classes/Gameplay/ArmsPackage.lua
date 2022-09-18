@@ -41,13 +41,13 @@ function ArmsPackage:dragBox(button, state, player)
 		return
 	end
 	if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) > 3 then
-		player:sendError("Du bist zu weit von der Kiste entfernt!")
+		player:sendError(_("Du bist zu weit von der Kiste entfernt!", player))
 
 		return
 	end
 	local faction = player:getFaction()
 	if not faction or not faction:isStateFaction() and not faction:isEvilFaction() then
-        player:sendError("Du kannst diese Kiste nicht aufheben!")
+        player:sendError(_("Du kannst diese Kiste nicht aufheben!", player))
 	    return
 	end
 	player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)

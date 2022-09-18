@@ -9,7 +9,13 @@
 ColorCarsManager = inherit(Singleton)
 
 function ColorCarsManager:constructor()
-    addRemoteEvents{"ColorCars:createLobbyGUI", "ColorCars:receiveClientLobbyInfos", "ColorCars:receivePasswordCheckResult", "ColorCars:receiveMaxPlayersCheckResult", "ColorCars:syncMatchGUI", "ColorCars:bindVehicleCollisionEvent", "ColorCars:syncNewCatcher", "ColorCars:changeLobbyOwner", "ColorCars:powerUpGhostMode", "ColorCars:openMatchGUI"}
+    addRemoteEvents{
+    "ColorCars:createLobbyGUI", "ColorCars:receiveClientLobbyInfos", "ColorCars:receivePasswordCheckResult",
+    "ColorCars:receiveMaxPlayersCheckResult", "ColorCars:syncMatchGUI", "ColorCars:bindVehicleCollisionEvent",
+    "ColorCars:syncNewCatcher", "ColorCars:changeLobbyOwner", "ColorCars:powerUpGhostMode", "ColorCars:openMatchGUI",
+    "ColorCars:deleteGUI",
+    }
+
     self.m_LobbyInfos = {}
     self.m_GhostModeTimer = {}
     self.m_TimeBetweenCatch = 3000
@@ -20,6 +26,7 @@ function ColorCarsManager:constructor()
     addEventHandler("ColorCars:receiveMaxPlayersCheckResult", root, bind(self.Event_receiveMaxPlayersResult, self))
     addEventHandler("ColorCars:syncMatchGUI", root, bind(self.Event_syncMatchGUI, self))
     addEventHandler("ColorCars:openMatchGUI", root, bind(self.openMatchGUI, self))
+    addEventHandler("ColorCars:deleteGUI", root, bind(self.deleteGUI, self))
     addEventHandler("ColorCars:bindVehicleCollisionEvent", root, bind(self.Event_bindVehicleCollisionEvent, self))
     addEventHandler("ColorCars:syncNewCatcher", root, bind(self.Event_syncNewCatcher, self))
     addEventHandler("ColorCars:changeLobbyOwner", root, bind(self.Event_changeLobbyOwner, self))
@@ -33,7 +40,6 @@ end
 
 function ColorCarsManager:addPlayer(lobby)
     triggerServerEvent("ColorCars:addPlayerToLobby", resourceRoot, lobby, localPlayer)
-    self:openMatchGUI() 
 end
 
 function ColorCarsManager:removePlayer()
