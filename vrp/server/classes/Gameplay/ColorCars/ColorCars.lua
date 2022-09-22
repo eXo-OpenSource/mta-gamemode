@@ -45,6 +45,7 @@ function ColorCars:constructor(lobbyOwner, lobbyName, password, maxPlayers, isSe
     self.m_TimeBetweenCatch = 3000
     self.m_Players = {}
     self.m_PlayerVehicle = {}
+    self.m_FuelTimer = {}
     self.m_PlayerCatchScore = {}
     self.m_PlayerPowerUps = {}
     self.m_PowerUpSpawnTimer = setTimer(bind(self.spawnPowerUpMarker, self), math.random(30000, 40000), 0)
@@ -74,6 +75,7 @@ function ColorCars:addPlayer(player)
     self.m_PlayerPowerUps[player] = {}
     self:createColorCar(player)
     player:createStorage(false)
+    self:syncGhostMode(player)
     player.colorCarsLobby = self
     player:setData("isInColorCars", true, true)
 
@@ -139,10 +141,10 @@ function ColorCars:createColorCar(player)
     self.m_PlayerVehicle[player]:setDimension(self.m_LobbyDimension)
     self.m_PlayerVehicle[player]:setDamageProof(true)
     self.m_PlayerVehicle[player]:setColor(0,255,0)
-    self.m_FuelTimer = setTimer(
+    self.m_FuelTimer[player] = setTimer(
         function(vehicle)
             vehicle:setFuel(100)
-        end, 1800000, 1, self.m_PlayerVehicle[player])
+        end, 1800000, 0, self.m_PlayerVehicle[player])
     
     player:triggerEvent("ColorCars:bindVehicleCollisionEvent", self.m_PlayerVehicle[player], self.m_Catcher)
     player:setInterior(15)
@@ -160,7 +162,7 @@ function ColorCars:deleteColorCar(player)
     player:removeFromVehicle()
     self.m_PlayerVehicle[player]:destroy()
     self.m_PlayerVehicle[player] = nil
-    killTimer(self.m_FuelTimer)
+    killTimer(self.m_FuelTimer[player])
 
     if self.m_PlayerPowerUps[player]["Vehiclechange"] then
         killTimer(self.m_PlayerPowerUps[player]["Vehiclechange"])
@@ -276,7 +278,7 @@ end
 
 function ColorCars:activateInstantPowerUp(player, powerUp)
     if powerUp == "Vehiclechange" then self:powerUpVehicleChange(player)
-    elseif powerUp == "Ghostmode" then self:powerUpGhostMode(player, self.m_LobbyDimension, true)
+    elseif powerUp == "Ghostmode" then self:powerUpGhostMode(player, self.m_LobbyDimension, true, getRealTime().timestamp)
     end
 end
 
@@ -325,8 +327,21 @@ function ColorCars:powerUpVehicleChange(player)
     end
 end
 
-function ColorCars:powerUpGhostMode(ghostPlayer, dim, state)
+function ColorCars:powerUpGhostMode(ghostPlayer, dim, state, timestamp)
+    self.m_PlayerPowerUps[ghostPlayer]["GhostMode"] = timestamp
     for i, player in pairs(self.m_Players) do
         player:triggerEvent("ColorCars:powerUpGhostMode", ghostPlayer, dim, true)
     end   
+end
+
+function ColorCars:syncGhostMode(joinedPlayer)
+    for i, player in pairs(self.m_Players) do
+        if self.m_PlayerPowerUps[player]["GhostMode"] then
+            if self.m_PlayerPowerUps[player]["GhostMode"] + 30 >= getRealTime().timestamp then
+                local remainingTime = (self.m_PlayerPowerUps[player]["GhostMode"] + 30 - getRealTime().timestamp)
+                player:triggerEvent("ColorCars:syncGhostMode", remainingTime, joinedPlayer, player)
+                joinedPlayer:triggerEvent("ColorCars:syncGhostMode", remainingTime, joinedPlayer, player)
+            end
+        end
+    end
 end

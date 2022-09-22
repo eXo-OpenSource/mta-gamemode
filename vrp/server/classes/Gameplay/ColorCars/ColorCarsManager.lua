@@ -116,7 +116,6 @@ function ColorCarsManager:addPlayerToLobby(lobby, player)
 	end
 
     ColorCarsManager.Lobbys[lobby]:addPlayer(player)
-
 end
 
 function ColorCarsManager:Event_removePlayerFromLobby(lobby, player)

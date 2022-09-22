@@ -9,8 +9,8 @@
 ColorCarsCreateLobbyGUI = inherit(GUIForm)
 inherit(Singleton, ColorCarsCreateLobbyGUI)
 
-function ColorCarsCreateLobbyGUI:constructor()
-    GUIForm.constructor(self, screenWidth/2 - screenWidth*0.175/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.175, screenHeight*0.5)
+function ColorCarsCreateLobbyGUI:constructor(marker)
+    GUIForm.constructor(self, screenWidth/2 - screenWidth*0.175/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.175, screenHeight*0.5, true, false, marker)
     self.m_CreateLobbyWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Lobby erstellen", true, true, self)
 
     self.m_NameLabel = GUILabel:new(self.m_PosX*0.07, self.m_PosY*0.3, 200, 30, _"Lobby Name:", self.m_CreateLobbyWindow)

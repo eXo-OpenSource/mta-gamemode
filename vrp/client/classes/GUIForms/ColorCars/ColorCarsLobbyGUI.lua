@@ -32,7 +32,7 @@ function ColorCarsLobbyGUI:constructor(marker)
         if self.m_LobbyGridList:getSelectedItem() then
             local lobby = self.m_LobbyGridList:getSelectedItem().m_Lobby
             if self.m_LobbyGridList:getSelectedItem().m_HasPassword then
-                ColorCarsManager:getSingleton():openPasswordGUI(lobby)
+                ColorCarsManager:getSingleton():openPasswordGUI(lobby, marker)
             else
                 ColorCarsManager:getSingleton():requestMaxPlayersCheck(lobby)
             end
@@ -43,6 +43,6 @@ function ColorCarsLobbyGUI:constructor(marker)
     function()
         if localPlayer:isDead() then return ErrorBox:new(_"Tote Spieler können keine Lobbys erstellen!") end
         
-        ColorCarsManager:getSingleton():openCreateLobbyGUI()
+        ColorCarsManager:getSingleton():openCreateLobbyGUI(marker)
     end
 end
