@@ -1,10 +1,14 @@
 VehicleTuningShowGUI = inherit(GUIForm)
 inherit(Singleton, VehicleTuningShowGUI)
 
-function VehicleTuningShowGUI:constructor(tuning, specialTuning)
+function VehicleTuningShowGUI:constructor(vehicle, tuning, specialTuning, rcVehicle)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 8)
-	self.m_Height = grid("y", 10)
+    if vehicle:getModel() == 459 then
+	    self.m_Height = grid("y", 16)
+    else
+        self.m_Height = grid("y", 10)
+    end
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeugtunings", true, true, self)
@@ -24,6 +28,15 @@ function VehicleTuningShowGUI:constructor(tuning, specialTuning)
             item:setColumnColor(2, tocolor(unpack(v)))
         else
             self.m_ListSpecial:addItem(tostring(i), tostring(v))
+        end
+    end
+
+    if vehicle:getModel() == 459 then
+        self.m_RcVehicleList = GUIGridGridList:new(1, 10, 7, 6, self.m_Window)
+        self.m_RcVehicleList:addColumn("RC Fahrzeuge", 0.5)
+        self.m_RcVehicleList:addColumn("", 0.5)
+        for veh ,state in pairs(rcVehicle) do
+            local item = self.m_RcVehicleList:addItem(getVehicleNameFromModel(veh), "")
         end
     end
 end

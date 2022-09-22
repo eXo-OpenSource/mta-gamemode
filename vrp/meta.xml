@@ -380,6 +380,8 @@
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Ammunation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/AmmunationEvaluation.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRobManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRob.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
@@ -490,6 +492,7 @@
 	<script src="server/classes/Vehicles/VehicleTuningShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleCustomTextureShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleRcUpgradeShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/TollStation.lua" type="server"/>
@@ -498,8 +501,6 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/GPS/GPS.lua" type="server"/>
-	<script src="server/classes/Gameplay/Shops/ShopVehicleRobManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Shops/ShopVehicleRob.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -859,6 +860,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuLastDriver.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRcVehicle.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
@@ -965,6 +967,7 @@
 	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWeaponStoreGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleRcUpgradeGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -1899,6 +1902,7 @@
 	<vrpfile src="files/images/Radar/Blips/BunnyHead.png"/>
 	<vrpfile src="files/images/Radar/Blips/Cinema.png"/>
 	<vrpfile src="files/images/Radar/Blips/ColorCars.png"/>
+	<vrpfile src="files/images/Radar/Blips/RcShop.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

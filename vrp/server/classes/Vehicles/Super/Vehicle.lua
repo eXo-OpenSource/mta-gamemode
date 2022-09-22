@@ -751,10 +751,11 @@ function Vehicle:respawnOnSpawnPosition()
 		self:vseRemoveAttachedPlayers()
 	end
 
-	if self:getData("BaronUser") then
-		local player = self:getData("BaronUser")
-		self:toggleBaron(player, false, true)
-		player:removeFromVehicle()
+	if self.m_RcVehicleUser then
+		for i, player in pairs(self.m_RcVehicleUser) do
+			self:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
+		end
 	end
 
 	if self.m_PositionType == VehiclePositionType.World then
@@ -922,7 +923,7 @@ function Vehicle:getTuningList(player)
 	if self.m_Tunings and self.m_Tunings.getList then
 		player:triggerEvent("vehicleReceiveTuningList", self, self.m_Tunings:getList())
 	else
-		player:triggerEvent("vehicleReceiveTuningList", self, {"(keine)"}, {"(keine)"})
+		player:triggerEvent("vehicleReceiveTuningList", self, {"(keine)"}, {"(keine)"}, {"(keine)"})
 	end
 end
 

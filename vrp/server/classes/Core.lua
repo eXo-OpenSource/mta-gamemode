@@ -158,6 +158,7 @@ function Core:constructor()
 		PricePoolManager:new()
 		ColorCarsManager:new()
 		LeaderCheck:new()
+		VehicleRcUpgradeShop:new()
 
 		if EVENT_EASTER then
 			Easter:new()

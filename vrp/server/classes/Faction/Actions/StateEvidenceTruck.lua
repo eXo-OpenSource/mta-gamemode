@@ -75,7 +75,7 @@ function StateEvidenceTruck:destructor()
 	self.m_Truck:destroy()
 
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
-
+	if isTimer(self.m_WaterCheckTimer) then killTimer(self.m_WaterCheckTimer) end
 	for index, value in pairs(self.m_DestinationMarkers) do
 		if isElement(value) then value:destroy() end
 	end

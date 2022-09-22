@@ -613,7 +613,7 @@ function GroupManager:Event_ConvertVehicle(veh)
 		if veh then
 			if veh:getOwner() == client:getId() then
 				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "addVehicle") then
-					if not veh:getData("BaronUser") then
+					if #veh:getData("RcVehicleUser") == 0 then
 						local status, newVeh = GroupVehicle.convertVehicle(veh, group)
 						if status then
 							client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
@@ -680,7 +680,7 @@ function GroupManager:Event_RemoveVehicle(veh)
 			end
 		end
 		
-		if veh:getData("BaronUser") then
+		if #veh:getData("RcVehicleUser") ~= 0 then
 			client:sendError(_("Das Fahrzeug ist in Benutzung!", client))
 			return
 		end

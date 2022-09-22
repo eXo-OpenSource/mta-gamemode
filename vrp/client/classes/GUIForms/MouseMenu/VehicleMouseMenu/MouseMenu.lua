@@ -332,32 +332,26 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 		if element:getModel() == 459 then
 			if (element:getData("OwnerType") == "player" and element:getData("OwnerName") == localPlayer.name) or (element:getData("OwnerType") == "group" and element:getData("OwnerName") == localPlayer:getGroupName()) then 
-				if not  localPlayer:getData("UsingBaron") then
-					if localPlayer.vehicle == element and localPlayer.vehicleSeat ~= 0 then
-						self:addItem(_"RC Baron benutzen",
+				if not localPlayer:getData("RcVehicle") then
+					if localPlayer.vehicle == element and (localPlayer.vehicleSeat == 2 or localPlayer.vehicleSeat == 3) then
+						self:addItem(_"RC Fahrzeug benutzen >>>",
 							function()
 								if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
-									if not element:getData("BaronUser") then
-										if localPlayer.vehicle then
-											if self:getElement() then
-												triggerServerEvent("vehicleToggleBaron", self:getElement(), true)
-											end
-										else
-											ErrorBox:new(_"Du hast im RC Van sitzen.")
-										end
+									if localPlayer.vehicle then
+										ClickHandler:getSingleton():addMouseMenu(MouseMenuRcVehicle:new(posX, posY, element), element)
 									else
-										ErrorBox:new(_"Der RC Baron wird derzeit von %s benutzt.", element:getData("BaronUser"):getName())
+										ErrorBox:new(_"Du musst im RC Van sitzen.")
 									end
 								end
 							end
 						):setIcon(FontAwesomeSymbols.Plane)
 					end
 				else
-					self:addItem(_"RC Baron nicht mehr benutzen",
+					self:addItem(_("%s nicht mehr benutzen", localPlayer.vehicle:getName()),
 					function()
 						if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
 							if self:getElement() then
-								triggerServerEvent("vehicleToggleBaron", self:getElement(), false)
+								triggerServerEvent("vehicleToggleRC", self:getElement(), localPlayer:getData("RcVehicle"), false)
 							end
 						end
 					end

@@ -213,7 +213,7 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank,
 			return 
 		end
 		if rank == self.m_LeaderRank[type] or rank > instance:getPlayerRank(client) then 
-			client:sendError(_("Du kannst die Rechte von dem Rang nicht verändern.", client))
+			client:sendError(_("Du kannst die Rechte von dem Spieler nicht verändern.", client))
 			return 
 		end
 
@@ -233,7 +233,7 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank,
 			return 
 		end
 		if rank == self.m_LeaderRank[type] or rank > instance:getPlayerRank(client) then 
-			client:sendError(_("Du kannst die Aktionsrechte von dem Rang nicht verändern.", client))
+			client:sendError(_("Du kannst die Aktionsrechte von dem Spieler nicht verändern.", client))
 			return
 		end
 		if not instance:isPlayerMember(playerId) then return end
@@ -254,7 +254,7 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank,
 			return
 		end
 		if rank == self.m_LeaderRank[type] or rank > instance:getPlayerRank(client) then
-			client:sendError(_("Du kannst die Waffenberechtigung von dem Rang nicht verändern.", client))
+			client:sendError(_("Du kannst die Waffenberechtigung von dem Spieler nicht verändern.", client))
 			return
 		end
 		if not instance:isPlayerMember(playerId) then return end
@@ -373,10 +373,7 @@ function PermissionsManager:onRankChange(changeType, changer, playerId, type)
 			if instance:getPlayerRank(playerId) < PERMISSIONS_INFO[name][2][type] then
 				playerPerm[name] = nil
 			end
-		end
-		if DatabasePlayer.getFromId(playerId) then
-			self:syncPermissions(DatabasePlayer.getFromId(playerId), type)
-		end				
+		end		
 	elseif changeType == "up" then
 		if instance:getPlayerRank(playerId) == self.m_LeaderRank[type] then
 			for name, state in pairs(playerPerm) do
@@ -384,6 +381,10 @@ function PermissionsManager:onRankChange(changeType, changer, playerId, type)
 			end
 		end
 	end
+
+	if DatabasePlayer.getFromId(playerId) then
+		self:syncPermissions(DatabasePlayer.getFromId(playerId), type)
+	end		
 end
 
 

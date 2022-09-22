@@ -74,14 +74,18 @@ function MWeedTruck:Event_weedTruckStart()
 	if faction then
 		if faction:isEvilFaction() then
 			if ActionsCheck:getSingleton():isActionAllowed(source) then
-				if faction:getMoney() >= MWeedTruck.Settings["costs"] then
-					faction:transferMoney(self.m_BankAccount, MWeedTruck.Settings["costs"], "Weed-Truck", "Action", "WeedTruck")
-					self.m_CurrentWeedTruck = WeedTruck:new(source)
-					ActionsCheck:getSingleton():setAction("Weed-Truck")
-					FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
-					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", source, faction, "faction")
+				if PermissionsManager:getSingleton():isPlayerAllowedToStart(source, "faction", "WeedTruck") then
+					if faction:getMoney() >= MWeedTruck.Settings["costs"] then
+						faction:transferMoney(self.m_BankAccount, MWeedTruck.Settings["costs"], "Weed-Truck", "Action", "WeedTruck")
+						self.m_CurrentWeedTruck = WeedTruck:new(source)
+						ActionsCheck:getSingleton():setAction("Weed-Truck")
+						FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
+						StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", source, faction, "faction")
+					else
+						source:sendError(_("Du hast nicht genug Geld in der Fraktionskasse! (%s)", source, toMoneyString(MWeedTruck.Settings["costs"])))
+					end
 				else
-					source:sendError(_("Du hast nicht genug Geld in der Fraktionskasse! (%s)", source, toMoneyString(MWeedTruck.Settings["costs"])))
+					source:sendError(_("Du bist nicht berechtigt einen Weed-Truck zu starten!", source))
 				end
 			end
 		end
