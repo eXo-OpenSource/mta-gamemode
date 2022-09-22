@@ -201,7 +201,7 @@ function GasStationManager:Event_requestFuelPrices()
 	for name, station in pairs(GasStationManager.Shops) do
 		if station:hasPlayerAccess(client) then
 			local pos = {station.m_Position.x, station.m_Position.y, station.m_Position.z}  -- dont ask why, it doesnt work otherwise
-			temp[station.m_Name] = {station.m_FuelTypePrices, pos}
+			temp[station.m_Name] = {station.m_FuelTypePrices, pos, station:isServiceStation(), station:isEvilStation()}
 		end
 	end
 	client:triggerEvent("receiveFuelPrices", temp)
