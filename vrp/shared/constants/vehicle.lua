@@ -424,3 +424,17 @@ VehicleSpawnPositionAfterRegister = {
 }
 
 RC_TOGGLE_COOLDOWN = 60*20
+
+RC_UPGRADE_VEHICLE = {
+	[441] = true, -- RC Bandit
+	[464] = true, -- RC Baron
+	[501] = true, -- RC Goblin
+	[564] = true, -- RC Tiger
+}
+
+RC_UPGRADE_VEHICLE_PRICE = {
+    [441] =     350000, -- RC Bandit
+    [464] =     500000, -- RC Baron
+    [501] =     750000, -- RC Goblin
+    [564] =     650000, -- RC Tiger
+}

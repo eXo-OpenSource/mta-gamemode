@@ -33,7 +33,7 @@ function VehicleManager:constructor()
 	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleSetInTuning", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling", "requestVehicleMarks", "vehicleToggleLoadingRamp",
 	"VehicleInfrared:onUse", "VehicleInfrared:onStop", "VehicleInfrared:onPlayerExit", "VehicleInfrared:onSyncLight", "VehicleInfrared:onCreateLight", "VehicleInfrared:onStopLight", "requestVehicles", "onToggleVehicleRegister",
-	"toggleShamalInterior", "requestKeyList", "vehicleToggleBaron"}
+	"toggleShamalInterior", "requestKeyList", "vehicleToggleRC"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -76,7 +76,7 @@ function VehicleManager:constructor()
 	addEventHandler("onToggleVehicleRegister", root, bind(self.Event_toggleVehicleRegister, self))
 	addEventHandler("toggleShamalInterior", root, bind(self.Event_toggleShamalInterior, self))
 	addEventHandler("requestKeyList", root, bind(self.Event_requestKeyList, self))
-	addEventHandler("vehicleToggleBaron", root, bind(self.Event_vehicleToggleBaron, self))
+	addEventHandler("vehicleToggleRC", root, bind(self.Event_vehicleToggleRC, self))
 
 	addEventHandler("onVehicleExplode", root,
 		function()
@@ -124,6 +124,7 @@ function VehicleManager:constructor()
 			if client.vehicle:hasKey(client) or
 					client.vehicle:canObjectBeLoaded() or
 					client.vehicle:getData("isGangwarVehicle") or
+					(client.vehicle.isRcVehicle and client:getData("RcVehicle")) or
 					(client.vehicle.importVehicle and client:getCompany() and client:getCompany():getId() == CompanyStaticId.EPT) or
 					client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
 				client.vehicle:toggleHandBrake(client)
@@ -258,6 +259,12 @@ function VehicleManager:constructor()
 				if VEHICLE_MAX_PASSENGER[new] then
 					source:initVehicleSeatExtension()
 				end
+
+				if old == 459 then
+					source:delRcVanExtension()
+				elseif new == 459 then
+					source:initRcVanExtension()
+				end
 			end
 		end
 	end)
@@ -274,6 +281,9 @@ function VehicleManager:constructor()
 			if player:getData("VSE:IsPassenger") then
 				player:getData("VSE:Vehicle"):vseEnterExit(player, "death")
 			end
+			if player:getData("RcVehicle") then
+				player:getData("RCVan"):toggleRC(player, player:getData("RcVehicle"), false, true, true)
+			end
 		end
 	)
 
@@ -285,8 +295,8 @@ function VehicleManager:constructor()
 			if player:getData("VSE:IsPassenger") then
 				player:getData("VSE:Vehicle"):vseEnterExit(player, false)
 			end
-			if player:getData("UsingBaron") then
-				player:getData("RCVan"):toggleBaron(player, false)
+			if player:getData("RcVehicle") then
+				player:getData("RCVan"):toggleRC(player, player:getData("RcVehicle"), false, true)
 			end
 		end
 	)
@@ -300,8 +310,8 @@ function VehicleManager:constructor()
 				if player:getData("VSE:IsPassenger") then
 					player:getData("VSE:Vehicle"):vseEnterExit(player, false)
 				end
-				if player:getData("UsingBaron") then
-					player:getData("RCVan"):toggleBaron(player, false)
+				if player:getData("RcVehicle") then
+					player:getData("RCVan"):toggleRC(player, player:getData("RcVehicle"), false)
 				end
             end
         end
@@ -624,6 +634,7 @@ function VehicleManager:destroyUnusedVehicles( player )
 				if vehicle then
 					if vehicle.m_HasBeenUsed then
 						if vehicle.m_HasBeenUsed == 0 then
+							if vehicle:getModel() == 459 then vehicle:delRcVanExtension() end
 							destroyElement(vehicle)
 							counter = counter + 1
 						end
@@ -850,7 +861,7 @@ function VehicleManager:destroyGroupVehicles(group)
 			if not veh.m_IsRented then
 				if veh.m_ForSale then triggerClientEvent("groupSaleVehiclesDestroyBubble", root, veh) end
 				if veh.m_ForRent then triggerClientEvent("groupRentVehiclesDestroyBubble", root, veh) end
-
+				if veh:getModel() == 459 then veh:delRcVanExtension() end
 				table.removevalue(self.m_GroupVehicles, veh)
 
 				veh:save()
@@ -1502,6 +1513,14 @@ function VehicleManager:Event_vehicleEmpty()
 			end
 			source:vseRemoveAttachedPlayers()
 		end
+		if source:getModel() == 459 then
+			if source.m_RcVehicleUser then
+				for i, player in pairs(source.m_RcVehicleUser) do
+					source:toggleRC(player, player:getData("RcVehicle"), false, true)
+					player:removeFromVehicle()
+				end
+			end
+		end
 
 		client:sendShortMessage(_("Mitfahrer wurden herausgeworfen!", client))
 	else
@@ -2015,6 +2034,14 @@ function VehicleManager:Event_requestKeyList()
 	client:triggerEvent("showKeyList", temp)
 end
 
-function VehicleManager:Event_vehicleToggleBaron(state)
-	source:toggleBaron(client, state)
+function VehicleManager:Event_vehicleToggleRC(vehicleId, state)
+	if source:getModel() == 459 then
+		if not source.m_RcVehicle[vehicleId] then
+			source:toggleRC(client, vehicleId, state)
+		else
+			client:sendError(_("Der %s wird derzeit verwendet.", client, getVehicleNameFromModel(vehicleId)))
+		end
+	else
+		client:sendError(_("Mit diesem Fahrzeug nicht möglich.", client))
+	end
 end

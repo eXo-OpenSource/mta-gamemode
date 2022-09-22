@@ -347,8 +347,8 @@ function( dir )
 end)
 
 addEventHandler("vehicleReceiveTuningList", localPlayer,
-function (vehicle, tuning, specialTuning)
-	VehicleTuningShowGUI:new(tuning, specialTuning)
+function (vehicle, tuning, specialTuning, rcVehicle)
+	VehicleTuningShowGUI:new(vehicle, tuning, specialTuning, rcVehicle)
 end)
 
 addEventHandler("vehicleAdminReceiveTextureList", localPlayer,

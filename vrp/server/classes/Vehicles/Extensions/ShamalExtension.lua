@@ -13,7 +13,7 @@ function ShamalExtension:initShamalExtension()
 
     self.m_ShamalMarker = createMarker(3.732, 23.031, 1198.701, "cylinder", 1)
     self.m_ShamalMarker:setInterior(1)
-    self.m_ShamalMarker:setDimension(6)
+    self.m_ShamalMarker:setDimension(self.m_ShamalDimension)
 
     self.m_ShamalExtensionVehicleExplode = bind(self.Event_seOnVehicleExplode, self)
     self.m_ShamalExtensionVehicleEnter = bind(self.Event_seOnVehicleEnter, self)

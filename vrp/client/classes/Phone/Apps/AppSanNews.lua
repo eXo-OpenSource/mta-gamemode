@@ -187,9 +187,11 @@ function AppSanNews:Event_receiveFuelPrices(infoTbl)
 		if not name:find("Tankstelle") then
 			name = name:gsub(name, _("Tankstelle %s", name))
 		end
+		local priceMult = (info[3] and SERVICE_FUEL_PRICE_MULTIPLICATOR) or (info[4] and EVIL_FUEL_PRICE_MULTIPLICATOR) or 1
 		self.m_FuelPriceGrid:addItemNoClick(name, "")
 		for type, price in pairs(info[1]) do
-			local item = self.m_FuelPriceGrid:addItem(FUEL_NAME[type], _("%s$", math.round(price, 1)))
+			
+			local item = self.m_FuelPriceGrid:addItem(FUEL_NAME[type], _("%s$", math.round(price * priceMult, 1)))
 			item.onLeftDoubleClick = function()
 				GPS:getSingleton():startNavigationTo(Vector3(info[2][1], info[2][2], info[2][3]))
 			end

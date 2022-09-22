@@ -227,6 +227,9 @@ function PermanentVehicle:virtual_constructor(data)
 		if VEHICLE_MAX_PASSENGER[data.Model] then
 			self:initVehicleSeatExtension()
 		end
+		if data.Model == 459 then
+			self:initRcVanExtension()
+		end
 
 		self.m_Unregistered = data.Unregistered
 	end
@@ -248,7 +251,7 @@ function PermanentVehicle:save()
   	if self.m_LastDrivers[#self.m_LastDrivers] and Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers]) then
 		lastDriver = Account.getIdFromName(self.m_LastDrivers[#self.m_LastDrivers])
 	end
-  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, RentPrice = ?, TemplateId = ?, Unregistered = ? WHERE Id = ?", sql:getPrefix(),
+	return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Interior=?, Dimension=?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, LastDriver = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ?, RentPrice = ?, TemplateId = ?, Unregistered = ? WHERE Id = ?", sql:getPrefix(),
     self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_SpawnInt, self.m_SpawnDim, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(),  lastDriver, self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_RentRate or 0, self.m_Template or 0, self.m_Unregistered or 0, self.m_Id)
 end
 
@@ -369,10 +372,11 @@ function PermanentVehicle:respawn(garageOnly)
 
         if maxSlots > numVehiclesInGarage then
 
-			if self:getData("BaronUser") then
-				local player = self:getData("BaronUser")
-				self:toggleBaron(player, false, true)
-				player:removeFromVehicle()
+			if self.m_RcVehicleUser then
+				for i, player in pairs(self.m_RcVehicleUser) do
+					self:toggleRC(player, player:getData("RcVehicle"), false, true)
+					player:removeFromVehicle()
+				end
 			end
 
 			self:setInGarage(true)

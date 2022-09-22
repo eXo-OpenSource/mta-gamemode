@@ -99,6 +99,7 @@ function WeedTruck:destructor()
 	removeEventHandler("onElementDestroy",self.m_Truck, self.m_DestroyFunc)
 	if isElement(self.m_Truck) then self.m_Truck:destroy() end
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	if isTimer(self.m_WaterCheckTimer) then killTimer(self.m_WaterCheckTimer) end
 	ActionsCheck:getSingleton():endAction()
 	
 	for index, value in pairs(self.m_DestinationPeds) do

@@ -58,10 +58,11 @@ function MechanicTow:respawnVehicle(vehicle)
 			occ:removeFromVehicle()
 		end
 	end
-	if vehicle:getData("BaronUser") then
-		local player = vehicle:getData("BaronUser")
-		vehicle:toggleBaron(player, false, true)
-		player:removeFromVehicle()
+	if vehicle.m_RcVehicleUser then
+		for i, player in pairs(vehicle.m_RcVehicleUser) do
+			vehicle:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
+		end
 	end
 	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
 		vehicle:respawn(true, true)

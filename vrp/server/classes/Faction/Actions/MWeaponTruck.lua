@@ -102,6 +102,11 @@ function MWeaponTruck:Event_onWeaponTruckLoad(boxContentTable)
 			client:sendError(_("Ungültige Fraktion!",client))
 		end
 
+		if not PermissionsManager:getSingleton():isPlayerAllowedToStart(client, "faction", self.m_CurrentType == "evil" and "WeaponTruck" or "WeaponTruckState") then
+			client:sendError(_("Du bist nicht berechtigt einen %sWaffentruck zu starten!", client, self.m_CurrentType == "state" and "Staats-" or ""))
+			return
+		end
+		
 		local totalAmount = 0
 		if faction then
 			for boxId, weaponTable in pairs(boxContentTable) do
