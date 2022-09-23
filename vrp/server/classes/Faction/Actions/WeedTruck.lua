@@ -260,9 +260,9 @@ function WeedTruck:Event_onDestinationPedClick(button, state, player)
 					if player:getFaction() and player:isFactionDuty() and (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) then
 						if (player.vehicle and #getAttachedElements(player.vehicle) > 0 ) or player:getPlayerAttachedObject() then
 							if source.type == "evil"  then
-								self:onDestinationPedClick(player, source, false, faction:isEvilFaction() and "false" or true)
+								self:onDestinationPedClick(player, source, false)
 							elseif source.type == "state" then
-								self:onDestinationPedClick(player, source, true, faction:isStateFaction() and "false" or true)
+								self:onDestinationPedClick(player, source, true)
 							else
 								player:sendError(_("Du kannst hier nicht abgeben!",player))
 							end
@@ -276,7 +276,7 @@ function WeedTruck:Event_onDestinationPedClick(button, state, player)
 	end
 end
 
-function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch)
+function WeedTruck:onDestinationPedClick(player, ped, stateDestination)
 	local faction = player:getFaction()
 	local package
 	local breakingNewsText
@@ -285,7 +285,7 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 
 	if player:getPlayerAttachedObject() then
 		if player:getPlayerAttachedObject():getModel() == 1575 and player:getPlayerAttachedObject():getData("drugPackage") then
-			if isSnitch == "false" then
+			if ped.faction == faction then
 				if stateDestination then
 					breakingNewsText = "Paket %d von %d wurde vom %s beschlagnahmt!"
 					PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, faction:getShortName())
@@ -301,14 +301,15 @@ function WeedTruck:onDestinationPedClick(player, ped, stateDestination, isSnitch
 				end
 			else 
 				if stateDestination then
-					player:sendInfo(_("Vielen Dank für ihren Verrat!", player))
+					player:sendPedChatMessage(ped:getData("Ped:Name"), _("Vielen Dank für deine Kooperation mit dem Staat.", player))
 					StateEvidence:getSingleton():addItemToEvidence(player, "Weed", WeedTruck.WeedPerPackage, false)
 				else 
-					player:sendInfo(_("Vielen Dank für ihren Verrat!\nDie Drogen behalte ich.", player))
+					player:sendPedChatMessage(ped:getData("Ped:Name"), _("Haste noch mehr? Wenn nicht kannste wieder gehen.", player))
 				end
 				breakingNewsText = "Paket %d von %d wurde an das/die %s übergeben!"
 				PlayerManager:getSingleton():breakingNews(breakingNewsText, 10-self:getRemainingPackageAmount()+1, WeedTruck.MaxPackages, ped.faction:getShortName())
 				player:giveAchievement(111) -- Snitch
+				outputDebug("giveAchievement 111")
 			end
 			package = player:getPlayerAttachedObject()
 			player:detachPlayerObject(package)
