@@ -15,11 +15,9 @@ function ShamalExtension:initShamalExtension()
     self.m_ShamalMarker:setInterior(1)
     self.m_ShamalMarker:setDimension(self.m_ShamalDimension)
 
-    self.m_ShamalExtensionVehicleExplode = bind(self.Event_seOnVehicleExplode, self)
     self.m_ShamalExtensionVehicleEnter = bind(self.Event_seOnVehicleEnter, self)
     self.m_ShamalExtensionDeleteDriver = bind(self.Event_seDeleteDriver, self)
     self.m_ShamalExtensionMarkerHit = bind(self.Event_seOnSkydivingMarkerHit, self)
-    addEventHandler("onVehicleExplode", self, self.m_ShamalExtensionVehicleExplode)
     addEventHandler("onVehicleEnter", self, self.m_ShamalExtensionVehicleEnter)
     addEventHandler("onVehicleExit", self, self.m_ShamalExtensionDeleteDriver)
     addEventHandler("onMarkerHit", self.m_ShamalMarker, self.m_ShamalExtensionMarkerHit)
@@ -30,7 +28,6 @@ function ShamalExtension:delShamalExtension()
     DimensionManager:getSingleton():freeDimension(self.m_ShamalDimension)
     self.m_hasShamalExtension = nil
 
-    removeEventHandler("onVehicleExplode", self, self.m_ShamalExtensionVehicleExplode)
     removeEventHandler("onVehicleEnter", self, self.m_ShamalExtensionVehicleEnter)
     removeEventHandler("onVehicleExit", self, self.m_ShamalExtensionDeleteDriver)
     removeEventHandler("onMarkerHit", self.m_ShamalMarker, self.m_ShamalExtensionMarkerHit)
@@ -96,12 +93,6 @@ function ShamalExtension:seEnterExitInterior(player, enter)
         player:setCameraTarget(self)
         bindKey(player, "g", "down", self.m_SeatExtensionEnterExit, false)
         player:setData("SE:InShamal", nil, true)
-    end
-end
-
-function ShamalExtension:Event_seOnVehicleExplode()
-    for i, passenger in pairs(self.m_SeatExtensionPassengers) do
-        self:seEnterExitInterior(passenger, false)
     end
 end
 

@@ -20,13 +20,11 @@ function VehicleSeatExtension:initVehicleSeatExtension()
 	end
 
 	self.m_SeatExtensionEnterExit = bind(self.vsePressEnterExitKey, self)
-	self.m_SeatExtensionVehicleEnter = bind(self.Event_vseVehicleEnter, self)
 	self.m_SeatExtensionVehicleStartEnter = bind(self.Event_vseVehicleStartEnter, self)
 	self.m_SeatExtensionVehicleExplode = bind(self.Event_vseVehicleExplode, self)
 	self.m_SeatExtensionVehicleDestroy = bind(self.Event_vseVehicleDestroy, self)
 	self.m_SeatExtensionColShapeHit = bind(self.Event_vseColShapeHit, self)
 	self.m_SeatExtensionColShapeLeave = bind(self.Event_vseColShapeLeave, self)
-	addEventHandler("onVehicleEnter", self, self.m_SeatExtensionVehicleEnter)
 	addEventHandler("onVehicleStartEnter", self, self.m_SeatExtensionVehicleStartEnter)
 	addEventHandler("onVehicleExplode", self, self.m_SeatExtensionVehicleExplode)
 	addEventHandler("onElementDestroy", self, self.m_SeatExtensionVehicleDestroy)
@@ -40,11 +38,9 @@ function VehicleSeatExtension:delVehicleSeatExtension()
 	self:setData("VSE:Passengers", self.m_SeatExtensionPassengers, true)
 	self.m_hasSeatExtension = nil
 
-	removeEventHandler("onVehicleEnter", self, self.m_SeatExtensionVehicleEnter)
 	removeEventHandler("onVehicleStartEnter", self, self.m_SeatExtensionVehicleStartEnter)
 	removeEventHandler("onVehicleExplode", self, self.m_SeatExtensionVehicleExplode)
 	removeEventHandler("onElementDestroy", self, self.m_SeatExtensionVehicleDestroy)
-
 	removeEventHandler("onColShapeHit", self.m_SeatExtensionCol, self.m_SeatExtensionColShapeHit)
 	removeEventHandler("onColShapeLeave", self.m_SeatExtensionCol, self.m_SeatExtensionColShapeLeave)
 	self.m_SeatExtensionCol:detach()
@@ -64,9 +60,7 @@ end
 function VehicleSeatExtension:Event_vseColShapeHit(hitElement, matchingDim)
 	if hitElement.type ~= "player" then return end 
 
-	if self:getMaxPassengers() ~= 0 and not self:getOccupant(1) then
-		-- enter normal
-else
+	if self:getMaxPassengers() == 0 or self:getOccupant(1) then
 		bindKey(hitElement, "g", "down", self.m_SeatExtensionEnterExit, true)
 	end
 end
@@ -77,9 +71,6 @@ function VehicleSeatExtension:Event_vseColShapeLeave(leaveElement, matchingDim)
 	unbindKey(leaveElement, "g", "down", self.m_SeatExtensionEnterExit)
 end
 
-function VehicleSeatExtension:Event_vseVehicleEnter(player, seat)
-end
-
 function VehicleSeatExtension:Event_vseVehicleStartEnter(player)
 	if not table.find(self.m_SeatExtensionPassengers, player) then
 		unbindKey(player, "g", "down", self.m_SeatExtensionEnterExit)
@@ -88,9 +79,11 @@ function VehicleSeatExtension:Event_vseVehicleStartEnter(player)
 	end
 end
 
-
 function VehicleSeatExtension:Event_vseVehicleExplode()
 	for i, passenger in pairs(self.m_SeatExtensionPassengers) do
+		if passenger:getData("SE:InShamal") then
+			self:seEnterExitInterior(passenger, false)
+		end
 		self:vseEnterExit(passenger, false)
 		passenger:kill()
 	end

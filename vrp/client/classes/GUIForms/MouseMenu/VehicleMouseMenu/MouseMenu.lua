@@ -331,7 +331,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			):setIcon(FontAwesomeSymbols.SignOut)
 		end
 		if element:getModel() == 459 then
-			if (element:getData("OwnerType") == "player" and element:getData("OwnerName") == localPlayer.name) or (element:getData("OwnerType") == "group" and element:getData("OwnerName") == localPlayer:getGroupName()) then 
+			if 	(element:getData("OwnerType") == "player" and element:getData("OwnerName") == localPlayer.name) or (element:getData("OwnerType") == "group" and element:getData("OwnerName") == localPlayer:getGroupName()) or
+				(element:getData("OwnerType") == "faction" and (localPlayer:getFaction() and element:getData("OwnerName") == localPlayer:getFaction():getName()) and localPlayer:getPublicSync("Faction:Duty")) then 
 				if not localPlayer:getData("RcVehicle") then
 					if localPlayer.vehicle == element and (localPlayer.vehicleSeat == 2 or localPlayer.vehicleSeat == 3) then
 						self:addItem(_"RC Fahrzeug benutzen >>>",
