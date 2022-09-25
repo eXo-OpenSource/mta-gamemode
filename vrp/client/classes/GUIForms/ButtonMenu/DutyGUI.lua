@@ -40,12 +40,12 @@ function DutyGUI:loadFactionItems(fac, isOnDuty, specialSkin)
         end
     else
         if fac:isStateFaction() then
-            self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionStateToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
+            self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionStateToggleDuty", false, core:get("Cache", "LastFactionSkin"), false)):setBarEnabled(false)
         elseif fac:isEvilFaction() then
-            self:addItem(_"Fraktionstätigkeit beginnen", Color.Green, bind(self.itemEvent, self, "factionEvilToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
+            self:addItem(_"Fraktionstätigkeit beginnen", Color.Green, bind(self.itemEvent, self, "factionEvilToggleDuty", false, core:get("Cache", "LastFactionSkin"), false)):setBarEnabled(false)
         else -- Rescue Team 4ever alone
             self:addItem(_"In Sanitäter-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "medic", false, core:get("Cache", "LastFactionSkin")))
-            self:addItem(_"In Feuerwehr-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "fire", false, core:get("Cache", "LastFactionSkin")))
+            self:addItem(_"In Feuerwehr-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "fire", false, core:get("Cache", "AlternativeLastFactionSkin")))
         end
     end
 end
@@ -63,12 +63,12 @@ function DutyGUI:loadCompanyItems(cmp, isOnDuty)
     end
 end
 
-function DutyGUI:itemEvent(eventName, arg1, arg2)
+function DutyGUI:itemEvent(eventName, arg1, arg2, arg3)
     if type(arg1) ~= "table" then -- prevent triggering whole class instances 
         if localPlayer:getJob() then 
             triggerServerEvent("jobQuit", root)
         end
-        triggerServerEvent(eventName, localPlayer, arg1, arg2)
+        triggerServerEvent(eventName, localPlayer, arg1, arg2, arg3)
     else
         if localPlayer:getJob() then 
             triggerServerEvent("jobQuit", root)
