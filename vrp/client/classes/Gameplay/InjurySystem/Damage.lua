@@ -47,7 +47,8 @@ function Damage:Event_startTreatment(time, isHealer)
 	else 
 		self:Event_cancelTreatment() 		
 	end
-	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_cancelTreatmentOnDeath, self))
+	self.m_cancelTreatmentOnDeath = bind(self.Event_cancelTreatmentOnDeath, self)
+	addEventHandler("onClientPlayerWasted", localPlayer, self.m_cancelTreatmentOnDeath)
 end
 
 function Damage:Event_finishTreatment()
@@ -68,6 +69,7 @@ function Damage:Event_finishTreatment()
 		killTimer(self.m_CancelTimer)
 		self.m_CancelTimer = nil
 	end
+	removeEventHandler("onClientPlayerWasted", localPlayer, self.m_cancelTreatmentOnDeath)
 end
 
 function Damage:Event_cancelTreatment() 			
@@ -88,7 +90,7 @@ function Damage:Event_cancelTreatment()
 		killTimer(self.m_CancelTimer)
 		self.m_CancelTimer = nil
 	end
-	removeEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_cancelTreatmentOnDeath, self))
+	removeEventHandler("onClientPlayerWasted", localPlayer, self.m_cancelTreatmentOnDeath)
 end
 
 function Damage:isInTreatment() return self.m_InTreatment end
