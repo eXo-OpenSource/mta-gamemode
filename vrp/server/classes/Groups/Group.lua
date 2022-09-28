@@ -134,8 +134,10 @@ function Group:onPlayerJoin(player)
 		self.m_Markers[player]:setInterior(player:getInterior())
 		self.m_Markers[player]:attach(player,0,0,1.5)
 		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 
 	GroupManager:getSingleton():addActiveGroup(self)
@@ -628,7 +630,7 @@ end
 
 function Group:refreshAttachedMarker(dimInt)
 	if not self.m_Markers then return end
-	if not self.m_Markers[player] then return end
+	if not self.m_Markers[source] then return end
 	if eventName == "onElementDimensionChange" then
 		self.m_Markers[source]:setDimension(dimInt)
 	elseif eventName == "onElementInteriorChange" then

@@ -602,6 +602,11 @@ function Player:respawn(position, rotation, bJailSpawn)
 		end
 	end
 
+	if self:isInSewer() then
+		self:setInSewer(false)
+		self:triggerEvent("Sewers:removeTexture")
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
 end

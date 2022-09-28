@@ -57,8 +57,6 @@ function Sewers:applyInteriorTexture()
 		end
 	end
 	HUDRadar:getSingleton():hide()
-
-	addEventHandler("onClientPlayerWasted", localPlayer, self.m_RemoveInteriorTexture)
 end
 
 function Sewers:applyCasinoTexture(radio, volume, noReverb)
@@ -185,7 +183,6 @@ function Sewers:removeInteriorTexture()
 		killTimer(self.m_PedTimer)
 	end
 	HUDRadar:getSingleton():show()
-	removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RemoveInteriorTexture)
 end
 
 
