@@ -618,7 +618,7 @@ function FactionState:uncuffPlayer( player)
 	player:setStateCuffed(false)
 	setPedWalkingStyle(player, 0)
 	player:setPublicSync("cuffed", false)
-
+	player:setData("cuffed", false, true) -- only for driveby resource
 end
 
 function FactionState:Event_CuffSuccess( target )
@@ -638,6 +638,7 @@ function FactionState:Event_CuffSuccess( target )
 					target:triggerEvent("CountdownStop", "Gefesselt in", 10)
 					target:triggerEvent("updateCuffImage", true)
 					target:setPublicSync("cuffed", true)
+					target:setData("cuffed", true, true) -- only for driveby resource
 				end
 			end
 		end

@@ -169,6 +169,10 @@ function VehicleManager:constructor()
 						player:sendShortMessage(_("Du hast keinen Führerschein! Lass dich nicht erwischen!", player))
 					end
 				end
+				
+				if player:getPublicSync("cuffed") then
+					cancelEvent()
+				end
 			end
 		end
 	)

@@ -183,7 +183,7 @@ function AppAmmunation:onWeaponChange(name)
 			self.m_SelectedWeaponId = 0
 			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(-1)) 
 			self.m_WeaponName:setText(name)
-			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon))
+			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon * AMMUNATION_APP_MULTIPLICATOR))
 			self.m_MagazineBuyBtn:setVisible(false)
 			self:updateButtons()
 		else
@@ -192,9 +192,9 @@ function AppAmmunation:onWeaponChange(name)
 
 			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(weaponID))
 			self.m_WeaponName:setText(_("Waffe: %s (Level: %i)", name, MIN_WEAPON_LEVELS[weaponID]))
-			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
+			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon * AMMUNATION_APP_MULTIPLICATOR))
 			if AmmuNationInfo[weaponID].Magazine then
-				self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
+				self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price * AMMUNATION_APP_MULTIPLICATOR))
 				self.m_MagazineBuyBtn:setVisible(true)
 			else
 				self.m_MagazineBuyBtn:setVisible(false)
