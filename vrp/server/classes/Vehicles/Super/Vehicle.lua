@@ -191,6 +191,14 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
+
+		if self:hasKey(player) and getVehicleTowedByVehicle(self) and getVehicleType(getVehicleTowedByVehicle(self)) == VehicleType.Trailer then
+			local towedVeh = getVehicleTowedByVehicle(self)
+			if towedVeh:getOwner() == self:getOwner() then
+				towedVeh:setFrozen(false)
+			end
+		end
+
 		self:allowControl(player, getVehicleEngineState(self))
 	end
 

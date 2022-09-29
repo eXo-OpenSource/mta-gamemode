@@ -105,10 +105,8 @@ end
 
 function ShopVehicleRob:addMarkerAndBlips()
 	local statePos = self:getNearestMarker(self.m_Vehicle.position, ROBABLE_SHOP_STATE_TARGETS)
-	
+	local evilPos = self:getFarthestMarker(self.m_Vehicle.position, ROBABLE_VEHICLE_SHOP_EVIL_TARGETS)
 	local mechanicPos = self:getRandomPos(ROBABLE_VEHICLE_SHOP_MECHANIC_POSITION, 3)
-
-	local evilPos = ROBABLE_VEHICLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_VEHICLE_SHOP_EVIL_TARGETS)]
 
 	self.m_Gang:attachPlayerMarkers()
 	self.m_EvilBlip = Blip:new("Marker.png", evilPos.x, evilPos.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
@@ -170,6 +168,12 @@ end
 function ShopVehicleRob:getNearestMarker(position, markerPositions)
 	table.sort(markerPositions, function(a, b)
 		return getDistanceBetweenPoints3D(a, position) < getDistanceBetweenPoints3D(b, position)
+	end)
+	return markerPositions[1], markerPositions[2], markerPositions[3]
+end
+function ShopVehicleRob:getFarthestMarker(position, markerPositions)
+	table.sort(markerPositions, function(a, b)
+		return getDistanceBetweenPoints3D(a, position) > getDistanceBetweenPoints3D(b, position)
 	end)
 	return markerPositions[1], markerPositions[2], markerPositions[3]
 end
