@@ -19,6 +19,7 @@ function FactionState:constructor()
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 	self:createArrestZone(1194.201, -1822.363, 13.582) -- FBI
+	self:createArrestZone(1240.056, -1746.687, 33.682) -- FBI roof
 	self.m_StateColor = {r = 3, g = 173, b = 252}
 
 	--self.m_GaragePorter = VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
