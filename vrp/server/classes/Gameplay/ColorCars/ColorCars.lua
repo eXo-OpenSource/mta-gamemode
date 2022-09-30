@@ -22,10 +22,10 @@ ColorCars.PowerUps =    {["Superboost"] = {["DisplayName"] = "Super Boost", ["St
                         ["Description"] = "Du hast ein Superjump erhalten.\nDu kannst es mit SHIFT aktivieren!", ["Client"] = true},
                         
                         ["Vehiclechange"] = {["DisplayName"] = "Fahrzeug änderung", ["Stackable"] = false, ["InstantActive"] = true, 
-                        ["Description"] = "Du hast ein neues Fahrzeug erhalten\nDies hält für 1 Minute!", ["Client"] = false},
+                        ["Description"] = "Du hast ein neues Fahrzeug erhalten\nDies hält für 30 Sekunden!", ["Client"] = false},
                         
                         ["Ghostmode"] = {["DisplayName"] = "Geist", ["Stackable"] = false, ["InstantActive"] = true, 
-                        ["Description"] = "Du bist nun ein Geist und kannst nicht berührt werden\nDies hält für 30 Sekunden!", ["Client"] = true}
+                        ["Description"] = "Du bist nun ein Geist und kannst nicht berührt werden\nDies hält für 15 Sekunden!", ["Client"] = true}
 }
 ColorCars.PowerUpVehicleChange = {411, 415, 560, 503, 530, 574, 559,}
 
@@ -85,7 +85,7 @@ function ColorCars:addPlayer(player)
 
     player:triggerEvent("ColorCars:openMatchGUI")
     ColorCarsManager:getSingleton():syncMatchGUI(self.m_LobbyOwner)
-    player:sendInfo(_("Sollte das Match Fenster stören,\n kannst du es jeder Zeit verschieben.", player), 10000)
+    player:sendInfo(_("Sollte das Match Fenster stören,\n kannst du es jederzeit verschieben.", player), 10000)
 
     self.m_SuportboostPowerUp = bind(self.powerUpSuperBoost, self, player)
     self.m_SuperjumpPowerUp = bind(self.powerUpSuperJump, self, player)
@@ -323,7 +323,7 @@ function ColorCars:powerUpVehicleChange(player)
             function()
                 vehicle:setModel(495)
                 self.m_PlayerPowerUps[player]["Vehiclechange"] = nil
-            end, 60000, 1)
+            end, 30000, 1)
     end
 end
 
@@ -337,8 +337,8 @@ end
 function ColorCars:syncGhostMode(joinedPlayer)
     for i, player in pairs(self.m_Players) do
         if self.m_PlayerPowerUps[player]["GhostMode"] then
-            if self.m_PlayerPowerUps[player]["GhostMode"] + 30 >= getRealTime().timestamp then
-                local remainingTime = (self.m_PlayerPowerUps[player]["GhostMode"] + 30 - getRealTime().timestamp)
+            if self.m_PlayerPowerUps[player]["GhostMode"] + 15 >= getRealTime().timestamp then
+                local remainingTime = (self.m_PlayerPowerUps[player]["GhostMode"] + 15 - getRealTime().timestamp)
                 player:triggerEvent("ColorCars:syncGhostMode", remainingTime, joinedPlayer, player)
                 joinedPlayer:triggerEvent("ColorCars:syncGhostMode", remainingTime, joinedPlayer, player)
             end

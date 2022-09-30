@@ -108,6 +108,14 @@ function Guns:Event_onTaser(target)
 			target:setFrozen(false)
 			toggleAllControls(target,true, true, false)
 			target.isTasered = false
+
+			if target:getPublicSync("cuffed") then
+				toggleControl(target, "sprint", false)
+				toggleControl(target, "jump", false)
+				toggleControl(target, "fire", false)
+				toggleControl(target, "aim_weapon", false)
+				toggleControl(target, "action", false)
+			end
 		end
 	end, 15000, 1, target )
 end

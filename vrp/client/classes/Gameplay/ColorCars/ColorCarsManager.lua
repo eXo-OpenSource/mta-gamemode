@@ -188,7 +188,7 @@ function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
         end
     end
     if not state then
-        self.m_GhostModeTimer[ghostPlayer] = setTimer(bind(self.Event_powerUpGhostMode, self), 30000, 1, ghostPlayer, dim, false)
+        self.m_GhostModeTimer[ghostPlayer] = setTimer(bind(self.Event_powerUpGhostMode, self), 15000, 1, ghostPlayer, dim, false)
     end
 end
 

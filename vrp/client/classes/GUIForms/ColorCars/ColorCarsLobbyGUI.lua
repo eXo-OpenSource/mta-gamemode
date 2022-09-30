@@ -11,7 +11,7 @@ inherit(Singleton, ColorCarsLobbyGUI)
 
 function ColorCarsLobbyGUI:constructor(marker)
     GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.4, screenHeight*0.5, true, false, marker)
-    self.m_LobbyWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Color Cars Lobbys", true, true, self)
+    self.m_LobbyWindow = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ColorCars Lobbys", true, true, self)
 
     self.m_JoinLobbyButton = GUIButton:new(self.m_PosX*0.9, self.m_PosY*0.3, 200, 50, _"Lobby beitreten", self.m_LobbyWindow):setBackgroundColor(Color.Green)
 
