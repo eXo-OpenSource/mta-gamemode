@@ -296,40 +296,40 @@ Crime = {
 
 AMMUNATION_APP_MULTIPLICATOR = 1.5
 AmmuNationInfo = {
-    [30] = { -- AK-47
-        Magazine = {price=300,amount=30},
-        Weapon = 2150
-    },
-    [31] = { -- M4A1
-        Magazine = {price=350,amount=50},
-        Weapon = 2850
-    },
-    [29] = { -- MP5
-        Magazine = {price=180,amount=30},
-        Weapon = 1250
-    },
-    [25] = { -- Shotgun
-        Magazine = {price=95,amount=1},
-        Weapon = 1000
-    },
-    [33] = { -- Rifle
-        Magazine = {price=80,amount=1},
-        Weapon = 1250
-    },
-    [22] = { -- Pistol
-        Magazine = {price=75,amount=17},
-        Weapon = 500
-    },
-    [24] = { -- Desert Eagle
-        Magazine = {price=375,amount=7},
-        Weapon = 1450
-    },
-    [1] = { -- Brass Knuckles
-        Weapon = 100
-    },
-    [0] = { -- Armor
-        Weapon = 250
-    },
+	[30] = { -- AK-47
+		Magazine = {price=60,amount=30},
+		Weapon = 2150
+	},
+	[31] = { -- M4A1
+		Magazine = {price=90,amount=50},
+		Weapon = 2800
+	},
+	[29] = { -- MP5
+		Magazine = {price=70,amount=30},
+		Weapon = 1300
+	},
+	[25] = { -- Shotgun
+		Magazine = {price=10,amount=1},
+		Weapon = 1200
+	},
+	[33] = { -- Rifle
+		Magazine = {price=20,amount=1},
+		Weapon = 1550
+	},
+	[22] = { -- Pistol
+		Magazine = {price=35,amount=17},
+		Weapon = 750
+	},
+	[24] = { -- Desert Eagle
+		Magazine = {price=30,amount=7},
+		Weapon = 1450
+	},
+	[1] = { -- Brass Knuckles
+		Weapon = 100
+	},
+	[0] = { -- Armor
+		Weapon = 200
+	},
 }
 
 DEFAULT_GANGAREA_RESOURCES = 500

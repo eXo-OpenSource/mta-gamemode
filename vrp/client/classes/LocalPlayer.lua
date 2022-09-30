@@ -398,7 +398,7 @@ function LocalPlayer:onDeathTimerUp()
 			-- now death gui
 			DeathGUI:new(self:getPublicSync("DeathTime"),
 				function()
-					local spawnAtHospial = core:get("Other", "RescueSpawnAfterDeath", "")
+					local spawnAtHospial = core:get("Other", "RescueSpawnAfterDeath", false)
 					HUDRadar:getSingleton():show()
 					HUDUI:getSingleton():show()
 					showChat(true)
