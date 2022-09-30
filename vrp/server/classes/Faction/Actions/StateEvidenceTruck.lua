@@ -45,6 +45,9 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 	self.m_DestroyFunc = bind(self.Event_OnTruckDestroy,self)
 
+	self.m_WaterCheckTimer = setTimer(bind(self.isStateEvidenceTruckInWater, self), 10000, 0)
+	self.m_IsSubmerged = false
+
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnTruckExit,self))
@@ -72,7 +75,7 @@ function StateEvidenceTruck:destructor()
 	self.m_Truck:destroy()
 
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
-
+	if isTimer(self.m_WaterCheckTimer) then killTimer(self.m_WaterCheckTimer) end
 	for index, value in pairs(self.m_DestinationMarkers) do
 		if isElement(value) then value:destroy() end
 	end
@@ -91,6 +94,9 @@ function StateEvidenceTruck:destructor()
 	end
 
 	TollStation.closeAll()
+	setTimer(function()
+		FactionState:getSingleton():forceCloseAreaGates()
+	end, 300000, 1)
 end
 
 function StateEvidenceTruck:timeUp()
@@ -176,15 +182,14 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
 	local bag = false
 
+	if hitElement.vehicle then return hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abgeben!", hitElement)) end
+
 	if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
 			--bags = getAttachedElements(hitElement)
 			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcken wurden abgegeben!", self.m_BagAmount-self:getRemainingBagAmount()+1, self.m_BagAmount)
 			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
 			bag = hitElement:getPlayerAttachedObject()
 			hitElement:detachPlayerObject(bag)
-	elseif hitElement:getOccupiedVehicle() then
-		hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abladen!", hitElement))
-		return
 	end
 
 	self.m_BankAccountServer:transferMoney(faction, bag.money, "Geldsack (Geldtransport)", "Action", "EvidenceTruck")
@@ -223,5 +228,18 @@ function StateEvidenceTruck:Event_OnTruckExit(player, seat)
 	if seat == 0 and player and isElement(player) then
 		player:triggerEvent("CountdownStop", "Geld-Transport")
 		player:triggerEvent("VehicleHealthStop")
+	end
+end
+
+function StateEvidenceTruck:isStateEvidenceTruckInWater()
+	if not self.m_IsSubmerged then
+		if isElementInWater(self.m_Truck) then
+			self.m_WaterNotificationTimer = setTimer(
+				function()
+					PlayerManager:getSingleton():breakingNews("Neueste Quellen berichten, dass der Geldtransporter einen Unfall hatte und ins Wasser gefahren ist!")
+				end
+			, 180000, 1)
+			self.m_IsSubmerged = true
+		end
 	end
 end

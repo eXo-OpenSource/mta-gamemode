@@ -119,18 +119,33 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
             Vector3(-0.7, -2.52, 0.2),
             Vector3(0.21, -2.51, 0.2),
             Vector3(-0.21, -2.49, 0.2),
-        }
-	}
+        },
+	},
+
+	[456] = { --vehicle model, yankee in this case
+	loadMarkerPos = Vector3(0, -5.25, 0),
+	vehicleDoors = {1},
+	objectId = 1575, -- drug package
+	objectNames = {"Drogenpaket", "Drogenpakete"},
+	randomRotation = false, --random z-rotaion on attach to provide some variety
+	positions = { -- in loading order, e.g. the first row is the first object position to load
+	Vector3(0.5, -0.1, 0.03), Vector3(-0.6, -0.1, 0.03),
+	Vector3(-0.6, -1.1, 0.03), Vector3(0.5, -1, 0.03),
+	Vector3(0.5, -1.9, 0.03), Vector3(0.5, -2.8, 0.03), 
+	Vector3(-0.6, -1.9, 0.03), Vector3(-0.6, -2.8, 0.03), 
+	Vector3(0.5, -3.7, 0.03), Vector3(-0.6, -3.7, 0.03),	
+	},
+	scale = 1.6 -- the objects scale, when attached
+	},
 }
 
-
-FUEL_PRICE = { --price per liter
-	["petrol"] = 2.3,
-	["petrol_plus"] = 3.4,
-	["diesel"] = 1.7,
-	["jetfuel"] = 4.6,
-	["universal"] = 0,
-	["nofuel"] = 0,
+FUEL_PRICE_RANGE = { --price per liter
+	["petrol"] = {2.5, 6},
+	["petrol_plus"] = {2.8, 6.8},
+	["diesel"] = {2.1, 6.5},
+	["jetfuel"] = {7, 12},
+	["universal"] = {0, 0},
+	["nofuel"] = {0, 0},
 
 }
 FUEL_NAME = { --display name
@@ -144,6 +159,7 @@ FUEL_NAME = { --display name
 }
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
+EVIL_FUEL_PRICE_MULTIPLICATOR = 3
 SERVICE_FUEL_PRICE_MULTIPLICATOR = 3
 SERVICE_REPAIR_PRICE_MULTIPLICATOR = 3
 
@@ -358,4 +374,67 @@ VehicleShopColors =  -- unified colors for the vehicle shop
 VEHICLES_WITH_BULLET_ARMOR = {
 	[425] = 2, --Hunter
     [432] = 2 --Rhino
+}
+
+VEHICLE_MAX_PASSENGER = { -- Only extra passenger, driver and normal passenger seats are not included
+	[511] = 4, -- Beagle -- normal = 1
+	[519] = 7, -- Shamal -- normal = 0
+	[553] = 10, -- Nevada -- normal = 0
+	[577] = 15, -- AT-400 -- normal = 1
+	[592] = 15, -- Andromada -- normal = 1
+}
+
+VEHICLE_SEAT_EXTENSION_DOOR_OFFSET = {
+	[511] = Vector3(2.5, 2.7, 0),
+	[519] = Vector3(2, 3.6, 0),
+	[553] = Vector3(-2, -3.6, 0),
+	[577] = Vector3(3, 19, 1.4),
+	[592] = Vector3(3, 11.3, 0),
+}
+
+--[[VEHICLE_SEAT_EXTENSION_SEAT_OFFSET = {
+	[511] = {
+		Vector3(-0.4, 1.6, -0.4),
+		Vector3(0.3, 1.6, -0.4),
+		Vector3(-0.4, 0.5, -0.4),
+		Vector3(0.3, 0.5, -0.4),
+	}
+}]]
+
+SHAMAL_EXTENSION_INTERIOR_POSITION = {
+	[0] = {Vector3(0.81, 35.85, 1199.6), 0},
+	[1] = {Vector3(2.57, 35.87, 1199.59), 0},
+	[2] = {Vector3(2.86, 29.80, 1199.59), 180},
+	[3] = {Vector3(0.61, 28.76, 1199.59), 180},
+	[4] = {Vector3(2.84, 28.64, 1199.59), 0},
+	[5] = {Vector3(0.61, 27.60, 1199.59), 0},
+	[6] = {Vector3(2.88, 26.37, 1199.59), 0},
+	[7] = {Vector3(0.57, 25.30, 1199.59), 0},
+   }
+
+VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN = DEBUG and 0 or 3*24*60*60
+
+VehicleSpawnPositionAfterRegister = {
+{1504.75, -1847.58, 12.25},
+{1507.75, -1847.53, 12.25},
+{1510.75, -1847.48, 12.25},
+{1520.74, -1846.97, 12.25},
+{1524.74, -1846.91, 12.25},
+{1531.74, -1846.79, 12.25},
+}
+
+RC_TOGGLE_COOLDOWN = 60*20
+
+RC_UPGRADE_VEHICLE = {
+	[441] = true, -- RC Bandit
+	[464] = true, -- RC Baron
+	[501] = true, -- RC Goblin
+	[564] = true, -- RC Tiger
+}
+
+RC_UPGRADE_VEHICLE_PRICE = {
+    [441] =     350000, -- RC Bandit
+    [464] =     500000, -- RC Baron
+    [501] =     750000, -- RC Goblin
+    [564] =     650000, -- RC Tiger
 }

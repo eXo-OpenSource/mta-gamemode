@@ -11,7 +11,7 @@ PrisonBreak.OfficerCountdown = 7 * 60 * 1000
 PrisonBreak.KeycardsCountdown = 2 * 60 * 1000
 PrisonBreak.DoorsCountdown = 12 * 60 * 1000
 
-function PrisonBreak:constructor(player)
+function PrisonBreak:constructor(faction)
 	self.m_Entrance = PrisonBreakManager:getSingleton().m_Entrance
 
 	self.m_Officer = PrisonBreakManager:getSingleton().m_Officer
@@ -23,7 +23,7 @@ function PrisonBreak:constructor(player)
 
 	self.m_KeycardPlayers = {}
 
-	self.m_Faction = player:getFaction()
+	self.m_Faction = faction
 
 	---Binds
 	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
@@ -104,7 +104,7 @@ end
 function PrisonBreak:start()
 	PlayerManager:getSingleton():breakingNews("Das Gefängnis meldet höchste Sicherheitswarnung. Gefahrenlage unbekannt!")
 	Discord:getSingleton():outputBreakingNews("Das Gefängnis meldet höchste Sicherheitswarnung. Gefahrenlage unbekannt!")
-	FactionState:getSingleton():sendWarning("Das Gefängnis meldet höchste Sicherheitswarnung mit Bitte um Unterstützung!", "Neuer Einsatz", true, {3583, -1614, 23.5})
+	FactionState:getSingleton():sendWarning("Das Gefängnis meldet höchste Sicherheitswarnung mit Bitte um Unterstützung!", "Neuer Einsatz", true, {-542.90, -515.07, 55.79})
 
 	self.m_Entrance:destroy()
 
@@ -127,7 +127,7 @@ function PrisonBreak:getWeaponsFromBox(button, state, player)
 	end
 
 	if self.m_WeaponBoxPlayers[player:getId()] then
-		player:sendError("Du hast bereits Waffen aus dem Lager erhalten!");
+		player:sendError(_("Du hast bereits Waffen aus dem Lager erhalten!", player));
 		return
 	end
 
@@ -151,7 +151,7 @@ function PrisonBreak:removeKeycardFromPlayer(player)
 	if player and isElement(player) and player:getInventory() then
 		if player:getInventory():getItemAmount("Keycard") and player:getInventory():getItemAmount("Keycard") > 0 then
 			player:getInventory():removeAllItem("Keycard")
-			player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
+			player:sendError(_("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!", player))
 		end
 	end
 end

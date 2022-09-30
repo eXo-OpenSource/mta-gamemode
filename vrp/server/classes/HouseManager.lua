@@ -11,7 +11,7 @@ addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse"
 "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
 "tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
 "houseAdminRequestData", "houseAdminChangeInterior", "houseAdminFree",
-"houseRingDoor", "houseRequestGUI"
+"houseRingDoor", "houseRequestGUI", "breakHouseDoor", "toggleGarageState",
 }
 
 local ROB_DELAY = DEBUG and 50 or 1000*60*15
@@ -24,8 +24,13 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"], value["buyPrice"])
 		count = count + 1
+	end
+
+	local query = sql:queryFetch("SELECT * FROM ??_garage", sql:getPrefix())
+	for key, v in pairs(query) do
+		self.m_Houses[v["HouseId"]]:createGarage(v["GarageId"], v["PosX"], v["PosY"], v["PosZ"], v["RotX"], v["RotY"], v["RotZ"])
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -41,6 +46,7 @@ function HouseManager:constructor()
 	addEventHandler("houseWithdraw",root,bind(self.withdraw,self))
 	addEventHandler("houseRemoveTenant",root,bind(self.removeTenant,self))
 	addEventHandler("tryRobHouse",root,bind(self.tryRob,self))
+	addEventHandler("breakHouseDoor",root,bind(self.breakDoor,self))
 	addEventHandler("houseRingDoor",root,bind(self.ringDoorBell,self))
 	addEventHandler("playerFindRobableItem",root,bind(self.onFindRobItem,self))
 	addEventHandler("playerRobTryToGiveWanted",root,bind(self.onTryToGiveWanted,self))
@@ -48,6 +54,7 @@ function HouseManager:constructor()
 	addEventHandler("houseAdminChangeInterior", root, bind(self.changeInterior,self))
 	addEventHandler("houseAdminFree", root, bind(self.freeByAdmin,self))
 	addEventHandler("houseRequestGUI", root, bind(self.Event_requestGUI, self))
+	addEventHandler("toggleGarageState", root, bind(self.Event_toggleGarageState, self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
@@ -60,6 +67,18 @@ function HouseManager:createNewHouse(player, cmd, ...)
 		if interior and price and HOUSE_INTERIOR_TABLE[interior] then
 			local pos = player:getPosition()
 			self:newHouse(pos, interior, price)
+		end
+	end
+end
+
+function HouseManager:Event_toggleGarageState()
+	for i, v in pairs(HouseGarage.Map) do
+		local house = self.m_Houses[i]
+		if getDistanceBetweenPoints3D(v.m_GaragePosition, client:getPosition()) <= 10 then
+			if house:isTenant(client:getId()) or house:getOwner() == client:getId() then
+				HouseGarage.Map[i]:toggleGarage()
+				break
+			end
 		end
 	end
 end
@@ -145,6 +164,12 @@ function HouseManager:onTryToGiveWanted()
 	if client.vehicle then return end
 	if not client.m_CurrentHouse then return end
 	client.m_CurrentHouse:tryToCatchRobbers(client)
+end
+
+function HouseManager:breakDoor()
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:breakDoor(client)
 end
 
 function HouseManager:requestAdminData()
@@ -253,10 +278,18 @@ end
 function HouseManager:loadBlips(player)
 	local house = self:getPlayerHouse(player)
 	if house then
+		if house.m_Garage then
+			local garage = house.m_Garage
+			player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+		end
 		player:triggerEvent("addHouseBlip", house.m_Id, house.m_Pos.x, house.m_Pos.y)
 	end
 	for index, rentHouse in pairs(self:getPlayerRentedHouses(player)) do
 		if rentHouse then
+			if rentHouse.m_Garage then
+				local garage = rentHouse.m_Garage
+				player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+			end
 			player:triggerEvent("addHouseBlip", rentHouse.m_Id, rentHouse.m_Pos.x, rentHouse.m_Pos.y)
 		end
 	end

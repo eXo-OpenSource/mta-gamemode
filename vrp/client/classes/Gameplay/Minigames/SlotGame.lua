@@ -73,7 +73,7 @@ SlotGame.Lines  =
     {{1,3}, {2,3}, {3,3}, {4,3}, {5,3}}, -- green bottom
 }
 
-SlotGame.HelpText = "Drehe mit dem Button >>Play<< \nAchtung! Dein Gewinn wird nicht sofort ausgezahlt erst wenn du den Button >Cash out< drückst!\nDein Gewinn steht oben im Feld >Win<.\nDein aktueller Einsatz im Feld >Credits<.\nDu kannst diesen mit dem Button >Bet up< und >Bet down< erhöhen/vermindern.\nGelbe Linie = 1xGewinn |Rote Linie = 2xGewinn\nObere Grüne =3xGewinn | Untere Grüne = 4x Gewinn | Mittlere Grüne = 5x Gewinn\nSymbole = Alarm < Haken < Blume < Geist < Würfel < Schildkröte (< heisst weniger Wert)"
+SlotGame.HelpText = "Drehe mit dem Button >>Play<< \nDein Gewinn steht oben im Feld >Win<.\nDein aktueller Einsatz im Feld >Credits<.\nDu kannst diesen mit dem Button >Bet up< und >Bet down< erhöhen/vermindern.\nGelbe Linie = 1xGewinn |Rote Linie = 2xGewinn\nObere Grüne =3xGewinn | Untere Grüne = 4x Gewinn | Mittlere Grüne = 5x Gewinn\nSymbole = Alarm < Haken < Blume < Geist < Würfel < Schildkröte (< heisst weniger Wert)"
 SlotGame.BetAmount = 
 {
 	[1] = 50, 
@@ -253,7 +253,7 @@ function SlotGame:showWin()
 			self.m_WinSound = playSound("files/audio/arcade-sfx/win.ogg")
 		end
 		setSoundEffectEnabled(self.m_WinSound, "reverb", true)
-		outputChatBox(("#FFFF00[Spielothek]#FFFFFF Du hast #00FF00$%s#FFFFFF gewonnen!"):format(self.m_LastPay), 255, 255, 255, true)
+		outputChatBox(_("#FFFF00[Spielothek]#FFFFFF Du hast #00FF00$%s#FFFFFF gewonnen!", self.m_LastPay), 255, 255, 255, true)
 	else 
 		self.m_StopDisable = setTimer(function() self.m_Disable = false; self.m_Play:setColor(tocolor(244, 206, 66, 100)) end, 1000, 1)
 	end

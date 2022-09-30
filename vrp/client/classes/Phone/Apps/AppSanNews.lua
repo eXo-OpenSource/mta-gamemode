@@ -16,6 +16,9 @@ local ColorTable = {
 
 function AppSanNews:constructor()
 	PhoneApp.constructor(self, "SanNews", "IconSanNews.png")
+	
+	addRemoteEvents{"receiveFuelPrices"}
+	addEventHandler("receiveFuelPrices", localPlayer, bind(self.Event_receiveFuelPrices, self))
 end
 
 function AppSanNews:onOpen(form)
@@ -69,6 +72,7 @@ function AppSanNews:onOpen(form)
 
 	self.m_SubmitButton.onLeftClick =
 		function()
+			if localPlayer:isInPrison() then return ErrorBox:new(_"Du kannst im Prison keine Werbung schalten.") end
 			local senderName = self.m_SenderNameChanger:getIndex()
 			--we have to do this because otherwise we can't get the correct ad type if some options are not added in the first place
 			local senderIndex = 1
@@ -80,6 +84,19 @@ function AppSanNews:onOpen(form)
 		end
 	self:calcCosts()
 
+	self.m_Tabs["FuelPrices"] = self.m_TabPanel:addTab(_"Tankpreise", FontAwesomeSymbols.Newspaper)
+	tab = self.m_Tabs["FuelPrices"]
+
+	GUILabel:new(tab.m_Width*0.02, tab.m_Height*0.01, tab.m_Width*0.98, tab.m_Height*0.06, "Doppelklick zum Route berechnen", self.m_Tabs["FuelPrices"]):setAlignX("center")
+	self.m_FuelPriceGrid = GUIGridList:new(10, 40, form.m_Width-20, form.m_Height-90, tab)
+	self.m_FuelPriceGrid:addColumn("Aktuelle Tankpreise", 0.4)
+	self.m_FuelPriceGrid:addColumn("", 0.6)
+	
+	self.m_TabPanel.onTabChanged = function(tabId)
+		if tabId == self.m_Tabs["FuelPrices"].TabIndex then
+			triggerServerEvent("requestFuelPrices", localPlayer)
+		end
+	end
 end
 
 function AppSanNews:calcCosts()
@@ -164,6 +181,23 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 	currentAd = ShortMessage:new(("%s"):format(text), ("Werbung von %s"):format(sender.name), ColorTable[color], AD_DURATIONS[duration]*1000, callSender)
 end)
 
+function AppSanNews:Event_receiveFuelPrices(infoTbl)
+	self.m_FuelPriceGrid:clear()
+	for name, info in pairs(infoTbl) do
+		if not name:find("Tankstelle") then
+			name = name:gsub(name, _("Tankstelle %s", name))
+		end
+		local priceMult = (info[3] and SERVICE_FUEL_PRICE_MULTIPLICATOR) or (info[4] and EVIL_FUEL_PRICE_MULTIPLICATOR) or 1
+		self.m_FuelPriceGrid:addItemNoClick(name, "")
+		for type, price in pairs(info[1]) do
+			
+			local item = self.m_FuelPriceGrid:addItem(FUEL_NAME[type], _("%s$", math.round(price * priceMult, 1)))
+			item.onLeftDoubleClick = function()
+				GPS:getSingleton():startNavigationTo(Vector3(info[2][1], info[2][2], info[2][3]))
+			end
+		end
+	end
+end
 
 addEvent("closeAd", true)
 addEventHandler("closeAd", root, function()

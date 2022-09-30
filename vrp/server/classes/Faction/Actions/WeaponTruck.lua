@@ -313,9 +313,9 @@ function WeaponTruck:outputBoxContent(player, box)
 			for typ,amount in pairs(weaponTable[weaponID]) do
 				if amount > 0 then
 					if typ == "Waffe" then
-						outputChatBox("Kiste: "..box.id..": "..amount.." "..WEAPON_NAMES[weaponID].." Waffe/n",player,255,255,0)
+						outputChatBox(_("Kiste: %s: %s %s Waffe/n", player, box.id, amount, WEAPON_NAMES[weaponID]),player,255,255,0)
 					elseif typ == "Munition" then
-						outputChatBox("Kiste: "..box.id..": "..amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,255,0)
+						outputChatBox(_("Kiste: %s: %s %s Magazin/e", player, box.id, amount, WEAPON_NAMES[weaponID]),player,255,255,0)
 					end
 				end
 			end

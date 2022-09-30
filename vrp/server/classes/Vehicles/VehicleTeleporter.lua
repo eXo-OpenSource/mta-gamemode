@@ -66,7 +66,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 		return
 	end
 	if isVehicle and not vehicle:isLandVehicle() then
-		player:sendError("Du kannst diesen Eingang nur zu Fuß oder mit Bodenfahrzeugen benutzen.")
+		player:sendError(_("Du kannst diesen Eingang nur zu Fuß oder mit Bodenfahrzeugen benutzen.", player))
 		return
     end
 

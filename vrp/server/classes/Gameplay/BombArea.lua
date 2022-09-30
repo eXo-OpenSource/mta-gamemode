@@ -35,7 +35,7 @@ function BombArea:explode()
     end
 
     if self.m_ExplodeCallback then
-        self.m_ExplodeCallback(self, self.m_Placer)
+        self.m_ExplodeCallback(self, self.m_Placer, self.m_PlacerFaction)
     end
 end
 
@@ -46,12 +46,12 @@ function BombArea:fire(player)
     end
 
     if not player:getFaction():isEvilFaction() then
-		player:sendError("Nur Spieler in bösen Fraktionen können Bomben legen!")
+		player:sendError(_("Nur Spieler in bösen Fraktionen können Bomben legen!", player))
 		return
 	end
 
 	if not player:getInventory():removeItem("Sprengstoff", 1) then
-		player:sendError("Du hast keine Bombe im Inventar!")
+		player:sendError(_("Du hast keine Bombe im Inventar!", player))
 		return
 	end
 
@@ -59,6 +59,7 @@ function BombArea:fire(player)
     self.m_BombObject:setInterior(player:getInterior())
     self.m_BombObject:setDimension(player:getDimension())
     self.m_Placer = player
+    self.m_PlacerFaction = player:getFaction()
     self.m_Timer = setTimer(bind(BombArea.explode, self), self.m_Timeout, 1)
 end
 

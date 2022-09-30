@@ -57,14 +57,14 @@ function WareGuess:checkWinner()
             nearestNumber = number
         end
         if diff == 0 then
-            outputChatBox("Du hast genau richtig geraten!", player, 0, 255, 0)
+            outputChatBox(_("Du hast genau richtig geraten!", player), player, 0, 255, 0)
         else
-            outputChatBox("Du liegst um "..diff.." daneben!", player, 255, 0, 0)
+            outputChatBox(_("Du liegst um %s daneben!", player, diff), player, 255, 0, 0)
         end
     end
 
     for player, number in pairs(self.m_Numbers) do
-        outputChatBox("Die beste Schätzung war "..nearestNumber.."!", player, 50, 200, 255)
+        outputChatBox(_("Die beste Schätzung war %s!", player, nearestNumber), player, 50, 200, 255)
 
         if number == nearestNumber then
             self.m_Winners[player] = true
@@ -77,12 +77,12 @@ end
 
 function WareGuess:onChat(player, text, type)
 	if not tonumber(text) then
-		player:sendError("Du hast eine ungültige Zahl eingegeben!")
+		player:sendError(_("Du hast eine ungültige Zahl eingegeben!", player))
 		return
 	end
 
 	if self.m_Numbers[player] then
-		player:sendError("Du hast bereits eine Zahl angegeben!")
+		player:sendError(_("Du hast bereits eine Zahl angegeben!", player))
 		return
 	end
 	self.m_Numbers[player] = tonumber(text)

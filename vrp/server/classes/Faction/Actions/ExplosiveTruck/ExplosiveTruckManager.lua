@@ -23,7 +23,7 @@ function ExplosiveTruckManager:start()
 	local faction = client:getFaction()
 
 	if not faction or not faction:isEvilFaction() then
-		client:sendError("Du bist in keiner bösen Fraktion!")
+		client:sendError(_("Du bist in keiner bösen Fraktion!", client))
 
 		return
 	end
@@ -31,14 +31,19 @@ function ExplosiveTruckManager:start()
 	local factionId = faction:getId()
 
 	if ExplosiveTruckManager.Active[factionId] then
-		client:sendError("Es läuft bereits ein Transport deiner Fraktion!")
+		client:sendError(_("Es läuft bereits ein Transport deiner Fraktion!", client))
 
 		return
 	end
 
 	if faction:getMoney() < ExplosiveTruck.Price then
-		client:sendError("Deine Fraktion hat nicht genügend Geld!")
+		client:sendError(_("Deine Fraktion hat nicht genügend Geld!", client))
 
+		return
+	end
+
+	if not PermissionsManager:getSingleton():isPlayerAllowedToStart(client, "faction", "ExplosiveTruck") then
+		client:sendError(_("Du bist nicht berechtigt Sprengstoff zu erwerben!", client))
 		return
 	end
 

@@ -67,17 +67,17 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, lastNameChange, Type, RankNames, RankLoans FROM ??_groups WHERE Deleted IS NULL", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, lastNameChange, Type, RankNames, RankLoans, RankPermissions FROM ??_groups WHERE Deleted IS NULL", sql:getPrefix())
 	for k, row in ipairs(result) do
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.lastNameChange, row.RankNames, row.RankLoans)
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.lastNameChange, row.RankNames, row.RankLoans, row.RankPermissions)
 		GroupManager.Map[row.Id] = group
 		count = count + 1
 	end
 	--Load Group Members
-	local result = sql:queryFetch("SELECT Id, GroupId, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId > 0", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, GroupId, GroupRank, GroupLoanEnabled, GroupPermissions FROM ??_character WHERE GroupId > 0", sql:getPrefix())
 	for k, row in ipairs(result) do
 		if GroupManager.Map[row.GroupId] then
-			GroupManager.Map[row.GroupId]:insertPlayer(row.Id, row.GroupRank, row.GroupLoanEnabled)
+			GroupManager.Map[row.GroupId]:insertPlayer(row.Id, row.GroupRank, row.GroupLoanEnabled, row.GroupPermissions)
 		end
 	end
 	--Initalize Activity and sync Ranknames
@@ -124,6 +124,14 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
+function GroupManager:getGangActionState(group)
+	local temp = {}
+	temp["houseRob"] = GroupHouseRob:getSingleton().m_GroupsRobCooldown[group] and GroupHouseRob:getSingleton().m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME or 0
+	temp["shopRob"] = ROBSHOP_LAST_ROB+ROBSHOP_PAUSE
+	temp["shopVehicleRob"] = {SHOP_VEHICLE_ROB_LAST_ROB+SHOP_VEHICLE_ROB_PAUSE, SHOP_VEHICLE_ROB_IS_STARTABLE}
+	return temp
+end
+
 function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
@@ -132,10 +140,10 @@ function GroupManager:sendInfosToClient(player)
 		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
-		if group:getPlayerRank(player) < GroupRank.Manager then
-			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames)
+		if group:getPlayerRank(player) < GroupRank.Manager and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "editLoan") and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "changeGroupType") and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "changeRankNames") then
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), self:getGangActionState(group), group.m_RankNames)
 		else
-			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), group.m_RankNames, group.m_RankLoans)
+			player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getType(), vehicles, group:canVehiclesBeModified(), self:getGangActionState(group), group.m_RankNames, group.m_RankLoans)
 		end
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
@@ -166,6 +174,11 @@ function GroupManager:Event_Create(name, type)
 
 	if client:getGroup() then
 		client:sendError(_("Du bist bereits in einer Firma/Gang!", client))
+		return
+	end
+
+	if string.find(name, " ") == 1 then
+		client:sendError(_("Der Name darf nicht mit einem Leerzeichen anfangen.", client))
 		return
 	end
 
@@ -238,7 +251,7 @@ function GroupManager:Event_Delete()
 	local group = client:getGroup()
 	if not group then return end
 
-	if group:getPlayerRank(client) ~= GroupRank.Leader then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "deleteGroup") then
 		client:sendError(_("Du bist nicht berechtigt die Firma/Gang zu löschen!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -302,7 +315,7 @@ function GroupManager:Event_Withdraw(amount)
 	if not group then return end
 	if not amount then return end
 
-	if group:getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "withdrawMoney") then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -325,7 +338,7 @@ function GroupManager:Event_AddPlayer(player)
 	local group = client:getGroup()
 	if not group then return end
 
-	if group:getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "invite"	) then
 		client:sendError(_("Du bist nicht berechtigt Firmen/Gang Mitglieder hinzuzufügen!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -355,9 +368,14 @@ function GroupManager:Event_DeleteMember(playerId)
 	local group = client:getGroup()
 	if not group then return end
 
-	if group:getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "uninvite") then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
 		-- Todo: Report possible cheat attempt
+		return
+	end
+
+	if group:getPlayerRank(client) <= group:getPlayerRank(playerId) then
+		client:sendError(_("Du kannst den Spieler nicht rauswerfen!", client))
 		return
 	end
 
@@ -377,11 +395,15 @@ function GroupManager:Event_InvitationAccept(groupId)
 	if not group then return end
 
 	if group:hasInvitation(client) then
-		group:addPlayer(client)
-		group:removeInvitation(client)
-		group:sendMessage(_("%s ist soeben der %s beigetreten!", client, getPlayerName(client), group:getType()),200,200,200)
-		group:addLog(client, "Gang/Firma", "ist der "..group:getType().." beigetreten!")
-		self:sendInfosToClient(client)
+		if not client:getGroup() then
+			group:addPlayer(client)
+			group:removeInvitation(client)
+			group:sendMessage(_("%s ist soeben der %s beigetreten!", client, getPlayerName(client), group:getType()),200,200,200)
+			group:addLog(client, "Gang/Firma", "ist der "..group:getType().." beigetreten!")
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Du bist bereits in einer Firma/Gang!", client))
+		end
 	else
 		client:sendError(_("Du hast keine Einladung für diese %s", client, group:getType()))
 	end
@@ -415,9 +437,14 @@ function GroupManager:Event_RankUp(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "changeRank") then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
+		return
+	end
+
+	if group:getPlayerRank(client) ~= GroupRank.Leader and group:getPlayerRank(client) <= group:getPlayerRank(playerId) + 1 then
+		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		return
 	end
 
@@ -431,6 +458,7 @@ function GroupManager:Event_RankUp(playerId)
 				player:setPublicSync("GroupRank", group:getPlayerRank(playerId) or 0)
 			end
 			self:sendInfosToClient(client)
+			PermissionsManager:getSingleton():onRankChange("up", client, playerId, "group")
 		else
 			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
 		end
@@ -453,9 +481,14 @@ function GroupManager:Event_RankDown(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "changeRank") then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
+		return
+	end
+
+	if group:getPlayerRank(client) ~= GroupRank.Leader and group:getPlayerRank(client) <= group:getPlayerRank(playerId) then
+		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		return
 	end
 
@@ -469,6 +502,7 @@ function GroupManager:Event_RankDown(playerId)
 				player:setPublicSync("GroupRank", group:getPlayerRank(playerId) or 0)
 			end
 			self:sendInfosToClient(client)
+			PermissionsManager:getSingleton():onRankChange("down", client, playerId, "group")
 		else
 			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))
 		end
@@ -484,8 +518,8 @@ function GroupManager:Event_ChangeName(name)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Leader then
-		client:sendError(_("Du bist nicht berechtigt den Namen zu verändern!", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "renameGroup") then
+		client:sendError(_("Du bist nicht berechtigt den Gruppennamen zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
@@ -497,6 +531,11 @@ function GroupManager:Event_ChangeName(name)
 
 	if client:getMoney() < GROUP_RENAME_COSTS then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+
+	if string.find(name, " ") == 1 then
+		client:sendError(_("Der Name darf nicht mit einem Leerzeichen anfangen.", client))
 		return
 	end
 
@@ -533,9 +572,33 @@ end
 
 function GroupManager:Event_SaveRank(rank,name,loan)
 	local group = client:getGroup()
-	if group and group:getPlayerRank(client) >= GroupRank.Manager then
-		group:setRankName(rank, name)
-		group:setRankLoan(rank, loan)
+	if group then
+
+		if group.m_RankNames[tostring(rank)] ~= name then
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "changeRankNames") then
+				if group:getPlayerRank(client) > rank or group:getPlayerRank(client) == GroupRank.Leader then
+					group:setRankName(rank, name)
+				else
+					client:sendError(_("Du kannst den Rangnamen von dem Rang nicht verändern!", client))
+				end
+			else
+				client:sendError(_("Du bist nicht berechtigt die Rangnamen zu ändern", client))
+			end
+		end
+		
+		if tonumber(group.m_RankLoans[tostring(rank)]) ~= tonumber(loan) then
+			if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "editLoan") then
+				if group:getPlayerRank(client) >= rank then
+					group:setRankLoan(rank,loan)
+				else
+					client:sendError(_("Du kannst das Gehalt von dem Rang nicht verändern!", client))
+				end
+			else
+				client:sendError(_("Du bist nicht berechtigt das Gehalt zu ändern", client))
+				return
+			end
+		end
+
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		group:addLog(client, "Gang/Firma", "hat die Einstellungen für Rang "..rank.." geändert!")
@@ -549,14 +612,37 @@ function GroupManager:Event_ConvertVehicle(veh)
 	if group then
 		if veh then
 			if veh:getOwner() == client:getId() then
-				local status, newVeh = GroupVehicle.convertVehicle(veh, group)
-				if status then
-					client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
-					group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." hinzugefügt!")
-					group.m_VehiclesSpawned = true
-					self:sendInfosToClient(client)
+				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "addVehicle") then
+					if not veh:getData("RcVehicleUser") or #veh:getData("RcVehicleUser") == 0 then
+						local status, newVeh = GroupVehicle.convertVehicle(veh, group)
+						if status then
+							client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
+							group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." hinzugefügt!")
+							group.m_VehiclesSpawned = true
+							self:sendInfosToClient(client)
+
+							if newVeh:getModel() == 459 then
+								if isTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()]) then 
+									killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
+				
+									RcVanExtensionLoadBatteryTimer[newVeh:getId()] = setTimer(function()
+										if RcVanExtensionBattery[newVeh:getId()] < 900 then
+											RcVanExtensionBattery[newVeh:getId()] = tonumber(RcVanExtensionBattery[newVeh:getId()]) + 5
+										else
+											RcVanExtensionBattery[newVeh:getId()] = 900
+											killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
+										end
+									end, 10000, 0)
+								end
+							end
+						else
+							client:sendError(_("Es ist ein Fehler aufgetreten (ist das Fahrzeug in Benutzung?)!", client))
+						end
+					else
+						client:sendError(_("Das Fahrzeug ist in Benutzung!", client))
+					end
 				else
-					client:sendError(_("Es ist ein Fehler aufgetreten (ist das Fahrzeug in Benutzung?)!", client))
+					client:sendError(_("Dazu bist du nicht berechtigt!", client))
 				end
 			else
 				client:sendError(_("Das ist nicht dein Fahrzeug!", client))
@@ -571,18 +657,18 @@ end
 function GroupManager:Event_RespawnAllVehicles(veh)
 	local group = client:getGroup()
 	if group then
-		if group:getPlayerRank(client) < GroupRank.Manager then
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "vehicleRespawnAll") then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
 		end
-		group:respawnVehicles()
+		group:respawnVehicles(client)
 	end
 end
 
 function GroupManager:Event_RemoveVehicle(veh)
 	local group = client:getGroup()
 	if group and veh then
-		if group:getPlayerRank(client) < GroupRank.Manager then
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "removeVehicle") then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
 		end
@@ -593,12 +679,31 @@ function GroupManager:Event_RemoveVehicle(veh)
 				return
 			end
 		end
+		
+		if veh:getData("RcVehicleUser") and #veh:getData("RcVehicleUser") ~= 0 then
+			client:sendError(_("Das Fahrzeug ist in Benutzung!", client))
+			return
+		end
 
 		local status, newVeh = PermanentVehicle.convertVehicle(veh, client, group)
 		if status then
 			client:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", client))
 			group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." entfernt!")
 			self:sendInfosToClient(client)
+
+			if newVeh:getModel() == 459 then
+				if isTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()]) then 
+					killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
+					RcVanExtensionLoadBatteryTimer[newVeh:getId()] = setTimer(function()
+						if RcVanExtensionBattery[newVeh:getId()] < 900 then
+							RcVanExtensionBattery[newVeh:getId()] = tonumber(RcVanExtensionBattery[newVeh:getId()]) + 5
+						else
+							RcVanExtensionBattery[newVeh:getId()] = 900
+							killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
+						end
+					end, 10000, 0)
+				end
+			end
 		else
 			client:sendError(_("Das Fahrzeug ist in Benutzung oder dein Maximaler Fahrzeug-Slot ist erreicht!", client))
 		end
@@ -628,7 +733,7 @@ function GroupManager:Event_SetVehicleForSale(amount)
 		return
 	end
 	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 15000000 then
-		if group:getPlayerRank(client) < GroupRank.Manager then
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "setVehicleForSale") then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
 		end
@@ -648,12 +753,19 @@ end
 function GroupManager:Event_StopVehicleForSale()
 	local group = client:getGroup()
 	if group and group == source:getGroup() then
-		source:setForSale(false, 0)
+		if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "stopVehicleForSale") then
+			source:setForSale(false, 0)
+		else
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		end
 	end
 end
 
 function GroupManager:Event_BuyVehicle()
 	local group = client:getGroup()
+	for i, player in pairs(source:getOccupants()) do
+		player:removeFromVehicle()
+	end
 	source:buy(client)
 end
 
@@ -668,12 +780,12 @@ function GroupManager:Event_SetVehicleForRent(amount)
 		return
 	end
 	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 25000 then
-		if group:getPlayerRank(client) < GroupRank.Manager then
+		if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "setVehicleForRent") then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
 		end
 		if source:isGroupPremiumVehicle() then
-			client:sendError(_("Premium-Fahrzeuge können nicht zum vermietet werden!", client))
+			client:sendError(_("Premium-Fahrzeuge können nicht vermietet werden!", client))
 			return
 		end
 		if getVehicleEngineState(source) then
@@ -688,7 +800,11 @@ end
 function GroupManager:Event_StopVehicleForRent()
 	local group = client:getGroup()
 	if group and group == source:getGroup() then
-		source:setForRent(false)
+		if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "stopVehicleForRent") then
+			source:setForRent(false)
+		else
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		end
 	end
 end
 
@@ -699,8 +815,8 @@ end
 
 function GroupManager:Event_ChangeType()
 	local group = client:getGroup()
-	if group:getPlayerRank(client) < GroupRank.Leader then
-		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "changeGroupType") then
+		client:sendError(_("Du bist nicht berechtigt den Gruppentyp zu ändern!", client))
 		return
 	end
 	if group:getType() == "Firma" then
@@ -749,12 +865,18 @@ function GroupManager:Event_ToggleLoan(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Manager then
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "toggleLoan") then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
 
 	local current = group:isPlayerLoanEnabled(playerId)
+
+	if group:getPlayerRank(client) <= group:getPlayerRank(playerId) and group:getPlayerRank(client) ~= GroupRank.Leader then
+		client:sendError(_("Du kannst das Gehalt vom dem Spieler nicht %saktivieren", client, current and "de" or ""))
+		return
+	end
+
 	group:setPlayerLoanEnabled(playerId, current and 0 or 1)
 	self:sendInfosToClient(client)
 
@@ -825,7 +947,7 @@ function GroupManager:Event_ShowRentedVehicles()
 			elseif vehicle:getPositionType() == VehiclePositionType.Harbor then
 				client:sendShortMessage(_("Das Boot (%s von %s) befindet sich im Industrie-Hafen (Logistik-Job)!", client, name, groupName))
 			else
-				client:sendShortMessage(_"Es ist ein interner Fehler aufgetreten!", client)
+				client:sendShortMessage(_("Es ist ein interner Fehler aufgetreten!", client))
 			end
 		end
 	end

@@ -80,14 +80,14 @@ function AppSkribble:receiveLobbys(lobbys)
 				if lobby.password == "" then
 					triggerServerEvent("skribbleJoinLobby", localPlayer, id)
 				else
-					InputBox:new("Passwort eingeben", "Dies ist eine private Lobby, bitte gib das Passwort ein:",
+					InputBox:new(_"Passwort eingeben", _"Dies ist eine private Lobby, bitte gib das Passwort ein:",
 						function(input)
 							if input == lobby.password then
 								triggerServerEvent("skribbleJoinLobby", localPlayer, id)
 								return
 							end
 
-							ErrorBox:new("Falsches Passwort!")
+							ErrorBox:new(_"Falsches Passwort!")
 						end
 					)
 				end

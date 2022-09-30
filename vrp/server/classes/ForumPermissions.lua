@@ -34,12 +34,12 @@ end
 function ForumPermissions:Event_SyncGroups(factionOrCompany, id)
 	if factionOrCompany == "faction" or factionOrCompany == "company" then
 		if factionOrCompany == "faction" then
-			if client:getFaction():getPlayerRank(client) < CompanyRank.Manager then
+			if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt!", client))
 				return
 			end
 		else
-			if client:getCompany():getPlayerRank(client) < FactionRank.Manager then
+			if client:getCompany():getPlayerRank(client) < CompanyRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt!", client))
 				return
 			end
@@ -50,7 +50,7 @@ function ForumPermissions:Event_SyncGroups(factionOrCompany, id)
 		end
 
 		if self.m_LastSync[factionOrCompany][id] + 5 * 60 * 1000 > getTickCount() then
-			client:sendError(_("Es kann nur alle 5 Minuten ein manuelles syncronisieren durchgeführt werden!", client))
+			client:sendError(_("Es kann nur alle 5 Minuten ein manuelles synchronisieren durchgeführt werden!", client))
 			return
 		end
 
@@ -63,7 +63,7 @@ function ForumPermissions:Event_SyncGroups(factionOrCompany, id)
 	end
 
 	Async.create(function()
-		client:sendSuccess(_("Die synchronisation der Gruppen wurde gestartet und dieser Prozess kann ein paar Minuten in Anspruch nehmen.", client))
+		client:sendSuccess(_("Die Synchronisation der Gruppen wurde gestartet und dieser Prozess kann ein paar Minuten in Anspruch nehmen.", client))
 		ServiceSync:getSingleton():syncAllUsers(client, factionOrCompany, id)
 		self:sendForumPermissions(client, factionOrCompany, id)
 	end)(client, factionOrCompany, id)
@@ -73,13 +73,13 @@ function ForumPermissions:sendForumPermissions(player, factionOrCompany, id)
 	if player then
 		local result = {}
 		if factionOrCompany == "faction" or factionOrCompany == "company" then
-			if factionOrCompany == "faction" then
-				if player:getFaction():getPlayerRank(player) < CompanyRank.Manager then
+			if factionOrCompany == "company" then
+				if player:getCompany():getPlayerRank(player) < CompanyRank.Manager then
 					player:sendError(_("Du bist nicht berechtigt!", player))
 					return
 				end
 			else
-				if player:getCompany():getPlayerRank(player) < FactionRank.Manager then
+				if player:getFaction():getPlayerRank(player) < FactionRank.Manager then
 					player:sendError(_("Du bist nicht berechtigt!", player))
 					return
 				end

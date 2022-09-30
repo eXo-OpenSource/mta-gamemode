@@ -232,6 +232,10 @@ function Player:loadCharacter()
 	if self:getFaction() and self:getFaction():isStateFaction() then
 		self:getFaction():takeEquipment(self)
 	end
+	if self:getFaction() and self:getFaction():isRescueFaction() then
+		self:setPublicSync("RadioStatus", 6)
+	end
+
 	FactionState:getSingleton():checkInsideGarage(self)
 	BeggarPedManager:getSingleton():sendBeggarPedsToClient(self)
 	InteriorEnterExitManager:getSingleton():sendInteriorEnterExitToClient(self)
@@ -556,7 +560,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	end
 
 	if self.m_PrisonTime > 0 then
-		self:setPrison(self.m_PrisonTime, true)
+		self:setPrison(self:getRemainingPrisonTime(), true)
 	end
 
 	PickupWeaponManager:getSingleton():detachWeapons(self)
@@ -598,6 +602,11 @@ function Player:respawn(position, rotation, bJailSpawn)
 		end
 	end
 
+	if self:isInSewer() then
+		self:setInSewer(false)
+		self:triggerEvent("Sewers:removeTexture")
+	end
+
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
 end
@@ -625,7 +634,7 @@ function Player:dropReviveWeapons()
 				dim = getElementDimension(self)
 				weapon =  self.m_ReviveWeaponsInfo[i][1]
 				ammo = self.m_ReviveWeaponsInfo[i][2]
-				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and weapon ~= 27 and weapon ~= 9 then
+				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and weapon ~= 42 and weapon ~= 9 then
 					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self, false, true, x-px, y-py)
 					if pickupWeapon then
 						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon
@@ -1119,7 +1128,7 @@ function Player:calcVehiclesTax()
 	local tax = 0
 	local amount = 0
 	for key, vehicle in pairs(self:getVehicles()) do
-		if vehicle:getTax() > 0 and not vehicle:isPremiumVehicle() then
+		if vehicle:getTax() > 0 and not vehicle:isPremiumVehicle() and not vehicle:isUnregistered()  then
 			tax = tax + vehicle:getTax()
 			amount = amount + 1
 		end
@@ -1367,7 +1376,7 @@ function Player:attachPlayerObject(object)
 			end
 			if settings.blockFlyingVehicles then
 				local veh = self.vehicle or (getElementAttachedTo(self) and getElementType(getElementAttachedTo(self)) == "vehicle")
-				if veh and veh:isAirVehicle() then
+				if veh and veh:isAirVehicle() or self:getPublicSync("isDoingHelicopterDriveby") then
 					self:sendError(_("Mit diesem Objekt kannst du dich nicht in Fluggeräten befinden!", self))
 					return false
 				end
@@ -1376,6 +1385,7 @@ function Player:attachPlayerObject(object)
 			self:setPrivateSync("attachedObject", object)
 			object:setCollisionsEnabled(false)
 			object:setDoubleSided(true)
+			object:setScale(settings.scale or 1, settings.scaleY or 1, settings.scaleZ or 1)
 			if settings["bone"] then
 				exports.bone_attach:attachElementToBone(object, self, settings["bone"], settings["pos"].x, settings["pos"].y, settings["pos"].z, settings["rot"].x, settings["rot"].y, settings["rot"].z)
 			else
@@ -1395,10 +1405,12 @@ function Player:attachPlayerObject(object)
 			end
 
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
+			self.m_DetachOnPlayerQuit = bind(self.Event_detachObjectOnQuit, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
+			addEventHandler("onPlayerQuit", self, self.m_DetachOnPlayerQuit)
 			return true
 		else
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
@@ -1438,6 +1450,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 			local settings = PlayerAttachObjects[model]
 			self:toggleControlsWhileObjectAttached(true, unpack(self.m_PlayerAttachedObjectSettings))
 			object:detach(self)
+			object:setScale(1, 1, 1)
 			removeEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
 			if settings["bone"] then
 				exports.bone_attach:detachElementFromBone(object)
@@ -1463,6 +1476,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onPlayerQuit", self, self.m_DetachOnPlayerQuit)
 		self.m_PlayerAttachedObject = nil
 		self:setPrivateSync("attachedObject", false)
 	end
@@ -1479,6 +1493,10 @@ function Player:dropPlayerAttachedObjectOnDamage()
 	if self.m_PlayerAttachedObject and self.m_PlayerAttachedObject:getModel() == 2912 then
 		self:detachPlayerObject(self:getPlayerAttachedObject(), true)
 	end
+end
+
+function Player:Event_detachObjectOnQuit()
+	self:detachPlayerObject(self:getPlayerAttachedObject(), true)
 end
 
 function Player:attachToVehicle(forceDetach)
@@ -1571,7 +1589,9 @@ function Player:meChat(system, ...)
 		if playersToSend[index] ~= self then
 			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
 		end
-
+		--[[if not system then  
+			StatisticsLogger:getSingleton():addChatLog(self, "me", text, receivedPlayers)
+		end]]
 	end
 end
 
@@ -1777,4 +1797,8 @@ end
 
 function Player:isInGhostMode()
 	return self.m_GhostMode
+end
+
+function Player:isEating()
+	return self.m_IsEating
 end

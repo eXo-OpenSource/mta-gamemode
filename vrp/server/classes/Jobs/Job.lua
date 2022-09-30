@@ -33,7 +33,7 @@ function Job:registerJobVehicle(player, vehicle, countdown, stopJobOnDestroy)
 
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if seat==0 and vehPlayer ~= player then
-			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			vehPlayer:sendError(_("Du kannst nicht in dieses Job-Fahrzeug!", vehPlayer))
 			cancelEvent()
 		end
 	end)

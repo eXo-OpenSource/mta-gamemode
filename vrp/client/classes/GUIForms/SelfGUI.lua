@@ -199,15 +199,17 @@ function SelfGUI:constructor()
 	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.Accent) end
 	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
 	self.m_VehicleShowRentedButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"gemietete Fahrzeuge", tabVehicles):setBarEnabled(true)
+	self.m_VehicleShowKeysButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Schlüssel", tabVehicles):setBarEnabled(true)
  	--self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
-	 GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
- 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
- 	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
+	 GUILabel:new(self.m_Width*0.695, self.m_Height*0.39, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.Accent)
+ 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
+ 	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.55, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
 
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	--self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleShowRentedButton.onLeftClick = bind(self.VehicleRentedVehiclesButton_Click, self)
+	self.m_VehicleShowKeysButton.onLeftClick = bind(self.VehicleKeysButton_Click, self)
 
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 	self.m_VehicleWorldRespawnButton.onLeftClick = bind(self.VehicleWorldRespawnButton_Click, self)
@@ -588,19 +590,17 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 			local vehicleId, vehicleInfo = unpack(vehicleInfo)
 			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
-			if positionType == VehiclePositionType.World then
-				positionType = getZoneName(x, y, z, false)
-			elseif positionType == VehiclePositionType.Garage then
-				positionType = _"Garage"
-			elseif positionType == VehiclePositionType.Mechanic then
-				positionType = _"Autohof"
-			elseif positionType == VehiclePositionType.Hangar then
-				positionType = _"Hangar"
-			elseif positionType == VehiclePositionType.Harbor then
-				positionType = _"Hafen"
+
+			if VehiclePositionTypeName[positionType] then
+				if VehiclePositionTypeName[positionType] == VehiclePositionTypeName[0] then
+					positionType = getZoneName(x, y, z, false)
+				else
+					positionType =VehiclePositionTypeName[positionType]
+				end
 			else
 				positionType = _"Unbekannt"
 			end
+			
 			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType, ("%d$"):format(element:getTax() or 0))
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
@@ -658,6 +658,11 @@ end
 
 function SelfGUI:VehicleRentedVehiclesButton_Click()
 	triggerServerEvent("groupShowRentedVehicles", localPlayer)
+end
+
+function SelfGUI:VehicleKeysButton_Click()
+	self:close()
+	VehicleKeyListGUI:new()
 end
 
 function SelfGUI:VehicleLocateButton_Click()
@@ -1262,6 +1267,14 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 
+		self.m_RescueSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.9, self.m_Height*0.04, _"Am Krankenhaus spawnen", self.m_SettingBG)
+		self.m_RescueSpawn:setFont(VRPFont(25))
+		self.m_RescueSpawn:setFontSize(1)
+		self.m_RescueSpawn:setChecked(core:get("Other", "RescueSpawnAfterDeath", false))
+		self.m_RescueSpawn.onChange = function (state)
+			core:set("Other", "RescueSpawnAfterDeath", state)
+		end
+
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
 
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
@@ -1445,6 +1458,14 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Sounds", "StaticNoise", state)
 		end
 
+		self.m_AllowRadioSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.9, self.m_Height*0.04, _"Radio Sounds", self.m_SettingBG)
+		self.m_AllowRadioSound:setFont(VRPFont(25))
+		self.m_AllowRadioSound:setFontSize(1)
+		self.m_AllowRadioSound:setChecked(core:get("Sounds", "RadioSound", true))
+		self.m_AllowRadioSound.onChange = function (state)
+			core:set("Sounds", "RadioSound", state)
+		end
+
 		self.m_PoliceSoundsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.70, self.m_Width*0.35, self.m_Height*0.07, _"Polizei-Sounds", self.m_SettingBG):setBarEnabled(true)
 		self.m_PoliceSoundsButton.onLeftClick = bind(self.PoliceSoundsButton_Click, self)
 
@@ -1565,7 +1586,17 @@ function SelfGUI:onSettingChange(setting)
 	elseif setting == "Tastenzuordnung" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
 		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen", self.m_SettingBG):setBarEnabled(true)
-		self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
+		self.m_KeyBindingsButton.onLeftClick = function()
+			localPlayer.m_KeyBindType = "general"
+			self:KeyBindsButton_Click()
+		end
+		if localPlayer:getFaction():isRescueFaction() then
+			self.m_FMSKeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen (Funk)", self.m_SettingBG):setBarEnabled(true)
+			self.m_FMSKeyBindingsButton.onLeftClick = function()
+				localPlayer.m_KeyBindType = "FMS"
+				self:KeyBindsButton_Click()
+			end
+		end
 	elseif setting == "Server-Tour" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Server-Tour", self.m_SettingBG)
 		local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"

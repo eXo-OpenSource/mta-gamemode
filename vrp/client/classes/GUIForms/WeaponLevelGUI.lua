@@ -16,7 +16,8 @@ function WeaponLevelGUI:constructor()
 	local currentLevel = localPlayer:getWeaponLevel()
 	local nextLevel = currentLevel+1
 
-	GUIWindow:new(0, 0, 300, 500, _"Waffenlevel", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, 300, 500, _"Waffenlevel", true, true, self)
+	self.m_Window:addHelpButton(LexiconPages.WeaponLevel)
 	GUILabel:new(10, 40, 280, 20, _"Hier kannst du dein Waffenlevel verbessern.\nEin besseres Waffenlevel wird benötigt um bessere Waffen zu kaufen und bessere Waffenskills zu erhalten!",self):setMultiline(true)
 	GUILabel:new(10, 125, 280, 25, _"Aktuelles Level:", self)
 	self.m_ProgressBar = GUIProgressBar:new(10, 150, 280, 20, self)

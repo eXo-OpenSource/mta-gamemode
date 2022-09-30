@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 ArmsDealer = inherit(Singleton)
-ARMSDEALER_MIN_MEMBERS = 3
 ArmsDealer.Data = 
 { 
     ["Waffen"] = AmmuNationInfo,
@@ -21,9 +20,9 @@ ArmsDealer.Data =
     },
     ["Explosiv"] = 
     {
-        ["RPG-7"] = {10, 100000, 35}, 
-        ["Granate"] = {10, 80000, 16},
-        ["SLAM"] = {4, 40000}
+        ["RPG-7"] = {7, 100000, 35}, 
+        ["Granate"] = {7, 80000, 16},
+        ["SLAM"] = {3, 40000}
     }
 }
 
@@ -57,6 +56,10 @@ end
 
 function ArmsDealer:checkoutCart(cart)
     if not ActionsCheck:getSingleton():isActionAllowed(client) then return end
+    if not PermissionsManager:getSingleton():isPlayerAllowedToStart(client, "faction", "Airdrop") then
+		client:sendError(_("Du bist nicht berechtigt einen Airdrop zu starten!", client))
+		return
+	end
 	if FactionState:getSingleton():countPlayers() < ARMSDEALER_MIN_MEMBERS then
        return client:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",client, ARMSDEALER_MIN_MEMBERS))
     end
@@ -102,10 +105,10 @@ function ArmsDealer:checkoutCart(cart)
                 self.m_LastPlayer = client 
                 self.m_LastFaction = faction
             else 
-                client:sendError("Deine Fraktion hat bereits heute bestellt!")
+                client:sendError(_("Deine Fraktion hat bereits heute bestellt!", client))
             end
         else 
-            client:sendError("Es läuft zurzeit bereits ein Airdrop!")
+            client:sendError(_("Es läuft zurzeit bereits ein Airdrop!", client))
         end
     end
 end

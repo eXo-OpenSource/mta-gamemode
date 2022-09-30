@@ -144,38 +144,42 @@ end
 
 function StateEvidence:Event_startEvidenceTruck()
 	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-		if ActionsCheck:getSingleton():isActionAllowed(client) then
-			if FactionEvil:getSingleton():countPlayers() >= EVIDENCETRUCK_MIN_MEMBERS then
-				local evObj
-				local totalMoney = 0
-				local objToDelete = {}
-				for i = 1, #self.m_EvidenceRoomItems do
-					evObj = self.m_EvidenceRoomItems[i]
-					local price = self:getObjectPrice(evObj.Type, evObj.Object, evObj.Amount)
+		if PermissionsManager:getSingleton():isPlayerAllowedToStart(client, "faction", "StateEvidenceTruck") then
+			if ActionsCheck:getSingleton():isActionAllowed(client) then
+				if FactionEvil:getSingleton():countPlayers() >= EVIDENCETRUCK_MIN_MEMBERS then
+					local evObj
+					local totalMoney = 0
+					local objToDelete = {}
+					for i = 1, #self.m_EvidenceRoomItems do
+						evObj = self.m_EvidenceRoomItems[i]
+						local price = self:getObjectPrice(evObj.Type, evObj.Object, evObj.Amount)
 
-					if(totalMoney + price <= EVIDENCETRUCK_MAX_LOAD) then
-						totalMoney = totalMoney + price
-						table.insert(objToDelete, evObj.Id)
+						if(totalMoney + price <= EVIDENCETRUCK_MAX_LOAD) then
+							totalMoney = totalMoney + price
+							table.insert(objToDelete, evObj.Id)
+						end
 					end
-				end
-				if totalMoney > 0 then
-					ActionsCheck:getSingleton():setAction("Geldtransport")
-					FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
-					StateEvidenceTruck:new(client, totalMoney)
-					PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-					Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-					FactionState:getSingleton():sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
-					StatisticsLogger:getSingleton():addActionLog("Geld-Transport", "start", client, client:getFaction(), "faction")
-					sql:queryFetchSingle(function()
-						self:loadObjectData()
-					end, "DELETE FROM ??_state_evidence WHERE Id IN (??)",sql:getPrefix(), table.concat(objToDelete, ","))
+					if totalMoney > 0 then
+						ActionsCheck:getSingleton():setAction("Geldtransport")
+						FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
+						StateEvidenceTruck:new(client, totalMoney)
+						PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+						Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+						FactionState:getSingleton():sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
+						StatisticsLogger:getSingleton():addActionLog("Geld-Transport", "start", client, client:getFaction(), "faction")
+						sql:queryFetchSingle(function()
+							self:loadObjectData()
+						end, "DELETE FROM ??_state_evidence WHERE Id IN (??)",sql:getPrefix(), table.concat(objToDelete, ","))
 
+					else
+						client:sendError(_("In der Asservatenkammer befindet sich zu wenig Material!", client))
+					end
 				else
-					client:sendError(_("In der Asservatenkammer befindet sich zu wenig Material!", client))
+					client:sendError(_("Es müssen mindestens 3 Spieler böser Fraktionen online sein!", client))
 				end
-			else
-				client:sendError(_("Es müssen mindestens 3 Spieler böser Fraktionen online sein!", client))
 			end
+		else
+			client:sendError(_("Du bist nicht berechtigt einen Geldtruck zu starten!", client))
 		end
 	end
 end

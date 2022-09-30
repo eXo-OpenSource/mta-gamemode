@@ -14,6 +14,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_BuyAble = price > 0 and true or false
 	self.m_OwnerId = owner
 	self.m_Money = money
+	self.m_LastRob = self.m_LastRob or 0
 	self.m_BankAccountServer = BankServer.get("server.vehicle_shop")
 
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.VehicleShop)
@@ -93,6 +94,7 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 	local price, requiredLevel, shopIndex = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level, self.m_VehicleList[vehicleModel][index].id
 	local template = self.m_VehicleList[vehicleModel][index].templateId
 	if not price then return end
+	if self.m_Ped:getDimension() ~= player:getDimension() or self.m_Ped:getInterior() ~= player:getInterior() then return end
 
 	if player:getVehicleLevel() < requiredLevel then
 		player:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", player, requiredLevel))
@@ -163,6 +165,8 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	veh:setLocked(true)
 	veh:setFrozen(true)
 	veh:toggleRespawn(false)
+	veh:setData("ShopVehicle", true, true)
+	veh:setData("ShopId", self.m_Id, true)
 	setVehicleDamageProof( veh , true)
 	if (CurrentStock == 0 and MaxStock ~= -1) then
 		self.m_UrgentlyNeedsVehicles = true

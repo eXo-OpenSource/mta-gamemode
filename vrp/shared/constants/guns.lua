@@ -8,8 +8,7 @@ WEAPON_DAMAGE = {
 	[25] = 20,
 	
 	[26] = 25,
-	
-	[27] = 0,
+	[27] = 10,
 
 	[28] = 8,
 	[29] = 8,
@@ -61,7 +60,8 @@ WEAPON_MODELS_WORLD =
 	[28] = 352, 
 	[29] = 353, 
 	[30] = 355, 
-	[31] = 356, 
+	[31] = 356,
+	[32] = 372,
 	[33] = 357, 
 	[34] = 358, 
 	[35] = 359, 
@@ -234,4 +234,26 @@ WEAPON_RELOAD_TIME = -- how much time a weapon should need to reload
 WEAPON_READY_TIME = -- how much time a weapon should need before beeing able to be fired
 {
 	[34] = 1500 
+}
+
+WEAPONS_KEVLAR_REPELS =
+{
+	[22] = true,
+	[24] = true,
+	[29] = true,
+	[32] = true,
+	[28] = true,
+	[30] = true,
+	[31] = true,
+}
+
+SHOT_STRENGTH_AGAINST_KEVLAR =
+{
+	[22] = 1,
+	[24] = 2,
+	[29] = 1,
+	[32] = 1,
+	[28] = 1,
+	[30] = 2,
+	[31] = 2,
 }

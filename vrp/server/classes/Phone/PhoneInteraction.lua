@@ -40,7 +40,7 @@ function PhoneInteraction:constructor()
 
 end
 
-function PhoneInteraction:callStart(player, voiceEnabled)
+function PhoneInteraction:callStart(player, voiceEnabled, showSkin)
 	if not player then return end
 
 	if not player:isPhoneEnabled() then
@@ -73,7 +73,7 @@ function PhoneInteraction:callStart(player, voiceEnabled)
 		return
 	end
 
-	player:triggerEvent("callIncoming", client, voiceEnabled)
+	player:triggerEvent("callIncoming", client, voiceEnabled, showSkin)
 	player.IncomingCall = true
 end
 
@@ -86,9 +86,9 @@ function PhoneInteraction:callBusy(caller)
 	caller.IncomingCall = false
 end
 
-function PhoneInteraction:callAnswer(caller, voiceCall)
+function PhoneInteraction:callAnswer(caller, voiceCall, showSkin)
 	if not caller or not isElement(caller) then return end
-	caller:triggerEvent("callAnswer", client, voiceCall)
+	caller:triggerEvent("callAnswer", client, voiceCall, showSkin)
 
 	-- Set phone partner
 	caller:setPhonePartner(client)
@@ -158,7 +158,7 @@ function PhoneInteraction:callStartSpecial(number)
 				self.m_LastSpecialCallNumber[client] = number
 				instance:getOwner(instance):phoneCall(client)
 			else
-				client:sendError("Du kannst dich nicht selbst anrufen!")
+				client:sendError(_("Du kannst dich nicht selbst anrufen!", client))
 			end
 		end
 	end
@@ -203,7 +203,7 @@ function PhoneInteraction:callSendLocation()
 		end
 
 		local pos = client:getPosition()
-		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_LocationBlips[client] = Blip:new("GPS.png", pos.x, pos.y, partner, 10000, BLIP_COLOR_CONSTANTS.Red)
 		self.m_LocationBlips[client]:setDisplayText("Position von "..client:getName())
 		self.m_LocationBlips[client]:setZ(pos.z)
 	end

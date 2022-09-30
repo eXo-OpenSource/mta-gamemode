@@ -124,7 +124,7 @@ function EventManager:Event_eventJoin(eventId)
 
 	local event = self.m_RunningEvents[eventId]
 	if not event then
-		client:sendError(_"Dieses Event existiert nicht mehr!")
+		client:sendError(_("Dieses Event existiert nicht mehr!", client))
 		return
 	end
 

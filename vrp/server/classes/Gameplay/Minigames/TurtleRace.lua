@@ -240,10 +240,10 @@ end
 function TurtleRace:addBet(turtleId, money)
 	if not turtleId or not money then return end
 	if self.m_State ~= "None" and self.m_State ~= "Preparing" then client:sendWarning("Du kannst zum aktuellen Zeitpunkt keine Wette setzen!") return end
-	if client:getMoney() < money then client:sendError("Du hast nicht genug Geld dabei!") return end
+	if client:getMoney() < money then client:sendError(_("Du hast nicht genug Geld dabei!", client)) return end
 
 	local row = sql:queryFetchSingle("SELECT * FROM ??_turtle_bets WHERE UserId = ?;", sql:getPrefix(), client:getId())
-	if row then client:sendError("Du hast bereits eine Wette am laufen!") return end
+	if row then client:sendError(_("Du hast bereits eine Wette am laufen!", client)) return end
 
 	client:transferMoney(self.m_BankAccountServer, money, "Schildkrötenrennen", "Gameplay", "TurtleRace")
 	client:sendShortMessage(_("Du hast %s auf Schildkröte %s gesetzt!", client, money, turtleId), _("Schildkrötenrennen", client), {50, 170, 20})

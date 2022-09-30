@@ -9,14 +9,14 @@ function Townhall:constructor()
 	self.m_OnClickFunc = bind(self.Event_OnPedClick, self)
 
 	-- Job Info
-	local jobInfoPed = Ped.create(12, Vector3(2754.63, -2374.09, 819.24))
+	--[[ local jobInfoPed = Ped.create(12, Vector3(2754.63, -2374.09, 819.24))
 	jobInfoPed:setRotation(Vector3(0, 0, 180))
 	jobInfoPed:setInterior(5)
 	jobInfoPed.Name = _"Spielhilfe"
 	jobInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	jobInfoPed.Type = 1
 	jobInfoPed.Func = function() HelpGUI:new() end
-	self.m_Peds[#self.m_Peds + 1] = jobInfoPed
+	self.m_Peds[#self.m_Peds + 1] = jobInfoPed ]]
 
 	--[[ Activities
 	local activitiesInfoPed = Ped.create(9, Vector3(1824, -1271.5, 120.3))
@@ -61,18 +61,27 @@ function Townhall:constructor()
 	itemInfoPed.Func = function() triggerServerEvent("shopOpenGUI", localPlayer, 50) end
 	self.m_Peds[#self.m_Peds + 1] = itemInfoPed
 
+	local unregisterVehiclePed = Ped.create(12, Vector3(2754.63, -2374.46, 819.24))
+	unregisterVehiclePed:setRotation(Vector3(0, 0, 180))
+	unregisterVehiclePed.Name = _"Fahrzeuge an-/abmelden"
+	unregisterVehiclePed:setInterior(5)
+	unregisterVehiclePed.Description = _"Für mehr Infos klicke mich an!"
+	unregisterVehiclePed.Type = 6
+	unregisterVehiclePed.Func = function() VehicleUnregisterGUI:new(unregisterVehiclePed) end
+	self.m_Peds[#self.m_Peds + 1] = unregisterVehiclePed
+
 	--// VEHICLE SPAWNER PEDS
 	local itemSpawnerPed = Ped.create(171, Vector3(1767.33, -1721.86, 13.37)) -- driving school
 	itemSpawnerPed:setRotation(Vector3(0, 0, 180))
 	itemSpawnerPed.Name = _"Fahrzeugverleih"
-	itemSpawnerPed.Description = _"Fahrzeug für 200$ ausleihen!"
+	itemSpawnerPed.Description = _("Fahrzeug für %s$ ausleihen!", VEHICLE_RENTAL_PRICE)
 	itemSpawnerPed.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
 
 	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55)) -- city hall
 	itemSpawnerPed2:setRotation(Vector3(0, 0, 97.13))
 	itemSpawnerPed2.Name = _"Fahrzeugverleih"
-	itemSpawnerPed2.Description = _"Fahrzeug für 200$ ausleihen!"
+	itemSpawnerPed2.Description = _("Fahrzeug für %s$ ausleihen!", VEHICLE_RENTAL_PRICE)
 	itemSpawnerPed2.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed2
 
@@ -99,7 +108,7 @@ function Townhall:constructor()
 	local itemSpawnerPed5 = Ped.create(171, Vector3(1180.90, -1331.90, 13.58))
 	itemSpawnerPed5:setRotation(Vector3(0, 0, 270))
 	itemSpawnerPed5.Name = _"Fahrzeugverleih"
-	itemSpawnerPed5.Description = _"Fahrzeug für 200$ ausleihen!"
+	itemSpawnerPed5.Description = _("Fahrzeug für %s$ ausleihen!", VEHICLE_RENTAL_PRICE)
 	itemSpawnerPed5.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed5
 
@@ -119,9 +128,17 @@ function Townhall:constructor()
 	itemSpawnerPed7.Name = _"Jobliste"
 	itemSpawnerPed7:setInterior(5)
 	itemSpawnerPed7.Description = _"Klicke hier für Informationen!"
-	itemSpawnerPed7.Func = function() JobHelpGUI:new() end
+	itemSpawnerPed7.Func = function() HelpGUI:getSingleton():openLexiconPage(LexiconPages.JobOverview) end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed7
 	
+
+	--// DT PED 
+	local itemSpawnerPed8 = Ped.create(1, Vector3(-1096.38, -1614.74, 76.37))
+	itemSpawnerPed8:setRotation(Vector3(0, 0, 270))
+	itemSpawnerPed8.Name = _"Illegaler Weed-Transport"
+	itemSpawnerPed8.Description = _"Hier startet der Drogentruck!"
+	itemSpawnerPed8.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed8
 
 	local president = Ped.create(153, Vector3(2747.92, -2378.36, 818.9))
 	president:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, false, true)
@@ -135,7 +152,7 @@ function Townhall:constructor()
 
 	local col = createColRectangle(1399.60, -1835.2, 1540.14-1399.60, 1835.2-1582.84) -- pershing square
 	self.m_NoParkingZone = NoParkingZone:new(col)
-	
+	NonCollisionArea:new("Cuboid", {Vector3(1502.43, -1850.71, 12), 40, 10 ,10})
 
 	self.m_ApplyInteriorTexture = bind(self.applyInteriorTexture, self)
 	addEventHandler("Townhall:applyTexture", localPlayer, self.m_ApplyInteriorTexture)

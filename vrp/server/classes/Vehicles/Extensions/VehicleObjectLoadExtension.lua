@@ -88,35 +88,51 @@ end
 
 function VehicleObjectLoadExtension:tryLoadObject(player, object)
     local cooled = (getTickCount() - self.m_LastInteraction) > VehicleObjectLoadExtension.ms_InteractionCooldown
-    if self:getObjectCount() < self:getMaxObjects() then
-        if self:isValidObjectToLoad(object) then
-            if cooled then
-                VehicleObjectLoadExtension.getLoadHook():call(self, player, object)
-                self:internalLoadObject(player, object)
-                self.m_LastInteraction = getTickCount()
-            end 
+    if getDistanceBetweenPoints3D(self.position, player.position) < 7 then
+        if not player.vehicle then
+            if self:getObjectCount() < self:getMaxObjects() then
+                if self:isValidObjectToLoad(object) then
+                    if cooled then
+                        VehicleObjectLoadExtension.getLoadHook():call(self, player, object)
+                        self:internalLoadObject(player, object)
+                        self.m_LastInteraction = getTickCount()
+                    end 
+                else
+                    player:sendError(_("Dieses Fahrzeug kann dein Objekt nicht transportieren!", player))
+                end
+            else
+                player:sendError(_("Dieses Fahrzeug ist voll!", player))
+            end
         else
-            player:sendError("Dieses Fahrzeug kann dein Objekt nicht transportieren!")
+            player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
         end
     else
-        player:sendError("Dieses Fahrzeug ist voll!")
+        player:sendError(_("Du bist zu weit vom Truck entfernt!", player))
     end
 end
 
 function VehicleObjectLoadExtension:tryUnloadObject(player)
     local cooled = (getTickCount() - self.m_LastInteraction) > VehicleObjectLoadExtension.ms_InteractionCooldown
-    if self:getObjectCount() > 0 then
-        if not player:getPlayerAttachedObject() then
-            if cooled then
-                VehicleObjectLoadExtension.getUnloadHook():call(self, player, object)
-                self:internalUnloadObject(player)
-                self.m_LastInteraction = getTickCount()
-            end 
+    if getDistanceBetweenPoints3D(self.position, player.position) < 7 then
+        if not player.vehicle then
+            if self:getObjectCount() > 0 then
+                if not player:getPlayerAttachedObject() then
+                    if cooled then
+                        VehicleObjectLoadExtension.getUnloadHook():call(self, player, object)
+                        self:internalUnloadObject(player)
+                        self.m_LastInteraction = getTickCount()
+                    end 
+                else
+                    player:sendError(_("Du hast bereits ein Objekt dabei!", player))
+                end
+            else
+                player:sendError(_("Dieses Fahrzeug ist leer!", player))
+            end
         else
-            player:sendError("Du hast bereits ein Objekt dabei!")
+            player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
         end
     else
-        player:sendError("Dieses Fahrzeug ist leer!")
+        player:sendError(_("Du bist zu weit vom Truck entfernt!", player))
     end
 end
 
@@ -125,12 +141,14 @@ function VehicleObjectLoadExtension:internalLoadObject(player, object)
     local data = VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()]
     local pos = data.positions[self:getObjectCount() + 1]
     object:attach(self, pos, 0, 0, data.randomRotation and math.random(0, 360) or data.rotation)
+    object:setScale(data.scale or 1)
     table.insert(self.m_LoadedObjects, object)
 end
 
 function VehicleObjectLoadExtension:internalUnloadObject(player)
     local object = table.remove(self.m_LoadedObjects, #self.m_LoadedObjects)
     object:detach()
+    object:setScale(1)
     player:attachPlayerObject(object)
 end
 

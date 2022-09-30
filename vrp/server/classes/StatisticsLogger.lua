@@ -65,6 +65,7 @@ end
 function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local userId = 0
     local groupId = 0
+	if type(player) == "number" then userId = player end
     if isElement(player) then userId = player:getId() end
     if group then groupId = group:getId() end
     sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp, Date) VALUES(?, ?, ?, ?, ?, ?, NOW())",
@@ -564,4 +565,9 @@ end
 function StatisticsLogger:addVehicleRentLog(groupId, playerId, vehicleId, rental, duration)
 	sqlLogs:queryExec("INSERT INTO ??_RentedVehicles (GroupId, UserId, VehicleId, Rental, Duration) VALUES (?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
 		groupId, playerId, vehicleId, rental, duration)
+end
+
+function StatisticsLogger:addColorCarsLog(creatorId, lobbyName, password, maxPlayers)
+    sqlLogs:queryExec("INSERT INTO ??_ColorCars (UserId, LobbyName, Password, MaxPlayers, Date) VALUES(?, ?, ?, ?, NOW())", sqlLogs:getPrefix(), 
+	creatorId, lobbyName, password, maxPlayers)
 end

@@ -100,6 +100,7 @@ function PolicePanel:constructor()
 	end
 
 	self.m_FreePlayerBtn = GUIGridButton:new(1, 10, 4, 1, _"Freilassen", self.m_Tabs[2]):setBackgroundColor(Color.Green):setBarEnabled(false)
+	self.m_FreePlayerBtn:setEnabled(false)
 	self.m_FreePlayerBtn.onLeftClick = function()
 		if self.m_JailSelectedPlayer and isElement(self.m_JailSelectedPlayer) then
 			QuestionBox:new(
@@ -312,6 +313,8 @@ function PolicePanel:receiveJailPlayers(playerTable)
 			self:onSelectJailPlayer(player)
 		end
 	end
+
+	self.m_FreePlayerBtn:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("faction", "releaseFromJail"))
 end
 
 function PolicePanel:checkLocateButtons(shouldBeEnabled)
@@ -382,8 +385,8 @@ function PolicePanel:onSelectBug(id)
 			end
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():getId() == 2 then
-			self.m_BugDisable:setEnabled(true)
-			self.m_BugClearLog:setEnabled(true)
+			self.m_BugClearLog:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("faction", "clearBugLog"))
+			self.m_BugDisable:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("faction", "disableBug"))
 		end
 	else
 		self.m_BugLogGrid:clear()
@@ -408,10 +411,10 @@ function PolicePanel:bugAction(func)
 				triggerServerEvent("factionStateBugAction", localPlayer, func, id)
 			end
 		else
-			ErrorBox:new("Diese Wanze ist nicht aktiviert!")
+			ErrorBox:new(_"Diese Wanze ist nicht aktiviert!")
 		end
 	else
-		ErrorBox:new("Keine Wanze ausgewählt!")
+		ErrorBox:new(_"Keine Wanze ausgewählt!")
 	end
 end
 
@@ -452,7 +455,7 @@ end
 function PolicePanel:locateElement(element, locationOf)
 	local elementText = locationOf == "phone" and _"Der Spieler" or _"Die Wanze"
 	local elementBlip = locationOf == "phone" and "GPS.png" or "Bug.png"
-	local elementBlipColor = locationOf == "phone" and BLIP_COLOR_CONSTANTS.Red or {50, 100, 150}
+	local elementBlipColor = locationOf == "phone" and BLIP_COLOR_CONSTANTS.Blue or {50, 100, 150}
 
 	if (getElementDimension(element) == 0 and getElementInterior(element) == 0) or element:getData("inSewer") then
 		self:stopLocating()

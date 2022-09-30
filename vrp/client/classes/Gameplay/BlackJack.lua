@@ -374,7 +374,7 @@ function BlackJack:onRender()
 		local x2, y2, z2 = getElementPosition(localPlayer) 
 		if getDistanceBetweenPoints3D(x, y, z, x2, y2, z2) > 5 then 
 			self:cancel()
-			ErrorBox:new("Du bist zu weit vom Black-Jack entfernt!")
+			ErrorBox:new(_"Du bist zu weit vom Black-Jack entfernt!")
 		end
 	end
 	if self.m_Shader and self.m_ScreenSource then

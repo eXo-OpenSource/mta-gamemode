@@ -71,7 +71,11 @@ function SkinSelectGUI:loadSkins()
 			if self.m_Edit then return false end
 			if self.m_GroupType == "faction" then
 				triggerServerEvent("factionPlayerSelectSkin", localPlayer, skinId)
-				core:set("Cache", "LastFactionSkin", skinId)
+				if localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() and localPlayer:getPublicSync("Rescue:Type") == "fire" then
+					core:set("Cache", "AlternativeLastFactionSkin", skinId)
+				else	
+					core:set("Cache", "LastFactionSkin", skinId)
+				end
 			elseif self.m_GroupType == "company" then
 				triggerServerEvent("companyPlayerSelectSkin", localPlayer, skinId)
 				core:set("Cache", "LastCompanySkin", skinId)

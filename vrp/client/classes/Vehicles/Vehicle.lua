@@ -22,7 +22,8 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList", "vehicleAdminReceiveTextureList", "vehicleEngineStateChange"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList", "vehicleAdminReceiveTextureList", "vehicleEngineStateChange",
+"syncVehicleTunings"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -346,8 +347,8 @@ function( dir )
 end)
 
 addEventHandler("vehicleReceiveTuningList", localPlayer,
-function (vehicle, tuning, specialTuning)
-	VehicleTuningShowGUI:new(tuning, specialTuning)
+function (vehicle, tuning, specialTuning, rcVehicle)
+	VehicleTuningShowGUI:new(vehicle, tuning, specialTuning, rcVehicle)
 end)
 
 addEventHandler("vehicleAdminReceiveTextureList", localPlayer,
@@ -371,6 +372,7 @@ addEventHandler("onClientElementStreamIn", root,
 				triggerEvent("rescueLadderUpdateCollision", source, false)
 			end
 			GroupSaleVehicles.VehiclestreamedIn(source)
+			GroupRentVehicles.VehiclestreamedIn(source)
 			Indicator:getSingleton():onVehicleStreamedIn(source)
 			VehicleELS:getSingleton():onVehicleStreamedIn(source)
 			Neon.VehiclestreamedIn(source)
@@ -386,6 +388,7 @@ addEventHandler("onClientElementStreamOut", root,
 		end
 		if getElementType(source) == "vehicle" then
 			GroupSaleVehicles.VehiclestreamedOut(source)
+			GroupRentVehicles.VehiclestreamedOut(source)
 			Indicator:getSingleton():onVehicleStreamedOut(source)
 			VehicleELS:getSingleton():onVehicleStreamedOut(source)
 			Neon.VehiclestreamedOut(source)
@@ -485,4 +488,14 @@ addEventHandler("onClientVehicleExit", root, function(player, seat)
 			toggleControl("vehicle_secondary_fire", true)
 		end
 	end
+end)
+
+addEventHandler("syncVehicleTunings", root, function(vehicle, tunings)
+	if not vehicle.m_Tunings then	
+		vehicle.m_Tunings = VehicleTuning:new(vehicle)
+	end
+	
+	if tunings["Neon"] == 1 then tunings["Neon"] = true else tunings["Neon"] = false end
+	vehicle.m_Tunings.m_Tuning = tunings
+	vehicle.m_Tunings:applyTuning()
 end)

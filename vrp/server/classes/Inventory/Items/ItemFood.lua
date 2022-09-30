@@ -41,7 +41,7 @@ end
 
 function ItemFood:use(player)
 	if player.isTasered then return false end
-	if AdminEventManager:getSingleton().m_EventRunning and AdminEventManager:getSingleton().m_CurrentEvent:isPlayerInEvent(player) and getPedArmor(player) == 0 then player:sendError("Du hast keine Schutzweste mehr!") return false end
+	if AdminEventManager:getSingleton().m_EventRunning and AdminEventManager:getSingleton().m_CurrentEvent:isPlayerInEvent(player) and getPedArmor(player) == 0 then player:sendError(_("Du hast keine Schutzweste mehr!", player)) return false end
 	if player:isInGangwar() and player:getArmor() == 0 then player:sendError(_("Du hast keine Schutzweste mehr!", player)) return false end
 	if JobBoxer:getSingleton():isPlayerBoxing(player) == true then player:sendError(_("Du darfst dich während des Boxkampfes nicht heilen!", player)) return false end
 	if math.round(math.abs(player.velocity.z*100)) ~= 0 and not player.vehicle then player:sendError(_("Du kannst in der Luft nichts essen!", player)) return false end
@@ -57,12 +57,16 @@ function ItemFood:use(player)
 		triggerClientEvent(ItemSettings["CustomEvent"], player, item)
 	end
 
+	DamageManager:getSingleton():clearPlayer(player)
+
 	local block, animation, time = unpack(ItemSettings["Animation"])
 	if not player.vehicle then 
 		player:setFrozen(true) --prevent the player from running forwards when eating while laying on ground after fall
 		nextframe(function() 
 			player:setFrozen(false)
-			player:setAnimation(block, animation, time, true, false, false) 
+			player:setAnimation(block, animation, time, true, false, false)
+			player.m_IsEating = true
+			player:setData("isEating", true, true)
 		end)
 	end
 	setTimer(
@@ -71,6 +75,8 @@ function ItemFood:use(player)
 			if not isElement(player) or getElementType(player) ~= "player" then return false end
 			player:setHealth(player:getHealth()+ItemSettings["Health"])
 			player:setAnimation()
+			player.m_IsEating = nil
+			player:setData("isEating", nil, true)
 		end, time, 1
 	)
 

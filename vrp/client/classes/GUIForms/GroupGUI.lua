@@ -31,19 +31,35 @@ function GroupGUI:constructor()
 	end
 	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
 	self.m_GroupsNameChangeLabel.onUnhover = function () self.m_GroupsNameChangeLabel:setColor(Color.Accent) end
+	self.m_GroupsNameChangeLabel:setVisible(false)
 
-
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
-	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.8, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
+	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupQuitButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.07, _"Verlassen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
 	self.m_GroupDeleteButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.1, self.m_Width*0.3, self.m_Height*0.07, _"Löschen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_GroupDeleteButton:setVisible(false)
+	self.m_GroupLogsButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.2, self.m_Width*0.3, self.m_Height*0.07, _"Gruppen-Logs", tabGroups):setBarEnabled(true)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabGroups)
-	self.m_GroupMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.1, _"Kasse:", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Inhalt:", tabGroups)
+	self.m_GroupMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.3, self.m_Width*0.25, self.m_Height*0.06, _"Payday:", tabGroups)
-	self.m_GroupPayDayLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.3, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
-	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.6, self.m_Height*0.5, tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.25, self.m_Height*0.06, _"Payday:", tabGroups)
+	self.m_GroupPayDayLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.43, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
+
+	self.m_ActionLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Aktion:", tabGroups)
+	self.m_HousRobLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.06, _"Hausraub Status:", tabGroups)
+	self.m_GroupNextHouseRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.6, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
+	self.m_ShopRobLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.25, self.m_Height*0.06, _"Shopraub Status:", tabGroups)
+	self.m_GroupNextShopRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.7, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
+	self.m_ShopVehicleRobLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.25, self.m_Height*0.06, _"Shopfahrzeugraub Status:", tabGroups)
+	self.m_GroupNextShopVehicleRobLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.8, self.m_Width*0.7, self.m_Height*0.06, "", tabGroups)
+
+	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
+	self.m_tabMitglieder = tabMitglieder
+
+	
+	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.6, self.m_Height*0.8, tabMitglieder)
 	self.m_GroupPlayersGrid:addColumn(_"", 0.06)
 	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.18)
@@ -51,11 +67,18 @@ function GroupGUI:constructor()
 	self.m_GroupPlayersGrid:setSortable{"Spieler", "Rang", "Aktivität"}
 	self.m_GroupPlayersGrid:setSortColumn(_"Rang", "down")
 
-	self.m_GroupAddPlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabGroups):setBackgroundColor(Color.Green):setBarEnabled(true)
-	self.m_GroupRemovePlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
-	self.m_GroupRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabGroups):setBarEnabled(true)
-	self.m_GroupRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabGroups):setBarEnabled(true)
-	self.m_GroupToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabGroups):setBarEnabled(true)
+	self.m_GroupAddPlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_GroupRemovePlayerButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_GroupRankUpButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
+	self.m_GroupRankDownButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_GroupToggleLoanButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+	self.m_GroupPlayerPermissionsButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.75, self.m_Width*0.3, self.m_Height*0.07, _"Rechte bearbeiten", tabMitglieder):setBarEnabled(true)
+	self.m_GroupAddPlayerButton:setEnabled(false)
+	self.m_GroupRemovePlayerButton:setEnabled(false)
+	self.m_GroupRankUpButton:setEnabled(false)
+	self.m_GroupRankDownButton:setEnabled(false)
+	self.m_GroupToggleLoanButton:setEnabled(false)
+	self.m_GroupPlayerPermissionsButton:setEnabled(false)
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 	self.m_GroupQuitButton.onLeftClick = bind(self.GroupQuitButton_Click, self)
@@ -65,6 +88,8 @@ function GroupGUI:constructor()
 	self.m_GroupRankUpButton.onLeftClick = bind(self.GroupRankUpButton_Click, self)
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupToggleLoanButton.onLeftClick = bind(self.GroupToggleLoanButton_Click, self)
+	self.m_GroupLogsButton.onLeftClick = bind(self.ShowLogs, self)
+	self.m_GroupPlayerPermissionsButton.onLeftClick = bind(self.groupPlayerPermissionsButton_Click, self)
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
@@ -119,7 +144,7 @@ function GroupGUI:constructor()
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.61, self.m_Width*0.28, self.m_Height*0.06, _"Letzter Raub:", tabBusiness)
 	self.m_ShopsRobLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.06, "-", tabBusiness)
 
-	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
+	--self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 	self.m_LeaderTab = false
 
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
@@ -140,19 +165,31 @@ end
 function GroupGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabBusiness.TabIndex then
 		triggerServerEvent("groupRequestBusinessInfo", root)
-	elseif tabId == self.m_TabLogs.TabIndex then
+	--[[elseif tabId == self.m_TabLogs.TabIndex then
 		local url = (INGAME_WEB_PATH .. "/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("group", self.m_Id)
 		if not self.m_LogGUI then
 			self.m_LogGUI = LogGUI:new(self.m_TabLogs, url)
 		else
 			self.m_LogGUI:updateLog()
-		end
+		end]]
 	else
 		triggerLatentServerEvent("groupRequestInfo", root)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, type, vehicles, canVehiclesBeModified, rankNames, rankLoans)
+function GroupGUI:ShowLogs()
+	self:close()
+	local url = (INGAME_WEB_PATH .. "/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("group", self.m_Id)
+	if not self.m_LogGUI then
+		self.m_LogGUI = LogGUI:new(self.m_TabLogs, url)
+		self.m_LogGUI:addBackButton(function() GroupGUI:getSingleton():show() end)
+	else
+		self.m_LogGUI:updateLog()
+	end
+
+end
+
+function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, type, vehicles, canVehiclesBeModified, actionStatus, rankNames, rankLoans)
 	if not id then
 		delete(self)
 		return
@@ -170,6 +207,39 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 	self.m_TypeLabel:setText(type..":")
 	self.m_VehicleConvertToGroupButton:setText(_("Fahrzeug zur\n%s hinzufügen", type))
 
+		self.m_ActionLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_HousRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_GroupNextHouseRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_ShopRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_GroupNextShopRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_ShopVehicleRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+		self.m_GroupNextShopVehicleRobLabel:setVisible(localPlayer:getGroupType() == "Gang" and true or false)
+
+		if getRealTime().timestamp > actionStatus["shopRob"] then
+			self.m_GroupNextShopRobLabel:setText(_"bereits möglich")
+			self.m_GroupNextShopRobLabel:setColor(Color.Green)
+		else
+			self.m_GroupNextShopRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["shopRob"]).hour..":"..getRealTime(actionStatus["shopRob"]).minute))
+			self.m_GroupNextShopRobLabel:setColor(Color.Red)
+		end
+		if getRealTime().timestamp > actionStatus["houseRob"] then
+			self.m_GroupNextHouseRobLabel:setText(_"bereits möglich")
+			self.m_GroupNextHouseRobLabel:setColor(Color.Green)
+		else
+			self.m_GroupNextHouseRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["houseRob"]).hour..":"..getRealTime(actionStatus["houseRob"]).minute))
+			self.m_GroupNextHouseRobLabel:setColor(Color.Red)
+		end
+		if getRealTime().timestamp > actionStatus["shopVehicleRob"][1] and actionStatus["shopVehicleRob"][2]then
+			self.m_GroupNextShopVehicleRobLabel:setText(_"bereits möglich")
+			self.m_GroupNextShopVehicleRobLabel:setColor(Color.Green)
+		elseif not actionStatus["shopVehicleRob"][2] then
+			self.m_GroupNextShopVehicleRobLabel:setText(_"Raub läuft")
+			self.m_GroupNextShopVehicleRobLabel:setColor(Color.Red)
+		else
+			self.m_GroupNextShopVehicleRobLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["shopVehicleRob"][1]).hour..":"..getRealTime(actionStatus["shopVehicleRob"][1]).minute))
+			self.m_GroupNextShopVehicleRobLabel:setColor(Color.Red)
+		end
+
 	self.m_GroupPlayersGrid:clear()
 	for playerId, info in pairs(players) do
 		local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
@@ -177,6 +247,7 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 		item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 		item:setColumnColor(2, getPlayerFromName(info.name) and Color.Accent or Color.White)
 		item.Id = playerId
+		item.Rank = info.rank
 
 		item.onLeftClick =
 		function()
@@ -184,27 +255,26 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 		end
 	end
 
-	if rank >= GroupRank.Manager then
-		if rank == GroupRank.Leader then
-			self.m_GroupDeleteButton:setVisible(true)
-		end
+	if rank >= GroupRank.Manager or PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "editLoan") or PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeGroupType") or PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeRankNames") then
 
 		self.m_RankNames = rankNames
 		self.m_RankLoans = rankLoans
 		self:addLeaderTab()
-		self:refreshRankGrid()
 
 		-- Update options
 		self.m_TypeLabelLeader:setText(type)
 		local x, y = self.m_TypeLabelLeader:getPosition()
 		self.m_TypeChange:setPosition(x + dxGetTextWidth(type, self.m_TypeLabelLeader:getFontSize(), self.m_TypeLabelLeader:getFont()) + 10, y)
-	else
-		self.m_GroupDeleteButton:setVisible(false)
-		self.m_GroupAddPlayerButton:setVisible(false)
-		self.m_GroupRemovePlayerButton:setVisible(false)
-		self.m_GroupRankUpButton:setVisible(false)
-		self.m_GroupRankDownButton:setVisible(false)
 	end
+	
+	self.m_GroupAddPlayerButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "invite"))
+	self.m_GroupRemovePlayerButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "uninvite"))
+	self.m_GroupRankUpButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeRank"))
+	self.m_GroupRankDownButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeRank"))
+	self.m_GroupToggleLoanButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "toggleLoan"))
+	self.m_GroupDeleteButton:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "deleteGroup"))
+	self.m_GroupsNameChangeLabel:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "renameGroup"))
+	self.m_GroupPlayerPermissionsButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changePermissions"))
 
 	-- Group Vehicles
 	self.m_VehiclesGrid:clear()
@@ -245,16 +315,12 @@ function GroupGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
 			local vehicleId, vehicleInfo = unpack(vehicleInfo)
 			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
-			if positionType == VehiclePositionType.World then
-				positionType = getZoneName(x, y, z, false)
-			elseif positionType == VehiclePositionType.Garage then
-				positionType = _"Garage"
-			elseif positionType == VehiclePositionType.Mechanic then
-				positionType = _"Autohof"
-			elseif positionType == VehiclePositionType.Hangar then
-				positionType = _"Hangar"
-			elseif positionType == VehiclePositionType.Harbor then
-				positionType = _"Hafen"
+			if VehiclePositionTypeName[positionType] then
+				if VehiclePositionTypeName[positionType] == VehiclePositionTypeName[0] then
+					positionType = getZoneName(x, y, z, false)
+				else
+					positionType =VehiclePositionTypeName[positionType]
+				end
 			else
 				positionType = _"Unbekannt"
 			end
@@ -313,26 +379,36 @@ function GroupGUI:addLeaderTab()
 	if self.m_LeaderTab == false then
 		local tabLeader = self.m_TabPanel:addTab(_"Leader")
 		self.m_TabLeader = tabLeader
-		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.025, self.m_Width*0.4, self.m_Height*0.95, tabLeader)
+		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.6, tabLeader)
 		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
 		self.m_FactionRangGrid:addColumn(_"Name", 0.8)
 
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Rangname:", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderRankName = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, tabLeader)
+		self.m_LeaderRankName:setVisible(false)
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.Accent)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.1, self.m_Height*0.06, tabLeader)
 		self.m_LeaderLoan:setNumeric(true, true)
+		self.m_LeaderLoan:setVisible(false)
 
-		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.3, self.m_Height*0.06, _"Rang speichern", tabLeader):setBarEnabled(true)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.4, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
-		GUIRectangle:new(self.m_Width*0.45, self.m_Height*0.36, self.m_Width*0.525, 2, Color.Accent, tabLeader)
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.38, self.m_Width*0.4, self.m_Height*0.09, _"Optionen:", tabLeader):setColor(Color.Accent)
+		self.m_ChangePermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.4, self.m_Height*0.07, _"Rechteverwaltung", tabLeader):setBarEnabled(true)
+		self.m_ChangePermissions.onLeftClick = bind(self.openPermissionsGUI, self)
+		self.m_ChangePermissions:setEnabled(false)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"Typ:", tabLeader)
-		self.m_TypeLabelLeader = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
-		self.m_TypeChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.Accent)
+		self.m_ChangeActionPermissions = GUIButton:new(self.m_Width*0.02, self.m_Height*0.845, self.m_Width*0.4, self.m_Height*0.07, _"Aktionsstartberechtigungen", self.m_TabLeader):setBarEnabled(true)
+		self.m_ChangeActionPermissions.onLeftClick = bind(self.openPermissionsGUI, self)
+		self.m_ChangeActionPermissions:setEnabled(false)
+
+		GUIRectangle:new(self.m_Width*0.45, self.m_Height*0.46, self.m_Width*0.525, 2, Color.Accent, tabLeader)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.09, _"Optionen:", tabLeader):setColor(Color.Accent)
+
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.58, self.m_Width*0.4, self.m_Height*0.06, _"Typ:", tabLeader)
+		self.m_TypeLabelLeader = GUILabel:new(self.m_Width*0.7, self.m_Height*0.58, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
+		self.m_TypeChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.58, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.Accent)
 		self.m_TypeChange.onLeftClick = function ()
 			local newType = localPlayer:getGroupType() == "Firma" and "Gang" or "Firma"
 			QuestionBox:new(_("Möchtest du wirklich deine %s in eine %s umwandeln? Kosten: 20.000$", localPlayer:getGroupType(), newType),
@@ -341,6 +417,7 @@ function GroupGUI:addLeaderTab()
 		end
 		self.m_TypeChange.onHover = function () self.m_TypeChange:setColor(Color.White) end
 		self.m_TypeChange.onUnhover = function () self.m_TypeChange:setColor(Color.Accent) end
+		self.m_TypeChange:setVisible(false)
 
 		self.m_BindButton = GUIButton:new(self.m_Width*0.45, self.m_Height*62, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabLeader):setBarEnabled(true)
 		self.m_BindButton.onLeftClick = function()
@@ -350,9 +427,20 @@ function GroupGUI:addLeaderTab()
 			self.m_BindManageGUI:addBackButton(function() GroupGUI:getSingleton():show() end)
 		end
 
-		self:refreshRankGrid()
+		self:refreshLeaderTab()
 		self.m_LeaderTab = true
+	else
+		self:refreshLeaderTab()
 	end
+end
+
+function GroupGUI:refreshLeaderTab()
+	self.m_LeaderLoan:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "editLoan"))
+	self.m_LeaderRankName:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeRankNames"))
+	self.m_TypeChange:setVisible(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changeGroupType"))
+	self.m_ChangePermissions:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changePermissions"))
+
+	self:refreshRankGrid()
 end
 
 function GroupGUI:saveRank()
@@ -524,5 +612,23 @@ function GroupGUI:GroupToggleLoanButton_Click()
 	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("groupToggleLoan", root, selectedItem.Id)
+	end
+end
+
+function GroupGUI:openPermissionsGUI()
+	RankPermissionsGUI:new("permission", "group")
+end
+
+function GroupGUI:groupPlayerPermissionsButton_Click()
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+
+		self.m_PermissionsManagmentGUI = GUIButtonMenu:new(_("Rechteverwaltung"))
+		if PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "changePermissions") then
+		self.m_PermissionsManagmentGUI:addItem(_"Rechte bearbeiten", Color.Accent,
+			function()
+				PlayerPermissionsGUI:new("permission", selectedItem.Rank, "group", selectedItem.Id)
+			end)
+		end
 	end
 end

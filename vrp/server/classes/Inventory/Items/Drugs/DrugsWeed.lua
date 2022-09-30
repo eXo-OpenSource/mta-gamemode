@@ -19,7 +19,7 @@ end
 
 function DrugsWeed:use( player )
   if player:getPublicSync("gangwarParticipant") then
-    player:sendError("Du darfst im Gangwar kein Weed rauchen!")
+    player:sendError(_("Du darfst im Gangwar kein Weed rauchen!", player))
     return
   end
 	ItemDrugs.use(self, player)

@@ -10,14 +10,19 @@ VehicleGuns = inherit(Singleton)
 VehicleGuns.Cooldowns = {
     [425] = 5000, --Hunter
     [432] = 5000, --Rhino
+    [464] = math.huge, --RC Baron
     [520] = 5000 --Hydra
 }
 VehicleGuns.ControlToDeactivate = {
     [425] = {"vehicle_fire"}, --Hunter
     [432] = {"vehicle_fire", "vehicle_secondary_fire"}, --Rhino
+    [464] = {"vehicle_fire", "vehicle_secondary_fire"}, --RC Baron
     [520] = {"vehicle_secondary_fire"} --Hydra
 }
 VehicleGuns.LastShoot = {ShotAt=0, LockedUntil=0}
+VehicleGuns.BlockShoot = {
+    [464] = true, --RC Baron
+}
 
 function VehicleGuns:constructor()
     self.m_ShootBind = bind(self.onShoot, self)
@@ -45,7 +50,7 @@ function VehicleGuns:onShoot()
 end
 
 function VehicleGuns:update()
-    if VehicleGuns.LastShoot.LockedUntil >= getTickCount() or (localPlayer:getOccupiedVehicle() and localPlayer:getOccupiedVehicle():getEngineState() == false) then
+    if (localPlayer.vehicle and VehicleGuns.BlockShoot[localPlayer.vehicle:getModel()]) or VehicleGuns.LastShoot.LockedUntil >= getTickCount() or (localPlayer:getOccupiedVehicle() and localPlayer:getOccupiedVehicle():getEngineState() == false) then
         self:toggleControls(false)
     else
         if self:isKeyPressed() == false then
@@ -73,6 +78,7 @@ end
 
 function VehicleGuns:onVehicleExit(player, seat)
     if player == localPlayer then
+        removeEventHandler("onClientRender", root, self.m_UpdateBind)
         if self.m_Controls then
             for index, control in pairs(self.m_Controls) do
                 unbindKey(control, "down", self.m_ShootBind)

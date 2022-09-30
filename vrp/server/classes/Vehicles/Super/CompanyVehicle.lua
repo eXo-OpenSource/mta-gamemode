@@ -215,6 +215,17 @@ function CompanyVehicle:respawn(force, ignoreCooldown)
 		end
 	end
 
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
+
+	if self.m_RcVehicleUser then
+		for i, player in pairs(self.m_RcVehicleUser) do
+			self:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
+		end
+	end
+
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setTaxiLightOn(false)

@@ -17,7 +17,7 @@ end
 addRemoteEvents{"showAdminMenu", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney", "adminReceiveOfflineWarns"}
 
 function AdminGUI:constructor(money)
-	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
+	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 580)
 
 	self.m_adminButton = {}
 
@@ -95,6 +95,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("transactionMenu", "Transaktions-Menü", self.onGeneralButtonClick, self.m_Width-225, 390, 200, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("multiAccountMenu", "Multi-Accounts", self.onGeneralButtonClick, self.m_Width-225, 430, 200, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("serialAccountMenu", "Serial-Account-Verknüpfungen", self.onGeneralButtonClick, self.m_Width-225, 470, 200, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("leaderBanMenu", "Leadersperren-Menü", self.onGeneralButtonClick, self.m_Width-225, 510, 200, 30, Color.Accent, tabAllgemein)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
@@ -391,6 +392,7 @@ function AdminGUI:onOfflineButtonClick(func)
 	elseif func == "offlineUnban" then
 		InputBox:new(
 				_("Spieler %s entbannen", selectedPlayer),
+				_("Aus welchem Grund möchtest du den Spieler %s entbannen?", selectedPlayer),
 				function (reason)
 					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
 				end)
@@ -614,6 +616,9 @@ function AdminGUI:onGeneralButtonClick(func)
 		else
 			ErrorBox:new("Ungültige Koordinaten-Angabe")
 		end
+	elseif func == "leaderBanMenu" then
+		self:close()
+		AdminLeaderBanGUI:new()
 	end
 end
 
@@ -687,14 +692,12 @@ function AdminVehicleGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
 		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
 			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
-			if positionType == VehiclePositionType.World then
-				positionType = getZoneName(x, y, z, false)
-			elseif positionType == VehiclePositionType.Garage then
-				positionType = _"Garage"
-			elseif positionType == VehiclePositionType.Mechanic then
-				positionType = _"Autohof"
-			elseif positionType == VehiclePositionType.Hangar then
-				positionType = _"Hangar"
+			if VehiclePositionTypeName[positionType] then
+				if VehiclePositionTypeName[positionType] == VehiclePositionTypeName[0] then
+					positionType = getZoneName(x, y, z, false)
+				else
+					positionType =VehiclePositionTypeName[positionType]
+				end
 			else
 				positionType = _"Unbekannt"
 			end

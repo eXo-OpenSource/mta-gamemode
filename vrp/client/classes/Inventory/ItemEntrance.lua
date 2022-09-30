@@ -79,7 +79,7 @@ function ItemEntrance:Event_OnRender()
 		dxDrawText(lastDesc, 0, 0, screenWidth, (screenHeight*0.9+fontHeight)+1, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
 		dxDrawText(lastDesc, 0, 0, screenWidth, screenHeight*0.9+fontHeight, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
 	end
-	local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
+	local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["general"]["KeyEntranceUse"]["defaultKey"])
 	dxDrawText(("Drücke %s zum Eintreten!"):format(key:upper()), 0, 0, screenWidth, screenHeight*0.9+fontHeight*1.1+fontHeight2*1.1, tocolor(255, 255, 255, 255), 1, "default-bold", "center", "bottom")
 end
 

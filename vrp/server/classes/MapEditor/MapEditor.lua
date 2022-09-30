@@ -257,7 +257,7 @@ function MapEditor:setMapStatus(id, player)
         client = player
     end
     if client:getRank() < ADMIN_RANK_PERMISSION["setMapStatus"] then
-        client:sendError("Du bist nicht berechtigt!")
+        client:sendError(_("Du bist nicht berechtigt!", client))
         return
     end
 

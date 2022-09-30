@@ -293,8 +293,10 @@ function Inventory:addItemEvents(item)
 			local itemDelete = false
 			if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
 			if not self.m_IsDeleteKeyDown then
+				if localPlayer:getData("isTied") or localPlayer:getPublicSync("cuffed") or localPlayer:getData("Admin:IsFrozen") then return ErrorBox:new(_"Du kannst derzeit nichts benutzen.") end
 				triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
 			else
+				if localPlayer:getData("isTied") or localPlayer:getPublicSync("cuffed") or localPlayer:getData("Admin:IsFrozen") then return ErrorBox:new(_"Du kannst derzeit nichts wegwerfen.") end
 				if self.m_InventoryActionPrompt then
 					self.m_InventoryActionPrompt:close()
 				end
@@ -311,6 +313,7 @@ function Inventory:addItemEvents(item)
 
 	item.onRightClick = function()
 		if item.Item then
+			if localPlayer:getData("isTied") or localPlayer:getPublicSync("cuffed") or localPlayer:getData("Admin:IsFrozen") then return ErrorBox:new(_"Du kannst derzeit nichts benutzen.") end
 			local itemName = item.ItemName
 			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place)
 		end

@@ -57,7 +57,7 @@ function FireManager:loadFirePlaces()
 end
 
 function FireManager:checkFire()
-	if FactionRescue:getSingleton():countPlayers(true, false) >= 3 and not self.m_CurrentFire then
+	if FactionRescue:getSingleton():countPlayers(true, false) >= MIN_PLAYERS_FOR_FIRE and not self.m_CurrentFire then
 		local random = math.random(1, 4)
 		if random == 4 then
 			PlaneManager:getSingleton():createRoute(true)
@@ -177,6 +177,9 @@ function FireManager:stopCurrentFire(stats)
 		self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Feuer gelöscht", "Event", "Fire")
 
 		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction * table.size(stats.pointsByPlayer))
+		
+		local groupLogMessage = self.m_CurrentFire.m_Id == 1000 and ("Brennende Absturztrümmer wurden gelöscht (+%s$)") or ("Ein ausgebrochenes Feuer wurde gelöscht (+%s$)")
+		FactionRescue:getSingleton().m_Faction:addLog(false, "Brand", (groupLogMessage):format(moneyForFaction))
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end
@@ -211,7 +214,7 @@ function FireManager:sendAdminFireData(player)
 end
 
 function FireManager:Event_toggleFire(id)
-	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+	if client:getRank() < ADMIN_RANK_PERMISSION["toggleFire"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
@@ -228,7 +231,7 @@ function FireManager:Event_toggleFire(id)
 end
 
 function FireManager:Event_createFire()
-	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+	if client:getRank() < ADMIN_RANK_PERMISSION["editFire"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
@@ -253,7 +256,7 @@ function FireManager:Event_createFire()
 end
 
 function FireManager:Event_editFire(id, tblArgs)
-	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+	if client:getRank() < ADMIN_RANK_PERMISSION["editFire"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
@@ -315,7 +318,7 @@ function FireManager:generateMessage(position, width, height)
 end
 
 function FireManager:Event_deleteFire(id)
-	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+	if client:getRank() < ADMIN_RANK_PERMISSION["editFire"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end

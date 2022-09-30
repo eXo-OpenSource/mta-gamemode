@@ -10,13 +10,17 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, rankPermissions, rankActions)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_ShorterName = name_shorter
 	self.m_Name = name
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]
+	self.m_PlayerWeapons = players[3]
+	self.m_PlayerPermissions = players[4]
+	self.m_PlayerWeaponPermissions = players[5]
+	self.m_PlayerActionPermissions = players[6]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
@@ -36,10 +40,14 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..Id) end
 	if rankSkins == "" then	rankSkins = {} for i=0,6 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for faction "..Id) end
 	if rankWeapons == "" then rankWeapons = {} for i=0,6 do rankWeapons[i] = {} for wi=0,46 do rankWeapons[i][wi] = 0 end end rankWeapons = toJSON(rankWeapons) outputDebug("Created RankWeapons for faction "..Id) end
+	if not rankPermissions or rankPermissions == "" then rankPermissions = {} for i=0,6 do rankPermissions[i] = PermissionsManager:getSingleton():createRankPermissions("faction", self.m_Id, i) end rankPermissions = toJSON(rankPermissions) outputDebug("Created RankPermissions for faction "..Id) end
+	if not rankActions or rankActions == "" then rankActions = {} for i=0,6 do rankActions[i] = PermissionsManager:getSingleton():createRankActions("faction", self.m_Id, i) end rankActions = toJSON(rankActions) outputDebug("Created RankActions for faction "..Id) end
 
 	self.m_RankWeapons = fromJSON(rankWeapons)
 	self.m_RankLoans = fromJSON(rankLoans)
 	self.m_RankSkins = fromJSON(rankSkins)
+	self.m_RankPermissions = fromJSON(rankPermissions)
+	self.m_RankActions = fromJSON(rankActions)
 	self.m_Type = factionType
 
 	self.m_Depot = Depot.load(depotId, self, "faction")
@@ -140,7 +148,7 @@ function Faction:save()
 	if self.m_Settings then
 		self.m_Settings:save()
 	end
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, RankPermissions = ?, RankActions = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), toJSON(self.m_RankPermissions), toJSON(self.m_RankActions), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
@@ -176,12 +184,16 @@ function Faction:setSetting(category, key, value, responsiblePlayer)
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
 		if not responsiblePlayer:getFaction() then allowed = false end
 		if responsiblePlayer:getFaction() ~= self then allowed = false end
-		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end
+		if category == "Equipment" then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editEquipment") then allowed = false end
+		elseif category == "Skin" then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editRankSkins") then allowed = false end
+		end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
 	else
-		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Fraktion %s können deren Einstellungen ändern!", responsiblePlayer, FactionRank.Leader, self:getShortName()))
+		responsiblePlayer:sendError(_("Du bist nicht berechtigt die %s Einstellungen zu ändern!", responsiblePlayer, category))
 	end
 end
 
@@ -277,6 +289,17 @@ function Faction:changeSkin(player, skinId)
 			-- ^useless if player switches faction
 			player:setModel(self:getSkinsForRank(playerRank)[1])
 		end
+		if self:isStateFaction() then
+			if skinId == 285 then
+				player:getInventory():giveItem("Kevlar", 1)
+				player:setData("Faction:InSpecialDuty", true, true)
+			else
+				player:getInventory():removeItem("Kevlar", 1)
+				WearableManager:getSingleton():removeWearable(player, "Kevlar")
+				player.m_KevlarShotsCount = nil
+				player:setData("Faction:InSpecialDuty", nil, true)
+			end
+		end
 	else
 		player:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", player))
 	end
@@ -296,6 +319,10 @@ function Faction:addPlayer(playerId, rank)
 	rank = rank or 0
 	self.m_Players[playerId] = rank
 	self.m_PlayerLoans[playerId] = 1
+	self.m_PlayerWeapons[playerId] = 1
+	self.m_PlayerPermissions[playerId] = {}
+	self.m_PlayerActionPermissions[playerId] = {}
+	self.m_PlayerWeaponPermissions[playerId] = {}
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
@@ -304,9 +331,13 @@ function Faction:addPlayer(playerId, rank)
 		if self.m_Name_Short == "SAPD" then
 			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
+		if self.m_Name_Short == "Rescue" then
+			player:setPublicSync("RadioStatus", 6)
+		end
 		bindKey(player, "y", "down", "chatbox", "Fraktion")
+		PermissionsManager:getSingleton():syncPermissions(player, "faction")
 	end
-	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1, FactionWeaponEnabled = 1, FactionPermissions = ?, FactionWeaponPermissions = ?, FactionActionPermissions = ?, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, toJSON({}), toJSON({}), toJSON({}), playerId)
 
 	Async.create(
 		function(self)
@@ -322,8 +353,20 @@ function Faction:removePlayer(playerId)
 
 	self.m_Players[playerId] = nil
 	self.m_PlayerLoans[playerId] = nil
+	self.m_PlayerWeapons[playerId] = nil
+	self.m_PlayerPermissions[playerId] = nil
+	self.m_PlayerActionPermissions[playerId] = nil
+	self.m_PlayerWeaponPermissions[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
+		if (self:isStateFaction() or self:isRescueFaction()) and player:isFactionDuty() then
+			takeAllWeapons(player)
+			RadioCommunication:getSingleton():allowPlayer(player, false)
+			
+			if self.m_Name_Short == "Rescue" then
+				player:setPublicSync("RadioStatus", nil)
+			end
+		end
 		player:saveAccountActivity()
 		setElementData(player, "playingTimeFaction", 0)
 		setElementData(player, "dutyTimeFaction", 0)
@@ -331,16 +374,17 @@ function Faction:removePlayer(playerId)
 		player:giveAchievement(67)
 		player:setCorrectSkin()
 		player:setFactionDuty(false)
+		player:getInventory():removeItem("Kevlar", 1)
+		WearableManager:getSingleton():removeWearable(player, "Kevlar")
+		player.m_KevlarShotsCount = nil
+		player:setData("Faction:InSpecialDuty", nil, true)
 		player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 		self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
-		if self:isStateFaction() and player:isFactionDuty() then
-			takeAllWeapons(player)
-			player:reloadBlips()
-		end
 		player:reloadBlips()
 		unbindKey(player, "y", "down", "chatbox", "Fraktion")
+		PermissionsManager:getSingleton():syncPermissions(player, "faction", true)
 	end
-	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0, FactionWeaponEnabled = 0, FactionPermissions = ?, FactionWeaponPermissions = ?, FactionActionPermissions = ?, FactionTraining = 0 WHERE Id = ?", sql:getPrefix(), toJSON({}), toJSON({}), toJSON({}), playerId)
 end
 
 function Faction:invitePlayer(player)
@@ -406,6 +450,27 @@ function Faction:setPlayerLoanEnabled(playerId, state)
 
 	self.m_PlayerLoans[playerId] = state
 	sql:queryExec("UPDATE ??_character SET FactionLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
+function Faction:isPlayerWeaponEnabled(playerId)
+	return self.m_PlayerWeapons[playerId] == 1
+end
+
+function Faction:setPlayerWeaponEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerWeapons[playerId] = state
+	sql:queryExec("UPDATE ??_character SET FactionWeaponEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
+function Faction:savePlayerPermissions(playerId)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	sql:queryExec("UPDATE ??_character SET FactionPermissions = ?, FactionWeaponPermissions = ?, FactionActionPermissions = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_PlayerPermissions[tonumber(playerId)]) or toJSON({}), toJSON(self.m_PlayerWeaponPermissions[tonumber(playerId)]) or toJSON({}), toJSON(self.m_PlayerActionPermissions[tonumber(playerId)]) or toJSON({}), playerId)
 end
 
 function Faction:getMoney()
@@ -500,9 +565,10 @@ function Faction:getPlayers(getIDsOnly)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local loanEnabled = self.m_PlayerLoans[playerId]
+		local weaponEnabled = self.m_PlayerWeapons[playerId]
 		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, weaponEnabled = weaponEnabled, activity = activity}
 	end
 	return temp
 end
@@ -646,6 +712,7 @@ function Faction:respawnVehicles(player)
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
+			vehicle:removeAttachedPlayers()
 			if not vehicle:respawn(true, isAdmin) then
 				fails = fails + 1
 			else
@@ -664,7 +731,7 @@ function Faction:phoneCall(caller)
 		if not player:getPhonePartner() then
 			if player ~= caller then
 				local color = {factionColors[self.m_Id].r, factionColors[self.m_Id].g, factionColors[self.m_Id].b}
-				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color, "faction")
 			end
 		end
 	end
@@ -930,63 +997,64 @@ function Faction:takeEquipment(player)
 	end
 end
 
-
-function Faction:storageWeapons(player)
+function Faction:storageWeapons(player, weapons)
 	local depot = self:getDepot()
 	local logData = {}
 	for i= 1, 12 do
 		if player:getWeapon(i) > 0 then
-			local weaponId = player:getWeapon(i)
-			local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
-			if WEAPON_CLIPS[weaponId] then
-				clipAmmo = WEAPON_CLIPS[weaponId]
-			end
+			if not weapons or weapons[player:getWeapon(i)] then
+				local weaponId = player:getWeapon(i)
+				local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
+				if WEAPON_CLIPS[weaponId] then
+					clipAmmo = WEAPON_CLIPS[weaponId]
+				end
 
-			local magazines = clipAmmo > 0 and math.floor(player:getTotalAmmo(i)/clipAmmo) or 0
-			if THROWABLE_WEAPONS[weaponId] then -- don't divide by magazine size
-				magazines = player:getTotalAmmo(i)
-			end
+				local magazines = clipAmmo > 0 and math.floor(player:getTotalAmmo(i)/clipAmmo) or 0
+				if THROWABLE_WEAPONS[weaponId] then -- don't divide by magazine size
+					magazines = player:getTotalAmmo(i)
+				end
 
-			local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
-			local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
+				local depotWeapons, depotMagazines = depot:getWeapon(weaponId)
+				local depotMaxWeapons, depotMaxMagazines = self.m_WeaponDepotInfo[weaponId]["Waffe"], self.m_WeaponDepotInfo[weaponId]["Magazine"]
 
-			if depotWeapons == -1 then
-				takeWeapon(player, weaponId)
-			else
-
-				if THROWABLE_WEAPONS[weaponId] then -- grenade etc
-					if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
-						depot:addWeaponD(weaponId, magazines)
-						takeWeapon(player, weaponId)
-						logData[WEAPON_NAMES[weaponId]] = magazines
-					elseif magazines > 0 then
-						local weaponsToMax = depotMaxWeapons - depotWeapons
-						depot:addWeaponD(weaponId, weaponsToMax)
-						setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - weaponsToMax)
-						if magsToMax > 0 then
-							logData[WEAPON_NAMES[weaponId]] = weaponsToMax
-							player:sendError(_("Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert.", player, magazines, WEAPON_NAMES[weaponId], weaponsToMax))
-						end
-					end
+				if depotWeapons == -1 then
+					takeWeapon(player, weaponId)
 				else
-					if depotWeapons+1 <= depotMaxWeapons then
-						if depotMagazines + magazines <= depotMaxMagazines then
-							depot:addWeaponD(weaponId, 1)
-							depot:addMagazineD(weaponId, magazines)
+
+					if THROWABLE_WEAPONS[weaponId] then -- grenade etc
+						if depotWeapons+magazines <= depotMaxWeapons then --magazines = duplicates of weapon
+							depot:addWeaponD(weaponId, magazines)
 							takeWeapon(player, weaponId)
 							logData[WEAPON_NAMES[weaponId]] = magazines
 						elseif magazines > 0 then
-							local magsToMax = depotMaxMagazines - depotMagazines
-							depot:addMagazineD(weaponId, magsToMax)
-							setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - magsToMax*clipAmmo)
+							local weaponsToMax = depotMaxWeapons - depotWeapons
+							depot:addWeaponD(weaponId, weaponsToMax)
+							setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - weaponsToMax)
 							if magsToMax > 0 then
-								logData[WEAPON_NAMES[weaponId]] = magsToMax
-								player:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", player, magazines, WEAPON_NAMES[weaponId], magsToMax))
+								logData[WEAPON_NAMES[weaponId]] = weaponsToMax
+								player:sendError(_("Im Depot ist nicht Platz für %s %s! Es wurden nur %s eingelagert.", player, magazines, WEAPON_NAMES[weaponId], weaponsToMax))
 							end
 						end
-
 					else
-						player:sendError(_("Im Depot ist nicht Platz für eine/n %s!", player, WEAPON_NAMES[weaponId]))
+						if depotWeapons+1 <= depotMaxWeapons then
+							if depotMagazines + magazines <= depotMaxMagazines then
+								depot:addWeaponD(weaponId, 1)
+								depot:addMagazineD(weaponId, magazines)
+								takeWeapon(player, weaponId)
+								logData[WEAPON_NAMES[weaponId]] = magazines
+							elseif magazines > 0 then
+								local magsToMax = depotMaxMagazines - depotMagazines
+								depot:addMagazineD(weaponId, magsToMax)
+								setWeaponAmmo(player, weaponId, getPedTotalAmmo(player, i) - magsToMax*clipAmmo)
+								if magsToMax > 0 then
+									logData[WEAPON_NAMES[weaponId]] = magsToMax
+									player:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", player, magazines, WEAPON_NAMES[weaponId], magsToMax))
+								end
+							end
+
+						else
+							player:sendError(_("Im Depot ist nicht Platz für eine/n %s!", player, WEAPON_NAMES[weaponId]))
+						end
 					end
 				end
 			end

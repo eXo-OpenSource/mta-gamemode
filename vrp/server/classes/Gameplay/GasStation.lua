@@ -8,14 +8,25 @@
 GasStation = inherit(Object)
 GasStation.Map = {}
 
-function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, fuelTypes, blipPosition)
+function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, evilStation, fuelTypes, blipPosition)
 	self.m_Stations = {}
 	self.m_Accessible = accessible
 	self.m_Name = name
 	self.m_NonInterior = nonInterior
 	self.m_ServiceStation = serviceStation
+	self.m_EvilStation = evilStation
+	self.m_Position = stations[1][1] -- for gps
 	self.m_FuelTypes = {}
+	self.m_FuelTypePrices = {}
 	for i, v in pairs(fuelTypes) do self.m_FuelTypes[v] = true end -- invert table
+	
+	for	i, type in pairs(fuelTypes) do
+		if FUEL_PRICE_RANGE[type][2] > 0 then
+			self.m_FuelTypePrices[type] = math.round(math.random(FUEL_PRICE_RANGE[type][1], FUEL_PRICE_RANGE[type][2]) + math.random(), 1)
+		else
+			self.m_FuelTypePrices[type] = 0
+		end
+	end 
 
 	for _, station in pairs(stations) do
 		local position, rotation, maxHoses = unpack(station)
@@ -31,7 +42,12 @@ function GasStation:constructor(stations, accessible, name, nonInterior, service
 		if self.m_ServiceStation then
 			object:setData("isServiceStation", true, true)
 		end
+
+		if self.m_EvilStation then
+			object:setData("isEvilStation", true, true)
+		end
 		object:setData("FuelTypes", self.m_FuelTypes, true, true)
+		object:setData("FuelTypePrices", self.m_FuelTypePrices, true)
 	end
 	if blipPosition then
 		self.m_Blip = Blip:new("Fuelstation.png", blipPosition.x, blipPosition.y, root, 300):setDisplayText("Tankstelle", BLIP_CATEGORY.VehicleMaintenance):setOptionalColor({0, 150, 136})
@@ -87,9 +103,13 @@ function GasStation:isServiceStation()
 	return self.m_ServiceStation
 end
 
+function GasStation:isEvilStation()
+	return self.m_EvilStation
+end
+
 function GasStation:takeFuelNozzle(player, element, fuelType)
 	if not self:hasPlayerAccess(player) then
-		player:sendError("Du bist nicht berechtigt diese Tankstelle zu nutzen!")
+		player:sendError(_("Du bist nicht berechtigt diese Tankstelle zu nutzen!", player))
 		return
 	end
 
@@ -102,7 +122,7 @@ function GasStation:takeFuelNozzle(player, element, fuelType)
 		end
 	end
 	if playersInUse >= self.m_Stations[element].maxHoses then
-		player:sendError("Diese Zapfsäule ist bereits belegt!")
+		player:sendError(_("Diese Zapfsäule ist bereits belegt!", player))
 		return
 	end
 

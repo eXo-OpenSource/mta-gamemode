@@ -29,13 +29,13 @@ function WareCode:onChat(player, text)
 		if not self.m_WrongPlayers[player] then
 			self.m_Super:addPlayerToWinners(player)
 			self.m_Winners[player] = true
-			outputChatBox("Richtig!", player, 0, 255, 0)
+			outputChatBox(_("Richtig", player), player, 0, 255, 0)
 		end
 	else
 		if not self.m_Winners[player] then
 			self.m_WrongPlayers[player] = true
 			player:triggerEvent("onClientWareFail")
-			outputChatBox("Falsch! (Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0)
+			outputChatBox(_("Falsch! (Richtig wäre: %s)", player, self.m_RightAnswer), player, 255, 0, 0)
 		end
 	end
 	return true

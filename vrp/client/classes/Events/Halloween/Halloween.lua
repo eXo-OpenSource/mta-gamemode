@@ -264,7 +264,7 @@ function Halloween:abortQuest()
 	if self.m_Quest then
 		delete(self.m_Quest)
 		self.m_Quest = nil
-		ErrorBox:new("Quest fehlgeschlagen!")
+		ErrorBox:new(_"Quest fehlgeschlagen!")
 		removeEventHandler("onClientPlayerWasted", localPlayer, self.m_WastedBind)
 	end
 end

@@ -11,9 +11,12 @@ local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, skyscraperId, buyPrice, bIsRob)
 	if owner == 0 then
 		owner = false
+	end
+	if skyscraperId == 0 then
+		skyscraperId = false
 	end
 
 	self.hasRobbedHouse = {}
@@ -21,6 +24,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
 	self.m_Price = price
+	self.m_BuyPrice = buyPrice
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position
@@ -28,9 +32,11 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner
 	self.m_Id = id
+	self.m_SkyscraperId = skyscraperId
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Money = money or 0
 	self.m_IsRob = bIsRob
+	self.m_IsInSkyscraper = skyscraperId
 	self.m_BankAccountServer = BankServer.get("action.house_rob")
 	self.m_BankAccountServer2 = BankServer.get("server.house")
 
@@ -61,13 +67,21 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 end
 
 function House:updatePickup()
-	if self.m_Pickup then
-		setPickupType(self.m_Pickup, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD))
-	else
-		self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD), 10, math.huge)
-		self.m_Pickup.m_PickupType = "House" --only used for fire message creation
-		addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
+	if not self.m_IsInSkyscraper then
+		if self.m_Pickup then
+			setPickupType(self.m_Pickup, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD))
+		else
+			self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and PICKUP_FOR_SALE or PICKUP_SOLD), 10, math.huge)
+			self.m_Pickup.m_PickupType = "House" --only used for fire message creation
+			addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
+		end
 	end
+end
+
+function House:createGarage(garageId, posX, posY, posZ, rotX, rotY, rotZ)
+	self.m_GarageId = garageId
+	self.m_Garage = HouseGarage:new(self.m_Id, self.m_GarageId, posX, posY, posZ, rotX, rotY, rotZ)
+	HouseGarage.Map[self.m_Id] = self.m_Garage
 end
 
 function House:getOwner()
@@ -103,13 +117,17 @@ end
 
 function House:showGUI(player)
 	local tenants = {}
+	local pickup = self.m_Pickup
 	for playerId, timestamp in pairs(self.m_Keys) do
 		tenants[playerId] = Account.getNameFromId(playerId)
 	end
+	if self.m_IsInSkyscraper then
+		pickup = SkyscraperManager.Map[self.m_SkyscraperId].m_Pickup
+	end
 	if player:getId() == self.m_Owner then
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_BankAccount:getMoney(), true, self.m_Id, self.m_Pickup)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_BankAccount:getMoney(), true, self.m_Id, pickup, self.m_Garage and "Ja" or "Nein")
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, false, self:isValidToEnter(player) and true or false, self.m_Id, self.m_Pickup)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, false, self:isValidToEnter(player) and true or false, self.m_Id, pickup, self.m_Garage and "Ja" or "Nein")
 	end
 end
 
@@ -176,6 +194,19 @@ function House:isPlayerNearby(player)
 	end
 end
 
+function House:isCopNearby(player)
+	for i, pplayer in pairs(getElementsByType("player")) do
+		if pplayer ~= player then
+			if pplayer:isFactionDuty() and pplayer:getFaction() and pplayer:getFaction():isStateFaction() == true then
+				if getDistanceBetweenPoints3D(player.position, pplayer.position) < 5 then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
 function House:isValidToEnter(player)
 	return self.m_Keys[player:getId()] or player:getId() == self.m_Owner
 end
@@ -195,6 +226,10 @@ function House:rentHouse(player)
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
 			player:sendSuccess(_("Du wurdest erfolgreich eingemietet", player))
+			if self.m_Garage then
+				local garage = self.m_Garage
+				player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+			end
 			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 			self:showGUI(player)
 		else
@@ -212,6 +247,7 @@ function House:unrentHouse(player, noDistanceCheck)
 		if player and isElement(player) then
 			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player))
 			player:triggerEvent("removeHouseBlip", self.m_Id)
+			player:triggerEvent("removeGarageBlip", self.m_Id)
 			if not noDistanceCheck then
 				self:showGUI(player)
 			end
@@ -285,6 +321,7 @@ function House:removeTenant(player, id)
 				local target = getPlayerFromName(name)
 				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()))
 				target:triggerEvent("removeHouseBlip", self.m_Id)
+				player:triggerEvent("removeGarageBlip", self.m_Id)
 			end
 			self:showGUI(player)
 		end
@@ -321,10 +358,11 @@ end
 function House:save()
 	self.m_BankAccount:save()
 	local houseID = self.m_Owner or 0
+	local pos = self.m_Pos
 	if not self.m_Keys then self.m_Keys = {} end
 	if not self.m_Elements then self.m_Elements = {} end
-	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ? WHERE id = ?;", sql:getPrefix(),
-		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, self.m_Id)
+	return sql:queryExec("UPDATE ??_houses SET x = ?, y = ?, z = ?, interiorID = ?, `keys` = ?, owner = ?, price = ?, buyPrice = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ?, skyscraperID = ? WHERE id = ?;", sql:getPrefix(),
+		pos.x, pos.y, pos.z, self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_BuyPrice, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, not self.m_SkyscraperId and 0 or self.m_SkyscraperId, self.m_Id)
 end
 
 function House:sellHouse(player)
@@ -332,8 +370,9 @@ function House:sellHouse(player)
 	if player:getId() == self.m_Owner then
 		-- destroy blip
 		player:triggerEvent("removeHouseBlip", self.m_Id)
+		player:triggerEvent("removeGarageBlip", self.m_Id)
 
-		local price = math.floor(self.m_Price*0.75)
+		local price = math.floor(self.m_BuyPrice*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		self.m_BankAccountServer2:transferMoney({player, true}, price, "Haus-Verkauf", "House", "Sell")
 		self.m_BankAccount:transferMoney(player, self.m_BankAccount:getMoney(), "Hauskasse", "House", "Sell")
@@ -349,10 +388,14 @@ function House:clearHouse()
 	self.m_Owner = false
 	self.m_Keys = {}
 	self.m_Money = 0
+	self.m_BuyPrice = 0
 	if self.m_BankAccount:getMoney() > 0 then
 		self.m_BankAccount:transferMoney(self.m_BankAccountServer2, self.m_BankAccount:getMoney(), "Hausräumung", "House", "Cleared")
 	end
 	self:updatePickup()
+	if self.m_IsInSkyscraper then
+		SkyscraperManager.Map[self.m_SkyscraperId]:updatePickup()
+	end
 	self:save()
 end
 
@@ -547,6 +590,17 @@ function House:tryToCatchRobbers( player )
 	end
 end
 
+function House:breakDoor(player)
+	if not self:isCopNearby(player) then return player:sendError(_("Du brauchst einen Partner um die Tür aufzubrechen!", player)) end
+	
+	if self.m_LockStatus then
+		self.m_LockStatus = false
+		player:meChat(true, _("bricht die Tür auf!", player))
+	else
+		player:sendError(_("Die Tür ist bereits auf.", player))
+	end
+end
+
 function House:onPlayerFade()
 	self:removePlayerFromList(source)
 end
@@ -571,11 +625,19 @@ function House:buyHouse(player)
 		player:giveAchievement(34)
 
 		player:transferBankMoney(self.m_BankAccountServer2, self.m_Price, "Haus-Kauf", "House", "Buy")
+		self.m_BuyPrice = self.m_Price
 		self.m_Owner = player:getId()
 		self:updatePickup()
+		if self.m_IsInSkyscraper then
+			SkyscraperManager.Map[self.m_SkyscraperId]:updatePickup()
+		end
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
 		self:save()
 		-- create blip
+		if self.m_Garage then
+			local garage = self.m_Garage
+			player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+		end
 		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 		self:showGUI(player)
 	else

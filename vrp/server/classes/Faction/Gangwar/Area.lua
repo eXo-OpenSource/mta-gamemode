@@ -128,6 +128,7 @@ function Area:attack( faction1, faction2, attackingPlayer)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
 		self.m_GangwarManager:addAreaToAttacks( self )
 		self:createSurroundingCol()
+		faction1:addLog(attackingPlayer, "Gangwar", ("hat das Gebiet %s attackiert!"):format(self.m_Name))
 	end
 end
 

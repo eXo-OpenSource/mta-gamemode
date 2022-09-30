@@ -25,8 +25,15 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return hitElement:sendError(_("Du kannst dieses Fahrzeug nicht reparieren!", hitElement))
 				end
 				local costs = (100 - vehicle:getHealthInPercent()) * 5 -- max. 500$, maybe improve this later to get higher costs based on maxHealth (armor)
-				if hitElement:getBankMoney() < costs then
+				if not hitElement:isFactionDuty() and not hitElement:isCompanyDuty() and hitElement:getBankMoney() < costs then
 					hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
+					return
+				end
+				if hitElement:getFaction() and hitElement:isFactionDuty() and hitElement:getFaction():getMoney() < costs then
+					hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
+					return
+				elseif hitElement:getCompany() and hitElement:isCompanyDuty() and hitElement:getCompany():getMoney() < costs then
+						hitElement:sendError(_("Dein Unternehmen benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
 
@@ -49,18 +56,38 @@ function PayNSpray:constructor(x, y, z, garageId)
 						elseif isElement(self.m_CustomDoor) then
 							self:setCustomGarageOpen(true)
 						end
-						if not isElement(hitElement) then return end
-						if hitElement:getBankMoney() >= costs then
-							vehicle:fix()
-							vehicle:setWheelStates(0, 0, 0, 0)
-							if costs > 0 then
-								hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
-							end
-						else
-							hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
-						end
+
 						setElementFrozen(vehicle, false)
 						vehicle.m_DisableToggleHandbrake = nil
+
+						if not isElement(hitElement) then return end
+						if hitElement:getFaction() and hitElement:isFactionDuty() then
+							if hitElement:getFaction():getMoney() >= costs then
+								if costs > 0 then
+									hitElement:getFaction():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								return hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
+						elseif hitElement:getCompany() and hitElement:isCompanyDuty() then
+							if hitElement:getCompany():getMoney() >= costs then
+								if costs > 0 then
+									hitElement:getCompany():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								return hitElement:sendError(_("Dein Unternehmen benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
+						else
+							if hitElement:getBankMoney() >= costs then
+								if costs > 0 then
+									hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
+								end
+							else
+								return hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
+							end
+						end
+						vehicle:fix()
+						vehicle:setWheelStates(0, 0, 0, 0)
 					end,
 					3000, 1
 				)
@@ -117,7 +144,7 @@ function PayNSpray.initializeAll()
 	PayNSpray:new(-1904.47, 289.47, 40, 19) -- SF Wang Cars{ x = -1904.900, y = 286.494, z = 40.456 }
 	PayNSpray:new(-2425.84, 1020.08, 50.4, 27) -- SF Juniper Hill
 	PayNSpray:new(-1420.49, 2582.37, 55.41, 40) -- El Quebrados
-	--PayNSpray:new(720.26, -455.14, 16.34, 47) -- Dillimore
+	PayNSpray:new(720.26, -455.14, 16.34, 47) -- Dillimore
 
 	--local noobSpawn = PayNSpray:new(1444.860, -1790.127, 13.250)
 	--noobSpawn:createCustomDoor(13028, Vector3(1445.6, -1781.39, 16.1), Vector3(180, -90, 90))

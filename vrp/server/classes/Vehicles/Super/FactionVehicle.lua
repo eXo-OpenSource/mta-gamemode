@@ -41,6 +41,20 @@ function FactionVehicle:constructor(data)
 				if not player:getFaction() or player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
 					cancelEvent()
 				end
+				if source:getModel() == 432 then
+					if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useRhino") then
+						return
+					end
+				elseif source:getModel() == 520 then
+					if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useHydra") then
+						return
+					end
+				elseif source:getModel() == 425 then
+					if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "faction", "useHunter") then
+						return
+					end
+				end
+				cancelEvent()
 			end
 		end)
 	end
@@ -262,7 +276,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 			player:sendError(_("In dieses Fahrzeug passen maximal %d Stk. dieses Items! (%s)", player, FACTION_TRUNK_MAX_ITEMS[itemName], itemName))
 		end
 	else
-		player:sendError("Ungültiges Element!")
+		player:sendError(_("Ungültiges Element!", player))
 	end
 end
 
@@ -278,7 +292,7 @@ function FactionVehicle:takeFactionItem(player, itemName)
 			player:sendError(_("Dieses Item ist nicht mehr im Fahrzeug! (%s)", player, itemName))
 		end
 	else
-		player:sendError("Ungültiges Element!")
+		player:sendError(_("Ungültiges Element!", player))
 	end
 end
 
@@ -317,6 +331,16 @@ function FactionVehicle:respawn(force, ignoreCooldown)
 		end
 	end
 
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
+
+	if self.m_RcVehicleUser then
+		for i, player in pairs(self.m_RcVehicleUser) do
+			self:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
+		end
+	end
 
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)

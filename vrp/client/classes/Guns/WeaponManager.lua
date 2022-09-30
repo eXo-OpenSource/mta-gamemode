@@ -52,6 +52,10 @@ function WeaponManager:update()
 		if self:isFiringAllowed() then
 			toggleControl("fire", true)
 			toggleControl("action", true)
+		else
+			toggleControl("fire", false)
+			toggleControl("action", false)
+			return
 		end
 	end
 
@@ -92,7 +96,10 @@ function WeaponManager:isAimingRocketLauncher()
 end
 
 function WeaponManager:isFiringAllowed()
-	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or VehicleFuel:isInstantiated() or FishingRod:isInstantiated() or getElementData(localPlayer, "inJail") or getElementData(localPlayer, "inAdminPrison") then
+	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or 
+		VehicleFuel:isInstantiated() or FishingRod:isInstantiated() or getElementData(localPlayer, "inJail") or 
+		getElementData(localPlayer, "inAdminPrison") or localPlayer.m_IsPickingLock or Damage:getSingleton().m_InTreatment or
+		localPlayer:getData("Admin:IsFrozen") then
 		return false
 	end
 	return true

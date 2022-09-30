@@ -23,6 +23,7 @@ function AppAmmunation:onOpen(form)
 	GUILabel:new(10, 65, form.m_Width-20, 22, _[[
 		Hier kannst du den Lieferservice von Ammunation nutzen.
 		Wähle einfach die gewünschten Produkte aus und klicke auf bestellen.
+		Für die Lieferung wird ein Aufschlag von 50% berechnet.
 
 		Das Geld wird bequem vom Konto abgebucht!
 	]], self.m_Tabs["Info"]):setMultiline(true)
@@ -139,9 +140,9 @@ function AppAmmunation:updateCart()
 			end
 		end
 	end
-	self.m_TotalCosts = totalCosts
-	self.m_SumLabel:setText(_("Gesamtsumme: %d$", totalCosts))
-	self.m_SumLabelCart:setText(_("Gesamtsumme: %d$", totalCosts))
+	self.m_TotalCosts = totalCosts * AMMUNATION_APP_MULTIPLICATOR
+	self.m_SumLabel:setText(_("Gesamtsumme: %d$", self.m_TotalCosts))
+	self.m_SumLabelCart:setText(_("Gesamtsumme: %d$", self.m_TotalCosts))
 	self:updateButtons()
 
 end
@@ -182,7 +183,7 @@ function AppAmmunation:onWeaponChange(name)
 			self.m_SelectedWeaponId = 0
 			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(-1)) 
 			self.m_WeaponName:setText(name)
-			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon))
+			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon * AMMUNATION_APP_MULTIPLICATOR))
 			self.m_MagazineBuyBtn:setVisible(false)
 			self:updateButtons()
 		else
@@ -191,9 +192,9 @@ function AppAmmunation:onWeaponChange(name)
 
 			self.m_WeaponImage:setImage(FileModdingHelper:getSingleton():getWeaponImage(weaponID))
 			self.m_WeaponName:setText(_("Waffe: %s (Level: %i)", name, MIN_WEAPON_LEVELS[weaponID]))
-			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
+			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon * AMMUNATION_APP_MULTIPLICATOR))
 			if AmmuNationInfo[weaponID].Magazine then
-				self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
+				self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price * AMMUNATION_APP_MULTIPLICATOR))
 				self.m_MagazineBuyBtn:setVisible(true)
 			else
 				self.m_MagazineBuyBtn:setVisible(false)

@@ -26,12 +26,17 @@ end
 function WearableShirt:use(player, itemId, bag, place, itemName)
 	local inventory = player:getInventory()
 	local value = inventory:getItemValueByBag( bag, place)
-	if player.m_PrisonTime > 0 then player:sendError("Im Prison nicht erlaubt!") return end
-	if player.m_JailTime > 0 then player:sendError("Im Gefängnis nicht erlaubt!") return end
+	if player.m_PrisonTime > 0 then player:sendError(_("Im Prison nicht erlaubt!", player)) return end
+	if player.m_JailTime > 0 then player:sendError(_("Im Gefängnis nicht erlaubt!", player)) return end
 	if value then --// for texture usage later
 
 	end
 	if not player.m_IsWearingShirt and not player.m_Shirt then --// if the player clicks onto the Shirt without currently wearing one
+		if itemName == "Kevlar" and not (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
+			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
+			player:getInventory():removeAllItem(self:getName())
+			return
+		end
 		if isElement(player.m_Shirt) then
 			destroyElement(player.m_Shirt)
 		end
@@ -67,6 +72,12 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		if bIsConceal then
 			triggerEvent("WeaponAttach:concealWeapons", player)
 		end
+		if itemName == "Kevlar" then
+			obj:setData("isProtectingChest", true)
+			if not player.m_KevlarShotsCount then
+				player.m_KevlarShotsCount = 0
+			end
+		end
 	elseif player.m_IsWearingShirt == itemName and player.m_Shirt then --// if the player clicks onto the same Shirt once more remove it
 		destroyElement(player.m_Shirt)
 		self.m_Shirts[player] = nil
@@ -76,6 +87,11 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		setElementData(player,"CanWeaponBeConcealed",false)
 		triggerEvent("WeaponAttach:unconcealWeapons", player)
 	else --// else the player must have clicked on another Shirt otherwise this instance of the class would have not been called
+		if itemName == "Kevlar" and not (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
+			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
+			player:getInventory():removeAllItem(self:getName())
+			return
+		end
 		if isElement(player.m_Shirt) then
 			destroyElement(player.m_Shirt)
 		end
@@ -107,9 +123,22 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		setObjectScale(obj, scale)
 		setElementDoubleSided(obj,true)
 		setElementData(player,"CanWeaponBeConcealed",bIsConceal)
+		if itemName == "Kevlar" then
+			obj:setData("isProtectingChest", true)
+		end
 		exports.bone_attach:attachElementToBone(obj, player, 3, 0, yOffset, zOffset, rotX, rotY, rotZ)
 		player.m_Shirt = obj
 		player.m_IsWearingShirt = itemName
 		player:meChat(true, "zieht "..objName.." an!")
 	end
+end
+
+function WearableShirt:destroyShirt(player)
+	destroyElement(player.m_Shirt)
+	self.m_Shirts[player] = nil
+	player.m_IsWearingShirt = false
+	player.m_Shirt = false
+	player:meChat(true, "setzt "..WearableShirt.objectTable[itemName][8].." ab!")
+	setElementData(player,"CanWeaponBeConcealed",false)
+	triggerEvent("WeaponAttach:unconcealWeapons", player)
 end

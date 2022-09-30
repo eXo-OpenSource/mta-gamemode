@@ -11,7 +11,7 @@ GroupVehicle = inherit(PermanentVehicle)
 function GroupVehicle.convertVehicle(vehicle, group)
 
 	-- don't convert them if they have occupants or are currently towed
-	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") then
+	if (vehicle:getOccupants() and table.size(vehicle:getOccupants()) > 0) or vehicle.towingVehicle or vehicle:getData("towedByVehicle") or (vehicle.m_SeatExtensionPassengers and #vehicle.m_SeatExtensionPassengers ~= 0) then
 		return false
 	end
 
@@ -20,7 +20,7 @@ function GroupVehicle.convertVehicle(vehicle, group)
 			local id = vehicle:getId()
 			local premium = vehicle.m_Premium and vehicle.m_Owner or 0
 
-			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
+			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, RentPrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
 
 			VehicleManager:getSingleton():removeRef(vehicle)
 			vehicle.m_Owner = group:getId()
@@ -69,12 +69,17 @@ function GroupVehicle:constructor(data)
 	end
 
 	self.m_IsRented = false
-	self:setForRent(false)
 
 	if data.SalePrice > 0 then
 		self:setForSale(true, data.SalePrice)
 	else
 		self:setForSale(false, 0)
+	end
+
+	if data.RentPrice > 0 then
+		self:setForRent(true, data.RentPrice)
+	else
+		self:setForRent(false)
 	end
 
 	addEventHandler("onVehicleExplode",self, function()
@@ -184,6 +189,16 @@ function GroupVehicle:respawn(force, suppressMessage)
 		end
 	end
 
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
+
+	if self.m_RcVehicleUser then
+		for i, player in pairs(self.m_RcVehicleUser) do
+			self:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
+		end
+	end
 
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
@@ -226,6 +241,8 @@ function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
 		self.m_SalePrice = tonumber(price)
+		self.m_HandBrake = true
+		self:setData("Handbrake", true, true)
 		self.m_DisableToggleEngine = true
 		self.m_DisableToggleHandbrake = true
 		self:setFrozen(true)
@@ -243,6 +260,8 @@ function GroupVehicle:setForRent(state, rate)
 	if state then
 		self.m_ForRent = true
 		self.m_RentRate = tonumber(rate)
+		self.m_HandBrake = true
+		self:setData("Handbrake", true, true)
 		self.m_DisableToggleEngine = true
 		self.m_DisableToggleHandbrake = true
 		self:setFrozen(true)
@@ -381,7 +400,7 @@ function GroupVehicle:rentEnd()
 			local currentFuel = self:getFuel()
 			if currentFuel < self.m_RentedFuel then
 				local needFuel = self.m_RentedFuel - currentFuel
-				local price = (FUEL_PRICE[self:getFuelType()] or 1)
+				local price = (GasStationManager.Shops["Idlewood"].m_FuelTypePrices[self:getFuelType()] or 1)
 				local tankSize = self:getFuelTankSize()
 				local opticalFuelRequired = tankSize * needFuel
 				local maxFuelWithMoney = deposit / price
@@ -424,10 +443,6 @@ function GroupVehicle:rentEnd()
 			VehicleManager:getSingleton():destroyGroupVehicles(self:getGroup())
 		end
 	end
-end
-
-function GroupVehicle:onEnter()
-	return true -- otherwise last driver will not added
 end
 
 function GroupVehicle:sendOwnerMessage(msg)

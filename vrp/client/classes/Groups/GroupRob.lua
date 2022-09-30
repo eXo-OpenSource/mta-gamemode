@@ -48,7 +48,7 @@ function GroupRob:onRobFind( )
 end
 
 function GroupRob:onRobDone() 
-	outputChatBox("Du suchst alle Ecken ab und findest nichts mehr. Verlasse nun das Haus!", 200,200,0)
+	outputChatBox(_"Du suchst alle Ecken ab und findest nichts mehr. Verlasse nun das Haus!", 200,200,0)
 	if self.m_CountDown then 
 		delete(self.m_CountDown)
 	end

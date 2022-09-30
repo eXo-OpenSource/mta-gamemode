@@ -24,7 +24,7 @@ function GasStationMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Fire)
 	else
 		for fuelType in pairs(element:getData("FuelTypes")) do
-			self:addItem(_("Zapfpistole nehmen (%s)", FUEL_NAME[fuelType]),
+			self:addItem(_("Zapfpistole nehmen (%s) (%s$ pro Liter)", FUEL_NAME[fuelType], math.round(element:getData("FuelTypePrices")[fuelType],1)),
 				function()
 					if localPlayer.vehicle then return end
 					triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element, fuelType)

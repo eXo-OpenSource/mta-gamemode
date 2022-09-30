@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 Fonts = {
-	FontAwesome = "files/fonts/FontAwesome5.ttf",					-- Icons
+	FontAwesome = "files/fonts/FontAwesome6.1.0.otf",				-- Icons
 	EkMukta = "files/fonts/EkMukta.ttf",							-- Main font
 	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",					-- Toast messages
 	Digital = "files/fonts/digital-7.ttf",							-- Speedo
@@ -93,7 +93,7 @@ FontAwesomeSymbols = {
 	Dollar = "",
 	Money = "",
 	Info = "",
-	Question = "",
+	Question = "?",
 	CheckSquare = "",
 	Check = "",
 	Square = "",
@@ -109,7 +109,7 @@ FontAwesomeSymbols = {
 	Gamepad = "",
 	Suitcase = "",
 	Minus = "",
-	Plus = "",
+	Plus = "+",
 	Lock = "",
 	Unlock = "",
 	Key = "",
@@ -176,6 +176,15 @@ FontAwesomeSymbols = {
 	Crosshair = "",
 	Egg = "",
 	HandHoldingUSD = "",
+	Gun = "",
+	Ticket = "",
+	Fire_Extinguisher = "",
+	Ship = "",
+	Plane = "",
+	Lock_Open = "",
+	People_Robbery = "",
+	Plane_Slash = "",
+
 }
 
 -- uncomment this to render a list of all loaded fonts

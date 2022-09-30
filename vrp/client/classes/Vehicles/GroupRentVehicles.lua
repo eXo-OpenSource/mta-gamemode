@@ -47,6 +47,8 @@ function GroupRentVehicles.loadSpeekBubble(veh)
 	end
 
 	SpeakBubble3D.Map[veh] = SpeakBubble3D:new(veh, _"Zu vermieten!", _("Preis: %d$ pro Stunde", getElementData(veh, "forRentRate")))
+	SpeakBubble3D.Map[veh]:setBorderColor(Color.Orange)
+	SpeakBubble3D.Map[veh]:setTextColor(Color.Orange)
 end
 
 

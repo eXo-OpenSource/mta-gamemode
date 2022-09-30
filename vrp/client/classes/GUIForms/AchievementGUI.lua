@@ -13,6 +13,7 @@ function AchievementGUI:constructor(money)
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Achievements", true, true, self)
+	self.m_Window:addHelpButton(LexiconPages.Achievement)
 	self.m_Window:addBackButton(function () delete(self) SelfGUI:getSingleton():show() end)
 	
 	self.m_GridList = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.07, self.m_Width*0.39, self.m_Height*0.8, self)

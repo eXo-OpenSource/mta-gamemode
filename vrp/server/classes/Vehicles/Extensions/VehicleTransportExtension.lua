@@ -224,11 +224,11 @@ function VehicleTransportExtension:internalCheckVehicleLoading(vehicleToLoad)
 
         local function onSlope(rot) return math.abs(math.abs(math.abs(rot)-180)-180) > 2 end
         if onSlope(rx) or onSlope(ry) then
-            driver:sendWarning("Stelle dein Fahrzeug gerade auf die Ladefläche.")
+            driver:sendWarning(_("Stelle dein Fahrzeug gerade auf die Ladefläche.", driver))
             return false 
         end
         if vehicleToLoad:getVelocity().length > 0.001 then 
-            driver:sendWarning("Fahre langsamer um das Fahrzeug auf den Transporter zu laden.")
+            driver:sendWarning(_("Fahre langsamer um das Fahrzeug auf den Transporter zu laden.", driver))
             return false 
         end
         -- prevent loading a vehicle directly after unloading if there is another dft nearby

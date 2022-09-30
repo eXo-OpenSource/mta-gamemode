@@ -7,13 +7,14 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, type, money, playTime, lastNameChange, rankNames, rankLoans)
+function Group:constructor(Id, name, type, money, playTime, lastNameChange, rankNames, rankLoans, rankPermissions)
 	if not players then players = {} end -- can happen due to Group.create using different constructor
 
 	self.m_Id = Id
 	self.m_Players = {}
 	self.m_PlayerLoans = {}
 	self.m_PlayerActivity = {}
+	self.m_PlayerPermissions = {}
 	self.m_LastActivityUpdate = 0
 	self.m_Name = name
 	self.m_Money = money or 0
@@ -44,10 +45,13 @@ function Group:constructor(Id, name, type, money, playTime, lastNameChange, rank
 	local saveRanks = false
 	if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
 	if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
+	if not rankPermissions or rankPermissions == "" then rankPermissions = {} for i=0,6 do rankPermissions[i] = PermissionsManager:getSingleton():createRankPermissions("group", self.m_Id, i) end rankPermissions = toJSON(rankPermissions) outputDebug("Created RankPermissions for group "..Id) saveRanks = true end
 
 
 	self.m_RankNames = fromJSON(rankNames)
 	self.m_RankLoans = fromJSON(rankLoans)
+	self.m_RankPermissions = fromJSON(rankPermissions)
+	
 	if saveRanks == true then
 		self:saveRankSettings()
 	end
@@ -130,8 +134,10 @@ function Group:onPlayerJoin(player)
 		self.m_Markers[player]:setInterior(player:getInterior())
 		self.m_Markers[player]:attach(player,0,0,1.5)
 		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 
 	GroupManager:getSingleton():addActiveGroup(self)
@@ -176,7 +182,7 @@ function Group:setName(name)
 end
 
 function Group:saveRankSettings()
-	if not sql:queryExec("UPDATE ??_groups SET RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
+	if not sql:queryExec("UPDATE ??_groups SET RankNames = ?, RankLoans = ?, RankPermissions = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankNames), toJSON(self.m_RankLoans), toJSON(self.m_RankPermissions), self.m_Id) then
 		return false
 	end
 	return true
@@ -233,6 +239,7 @@ function Group:addPlayer(playerId, rank)
 	rank = rank or GroupRank.Normal
 	self.m_Players[playerId] = rank
 	self.m_PlayerLoans[playerId] = 1
+	self.m_PlayerPermissions[playerId] = {}
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setGroup(self)
@@ -242,6 +249,7 @@ function Group:addPlayer(playerId, rank)
 		elseif self.m_Type == "Firma" then
 			player:giveAchievement(28)
 		end
+		PermissionsManager:getSingleton():syncPermissions(player, "group")
 	end
 
 	sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ?, GroupLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
@@ -267,6 +275,7 @@ function Group:removePlayer(playerId)
 
 	self.m_Players[playerId] = nil
 	self.m_PlayerLoans[playerId] = nil
+	self.m_PlayerPermissions[playerId] = nil
 	local player = Player.getFromId(playerId)
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
 	for k,v in ipairs( props ) do
@@ -282,9 +291,11 @@ function Group:removePlayer(playerId)
 			player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
 			self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
 		end
+		PermissionsManager:getSingleton():syncPermissions(player, "group", true)
 	end
 	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0, GroupLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 	self:removePlayerMarker(player)
+	self:checkDespawnVehicle()
 end
 
 function Group:invitePlayer(player)
@@ -352,6 +363,14 @@ function Group:setPlayerLoanEnabled(playerId, state)
 	sql:queryExec("UPDATE ??_character SET GroupLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
 end
 
+function Group:savePlayerPermissions(playerId)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	sql:queryExec("UPDATE ??_character SET GroupPermissions = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_PlayerPermissions[tonumber(playerId)]) or toJSON({}), playerId)
+end
+
 function Group:getMoney()
 	return self.m_BankAccount:getMoney()
 end
@@ -375,12 +394,16 @@ function Group:setSetting(category, key, value, responsiblePlayer)
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
 		if not responsiblePlayer:getGroup() then allowed = false end
 		if responsiblePlayer:getGroup() ~= self then allowed = false end
-		if self:getPlayerRank(responsiblePlayer) ~= GroupRank.Leader then allowed = false end
+		if category == "Equipment" then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "editEquipment") then allowed = false end
+		elseif category == "Skin" then
+			if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "editRankSkins") then allowed = false end
+		end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
 	else
-		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Gruppe %s können deren Einstellungen ändern!", responsiblePlayer, GroupRank.Leader, self:getName()))
+		responsiblePlayer:sendError(_("Du bist nicht berechtigt die %s Einstellungen zu ändern!", responsiblePlayer, category))
 	end
 end
 
@@ -554,8 +577,10 @@ function Group:attachPlayerMarkers()
 		self.m_Markers[player]:setInterior(player:getInterior())
 		self.m_Markers[player]:attach(player,0,0,1.5)
 		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 end
 
@@ -566,8 +591,10 @@ function Group:attachPlayerMarker(player)
 	self.m_Markers[player]:setInterior(player:getInterior())
 	self.m_Markers[player]:attach(player,0,0,1.5)
 	self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+	self.m_RemovePlayerMarkerOnQuit = bind(self.Event_RemovePlayerMarkerOnQuit, self)
 	addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 	addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	addEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 end
 
 function Group:removePlayerMarkers()
@@ -576,6 +603,7 @@ function Group:removePlayerMarkers()
 		if self.m_Markers[player] then self.m_Markers[player]:destroy() end
 		removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 		removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+		removeEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	end
 	self.m_Markers = {}
 end
@@ -586,12 +614,23 @@ function Group:removePlayerMarker(player)
 	self.m_Markers[player]:destroy()
 	removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
 	removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	removeEventHandler("onPlayerQuit", player, self.m_RemovePlayerMarkerOnQuit)
 	self.m_Markers[player] = nil
+end
+
+function Group:Event_RemovePlayerMarkerOnQuit()
+	if not self.m_Markers then return end
+	if not self.m_Markers[source] then return end
+	self.m_Markers[source]:destroy()
+	removeEventHandler("onElementDimensionChange", source, self.m_RefreshAttachedMarker)
+	removeEventHandler("onElementInteriorChange", source, self.m_RefreshAttachedMarker)
+	removeEventHandler("onPlayerQuit", source, self.m_RemovePlayerMarkerOnQuit)
+	self.m_Markers[source] = nil
 end
 
 function Group:refreshAttachedMarker(dimInt)
 	if not self.m_Markers then return end
-	if not self.m_Markers[player] then return end
+	if not self.m_Markers[source] then return end
 	if eventName == "onElementDimensionChange" then
 		self.m_Markers[source]:setDimension(dimInt)
 	elseif eventName == "onElementInteriorChange" then
@@ -605,7 +644,7 @@ function Group:phoneCall(caller)
 			if not player:getPhonePartner() then
 				if player ~= caller then
 					local color = self:getColor()
-					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color)
+					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color, "group")
 				end
 			end
 		end
@@ -645,9 +684,10 @@ function Group:phoneTakeOff(player, caller, voiceCall)
 	end
 end
 
-function Group:insertPlayer(id, rank, loan)
+function Group:insertPlayer(id, rank, loan, permissions)
 	self.m_Players[id] = rank
 	self.m_PlayerLoans[id] = loan
+	self.m_PlayerPermissions[id] = fromJSON(permissions)
 end
 
 function Group:initalizePlayers()
@@ -720,6 +760,7 @@ function Group:respawnVehicles(player)
 			self:sendShortMessage(("Ihr habt nicht genügend Geld um alle Fahrzeuge zu respawnen"):format(vehicles-fails, vehicles))
 			break;
 		end
+		vehicle:removeAttachedPlayers()
 		if not vehicle:respawn(false, true) then
 			fails = fails + 1
 		end

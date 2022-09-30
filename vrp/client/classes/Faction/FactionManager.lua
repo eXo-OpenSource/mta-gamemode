@@ -73,7 +73,7 @@ function FactionManager:factionEvilStartRaid(target)
 			end
 		end
 		localPlayer.m_evilRaidTarget = target
-		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 15000, 1)
+		localPlayer.evilRaidTimer = setTimer(bind(self.endEvilFactionRaid, self), 15000, 1)
 
 		addEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 	end
@@ -87,8 +87,8 @@ function FactionManager:endEvilFactionRaid()
 		else
 			triggerServerEvent("factionEvilFailedRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		end
-		removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 	end
+	removeEventHandler("onClientPlayerWasted", localPlayer, self.m_RaidBind)
 end
 
 function FactionManager:endEvilFactionRaidOnDeath()

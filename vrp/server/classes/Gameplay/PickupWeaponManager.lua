@@ -2,8 +2,9 @@ PickupWeaponManager = inherit(Singleton)
 PickupWeaponManager.Map = { }
 
 function PickupWeaponManager:constructor()
-	addRemoteEvents{"onPlayerHitPickupWeapon"}
+	addRemoteEvents{"onPlayerHitPickupWeapon", "onPlayerDropWeapon", }
 	addEventHandler("onPlayerHitPickupWeapon", root, bind(self.Event_onPlayerPickupWeaponUse, self))
+	addEventHandler("onPlayerDropWeapon", root, bind(self.Event_onPlayerDropWeapon, self))
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.Event_Quit, self))
 end
 
@@ -15,6 +16,11 @@ function PickupWeaponManager:Event_onPlayerPickupWeaponUse( pickup )
 			end
 		end
 	end
+end
+
+function PickupWeaponManager:Event_onPlayerDropWeapon(data)
+	takeWeapon(client, data[6])
+	PickupWeapon:new(data[1], data[2], data[3], data[4], data[5], data[6], data[7], client, false)
 end
 
 function PickupWeaponManager:destructor()

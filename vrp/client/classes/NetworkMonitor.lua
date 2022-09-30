@@ -45,14 +45,14 @@ function NetworkMonitor:monitor()
     if loss then
         if getTickCount() >= self.m_LastOutput + 15000 then
             self.m_LastOutput = getTickCount()
-            outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund eines sehr hohen Paketverlustes: #ff0000%s%%"):format(math.ceil(loss, 2)), 255, 0, 0, true)
+            outputChatBox(_("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund eines sehr hohen Paketverlustes: #ff0000%s%%", math.ceil(loss, 2)), 255, 0, 0, true)
         end
     end
     local ping = self:ping()
     if ping then
         if getTickCount() >= self.m_LastPingOutput + 15000 then
             self.m_LastPingOutput = getTickCount()
-            outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms"):format(MIN_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
+            outputChatBox(_("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms", MIN_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
         end
     end
     if self.m_LastAct and (getTickCount() - self.m_LastAct) > 2000 and (not ping and not loss) then

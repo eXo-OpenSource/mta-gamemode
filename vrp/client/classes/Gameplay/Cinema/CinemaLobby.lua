@@ -41,7 +41,7 @@ function CinemaLobby:constructor(lobbyHost, settingVideoAddHostOnly, settingMana
     self.m_SyncRemoveVideo = bind(self.defaultScreen, self)
     addEventHandler("Cinema_syncRemoveVideo", getRootElement(), self.m_SyncRemoveVideo)
 
-    local key = core:get("KeyBindings", "KeyCinemaVideoGUI", KeyBinds:getSingleton().m_Keys["KeyCinemaVideoGUI"]["defaultKey"])
+    local key = core:get("KeyBindings", "KeyCinemaVideoGUI", KeyBinds:getSingleton().m_Keys["general"]["KeyCinemaVideoGUI"]["defaultKey"])
     InfoBox:new(("Drücke '%s' für die Videoverwaltung!"):format(key:upper()))
 end
 

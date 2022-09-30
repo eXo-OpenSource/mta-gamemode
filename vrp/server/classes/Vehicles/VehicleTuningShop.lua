@@ -155,7 +155,7 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
 
         if instanceof(vehicle, CompanyVehicle) then
           if not vehicle:canBeModified() then
-              hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
+              hitElement:sendError(_("Dieser Unternehmens-Wagen darf nicht getunt werden!", hitElement))
               return
           end
 		elseif instanceof(vehicle, FactionVehicle) then
@@ -170,6 +170,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
             end
             if not vehicle:canBeModified()  then
                 hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
+                return
+            end
+            if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(hitElement, "group", "editVehicleTuning") then
+                hitElement:sendError(_("Du bist nicht berechtigt Gruppen-Fahrzeuge zu tunen!", hitElement))
                 return
             end
         elseif vehicle:isPermanent() then
@@ -266,6 +270,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
     end
 	vehicle.m_Tunings:saveGTATuning()
 	vehicle.m_Tunings:applyTuning()
+    client:triggerEvent("syncVehicleTunings", vehicle, vehicle.m_Tunings:getTunings())
 
     client:sendSuccess(_("Upgrades gekauft!", client))
 

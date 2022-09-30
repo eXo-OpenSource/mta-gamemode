@@ -138,8 +138,8 @@ function RobableShop:startRob(shop, attacker, ped)
 	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
 	self.m_onCrash = bind(self.onCrash, self)
 	addEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
-	self.m_characterInitializedFunc = bind(self.characterInitialized, self)
-	addEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
+	--self.m_characterInitializedFunc = bind(self.characterInitialized, self)
+	--addEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
 
@@ -200,7 +200,7 @@ function RobableShop:m_onExpire()
 		removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
 		removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
 		removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-		removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+		--removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
 	end
 
 	local money = self.m_Bag.Money or 0
@@ -209,7 +209,7 @@ function RobableShop:m_onExpire()
 	self.m_BankAccountServer:transferMoney(self.m_Shop.m_BankAccount, stateMoney*2, "Shop Raub Sicherstellung 2/3", "Gameplay", "ShopRob")
 	self.m_Bag:destroy()
 
-	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
+	--removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
@@ -258,8 +258,8 @@ function RobableShop:stopRob(player)
 	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
 	removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
 	removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-	removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
-	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
+	--removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+	--removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
@@ -291,13 +291,13 @@ function RobableShop:giveBag(player)
 	self.m_onWastedFunc = bind(self.onWasted, self)
 	self.m_onVehicleEnterFunc = bind(self.onVehicleEnter, self)
 	self.m_onVehicleExitFunc = bind(self.onVehicleExit, self)
-	self.m_onPlayerQuitFunc = bind(self.onPlayerQuit, self)
+	--self.m_onPlayerQuitFunc = bind(self.onPlayerQuit, self)
 
 	addEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
 	addEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
 	addEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
 	addEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-	addEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+	--addEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
 
 	player:sendShortMessage(_("Du hast die Beute erhalten!", player))
 
@@ -329,7 +329,7 @@ function RobableShop:removeBag(player, logout)
 	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
 	removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
 	removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-	removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+	--removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
 
 	player:sendShortMessage(_("Du hast die Beute verloren!", player))
 end

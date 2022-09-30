@@ -41,7 +41,7 @@ function PickupWeapon:pickup(player)
 			setTimer(setPedAnimation, 1200, 1, player, false)
 			delete(self)
 		else
-			player:sendError("Du hast zu wenig Spielstunden!")
+			player:sendError(_("Du hast zu wenig Spielstunden!", player))
 		end
 	end
 end

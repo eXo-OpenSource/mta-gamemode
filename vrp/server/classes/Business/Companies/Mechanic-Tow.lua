@@ -10,7 +10,7 @@ function MechanicTow:constructor()
 
 	self.m_TowColShape = createColRectangle(2649.02, -2122.29, 18.5, 10.5)
 
-	local blip = Blip:new("CarLot.png", 2661.91, -2104.90, root, 400)
+	local blip = Blip:new("CarLot.png", 2465.677, -2093.584, root, 400)
 	blip:setOptionalColor({150, 150, 150})
 	blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
 
@@ -56,6 +56,12 @@ function MechanicTow:respawnVehicle(vehicle)
 	if occs then
 		for i, occ in pairs(occs) do
 			occ:removeFromVehicle()
+		end
+	end
+	if vehicle.m_RcVehicleUser then
+		for i, player in pairs(vehicle.m_RcVehicleUser) do
+			vehicle:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
 		end
 	end
 	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
@@ -161,20 +167,20 @@ end
 
 function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
-	if source:getMoney() >= price then
+	if source:getBankMoney() >= price then
 		vehicle:fix()
-		source:transferMoney(self.m_BankAccountServer, price, "Mech&Tow Reperatur", "Company", "Repair")
+		source:transferBankMoney(self.m_BankAccountServer, price, "Mech&Tow Reparatur", "Company", "Repair")
 
 		if vehicle.PendingMechanic then
 			if source ~= vehicle.PendingMechanic then
 				self.m_PendingQuestions[vehicle.PendingMechanic] = getRealTime().timestamp
 
-				self.m_BankAccountServer:transferMoney(vehicle.PendingMechanic, price*0.3, "Reperatur", "Company", "Repair")
+				self.m_BankAccountServer:transferMoney({vehicle.PendingMechanic, true}, price*0.3, "Reparatur", "Company", "Repair")
 				vehicle.PendingMechanic:givePoints(2)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(source), price*0.3))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
-				self.m_BankAccountServer:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, price*0.6, "Reperatur", "Company", "Repair")
+				self.m_BankAccountServer:transferMoney({"company", CompanyStaticId.MECHANIC, true, true}, price*0.6, "Reparatur", "Company", "Repair")
 			else
 				source:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", source))
 			end
@@ -187,7 +193,7 @@ end
 
 function MechanicTow:Event_mechanicRepairCancel(vehicle)
 	if vehicle.PendingMechanic then
-		vehicle.PendingMechanic:sendWarning(_("Der Reperaturvorgang wurde von der Gegenseite abgebrochen!", vehicle.PendingMechanic))
+		vehicle.PendingMechanic:sendWarning(_("Der Reparaturvorgang wurde von der Gegenseite abgebrochen!", vehicle.PendingMechanic))
 		vehicle.PendingMechanic = nil
 	end
 end
@@ -209,6 +215,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	-- Spawn vehicle in non-collision zone
 	source:setPositionType(VehiclePositionType.World)
 	source:setDimension(0)
+	source:setInterior(0)
 	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(MechanicTow.SpawnPositions))
 	if source:isAirVehicle() then
 		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
@@ -241,6 +248,7 @@ function MechanicTow:onEnterTowLot(hitElement)
 			end
 			self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s)  abgeschleppt!"):format(towingBike:getName()))
 			towingBike:destroy()
+			hitElement.vehicle:setData("towingBike", nil, true)
 			hitElement:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", hitElement))
 			self.m_BankAccountServer:transferMoney(hitElement, 200, "Fahrzeug-Wrack", "Company", "Towed")
 		else

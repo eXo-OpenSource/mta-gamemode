@@ -251,14 +251,16 @@ SkinShops = {
 		MarkerInt = 15;
 		PlayerPos = Vector3(217.922, -98.563, 1005.258);
 		PlayerRot = Vector3(0.000, 0.000, 299);
-		CameraMatrix = {216.056396484375, -99.181800842285156, 1006.8388061523437, 216.90571594238281, -98.900047302246094, 1006.3923950195312, 0, 70}
+		CameraMatrix = {216.056396484375, -99.181800842285156, 1006.8388061523437, 216.90571594238281, -98.900047302246094, 1006.3923950195312, 0, 70};
+		Levels = {1, 5};
 	};
 	{
 		Marker = Vector3(177.179, -86.714, 1000.805);
 		MarkerInt = 18;
 		PlayerPos = Vector3(181.724, -88.541, 1002.023);
 		PlayerRot = Vector3(0.000, 0.000, 90);
-		CameraMatrix = {177.40980529785, -87.031700134277, 1003.7614746094, 178.3257598877, -87.35213470459, 1003.5198974609, 0, 70}
+		CameraMatrix = {177.40980529785, -87.031700134277, 1003.7614746094, 178.3257598877, -87.35213470459, 1003.5198974609, 0, 70};
+		Levels = {6, 10};
 	};
 }
 
@@ -314,6 +316,10 @@ FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256
 HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512
 
 CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
+CUSTOM_FACTION_RINGSOUND_PATH = "files/audio/Ringtones/customFaction.mp3"
+CUSTOM_COMPANY_RINGSOUND_PATH = "files/audio/Ringtones/customCompany.mp3"
+CUSTOM_GROUP_RINGSOUND_PATH = "files/audio/Ringtones/customGroup.mp3"
+CUSTOM_TUNINGSOUND_PATH = "files/audio/vehicles/VehicleTuning.mp3"
 
 PHONE_MODELS = {
 	{Name = "Nexus 5", Image = "Nexus_5.png", IconPreset = "Android"},

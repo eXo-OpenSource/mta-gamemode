@@ -8,10 +8,11 @@
 HouseGUI = inherit(GUIForm)
 inherit(Singleton, HouseGUI)
 
-addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
+addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip", "addGarageBlip", "removeGarageBlip"}
 
 HouseGUI.Blips = {}
-function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId, pickup)
+HouseGUI.GarageBlips = {}
+function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId, pickup, garage)
 	self.m_isOwner = ownerName == localPlayer:getName()
 	self.m_isTenant = tenants and tenants[localPlayer:getPrivateSync("Id")]
 	self.m_isRentEnabled = rentprice > 0
@@ -27,14 +28,15 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true, false, pickup)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Hausmenü (Hausnr. %d)", houseId), true, true, self)
 
-	self.m_OwnerLbl = GUIGridLabel:new(1, 1, 6, 1, _("Besitzer: %s", ownerName or "Niemand"), self.m_Window)
-	self.m_PriceLbl = GUIGridLabel:new(1, 2, 5, 1, _("Preis: %s", toMoneyString(price)), self.m_Window)
+	self.m_OwnerLbl = GUIGridLabel:new(1, 0.8, 6, 1, _("Besitzer: %s", ownerName or "Niemand"), self.m_Window)
+	self.m_PriceLbl = GUIGridLabel:new(1, 1.5, 5, 1, _("Preis: %s", toMoneyString(price)), self.m_Window)
+	self.m_GarageLbl = GUIGridLabel:new(1, 2.2, 4, 1, _("Garage: %s", garage), self.m_Window)
 
 	if not ownerName then
 		self.m_BuyBtn = GUIGridButton:new(1, 3, 6, 1, _"Haus kaufen", self.m_Window):setBackgroundColor(Color.Green)
 		self.m_BuyBtn.onLeftClick = bind(HouseGUI.buyHouse, self)
 	elseif self.m_isRentEnabled or self.m_isTenant then
-		self.m_RentPriceLbl = GUIGridLabel:new(1, 3, 4, 1, _("Mietpreis: %s", toMoneyString(rentprice)), self.m_Window)
+		self.m_RentPriceLbl = GUIGridLabel:new(1, 2.9, 4, 1, _("Mietpreis: %s", toMoneyString(rentprice)), self.m_Window)
 		self.m_RentBtn = GUIGridButton:new(4, 3, 3, 1, self.m_isTenant and _"Ausmieten" or _"Einmieten", self.m_Window):setEnabled(not self.m_isOwner)
 
 		self.m_RentBtn.onLeftClick = function()
@@ -50,7 +52,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 
 	self.m_LockBtn = GUIGridButton:new(1, 4, 6, 1, isClosed and _"Aufschließen" or _"Abschließen", self.m_Window):setEnabled(hasKey)
 	self.m_SpawnBtn = GUIGridButton:new(1, 5, 6, 1, _"als Spawnpunkt festlegen", self.m_Window):setEnabled(hasKey)
-	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)
+	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, (localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true) and _"Tür aufbrechen" or _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)
 	self.m_EnterLeaveBtn = GUIGridButton:new(1, 7, self.m_isInside and 6 or 5, 1, self.m_isInside and _"Verlassen" or (ownerName and _"Betreten" or _"Besichtigen"), self.m_Window):setBarEnabled(false)
 	if not self.m_isInside then
 		self.m_DoorBellBtn = GUIGridIconButton:new(6, 7, FontAwesomeSymbols.Bell, self.m_Window):setTooltip(_"an der Tür klingeln", "bottom")
@@ -68,7 +70,11 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	end
 
 	self.m_RobBtn.onLeftClick = function()
-		triggerServerEvent("tryRobHouse", localPlayer)
+		if (localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true) then
+			triggerServerEvent("breakHouseDoor", localPlayer)
+		else
+			triggerServerEvent("tryRobHouse", localPlayer)
+		end
 	end
 
 	self.m_EnterLeaveBtn.onLeftClick = function()
@@ -204,6 +210,18 @@ addEventHandler("addHouseBlip", root,
 			HouseGUI.Blips[id] = Blip:new("House.png", x, y, 2000)
 			HouseGUI.Blips[id]:setDisplayText("Haus")
 			HouseGUI.Blips[id]:setOptionalColor({122, 163, 57})
+			--HouseGUI.Blips[id]:setZ(1)
+		end
+	end
+)
+
+addEventHandler("addGarageBlip", root,
+	function(id, x, y)
+		if not HouseGUI.GarageBlips[id] then
+			HouseGUI.GarageBlips[id] = Blip:new("Garage.png", x, y, 2000)
+			HouseGUI.GarageBlips[id]:setDisplayText("Privater Stellplatz")
+			HouseGUI.GarageBlips[id]:setOptionalColor({122, 163, 57})
+			--HouseGUI.GarageBlips[id]:setZ(-100)
 		end
 	end
 )
@@ -213,6 +231,15 @@ addEventHandler("removeHouseBlip", root,
 		 if HouseGUI.Blips[id] then
 		 	delete(HouseGUI.Blips[id])
 			HouseGUI.Blips[id] = nil
+		end
+	end
+)
+
+addEventHandler("removeGarageBlip", root,
+	function(id)
+		 if HouseGUI.GarageBlips[id] then
+		 	delete(HouseGUI.GarageBlips[id])
+			HouseGUI.GarageBlips[id] = nil
 		end
 	end
 )

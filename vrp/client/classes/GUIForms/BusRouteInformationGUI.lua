@@ -11,7 +11,7 @@ BusRouteInformationGUI = inherit(GUIForm)
 
 function BusRouteInformationGUI:constructor(element)
 	--main
-    if not element:getData("EPT_bus_station") or not element then -- close if element has no route
+    if not element:getData("EPT_bus_duty") and not element:getData("EPT_bus_station") and not element then -- close if element has no route
         ErrorBox:new(_"An dieser Bushaltestelle halten leider keine Busse")
         return
     end

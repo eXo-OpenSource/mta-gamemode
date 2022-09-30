@@ -56,10 +56,10 @@ addEventHandler("trunkAddItem", root, function(trunkId, item, amount, value)
 end)
 
 addEventHandler("trunkAddWeapon", root, function(trunkId, weaponId, muni)
-	if weaponId == 27 then 
+	--[[if weaponId == 27 then 
 		client:sendError("Diese Waffe kannst Du nicht einlagern!")
 		return 
-	end
+	end]]
 	if Trunk.getFromId(trunkId) then
 		Trunk.getFromId(trunkId):addWeapon(client, weaponId, muni)
 	else
@@ -122,8 +122,9 @@ function Trunk:addItem(player, item, amount, value)
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
 			if item == "Kleidung" then
-				player:sendError(_("Du kannst dieses Item nicht in den Kofferraum legen!", player))
-				return false
+				if player:getModel() == tonumber(value) then
+					WearableManager:getSingleton():removeWearable(player, item, value)
+				end
 			end
 
 			if player:getInventory():removeItem(item, amount, value) then
@@ -149,16 +150,6 @@ function Trunk:takeItem(player, slot)
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
 			local item = self.m_ItemSlot[slot]["Item"]
 			local amount = self.m_ItemSlot[slot]["Amount"]
-
-			if item == "Kleidung" then
-				local value = self.m_ItemSlot[slot]["Value"]
-
-				if not SkinInfo[tonumber(value)] then
-					player:sendError(_("Du kannst dieses Item aus dem Kofferraum entfernen!", player))
-					return false
-				end
-			end
-
 			local success = false
 			if isCopSeizing then
 				if FactionState:getSingleton():isItemIllegal(item) then

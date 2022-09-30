@@ -30,9 +30,9 @@ end
 
 function AntiClickSpam:checkSpam()
 	if self.m_Counter >= self.m_Warn and self.m_Counter < self.m_Block then
-		WarningBox:new("Achtung: Clickspam!")
+		WarningBox:new(_"Achtung: Clickspam!")
 	elseif self.m_Counter >= self.m_Block then
-		ErrorBox:new("Achtung: Clickspam - Klicken wurde gesperrt!")
+		ErrorBox:new(_"Achtung: Clickspam - Klicken wurde gesperrt!")
 		self:block()
 	end
 end

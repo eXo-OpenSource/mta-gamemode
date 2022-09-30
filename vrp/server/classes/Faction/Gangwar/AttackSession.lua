@@ -396,16 +396,16 @@ function AttackSession:notifyFactions()
 			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
+			v:sendInfo(_("Alle Gegner sind eliminiert!",v))
 		end
 	elseif self.endReason == 2 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
+			v:sendInfo(_("Alle Gegner sind eliminiert!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
-		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFAlle Gegner wurden eleminiert!",200,0,0,true)
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFAlle Gegner wurden eliminiert!",200,0,0,true)
 	elseif self.endReason == 3 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			v:sendInfo(_("Die Flagge wurde nicht gehalten!",v))

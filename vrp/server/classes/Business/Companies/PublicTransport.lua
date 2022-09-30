@@ -10,8 +10,8 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 	},
 }
 
-local TAXI_PRICE_PER_KM_CAR = 50
-local TAXI_PRICE_PER_KM_PLANE = 75
+local TAXI_PRICE_PER_KM_CAR = 100
+local TAXI_PRICE_PER_KM_PLANE = 150
 PublicTransport.m_TaxiSigns = {}
 
 function PublicTransport:constructor()
@@ -47,7 +47,10 @@ function PublicTransport:constructor()
 	setElementData(importBlackBoard, "clickable", true)
 	setElementData(importBlackBoard, "importListObject", true) -- gets managed by click handler
 
-	self.m_VehicleImportBlip = Blip:new(_"CarShop.png", -1687.93, 14.47, {company = self.m_Id, duty = true}, nil, {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b})
+	local blip = Blip:new("House.png", 1752, -1875.72, {company = self.m_Id}, nil, {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b})
+	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
+
+	self.m_VehicleImportBlip = Blip:new("CarShop.png", -1687.93, 14.47, {company = self.m_Id, duty = true}, nil, {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b})
 	self.m_VehicleImportBlip:setDisplayText("Fahrzeug-Import")
 end
 
@@ -346,6 +349,10 @@ end
 
 function PublicTransport:Event_changeBusDutyState(state, arg, arg2) -- from clientside mouse menu
 	if not client.vehicle then return end
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "startBusTour") then 
+		client:sendError(_("Du bist nicht berechtigt eine Buslinie zu bedienen!", client)) 
+		return 
+	end
 	if state == "dutyLine" then
 		self:startBusTour(client.vehicle, client, arg, arg2)
 	elseif state == "dutySpecial" then

@@ -32,6 +32,7 @@ function Gate:triggerMovement(hitEle, force)
         return diff
     end
     if (not hitEle or not isElement(hitEle)) and not force then return false end
+    if hitEle and hitEle:isDead() then return end
     if force or hitEle:getType() == "player" then
         local player = hitEle
         if self.m_Timer and isTimer(self.m_Timer) then

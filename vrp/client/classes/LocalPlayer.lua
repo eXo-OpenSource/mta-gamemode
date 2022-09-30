@@ -30,7 +30,10 @@ function LocalPlayer:constructor()
 	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
 	self.m_CameraOnTop = bind(self.setCameraOnTop, self)
 	self.m_BikeBug = setTimer(bind(self.checkBikeBug, self), 250, 0)
-
+	self.m_RankPermissions = {}
+	self.m_PlayerPermissions = {}
+	self.m_PlayerActionPermissions = {}
+	self.m_PlayerWeaponPermissions = {}
 
 
 	-- Since the local player exist only once, we can add the events here
@@ -395,11 +398,12 @@ function LocalPlayer:onDeathTimerUp()
 			-- now death gui
 			DeathGUI:new(self:getPublicSync("DeathTime"),
 				function()
+					local spawnAtHospial = core:get("Other", "RescueSpawnAfterDeath", "")
 					HUDRadar:getSingleton():show()
 					HUDUI:getSingleton():show()
 					showChat(true)
 					-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
-					triggerServerEvent("factionRescueWastedFinished", localPlayer)
+					triggerServerEvent("factionRescueWastedFinished", localPlayer, spawnAtHospial)
 				end
 			)
 		end, soundLength*1000, 1
@@ -459,15 +463,16 @@ function LocalPlayer:Event_playerWasted(arrestedOnWaste)
 	setSoundVolume(self.m_DeathAudio,1)
 	setSkyGradient(10,10,10,30,30,30)
 	setTimer(setGameSpeed, 5000, 1, 1)
+	local wasGangWar = localPlayer:getPublicSync("gangwarParticipant")
 	self.m_CameraTimer = setTimer(
 		function()
-			if localPlayer:getInterior() == 0 and not arrestedOnWaste then
+			if localPlayer:getInterior() == 0 and not arrestedOnWaste and not wasGangWar then
 				addEventHandler("onClientPreRender", root, self.m_CameraOnTop)
 			end
 		end
 	, 4500, 1)
 	setTimer(resetSkyGradient,30000,1)
-	if localPlayer:getInterior() > 0 or arrestedOnWaste then
+	if localPlayer:getInterior() > 0 or arrestedOnWaste or localPlayer:getPublicSync("gangwarParticipant") then
 		self.m_OnDeathTimerUp()
 		return
 	end
@@ -562,15 +567,15 @@ function LocalPlayer:checkAFK()
 		local afkMinutes = self.m_AFKCheckCount*5/60
 		if afkMinutes == 12 then
 			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
-				outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
-				self:sendTrayNotification("WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", "warning", true)
+				outputChatBox ( _"WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
+				self:sendTrayNotification(_"WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", "warning", true)
 				self:generateAFKCode()
 				return
 			end
 		elseif afkMinutes == 14 then
 			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
-				outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
-				self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
+				outputChatBox ( _"WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+				self:sendTrayNotification(_"WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
 				return
 			end
 		elseif afkMinutes >= 15 then
@@ -599,7 +604,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, true)
 			end
 		end
 
@@ -694,13 +699,13 @@ function LocalPlayer:generateAFKCode()
 	end
 	local fcode = table.concat(code)
 	self.m_AFKCode = fcode
-	outputChatBox("Um nicht ins AFK-Cafe zu kommen, gib folgenden Befehl ein: /noafk "..fcode,255,0,0)
+	outputChatBox(_("Um nicht ins AFK-Cafe zu kommen, gib folgenden Befehl ein: /noafk %s", fcode),255,0,0)
 end
 
 function LocalPlayer:onAFKCodeInput(cmd, code)
 	if self.m_AFKCode then
 		if self.m_AFKCode == code then
-			outputChatBox("Vorgang abgebrochen.", 255, 0, 0)
+			outputChatBox(_"Vorgang abgebrochen.", 255, 0, 0)
 			self.m_AFKCheckCount = 0
 			self.m_AFKCode = false
 		else
@@ -906,8 +911,12 @@ end
 
 function LocalPlayer:startAnimation(_, ...)
 	if localPlayer:getData("isTasered") then return end
+	if localPlayer:getData("isInDeathMatch") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
+	if localPlayer:isInWater() then return end
+	if localPlayer:getData("isEating") then return end
+    if localPlayer:isReloadingWeapon() then return end
 	if isPedAiming(localPlayer) then return end
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end

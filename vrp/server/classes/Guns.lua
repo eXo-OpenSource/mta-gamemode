@@ -108,6 +108,14 @@ function Guns:Event_onTaser(target)
 			target:setFrozen(false)
 			toggleAllControls(target,true, true, false)
 			target.isTasered = false
+
+			if target:getPublicSync("cuffed") then
+				toggleControl(target, "sprint", false)
+				toggleControl(target, "jump", false)
+				toggleControl(target, "fire", false)
+				toggleControl(target, "aim_weapon", false)
+				toggleControl(target, "action", false)
+			end
 		end
 	end, 15000, 1, target )
 end
@@ -133,7 +141,17 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 		self:killPed(target, attacker, weapon, bodypart)
 		return
 	end
-	
+	if target.m_Shirt then
+		if bodypart == 3 and WEAPONS_KEVLAR_REPELS[weapon] and target.m_Shirt:getData("isProtectingChest") then
+			if target.m_KevlarShotsCount >= math.random(3, 4) then
+				self:destroyKevlar(attacker, target)
+				return
+			else
+				target.m_KevlarShotsCount = target.m_KevlarShotsCount + SHOT_STRENGTH_AGAINST_KEVLAR[weapon]
+				return
+			end
+		end
+	end
 	local realLoss = 0
 	if EXPLOSIVE_DAMAGE_MULTIPLIER[weapon] then
 		realLoss = loss * EXPLOSIVE_DAMAGE_MULTIPLIER[weapon]
@@ -161,7 +179,6 @@ end
 function Guns:killPed(target, attacker, weapon, bodypart)
 	target:kill(attacker, weapon, bodypart)
 end
-
 
 function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 	local killer = killer
@@ -197,7 +214,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 		if inv then
 			if inv:getItemAmount("Diebesgut") > 0 then
 				inv:removeAllItem("Diebesgut")
-				outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+				outputChatBox(_("Dein Diebesgut ging verloren...", source), source, 200,0,0)
 			end
 		end
 
@@ -217,10 +234,12 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon, bodypart)
 			end
 
 			if sourceFaction:isEvilFaction() and killerFaction:isEvilFaction() then
-				if not killer:isInGangwar() then
-					if killerFaction:getDiplomacy(sourceFaction) == FACTION_DIPLOMACY["im Krieg"] then
-						local bonus = sourceFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or sourceFaction:getMoney()
-						sourceFaction:transferMoney(killerFaction, bonus, ("Mord von %s an %s"):format(killer:getName(), source:getName()), "Faction", "Kill")
+				if killer:isFactionDuty() and source:isFactionDuty() then
+					if not killer:isInGangwar() then
+						if killerFaction:getDiplomacy(sourceFaction) == FACTION_DIPLOMACY["im Krieg"] then
+							local bonus = sourceFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or sourceFaction:getMoney()
+							sourceFaction:transferMoney(killerFaction, bonus, ("Mord von %s an %s"):format(killer:getName(), source:getName()), "Faction", "Kill")
+						end
 					end
 				end
 			end
@@ -555,11 +574,26 @@ function Guns:destroyProtectionHelmet(attacker, target)
 				target.m_IsWearingHelmet = false
 				target.m_Helmet = false
 				target:setData("isFaceConcealed", false)
-				outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", attacker, 200,200,0)
+				outputChatBox(_("Dein Schuss zerstörte den Helm von %s!", attacker, getPlayerName(target)), attacker, 200,200,0)
 				target:triggerEvent("clientBloodScreen")
 				
 				return true
 			end
+		end
+	end
+end
+
+function Guns:destroyKevlar(attacker, target)
+	if target.m_Shirt then
+		if target.m_Shirt:getData("isProtectingChest") then
+			target:getInventory():removeItem("Kevlar", 1)
+			destroyElement(target.m_Shirt)
+			target:meChat(true, "Kevlarweste wurde aufgrund der zu hohen Belastung unbrauchbar!")
+			target.m_IsWearingShirt = false
+			target.m_Shirt = false
+			target.m_KevlarShotsCount = nil
+			outputChatBox(_("Dein Schuss zerstörte die Kevlarweste von %s!", attacker, getPlayerName(target)), attacker, 200,200,0)
+			target:triggerEvent("clientBloodScreen")
 		end
 	end
 end

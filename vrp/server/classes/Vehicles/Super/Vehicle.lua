@@ -10,6 +10,9 @@ inherit(VehicleDataExtension, Vehicle)
 inherit(VehicleObjectLoadExtension, Vehicle)
 inherit(VehicleELS, Vehicle)
 inherit(VehicleTransportExtension, Vehicle)
+inherit(VehicleSeatExtension, Vehicle)
+inherit(ShamalExtension, Vehicle)
+inherit(RcVanExtension, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -188,6 +191,14 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
+
+		if self:hasKey(player) and getVehicleTowedByVehicle(self) and getVehicleType(getVehicleTowedByVehicle(self)) == VehicleType.Trailer then
+			local towedVeh = getVehicleTowedByVehicle(self)
+			if towedVeh:getOwner() == self:getOwner() then
+				towedVeh:setFrozen(false)
+			end
+		end
+
 		self:allowControl(player, getVehicleEngineState(self))
 	end
 
@@ -200,8 +211,8 @@ end
 
 function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
-	local hbState = getControlState( player, "handbrake")
 	if player:getType() ~= "player" then return end
+	local hbState = getControlState( player, "handbrake")
 
 	if seat == 0 then
 		if hbState then
@@ -500,7 +511,7 @@ function Vehicle:setEngineState(state)
 		self.controller:triggerEvent("vehicleEngineStateChange", self, state)
 	end
 
-	if instanceof(self, PermanentVehicle, true) then return end
+	--if instanceof(self, PermanentVehicle, true) then return end
 	if self.controller and self.controller:getType() == "player" then
 		self:setDriver(self.controller)
 	end
@@ -603,7 +614,7 @@ function Vehicle:countdownDestroyStart(player)
 	end
 	self.m_CountdownDestroyPlayer = player
 	player:sendWarning(_("Vorsicht: Steig innerhalb von %d Sekunden wieder ein, oder das Fahrzeug wird gelöscht!", player, self.m_CountdownDestroy))
-	player:triggerEvent("Countdown", self.m_CountdownDestroy, "Fahrzeug")
+	player:triggerEvent("Countdown", self.m_CountdownDestroy, _("Fahrzeug", player))
 	self.m_CountdownDestroyTimer = setTimer(function()
 		player:sendInfo(_("Zeit abgelaufen! Das Fahrzeug wurde gelöscht!", player))
 		if self and isElement(self) then
@@ -743,6 +754,18 @@ function Vehicle:respawnOnSpawnPosition()
 	if self.m_RespawnHook:call(self) then
 		return
 	end
+
+	if self:hasSeatExtension() then
+		self:vseRemoveAttachedPlayers()
+	end
+
+	if self.m_RcVehicleUser then
+		for i, player in pairs(self.m_RcVehicleUser) do
+			self:toggleRC(player, player:getData("RcVehicle"), false, true)
+			player:removeFromVehicle()
+		end
+	end
+
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
@@ -831,7 +854,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 				client:getCompany():checkLeviathanTowing(client, self.m_GrabbedVehicle)
 			end
 		else
-			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
+			client:sendError(_("Das Fahrzeug kann nur auf dem Boden abgestellt werden!", client))
 		end
 	else
 		if not self.m_Magnet and not isElement(self.m_Magnet) then
@@ -846,7 +869,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 			if vehicle ~= self then
 				if vehicle:isRespawnAllowed() and (vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike or vehicle:getVehicleType() == VehicleType.Helicopter or magnetPlanes[vehicle:getModel()]) then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
-						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
+						client:sendWarning(_("Bitte löse erst die Handbremse von diesem Fahrzeug!", client))
 					else
 						if table.size(getVehicleOccupants(vehicle)) == 0 then
 							self.m_MagnetActivated = true
@@ -855,7 +878,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 							setElementData(self, "MagnetGrabbedVehicle", vehicle)
 							break
 						else
-							client:sendWarning("Das Fahrzeug ist nicht leer!")
+							client:sendWarning(_("Das Fahrzeug ist nicht leer!", client))
 						end
 					end
 				end
@@ -908,7 +931,7 @@ function Vehicle:getTuningList(player)
 	if self.m_Tunings and self.m_Tunings.getList then
 		player:triggerEvent("vehicleReceiveTuningList", self, self.m_Tunings:getList())
 	else
-		player:triggerEvent("vehicleReceiveTuningList", self, {"(keine)"}, {"(keine)"})
+		player:triggerEvent("vehicleReceiveTuningList", self, {"(keine)"}, {"(keine)"}, {"(keine)"})
 	end
 end
 
@@ -935,7 +958,8 @@ end
 
 function Vehicle:setDriver(player)
 	if not self:getEngineState() then return end
-
+	if not self:isPermanent() then return end
+	
 	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
 		return
 	end

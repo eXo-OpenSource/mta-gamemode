@@ -15,6 +15,7 @@ function IDCardGUI:constructor(player)
 
 	GUIForm.constructor(self, screenWidth/2-400/2, screenHeight/2-320/2, 400, 320)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Ausweis", true, true, self)
+	self.m_Window:addHelpButton(LexiconPages.IDCard)
 
 	GUILabel:new(10, 40, 140, 30, player:getName(), self)
 	GUIImage:new(10, 70, 140, 130, string.format("files/images/Skins/head/%s.png", player:getModel()), self)

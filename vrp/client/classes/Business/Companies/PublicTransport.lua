@@ -31,6 +31,10 @@ function PublicTransport:onImportListRequest()
 		ErrorBox:new(_"Du bist nicht im Unternehmensdienst.")
 		return
 	end
+	if not PermissionsManager:getSingleton():hasPlayerPermissionsTo("company", "startVehicleImport") then
+		ErrorBox:new(_"Du bist nicht berechtigt einen Fahrzeugimport zu starten!")
+		return
+	end
 	triggerServerEvent("requestVehicleImportList", localPlayer) 
 end
 

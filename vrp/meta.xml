@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.4-9.11413" client="1.5.4-9.11413"/>
+	<min_mta_version server="1.5.8-9.20979" client="1.5.8-9.20979"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -23,6 +23,8 @@
 	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 	<script src="shared/constants/injury.lua" type="shared"/>
+	<script src="shared/constants/company.lua" type="shared"/>
+	<script src="shared/constants/permissions.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -113,6 +115,11 @@
 	<script src="server/classes/Time.lua" type="server"/>
 	<script src="server/classes/PedScale.lua" type="server"/>
 	<script src="server/classes/CustomAnimationManager.lua" type="server"/>
+	<script src="server/classes/HouseGarage.lua" type="server"/>
+	<script src="server/classes/Skyscraper.lua" type="server"/>
+	<script src="server/classes/SkyscraperManager.lua" type="server"/>
+	<script src="server/classes/PermissionsManager.lua" type="server"/>
+	<script src="server/classes/LeaderCheck.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -301,6 +308,9 @@
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchDefault.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchHalloween.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/ColorCars/ColorCarsManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/ColorCars/ColorCars.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
@@ -370,6 +380,8 @@
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Ammunation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/AmmunationEvaluation.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRobManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopVehicleRob.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
@@ -453,7 +465,9 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTransportExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
-
+	<script src="server/classes/Vehicles/Extensions/ShamalExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleSeatExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/RcVanExtension.lua" type="server"/>
 
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>
@@ -478,6 +492,7 @@
 	<script src="server/classes/Vehicles/VehicleTuningShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleCustomTextureShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleRcUpgradeShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/TollStation.lua" type="server"/>
@@ -605,7 +620,8 @@
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
 	<script src="client/classes/CustomAnimationManager.lua" type="client"/>
-
+	<script src="client/classes/PermissionsManager.lua" type="client"/>
+	
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
@@ -815,6 +831,7 @@
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleKeyListGUI.lua" type="client"/>
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
@@ -826,6 +843,7 @@
 	<script src="client/classes/GUIForms/Admin/AdminTransactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminLeaderBanGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/Company/VehicleImportListGUI.lua" type="client"/>
 
@@ -842,6 +860,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuLastDriver.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRcVehicle.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
@@ -860,6 +879,8 @@
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/SkyscraperGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
@@ -943,6 +964,10 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/FactionWeaponStoreGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleRcUpgradeGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
@@ -971,6 +996,8 @@
 	<script src="client/classes/GUIForms/InjuryTreatmentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/PlayerPermissionsGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/RankPermissionsGUI.lua" type="client" />
 	<script src="client/classes/Faction/Gangwar/GangwarPickGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>
@@ -1011,6 +1038,11 @@
 	<script src="client/classes/GUIForms/PricePoolRaffleGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PricePoolEntryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PricePoolPriceGUI.lua" type="client"/>
+
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsCreateLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsMatchGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ColorCars/ColorCarsPasswordGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1106,6 +1138,7 @@
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/HelicopterDrivebyManager.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/RcVanExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>
@@ -1234,6 +1267,8 @@
 
 	<script src="client/classes/Gameplay/Cinema/CinemaLobby.lua" type="client"/>
 	<script src="client/classes/Gameplay/Cinema/CinemaManager.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/ColorCars/ColorCarsManager.lua" type="client"/>
 
 	<!-- Fishing -->
 	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
@@ -1685,6 +1720,7 @@
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
 	<vrpfile src="files/images/Other/Bullet.png"/>
+	<vrpfile src="files/images/Other/LockPick.png"/>
 
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
@@ -1865,6 +1901,8 @@
 	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
 	<vrpfile src="files/images/Radar/Blips/BunnyHead.png"/>
 	<vrpfile src="files/images/Radar/Blips/Cinema.png"/>
+	<vrpfile src="files/images/Radar/Blips/ColorCars.png"/>
+	<vrpfile src="files/images/Radar/Blips/RcShop.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -2012,6 +2050,7 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_FT_Ladder.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Leviathan.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Huntley.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
 
@@ -3457,6 +3496,8 @@
 	<file src="files/fonts/EkMukta-Bold.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome5.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome6.otf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome6.1.0.otf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Chapaza.ttf" /><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
@@ -3480,6 +3521,7 @@
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
 	<map src="files/maps/Blueberry-Telegraphpole.map"/>
+	<map src="files/maps/ColorCars.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
