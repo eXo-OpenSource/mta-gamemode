@@ -125,6 +125,7 @@ function VehicleManager:constructor()
 					client.vehicle:canObjectBeLoaded() or
 					client.vehicle:getData("isGangwarVehicle") or
 					(client.vehicle.isRcVehicle and client:getData("RcVehicle")) or
+					client.vehicle:getData("Vehicle:Stolen") or
 					(client.vehicle.importVehicle and client:getCompany() and client:getCompany():getId() == CompanyStaticId.EPT) or
 					client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
 				client.vehicle:toggleHandBrake(client)

@@ -38,7 +38,7 @@ function PlayerPermissionsGUI:constructor(permissionsType, rank, type, playerId)
 	self.m_SaveButton.onLeftClick = bind(self.saveButton_Click, self)
 	addEventHandler("showPlayerPermissionsList", localPlayer, bind(self.updateList, self))
 
-	triggerServerEvent("requestPlayerPermissionsList", localPlayer, permissionsType, rank, type, playerId)
+	triggerServerEvent("requestPlayerPermissionsList", localPlayer, permissionsType, type, playerId)
 end
 
 function PlayerPermissionsGUI:destructor()
@@ -87,6 +87,6 @@ function PlayerPermissionsGUI:onItemDoubleClick()
 end
 
 function PlayerPermissionsGUI:saveButton_Click()
-	triggerServerEvent("changePlayerPermissions", localPlayer, self.m_PermissionsType, self.m_Rank, self.m_Changes, self.m_Type, self.m_PlayerId)
+	triggerServerEvent("changePlayerPermissions", localPlayer, self.m_PermissionsType, self.m_Changes, self.m_Type, self.m_PlayerId)
 	self.m_Changes = {}
 end

@@ -78,13 +78,14 @@ function PermissionsManager:Event_requestRankPermissionsList(permissionsType, ty
 	client:triggerEvent("showRankPermissionsList", temp, type)
 end
 
-function PermissionsManager:Event_requestPlayerPermissionsList(permissionsType, rank, type, playerId, sendTo)
+function PermissionsManager:Event_requestPlayerPermissionsList(permissionsType, type, playerId, sendTo)
 	if not client then client = sendTo end
 	if not self:getInstance(client, type) then return end
 	
 	local temp = {}	
 	local instance = self:getInstance(client, type)
-	
+	local rank = instance:getPlayerRank(playerId)
+
 	if permissionsType == "permission" and type and rank then
 		if not self:hasPlayerPermissionsTo(client, type, "changePermissions") then 
 			client:sendError(_("Du bist nicht berechtigt die Rechte zu verändern!", client))
@@ -202,10 +203,11 @@ function PermissionsManager:Event_changeRankPermissions(permissionsType, tbl, ty
 	self:Event_requestRankPermissionsList(permissionsType, type, client)
 end
 
-function PermissionsManager:Event_changePlayerPermissions(permissionsType, rank, tbl, type, playerId)
+function PermissionsManager:Event_changePlayerPermissions(permissionsType, tbl, type, playerId)
 	if not self:getInstance(client, type) then return end
 	local instance = self:getInstance(client, type)
 	local error = false
+	local rank = instance:getPlayerRank(playerId)
 
 	if permissionsType == "permission" then
 		if not self:hasPlayerPermissionsTo(client, type, "changePermissions") then

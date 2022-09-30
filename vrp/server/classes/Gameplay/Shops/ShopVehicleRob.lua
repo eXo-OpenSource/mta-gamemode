@@ -54,6 +54,10 @@ function ShopVehicleRob:destructor()
 	self.m_Vehicle:setData("Vehicle:Stolen", false, true)
 	self.m_Vehicle:setData("Vehicle:LockIsPicked", false, true)
 
+	for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
+		removePedFromVehicle(v)
+	end
+
 	removeEventHandler("onVehicleEnter", self.m_Vehicle, self.m_onVehicleEnter)
 	removeEventHandler("onVehicleExit", self.m_Vehicle, self.m_onVehicleExit)
 	removeEventHandler("onVehicleExplode", self.m_Vehicle, self.m_ExplodeFunc)
@@ -93,14 +97,8 @@ end
 
 function ShopVehicleRob:Event_onVehicleExplode()
 	PlayerManager:getSingleton():breakingNews("%s Überfall: Das Fahrzeug wurde zerstört!", self.m_Shop:getName())
-	
-	for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
-		removePedFromVehicle(v)
-	end
-	
 	self.m_Shop:decreaseVehicleStock(self.m_Vehicle:getModel(), self.m_VehicleIndex)
 	delete(self)
-
 end
 
 function ShopVehicleRob:addMarkerAndBlips()
@@ -117,31 +115,20 @@ function ShopVehicleRob:addMarkerAndBlips()
 	self.m_StateBlip:setZ(statePos.z)
 
 	self.m_MechanicBlip = {}
-	self.m_MechanicBlip[1] = Blip:new("PayNSpray.png", mechanicPos[1].x, mechanicPos[1].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_MechanicBlip[1] = Blip:new("PayNSpray.png", mechanicPos[1][1].x, mechanicPos[1][1].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
 	self.m_MechanicBlip[1]:setDisplayText("Gutachter")
-	self.m_MechanicBlip[1]:setZ(mechanicPos[1].z)
-	self.m_MechanicBlip[2] = Blip:new("PayNSpray.png", mechanicPos[2].x, mechanicPos[2].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_MechanicBlip[1]:setZ(mechanicPos[1][1].z)
+	self.m_MechanicBlip[2] = Blip:new("PayNSpray.png", mechanicPos[2][1].x, mechanicPos[2][1].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
 	self.m_MechanicBlip[2]:setDisplayText("Gutachter")
-	self.m_MechanicBlip[2]:setZ(mechanicPos[2].z)
-	self.m_MechanicBlip[3] = Blip:new("PayNSpray.png", mechanicPos[3].x, mechanicPos[3].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_MechanicBlip[2]:setZ(mechanicPos[2][1].z)
+	self.m_MechanicBlip[3] = Blip:new("PayNSpray.png", mechanicPos[3][1].x, mechanicPos[3][1].y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
 	self.m_MechanicBlip[3]:setDisplayText("Gutachter")
-	self.m_MechanicBlip[3]:setZ(mechanicPos[3].z)
-
-	self.m_MechanicPeds = {}
-	self.m_MechanicPeds[1] = createPed(50, Vector3(2316.70, 327.09, 26.78), 233.81)
-	self.m_MechanicPeds[2] = createPed(309, Vector3(-1861.55, -1610.55, 21.76), 225)
-	self.m_MechanicPeds[3] = createPed(182, Vector3(-1231.95, 1836.87, 41.44), 50)
-	self.m_MechanicPeds[4] = createPed(182, Vector3(1782.32, -2346.71, 13.45), 232)
-	self.m_MechanicPeds[5] = createPed(309, Vector3(2459.54, 2483.51, 10.82), 317)
-	for i, v in pairs(self.m_MechanicPeds) do
-		v:setFrozen(true)
-		v:setData("NPC:Immortal", true, true)
-	end
+	self.m_MechanicBlip[3]:setZ(mechanicPos[3][1].z)
 
 	self.m_MechanicMarker = {}
-	self.m_MechanicMarker[1]= createMarker(mechanicPos[1], "cylinder", 4, 255, 0, 0, 100)
-	self.m_MechanicMarker[2] = createMarker(mechanicPos[2], "cylinder", 4, 255, 0, 0, 100)
-	self.m_MechanicMarker[3] = createMarker(mechanicPos[3], "cylinder", 4, 255, 0, 0, 100)
+	self.m_MechanicMarker[1]= createMarker(mechanicPos[1][1], "cylinder", 4, 255, 0, 0, 100)
+	self.m_MechanicMarker[2] = createMarker(mechanicPos[2][1], "cylinder", 4, 255, 0, 0, 100)
+	self.m_MechanicMarker[3] = createMarker(mechanicPos[3][1], "cylinder", 4, 255, 0, 0, 100)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 4, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 4, 0, 255, 0, 100)
 	self.m_onEstimateMarkerHit = bind(self.Event_onEstimateMarkerHit, self)
@@ -151,6 +138,17 @@ function ShopVehicleRob:addMarkerAndBlips()
 	addEventHandler("onMarkerHit", self.m_MechanicMarker[3], self.m_onEstimateMarkerHit)
 	addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
 	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
+
+	self.m_MechanicPeds = {}
+	self.m_MechanicPeds[1] = createPed(mechanicPos[1][2][1], mechanicPos[1][2][2], mechanicPos[1][2][3])
+	self.m_MechanicPeds[2] = createPed(mechanicPos[2][2][1], mechanicPos[2][2][2], mechanicPos[2][2][3])
+	self.m_MechanicPeds[3] = createPed(mechanicPos[3][2][1], mechanicPos[3][2][2], mechanicPos[3][2][3])
+	for i, ped in ipairs(self.m_MechanicPeds) do
+		ped:setFrozen(true)
+		ped:setData("NPC:Immortal", true, true)
+		addEventHandler("onElementClicked", ped, bind(self.onEstimatePedClick, self))
+		ped.marker = self.m_MechanicMarker[i]
+	end
 end
 
 function ShopVehicleRob:Event_onVehicleEnter(player, seat)
@@ -162,6 +160,26 @@ end
 function ShopVehicleRob:Event_onVehicleExit(player, seat)
 	if seat == 0 and player and isElement(player) then
 		player:triggerEvent("CountdownStop", "Fahrzeugdiebstahl")
+
+		if isElementWithinMarker(source, self.m_StateMarker) then
+			if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+				ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney({player, true}, 2500, "Wiederbeschaffungsprämie", "Gameplay", "ShopVehicleRob")
+				PlayerManager:getSingleton():breakingNews("%s Überfall: Das Fahrzeug wurde sichergestellt!", self.m_Shop:getName())
+			elseif player:getGroup() == self.m_Gang then
+				return player:sendError(_("Du kannst hier nicht abgeben!", player))
+			else return end
+
+		elseif isElementWithinMarker(source, self.m_EvilMarker) then
+			if player:getGroup() == self.m_Gang and not player:isFactionDuty() then
+				ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney(player, self:calcPrice(), "Fahrzeugdiebstahl", "Gameplay", "ShopVehicleRob")
+				PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit dem Fahrzeug entkommen!", self.m_Shop:getName())
+				self.m_Shop:decreaseVehicleStock(self.m_Vehicle:getModel(), self.m_VehicleIndex)
+			elseif player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+				return player:sendError(_("Du kannst hier nicht abgeben!", player))
+			else return end
+
+		else return end
+		delete(self)
 	end
 end
 
@@ -228,34 +246,9 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle and hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0  then
 			if not self.m_UsedEstimateMarker[source] then
-
-				if hitElement.vehicle:getSpeed() > 40 then
-					hitElement:sendWarning("Fahre langsamer um das Fahrzeug schätzen zu lassen.")
-					return false
-				end
-
-				local freezeTime = 0
-				hitElement:sendInfo(_("Der Wert des Fahrzeugs wird nun geschätzt.", hitElement))
-				self.m_Vehicle:setFrozen(true)
-				self.m_Vehicle.m_DisableToggleHandbrake = true
-				self.m_UsedEstimateMarker[source] = true
-				if source == self.m_MechanicMarker[1] then
-					freezeTime = 12000
-					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.15)
-				elseif source == self.m_MechanicMarker[2] then
-					freezeTime = 18000
-					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.06, self.m_VehicleShopPrice*0.14)
-				elseif source == self.m_MechanicMarker[3] then
-					freezeTime = 28000
-					self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.04, self.m_VehicleShopPrice*0.17)
-				end
-				setTimer(function()
-					self.m_Vehicle:setFrozen(false)
-					self.m_Vehicle.m_DisableToggleHandbrake = false
-					hitElement:sendInfo(_("Der Wert des Fahrzeugs wurde auf %s$ geschätzt.", hitElement, self.m_VehicleEstimated))
-				end, freezeTime, 1)
+				hitElement:sendInfo(_("Klicke auf den NPC um das Fahrzeug schätzen zu lassen.", hitElement))
 			else
-				hitElement:sendError(_("Du hast das Fahrzeug hier bereits schätzen lassen.", hitElement))
+				hitElement:sendWarning(_("Du hast das Fahrzeug hier bereits schätzen lassen.", hitElement))
 			end
 		end
 	end
@@ -264,38 +257,8 @@ end
 function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
-			
-			if hitElement.vehicle:getSpeed() > 40 then
-				hitElement:sendWarning("Fahre langsamer um das Fahrzeug abzugeben.")
-				return false
-			end
-
-			if source == self.m_StateMarker then
-				if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-					for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
-						removePedFromVehicle(v)
-					end
-
-					ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney({hitElement, true}, 2500, "Wiederbeschaffungsprämie", "Gameplay", "ShopVehicleRob")
-					PlayerManager:getSingleton():breakingNews("%s Überfall: Das Fahrzeug wurde sichergestellt!", self.m_Shop:getName())
-				elseif hitElement:getGroup() == self.m_Gang then
-					return hitElement:sendError(_("Du kannst hier nicht abgeben!", hitElement))
-				else return end
-			elseif source == self.m_EvilMarker then
-				if hitElement:getGroup() == self.m_Gang and not hitElement:isFactionDuty() then
-					for i, v in pairs(getVehicleOccupants(self.m_Vehicle)) do
-						removePedFromVehicle(v)
-					end
-
-					ShopVehicleRobManager:getSingleton().m_BankAccountServer:transferMoney(hitElement, self:calcPrice(), "Fahrzeugdiebstahl", "Gameplay", "ShopVehicleRob")
-					PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit dem Fahrzeug entkommen!", self.m_Shop:getName())
-					self.m_Shop:decreaseVehicleStock(self.m_Vehicle:getModel(), self.m_VehicleIndex)
-				elseif hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-					return hitElement:sendError(_("Du kannst hier nicht abgeben!", hitElement))
-				else return end
-			else return end
-		else return end
-		delete(self)
+			hitElement:sendInfo(_("Steige aus um das Fahrzeug abzugeben.", hitElement))
+		end
 	end
 end
 
@@ -315,4 +278,42 @@ function ShopVehicleRob:calcPrice()
 		end
 	end
 	return price
+end
+
+function ShopVehicleRob:onEstimatePedClick(button, state, player)
+	if button == "left" and state == "down" then
+		if getDistanceBetweenPoints3D(player.position, source.position) < 12 then
+			if isElementWithinMarker(player, source.marker) then
+				if player.vehicle and player.vehicle == self.m_Vehicle and player.vehicleSeat == 0  then
+					if not self.m_UsedEstimateMarker[source.marker] then
+
+						local freezeTime = 0
+						player:sendInfo(_("Der Wert des Fahrzeugs wird nun geschätzt.", player))
+						self.m_Vehicle:setFrozen(true)
+						self.m_Vehicle.m_DisableToggleHandbrake = true
+						self.m_UsedEstimateMarker[source.marker] = true
+						if isElementWithinMarker(player, self.m_MechanicMarker[1]) then
+							freezeTime = 12000
+							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.15)
+						elseif isElementWithinMarker(player, self.m_MechanicMarker[2]) then
+							freezeTime = 18000
+							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.06, self.m_VehicleShopPrice*0.14)
+						elseif isElementWithinMarker(player, self.m_MechanicMarker[3]) then
+							freezeTime = 28000
+							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.04, self.m_VehicleShopPrice*0.17)
+						end
+						setTimer(function()
+							self.m_Vehicle:setFrozen(false)
+							self.m_Vehicle.m_DisableToggleHandbrake = false
+							player:sendInfo(_("Der Wert des Fahrzeugs wurde auf %s$ geschätzt.", player, self.m_VehicleEstimated))
+						end, freezeTime, 1)
+					else
+						player:sendError(_("Du hast das Fahrzeug hier bereits schätzen lassen.", player))
+					end
+				end
+			else
+				player:sendError(_("Fahre zuerst in den Marker.", player))
+			end
+		end
+	end
 end
