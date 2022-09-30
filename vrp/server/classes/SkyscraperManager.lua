@@ -15,7 +15,7 @@ function SkyscraperManager:constructor()
 
 	for key, value in pairs(query) do
         local query2 = sql:queryFetch("SELECT Id FROM ??_houses WHERE skyscraperID = ?", sql:getPrefix(), value["Id"])
-		SkyscraperManager.Map[value["Id"]] = Skyscraper:new(value["Id"], Vector3(value["PosX"], value["PosY"], value["PosZ"]), query2)
+		SkyscraperManager.Map[value["Id"]] = Skyscraper:new(value["Id"], Vector3(value["PosX"], value["PosY"], value["PosZ"]), query2, value["HouseOrder"])
 	end
 	
 	addEventHandler("Skyscraper:requestHouseInfos", root, bind(self.Event_requestHouseInfos, self))
@@ -41,7 +41,7 @@ function SkyscraperManager:newSkyscraper(player, cmd)
 		local pos = player:getPosition()
 		sql:queryExec("INSERT INTO ??_skyscrapers (PosX , PosY, PosZ) VALUES (?,?,?)", sql:getPrefix(), pos.x, pos.y, pos.z)
 		local Id = sql:lastInsertId()
-		SkyscraperManager.Map[Id] = Skyscraper:new(Id, pos, false)
+		SkyscraperManager.Map[Id] = Skyscraper:new(Id, pos, false, false)
 	end
 end
 
@@ -63,6 +63,7 @@ function SkyscraperManager:addHouseToSkyscraper(player, cmd, houseId, skyscraper
 		HouseManager:getSingleton().m_Houses[houseId].m_Pickup:destroy()
 		HouseManager:getSingleton().m_Houses[houseId].m_Pickup = nil
 		table.insert(SkyscraperManager.Map[skyscraperId].m_Houses, houseId)
+		table.insert(SkyscraperManager.Map[skyscraperId].m_HouseOrder, houseId)
 		SkyscraperManager.Map[skyscraperId]:updatePickup()
 	end
 end
@@ -79,6 +80,7 @@ function SkyscraperManager:removeHouseFromSkyscraper(player, cmd, houseId, skysc
 		HouseManager:getSingleton().m_Houses[houseId].m_IsInSkyscraper = false
 		HouseManager:getSingleton().m_Houses[houseId]:setPosition(pos)
 		table.removevalue(SkyscraperManager.Map[skyscraperId].m_Houses, houseId)
+		table.removevalue(SkyscraperManager.Map[skyscraperId].m_HouseOrder, houseId)
 		SkyscraperManager.Map[skyscraperId]:updatePickup()
 	end
 end

@@ -13,9 +13,9 @@ addRemoteEvents{"Skyscraper:showGUI"}
 function SkyscraperGUI:constructor(id, apartments, apartmentsOwner, rangeElement)
     GUIButtonMenu.constructor(self, _("Hochhaus #%s", id), false, false, false, false, rangeElement)
 
-    for i, houseId in pairs(apartments) do
-        local floorNumber = i-1
-        local floorName = i == 1 and "EG" or "OG"..floorNumber
+    for i, houseId in pairs(table.reverse(apartments)) do
+        local floorNumber = #apartments - i
+        local floorName = floorNumber == 0 and "EG" or floorNumber..". OG"
         local color = apartmentsOwner[i] and Color.Red or Color.Green
         local idPrefix = localPlayer:getRank() >= 4 and "["..houseId.."]" or ""
         local rentStatus = apartmentsOwner[i] and "vermietet" or "frei"

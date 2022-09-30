@@ -312,6 +312,7 @@ function Core:destructor()
 		delete(BlackJackManager:getSingleton())
 		delete(CasinoWheelManager:getSingleton())
 		delete(PricePoolManager:getSingleton())
+		delete(SkyscraperManager:getSingleton())
 		if EVENT_EASTER then
 			delete(Easter:getSingleton())
 		end

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Skyscraper = inherit(Object)
 
-function Skyscraper:constructor(id, position, houses)
+function Skyscraper:constructor(id, position, houses, houseOrder)
     self.m_Id = id
     self.m_Position = position
     --self.m_GaragePosiion = garagePosition
@@ -17,6 +17,12 @@ function Skyscraper:constructor(id, position, houses)
         for i, v in pairs(houses) do
             table.insert(self.m_Houses, v["Id"])
         end
+    end
+
+    if houseOrder then
+        self.m_HouseOrder = fromJSON(houseOrder)
+    else
+        self.m_HouseOrder = table.copy(self.m_Houses)
     end
 
     self:updatePickup()
@@ -51,15 +57,16 @@ end
 
 function Skyscraper:showGUI(player)
     local temp = {}
+
     for i, v in pairs(self.m_Houses) do
         table.insert(temp, HouseManager:getSingleton().m_Houses[v].m_Owner)
     end
-    player:triggerEvent("Skyscraper:showGUI", self.m_Id, self.m_Houses, temp, player.lastSkyscraperPickup)
+    player:triggerEvent("Skyscraper:showGUI", self.m_Id, self.m_HouseOrder, temp, player.lastSkyscraperPickup)
 end
 
 function Skyscraper:save()
-    local x, y, z = self.m_Pickup:getPosition()
-    return sql:queryExec("UPDATE ??_skyscrapers SET x = ?, y = ?, z = ?", sql:getPrefix(), x, y, z)
+    local pos = self.m_Pickup:getPosition()
+    sql:queryExec("UPDATE ??_skyscrapers SET PosX = ?, PosY = ?, PosZ = ?, HouseOrder = ? WHERE Id = ?", sql:getPrefix(), pos.x, pos.y, pos.z, toJSON(self.m_HouseOrder), self.m_Id)
 end
 
 function Skyscraper:getPosition()

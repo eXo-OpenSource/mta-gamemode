@@ -11,11 +11,11 @@ inherit(Singleton, VehicleRcUpgradeTypeSelectGUI)
 addRemoteEvents{"sendOwningRcVehicle", "openVehicleRcUpgradeGUI", "sendOwningRcVans"}
 
 function VehicleRcUpgradeTypeSelectGUI:constructor(rangeElement)
-	GUIButtonMenu.constructor(self, _("Wähle ein Typ aus"), false, false, false, false, rangeElement)
+	GUIButtonMenu.constructor(self, _("Wähle den Gruppentyp aus"), false, false, false, false, rangeElement)
 
 	self:addItem(_"Spieler", Color.Accent, bind(self.onItemClick, self, "player", rangeElement))
 	if localPlayer:getGroupType() then
-		self:addItem(_"Gruppe", Color.Accent, bind(self.onItemClick, self, "group", rangeElement))
+		self:addItem(_"Firma/Gang", Color.Accent, bind(self.onItemClick, self, "group", rangeElement))
 	end
 end
 
@@ -74,8 +74,8 @@ function VehicleRcUpgradeGUI:constructor(rangeElement, data)
 	self.m_Height = grid("y", 8)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2-40, self.m_Width, self.m_Height, true, false, rangeElement)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"RC Fahrzeuge kaufen", true, true, self)
-	self.m_Info = GUIGridLabel:new(1, 1, 7, 1, "Doppelklick zum kaufen", self):setColor(Color.Red)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Upgrades kaufen", true, true, self)
+	self.m_Info = GUIGridLabel:new(1, 1, 7, 1, _"Doppelklick zum Kaufen", self):setColor(Color.Red)
 	self:updateList(data)
 end
 
@@ -84,10 +84,10 @@ function VehicleRcUpgradeGUI:updateList(data)
 
 	self.m_UpgradeGrid = GUIGridGridList:new(1,2, 7, 7, self.m_Window)
 	self.m_UpgradeGrid:addColumn(_"Fahrzeug", 0.6)
-	self.m_UpgradeGrid:addColumn(_"Im Besitz", 0.3)
+	self.m_UpgradeGrid:addColumn(_"Eingebaut", 0.4)
 	for upgrade, state in pairs(RC_UPGRADE_VEHICLE) do
 		if state then
-			local item = self.m_UpgradeGrid:addItem(getVehicleNameFromModel(upgrade), table.find(data, upgrade) and "✓" or "✘")
+			local item = self.m_UpgradeGrid:addItem(_("%s (%s)", getVehicleNameFromModel(upgrade), toMoneyString(RC_UPGRADE_VEHICLE_PRICE[upgrade])), table.find(data, upgrade) and "✓" or "✘")
 			item.Id = upgrade
 			item.onLeftDoubleClick = bind(self.onUpgradeBuy_Click, self)
 		end
