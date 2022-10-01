@@ -52,8 +52,10 @@ function ShamalExtension:seCreateDriver(skinId)
 end
 
 function ShamalExtension:Event_seDeleteDriver()
-    self.m_ShamalDriver:destroy()
-    self.m_ShamalDriver = nil
+    if self.m_ShamalDriver then
+        self.m_ShamalDriver:destroy()
+        self.m_ShamalDriver = nil
+    end
 end
 
 function ShamalExtension:seEnterExitInterior(player, enter)

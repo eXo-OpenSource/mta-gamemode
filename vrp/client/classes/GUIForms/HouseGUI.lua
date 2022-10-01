@@ -70,7 +70,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	end
 
 	self.m_RobBtn.onLeftClick = function()
-		if (localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true) then
+		if (localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true) then
 			triggerServerEvent("breakHouseDoor", localPlayer)
 		else
 			triggerServerEvent("tryRobHouse", localPlayer)

@@ -163,12 +163,16 @@ function ColorCarsManager:Event_receiveLobbyInfos(lobbys)
     self:refreshLobbyGUI()
 end
 
-function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
+function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state, quit)
     self.m_Dimension = dim
-    local state = not state
+    if quit then
+        state = true
+    else
+        state = not state
+    end
 
     if self.m_GhostModeTimer[ghostPlayer] then
-        if not state then
+        if not state or quit then
             self.m_GhostModeTimer[ghostPlayer]:destroy()
             self.m_GhostModeTimer[ghostPlayer] = nil
         else
@@ -179,16 +183,17 @@ function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state)
     ghostPlayer.vehicle:setAlpha(state and 255 or 100)
     ghostPlayer:setAlpha(state and 255 or 100)
     localPlayer.vehicle:setCollidableWith(ghostPlayer.vehicle, state)
-          
-    if localPlayer == ghostPlayer then
-        for i , player in pairs(getElementsByType("player")) do
-            if player:getDimension() == dim and player:getInterior() == localPlayer:getInterior() then
-                localPlayer.vehicle:setCollidableWith(player.vehicle, state)
+    if not quit then      
+        if localPlayer == ghostPlayer then
+            for i , player in pairs(getElementsByType("player")) do
+                if player:getDimension() == dim and player:getInterior() == localPlayer:getInterior() then
+                    localPlayer.vehicle:setCollidableWith(player.vehicle, state)
+                end
             end
         end
-    end
-    if not state then
-        self.m_GhostModeTimer[ghostPlayer] = setTimer(bind(self.Event_powerUpGhostMode, self), 15000, 1, ghostPlayer, dim, false)
+        if not state then
+            self.m_GhostModeTimer[ghostPlayer] = setTimer(bind(self.Event_powerUpGhostMode, self), 15000, 1, ghostPlayer, dim, false)
+        end
     end
 end
 

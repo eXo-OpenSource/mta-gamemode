@@ -97,6 +97,7 @@ function ColorCars:addPlayer(player)
 end
 
 function ColorCars:removePlayer(player)
+    self:powerUpGhostMode(player, self.m_LobbyDimension, false, false, true)
     table.removevalue(self.m_Players, player)
     self.m_PlayerCatchScore[player] = nil
     self:deleteColorCar(player)
@@ -327,10 +328,10 @@ function ColorCars:powerUpVehicleChange(player)
     end
 end
 
-function ColorCars:powerUpGhostMode(ghostPlayer, dim, state, timestamp)
+function ColorCars:powerUpGhostMode(ghostPlayer, dim, state, timestamp, quit)
     self.m_PlayerPowerUps[ghostPlayer]["GhostMode"] = timestamp
     for i, player in pairs(self.m_Players) do
-        player:triggerEvent("ColorCars:powerUpGhostMode", ghostPlayer, dim, true)
+        player:triggerEvent("ColorCars:powerUpGhostMode", ghostPlayer, dim, state, quit)
     end   
 end
 

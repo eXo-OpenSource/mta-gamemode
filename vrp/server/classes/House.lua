@@ -595,7 +595,7 @@ function House:breakDoor(player)
 	
 	if self.m_LockStatus then
 		self.m_LockStatus = false
-		player:meChat(true, _("bricht die Tür auf!", player))
+		player:meChat(true, _("nimmt anlauf und bricht die Tür auf.", player))
 	else
 		player:sendError(_("Die Tür ist bereits auf.", player))
 	end

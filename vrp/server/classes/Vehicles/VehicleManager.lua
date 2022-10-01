@@ -1638,24 +1638,26 @@ function VehicleManager:Event_LoadObject(veh, type)
 	if client:getFaction() then
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					local object = client:getPlayerAttachedObject()
-					if #getAttachedElements(veh) < vehicleObjects[veh.model]["count"] then
-						if object then
-							local count = #getAttachedElements(veh)
-							client:detachPlayerObject(object)
-							object:attach(veh, vehicleObjects[veh.model][count+1])
-							if object.LoadHook then
-								object.LoadHook(client, veh, object)
+				if not client:isDead() then
+					if not client.vehicle then
+						local object = client:getPlayerAttachedObject()
+						if #getAttachedElements(veh) < vehicleObjects[veh.model]["count"] then
+							if object then
+								local count = #getAttachedElements(veh)
+								client:detachPlayerObject(object)
+								object:attach(veh, vehicleObjects[veh.model][count+1])
+								if object.LoadHook then
+									object.LoadHook(client, veh, object)
+								end
+							else
+								client:sendError(_("Du hast %s dabei!", client, name))
 							end
 						else
-							client:sendError(_("Du hast %s dabei!", client, name))
+							client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
 						end
 					else
-						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
+						client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 					end
-				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 				end
 			else
 				client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
@@ -1694,21 +1696,23 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	if client:getFaction() then
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					for key, object in pairs (getAttachedElements(veh)) do
-						if object.model == model then
-							object:detach(self.m_Truck)
-							client:attachPlayerObject(object)
-							if object.DeloadHook then
-								object.DeloadHook(client, veh, object)
+				if not client:isDead() then
+					if not client.vehicle then
+						for key, object in pairs (getAttachedElements(veh)) do
+							if object.model == model then
+								object:detach(self.m_Truck)
+								client:attachPlayerObject(object)
+								if object.DeloadHook then
+									object.DeloadHook(client, veh, object)
+								end
+								return
 							end
-							return
 						end
+						client:sendError(_("Es befindet sich %s im Truck!", client, name))
+						return
+					else
+						client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 					end
-					client:sendError(_("Es befindet sich %s im Truck!", client, name))
-					return
-				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
 				end
 			else
 				client:sendError(_("Du bist zu weit vom Truck entfernt!", client))
