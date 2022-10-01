@@ -828,6 +828,10 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		if client.sittingOn then
 			Chair:getSingleton():trySitDown()
 		end
+
+		if client:getFaction() and client:getFaction():isRescueFaction() then
+			client:setPublicSync("RadioStatus", 6)
+		end
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then
@@ -842,9 +846,6 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		end
 	else
 		client:endAFK()
-	end
-	if client:getFaction() and client:getFaction():isRescueFaction() then
-		client:setPublicSync("RadioStatus", 6)
 	end
 end
 

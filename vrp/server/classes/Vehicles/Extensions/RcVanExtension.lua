@@ -80,6 +80,7 @@ function RcVanExtension:toggleRC(player, rcVehicle, state, force, death)
 			
 			self.m_RcVehicleRange[rcVehicle] = createColSphere(0, 0, 0, 500)
 			self.m_RcVehicleRange[rcVehicle]:attach(self)
+			self.m_RcVehicleRange[rcVehicle].rcVehicle = self.m_RcVehicle[rcVehicle]
 
 			player.m_RcVanSeat = player.vehicleSeat
 			player:setAlpha(0)
@@ -138,6 +139,7 @@ function RcVanExtension:toggleRC(player, rcVehicle, state, force, death)
 		self.m_RcVehicle[rcVehicle]:destroy()
 		self.m_RcVehicle[rcVehicle] = nil
 		self.m_RcVehicleRange[rcVehicle]:destroy()
+		self.m_RcVehicleRange[rcVehicle] = nil
 
 		table.removevalue(self.m_RcVehicleUser, player)
 		self:setData("RcVehicleUser", self.m_RcVehicleUser, true)
@@ -169,20 +171,22 @@ function RcVanExtension:Event_rveVehicleDamage(loss)
 end
 
 function RcVanExtension:Event_rveColShapeHit(hitElement)
-	if hitElement.type ~= "player" then return end
-	hitElement:triggerEvent("CountdownStop", "Connection lost")
-	hitElement:triggerEvent("RVE:withinRange")
-	if isTimer(hitElement.m_rveOutOfRangeTimer) then killTimer(hitElement.m_rveOutOfRangeTimer) end
+	if hitElement and hitElement.vehicle and source.rcVehicle == hitElement.vehicle then
+		hitElement:triggerEvent("CountdownStop", "Connection lost")
+		hitElement:triggerEvent("RVE:withinRange")
+		if isTimer(hitElement.m_rveOutOfRangeTimer) then killTimer(hitElement.m_rveOutOfRangeTimer) end
+	end
 end
 
 function RcVanExtension:Event_rveColShapeLeave(leaveElement)
-	if leaveElement.type ~= "player" then return end
-	leaveElement:triggerEvent("RVE:outOfRange")
-	leaveElement:triggerEvent("Countdown", 15, "Connection lost")
-	leaveElement.m_rveOutOfRangeTimer = setTimer(function()
-		self:toggleRC(leaveElement, leaveElement:getData("RcVehicle"), false, true)
-		leaveElement:triggerEvent("RVE:withinRange")
-	end, 15000, 1)
+	if leaveElement and leaveElement.vehicle and source.rcVehicle == leaveElement.vehicle then
+		leaveElement:triggerEvent("RVE:outOfRange")
+		leaveElement:triggerEvent("Countdown", 15, "Connection lost")
+		leaveElement.m_rveOutOfRangeTimer = setTimer(function()
+			self:toggleRC(leaveElement, leaveElement:getData("RcVehicle"), false, true)
+			leaveElement:triggerEvent("RVE:withinRange")
+		end, 15000, 1)
+	end
 end
 
 function RcVanExtension:Event_rveVehicleStartEnter()

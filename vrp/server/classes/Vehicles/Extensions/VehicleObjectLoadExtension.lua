@@ -91,14 +91,16 @@ function VehicleObjectLoadExtension:tryLoadObject(player, object)
     if getDistanceBetweenPoints3D(self.position, player.position) < 7 then
         if not player.vehicle then
             if self:getObjectCount() < self:getMaxObjects() then
-                if self:isValidObjectToLoad(object) then
-                    if cooled then
-                        VehicleObjectLoadExtension.getLoadHook():call(self, player, object)
-                        self:internalLoadObject(player, object)
-                        self.m_LastInteraction = getTickCount()
-                    end 
-                else
-                    player:sendError(_("Dieses Fahrzeug kann dein Objekt nicht transportieren!", player))
+                if not player:isDead() then
+                    if self:isValidObjectToLoad(object) then
+                        if cooled then
+                            VehicleObjectLoadExtension.getLoadHook():call(self, player, object)
+                            self:internalLoadObject(player, object)
+                            self.m_LastInteraction = getTickCount()
+                        end 
+                    else
+                        player:sendError(_("Dieses Fahrzeug kann dein Objekt nicht transportieren!", player))
+                    end
                 end
             else
                 player:sendError(_("Dieses Fahrzeug ist voll!", player))
@@ -116,14 +118,16 @@ function VehicleObjectLoadExtension:tryUnloadObject(player)
     if getDistanceBetweenPoints3D(self.position, player.position) < 7 then
         if not player.vehicle then
             if self:getObjectCount() > 0 then
-                if not player:getPlayerAttachedObject() then
-                    if cooled then
-                        VehicleObjectLoadExtension.getUnloadHook():call(self, player, object)
-                        self:internalUnloadObject(player)
-                        self.m_LastInteraction = getTickCount()
-                    end 
-                else
-                    player:sendError(_("Du hast bereits ein Objekt dabei!", player))
+                if not player:isDead() then
+                    if not player:getPlayerAttachedObject() then
+                        if cooled then
+                            VehicleObjectLoadExtension.getUnloadHook():call(self, player, object)
+                            self:internalUnloadObject(player)
+                            self.m_LastInteraction = getTickCount()
+                        end 
+                    else
+                        player:sendError(_("Du hast bereits ein Objekt dabei!", player))
+                    end
                 end
             else
                 player:sendError(_("Dieses Fahrzeug ist leer!", player))

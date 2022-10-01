@@ -258,7 +258,7 @@ function FactionManager:sendInfosToClient(client)
 	end
 
 	if faction then --use triggerLatentEvent to improve serverside performance
-		if faction:getPlayerRank(client) < FactionRank.Manager and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editLoan") and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editWeaponPermissions") then
+		if faction:getPlayerRank(client) < FactionRank.Manager and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editLoan") and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editWeaponPermissions") and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "editActionPermissions") then
 			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames)
 		else
 			client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), ActionsCheck:getSingleton():getStatus(), faction.m_RankNames, faction.m_RankLoans, wpn, faction.m_RankWeapons)

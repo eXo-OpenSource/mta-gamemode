@@ -884,7 +884,7 @@ function FactionRescue:moveLadder(veh)
 end
 
 function FactionRescue:Event_fillFireExtinguisher()
-	setWeaponAmmo(client, 42, 10000, 500)
+	giveWeapon(client, 42, (10000 - getPedTotalAmmo(client, 9)), true)
 end
 
 function FactionRescue:addVehicleFire(veh)
