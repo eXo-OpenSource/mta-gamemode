@@ -142,11 +142,11 @@ function DamageManager:Event_OnCancelTreat(isHealer)
 		end
 		client.m_TreatedBy = nil
 		if client ~= healer then
+			client:triggerEvent("Damage:cancelTreatment")
 			toggleAllControls(client, true)
 			client:setFrozen(false)
 			client:setAnimation(nil)
 			setElementData(client, "Damage:isTreating", false)
-			client:triggerEvent("Damage:cancelTreatment")
 		end
 	else 
 		local patient = client.m_Treating

@@ -96,5 +96,9 @@ end
 function Damage:isInTreatment() return self.m_InTreatment end
 
 function Damage:Event_cancelTreatmentOnDeath()
-	triggerServerEvent("Damage:onCancelTreat", localPlayer, self.m_IsHealer)
+	if getElementData(localPlayer, "Damage:isTreating") then
+		triggerServerEvent("Damage:onCancelTreat", localPlayer, self.m_IsHealer)
+	else
+		removeEventHandler("onClientPlayerWasted", localPlayer, self.m_cancelTreatmentOnDeath)
+	end
 end
