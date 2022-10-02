@@ -112,4 +112,5 @@ end
 function ShopVehicleRobManager:Event_onPoliceUnlockVehicle()
 	self.m_CurrentRob:finishPickingLock(client)
 	client:sendSuccess(_("Fahrzeug aufgesperrt", client))
+	FactionState:getSingleton():sendShortMessage(("%s hat das Schloss vom Fahrzeug geöffnet."):format(client:getName()), 20000)
 end
