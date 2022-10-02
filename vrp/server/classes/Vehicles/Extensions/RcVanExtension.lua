@@ -33,6 +33,9 @@ function RcVanExtension:initRcVanExtension()
 			RcVanExtensionBattery[self:getId()][rc] = 900
 		else
 			if RcVanExtensionBattery[self:getId()][rc] < 900 then
+				if isTimer(RcVanExtensionLoadBatteryTimer[self:getId()][rc]) then
+					killTimer(RcVanExtensionLoadBatteryTimer[self:getId()][rc])
+				end
 				RcVanExtensionLoadBatteryTimer[self:getId()][rc] = setTimer(function()
 					if RcVanExtensionBattery[self:getId()][rc] < 900 then
 						RcVanExtensionBattery[self:getId()][rc] = tonumber(RcVanExtensionBattery[self:getId()][rc]) + 5
@@ -150,7 +153,7 @@ function RcVanExtension:toggleRC(player, rcVehicle, state, force, death)
 		RcVanExtensionBattery[self:getId()][rcVehicle] = self.m_RcVehicleBatteryTimer[rcVehicle]:getDetails()/1000 
 		if isTimer(self.m_RcVehicleBatteryTimer[rcVehicle]) then killTimer(self.m_RcVehicleBatteryTimer[rcVehicle]) end
 		player:triggerEvent("CountdownStop", "Batterie")
-		
+
 		RcVanExtensionLoadBatteryTimer[self:getId()][rcVehicle] = setTimer(function()
 			if RcVanExtensionBattery[self:getId()][rcVehicle] < 900 then
 				RcVanExtensionBattery[self:getId()][rcVehicle] = tonumber(RcVanExtensionBattery[self:getId()][rcVehicle]) + 5
