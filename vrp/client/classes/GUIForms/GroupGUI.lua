@@ -178,15 +178,11 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 end
 
 function GroupGUI:ShowLogs()
+	if self.m_LogGUI then delete(self.m_LogGUI) end
 	self:close()
 	local url = (INGAME_WEB_PATH .. "/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("group", self.m_Id)
-	if not self.m_LogGUI then
-		self.m_LogGUI = LogGUI:new(self.m_TabLogs, url)
-		self.m_LogGUI:addBackButton(function() GroupGUI:getSingleton():show() end)
-	else
-		self.m_LogGUI:updateLog()
-	end
-
+	self.m_LogGUI = LogGUI:new(false, url)
+	self.m_LogGUI:addBackButton(function() GroupGUI:getSingleton():show() end)
 end
 
 function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, type, vehicles, canVehiclesBeModified, actionStatus, rankNames, rankLoans)

@@ -1853,7 +1853,7 @@ function FactionState:Event_givePANote(target, note)
 				target:sendInfo(_("%s hat dir eine GWD-Note von %d gegeben!", target, client:getName(), note))
 				client:sendInfo(_("Du hast %s eine GWD-Note von %d gegeben!", client, target:getName(), note))
 				target:setPaNote(note)
-				client:getFaction():addLog(player, "GWD", ("%s hat %s eine GWD-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
+				client:getFaction():addLog(client, "GWD", ("hat %s eine GWD-Note von %d gegeben!"):format(target:getName(), note))
 			else
 				client:sendError(_("Ungültige GWD-Note!", client))
 			end
