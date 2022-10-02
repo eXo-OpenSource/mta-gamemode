@@ -620,21 +620,6 @@ function GroupManager:Event_ConvertVehicle(veh)
 							group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." hinzugefügt!")
 							group.m_VehiclesSpawned = true
 							self:sendInfosToClient(client)
-
-							if newVeh:getModel() == 459 then
-								if isTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()]) then 
-									killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
-				
-									RcVanExtensionLoadBatteryTimer[newVeh:getId()] = setTimer(function()
-										if RcVanExtensionBattery[newVeh:getId()] < 900 then
-											RcVanExtensionBattery[newVeh:getId()] = tonumber(RcVanExtensionBattery[newVeh:getId()]) + 5
-										else
-											RcVanExtensionBattery[newVeh:getId()] = 900
-											killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
-										end
-									end, 10000, 0)
-								end
-							end
 						else
 							client:sendError(_("Es ist ein Fehler aufgetreten (ist das Fahrzeug in Benutzung?)!", client))
 						end
@@ -690,20 +675,6 @@ function GroupManager:Event_RemoveVehicle(veh)
 			client:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", client))
 			group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." entfernt!")
 			self:sendInfosToClient(client)
-
-			if newVeh:getModel() == 459 then
-				if isTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()]) then 
-					killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
-					RcVanExtensionLoadBatteryTimer[newVeh:getId()] = setTimer(function()
-						if RcVanExtensionBattery[newVeh:getId()] < 900 then
-							RcVanExtensionBattery[newVeh:getId()] = tonumber(RcVanExtensionBattery[newVeh:getId()]) + 5
-						else
-							RcVanExtensionBattery[newVeh:getId()] = 900
-							killTimer(RcVanExtensionLoadBatteryTimer[newVeh:getId()])
-						end
-					end, 10000, 0)
-				end
-			end
 		else
 			client:sendError(_("Das Fahrzeug ist in Benutzung oder dein Maximaler Fahrzeug-Slot ist erreicht!", client))
 		end

@@ -24,7 +24,17 @@ function GasStationMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Fire)
 	else
 		for fuelType in pairs(element:getData("FuelTypes")) do
-			self:addItem(_("Zapfpistole nehmen (%s) (%s$ pro Liter)", FUEL_NAME[fuelType], math.round(element:getData("FuelTypePrices")[fuelType],1)),
+			local price = element:getData("FuelTypePrices")[fuelType]
+			local multiplier
+			if element:getData("isServiceStation") then
+				multiplier = SERVICE_FUEL_PRICE_MULTIPLICATOR
+			elseif element:getData("isEvilStation") then
+				multiplier = EVIL_FUEL_PRICE_MULTIPLICATOR
+			else
+				multiplier = 1
+			end
+			
+			self:addItem(_("Zapfpistole nehmen (%s) (%s$ pro Liter)", FUEL_NAME[fuelType], math.round(price * multiplier, 1)),
 				function()
 					if localPlayer.vehicle then return end
 					triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element, fuelType)

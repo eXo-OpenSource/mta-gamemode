@@ -1385,7 +1385,9 @@ function Player:attachPlayerObject(object)
 			self:setPrivateSync("attachedObject", object)
 			object:setCollisionsEnabled(false)
 			object:setDoubleSided(true)
-			object:setScale(settings.scale or 1, settings.scaleY or 1, settings.scaleZ or 1)
+			if settings.scale then
+				object:setScale(settings.scale.x or 1, settings.scale.y or 1, settings.scale.z or 1)
+			end
 			if settings["bone"] then
 				exports.bone_attach:attachElementToBone(object, self, settings["bone"], settings["pos"].x, settings["pos"].y, settings["pos"].z, settings["rot"].x, settings["rot"].y, settings["rot"].z)
 			else
@@ -1450,8 +1452,10 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 			local settings = PlayerAttachObjects[model]
 			self:toggleControlsWhileObjectAttached(true, unpack(self.m_PlayerAttachedObjectSettings))
 			object:detach(self)
-			object:setScale(1, 1, 1)
 			removeEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
+			if settings.scale then
+				object:setScale(1, 1, 1)
+			end
 			if settings["bone"] then
 				exports.bone_attach:detachElementFromBone(object)
 			else

@@ -58,7 +58,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_ExitMarker:setDimension(self.m_Dimension)
 	addEventHandler("onColShapeHit", colshape,
 		function(hitElement, matchingDimension)
-			if hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() then
+			if hitElement.type == "player" and hitElement:getDimension() == source:getDimension() and hitElement:getInterior() == source:getInterior() then
 				hitElement.m_LastGroupPropertyInside = true
 				hitElement.m_LastPropertyPickup = self
 				hitElement:triggerEvent("onTryEnterExit", source, "Ausgang")

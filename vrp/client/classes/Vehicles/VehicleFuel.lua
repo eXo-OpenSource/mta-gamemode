@@ -67,7 +67,7 @@ function VehicleFuel:getFuelAmount()
 end
 
 function VehicleFuel:getFuelPrice(station)
-	if not station:getData("FuelTypePrices")[self.m_Vehicle:getFuelType()] then return 0 end
+	if not station or not station:getData("FuelTypePrices") or not station:getData("FuelTypePrices")[self.m_Vehicle:getFuelType()] then return 0 end
 	local mult = ((self.m_isServiceStation and SERVICE_FUEL_PRICE_MULTIPLICATOR) or (self.m_isEvilStation and EVIL_FUEL_PRICE_MULTIPLICATOR) or 1)
 	return math.round(self:getOpticalFuelAmount() * station:getData("FuelTypePrices")[self.m_Vehicle:getFuelType()] * mult, 2)
 end

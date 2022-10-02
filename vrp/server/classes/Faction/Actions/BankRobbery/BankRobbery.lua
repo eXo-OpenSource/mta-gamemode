@@ -126,8 +126,8 @@ function BankRobbery:destroyRob()
 	self.m_Blip = {}
 
 	if self.m_HelpColShape then
-		removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
-		removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
+		removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColHitFunc)
+		removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColLeaveFunc)
 	end
 
 	self.m_AlarmTriggered = false
