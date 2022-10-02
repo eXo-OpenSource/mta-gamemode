@@ -249,11 +249,17 @@ function GroupVehicle:setForSale(sale, price)
 	else
 		self.m_ForSale = false
 		self.m_SalePrice = 0
-		self.m_DisableToggleEngine = false
-		self.m_DisableToggleHandbrake = false
+		if not self:isForRent() then
+			self.m_DisableToggleEngine = false
+			self.m_DisableToggleHandbrake = false
+		end
 	end
 	setElementData(self, "forSale", self.m_ForSale, true)
 	setElementData(self, "forSalePrice", tonumber(self.m_SalePrice), true)
+end
+
+function GroupVehicle:isForRent()
+	return self.m_ForRent
 end
 
 function GroupVehicle:setForRent(state, rate)
@@ -268,8 +274,10 @@ function GroupVehicle:setForRent(state, rate)
 	else
 		self.m_ForRent = false
 		self.m_RentRate = 0
-		self.m_DisableToggleEngine = false
-		self.m_DisableToggleHandbrake = false
+		if not self:isForSale() then
+			self.m_DisableToggleEngine = false
+			self.m_DisableToggleHandbrake = false
+		end
 	end
 	setElementData(self, "forRent", self.m_ForRent, true)
 	setElementData(self, "forRentRate", tonumber(self.m_RentRate), true)

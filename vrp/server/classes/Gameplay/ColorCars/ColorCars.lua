@@ -128,7 +128,7 @@ function ColorCars:removePlayer(player)
     
     if player == self.m_Catcher and #self.m_Players ~= 0 then
         self:setCatcher(self.m_Players[math.random(1, #self.m_Players)])
-    else 
+    elseif #self.m_Players == 0 then
         self.m_Catcher = "none" 
     end
     ColorCarsManager:getSingleton():syncMatchGUI(self.m_LobbyOwner)

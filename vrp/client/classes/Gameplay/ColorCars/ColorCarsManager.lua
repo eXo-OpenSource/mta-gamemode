@@ -179,10 +179,11 @@ function ColorCarsManager:Event_powerUpGhostMode(ghostPlayer, dim, state, quit)
             self.m_GhostModeTimer[ghostPlayer] = nil
         end
     end
-    
-    ghostPlayer.vehicle:setAlpha(state and 255 or 100)
-    ghostPlayer:setAlpha(state and 255 or 100)
-    localPlayer.vehicle:setCollidableWith(ghostPlayer.vehicle, state)
+    if ghostPlayer and ghostPlayer.type == "player" and ghostPlayer.vehicle then
+        ghostPlayer.vehicle:setAlpha(state and 255 or 100)
+        ghostPlayer:setAlpha(state and 255 or 100)
+        localPlayer.vehicle:setCollidableWith(ghostPlayer.vehicle, state)
+    end
     if not quit then      
         if localPlayer == ghostPlayer then
             for i , player in pairs(getElementsByType("player")) do
