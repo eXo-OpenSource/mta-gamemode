@@ -29,10 +29,10 @@ function PayNSpray:constructor(x, y, z, garageId)
 					hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
-				if hitElement:getFaction() and hitElement:isFactionDuty() and hitElement:getFaction():getMoney() < costs then
+				if hitElement:getFaction() and hitElement:isFactionDuty() and vehicle:getFaction() == hitElement:getFaction() and hitElement:getFaction():getMoney() < costs then
 					hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
-				elseif hitElement:getCompany() and hitElement:isCompanyDuty() and hitElement:getCompany():getMoney() < costs then
+				elseif hitElement:getCompany() and hitElement:isCompanyDuty() and vehicle:getCompany() == hitElement:getCompany() and hitElement:getCompany():getMoney() < costs then
 						hitElement:sendError(_("Dein Unternehmen benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
@@ -61,7 +61,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 						vehicle.m_DisableToggleHandbrake = nil
 
 						if not isElement(hitElement) then return end
-						if hitElement:getFaction() and hitElement:isFactionDuty() then
+						if hitElement:getFaction() and hitElement:isFactionDuty() and vehicle:getFaction() == hitElement:getFaction() then
 							if hitElement:getFaction():getMoney() >= costs then
 								if costs > 0 then
 									hitElement:getFaction():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
@@ -69,7 +69,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 							else
 								return hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 							end
-						elseif hitElement:getCompany() and hitElement:isCompanyDuty() then
+						elseif hitElement:getCompany() and hitElement:isCompanyDuty() and vehicle:getCompany() == hitElement:getCompany() then
 							if hitElement:getCompany():getMoney() >= costs then
 								if costs > 0 then
 									hitElement:getCompany():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
