@@ -2004,6 +2004,7 @@ function VehicleManager:Event_requestVehicles()
 end
 
 function VehicleManager:Event_toggleVehicleRegister(type)
+	if not source or not isElement(source) or source.type ~= "vehicle" then return end
 	if not source:isEmpty() then return client:sendError(_("Das Fahrzeug ist nicht leer.", client)) end
 	if source:getOwner() ~= client:getId() then return client:sendError(_("Das Fahrzeug gehört nicht dir.", client)) end 
 	

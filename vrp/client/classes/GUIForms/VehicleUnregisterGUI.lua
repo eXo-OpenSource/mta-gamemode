@@ -60,7 +60,7 @@ function VehicleUnregisterGUI:updateList(vehicles)
             if self.m_InfoLabel then
                 delete(self.m_InfoLabel)
             end
-            self.m_InfoLabel = GUIGridLabel:new(1, 10, 15, 1, item.registered ~= 0 and ("Mindestens abgemeldet bis zum %s"):format(getOpticalTimestamp(item.registered))  or _"Nicht abgemeldet", self.m_Window):setAlignX("center")
+            self.m_InfoLabel = GUIGridLabel:new(1, 10, 15, 1, item.registered ~= 0 and ("Mindestens abgemeldet bis zum %s"):format(getOpticalTimestamp(item.registered + VEHICLE_MIN_DAYS_TO_REGISTER_AGAIN))  or _"Nicht abgemeldet", self.m_Window):setAlignX("center")
         end
     end
 end
