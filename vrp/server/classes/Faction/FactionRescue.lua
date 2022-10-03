@@ -943,6 +943,7 @@ function FactionRescue:addVehicleFire(veh)
 		self.m_VehicleFires[veh].Blip:delete()
 		local moneyForFaction = 0
 		local playersByID = {}
+		local mostPoints = {}
 		for player, score in pairs(stats.pointsByPlayer) do
 			if isElement(player) then
 				player:giveCombinedReward("Fahrzeugbrand gelöscht", {
@@ -958,11 +959,14 @@ function FactionRescue:addVehicleFire(veh)
 				})
 				playersByID[player:getId()] = score
 				moneyForFaction = moneyForFaction + score*120
+				table.insert(mostPoints, score)
 			end
 		end
 		FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 		StatisticsLogger:getSingleton():addFireLog(-1, math.floor(self.m_VehicleFires[veh]:getTimeSinceStart()/1000), toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction)
-		FactionRescue:getSingleton().m_Faction:addLog(false, "Brand", ("Ein brennendes Fahrzeug wurde gelöscht (+%s$)"):format(moneyForFaction))
+		
+		table.sort(mostPoints, function(a, b) return a > b end)
+		FactionRescue:getSingleton().m_Faction:addLog(table.find(playersByID, mostPoints[1]), "Brand", ("hat ein abgebranntes Fahrzeug (%s Min.) gelöscht (+%s$)."):format(math.floor((getTickCount()-stats.startTime)/1000/60), moneyForFaction))
 
 		self.m_VehicleFires[veh] = nil
 	end, zone)

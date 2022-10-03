@@ -71,6 +71,11 @@ function Blip:isVisibleForPlayer(player)
 	if isElement(self.m_VisibleTo) then return false end -- visibleTo is an element which is not the player, so skip it
 	if not isElement(player) then return false end -- blips who were visible to a player which does no longer exist
 
+	local group = player:getGroup()
+	if group and self.m_VisibleTo["group"] and self.m_VisibleTo["group"][group:getId()] then
+		return true
+	end
+
 	local fac = player:getFaction()
 	if fac then
 		if self.m_VisibleTo["faction"] and (self.m_VisibleTo["faction"][fac:getId()] or (fac:getAllianceFaction() and self.m_VisibleTo["faction"][fac:getAllianceFaction():getId()])) then
@@ -85,11 +90,6 @@ function Blip:isVisibleForPlayer(player)
 	local comp = player:getCompany()
 	if comp and self.m_VisibleTo["company"] and self.m_VisibleTo["company"][comp:getId()] then
 		if self.m_VisibleTo["duty"] and not player:isCompanyDuty() then return false end
-		return true
-	end
-
-	local group = player:getGroup()
-	if group and self.m_VisibleTo["group"] and self.m_VisibleTo["group"][group:getId()] then
 		return true
 	end
 

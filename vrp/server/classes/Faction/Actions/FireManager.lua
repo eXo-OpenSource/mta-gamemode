@@ -157,6 +157,7 @@ function FireManager:stopCurrentFire(stats)
 	if stats then
 		local playersByID = {}
 		local moneyForFaction = 0
+		local mostPoints = {}
 		for player, score in pairs(stats.pointsByPlayer) do
 			if isElement(player) and player:getFaction() and player:getFaction():isRescueFaction() then
 				player:giveCombinedReward("Feuer gelöscht", {
@@ -172,14 +173,16 @@ function FireManager:stopCurrentFire(stats)
 				})
 				playersByID[player:getId()] = score
 				moneyForFaction = moneyForFaction + score*32
+				table.insert(mostPoints, score)
 			end
 		end
 		self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Feuer gelöscht", "Event", "Fire")
 
 		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction * table.size(stats.pointsByPlayer))
 		
-		local groupLogMessage = self.m_CurrentFire.m_Id == 1000 and ("Brennende Absturztrümmer wurden gelöscht (+%s$)") or ("Ein ausgebrochenes Feuer wurde gelöscht (+%s$)")
-		FactionRescue:getSingleton().m_Faction:addLog(false, "Brand", (groupLogMessage):format(moneyForFaction))
+		table.sort(mostPoints, function(a, b) return a > b end)
+		local groupLogMessage = self.m_CurrentFire.m_Id == 1000 and ("hat brennende Absturztrümmer (%s Min.) gelöscht (+%s$).") or ("hat ein ausgebrochenes Feuer (%s Min.) gelöscht (+%s$).")
+		FactionRescue:getSingleton().m_Faction:addLog(table.find(playersByID, mostPoints[1]), "Brand", (groupLogMessage):format(math.floor((getTickCount()-stats.startTime)/1000/60), moneyForFaction))
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end

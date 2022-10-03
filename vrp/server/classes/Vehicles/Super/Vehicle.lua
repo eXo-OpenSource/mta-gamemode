@@ -865,7 +865,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 		local vehicles = getElementsWithinColShape(colShape, "vehicle")
 		colShape:destroy()
 
-		for _, vehicle in pairs(vehicles) do
+		for __, vehicle in pairs(vehicles) do
 			if vehicle ~= self then
 				if vehicle:isRespawnAllowed() and (vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike or vehicle:getVehicleType() == VehicleType.Helicopter or magnetPlanes[vehicle:getModel()]) then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
@@ -975,6 +975,8 @@ function Vehicle:getVehicleType()
 end
 
 function Vehicle:getFaction() end
+
+function Vehicle:getCompany() end
 
 function Vehicle:updateTemplate()
 	if self.m_Template then
