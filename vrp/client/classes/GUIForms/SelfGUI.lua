@@ -1058,7 +1058,7 @@ function SelfGUI:onSettingChange(setting)
 
 
 	elseif setting == "Spawn" then
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn", self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn nach Login", self.m_SettingBG)
 
 		self.m_Default = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.35, self.m_Height*0.04, _"Letzter Standort", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_Noobspawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.35, self.m_Height*0.04, _"Usertreff", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
@@ -1094,7 +1094,18 @@ function SelfGUI:onSettingChange(setting)
 		self.m_CompanyBase.onChange = function() uncheckAll() self.m_CompanyBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.COMPANY_BASE) end
 		self.m_GroupBase.onChange = function() uncheckAll() self.m_GroupBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.GROUP_BASE) end
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.7, self.m_Height*0.055, _"Nutze das Klicksystem bzw. das Hausmenü um den Spawnpunkt für ein Fahrzeug oder Haus festzulegen!", self.m_SettingBG)
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.59, self.m_Width*0.8, self.m_Height*0.07, _"Spawn nach Tod (Fraktion)", self.m_SettingBG)
+
+		self.m_RescueSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Am Krankenhaus spawnen", self.m_SettingBG)
+		self.m_RescueSpawn:setFont(VRPFont(25))
+		self.m_RescueSpawn:setFontSize(1)
+		self.m_RescueSpawn:setChecked(core:get("Other", "RescueSpawnAfterDeath", false))
+		self.m_RescueSpawn.onChange = function (state)
+			core:set("Other", "RescueSpawnAfterDeath", state)
+		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.7, self.m_Height*0.055, _"Nutze das Klicksystem bzw. das Hausmenü um den Spawnpunkt für ein Fahrzeug oder Haus festzulegen!", self.m_SettingBG)
 	elseif setting == "Nametag/Reddot" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Nametag", self.m_SettingBG)
 		self.m_NametagChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
@@ -1265,14 +1276,6 @@ function SelfGUI:onSettingChange(setting)
 			else
 				ItemSmokeGrenade:getSingleton():disableLowMode()
 			end
-		end
-
-		self.m_RescueSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.9, self.m_Height*0.04, _"Am Krankenhaus spawnen", self.m_SettingBG)
-		self.m_RescueSpawn:setFont(VRPFont(25))
-		self.m_RescueSpawn:setFontSize(1)
-		self.m_RescueSpawn:setChecked(core:get("Other", "RescueSpawnAfterDeath", false))
-		self.m_RescueSpawn.onChange = function (state)
-			core:set("Other", "RescueSpawnAfterDeath", state)
 		end
 
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)

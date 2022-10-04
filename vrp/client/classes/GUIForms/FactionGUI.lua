@@ -605,7 +605,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, ac
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
-			self.m_Id = localPlayer:getFaction():isStateFaction() and 1 or id
+			self.m_Id = id
 			local x, y = self.m_FactionNameLabel:getPosition()
 			self.m_RankNames = rankNames
 			self.m_FactionNameLabel:setText(name)

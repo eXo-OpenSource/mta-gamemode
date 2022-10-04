@@ -976,8 +976,6 @@ end
 
 function Vehicle:getFaction() end
 
-function Vehicle:getCompany() end
-
 function Vehicle:updateTemplate()
 	if self.m_Template then
 		self.m_TemplateName = TuningTemplateManager:getSingleton():getNameFromId( self.m_Template ) or ""

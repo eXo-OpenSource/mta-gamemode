@@ -69,7 +69,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 							else
 								return hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 							end
-						elseif hitElement:getCompany() and hitElement:isCompanyDuty() and vehicle:getCompany() == hitElement:getCompany() then
+						elseif hitElement:getCompany() and hitElement:isCompanyDuty() and instanceof(vehicle, CompanyVehicle) and vehicle:getCompany() == hitElement:getCompany() then
 							if hitElement:getCompany():getMoney() >= costs then
 								if costs > 0 then
 									hitElement:getCompany():transferMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")

@@ -77,8 +77,8 @@ function ShopVehicleRobManager:Event_onVehicleSteal()
 						client:sendError(_("Es läuft bereits ein Autohaus-Überfall!", client))
 						return false
 					end
-					if FactionState:getSingleton():countPlayers() < SHOP_VEHICLE_ROB_MIN_MEMBERS then
-						client:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",client, SHOP_VEHICLE_ROB_MIN_MEMBERS))
+					if FactionState:getSingleton():countPlayers(true, false) < SHOP_VEHICLE_ROB_MIN_MEMBERS then
+						client:sendError(_("Es müssen mindestens %d aktive Staatsfraktionisten online sein!",client, SHOP_VEHICLE_ROB_MIN_MEMBERS))
 						return false
 					end
 					self.m_CurrentRob = ShopVehicleRob:new(client, source)
@@ -113,4 +113,5 @@ function ShopVehicleRobManager:Event_onPoliceUnlockVehicle()
 	self.m_CurrentRob:finishPickingLock(client)
 	client:sendSuccess(_("Fahrzeug aufgesperrt", client))
 	FactionState:getSingleton():sendShortMessage(("%s hat das Schloss vom Fahrzeug geöffnet."):format(client:getName()), 20000)
+	FactionState:getSingleton():addLog(client, "Fraktion", ("hat ein gestohlenes Shopfahrzeug (%s) aufgeschlossen."):format(self.m_CurrentRob.m_Vehicle:getName()))
 end
