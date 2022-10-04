@@ -133,8 +133,8 @@ function GroupHouseRob:startNewRob( house, player )
 		local group = player:getGroup()
 		if group then
 			if group:getType() == "Gang" then
-				if FactionState:getSingleton():countPlayers() < HOUSEROB_MIN_MEMBERS then
-					player:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!", player, HOUSEROB_MIN_MEMBERS))
+				if FactionState:getSingleton():countPlayers(true, false) < HOUSEROB_MIN_MEMBERS then
+					player:sendError(_("Es müssen mindestens %d aktive Staatsfraktionisten online sein!", player, HOUSEROB_MIN_MEMBERS))
 					return false
 				end
 				if player:getFaction() and player:getFaction():isStateFaction() then

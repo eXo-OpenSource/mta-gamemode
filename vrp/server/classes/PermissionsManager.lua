@@ -145,6 +145,7 @@ end
 
 function PermissionsManager:Event_changeRankPermissions(permissionsType, tbl, type)
 	if not self:getInstance(client, type) then return end
+	if table.size(tbl) == 0 then return end
 	local instance = self:getInstance(client, type)
 	local error = false
 
@@ -198,13 +199,15 @@ function PermissionsManager:Event_changeRankPermissions(permissionsType, tbl, ty
 		self:syncPermissions(player, type)
 	end
 
-	client:sendInfo(_("%s", client, error and "Einige Rechte konnten nicht geändert werden." or "Rechte erfolgreich geändert." ))
-	
+	local text = error and "Einige Rechte konnten nicht geändert werden." or "Rechte erfolgreich geändert."
+	client:sendInfo(_("%s", client, text))
+
 	self:Event_requestRankPermissionsList(permissionsType, type, client)
 end
 
 function PermissionsManager:Event_changePlayerPermissions(permissionsType, tbl, type, playerId)
 	if not self:getInstance(client, type) then return end
+	if table.size(tbl) == 0 then return end
 	local instance = self:getInstance(client, type)
 	local error = false
 	local rank = instance:getPlayerRank(playerId)
@@ -276,7 +279,8 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, tbl, 
 		self:syncPermissions(DatabasePlayer.getFromId(playerId), type)
 	end
 
-	client:sendInfo(_("%s", client, error and "Einige Rechte konnten nicht geändert werden." or "Rechte erfolgreich geändert." ))
+	local text = error and "Einige Rechte konnten nicht geändert werden." or "Rechte erfolgreich geändert."
+	client:sendInfo(_("%s", client, text))
 	
 	self:Event_requestPlayerPermissionsList(permissionsType, rank, type, playerId, client)
 end

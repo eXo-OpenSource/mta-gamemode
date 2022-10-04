@@ -204,6 +204,7 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin, dontChangeSkin, 
 				takeAllWeapons(client)
 				if type == "fire" then
 					giveWeapon(client, 42, 0, true)
+					client:setPublicSync("RadioStatus", 3)
 				end
 				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
