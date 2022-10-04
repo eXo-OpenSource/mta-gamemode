@@ -201,6 +201,7 @@ function PermissionsManager:Event_changeRankPermissions(permissionsType, tbl, ty
 
 	local text = error and "Einige Rechte konnten nicht geändert werden." or "Rechte erfolgreich geändert."
 	client:sendInfo(_("%s", client, text))
+	self:addLog(instance, client, permissionsType)
 
 	self:Event_requestRankPermissionsList(permissionsType, type, client)
 end
@@ -281,7 +282,8 @@ function PermissionsManager:Event_changePlayerPermissions(permissionsType, tbl, 
 
 	local text = error and "Einige Rechte konnten nicht geändert werden." or "Rechte erfolgreich geändert."
 	client:sendInfo(_("%s", client, text))
-	
+	self:addLog(instance, client, permissionsType, playerId)
+
 	self:Event_requestPlayerPermissionsList(permissionsType, rank, type, playerId, client)
 end
 
@@ -454,4 +456,19 @@ function PermissionsManager:getInstance(player, type)
 		if player:getGroup() then instance = player:getGroup() end
 	end
 	return instance
+end
+
+function PermissionsManager:addLog(instance, player, type, target)
+	local permType = "Rechte"
+	if type == "action" then
+		permType = "Aktionsrechte"
+	elseif type == "weapon" then
+		permType = "Waffenrechte"
+	end
+
+	if target then
+		instance:addLog(player, "Rechte", ("hat die %s von %s geändert"):format(permType, Account.getNameFromId(tonumber(target))))
+	else
+		instance:addLog(player, "Rechte", ("hat die %s geändert"):format(permType))
+	end
 end
