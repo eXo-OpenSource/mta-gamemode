@@ -83,6 +83,7 @@ function Guns:Event_onTaser(target)
 	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle then return end
 	if target:getPublicSync("supportMode") then return end
+	if target:getData("RcVehicle") then return end
 
 	client:giveAchievement(65)
 
@@ -143,11 +144,10 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 	end
 	if target.m_Shirt then
 		if bodypart == 3 and WEAPONS_KEVLAR_REPELS[weapon] and target.m_Shirt:getData("isProtectingChest") then
+			target.m_KevlarShotsCount = target.m_KevlarShotsCount + SHOT_STRENGTH_AGAINST_KEVLAR[weapon]
+			
 			if target.m_KevlarShotsCount >= math.random(3, 4) then
 				self:destroyKevlar(attacker, target)
-				return
-			else
-				target.m_KevlarShotsCount = target.m_KevlarShotsCount + SHOT_STRENGTH_AGAINST_KEVLAR[weapon]
 				return
 			end
 		end
