@@ -935,12 +935,17 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "vehiclePark")) then
+		if source:hasKey(client) or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] then
 			if source:isBroken() then
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
 			end
 
+			if (instanceof(source, GroupVehicle) and not PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "group", "vehiclePark")) then
+				client:sendError(_("Du bist nicht berechtigt Gruppen-Fahrzeuge zu parken.", client))
+				return
+			end
+			
 			if not source:isOnGround() then
 				client:sendError(_("Das Fahrzeug muss zum Parken stillstehen!", client))
 				return
