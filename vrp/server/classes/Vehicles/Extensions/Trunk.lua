@@ -122,6 +122,11 @@ function Trunk:addItem(player, item, amount, value)
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
 			if item == "Kleidung" then
+				if not SkinInfo[tonumber(value)] then
+					player:sendError(_("Du kannst diesen Skin nicht in den Kofferraum legen!", player))
+					return false
+				end
+
 				if player:getModel() == tonumber(value) then
 					WearableManager:getSingleton():removeWearable(player, item, value)
 				end
