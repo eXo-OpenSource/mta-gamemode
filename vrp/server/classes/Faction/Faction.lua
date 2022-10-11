@@ -299,6 +299,10 @@ function Faction:changeSkin(player, skinId)
 				player.m_KevlarShotsCount = nil
 				player:setData("Faction:InSpecialDuty", nil, true)
 			end
+
+			if player:getWeapon(3) == 27 then
+				self:storageWeapons(player, {[27] = true})
+			end
 		end
 	else
 		player:sendError(_("Du bist nicht im Dienst deiner Fraktion aktiv!", player))

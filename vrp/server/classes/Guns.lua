@@ -148,8 +148,8 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 			
 			if target.m_KevlarShotsCount >= math.random(3, 4) then
 				self:destroyKevlar(attacker, target)
-				return
 			end
+			return
 		end
 	end
 	local realLoss = 0
