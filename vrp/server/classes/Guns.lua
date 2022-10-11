@@ -134,6 +134,9 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 	if target.m_SupMode or attacker.m_SupMode or target:isInGhostMode() or attacker:isInGhostMode() then
 		return
 	end
+	if target:getData("RcVehicle") then 
+		return
+	end
 	if weapon == 34 and bodypart == 9 then
 		if self:destroyProtectionHelmet(attacker, target) then
 			return
