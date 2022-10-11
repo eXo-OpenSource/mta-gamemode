@@ -169,6 +169,13 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	local money = player.sendRequest.money
 	local value = player.sendRequest.itemValue
 
+	if item == "Kleidung" then
+		if not SkinInfo[tonumber(value)] then
+			player:sendError(_("Du kannst diesen Skin nicht handeln!", player))
+			return false
+		end
+	end
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zu weit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zu weit von %s entfernt!", target, player.name))

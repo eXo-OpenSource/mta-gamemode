@@ -538,6 +538,23 @@ SkinInfo = {
 	[303] = {"Geschäftsmann", 500000, 10},
 	[306] = {"Elektronikexperte", 250000, 10},
 	[308] = {"Russischer Waffenhändler", 350000, 10},
+
+	-- event skins
+	[244] = {"Weihnachtsmann", math.huge, -1},
+	[310] = {"Zombie", math.huge, -1},
+
+	-- other skins
+	[155] = {"Pizzalieferant", math.huge, -1},
+	[78] = {"Obdachloser", math.huge, -1},
+	[79] = {"Obdachloser", math.huge, -1},
+	[134] = {"Obdachloser", math.huge, -1},
+	[135] = {"Obdachloser", math.huge, -1},
+	[136] = {"Obdachloser", math.huge, -1},
+	[137] = {"Obdachloser", math.huge, -1},
+	[200] = {"Obdachloser", math.huge, -1},
+	[212] = {"Obdachloser", math.huge, -1},
+	[230] = {"Obdachloser", math.huge, -1},
+	[239] = {"Obdachloser", math.huge, -1},
 }
 
 Tasks = {

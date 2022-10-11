@@ -246,6 +246,9 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 				if WEAPON_DAMAGE[weapon] then
 					cancelEvent()
 				end
+				if localPlayer:getData("RcVehicle") then
+					cancelEvent()
+				end
 			end
 		elseif attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and self.m_NetworkInteruptFreeze then
 			cancelEvent()

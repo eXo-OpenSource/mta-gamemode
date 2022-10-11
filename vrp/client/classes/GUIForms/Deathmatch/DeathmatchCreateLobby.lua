@@ -11,10 +11,10 @@ inherit(Singleton, DeathmatchCreateLobby)
 addRemoteEvents{"deathmatchReceiveCreateData"}
 
 
-function DeathmatchCreateLobby:constructor()
+function DeathmatchCreateLobby:constructor(marker)
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch-Lobby erstellen", true, true, self)
-	self.m_Window:addBackButton(function () DeathmatchLobbyGUI:getSingleton():show() end)
+	self.m_Window:addBackButton(function () DeathmatchLobbyGUI:getSingleton():show():addClosingRange(self.m_RangeElement) end)
 	GUILabel:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.05, "Warnung: Die Lobby wird gelöscht sobald kein Spieler mehr darin spielt!", self.m_Window):setColor(Color.Red)
 
 	GUILabel:new(self.m_Width*0.02, 40+self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, "Map:", self.m_Window)

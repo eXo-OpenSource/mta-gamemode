@@ -11,6 +11,7 @@ inherit(Singleton, DeathmatchLobbyGUI)
 addRemoteEvents{"deathmatchOpenLobbyGUI", "deathmatchReceiveLobbys"}
 
 function DeathmatchLobbyGUI:constructor(marker)
+	self.m_RangeElement = marker
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460, true, false, marker)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, true, self)
@@ -26,9 +27,9 @@ function DeathmatchLobbyGUI:constructor(marker)
 	self.m_LobbyGrid:addColumn(_"Modus", 0.15)
 	self.m_LobbyGrid:addColumn(_"PW", 0.15)
 	self.m_CreateLobbyButton = GUIButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.17, self.m_Width*0.3, self.m_Height*0.07, _"Lobby erstellen", self.m_Window):setBackgroundColor(Color.Accent):setBarEnabled(true)
-	self.m_CreateLobbyButton:setEnabled(false)
+	--self.m_CreateLobbyButton:setEnabled(false)
 	self.m_CreateLobbyButton.onLeftClick = function()
-		DeathmatchCreateLobby:getSingleton():open():addClosingRange(marker)
+		DeathmatchCreateLobby:getSingleton():open():addClosingRange(self.m_RangeElement)
 		delete(self)
 	end
 
@@ -90,7 +91,7 @@ function DeathmatchLobbyGUI:tryJoinLobby()
 						ErrorBox:new(_"Falsches Passwort eingegeben!")
 					end
 				end
-			)
+			):addClosingRange(self.m_RangeElement)
 		else
 			self:joinLobby(selectedItem.Id)
 		end

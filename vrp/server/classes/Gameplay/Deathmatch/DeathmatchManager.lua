@@ -8,7 +8,7 @@
 
 DeathmatchManager = inherit(Singleton)
 DeathmatchManager.Lobbys = {}
-DeathmatchManager.AllowedWeapons = {22, 24, 25, 28, 29, 32, 30, 31, 33, 34, 10, 11, 12, 14, 15}
+DeathmatchManager.AllowedWeapons = {22, 24, 25, 29, 30, 31, 33, }
 
 DeathmatchManager.Maps = {
 	["lvpd"] = {
@@ -89,7 +89,7 @@ function DeathmatchManager:constructor()
 		["halloween"] = DeathmatchHalloween
 	}
 
-	--self:loadServerLobbys()
+	self:loadServerLobbys()
 	self.m_BankServer = BankServer.get("gameplay.deathmatch")
 	local b = Blip:new("SniperGame.png", 1327.88, -1556.25)
 	b:setDisplayText("Paintball-Arena", BLIP_CATEGORY.Leisure)
@@ -179,7 +179,7 @@ function DeathmatchManager:loadServerLobbys()
 	self:createLobby("M4 LVPD #1", "Server", "lvpd", {31}, "default", 300)
 	self:createLobby("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
 	self:createLobby("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
-	self:createLobby("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
+	--self:createLobby("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
 	self:createLobby("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
 	self:createLobby("M4 Motel #1", "Server", "motel", {31}, "default", 10)
 end

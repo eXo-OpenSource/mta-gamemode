@@ -32,7 +32,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 				if hitElement:getFaction() and hitElement:isFactionDuty() and vehicle:getFaction() == hitElement:getFaction() and hitElement:getFaction():getMoney() < costs then
 					hitElement:sendError(_("Deine Fraktion benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
-				elseif hitElement:getCompany() and hitElement:isCompanyDuty() and vehicle:getCompany() == hitElement:getCompany() and hitElement:getCompany():getMoney() < costs then
+				elseif hitElement:getCompany() and hitElement:isCompanyDuty() and instanceof(vehicle, CompanyVehicle) and vehicle:getCompany() == hitElement:getCompany() and hitElement:getCompany():getMoney() < costs then
 						hitElement:sendError(_("Dein Unternehmen benötigt %d$ in der Kasse, um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end

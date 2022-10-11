@@ -865,11 +865,6 @@ function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
 	client:sendInfo(_("Kleidung gewechselt.", client))
 	if client:getModel() == client:getFaction().m_SpecialSkin then -- in special duty, stop it
 		client:getFaction():changeSkin(client, skinId)
-		if client:getFaction():isStateFaction() then
-			if client:getWeapon(3) == 27 then
-				client:getFaction():storageWeapons(client, {[27] = true})
-			end
-		end
 	else --start special duty
 		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
 	end

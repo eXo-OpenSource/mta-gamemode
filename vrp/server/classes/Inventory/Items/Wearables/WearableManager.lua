@@ -146,7 +146,7 @@ function WearableManager:removeWearable( player, itemName, value )
 						triggerEvent("WeaponAttach:unconcealWeapons", player)
 					elseif wearableClass == WearableClothes then
 						if getElementModel(player) == tonumber(value) then
-							player:setSkin(252)
+							player:setSkin(252, true)
 							player:meChat(true, "zieht seine Kleidung aus!")
 							setPedAnimation(player,"on_lookers","lkaround_in",1000,true,true,true)
 							setTimer(setPedAnimation,1000,1,player,false)
