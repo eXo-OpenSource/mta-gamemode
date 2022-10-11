@@ -544,7 +544,7 @@ SkinInfo = {
 	[310] = {"Zombie", math.huge, -1},
 
 	-- other skins
-	[155] = {"Pizzaboy", math.huge, -1},
+	[155] = {"Pizzalieferant", math.huge, -1},
 	[78] = {"Obdachloser", math.huge, -1},
 	[79] = {"Obdachloser", math.huge, -1},
 	[134] = {"Obdachloser", math.huge, -1},
