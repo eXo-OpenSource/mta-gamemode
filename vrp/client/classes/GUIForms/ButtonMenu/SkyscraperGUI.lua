@@ -13,6 +13,7 @@ addRemoteEvents{"Skyscraper:showGUI"}
 function SkyscraperGUI:constructor(id, apartments, apartmentsOwner, rangeElement)
     GUIButtonMenu.constructor(self, _("Hochhaus #%s", id), false, false, false, false, rangeElement)
 
+    local apartmentsOwner = table.reverse(apartmentsOwner)
     for i, houseId in pairs(table.reverse(apartments)) do
         local floorNumber = #apartments - i
         local floorName = floorNumber == 0 and "EG" or floorNumber..". OG"

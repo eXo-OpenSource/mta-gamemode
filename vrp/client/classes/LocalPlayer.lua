@@ -345,7 +345,7 @@ end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
-		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() and not localPlayer:getData("isInDeathMatch") and not localPlayer:getData("inWare") then
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true, false, true)
 			elseif localPlayer:getFaction():isRescueFaction() then

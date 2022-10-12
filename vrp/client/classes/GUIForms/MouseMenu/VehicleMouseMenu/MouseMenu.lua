@@ -156,7 +156,9 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				):setIcon(FontAwesomeSymbols.Arrows)
 			end
 		end
-		if (element:getModel() == 544 or element:getModel() == 407) and localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+		if (element:getModel() == 544 or element:getModel() == 407 or element:getModel() == 563) and 
+		localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() and 
+		localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "fire" then
 			self:addItem(_"Feuerlöscher auffüllen",
 				function()
 					if self:getElement() then 

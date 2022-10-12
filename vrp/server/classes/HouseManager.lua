@@ -30,7 +30,9 @@ function HouseManager:constructor()
 
 	local query = sql:queryFetch("SELECT * FROM ??_garage", sql:getPrefix())
 	for key, v in pairs(query) do
-		self.m_Houses[v["HouseId"]]:createGarage(v["GarageId"], v["PosX"], v["PosY"], v["PosZ"], v["RotX"], v["RotY"], v["RotZ"])
+		if self.m_Houses[v["HouseId"]] then
+			HouseGarage.Map[key] = self.m_Houses[v["HouseId"]]:createGarage(key, v["GarageId"], v["PosX"], v["PosY"], v["PosZ"], v["RotX"], v["RotY"], v["RotZ"])
+		end
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -73,7 +75,7 @@ end
 
 function HouseManager:Event_toggleGarageState()
 	for i, v in pairs(HouseGarage.Map) do
-		local house = self.m_Houses[i]
+		local house = self.m_Houses[v.m_HouseId]
 		if getDistanceBetweenPoints3D(v.m_GaragePosition, client:getPosition()) <= 10 then
 			if house:isTenant(client:getId()) or house:getOwner() == client:getId() then
 				HouseGarage.Map[i]:toggleGarage()
@@ -278,17 +280,19 @@ end
 function HouseManager:loadBlips(player)
 	local house = self:getPlayerHouse(player)
 	if house then
-		if house.m_Garage then
-			local garage = house.m_Garage
-			player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+		if #house.m_Garage > 0 then
+			for i, garage in pairs(house.m_Garage) do
+				player:triggerEvent("addGarageBlip", garage.m_Id, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+			end
 		end
 		player:triggerEvent("addHouseBlip", house.m_Id, house.m_Pos.x, house.m_Pos.y)
 	end
 	for index, rentHouse in pairs(self:getPlayerRentedHouses(player)) do
 		if rentHouse then
-			if rentHouse.m_Garage then
-				local garage = rentHouse.m_Garage
-				player:triggerEvent("addGarageBlip", garage.m_HouseId, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+			if #rentHouse.m_Garage > 0 then
+				for i, garage in pairs(rentHouse.m_Garage) do
+					player:triggerEvent("addGarageBlip", garage.m_Id, garage.m_GaragePosition.x, garage.m_GaragePosition.y)
+				end
 			end
 			player:triggerEvent("addHouseBlip", rentHouse.m_Id, rentHouse.m_Pos.x, rentHouse.m_Pos.y)
 		end
