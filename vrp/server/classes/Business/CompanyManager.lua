@@ -389,6 +389,7 @@ function CompanyManager:Event_companySaveRank(rank,loan)
 	if company then
         if tonumber(loan) > COMPANY_MAX_RANK_LOANS[rank] then
 			client:sendError(_("Der maximale Lohn für diesen Rang beträgt %d$", client, COMPANY_MAX_RANK_LOANS[rank]))
+			return
 		end
 
 		if tonumber(company.m_RankLoans[tostring(rank)]) ~= tonumber(loan) then
