@@ -18,7 +18,8 @@ HouseGarage.Garage = {
     [49] = Vector3(785.95, -494.23, 17.34),
 }
 
-function HouseGarage:constructor(houseId, garageId, posX, posY, posZ, rotX, rotY, rotZ)
+function HouseGarage:constructor(id, houseId, garageId, posX, posY, posZ, rotX, rotY, rotZ)
+    self.m_Id = id
     self.m_Garage = self
     self.m_HouseId = houseId
     self.m_GarageId = garageId
