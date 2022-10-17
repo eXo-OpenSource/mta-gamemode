@@ -1750,8 +1750,9 @@ function Admin:Event_adminStopVehicleForSale(reason)
 	if client:getRank() >= ADMIN_RANK_PERMISSION["endVehicleSale"] then
 		if getElementData(source, "GroupType") then
 			source:setForSale(false, 0)
-			source:getGroup():sendShortMessage(_("Der Verkauf vom Fahrzeug (%s) wurde von %s beendet! Grund: %s", client, source:getName(), client:getName(), reason), -1)
+			source:getGroup():sendShortMessage(_("Der Verkauf vom Fahrzeug %s (%s) wurde von %s beendet! Grund: %s", client, source:getName(), source:getId(), client:getName(), reason), -1)
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "endSale", source, reason)
+			self:sendShortMessage(_("%s hat das Fahrzeug %s (%s) von %s aus dem Verkauf genommen (Grund: %s).", client, client:getName(), source:getName(), source:getId(), source:getGroup():getName(), reason))
 		end
 	else
 		client:sendError("Du bist nicht berechtigt!")
@@ -1766,8 +1767,9 @@ function Admin:Event_adminStopVehicleForRent(reason)
 	if client:getRank() >= ADMIN_RANK_PERMISSION["endVehicleSale"] then
 		if getElementData(source, "GroupType") then
 			source:setForRent(false, 0)
-			source:getGroup():sendShortMessage(_("Die Vermietung vom Fahrzeug (%s) wurde von %s beendet! Grund: %s", client, source:getName(), client:getName(), reason), -1)
+			source:getGroup():sendShortMessage(_("Die Vermietung vom Fahrzeug %s (%s) wurde von %s beendet! Grund: %s", client, source:getName(), source:getId(), client:getName(), reason), -1)
 			StatisticsLogger:getSingleton():addAdminVehicleAction(client, "endRent", source, reason)
+			self:sendShortMessage(_("%s hat die Vermietung des Fahrzeug %s (%s) von %s beendet! (Grund: %s).", client, client:getName(), source:getName(), source:getId(), source:getGroup():getName(), reason))
 		end
 	else
 		client:sendError("Du bist nicht berechtigt!")

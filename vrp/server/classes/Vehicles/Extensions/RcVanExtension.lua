@@ -134,9 +134,6 @@ function RcVanExtension:toggleRC(player, rcVehicle, state, force, death)
 		if not death then -- to prevent that the setted alpha from ExecutionPed will be changed
 			player:setAlpha(255)
 		end
-		if isTimer(player.m_rveOutOfRangeTimer) then
-			self:Event_rveColShapeHit(player)
-		end
 
 		player:removeFromVehicle()
 		player:warpIntoVehicle(self, player.m_RcVanSeat)
@@ -154,7 +151,10 @@ function RcVanExtension:toggleRC(player, rcVehicle, state, force, death)
 
 		RcVanExtensionBattery[self:getId()][rcVehicle] = self.m_RcVehicleBatteryTimer[rcVehicle]:getDetails()/1000 
 		if isTimer(self.m_RcVehicleBatteryTimer[rcVehicle]) then killTimer(self.m_RcVehicleBatteryTimer[rcVehicle]) end
+		if isTimer(player.m_rveOutOfRangeTimer) then killTimer(player.m_rveOutOfRangeTimer) end
 		player:triggerEvent("CountdownStop", "Batterie")
+		player:triggerEvent("CountdownStop", "Connection lost")
+		player:triggerEvent("RVE:withinRange")
 
 		RcVanExtensionLoadBatteryTimer[self:getId()][rcVehicle] = setTimer(function()
 			if RcVanExtensionBattery[self:getId()][rcVehicle] < 900 then
@@ -165,8 +165,6 @@ function RcVanExtension:toggleRC(player, rcVehicle, state, force, death)
 			end
 		end, 10000, 0)
 	end
-		
-
 end
 
 function RcVanExtension:Event_rveVehicleDamage(loss)
