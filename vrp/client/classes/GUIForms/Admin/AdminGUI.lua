@@ -87,7 +87,7 @@ function AdminGUI:constructor(money)
 	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBarEnabled(false)
 	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
-	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
+	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setCaption(_"ID des Spielers")
 	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
 
 	self:addAdminButton("syncForum", "Foren-Gruppen", self.onGeneralButtonClick, self.m_Width-225, 310, 200, 30, Color.Orange, tabAllgemein)
