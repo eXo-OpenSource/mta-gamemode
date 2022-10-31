@@ -66,12 +66,12 @@ Halloween.ms_Bonus = {
 		["VehicleModel"] = 442
 	},
 	{
-		["Text"] = "Boxville",
-		["Image"] = "Bonus_Boxville.png",
+		["Text"] = "Bloodring Banger",
+		["Image"] = "Bonus_Bloodring.png",
 		["Pumpkin"] = 1000,
 		["Sweets"] = 7500,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 498
+		["VehicleModel"] = 504
 	},
 }
 
@@ -89,32 +89,30 @@ Halloween.ms_QuestRewards = {
 local day = getRealTime().monthday
 local month = getRealTime().month+1
 
-if month == 10 and day <= 31 then
-	Halloween.ms_PricePoolName = "Halloween2021-1"
-	Halloween.ms_PricePoolEnd = 1635699600
+if (month == 10 and day == 31) or (month == 11 and day <= 6) then
+	Halloween.ms_PricePoolName = "Halloween2022-1"
+	Halloween.ms_PricePoolEnd = 1667754000
 	Halloween.ms_PricePoolPrices = {
-		{"vehicle", 480},
-		{"money", 100000},
-		{"money", 100000},
+		{"money", 150000},
+		{"vehicle", 568},
 
-		{"vehicle", 503},
-		{"money", 100000},
-		{"money", 100000},
+		{"money", 150000},
+		{"vehicle", 545},
 
+		{"money", 150000},
 		{"VIP", 1},
 	}
-elseif month == 11 and day <= 7 then
-	Halloween.ms_PricePoolName = "Halloween2021-2"
-	Halloween.ms_PricePoolEnd = 1633622400
+elseif month == 11 and day <= 13 then
+	Halloween.ms_PricePoolName = "Halloween2022-2"
+	Halloween.ms_PricePoolEnd = 1668358800
 	Halloween.ms_PricePoolPrices = {
-		{"vehicle", 572},
-		{"money", 100000},
-		{"money", 100000},
+		{"money", 150000},
+		{"vehicle", 459},
 
-		{"vehicle", 576},
-		{"money", 100000},
-		{"money", 100000},
+		{"money", 150000},
+		{"vehicle", 547},
 
+		{"money", 150000},
 		{"VIP", 1},
 	}
 end
@@ -152,14 +150,15 @@ function Halloween:constructor()
 	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus", "Halloween:giveGhostCleaner", "Halloween:takeGhostCleaner", "Halloween:requestQuestState", "Halloween:requestQuestUpdate"}
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
 	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
+	--[[
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerQuit, self))
 	addEventHandler("Halloween:giveGhostCleaner", root, bind(self.Event_giveGhostCleaner, self))
 	addEventHandler("Halloween:takeGhostCleaner", root, bind(self.Event_takeGhostCleaner, self))
 	addEventHandler("Halloween:requestQuestState", root, bind(self.requestQuestState, self))
 	addEventHandler("Halloween:requestQuestUpdate", root, bind(self.requestQuestUpdate, self))
-
+	]]
 	self:initHalloweenDM()
-	self:createQuestMarkers()
+	--self:createQuestMarkers()
 
 	HalloweenEasterEggs:new()
 
@@ -380,6 +379,8 @@ function Halloween:halloweenDmStart()
 	end
 end
 
+
+--[[
 function Halloween:Event_giveGhostCleaner()
 	giveWeapon(client, 27, 9999, true)
 end
@@ -441,6 +442,7 @@ function Halloween:setQuestState(player, quest)
 		sql:queryExec("UPDATE ??_halloween_quest SET Quest = ? WHERE UserId = ?", sql:getPrefix(), quest, player:getId())
 	end
 end
+]]
 
 function Halloween:onEntryBuy(playerId, amount)
 	local pumpkinsToDrop = 0

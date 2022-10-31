@@ -91,9 +91,10 @@ function Halloween:constructor()
 	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
 	addEventHandler("setHalloweenDarkness", root, bind(self.setDarkness, self))
 	--addEventHandler("onClientPlayerWeaponSwitch", root, bind(self.onClientPlayerWeaponSwitch, self))
-	addEventHandler("Halloween:sendQuestState", root, bind(self.receiveQuestState, self))
-	addEventHandler("onClientPlayerWeaponFire", root, bind(self.onClientPlayerWeaponFire, self))
+	--addEventHandler("Halloween:sendQuestState", root, bind(self.receiveQuestState, self))
+	--addEventHandler("onClientPlayerWeaponFire", root, bind(self.onClientPlayerWeaponFire, self))
 
+	--[[
 	self.m_Quests = {
 		GhostFinderQuest,
 		GhostKillerQuest,
@@ -120,7 +121,7 @@ function Halloween:constructor()
 
 	CustomModelManager:getSingleton():loadImportTXD("files/models/events/halloween/shotgspa.txd", 351)
 	CustomModelManager:getSingleton():loadImportDFF("files/models/events/halloween/shotgspa.dff", 351)
-	WEAPON_NAMES[27] = "Geistvertreiber"
+	WEAPON_NAMES[27] = "Geistvertreiber" ]]
 end
 
 function Halloween:Event_restore(clear)
@@ -130,19 +131,19 @@ function Halloween:Event_restore(clear)
 		local color = tocolor(200, 200, 200, 200)
 		dxDrawText("Stumpy", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 55
-		dxDrawText("sLi", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("sLi\nGustavo-\nFring", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
 		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Dean-\nWinchester", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("-//-", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Maurice\nAngry", xoffs, 20, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Angry\nNils", xoffs, 20, xoffs+60, 115, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 58
-		dxDrawText("Noir\nWilli\nThresh\nGuNShOtzZ\nDonnerHerz", xoffs, 5, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Kurumi\nHigh5", xoffs, 5, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 		dxDrawText("Renn\nkleiner\nMann", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
-		dxDrawText("Strobe\nPewX\nMasterM", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
+		dxDrawText("Strobe\nPewX\nMasterM\nZeroTwo", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
 		dxDrawText("MegaThorx\nSnake\nSlliX", xoffs, 20, xoffs+60, 100, color, 1, getVRPFont(self.m_Font), "center")
 		xoffs = xoffs + 60 + 57
