@@ -484,7 +484,7 @@ GAS_STATIONS = {
 		serviceStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	--[[{
+	{
 		name = "LCN",
 		stations = {
 			{Vector3(715.71051, -1199.40308, 19.44590), 239, 1},
@@ -493,7 +493,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},]]
+	},
 	--[[{
 		name = "Yakuza",
 		stations = {
@@ -504,7 +504,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},]]
+	}
 	{
 		name = "Los Aztecas",
 		stations = {
@@ -515,7 +515,7 @@ GAS_STATIONS = {
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	--[[{
+	{
 		name = "Outlaws MC",
 		stations = {
 			{Vector3(693.20, -455.38, 16.84), 270, 1},

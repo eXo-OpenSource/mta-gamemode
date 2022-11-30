@@ -30,11 +30,11 @@
 	<map src="fraktionen/army_shooting_town.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" /> 
-	<map src="fraktionen/aztecas.map" />
+	<!--<map src="fraktionen/aztecas.map" />-->
 	<!--<map src="fraktionen/brigada.map" />-->
 
 	<!-- <map src="fraktionen/biker.map" />  --> <!--Outlaws base-->
-	<!-- <map src="fraktionen/cosanostra.map" /> -->
+	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
 	<map src="fraktionen/PD-interior.map" />
 	<!--<map src="fraktionen/lspd-gate-access.map" />-->
