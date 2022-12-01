@@ -240,7 +240,7 @@ function ShopVehicleRob:Event_onEstimateMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle and hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0  then
 			if not self.m_UsedEstimateMarker[source] then
-				hitElement:sendInfo(_("Klicke auf den NPC um das Fahrzeug schätzen zu lassen.", hitElement))
+				hitElement:sendInfo(_("Klicke auf den NPC, um das Fahrzeug schätzen zu lassen.", hitElement))
 			else
 				hitElement:sendWarning(_("Du hast das Fahrzeug hier bereits schätzen lassen.", hitElement))
 			end
@@ -251,7 +251,7 @@ end
 function ShopVehicleRob:Event_onDeliveryMarkerHit(hitElement, matchingDim)
 	if hitElement.type == "player" then
 		if hitElement.vehicle == self.m_Vehicle and hitElement.vehicleSeat == 0 then
-			hitElement:sendInfo(_("Steige aus um das Fahrzeug abzugeben.", hitElement))
+			hitElement:sendInfo(_("Steige aus, um das Fahrzeug abzugeben.", hitElement))
 		end
 	end
 end
@@ -268,7 +268,7 @@ function ShopVehicleRob:calcPrice()
 		if self.m_VehicleEstimated then
 			price = math.random(self.m_VehicleEstimated, self.m_VehicleEstimated*1.05)
 		else
-			price = math.random(self.m_VehicleShopPrice*0.03, self.m_VehicleShopPrice*0.05)
+			price = math.random(self.m_VehicleShopPrice*0.01, self.m_VehicleShopPrice*0.03)
 		end
 	end
 	return price
@@ -288,13 +288,13 @@ function ShopVehicleRob:onEstimatePedClick(button, state, player)
 						self.m_UsedEstimateMarker[source.marker] = true
 						if isElementWithinMarker(player, self.m_MechanicMarker[1]) then
 							freezeTime = 12000
-							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.07, self.m_VehicleShopPrice*0.15)
+							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.05, self.m_VehicleShopPrice*0.07)
 						elseif isElementWithinMarker(player, self.m_MechanicMarker[2]) then
 							freezeTime = 18000
-							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.06, self.m_VehicleShopPrice*0.14)
+							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.06, self.m_VehicleShopPrice*0.09)
 						elseif isElementWithinMarker(player, self.m_MechanicMarker[3]) then
 							freezeTime = 28000
-							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.04, self.m_VehicleShopPrice*0.17)
+							self.m_VehicleEstimated = math.random(self.m_VehicleShopPrice*0.04, self.m_VehicleShopPrice*0.1)
 						end
 						setTimer(function()
 							self.m_Vehicle:setFrozen(false)
