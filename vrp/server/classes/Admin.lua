@@ -336,17 +336,19 @@ end
 
 function Admin:Event_respawnFactionVehicles(Id)
     local faction = FactionManager:getSingleton():getFromId(Id)
-    if faction and client:getRank() >= RANK.Supporter then
+    if faction and client:getRank() >= ADMIN_RANK_PERMISSION["respawnFaction"] then
         faction:respawnVehicles(client)
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
+		StatisticsLogger:addAdminAction(client, "respawnFaction", faction:getShortName())
     end
 end
 
 function Admin:Event_respawnCompanyVehicles(Id)
     local company = CompanyManager:getSingleton():getFromId(Id)
-    if company and client:getRank() >= RANK.Supporter then
+    if company and client:getRank() >= ADMIN_RANK_PERMISSION["respawnCompany"] then
         company:respawnVehicles(client)
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, company:getName()))
+		StatisticsLogger:addAdminAction(client, "respawnCompany", company:getShortName())
     end
 end
 
@@ -459,7 +461,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 	end
 
 	if func == "aduty" or func == "smode" then
-		self:toggleSupportMode(admin)
+		if admin:getRank() == RANK.Ticketsupporter then
+			self:toggleTicketSupportMode(admin)
+		else
+			self:toggleSupportMode(admin)
+		end
 	elseif func == "clearchat" then
 		self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
 		for index, player in pairs(Element.getAllByType("player")) do
@@ -956,6 +962,45 @@ function Admin:toggleSupportMode(player)
 end
 
 function Admin:toggleSupportArrow(player, state)
+	if state == true then
+		if isElement(self.m_SupportArrow[player]) then self.m_SupportArrow[player]:destroy() end
+        local pos = player:getPosition()
+		self.m_SupportArrow[player] = createMarker(pos, "arrow" ,0.5, 50, 200, 255, 255)
+        self.m_SupportArrow[player]:attach(player, 0, 0, 1.5)
+		addEventHandler("onPlayerQuit", player, self.m_DeleteArrowBind)
+		addEventHandler("onPlayerWasted", player, self.m_DeleteArrowBind)
+	elseif state == false then
+        if isElement(self.m_SupportArrow[player]) then self.m_SupportArrow[player]:destroy() end
+        removeEventHandler("onPlayerQuit", player, self.m_DeleteArrowBind)
+		removeEventHandler("onPlayerWasted", player, self.m_DeleteArrowBind)
+	end
+end
+
+function Admin:toggleTicketSupportMode(player)
+	if not player:getPublicSync("ticketsupportMode") then
+        player:setPublicSync("ticketsupportMode", true)
+        player:sendInfo(_("Ticketsupport Modus aktiviert!", player))
+        self:sendShortMessage(_("%s hat den Ticketsupport Modus aktiviert!", player, player:getName()))
+        self:toggleTicketsupportArrow(player, true)
+		player.m_TicketsupMode = true
+		StatisticsLogger:getSingleton():addAdminAction(player, "TicketsupportMode", "aktiviert")
+		toggleAllControls(player, false, true, false)
+
+		if isPedInVehicle(player) then
+			player:removeFromVehicle()
+		end
+    else
+        player:setPublicSync("ticketsupportMode", false)
+        player:sendInfo(_("Ticketsupport Modus deaktiviert!", player))
+        self:sendShortMessage(_("%s hat den Ticketsupport Modus deaktiviert!", player, player:getName()))
+        self:toggleTicketsupportArrow(player, false)
+		player.m_TicketsupMode = false
+		StatisticsLogger:getSingleton():addAdminAction(player, "TicketsupportMode", "deaktiviert")
+		toggleAllControls(player, true)
+    end
+end
+
+function Admin:toggleTicketsupportArrow(player, state)
 	if state == true then
 		if isElement(self.m_SupportArrow[player]) then self.m_SupportArrow[player]:destroy() end
         local pos = player:getPosition()

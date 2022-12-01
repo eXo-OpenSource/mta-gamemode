@@ -79,8 +79,10 @@ function Nametag:draw()
 					if bLineOfSight and not smokeHit or localPlayer:getPrivateSync("isSpecting") then
 						local drawName = getPlayerName(player)
 						local isAdmin = false
-						if player.getPublicSync and player:getPublicSync("supportMode") then
-							drawName = ("(%s) %s"):format(RANKSCOREBOARD[player.getPublicSync and player:getPublicSync("Rank") or 3] or "Support", drawName)
+						local adminColor = Color.Accent
+						if player.getPublicSync and player:getPublicSync("supportMode") or player:getPublicSync("ticketsupportMode") then
+							drawName = ("[%s] %s"):format(RANKSCOREBOARD[player.getPublicSync and player:getPublicSync("Rank") or 3] or "Support", drawName)
+							adminColor = tocolor(unpack(RANKCOLORS[player.getPublicSync and player:getPublicSync("Rank") or 3]))
 							isAdmin = true
 						end
 						local wanteds = player:getWanteds()
@@ -103,7 +105,7 @@ function Nametag:draw()
 						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
 						dxDrawText(drawName, scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
 						if isAdmin then
-							dxDrawText(drawName, scx,scy, nil, nil, Color.changeAlpha(Color.Accent, 255*alpha), 2*size, Nametag.font, "center", "center")
+							dxDrawText(drawName, scx,scy, nil, nil, Color.changeAlpha(adminColor, 255*alpha), 2*size, Nametag.font, "center", "center")
 						else
 							dxDrawText(drawName, scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
 						end

@@ -99,7 +99,7 @@ function WeaponManager:isFiringAllowed()
 	if localPlayer:getPublicSync("cuffed") or getElementData(localPlayer, "isTasered") or NoDm:getSingleton():isInNoDmZone() or 
 		VehicleFuel:isInstantiated() or FishingRod:isInstantiated() or getElementData(localPlayer, "inJail") or 
 		getElementData(localPlayer, "inAdminPrison") or localPlayer.m_IsPickingLock or Damage:getSingleton().m_InTreatment or
-		localPlayer:getData("Admin:IsFrozen") then
+		localPlayer:getData("Admin:IsFrozen") or localPlayer:getPublicSync("ticketsupportMode") then
 		return false
 	end
 	return true
