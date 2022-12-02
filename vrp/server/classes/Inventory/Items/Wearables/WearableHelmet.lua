@@ -17,6 +17,7 @@ WearableHelmet.objectTable =
 	["Hasenohren"] = {1934, 0, 0, 1, 0, 180, "Hasenohren", true},
 	["Weihnachtsmütze"] = {1936, 0.14, 0, 1, 0, 90, "Weihnachtsmütze", true},
 	["Stern"] = {902, 0.1, 0, 0.2, 0, 90, "Stern", true},
+	["Lebkuchen-Maske"] = {2107, -0.6, -0.003, 1, 0, 90, "Lebkuchen-Maske", true},
 }
 
 

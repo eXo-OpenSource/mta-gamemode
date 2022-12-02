@@ -49,6 +49,7 @@ function ItemManager:constructor()
 		["SLAM"] = ItemSlam;
 		["Rauchgranate"] = ItemSmokeGrenade;
 		["DefuseKit"] = ItemDefuseKit;
+		["Päckchen"] = ItemPresent;
 
 		["Bambusstange"] = ItemFishing,
 		["Angelrute"] = ItemFishing,
@@ -102,6 +103,7 @@ function ItemManager:constructor()
 		["Einsatzhelm"] = WearableHelmet,
 		["Hasenohren"] = WearableHelmet,
 		["Weihnachtsmütze"] = WearableHelmet,
+		["Lebkuchen-Maske"] = WearableHelmet,
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,

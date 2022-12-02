@@ -62,7 +62,7 @@ end
 
 function QuestPackageFind:addObject(Id, pos)
 	pos.z = pos.z+0.5
-	self.m_Objects[Id] = createObject(3878, pos)
+	self.m_Objects[Id] = createObject(2070, pos)
 	self.m_Objects[Id]:setAlpha(0)
 	self.m_Objects[Id].Id = Id
     self.m_Objects[Id]:setData("clickable", true, true)

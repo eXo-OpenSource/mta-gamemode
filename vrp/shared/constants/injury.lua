@@ -39,7 +39,6 @@ INJURY_WEAPON_TO_CAUSE =
 	[41] = "Vergiftung",
 	[42] = "Vergiftung",
 	[19] = "Schrapnellen",
-	[37] = "Verbrennungen",
 	[49] = "Prellungen",
 	[50] = "Prellungen",
 	[51] = "Schrapnellen",

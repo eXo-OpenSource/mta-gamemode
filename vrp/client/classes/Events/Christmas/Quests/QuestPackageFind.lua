@@ -13,7 +13,7 @@ end
 
 function QuestPackageFind.togglePackages(state)
 	for index, object in pairs(getElementsByType("object")) do
-		if object:getModel() == 3878 then
+		if object:getModel() == 2070 then
 			object:setCollisionsEnabled(state)
 			object:setAlpha(state and 255 or 0)
 		end

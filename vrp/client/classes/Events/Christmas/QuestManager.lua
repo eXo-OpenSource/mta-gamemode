@@ -5,10 +5,9 @@ function QuestManager:constructor()
 	-- Only add if clientside script is necessary
 	self.m_Quests = {
 		[2] = QuestPhotography,
-		[3] = QuestPhotography,
-		[4] = QuestDraw,
+		[5] = QuestPhotography,
+		[6] = QuestSantaKill,
 		[7] = QuestPackageFind,
-		[8] = QuestSantaKill,
 		[10] = QuestDraw,
 		[13] = QuestSantaKill,
 		[14] = QuestPhotography,

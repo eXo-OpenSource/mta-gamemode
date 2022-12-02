@@ -29,6 +29,12 @@ function StaticWorldItems:constructor()
 			["chance"] = 33,
 			["enabled"] = EVENT_HALLOWEEN
 		},
+		["Päckchen"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Päckchen"),
+			["offsetZ"] = -0.55,
+			["chance"] = 33,
+			["enabled"] = EVENT_CHRISTMAS
+		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(1000*60*60)

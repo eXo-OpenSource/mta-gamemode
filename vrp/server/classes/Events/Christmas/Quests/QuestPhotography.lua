@@ -4,7 +4,7 @@ QuestPhotography.Targets = {
 	[2] = {
 		["SantaClaus"] = 1,
 	},
-	[3] = {
+	[5] = {
 		["Players"] = 3,
 	},
 	[14] = {
@@ -22,7 +22,7 @@ function QuestPhotography:constructor(id)
 
 	if id == 2 then
 		--setGarageOpen(9, true)
-		self.m_NPC = NPC:new(244, 2918.653, -1600.370, 14.945, 72.5)
+		self.m_NPC = NPC:new(244, 2151.49, -1015.52, 69.04, 129)
 		self.m_NPC:setImmortal(true)
 		self.m_NPC:setFrozen(true)
 	end

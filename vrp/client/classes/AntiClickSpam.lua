@@ -58,3 +58,8 @@ function AntiClickSpam:setEnabled(state)
 	self.m_Enabled = state
 end
 
+function AntiClickSpam:setBlock(number)
+	assert(type(number) == "number", "first argument is not a number")
+	self.m_Warn = number - 2
+	self.m_Block = number
+end

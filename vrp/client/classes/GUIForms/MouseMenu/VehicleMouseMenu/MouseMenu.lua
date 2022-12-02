@@ -416,6 +416,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 
+		if getElementData(element,"ChristmasTruck:Truck") then
+			if #self:getAttachedElement(2912, element) > 0 then
+				self:addItem(_"Geschenk vom Truck nehmen",
+					function()
+						triggerServerEvent("vehicleDeloadObject", self:getElement(), element, "christmasPresent")
+					end
+				):setIcon(FontAwesomeSymbols.Double_Down)
+			end
+			if #self:getAttachedElement(2912, localPlayer) > 0 then
+				self:addItem(_"Geschenk auf den Truck laden",
+					function()
+						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "christmasPresent")
+					end
+				):setIcon(FontAwesomeSymbols.Double_Up)
+			end
+		end
+
 		if localPlayer:getCompany() and localPlayer:getCompany():getId() == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") then
 			if element:getHealth() < 950 then
 				self:addItem(_"Mechaniker: Reparieren",

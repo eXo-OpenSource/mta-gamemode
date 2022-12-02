@@ -207,19 +207,26 @@ function CustomModelManager:constructor()
 		self:loadImportTXD("files/models/objects/XmasTree1.txd", 6972)
 		self:loadImportDFF("files/models/objects/XmasTree1.dff", 6972)
 
-		self:loadImportCOL("files/models/objects/XmasBox.col", 3878)
-		self:loadImportTXD("files/models/objects/XmasBox.txd", 3878)
-		self:loadImportDFF("files/models/objects/XmasBox.dff", 3878)
+		self:loadImportCOL("files/models/objects/XmasTree2.col", 2077)
+		self:loadImportTXD("files/models/objects/XmasTree2.txd", 2077)
+		self:loadImportDFF("files/models/objects/XmasTree2.dff", 2077)
+
+		self:loadImportCOL("files/models/objects/XmasBox.col", 2070)
+		self:loadImportTXD("files/models/objects/XmasBox.txd", 2070)
+		self:loadImportDFF("files/models/objects/XmasBox.dff", 2070)
 
 		self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
 
-		self:loadImportTXD("files/models/skins/santaThin.txd", 260)
-		self:loadImportDFF("files/models/skins/santaThin.dff", 260)
+		self:loadImportTXD("files/models/skins/snowman.txd", 260)
+		self:loadImportDFF("files/models/skins/snowman.dff", 260)
 
 		self:loadImportTXD("files/models/vehicles/reindeerSledge.txd", 609)
 		self:loadImportDFF("files/models/vehicles/reindeerSledge.dff", 609)
+
+		self:loadImportTXD("files/models/objects/GingerbreadMask.txd", 2107)
+		self:loadImportDFF("files/models/objects/GingerbreadMask.dff", 2107)
 	end
 
 	-- SCHUH ZUM WERFEN

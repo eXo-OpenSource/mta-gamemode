@@ -1035,6 +1035,14 @@ function Player:payDay()
 		income = income + 200
 		BankServer.get("event.christmas"):transferMoney({self, true, true}, 200, "Weihnachtsgeld", "Event", "ChristmasBonus", {silent = true})
 		self:addPaydayText("income", _("Weihnachtsgeld", self), 200)
+
+		if self:getFaction() and not self:getFaction():isRescueFaction() and ChristmasTruckManager:getSingleton():getPresentsCount(self:getFaction()) then
+			local presentCount = ChristmasTruckManager:getSingleton():getPresentsCount(self:getFaction())
+			local presentMoney = presentCount * ChristmasTruckManager.MoneyBonusPerPresent
+			income = income + presentMoney
+			BankServer.get("event.christmas"):transferMoney({self, true, true}, presentMoney, "Weihnachtsbaum-Bonus", "Event", "ChristmasBonus", {silent = true})
+			self:addPaydayText("income", _("Weihnachtsbaum-Bonus", self), presentMoney)
+		end
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
@@ -1111,6 +1119,14 @@ function Player:payDay()
 	if EVENT_CHRISTMAS then
 		self:addPaydayText("info", _("Du hast 3 Zuckerstangen bekommen!", self))
 		self:getInventory():giveItem("Zuckerstange", 3)
+
+		if self:getFaction() and not self:getFaction():isRescueFaction() and ChristmasTruckManager:getSingleton():getPresentsCount(self:getFaction()) then
+			local presentCount = ChristmasTruckManager:getSingleton():getPresentsCount(self:getFaction())
+			if presentCount >= ChristmasTruckManager.MaxPresents then
+				self:addPaydayText("info", _("Du hast %s zusätzliche Zuckerstangen bekommen (Voller Baum)!", self, ChristmasTruckManager.SugarcaneBonusIfFull))
+				self:getInventory():giveItem("Zuckerstange", ChristmasTruckManager.SugarcaneBonusIfFull)
+			end
+		end
 	end
 
 	if EVENT_HALLOWEEN then

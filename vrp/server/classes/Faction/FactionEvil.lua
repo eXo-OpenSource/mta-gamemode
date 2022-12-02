@@ -311,22 +311,22 @@ end
 
 function FactionEvil:loadLCNGates(factionId)
 
-	local lcnGates = {}
-	lcnGates[1] = Gate:new(988, Vector3(783.255, -1149.449, 23.641), Vector3(0, 0, 90), Vector3(783.255, -1145.52, 23.641))
-	lcnGates[1]:addGate(988, Vector3(783.255, -1155.3, 23.641), Vector3(0, 0, 90), Vector3(783.255, -1159.25, 23.641))
-	lcnGates[1]:setGateScale(Vector3(1.065, 1, 1.09))
+	self.m_LCNGates = {}
+	self.m_LCNGates[1] = Gate:new(988, Vector3(783.255, -1149.449, 23.641), Vector3(0, 0, 90), Vector3(783.255, -1145.52, 23.641))
+	self.m_LCNGates[1]:addGate(988, Vector3(783.255, -1155.3, 23.641), Vector3(0, 0, 90), Vector3(783.255, -1159.25, 23.641))
+	self.m_LCNGates[1]:setGateScale(Vector3(1.065, 1, 1.09))
 
-	lcnGates[2] = Gate:new(988, Vector3(660.249, -1230.912, 15.675), Vector3(0, 0, 242), Vector3(658.4, -1234.39, 15.675))
-	lcnGates[2]:addGate(988, Vector3(662.999, -1225.739, 15.675), Vector3(0, 0, 242), Vector3(664.849, -1222.261, 15.675))
-	lcnGates[2]:setGateScale(Vector3(1.065, 1, 1))
+	self.m_LCNGates[2] = Gate:new(988, Vector3(660.249, -1230.912, 15.675), Vector3(0, 0, 242), Vector3(658.4, -1234.39, 15.675))
+	self.m_LCNGates[2]:addGate(988, Vector3(662.999, -1225.739, 15.675), Vector3(0, 0, 242), Vector3(664.849, -1222.261, 15.675))
+	self.m_LCNGates[2]:setGateScale(Vector3(1.065, 1, 1))
 
-	lcnGates[3] = Gate:new(988, Vector3(667.909, -1307.242, 13.6), Vector3(0, 0, 0), Vector3(671.83, -1307.242, 13.6))
-	lcnGates[3]:addGate(988, Vector3(662.059, -1307.242, 13.6), Vector3(0, 0, 0), Vector3(658.12, -1307.242, 13.6))
-	lcnGates[3]:setGateScale(Vector3(1.065, 1, 1.09))
+	self.m_LCNGates[3] = Gate:new(988, Vector3(667.909, -1307.242, 13.6), Vector3(0, 0, 0), Vector3(671.83, -1307.242, 13.6))
+	self.m_LCNGates[3]:addGate(988, Vector3(662.059, -1307.242, 13.6), Vector3(0, 0, 0), Vector3(658.12, -1307.242, 13.6))
+	self.m_LCNGates[3]:setGateScale(Vector3(1.065, 1, 1.09))
 
 	--setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
-	for index, gate in pairs(lcnGates) do
+	for index, gate in pairs(self.m_LCNGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
@@ -517,6 +517,16 @@ function FactionEvil:Event_storageWeapons(player)
 	if faction and faction:isEvilFaction() then
 		if client:isFactionDuty() then
 			faction:storageWeapons(client)
+		end
+	end
+end
+
+function FactionEvil:forceOpenLCNGates()
+	if not self.m_LCNGates then return end
+	
+	for i, gate in pairs(self.m_LCNGates) do
+		if gate.m_Closed == true then
+			gate:triggerMovement(false, true)
 		end
 	end
 end

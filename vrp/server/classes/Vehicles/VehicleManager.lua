@@ -1636,6 +1636,14 @@ function VehicleManager:Event_LoadObject(veh, type)
 		model = 1575
 		name = "kein Drogenpaket"
 
+	elseif type == "christmasPresent" then
+		model = 2912
+		name = "kein Geschenk"
+	
+		if veh:getData("ChristmasTruck:Truck") then
+			ChristmasTruckManager:getSingleton().m_Current:Event_LoadPresent(veh)
+			return
+		end
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
@@ -1693,7 +1701,15 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	elseif type == "drugPackage" then
 		model = 1575
 		name = "kein Drogenpaket"
+	
+	elseif type == "christmasPresent" then
+		model = 2912
+		name = "kein Geschenk"
 
+		if veh:getData("ChristmasTruck:Truck") then
+			ChristmasTruckManager:getSingleton().m_Current:Event_DeloadPresent(veh)
+			return
+		end
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryUnloadObject(client)

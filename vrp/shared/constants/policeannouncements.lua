@@ -24,7 +24,6 @@ POLICE_RANDOM_ANNOUNCEMENTS = {
     ["Las Brujas"] = {18},
     ["Palomino Creek"] = {20},
     ["El Castillo Del Diablo"] = {22},
-    ["East Beach"] = {23},
     ["Dillimore"] = {23},
     ["Whetstone"] = {25},
     ["Fallen Tree"] = {27},

@@ -1,7 +1,8 @@
 QuestPackageTransport = inherit(Quest)
 
 QuestPackageTransport.Targets = {
-	[6] = Vector3(101, -223, 0.7),
+	[4] = Vector3(-2558.92, 658.28, 13.95),
+	[8] = Vector3(101, -223, 0.7),
 	[11] = Vector3(2721.7, -1925.3, 12.7),
 	[16] = Vector3(2034.548, 983.261, 9.9),
 
@@ -48,7 +49,7 @@ function QuestPackageTransport:addPlayer(player)
 		player:warpIntoVehicle(self.m_Vehicles[player])
 		self.m_Vehicles[player]:attachTrailer(self.m_Trailers[player])
 		for i=1, 3 do
-			self.m_Boxes[player][i] = createObject(3878, 1484.88, -1721.95, 14.60)
+			self.m_Boxes[player][i] = createObject(2070, 1484.88, -1721.95, 14.60)
 			self.m_Boxes[player][i]:setScale(0.4)
 			self.m_Boxes[player][i]:setCollisionsEnabled(false)
 			self.m_Boxes[player][i]:attach(self.m_Trailers[player], 0 ,-2+i, 0)

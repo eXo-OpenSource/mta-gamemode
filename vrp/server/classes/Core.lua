@@ -171,6 +171,8 @@ function Core:constructor()
 		if EVENT_CHRISTMAS then
 			Christmas:new()
 			BotManager:new()
+			CookieClickerManager:new()
+			ChristmasTruckManager:new()
 		end
 
 		GPS:new()
@@ -315,6 +317,10 @@ function Core:destructor()
 		delete(SkyscraperManager:getSingleton())
 		if EVENT_EASTER then
 			delete(Easter:getSingleton())
+		end
+		if EVENT_CHRISTMAS then
+			delete(CookieClickerManager:getSingleton())
+			delete(ChristmasTruckManager:getSingleton())
 		end
 		delete(sql) -- Very slow
 	end

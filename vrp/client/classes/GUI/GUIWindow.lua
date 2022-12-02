@@ -72,6 +72,9 @@ function GUIWindow:drawThis()
 end
 
 function GUIWindow:CloseButton_Click()
+	if self.closeCallback then
+		self:closeCallback()
+	end
 	if self.m_CloseOnClose then
 		self:close()
 	else
@@ -158,4 +161,9 @@ end
 function GUIWindow.updateGrid(withTabs)
 	grid("reset", true)
 	grid("offset", withTabs and 50 or 30)
+end
+
+function GUIWindow:addCloseCallback(callback)
+	self.closeCallback = callback
+	return self
 end

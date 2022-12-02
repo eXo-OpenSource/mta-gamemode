@@ -5,29 +5,30 @@ QuestManager.Quests = {
 		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Montgomery!",
 		["Packages"] = 5,
 	},
+	
 	[2] = {
 		["Name"] = "Weihnachtsmann-Selfie",
 		["Description"] = "Finde den Weihnachtsmann (Er ist in Los Santos) und schieße ein Foto von ihm!",
-		["Packages"] = 5,
+		["Packages"] = 10,
 	},
 	[3] = {
+		["Name"] = "Weihnachts-Bodyguard",
+		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Montgomery!",
+		["Packages"] = 5,
+	},
+	[4] = {
+		["Name"] = "Päckchen-Transport",
+		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
+		["Packages"] = 5,
+	},
+	[5] = {
 		["Name"] = "Weihnachts-Fotograf",
 		["Description"] = "Schieße ein Foto mit mindestens 3 Spielern darauf!",
 		["Packages"] = 5,
 	},
-	[4] = {
-		["Name"] = "Verschnaufpause",
-		["Description"] = "Heute gibt es nichts zu erledigen! Hier deine Belohnung!",
-		["Packages"] = 5,
-	},
-	[5] = {
-		["Name"] = "Weihnachts-Bodyguard",
-		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Los Santos!",
-		["Packages"] = 5,
-	},
 	[6] = {
-		["Name"] = "Päckchen-Transport",
-		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
+		["Name"] = "Weihnachts-Morde",
+		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
 		["Packages"] = 5,
 	},
 	[7] = {
@@ -36,8 +37,8 @@ QuestManager.Quests = {
 		["Packages"] = 5,
 	},
 	[8] = {
-		["Name"] = "Weihnachts-Morde",
-		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
+		["Name"] = "Päckchen-Transport",
+		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
 		["Packages"] = 5,
 	},
 	[9] = {
@@ -128,12 +129,12 @@ function QuestManager:constructor()
 	self.m_Quests = {
 		[1] = QuestNPCTransport,
 		[2] = QuestPhotography,
-		[3] = QuestPhotography,
-		[4] = QuestNoQuest,
-		[5] = QuestNPCTransport,
-		[6] = QuestPackageTransport,
+		[3] = QuestNPCTransport,
+		[4] = QuestPackageTransport,
+		[5] = QuestPhotography,
+		[6] = QuestSantaKill,
 		[7] = QuestPackageFind,
-		[8] = QuestSantaKill,
+		[8] = QuestPackageTransport,
 		[9] = QuestFortuneWheel,
 		[10] = QuestNoQuest,
 		[11] = QuestPackageTransport,

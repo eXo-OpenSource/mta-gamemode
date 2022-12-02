@@ -33,6 +33,13 @@ Christmas.ms_Bonus = {
 		["SkinId"] = 244
 	},
 	{
+		["Text"] = "Lebkuchen-Maske",
+		["Image"] = "Bonus_GingerbreadMask.png",
+		["Packages"] = 150,
+		["CandyCane"] = 180,
+		["Type"] = "Special",
+	},
+	{
 		["Text"] = "30 Tage VIP",
 		["Image"] = "Bonus_VIP.png",
 		["Packages"] = 175,
@@ -46,6 +53,14 @@ Christmas.ms_Bonus = {
 		["CandyCane"] = 850,
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 423
+	},
+	{
+		["Text"] = "Nebula",
+		["Image"] = "Bonus_Nebula.png",
+		["Packages"] = 700,
+		["CandyCane"] = 1600,
+		["Type"] = "Vehicle",
+		["VehicleModel"] = 516
 	}
 }
 
@@ -53,48 +68,58 @@ Christmas.ms_Bonus = {
 local day = getRealTime().monthday
 local month = getRealTime().month+1
 
-if month == 12 and day >= 6 and day <= 12 then
-	Christmas.ms_PricePoolName = "Christmas2021-1"
-	Christmas.ms_PricePoolEnd = 1639328400
-	Christmas.ms_PricePoolPrices = {
-		{"vehicle", 571},
-		{"money", 100000},
-		{"money", 100000},
+if month == 12 and day >= 5 and day <= 11 then
+    Christmas.ms_PricePoolName = "Christmas2022-1"
+    Christmas.ms_PricePoolEnd = 1670778000
+    Christmas.ms_PricePoolPrices = {
+        {"money", 150000},
+        {"vehicle", 463 },
+         
+        {"money", 150000}, 
+        {"vehicle", 422}, 
 
-		{"vehicle", 534},
-		{"money", 100000},
-		{"money", 100000},
+        {"money", 150000}, 
+        {"VIP", 1}
+    }
+elseif month == 12 and day >= 12 and day <= 18 then
+    Christmas.ms_PricePoolName = "Christmas2022-2"
+    Christmas.ms_PricePoolEnd = 1671382800
+    Christmas.ms_PricePoolPrices = {
+        {"money", 150000}, 
+        {"vehicle", 459}, 
+        
+        {"money", 150000}, 
+        {"vehicle", 480}, 
+        
+        {"money", 150000}, 
+        {"VIP", 1}
+    }
+elseif month == 12 and day >= 19 and day <= 25 then
+    Christmas.ms_PricePoolName = "Christmas2022-3"
+    Christmas.ms_PricePoolEnd = 1671987600
+    Christmas.ms_PricePoolPrices = {
+        {"money", 150000}, 
+        {"vehicle", 521},
+        
+        {"money", 150000},
+        {"vehicle", 587}, 
+        
+        {"money", 150000},
+        {"VIP", 1}
+    }
+elseif (month == 12 and day >= 26) or (month == 1 and day <= 1) then
+    Christmas.ms_PricePoolName = "Christmas2022-4"
+    Christmas.ms_PricePoolEnd = 1672592400
+    Christmas.ms_PricePoolPrices = {
+        {"money", 150000}, 
+        {"vehicle", 434}, 
+        
+        {"money", 150000}, 
+        {"vehicle", 534},
 
-		{"VIP", 1},
-	}
-elseif month == 12 and day <= 19 then
-	Christmas.ms_PricePoolName = "Christmas2021-2"
-	Christmas.ms_PricePoolEnd = 1639933200
-	Christmas.ms_PricePoolPrices = {
-		{"vehicle", 437},
-		{"money", 100000},
-		{"money", 100000},
-
-		{"vehicle", 586},
-		{"money", 100000},
-		{"money", 100000},
-
-		{"VIP", 1},
-	}
-elseif month == 12 and day <= 26 then
-	Christmas.ms_PricePoolName = "Christmas2021-3"
-	Christmas.ms_PricePoolEnd = 1640538000
-	Christmas.ms_PricePoolPrices = {
-		{"vehicle", 448},
-		{"money", 100000},
-		{"money", 100000},
-
-		{"vehicle", 445},
-		{"money", 100000},
-		{"money", 100000},
-
-		{"VIP", 1},
-	}
+        {"money", 150000}, 
+        {"VIP", 1}
+    }
 end
 
 function Christmas:constructor()
@@ -104,8 +129,9 @@ function Christmas:constructor()
 	self.m_BankServerAccount = BankServer.get("event.christmas")
 
 	if EVENT_CHRISTMAS_MARKET then
-		WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0) -- in front of tree
-		WheelOfFortune:new(Vector3(1479, -1692.3, 14.2), 180) -- in back of tree
+		WheelOfFortune:new(Vector3(1479.24, -1671.78, 14.55), 0) -- in front of tree
+		WheelOfFortune:new(Vector3(1484.21, -1665.72, 14.55), 90) -- right side of tree
+		WheelOfFortune:new(Vector3(1474.46, -1665.92, 14.55), 270) -- left side of tree
 		--other wheels on side of market
 		WheelOfFortune:new(Vector3(1455.52, -1662.81, 14.16), 80)
 		WheelOfFortune:new(Vector3(1454.12, -1669.74, 14.17), 70)
@@ -114,9 +140,12 @@ function Christmas:constructor()
 		WheelOfFortune:new(Vector3(1506.11, -1651.70, 14.11), 245)
 		WheelOfFortune:new(Vector3(1509.73, -1645.62, 14.11), 230)
 
-		FerrisWheelManager:getSingleton():addWheel(Vector3(1479.35, -1665.9, 26.5), 0)
+		FerrisWheelManager:getSingleton():addWheel(Vector3(1496.9004, -1697.5, 26.6), 90)
 	end
 
+	local tree = createObject(2077, 1479.6392, -1666.17, 12.0589, 0, 0, 0)
+	local treeLOD = createObject(2077, 1479.6392, -1666.17, 12.0589, 0, 0, 0, true)
+	setLowLODElement(tree, treeLOD)
 
 	createObject(3861, 1456.84, -1748.18, 13.72, 0, 0, 170) --QuestShop (before market opens) BonusShop (after Event)
 	createObject(3861, 1453.17, -1744.94, 13.72, 0, 0, 115) --Firework Shop
@@ -129,9 +158,11 @@ function Christmas:constructor()
 	if Christmas.ms_PricePoolName then
 		self.m_PricePool = PricePoolManager:getSingleton():getPricePool(Christmas.ms_PricePoolName, "Päckchen", Christmas.ms_PricePoolPrices, Christmas.ms_PricePoolEnd)
 		if self.m_PricePool then
-			PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(1481.55, -1697.34, 14.05), 165)
+			PricePoolManager:getSingleton():createPed(self.m_PricePool, 185, Vector3(1476.20, -1670.43, 14.55), 190.62)
 		end
 	end
+
+	ChristmasEasterEggs:new()
 end
 
 function Christmas:Event_requestBonusData()
@@ -195,6 +226,9 @@ function Christmas:Event_buyBonus(bonusId)
 				return
 			end
 			client.m_Premium:giveEventMonth()
+		elseif bonus["Text"] == "Lebkuchen-Maske" then
+			client:getInventory():giveItem("Lebkuchen-Maske", 1)
+			client:sendShortMessage("Die Maske wurde in dein Inventar gelegt!")
 		end
 	end
 
