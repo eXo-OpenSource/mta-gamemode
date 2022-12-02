@@ -146,7 +146,7 @@ end
 function ChristmasTruck:Event_OnChristmasTruckDestroy()
 	if self and not self.m_Destroyed then
 		self.m_Destroyed = true
-		self:Event_OnWeaponTruckExit(self.m_Driver,0)
+		self:Event_OnChristmasTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Weihnachtstruck wurde zerstört!")
 		Discord:getSingleton():outputBreakingNews("Der Weihnachtstruck wurde zerstört!")
 		delete(self)

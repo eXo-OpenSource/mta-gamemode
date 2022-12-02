@@ -65,6 +65,7 @@ function QuestPackageFind:addObject(Id, pos)
 	self.m_Objects[Id] = createObject(2070, pos)
 	self.m_Objects[Id]:setAlpha(0)
 	self.m_Objects[Id].Id = Id
+    self.m_Objects[Id]:setData("QuestPackageFind:Package", true, true)
     self.m_Objects[Id]:setData("clickable", true, true)
     addEventHandler("onElementClicked",self.m_Objects[Id], bind(self.onPackageClick, self))
 	return self.m_Objects[Id]

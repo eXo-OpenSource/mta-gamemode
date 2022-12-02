@@ -211,10 +211,6 @@ function CustomModelManager:constructor()
 		self:loadImportTXD("files/models/objects/XmasTree2.txd", 2077)
 		self:loadImportDFF("files/models/objects/XmasTree2.dff", 2077)
 
-		self:loadImportCOL("files/models/objects/XmasBox.col", 2070)
-		self:loadImportTXD("files/models/objects/XmasBox.txd", 2070)
-		self:loadImportDFF("files/models/objects/XmasBox.dff", 2070)
-
 		self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
 		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
 		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
@@ -224,9 +220,6 @@ function CustomModelManager:constructor()
 
 		self:loadImportTXD("files/models/vehicles/reindeerSledge.txd", 609)
 		self:loadImportDFF("files/models/vehicles/reindeerSledge.dff", 609)
-
-		self:loadImportTXD("files/models/objects/GingerbreadMask.txd", 2107)
-		self:loadImportDFF("files/models/objects/GingerbreadMask.dff", 2107)
 	end
 
 	-- SCHUH ZUM WERFEN
@@ -245,8 +238,15 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/objects/worldItems/pumpkin.txd", 1935)
 	self:loadImportDFF("files/models/objects/worldItems/pumpkin.dff", 1935)
 
+	self:loadImportCOL("files/models/objects/XmasBox.col", 2070)
+	self:loadImportTXD("files/models/objects/XmasBox.txd", 2070)
+	self:loadImportDFF("files/models/objects/XmasBox.dff", 2070)
+
 	self:loadImportTXD("files/models/wearables/ChristmasHat.txd", 1936)
 	self:loadImportDFF("files/models/wearables/ChristmasHat.dff", 1936)
+
+	self:loadImportTXD("files/models/objects/GingerbreadMask.txd", 2107)
+	self:loadImportDFF("files/models/objects/GingerbreadMask.dff", 2107)
 
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")

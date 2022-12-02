@@ -8,7 +8,7 @@
 CookieClickerGUI = inherit(GUIForm)
 inherit(Singleton, CookieClickerGUI)
 
-addRemoteEvents{"CookieClicker:openGUI", "CookieClicker:sendCookieData", "CookieClicker:sendTopListData"}
+addRemoteEvents{"CookieClicker:openGUI", "CookieClicker:sendCookieData", "CookieClicker:sendTopListData", "CookieClicker:forceCloseGUI"}
 
 function CookieClickerGUI:constructor(rangeElement)
 	GUIWindow.updateGrid()
@@ -81,9 +81,11 @@ function CookieClickerGUI:constructor(rangeElement)
 	addEventHandler("CookieClicker:sendCookieData", localPlayer, bind(self.onCookieDataReceive, self))
 end
 
-function CookieClickerGUI:virtual_destructor()
-	triggerServerEvent("CookieClicker:saveCookies", localPlayer, self.m_Cookies)
-		AntiClickSpam:getSingleton():setBlock(8)
+function CookieClickerGUI:virtual_destructor(noSave)
+	if not noSave then
+		triggerServerEvent("CookieClicker:saveCookies", localPlayer, self.m_Cookies)
+	end
+	AntiClickSpam:getSingleton():setBlock(8)
 end
 
 function CookieClickerGUI:onUpgradeButtonClick(id)
@@ -171,5 +173,11 @@ end
 addEventHandler("CookieClicker:openGUI", localPlayer, function(rangeElement)
 	if not CookieClickerButtonGUI:isInstantiated() and not CookieClickerGUI:isInstantiated() then
 		CookieClickerButtonGUI:new(rangeElement)
+	end
+end)
+
+addEventHandler("CookieClicker:forceCloseGUI", localPlayer, function(save)
+	if CookieClickerGUI:isInstantiated() then
+		CookieClickerGUI:getSingleton():delete(save)
 	end
 end)

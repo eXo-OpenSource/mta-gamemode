@@ -319,7 +319,7 @@ function FactionEvil:loadLCNGates(factionId)
 	self.m_LCNGates[2] = Gate:new(988, Vector3(660.249, -1230.912, 15.675), Vector3(0, 0, 242), Vector3(658.4, -1234.39, 15.675))
 	self.m_LCNGates[2]:addGate(988, Vector3(662.999, -1225.739, 15.675), Vector3(0, 0, 242), Vector3(664.849, -1222.261, 15.675))
 	self.m_LCNGates[2]:setGateScale(Vector3(1.065, 1, 1))
-
+	
 	self.m_LCNGates[3] = Gate:new(988, Vector3(667.909, -1307.242, 13.6), Vector3(0, 0, 0), Vector3(671.83, -1307.242, 13.6))
 	self.m_LCNGates[3]:addGate(988, Vector3(662.059, -1307.242, 13.6), Vector3(0, 0, 0), Vector3(658.12, -1307.242, 13.6))
 	self.m_LCNGates[3]:setGateScale(Vector3(1.065, 1, 1.09))
@@ -328,7 +328,7 @@ function FactionEvil:loadLCNGates(factionId)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
 	for index, gate in pairs(self.m_LCNGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
-		gate.onGateHit = bind(self.onBarrierGateHit, self)
+		gate.onGateHit = bind(self.onLCNBarrierGateHit, self)
 	end
 	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza"
 	--// ps: have I told you that I hate this new faction-base?
@@ -529,4 +529,12 @@ function FactionEvil:forceOpenLCNGates()
 			gate:triggerMovement(false, true)
 		end
 	end
+end
+
+function FactionEvil:onLCNBarrierGateHit(player)
+	if player:getFaction() and player:getFaction():getId() == FactionStaticId.LCN and ActionsCheck:getSingleton():isCurrentAction() ~= "Weihnachtstruck" then
+		return true
+	else
+		return false 
+	end 
 end
