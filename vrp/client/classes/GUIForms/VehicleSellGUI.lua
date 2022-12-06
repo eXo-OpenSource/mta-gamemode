@@ -22,6 +22,7 @@ function VehicleSellGUI:constructor( ts, veh )
 	self.m_Edit = GUIEdit:new(width*0.55, height*0.44, width*0.3, height*0.07, self.m_Window )
 	self.m_LabelContract4 =	GUILabel:new(width*0.2,height*0.56,width*0.3, height*0.1,_"Verkaufspreis ($): ", self.m_Window)
 	self.m_Edit2 = GUIEdit:new(width*0.55, height*0.56, width*0.3, height*0.07, self.m_Window )
+	self.m_Edit2:setNumeric(true, true)
 	self.m_AcceptButton = GUIButton:new(width*0.3, height*0.8, width*0.4, height*0.1, "Weiter", self.m_Window)
 	self.m_AcceptButton.onLeftClick = bind(self.AcceptButton_applyContract, self)
 end

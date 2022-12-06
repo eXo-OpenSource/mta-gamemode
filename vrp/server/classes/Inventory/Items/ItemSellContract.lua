@@ -27,6 +27,11 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 				return
 			end
 
+			if car:getOwner() ~= client:getId() then
+				client:sendError(_("Das Fahrzeug gehört nicht dir.", client))
+				return
+			end 
+
 			if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 				client:sendError(_("Der Spieler hat die maximalen Fahrzeug-Slots erreicht!", client))
 				return
@@ -56,6 +61,10 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						client:sendError(_("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!", client))
 						return
 					end
+					if car:getOwner() ~= client:getId() then
+						client:sendError(_("Das Fahrzeug gehört nicht dir.", client))
+						return
+					end 
 					if client:transferBankMoney({"player", player:getId(), true}, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade") then
 						client:triggerEvent("closeVehicleAccept")
 						client:sendInfo(_("Der Handel wurde abgeschlossen!", client))
@@ -65,6 +74,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						car:setData("OwnerName", client.name, true)
 						VehicleManager:getSingleton():addRef( car, false)
 						car.m_Keys = {}
+						setElementData(car, "VehicleKeys", car.m_Keys)
 						VehicleManager:getSingleton():syncVehicleInfo( player )
 						VehicleManager:getSingleton():syncVehicleInfo( client )
 						player:getInventory():removeItem("Handelsvertrag", 1)
