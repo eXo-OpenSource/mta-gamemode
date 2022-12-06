@@ -42,7 +42,7 @@ function HistoryPlayer:setHighestRank(playerId, rank, elementId, elementType)
         --sql:queryExec("INSERT INTO ??_player_history (UserId, ElementId, ElementType, HighestRank, JoinDate, InviterId) VALUES (?, ?, ?, ?, NOW(), 0)",
         --    sql:getPrefix(), playerId, elementId, elementType, rank)
     else
-        if not result[1].HighestRank or rank > result[1].HighestRank then
+        if not result[#result].HighestRank or rank > result[#result].HighestRank then
             sql:queryExec("UPDATE ??_player_history SET HighestRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
                 sql:getPrefix(), rank, playerId, elementId, elementType)
         end

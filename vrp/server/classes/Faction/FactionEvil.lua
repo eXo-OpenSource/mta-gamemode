@@ -496,6 +496,9 @@ function FactionEvil:Event_FactionRearm()
 		client:triggerEvent("showFactionWeaponShopGUI", client.m_CurrentDutyPickup)
 		client:setHealth(100)
 		client:setArmor(100)
+		StatisticsLogger:getSingleton():addHealLog(client, 100, "Faction Rearm Heal")
+		DamageManager:getSingleton():clearPlayer(client)
+		client:checkLastDamaged()
 		local wStorage, aStorage
 		for i = 1,12 do
 			wStorage, aStorage = Guns:getSingleton():getWeaponInStorage( client, i)
