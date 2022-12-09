@@ -8,5 +8,5 @@ function PremiumArea:constructor()
 		triggerServerEvent("premiumOpenVehiclesList", localPlayer)
 	 end)
 	self.m_Ped:setFrozen(true)
-	self.m_Ped.SpeakBubble = SpeakBubble3D:new(self.m_Ped, "Premium-Fahrzeuge", "Hier kannst du gekaufte Fahrzeuge abholen!")
+	self.m_Ped.SpeakBubble = SpeakBubble3D:new(self.m_Ped, "Premium-Fahrzeuge", "Hier kannst du gekaufte Fahrzeuge abholen!", 0, 1.3)
 end

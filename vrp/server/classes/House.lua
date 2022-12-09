@@ -591,8 +591,15 @@ function House:tryToCatchRobbers( player )
 					wantedChance = math.random(1,20)
 				end
 				if wantedChance <= 5 and not group.m_RobReported then
+					local pickup
+					if self.m_IsInSkyscraper then
+						pickup = SkyscraperManager.Map[self.m_SkyscraperId].m_Pickup
+					else
+						pickup = self.m_Pickup
+					end
+
 					group.m_RobReported = true
-					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf Mitglieder der Gruppe %s!", "Neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), group:getName())
+					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf Mitglieder der Gruppe %s!", "Neuer Einsatz", false, serialiseVector(pickup:getPosition()), group:getName())
 				end
 			end
 		end

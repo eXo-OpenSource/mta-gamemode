@@ -33,7 +33,8 @@ function CookieClickerManager:constructor()
 			GlobalTimer:getSingleton():registerEvent(function()
 				for key, player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 					player:triggerEvent("CookieClicker:forceCloseGUI")
-					player:sendInfo(_("Der Cookie Clicker ist nun beendet. \nVielen Dank an alle Teilnehmer"))
+					player:sendInfo(_("Das Cookie Clicker Event ist nun beendet. \nInfos bezüglicher der Gewinner und Gewinne werden zeitnah im Forum bekannt gegeben.\nVielen Dank an alle Teilnehmer."))
+					self.m_IsActive = false
 				end
 			end, "End Cookie Clicker Event", nil, 23, 59)
 		end
