@@ -504,18 +504,18 @@ GAS_STATIONS = {
 		nonInterior = true,
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	}
+	}]]
 	{
-		name = "Los Aztecas",
+		name = "Vatos Locos",
 		stations = {
-			{Vector3(1828.840, -2019.422, 13.947), 90, 1},
+			{Vector3(2785.38, -1940.27, 13.55+.3), 90, 1},
 		},
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	{
+	--[[{
 		name = "Outlaws MC",
 		stations = {
 			{Vector3(693.20, -455.38, 16.84), 270, 1},
@@ -545,7 +545,7 @@ GAS_STATIONS = {
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
 	},
-	{
+	--[[{
 		name = "Ballas",
 		stations = {
 			{Vector3(2241.83, -1443.94, 24.63), 90, 1},
@@ -554,7 +554,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		evilStation = true,
 		fuelTypes = {"petrol", "diesel", "jetfuel"},
-	},
+	},]]
 	--[[{
 		name = "Kartell",
 		stations = {

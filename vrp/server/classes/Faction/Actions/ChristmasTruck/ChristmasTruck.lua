@@ -26,7 +26,7 @@ ChristmasTruck.blipPos = { -- for now only the positions from active factions
 	[5] = Vector3(683.15, -1255.801, 12.5837),
 	[7] = Vector3(2492.44, -1668.54, 12.36312),
 	[8] = Vector3(2225.167, -1431.90, 22.9),
-	[10] = Vector3(1883.204, -2029.459, 12.3),
+	[10] = Vector3(2782.35, -2019.28, 12.55),
 }
 ChristmasTruck.Time = 20*60*1000
 ChristmasTruck.MaxPresents = 8

@@ -28,7 +28,7 @@
 	<map src="fraktionen/army.map" />
 	<!--<map src="fraktionen/army_lsbase.map" />-->
 	<map src="fraktionen/army_shooting_town.map" />
-	<map src="fraktionen/ballas.map" />
+	<!--<map src="fraktionen/ballas.map" />-->
 	<map src="fraktionen/grove.map" /> 
 	<!--<map src="fraktionen/aztecas.map" />-->
 	<!--<map src="fraktionen/brigada.map" />-->
@@ -46,7 +46,7 @@
 	<map src="fraktionen/rescue_int.map" />
 	<!--map src="fraktionen/lostmc.map" /-->
 	<!--<map src="fraktionen/vatos.map" />-->
-	<!--<map src="fraktionen/vatos-sevilla.map" />-->
+	<map src="fraktionen/vatos-sevilla.map" />
 	<!-- <map src="fraktionen/triad.map" /> -->
 	<!--<map src="fraktionen/yakuza.map"/> -->
 
