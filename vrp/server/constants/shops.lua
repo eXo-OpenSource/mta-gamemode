@@ -316,6 +316,16 @@ for i, k in pairs(SHOP_OWNER_TYPES) do
 	SHOP_OWNER_TYPES[k] = i
 end
 
+SHOP_ITEM_STRIPPER_PRICE = 10 -- price will be multiplied with the stripper count
+
+SHOP_ITEM_STRIPPER_COUNT = {
+	["Alhambra"] = 3,
+	["The Pig Pen"] = 6,
+	["Green Bottle"] = 3,
+	["Lil probe inn"] = 2,
+	["Pleasure domes"] = 10
+}
+
 SHOP_BAR_STRIP = {
 	["Alhambra"] = {
 		["Skins"] = {63, 92, 138, 139, 140, 152, 243, 238, 244, 178},

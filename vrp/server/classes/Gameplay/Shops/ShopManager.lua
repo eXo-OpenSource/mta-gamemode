@@ -16,7 +16,7 @@ function ShopManager:constructor()
 	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyWeapon", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
 	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder", 
-	"requestVehicleShops", "editVehicleShop", "onVehicleShopOpen"
+	"requestVehicleShops", "editVehicleShop", "onVehicleShopOpen","barRequestShopItems", "barRentStrippers"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -39,8 +39,10 @@ function ShopManager:constructor()
 
 	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
-	addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
+	--addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
 	addEventHandler("barShopStopStripper", root, bind(self.barStopStripper, self))
+	addEventHandler("barRequestShopItems", root, bind(self.barRequestShopItems, self))
+	addEventHandler("barRentStrippers", root, bind(self.barRentStripper, self))
 	addEventHandler("requestVehicleShops", root, bind(self.onRequestVehicleShops, self))
 	addEventHandler("editVehicleShop", root, bind(self.editShopVehicle, self))
 	addEventHandler("shopOpenGUI", root, function(id)
@@ -353,11 +355,21 @@ function ShopManager:barMusicStop(shopId)
 	end
 end
 
-function ShopManager:barStartStripper(shopId)
+--[[function ShopManager:barStartStripper(shopId)
 	if client:isDead() then return false end
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:startStripper(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end]]
+
+function ShopManager:barRentStripper(shopId, minutes)
+	if client:isDead() then return false end
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:rentStrippers(client, minutes)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))
 	end
@@ -368,6 +380,15 @@ function ShopManager:barStopStripper(shopId)
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:stopStripper(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:barRequestShopItems(shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:requestBarShopItems(client)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))
 	end
