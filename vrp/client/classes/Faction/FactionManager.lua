@@ -16,7 +16,7 @@ function FactionManager:constructor()
 	self.m_YakuzaTextures = {}
 
     addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder", 
-        "factionForceOffduty", "startAreaAlert", "stopAreaAlert", "playAreaAlertMessage", "onClientDiplomacyReceive"}
+        "factionForceOffduty", "startAreaAlert", "stopAreaAlert", "playAreaAlertMessage", "onClientDiplomacyReceive", "startFactionRespawnAnnouncement", "stopFactionRespawnAnnoucement"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
@@ -29,6 +29,8 @@ function FactionManager:constructor()
 	addEventHandler("stopAreaAlert", localPlayer, bind(self.stopAreaAlert, self))
     addEventHandler("playAreaAlertMessage", localPlayer, bind(self.playAreaAlertMessage, self))
     addEventHandler("onClientDiplomacyReceive", localPlayer, bind(self.receiveDiplomacies, self))
+    addEventHandler("startFactionRespawnAnnouncement", localPlayer, bind(self.startRespawnAnnouncement, self))
+    addEventHandler("stopFactionRespawnAnnoucement", localPlayer, bind(self.stopRespawnAnnoucement, self))
 
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
@@ -340,4 +342,16 @@ function FactionManager:receiveDiplomacies(diplomacies)
             FactionManager.Map[factionId]:setDiplomacy(diplomacy)
         end
     end
+end
+
+function FactionManager:startRespawnAnnouncement(announcer)
+	if localPlayer:getFaction() then
+		localPlayer:getFaction():startRespawnAnnouncement(announcer)
+	end
+end
+
+function FactionManager:stopRespawnAnnoucement(stopper)
+	if localPlayer:getFaction() then
+		localPlayer:getFaction():stopRespawnAnnoucement(stopper)
+	end
 end

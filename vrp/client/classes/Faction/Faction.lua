@@ -92,3 +92,35 @@ function Faction:hasWarWith(faction)
 	end
 	return false
 end
+
+function Faction:startRespawnAnnouncement(announcer)
+	local seconds = 15
+	local whoAnnouncedText = _("%s einen Respawn angekündigt.", announcer == localPlayer and "Du hast" or _("%s hat", announcer:getName())) 
+	local secondsLeftText = _("Alle Fahrzeuge werden in %d Sekunden respawned!", seconds)
+	local stopRespawnText = _"Klicke hier, um den Respawn zu stoppen."
+
+	self.m_RespawnAnnouncement = ShortMessage:new(_("%s %s\n %s", whoAnnouncedText, secondsLeftText, stopRespawnText), 
+	_"Fahrzeug Respawn", 
+	tocolor(self:getColor().r, self:getColor().g, self:getColor().b), 
+	15000, function()
+		triggerServerEvent("stopFactionRespawnAnnouncement", localPlayer, self:getId())
+	end)
+
+	self.m_RespawnCountdown = setTimer(function() 
+		seconds = seconds - 1
+		secondsLeftText = _("Alle Fahrzeuge werden in %d Sekunde%s respawned!", seconds, seconds ~= 1 and "n" or "")
+		self.m_RespawnAnnouncement:setText(_("%s %s\n%s", whoAnnouncedText, secondsLeftText, stopRespawnText))
+	end, 1000, 15)
+end
+
+function Faction:stopRespawnAnnoucement(stopper)
+	local whoStoppedText
+	if stopper == localPlayer then
+		whoStoppedText = _"Du hast den Respawn gestoppt."
+	else
+		whoStoppedText = _("%s hat den Respawn gestoppt.", stopper:getName())
+	end
+	killTimer(self.m_RespawnCountdown)
+	self.m_RespawnAnnouncement:delete()
+	self.m_RespawnAnnouncement = ShortMessage:new(whoStoppedText, _"Fahrzeug Respawn")
+end

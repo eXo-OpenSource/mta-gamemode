@@ -20,7 +20,8 @@ function FactionManager:constructor()
 	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", 
 	"factionToggleWeapon", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", 
 	"factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" , 
-	"factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp", "factionStorageSelectedWeapons"}
+	"factionEquipmentOptionRequest", "factionEquipmentOptionSubmit", "factionPlayerNeedhelp", "factionStorageSelectedWeapons",
+	"stopFactionRespawnAnnouncement"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -51,6 +52,7 @@ function FactionManager:constructor()
 	addEventHandler("factionEquipmentOptionSubmit", root, bind(self.Event_factionEquipmentOptionSubmit, self))
 	addEventHandler("factionPlayerNeedhelp", root, bind(self.Event_playerNeedhelp, self))
 	addEventHandler("factionStorageSelectedWeapons", root, bind(self.Event_storageSelecteWeapons, self))
+	addEventHandler("stopFactionRespawnAnnouncement", root, bind(self.Event_stopRespawnAnnoucement, self))
 
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 
@@ -614,12 +616,20 @@ function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	end
 end
 
-function FactionManager:Event_factionRespawnVehicles()
+function FactionManager:Event_factionRespawnVehicles(instant)
 	if client:getFaction() then
 		local faction = client:getFaction()
 
 		if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "faction", "vehicleRespawnAll") then
-			faction:respawnVehicles()
+			if not client:getFaction().m_RespawnTimer or not isTimer(client:getFaction().m_RespawnTimer) then
+				if instant then
+					faction:respawnVehicles()
+				else
+					faction:startRespawnAnnouncement(client)
+				end
+			else
+				client:sendError(_("Es wurde bereits eine Respawn Ankündigung erstellt.", client))
+			end
 		else
 			client:sendError(_("Dazu bist du nicht berechtigt.", client))
 		end
@@ -946,5 +956,11 @@ function FactionManager:sendPermissionsToClient(faction)
 
 	for index, player in pairs(players) do
 		player:triggerEvent("onClientPermissionsReceive", faction:getId(), permissions)
+	end
+end
+
+function FactionManager:Event_stopRespawnAnnoucement()
+	if client:getFaction() then
+		client:getFaction():stopRespawnAnnouncement(client)
 	end
 end

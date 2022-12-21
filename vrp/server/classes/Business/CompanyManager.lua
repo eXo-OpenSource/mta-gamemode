@@ -12,7 +12,10 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", "companyPlayerSelectSkin", "companyUpdateSkinPermissions"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", 
+		"companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", 
+		"companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", 
+		"companyPlayerSelectSkin", "companyUpdateSkinPermissions", "stopCompanyRespawnAnnouncement"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
@@ -32,6 +35,7 @@ function CompanyManager:constructor()
 	addEventHandler("companyRequestSkinSelection", root, bind(self.Event_requestSkins, self))
 	addEventHandler("companyPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 	addEventHandler("companyUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
+	addEventHandler("stopCompanyRespawnAnnouncement", root, bind(self.Event_stopRespawnAnnoucement, self))
 end
 
 function CompanyManager:destructor()
@@ -373,11 +377,20 @@ function CompanyManager:switchLeaders(oldLeader, newLeader)
 	)(oldLeader)
 end
 
-function CompanyManager:Event_companyRespawnVehicles()
+function CompanyManager:Event_companyRespawnVehicles(instant)
 	if client:getCompany() then
 		local company = client:getCompany()
+
 		if PermissionsManager:getSingleton():hasPlayerPermissionsTo(client, "company", "vehicleRespawnAll") then
-			company:respawnVehicles()
+			if not client:getCompany().m_RespawnTimer or not isTimer(client:getCompany().m_RespawnTimer) then
+				if instant then
+					company:respawnVehicles()
+				else
+					company:startRespawnAnnouncement(client)
+				end
+			else
+				client:sendError(_("Es wurde bereits eine Respawn Ankündigung erstellt.", client))
+			end
 		else
 			client:sendError(_("Dazu bist du nicht berechtigt.", client))
 		end
@@ -497,7 +510,7 @@ end
 
 function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
-		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName(), company.m_RankNames)
+		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName(), company.m_RankNames, companyColors[company:getId()])
 	end
 end
 
@@ -556,5 +569,11 @@ end
 function CompanyManager:companyForceOffduty(player)
 	if player:getPublicSync("Company:Duty") and player:getCompany() then
 		self:Event_toggleDuty(true, false, true, player)
+	end
+end
+
+function CompanyManager:Event_stopRespawnAnnoucement()
+	if client:getCompany() then
+		client:getCompany():stopRespawnAnnouncement(client)
 	end
 end

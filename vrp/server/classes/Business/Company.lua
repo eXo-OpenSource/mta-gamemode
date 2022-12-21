@@ -534,12 +534,10 @@ end
 
 function Company:respawnVehicles(player)
 	local isAdmin = player and player:getRank() >= RANK.Supporter
-	local time = getRealTime().timestamp
-	if self.m_LastRespawn and not isAdmin then
-		if time - self.m_LastRespawn <= 900 then --// 15min
-			return self:sendShortMessage("Fahrzeuge können nur alle 15 Minuten respawned werden!")
-		end
+	if not self:isRespawnPossible() and not isAdmin then
+		return self:sendShortMessage("Fahrzeuge können nur alle 15 Minuten respawned werden!")
 	end
+
 	if isAdmin then
 		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
 		player:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
@@ -562,6 +560,16 @@ function Company:respawnVehicles(player)
 	end
 
 	self:sendShortMessage(("%s/%s Fahrzeuge wurden respawned!"):format(vehicles-fails, vehicles))
+end
+
+function Company:isRespawnPossible()
+	local time = getRealTime().timestamp
+	if self.m_LastRespawn then
+		if time - self.m_LastRespawn <= 900 then --// 15min
+			return false
+		end
+	end
+	return true
 end
 
 function Company:phoneCall(caller)
@@ -630,4 +638,22 @@ end
 
 function Company:refreshBankAccountGUI(player)
 	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
+end
+
+function Company:startRespawnAnnouncement(announcer)
+	if not self:isRespawnPossible() then
+		return self:sendShortMessage("Fahrzeuge können nur alle 15 Minuten respawned werden!")
+	end
+
+	for __, cPlayer in pairs(self:getOnlinePlayers()) do
+		cPlayer:triggerEvent("startCompanyRespawnAnnouncement", announcer)
+	end
+	self.m_RespawnTimer = setTimer(function() self:respawnVehicles() end, 15500, 1)
+end
+
+function Company:stopRespawnAnnouncement(stopper)
+	for __, fPlayer in pairs(self:getOnlinePlayers()) do
+		fPlayer:triggerEvent("stopCompanyRespawnAnnoucement", stopper)
+	end
+	killTimer(self.m_RespawnTimer)
 end

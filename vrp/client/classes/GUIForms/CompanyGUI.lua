@@ -37,8 +37,9 @@ function CompanyGUI:constructor()
 	--self.m_CompanyMoneyWithdrawButton = GUIButton:new(self.m_Width*0.56, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", tabAllgemein):setBarEnabled(true)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
-	self.m_CompanyRespawnVehicleButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", tabAllgemein):setBarEnabled(true)
-	self.m_CompanyRespawnVehicleButton.onLeftClick = bind(self.CompanyRespawnVehicles, self)
+	self.m_CompanyRespawnVehicleButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", tabAllgemein):setBarEnabled(true):setTooltip("Linksklick für sofortigen Respawn \nRechtsklick für angekündigten Respawn", "button", true)
+	self.m_CompanyRespawnVehicleButton.onLeftClick = bind(self.CompanyRespawnVehicles, self, true)
+	self.m_CompanyRespawnVehicleButton.onRightClick = bind(self.CompanyRespawnVehicles, self, false)
 
 	if localPlayer:getCompany():getId() == 3 then -- San News
 		self.m_SanNewsToggleMsg = GUIButton:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.3, self.m_Height*0.07, _"/sannews de/aktivieren", tabAllgemein):setBarEnabled(true)
@@ -373,8 +374,8 @@ function CompanyGUI:CompanyToggleLoanButton_Click()
 	end
 end
 
-function CompanyGUI:CompanyRespawnVehicles()
-	triggerServerEvent("companyRespawnVehicles", root)
+function CompanyGUI:CompanyRespawnVehicles(instant)
+	triggerServerEvent("companyRespawnVehicles", root, instant)
 end
 
 function CompanyGUI:SanNewsToggleMessage()
