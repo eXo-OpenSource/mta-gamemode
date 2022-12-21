@@ -71,6 +71,69 @@ DeathmatchManager.Maps = {
 			Vector3(2193, -1147, 1033.5),
 		}
 	},
+	["maddogg"] = {
+		["Name"] = "Madd Dogg Villa",
+		["Selectable"] = true,
+		["Interior"] = 5,
+		["Spawns"] = {
+			Vector3(1262.13, -784.74, 1091.91),
+			Vector3(1274.61, -794.30, 1089.93),
+			Vector3(1288.18, -795.60, 1089.94),
+			Vector3(1273.25, -804.24, 1089.93),
+			Vector3(1290.73, -803.15, 1089.94),
+			Vector3(1278.16, -822.33, 1089.94),
+			Vector3(1287.17, -815.41, 1089.94),
+			Vector3(1282.48, -838.02, 1089.94),
+			Vector3(1288.86, -829.02, 1085.64),
+			Vector3(1248.18, -828.43, 1084.01),
+			Vector3(1240.60, -824.41, 1083.16),
+			Vector3(1233.14, -807.81, 1084.01),
+			Vector3(1247.46, -804.39, 1084.01),
+			Vector3(1266.11, -795.17, 1084.01),
+			Vector3(1299.69, -792.40, 1084.01),
+			Vector3(1260.89, -781.16, 1084.01),
+			Vector3(1272.76, -812.83, 1084.01),
+			Vector3(1234.27, -755.69, 1084.01),
+			Vector3(1278.67, -811.38, 1085.63),
+		}
+	},
+	["atrium"] = {
+		["Name"] = "LS Atrium",
+		["Selectable"] = true,
+		["Interior"] = 18,
+		["Spawns"] = {
+			Vector3(1709.63, -1642.70, 20.22),
+			Vector3(1702.18, -1658.83, 20.23),
+			Vector3(1733.73, -1640.94, 23.76),
+			Vector3(1709.90, -1663.32, 23.71),
+			Vector3(1711.47, -1676.65, 27.22),
+			Vector3(1733.59, -1656.11, 27.24),
+			Vector3(1713.43, -1642.42, 27.22),
+			Vector3(1733.67, -1662.42, 20.25),
+			Vector3(1714.17, -1673.17, 20.23),
+			Vector3(1721.30, -1647.92, 20.23),
+		}
+	},
+	["caligulas"] = {
+		["Name"] = "Caligulas Keller",
+		["File"] = 	"files/maps/DMArena/Caligulas.map",
+		["Selectable"] = true,
+		["Interior"] = 1,
+		["Spawns"] = {
+			Vector3(2148.09, 1613.78, 1000.97),
+			Vector3(2145.03, 1602.95, 1006.17),
+			Vector3(2170.80, 1602.27, 999.97),
+			Vector3(2191.74, 1614.34, 999.98),
+			Vector3(2217.97, 1612.61, 999.98),
+			Vector3(2232.55, 1584.73, 999.96),
+			Vector3(2207.66, 1551.83, 1007.50),
+			Vector3(2187.68, 1578.90, 999.97),
+			Vector3(2176.50, 1601.57, 999.98),
+			Vector3(2157.72, 1612.97, 999.97),
+			Vector3(2153.52, 1621.63, 993.69),
+			Vector3(2144.40, 1639.91, 993.58),
+		}
+	},
 
 	["halloween"] = {
 		["Name"] = "Halloween",
@@ -146,12 +209,13 @@ function DeathmatchManager:constructor()
 		end
 	)
 
-	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveLobby", "deathmatchRequestCreateData", "deathmatchCreateLobby"}
+	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveLobby", "deathmatchRequestCreateData", "deathmatchCreateLobby", "deathmatchSendPlayerSelectedWeapons"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
 	addEventHandler("deathmatchJoinLobby", root, bind(self.joinLobby, self))
 	addEventHandler("deathmatchLeaveLobby", root, bind(self.leaveLobby, self))
 	addEventHandler("deathmatchRequestCreateData", root, bind(self.requestCreateData, self))
 	addEventHandler("deathmatchCreateLobby", root, bind(self.createPlayerLobby, self))
+	addEventHandler("deathmatchSendPlayerSelectedWeapons", root, bind(self.givePlayerDeathmatchWeapons, self))
 
 	--Development
 	if DEBUG and EVENT_HALLOWEEN then
@@ -176,12 +240,18 @@ end
 
 function DeathmatchManager:loadServerLobbys()
 	self:createLobby("Deagle LVPD #1", "Server", "lvpd", {24}, "default", 300)
-	self:createLobby("M4 LVPD #1", "Server", "lvpd", {31}, "default", 300)
+	self:createLobby("Zufällige Waffen LVPD #1", "Server", "lvpd", Randomizer:getRandomOf(math.random(1, #DeathmatchManager.AllowedWeapons), DeathmatchManager.AllowedWeapons), "default", 300)
 	self:createLobby("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
-	self:createLobby("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
+	self:createLobby("Zufällige Waffen Battlefield #1", "Server", "battlefield", Randomizer:getRandomOf(math.random(1, #DeathmatchManager.AllowedWeapons), DeathmatchManager.AllowedWeapons), "default", 300)
 	--self:createLobby("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
 	self:createLobby("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
-	self:createLobby("M4 Motel #1", "Server", "motel", {31}, "default", 10)
+	self:createLobby("Zufällige Waffen Motel #1", "Server", "motel", Randomizer:getRandomOf(math.random(1, #DeathmatchManager.AllowedWeapons), DeathmatchManager.AllowedWeapons), "default", 10)
+	self:createLobby("Deagle Atrium #1", "Server", "atrium", {24}, "default", 10)
+	self:createLobby("Zufällige Waffen Atrium #1", "Server", "atrium", Randomizer:getRandomOf(math.random(1, #DeathmatchManager.AllowedWeapons), DeathmatchManager.AllowedWeapons), "default", 10)
+	self:createLobby("Deagle Caligulas Keller #1", "Server", "caligulas", {24}, "default", 10)
+	self:createLobby("Zufällige Waffen Caligulas #1", "Server", "caligulas", Randomizer:getRandomOf(math.random(1, #DeathmatchManager.AllowedWeapons), DeathmatchManager.AllowedWeapons), "default", 10)
+	self:createLobby("Deagle Madd Dogg #1", "Server", "maddogg", {24}, "default", 10)
+	self:createLobby("Zufällige Waffen Madd Dogg #1", "Server", "maddogg", Randomizer:getRandomOf(math.random(1, #DeathmatchManager.AllowedWeapons), DeathmatchManager.AllowedWeapons), "default", 10)
 end
 
 function DeathmatchManager:requestLobbys()
@@ -214,7 +284,7 @@ function DeathmatchManager:createPlayerLobby(map, weapon, password)
 	if client:getMoney() >= 500 then
 		client:transferMoney(self.m_BankServer, 500, "Deathmatch Lobby", "Gameplay", "Deathmatch")
 		local lobbyName = ("%s´s Lobby"):format(client:getName())
-		self:createLobby(lobbyName, client, map, {weapon}, "default", 300, password)
+		self:createLobby(lobbyName, client, map, weapon, "default", 300, password)
 	else
         client:sendError(_("Du hast nicht genug Geld dabei! (500$)", client))
 	end
@@ -256,4 +326,10 @@ function DeathmatchManager:isDamageAllowed(player, attacker, weapon)
 		return player.deathmatchLobby:isDamageAllowed(player, attacker, weapon)
 	end
 	return true
+end
+
+function DeathmatchManager:givePlayerDeathmatchWeapons(weapons)
+	if client.deathmatchLobby then
+		client.deathmatchLobby:giveWeapons(client, weapons)
+	end
 end

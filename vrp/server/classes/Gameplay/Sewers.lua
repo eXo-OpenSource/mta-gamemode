@@ -56,7 +56,7 @@ function Sewers:constructor()
             self:teleportBack(hE)
         end
     end)
-    addEventHandler("onElementDimensionChange", root, function( dim)
+    addEventHandler("onElementDimensionChange", root, function(old, dim)
         if dim == self.m_Dimension then
             if source:isWithinColShape(self.m_RectangleCol) then
                 if source:getType() == "player" then

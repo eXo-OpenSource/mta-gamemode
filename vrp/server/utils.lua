@@ -36,7 +36,7 @@ function getElementMatrix(element)
 	return matrix
 end
 
-addEvent("onElementInteriorChange", true )
+--[[addEvent("onElementInteriorChange", true ) We no longer need this, as it is now available from mta itself
 _setElementInterior = setElementInterior
 function setElementInterior(element, interior, x, y, z)
 	if isElement(element) then
@@ -52,4 +52,4 @@ function setElementDimension(element, dimension)
 		_setElementDimension(element, dimension)
 		triggerEvent("onElementDimensionChange", element, dimension)
 	end
-end
+end]]

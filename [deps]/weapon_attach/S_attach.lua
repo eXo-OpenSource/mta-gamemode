@@ -192,7 +192,7 @@ end
 addEventHandler("onPlayerVehicleExit", getRootElement(), unalphaWepsVehicle)
 
 addEvent("onElementDimensionChange")
-addEventHandler("onElementDimensionChange", root, function( dim )
+addEventHandler("onElementDimensionChange", root, function( old, dim )
 	if source then
 		if getElementType(source) == "player" then
 			local wObj
@@ -206,8 +206,8 @@ addEventHandler("onElementDimensionChange", root, function( dim )
 	end
 end)
 
-addEvent("onElementInteriorChange")
-addEventHandler("onElementInteriorChange", root, function( int )
+--addEvent("onElementInteriorChange")
+addEventHandler("onElementInteriorChange", root, function( old, int )
 	if source then
 		if getElementType(source) == "player" then
 			local wObj

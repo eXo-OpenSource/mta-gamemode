@@ -628,7 +628,7 @@ function Group:Event_RemovePlayerMarkerOnQuit()
 	self.m_Markers[source] = nil
 end
 
-function Group:refreshAttachedMarker(dimInt)
+function Group:refreshAttachedMarker(oldDimInt, dimInt)
 	if not self.m_Markers then return end
 	if not self.m_Markers[source] then return end
 	if eventName == "onElementDimensionChange" then

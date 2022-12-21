@@ -1,0 +1,4 @@
+<map edf:definitions="editor_main">
+    <object id="object (chinaTgate) (1)" breakable="true" interior="1" alpha="255" dimension="0" model="2930" scale="1.183615" doublesided="false" collisions="true" posX="2148.761" posY="1604.6399" posZ="1007.9" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (cjgaragedoor) (1)" breakable="true" interior="1" alpha="0" dimension="0" model="17951" scale="1" doublesided="false" collisions="true" posX="2147.5" posY="1605.3" posZ="1006.9" rotX="0" rotY="0" rotZ="271.041"></object>
+</map>

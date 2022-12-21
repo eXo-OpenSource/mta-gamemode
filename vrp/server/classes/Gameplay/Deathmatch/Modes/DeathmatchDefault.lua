@@ -29,9 +29,9 @@ function DeathmatchDefault:addPlayer(player)
 		["Kills"] = 0,
 		["Deaths"] = 0
 	}
-	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+	--giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	self:refreshGUI()
-	DeathmatchLobby.respawnPlayer(self, player)
+	--DeathmatchLobby.respawnPlayer(self, player)
 end
 
 
@@ -55,5 +55,3 @@ function DeathmatchDefault:onWasted(player, killer, weapon)
 	end
 	player.deathmatchLobby:respawnPlayer(player, true)
 end
-
-

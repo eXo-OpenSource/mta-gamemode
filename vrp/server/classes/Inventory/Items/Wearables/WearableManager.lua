@@ -47,7 +47,7 @@ function WearableManager:checkReference( sData )
 
 end
 
-function WearableManager:Event_onElementInteriorChange( int )
+function WearableManager:Event_onElementInteriorChange( old, int )
 	local obj = false
 	if source.m_Helmet then
 		setElementInterior(source.m_Helmet, int)
@@ -67,7 +67,7 @@ function WearableManager:Event_onElementInteriorChange( int )
 	end
 end
 
-function WearableManager:Event_onElementDimensionChange( dim )
+function WearableManager:Event_onElementDimensionChange( old, dim )
 	local obj = false
 	if source.m_Helmet then
 		setElementDimension(source.m_Helmet, dim)

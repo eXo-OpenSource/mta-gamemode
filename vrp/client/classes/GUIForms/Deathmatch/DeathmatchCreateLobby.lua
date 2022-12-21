@@ -20,11 +20,11 @@ function DeathmatchCreateLobby:constructor(marker)
 	GUILabel:new(self.m_Width*0.02, 40+self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, "Map:", self.m_Window)
 	self.m_MapChanger = GUIChanger:new(self.m_Width*0.02+self.m_Width*0.25, 40+self.m_Height*0.05, self.m_Width*0.35, self.m_Height*0.07, self.m_Window)
 
-	GUILabel:new(self.m_Width*0.02, 40+self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.07, "Waffe:", self.m_Window)
-	self.m_WeaponChanger = GUIChanger:new(self.m_Width*0.02+self.m_Width*0.25, 40+self.m_Height*0.13, self.m_Width*0.35, self.m_Height*0.07, self.m_Window)
+	GUILabel:new(self.m_Width*0.02, 40+self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, "Waffe:", self.m_Window)
+	--self.m_WeaponChanger = GUIChanger:new(self.m_Width*0.02+self.m_Width*0.25, 40+self.m_Height*0.13, self.m_Width*0.35, self.m_Height*0.07, self.m_Window)
 
-	GUILabel:new(self.m_Width*0.02, 40+self.m_Height*0.21, self.m_Width*0.25, self.m_Height*0.07, "Passwort:", self.m_Window)
-	self.m_Password = GUIEdit:new(self.m_Width*0.02+self.m_Width*0.25, 40+self.m_Height*0.21, self.m_Width*0.35, self.m_Height*0.07, self.m_Window)
+	GUILabel:new(self.m_Width*0.02, 40+self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.07, "Passwort:", self.m_Window)
+	self.m_Password = GUIEdit:new(self.m_Width*0.02+self.m_Width*0.25, 40+self.m_Height*0.13, self.m_Width*0.35, self.m_Height*0.07, self.m_Window)
 
 	self.m_Create = GUIButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.09, self.m_Width*0.3, self.m_Height*0.07, _"Erstellen (500$)", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_Create.onLeftClick = bind(self.createLobby, self)
@@ -45,9 +45,13 @@ end
 
 function DeathmatchCreateLobby:createLobby()
 	local map = self.m_MapNames[self.m_MapChanger:getSelectedItem()]
-	local weapon = self.m_WeaponNames[self.m_WeaponChanger:getSelectedItem()]
 	local password = self.m_Password:getText() or ""
-	triggerServerEvent("deathmatchCreateLobby", localPlayer, map, weapon, password)
+	
+	if table.size(self.m_SelectedWeapons) == 0 then
+		return ErrorBox:new(_"Wähle mindestens eine Waffe aus.")
+	end
+
+	triggerServerEvent("deathmatchCreateLobby", localPlayer, map, self.m_SelectedWeapons, password)
 	delete(self)
 end
 
@@ -58,9 +62,20 @@ function DeathmatchCreateLobby:receiveData(maps, weapons)
 		self.m_MapChanger:addItem(mapData["Name"])
 	end
 
+	self.m_WeaponButtons = {}
+	self.m_SelectedWeapons =  {}
 	self.m_WeaponNames = {}
 	for index, weaponId in pairs(weapons) do
+		self.m_WeaponButtons[index] = GUICheckbox:new(self.m_Width*0.02+self.m_Width*0.25, 40+self.m_Height* (0.21 + (index * .08)) , self.m_Width*0.35, self.m_Height*0.07, WEAPON_NAMES[weaponId] ,self.m_Window)
 		self.m_WeaponNames[WEAPON_NAMES[weaponId]] = weaponId
-		self.m_WeaponChanger:addItem(WEAPON_NAMES[weaponId])
+
+		self.m_WeaponButtons[index].onChange = function(state)
+			if state and not table.find(self.m_SelectedWeapons, weaponId) then
+				table.insert(self.m_SelectedWeapons, weaponId)
+			else
+				table.removevalue(self.m_SelectedWeapons, weaponId)
+			end
+		end
+
 	end
 end
