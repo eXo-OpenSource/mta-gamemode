@@ -223,7 +223,7 @@ function Admin:Event_OnSuperManStartRequest()
 end
 
 function Admin:Event_OnSuperManStopRequest()
-	if client:getRank() >= RANK.Moderator then
+	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then
 				exports["superman"]:stopSuperMan(client)
@@ -951,7 +951,7 @@ function Admin:toggleSupportMode(player)
 		--player:setWalkingStyle(0)
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
-		if player:getRank() >= RANK.Moderator then
+		if player:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 			player:triggerEvent("superman:toggle", false)
 		end
 		player:triggerEvent("disableDamage", false)
@@ -1060,12 +1060,12 @@ function Admin:onlineList(player)
 		outputChatBox(" ", player, 50, 200, 255)
 		outputChatBox("Folgende Teammitglieder sind online:", player, 50, 200, 255)
 		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do
-			if onlineAdmin:getPublicSync("supportMode") then
+			if onlineAdmin:getPublicSync("supportMode") or onlineAdmin:getPublicSync("ticketsupportMode") then
 				outputChatBox(("    • %s #ffffff%s (Aktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, unpack(self.m_RankColors[rank]))
 			end
 		end
 		for onlineAdmin, rank in kspairs(self.m_OnlineAdmins, function(a, b) return a:getRank() > b:getRank() end) do
-			if not onlineAdmin:getPublicSync("supportMode") then
+			if not onlineAdmin:getPublicSync("supportMode") and not onlineAdmin:getPublicSync("ticketsupportMode") then
 				outputChatBox(("    • %s #ffffff%s (Inaktiv)"):format(self.m_RankNames[rank], onlineAdmin:getName()), player, 192, 192, 192, true)
 			end
 		end

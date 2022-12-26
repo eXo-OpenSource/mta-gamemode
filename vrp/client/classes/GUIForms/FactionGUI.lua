@@ -632,9 +632,10 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, ac
 				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local weaponSymbol = FontAwesomeSymbols.Gun
 				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, weaponSymbol, info.name, info.rank, tostring(info.activity).." h")
+				local color = (getPlayerFromName(info.name) and getPlayerFromName(info.name):getPublicSync("Faction:Duty") and Color.Orange) or (getPlayerFromName(info.name) and Color.Accent) or Color.White
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 				item:setColumnFont(2, FontAwesome(20), 1):setColumnColor(2, info.weaponEnabled == 1 and Color.Green or Color.Red)
-				item:setColumnColor(3, getPlayerFromName(info.name) and Color.Accent or Color.White)
+				item:setColumnColor(3, color)
 				item.Id = playerId
 				item.Rank = info.rank
 

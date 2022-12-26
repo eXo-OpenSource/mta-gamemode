@@ -125,7 +125,7 @@ RANKSCOREBOARD[5] = "Administrator"
 RANKSCOREBOARD[6] = "Servermanager"
 RANKSCOREBOARD[7] = "Developer"
 RANKSCOREBOARD[8] = "Stellv. Projektleiter"
-RANKSCOREBOARD[9] = "Projekteiter"
+RANKSCOREBOARD[9] = "Projektleiter"
 
 RANKCOLORS = {}
 RANKCOLORS[-1] = {0, 0, 0}
