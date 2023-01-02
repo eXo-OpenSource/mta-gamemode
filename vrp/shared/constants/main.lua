@@ -167,6 +167,10 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
 	["throwaway"] = RANK.Moderator,
+	["modsBan"] = RANK.Supporter,
+	["removeModsBan"] = RANK.Administrator,
+	["offlineModsBan"] = RANK.Supporter,
+	["offlineRemoveModsBan"] = RANK.Administrator,
 
 	--admin general
 	["event"] = RANK.Moderator,

@@ -936,20 +936,28 @@ function LocalPlayer:vehiclePickUp()
 end
 
 addEvent("showModCheck", true)
-addEventHandler("showModCheck",localPlayer, function(tbl)
+addEventHandler("showModCheck",localPlayer, function(tbl, modBan)
 	local w, h = screenWidth, screenHeight
 	local tx = dxGetFontHeight(3,"default-bold")
 	local tx2 = dxGetFontHeight(2,"default")
-	addEventHandler("onClientRender", root, function()
-		dxDrawRectangle(0,0,w,h,tocolor(255,255,255,255))
-		dxDrawImage(w*0.5-w*0.05,h*0.02,w*0.1,w*0.1,"files/images/warning.png")
-		dxDrawText("Warnung! Folgende Modifikationen müssen entfernt werden, da sie in der Größe sehr stark abweichen!",0,h*0.3-tx*1.1,w,0,tocolor(150,0,0,255),3,"default-bold","center","top")
-		dxDrawText("Originale GTA3.img ist im Forum verfügbar! https://goo.gl/L6i7dR",0,h*0.3,w,0,tocolor(0,0,0,255),2,"default-bold","center","top")
-		dxDrawLine(0,h*0.3+tx,w,h*0.3+tx,tocolor(150,0,0,255))
-		for i = 1,#tbl do
-			dxDrawText(i.."# "..tbl[i],0,(h*0.3)+tx+i*(tx2*1.5),w,h,tocolor(0,0,0,255),2,"default","center","top")
-		end
-	end)
+	if modBan then
+		addEventHandler("onClientRender", root, function()
+			dxDrawRectangle(0,0,w,h,tocolor(255,255,255,255))
+			dxDrawImage(w*0.5-w*0.05,h*0.02,w*0.1,w*0.1,"files/images/warning.png")
+			dxDrawText("Warnung! Du darfst keine Modifikationen nutzen! \nInfos zur Sperre findest du im Control Panel auf deinem Profil unter Logs > Strafen.",0,h*0.3-tx*1.1,w,0,tocolor(150,0,0,255),3,"default-bold","center","top")
+		end)
+	else
+		addEventHandler("onClientRender", root, function()
+			dxDrawRectangle(0,0,w,h,tocolor(255,255,255,255))
+			dxDrawImage(w*0.5-w*0.05,h*0.02,w*0.1,w*0.1,"files/images/warning.png")
+			dxDrawText("Warnung! Folgende Modifikationen müssen entfernt werden, da sie in der Größe sehr stark abweichen!",0,h*0.3-tx*1.1,w,0,tocolor(150,0,0,255),3,"default-bold","center","top")
+			dxDrawText("Originale GTA3.img ist im Forum verfügbar! https://goo.gl/L6i7dR",0,h*0.3,w,0,tocolor(0,0,0,255),2,"default-bold","center","top")
+			dxDrawLine(0,h*0.3+tx,w,h*0.3+tx,tocolor(150,0,0,255))
+			for i = 1,#tbl do
+				dxDrawText(i.."# "..tbl[i],0,(h*0.3)+tx+i*(tx2*1.5),w,h,tocolor(0,0,0,255),2,"default","center","top")
+			end
+		end)
+	end
 end)
 
 function LocalPlayer:deactivateBlur(bool)

@@ -58,8 +58,11 @@ function ModdingCheck:constructor()
 			);
 		]], sql:getPrefix())
 	end
-
+	self.m_ModUserBans = {}
 	self:loadBans()
+
+	self.m_TimedPulse = TimedPulse:new(1000*60*60)
+	self.m_TimedPulse:registerHandler(bind(self.loadBans, self, true))
 
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
 	for _,plr in ipairs( getElementsByType("player") ) do
@@ -67,10 +70,18 @@ function ModdingCheck:constructor()
 	end
 end
 
-function ModdingCheck:loadBans()
-	self.m_ModUserBans = sql:queryFetch([[
+function ModdingCheck:loadBans(refresh)
+	if refresh then 
+		self.m_ModUserBans = {}
+		self.m_ModBans = {}
+	end
+
+	local modBans = sql:queryFetch([[
 		SELECT s.Serial FROM ??_account_mod_bans b INNER JOIN ??_account_to_serial s ON s.PlayerId = b.UserId WHERE b.ValidUntil IS NULL or b.ValidUntil > NOW()
 	]], sql:getPrefix(), sql:getPrefix())
+	for __, info in pairs(modBans) do
+		self.m_ModUserBans[info.Serial] = true
+	end
 
 	self.m_ModBans = sql:queryFetch([[
 		SELECT * FROM ??_mod_blacklist
@@ -85,8 +96,8 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 	local foundVehicleMods = false
 	local hasModsBan = false
 
-	for _, v in pairs(self.m_ModUserBans) do
-		if v.Serial == source:getSerial() then
+	for serial, state in pairs(self.m_ModUserBans) do
+		if serial == source:getSerial() then
 			hasModsBan = true
 			break
 		end
@@ -138,11 +149,26 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 			end
 		end
 	end
-	if hasModsBan and #tNames > 0 then
+	--[[if hasModsBan and #tNames > 0 then
 		tNames[#tNames+1] = "Du darfst keine Fahrzeuge modden!"
-	end
-	if #tNames > 0 then
+	end]]
+	if #tNames > 0 or hasModsBan then
 		fadeCamera(source, false,0.5,255,255,255)
-		triggerClientEvent("showModCheck", source, tNames)
+		triggerClientEvent("showModCheck", source, tNames, hasModsBan)
 	end
+end
+
+function ModdingCheck:addBan(userId, adminId, duration, reason)
+	if duration == 0 then duration = nil end
+	sql:queryExec("INSERT INTO ??_account_mod_bans (UserId, AdminId, CreatedAt, ValidUntil) VALUES (?, ?, NOW(), NOW() + INTERVAL ? Hour)", sql:getPrefix(), userId, adminId, duration)
+	
+	if DatabasePlayer.Map[userId] then
+		DatabasePlayer.Map[userId]:kick(_("Du hast eine Mods Sperre bekommen Grund: %s", DatabasePlayer.Map[userId], reason))
+	end
+	self:loadBans(true)
+end
+
+function ModdingCheck:removeBan(userId)
+	sql:queryExec("DELETE FROM ??_account_mod_bans WHERE UserId = ?", sql:getPrefix(), userId)
+	self:loadBans(true)
 end

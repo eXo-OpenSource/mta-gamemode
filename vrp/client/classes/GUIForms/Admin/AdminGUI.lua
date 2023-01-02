@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "rkick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "rkick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange", "modsBan", "removeModsBan"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -124,6 +124,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("unprison", "aus Prison entlassen", self.onPlayerButtonClick, 220, 250, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("timeban", "Timeban", self.onPlayerButtonClick, 220, 290, 160, 30, Color.Red, tabSpieler)
 	self:addAdminButton("permaban", "Permaban", self.onPlayerButtonClick, 220, 330, 160, 30, Color.Red, tabSpieler)
+	self:addAdminButton("modsBan", "Mods sperren", self.onPlayerButtonClick, 220, 370, 160, 30, Color.Red, tabSpieler)
+	self:addAdminButton("removeModsBan", "Mods freigeben ", self.onPlayerButtonClick, 220, 410, 160, 30, Color.Red, tabSpieler)
 
 	GUILabel:new(440, 130, 160, 30, _"Sonstiges:", tabSpieler)
 	self:addAdminButton("spect", "specten", self.onPlayerButtonClick, 440, 170, 160, 30, Color.LightRed, tabSpieler)
@@ -171,6 +173,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineWarn", "Warns verwalten", self.onOfflineButtonClick, 220, 370, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlinePrison", "ins Prison", self.onOfflineButtonClick, 220, 410, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlineUnPrison", "aus Prison entlassen", self.onOfflineButtonClick, 410, 410, 180, 30, Color.Orange, tabOffline)
+	self:addAdminButton("offlineModsBan", "Mods sperren", self.onOfflineButtonClick, 220, 450, 180, 30, Color.Red, tabOffline)
+	self:addAdminButton("offlineRemoveModsBan", "Mods freigeben ", self.onOfflineButtonClick, 410, 450, 180, 30, Color.Red, tabOffline)
 
 	self:refreshOnlinePlayers()
 
@@ -424,6 +428,29 @@ function AdminGUI:onOfflineButtonClick(func)
 			function ()
 				triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer)
 			end)
+	elseif func == "offlineModsBan" then
+		AdminInputBox:new(
+			_("Modifikationen für den Spieler %s sperren", selectedPlayer),
+			_"Dauer in Tagen: (0 für Permanent)",
+			function (reason, duration)
+				if reason and duration then
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason, duration)
+				else
+					ErrorBox:new("Kein Grund oder Dauer angegeben!")
+				end
+			end)
+	elseif func == "offlineRemoveModsBan" then
+		InputBox:new(
+			_("Modifikationen von dem Spieler %s entsperren", selectedPlayer),
+			_("Aus welchem Grund möchtest du Modifikationen für %s wieder freigeben?", selectedPlayer),
+			function (reason)
+				if reason then
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
+				else
+					ErrorBox:new("Keine Dauer angegeben!")
+				end
+			end)	
+		
 	end
 end
 
@@ -525,6 +552,28 @@ function AdminGUI:onPlayerButtonClick(func)
 						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, newName)
 					end
 				end)
+	elseif func == "modsBan" then
+		AdminInputBox:new(
+				_("Modifikationen für den Spieler %s sperren", self.m_SelectedPlayer:getName()),
+				_"Dauer in Tagen: (0 für Permanent)",
+				function (reason, duration)
+					if reason and duration then
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+					else
+						ErrorBox:new("Kein Grund oder Dauer angegeben!")
+					end
+				end)
+	elseif func == "removeModsBan" then
+		InputBox:new(_("Modifikationen von dem Spieler %s entsperren", self.m_SelectedPlayer:getName()),
+				_("Aus welchem Grund möchtest du Modifikationen für %s wieder freigeben?", self.m_SelectedPlayer:getName()),	
+				function (reason)
+					if reason then
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason)
+					else
+						ErrorBox:new("Keine Dauer angegeben!")
+					end
+				end)	
+		
 	end
 end
 

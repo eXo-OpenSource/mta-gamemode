@@ -755,7 +755,25 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			ThrowObject:new(admin, target:getModel()):replaceEntity(target)
 			StatisticsLogger:getSingleton():addAdminAction(admin, "Spielerwurf", target)
 		end
-    end
+	elseif func == "modsBan" then
+		if not target then return end
+		if not duration then return end
+		if not reason then return end
+		duration = tonumber(duration)
+		if duration == 0 then
+			self:sendShortMessage(_("%s hat %s eine permanente Sperre für Modifikationen gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+		else
+			self:sendShortMessage(_("%s hat %s eine %s-tägige Sperre für Modifikationen gegeben! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+		end
+		self:addPunishLog(admin, target, func, reason, duration*60*60*24)
+		ModdingCheck:getSingleton():addBan(target:getId(), admin:getId(), duration, reason)
+	elseif func == "removeModsBan" then
+		if not target then return end
+		if not reason then return end
+		self:sendShortMessage(_("%s hat Modifikationen für %s wieder freigegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+		self:addPunishLog(admin, target, "removeModsBan", reason, 0)
+		ModdingCheck:getSingleton():removeBan(target:getId())
+	end
 end
 
 function Admin:Event_offlineFunction(func, target, reason, duration, admin)
@@ -871,6 +889,30 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 				end
 			end
 		end)()
+	elseif func == "offlineModsBan" then
+		if tonumber(duration) then
+			if type(reason) == "string" then
+				if duration == 0 then
+					self:sendShortMessage(_("%s hat %s eine permanente Sperre für Modifikationen gegeben! Grund: %s", admin, admin:getName(), target, reason))
+				else
+					self:sendShortMessage(_("%s hat %s eine %s-tägige Sperre für Modifikationen gegeben! Grund: %s", admin, admin:getName(), target, duration, reason))
+				end
+				self:addPunishLog(admin, Account.getIdFromName(target), "modsBan", reason, duration*60*60*24)
+				ModdingCheck:getSingleton():addBan(Account.getIdFromName(target), admin:getId(), duration, reason)
+			else
+				admin:sendError("Keinen Grund angegeben!")
+			end
+		else
+			admin:sendError("Keine Dauer angegeben!")
+		end
+	elseif func == "offlineRemoveModsBan" then
+		if type(reason) == "string" then
+			self:sendShortMessage(_("%s hat Modifikationen für %s wieder freigegeben! Grund: %s", admin, admin:getName(), target, reason))
+			self:addPunishLog(admin, Account.getIdFromName(target), "removeModsBan", reason, 0)
+			ModdingCheck:getSingleton():removeBan(Account.getIdFromName(target))
+		else
+			admin:sendError("Keinen Grund angegeben!")
+		end
 	else
         outputDebug("Event_offlineFunction Error - Function not found")
 	end
