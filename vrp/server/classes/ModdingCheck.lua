@@ -160,7 +160,7 @@ end
 
 function ModdingCheck:addBan(userId, adminId, duration, reason)
 	if duration == 0 then duration = nil end
-	sql:queryExec("INSERT INTO ??_account_mod_bans (UserId, AdminId, CreatedAt, ValidUntil) VALUES (?, ?, NOW(), NOW() + INTERVAL ? Hour)", sql:getPrefix(), userId, adminId, duration)
+	sql:queryExec("INSERT INTO ??_account_mod_bans (UserId, AdminId, CreatedAt, ValidUntil) VALUES (?, ?, NOW(), NOW() + INTERVAL ? Day)", sql:getPrefix(), userId, adminId, duration)
 	
 	if DatabasePlayer.Map[userId] then
 		DatabasePlayer.Map[userId]:kick(_("Du hast eine Mods Sperre bekommen Grund: %s", DatabasePlayer.Map[userId], reason))
