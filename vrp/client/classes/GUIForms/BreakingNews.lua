@@ -119,19 +119,19 @@ end
 
 addEventHandler("breakingNews", root,
 	function(text, title, color, titleColor)
-		if core:get("HUD", "breakingNewsBox", true) then
+		if core:get("HUD", "breakingNewsBox", true) or title == "Admin Ankündigung" then
 			if BreakingNews:isInstantiated() then
 				BreakingNews:getSingleton():addNews(text, title, color, titleColor)
 			else
 				BreakingNews:new(text, title, color, titleColor)
 			end
 		end
-		if core:get("HUD", "breakingNewsInChat", false) then
+		if core:get("HUD", "breakingNewsInChat", false) or title == "Admin Ankündigung" then
 			local r, g, b = fromcolor(Color.LightRed)
 			if color and type(color) == "table" then
 				r, g, b = unpack(color)
 			end
-			outputChatBox(("[Breaking News] #FFFFFF %s"):format(text, title, color, titleColor), r, g, b, true)
+			outputChatBox(("[%s] #FFFFFF %s"):format(title, text, color, titleColor), r, g, b, true)
 		end
 	end
 )

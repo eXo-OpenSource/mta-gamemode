@@ -95,6 +95,7 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 	local difCondition --// bool that will state if the modded skin is differing too much from the original one
 	local foundVehicleMods = false
 	local hasModsBan = false
+	local modCount = 0
 
 	for serial, state in pairs(self.m_ModUserBans) do
 		if serial == source:getSerial() then
@@ -104,6 +105,7 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 	end
 
 	for idx,item in ipairs(modList) do
+		modCount = modCount + 1
 		if item.sizeX then
 			sql:queryExec([[
 				INSERT INTO ??_account_mods
@@ -152,10 +154,20 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 	--[[if hasModsBan and #tNames > 0 then
 		tNames[#tNames+1] = "Du darfst keine Fahrzeuge modden!"
 	end]]
-	if #tNames > 0 or hasModsBan then
+	if #tNames > 0 or (hasModsBan and modCount > 0) then
 		fadeCamera(source, false,0.5,255,255,255)
 		triggerClientEvent("showModCheck", source, tNames, hasModsBan)
 	end
+end
+
+function ModdingCheck:hasBan(userId)
+	local serial
+	if DatabasePlayer.Map[userId] and isElement(DatabasePlayer.Map[userId]) then
+		serial = DatabasePlayer.Map[userId]:getSerial()
+	else
+		serial = Account.getLastSerialFromId(userId)
+	end 
+	return self.m_ModUserBans[serial] and true or false
 end
 
 function ModdingCheck:addBan(userId, adminId, duration, reason)
@@ -163,7 +175,7 @@ function ModdingCheck:addBan(userId, adminId, duration, reason)
 	sql:queryExec("INSERT INTO ??_account_mod_bans (UserId, AdminId, CreatedAt, ValidUntil) VALUES (?, ?, NOW(), NOW() + INTERVAL ? Day)", sql:getPrefix(), userId, adminId, duration)
 	
 	if DatabasePlayer.Map[userId] then
-		DatabasePlayer.Map[userId]:kick(_("Du hast eine Mods Sperre bekommen Grund: %s", DatabasePlayer.Map[userId], reason))
+		DatabasePlayer.Map[userId]:kick(_("Du hast eine Sperre für Modifikationen erhalten! Grund: %s", DatabasePlayer.Map[userId], reason))
 	end
 	self:loadBans(true)
 end

@@ -110,9 +110,4 @@ function Christmas:constructor()
 	ped.SpeakBubble:setBorderColor(Color.LightRed)
 	ped.SpeakBubble:setTextColor(Color.LightRed)
 	setElementData(ped, "clickable", true)
-	
-	if SNOW_SHADERS_ENABLED then
-		triggerEvent("switchSnowFlakes", root, core:get("Event", "SnowFlakes", EVENT_CHRISTMAS))
-		triggerEvent("switchSnowGround", root, core:get("Event", "SnowGround", EVENT_CHRISTMAS), core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
-	end
 end

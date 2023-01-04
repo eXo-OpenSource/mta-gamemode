@@ -324,6 +324,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Ban = Ban.checkOfflineBan(Id);
 						Warn = Warn.getAmount(Id);
 						PrisonTime = player.m_PrisonTime;
+						ModsBan = ModdingCheck:getSingleton():hasBan(Id);
                     }
 
                     if isOffline then delete(player) end

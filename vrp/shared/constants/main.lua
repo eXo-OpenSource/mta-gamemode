@@ -72,10 +72,6 @@ JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
 JOB_LEVEL_BOXER = 8
 
-JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
-
-JOB_PAY_MULTIPLICATOR = 1
-
 BLIP_CATEGORY = {
 	Default = "Allgemein",
 	Shop = "Shops",

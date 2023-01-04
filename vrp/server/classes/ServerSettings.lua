@@ -29,11 +29,11 @@ function ServerSettings:constructor()
 		end
 
 		if row.Index == "JobPayMultiplicator" then
-			JOB_PAY_MULTIPLICATOR = row.Value
+			JOB_PAY_MULTIPLICATOR = tonumber(row.Value)
 		end
 
 		if row.Index == "JobExtraPointFactor" then
-			JOB_EXTRA_POINT_FACTOR = row.Value
+			JOB_EXTRA_POINT_FACTOR = tonumber(row.Value)
 		end
 
 		self.m_Settings[row.Index] = row.Value
