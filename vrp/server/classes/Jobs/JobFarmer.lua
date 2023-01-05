@@ -57,15 +57,18 @@ function JobFarmer:giveJobMoney(player)
 
 	if not self.m_PlayerIncomeCache[player] then return end 
 	local income = 0
+	local earnedPoints = 0
 	local duration = getRealTime().timestamp - self.m_PlayerIncomeCache[player].lastAction
 	self.m_PlayerIncomeCache[player].lastAction = 0
 	if self.m_PlayerIncomeCache[player].combine > 0 then
 		income = self.m_PlayerIncomeCache[player].combine
-		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
+		earnedPoints = math.round(((income / MONEY_PLANT_HARVESTER) / 6)*JOB_EXTRA_POINT_FACTOR) -- one point every six plants
+		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income, nil, nil, earnedPoints)
 		self.m_PlayerIncomeCache[player].combine = 0 
 	elseif self.m_PlayerIncomeCache[player].tractor > 0 then
 		income = self.m_PlayerIncomeCache[player].tractor
-		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.tractor", duration, income)
+		earnedPoints = math.round(((income / MONEY_PLANT_HARVESTER) / 6)*JOB_EXTRA_POINT_FACTOR) -- one point every six plants
+		StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.tractor", duration, income, nil, nil, earnedPoints)
 		self.m_PlayerIncomeCache[player].tractor = 0
 	end
 	if income > 0 then
@@ -80,7 +83,7 @@ function JobFarmer:giveJobMoney(player)
 				category = "Job",
 				subcategory = "Farmer"
 			},
-			points = math.round(((income / MONEY_PLANT_HARVESTER) / 6)*JOB_EXTRA_POINT_FACTOR), -- one point every six plants
+			points = earnedPoints,
 		})
 
 	end

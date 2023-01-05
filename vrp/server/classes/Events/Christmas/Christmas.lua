@@ -20,45 +20,45 @@ Christmas.ms_Bonus = {
 	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
-		["Packages"] =75,
-		["CandyCane"] = 100,
+		["Packages"] = 35, --75
+		["CandyCane"] = 50, --50
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Weihnachts-Skin",
 		["Image"] = "Bonus_ChristmasSkin.png",
-		["Packages"] = 120,
-		["CandyCane"] = 150,
+		["Packages"] = 60, --120
+		["CandyCane"] = 75, --150
 		["Type"] = "Skin",
 		["SkinId"] = 244
 	},
 	{
 		["Text"] = "Lebkuchen-Maske",
 		["Image"] = "Bonus_GingerbreadMask.png",
-		["Packages"] = 150,
-		["CandyCane"] = 180,
+		["Packages"] = 75, --150
+		["CandyCane"] = 90, --180
 		["Type"] = "Special",
 	},
 	{
 		["Text"] = "30 Tage VIP",
 		["Image"] = "Bonus_VIP.png",
-		["Packages"] = 175,
-		["CandyCane"] = 200,
+		["Packages"] = 100, --175
+		["CandyCane"] = 125, --200
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Mr. Whoopee",
 		["Image"] = "Bonus_Whoopee.png",
-		["Packages"] = 550,
-		["CandyCane"] = 850,
+		["Packages"] = 275, --550
+		["CandyCane"] = 425, --850
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 423
 	},
 	{
 		["Text"] = "Nebula",
 		["Image"] = "Bonus_Nebula.png",
-		["Packages"] = 700,
-		["CandyCane"] = 1600,
+		["Packages"] = 350, --700
+		["CandyCane"] = 800, --1600
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 516
 	}

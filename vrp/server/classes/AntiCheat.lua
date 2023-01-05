@@ -208,7 +208,7 @@ function AntiCheat:addPlayerToWhitelist(player, cmd, name, acCode, serial)
 			end
 
 			sql:queryExec("INSERT INTO ??_account_anticheat_whitelist (PlayerId, Bypass) VALUES (?, ?) ON DUPLICATE KEY UPDATE Bypass = ?", sql:getPrefix(), userId, toJSON(bypassTbl), toJSON(bypassTbl))
-			player:sendSuccess(_("Der Spieler %s (Id: %d) wurde erfolgreich für Anticheat Code #%s gewhitelistet.", player, userName, userId, acCode))
+			player:sendSuccess(_("Der Spieler %s (Id: %d) wurde erfolgreich für den Anticheat Code #%s gewhitelistet.", player, userName, userId, acCode))
 		end
 	end
 end

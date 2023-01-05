@@ -101,15 +101,16 @@ function JobBoxer:endJob()
     local level = client:getPublicSync("JobBoxer:activeLevel")
     self.m_BankAccountServer:transferMoney({client, true}, JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR, "Boxer-Job", "Job", "Boxer")
 	local income = JobBoxerMoney[level] * JOB_PAY_MULTIPLICATOR
-	local duration = getRealTime().timestamp - client.m_LastJobAction
-	StatisticsLogger:getSingleton():addJobLog(client, "jobBoxer", duration, income)
+	local points = math.round(1 * JOB_EXTRA_POINT_FACTOR)
+    local duration = getRealTime().timestamp - client.m_LastJobAction
+	StatisticsLogger:getSingleton():addJobLog(client, "jobBoxer", duration, income, nil, nil, points)
 	client.m_LastJobAction = nil
     client:sendSuccess(("Du hast den Kampf gewonnen!\nDu erhälst dafür %s $!"):format(income))
 
     local level = self:getPlayerLevel(client)[3]
     self.m_PlayerLevelCache[client:getName()][3] = level + 1
     client:increaseStatistics("BoxerLevel", 1)
-    client:givePoints(1)
+    client:givePoints(points)
     self:updateCachedTopList(client)
 
     client:restoreStorage()
