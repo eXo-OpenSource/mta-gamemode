@@ -180,8 +180,8 @@ end
 function HouseGUI:saveRent(disable)
 	local amount = disable == true and 0 or tonumber(self.m_EditRent:getText()) or 0
 
-	if disable ~= true and math.clamp(1, amount, 500) ~= amount then
-		return WarningBox:new("Die Miete muss zwischen 1$ und 500$ liegen")
+	if disable ~= true and math.clamp(100, amount, 5000) ~= amount then
+		return WarningBox:new("Die Miete muss zwischen 100$ und 5000$ liegen")
 	end
 	triggerServerEvent("houseSetRent", root, amount)
 

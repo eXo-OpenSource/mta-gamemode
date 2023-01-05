@@ -451,7 +451,7 @@ function PermanentVehicle:toggleRegister(player)
 		self.m_Unregistered = 0
 		self:setPositionType(VehiclePositionType.World)
 		self:setDimension(0)
-		local x, y, z = unpack(Randomizer:getRandomTableValue(VehicleSpawnPositionAfterRegister))
+		local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(VehicleSpawnPositionAfterRegister))
 		local pickUpText = "Du kannst es hinter der Stadthalle abholen."
 		if self:isAirVehicle() and self:getModel() ~= 460 then
 			pickUpText = "Du kannst es am Flughafen in Los Santos abholen."
@@ -461,8 +461,8 @@ function PermanentVehicle:toggleRegister(player)
 			x, y, z, rotation = 2350.26, -2523.06, 0, 180 -- ls docks
 		end
 		self:setPosition(x, y, z + self:getBaseHeight())
-		self:setRotation(0, 0, 0)
-		player:sendInfo(_("Dein Fahrzeug ist nun wieder angemeldet! %s", player, pickUpText))
+		self:setRotation(0, 0, rotation)
+		player:sendInfo(_("Dein Fahrzeug ist nun wieder angemeldet! \n%s", player, pickUpText))
 	else
 		self:removeAttachedPlayers()
 		self:setPositionType(VehiclePositionType.Unregistered)

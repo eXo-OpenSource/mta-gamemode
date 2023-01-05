@@ -24,7 +24,9 @@ function ExecutionPed:constructor( player, weapon, bodypart )
 	self.m_Entity.m_ExecutedPlayer = player
 	self.m_Player = player
 	setElementAlpha(player, 0)
-	nextframe(function() attachElements(self.m_Entity, player) self:setRandomAnimation() end)
+	if dim == 0 and int == 0 then
+		nextframe(function() attachElements(self.m_Entity, player) self:setRandomAnimation() end)
+	end
 	self.m_HealthTimer = setTimer(function() setElementHealth(self.m_Entity, 20) end, 1000, 1)
 	--setTimer(setElementCollisionsEnabled, 3000, 1, player, false)
 	toggleAllControls(player, false)

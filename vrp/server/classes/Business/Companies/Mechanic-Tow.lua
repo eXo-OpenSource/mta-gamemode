@@ -217,16 +217,18 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	source:setDimension(0)
 	source:setInterior(0)
 	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(MechanicTow.SpawnPositions))
-	if source:isAirVehicle() then
+	local text = "im Hinterhof"
+	if source:isAirVehicle() and source:getModel() ~= 460 then
 		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
-	elseif source:isWaterVehicle() then
+		text = "am Flughafen in Los Santos"
+	elseif source:isWaterVehicle() or source:getModel() == 460 then
 		x, y, z, rotation = 2350.26, -2523.06, 0, 180 -- ls docks
+		text = "an den Ocean Docks"
 	end
 
 	source:setPosition(x, y, z + source:getBaseHeight())
 	source:setRotation(0, 0, rotation)
-
-	client:sendSuccess(_("Fahrzeug freigekauft, es steht im Hinterhof bereit! Das Geld wurde vom Konto abgezogen.", client))
+	client:sendSuccess(_("Fahrzeug freigekauft, es steht %s bereit! Das Geld wurde vom Konto abgezogen.", client, text))
 end
 
 function MechanicTow:isValidTowableVehicle(veh)
