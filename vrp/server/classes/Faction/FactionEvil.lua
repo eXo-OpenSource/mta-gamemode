@@ -215,7 +215,7 @@ function FactionEvil:putOrderInDepot(player, box)
 				else
 					insertWeapomAmount = (depotInfo[id]["Waffe"] - depot.m_Weapons[id]["Waffe"] >= 0 and depotInfo[id]["Waffe"] - depot.m_Weapons[id]["Waffe"] or 0)
 				end
-				depot:addWeaponD(id, insertAmount)
+				depot:addWeaponD(id, insertWeapomAmount)
 				player:getFaction():sendShortMessage(("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), insertWeapomAmount, product))
 				player:getFaction():sendShortMessage(("%s hat %s Munition [ %s ] ins Lager gelegt!"):format(player:getName(), insertAmmoAmount, product))
 				player:getFaction():addLog(player, "Lager", ("%s hat %s Waffe/n [ %s ] ins Lager gelegt!"):format(player:getName(), insertWeapomAmount, product))

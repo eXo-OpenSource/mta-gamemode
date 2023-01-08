@@ -28,6 +28,14 @@ function ServerSettings:constructor()
 			SERVICE_SYNC = toboolean(row.Value)
 		end
 
+		if row.Index == "JobPayMultiplicator" then
+			JOB_PAY_MULTIPLICATOR = tonumber(row.Value)
+		end
+
+		if row.Index == "JobExtraPointFactor" then
+			JOB_EXTRA_POINT_FACTOR = tonumber(row.Value)
+		end
+
 		self.m_Settings[row.Index] = row.Value
 	end
 end

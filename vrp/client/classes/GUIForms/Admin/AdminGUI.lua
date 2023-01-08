@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "rkick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "rkick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange", "modsBan", "removeModsBan"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -99,12 +99,13 @@ function AdminGUI:constructor(money)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
-	self.m_PlayerSearch = GUIEdit:new(10, 10, 200, 30, tabSpieler)
+	self.m_PlayerSearch = GUIEdit:new(10, 30, 200, 30, tabSpieler)
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
-	self.m_PlayersGrid = GUIGridList:new(10, 45, 200, 425, tabSpieler)
+	GUILabel:new(10, 10, 200, 20, "Suche:", tabSpieler)
+	self.m_PlayersGrid = GUIGridList:new(10, 70, 200, 440, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
-	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setBarEnabled(false):setFont(FontAwesome(15))
+	self.m_RefreshButton = GUIButton:new(10, 515, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setBarEnabled(false):setFont(FontAwesome(15))
 	self.m_RefreshButton.onLeftClick = function ()
 		self:refreshOnlinePlayers()
 	end
@@ -124,6 +125,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("unprison", "aus Prison entlassen", self.onPlayerButtonClick, 220, 250, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("timeban", "Timeban", self.onPlayerButtonClick, 220, 290, 160, 30, Color.Red, tabSpieler)
 	self:addAdminButton("permaban", "Permaban", self.onPlayerButtonClick, 220, 330, 160, 30, Color.Red, tabSpieler)
+	self:addAdminButton("modsBan", "Mods sperren", self.onPlayerButtonClick, 220, 370, 160, 30, Color.Red, tabSpieler)
+	self:addAdminButton("removeModsBan", "Mods freigeben ", self.onPlayerButtonClick, 220, 410, 160, 30, Color.Red, tabSpieler)
 
 	GUILabel:new(440, 130, 160, 30, _"Sonstiges:", tabSpieler)
 	self:addAdminButton("spect", "specten", self.onPlayerButtonClick, 440, 170, 160, 30, Color.LightRed, tabSpieler)
@@ -132,11 +135,11 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("gethere", "her porten", self.onPlayerButtonClick, 440, 290, 160, 30, Color.Green, tabSpieler)
 	self:addAdminButton("nickchange", "Nick ändern", self.onPlayerButtonClick, 440, 330, 160, 30, Color.Orange, tabSpieler)
 
-	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", self.onPlayerButtonClick, 610, 130, 160, 30, Color.Accent, tabSpieler)
-	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", self.onPlayerButtonClick, 610, 170, 160, 30, Color.Accent, tabSpieler)
-	self:addAdminButton("warn", "Warns verwalten", self.onPlayerButtonClick, 610, 210, 160, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("setFaction", "in Fraktion setzen", self.onPlayerButtonClick, 610, 250, 160, 30, Color.Accent, tabSpieler)
-	self:addAdminButton("setCompany", "in Unternehmen setzen", self.onPlayerButtonClick, 610, 290, 160, 30, Color.Accent, tabSpieler)
+	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", self.onPlayerButtonClick, 610, 170, 160, 30, Color.Accent, tabSpieler)
+	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", self.onPlayerButtonClick, 610, 210, 160, 30, Color.Accent, tabSpieler)
+	self:addAdminButton("warn", "Warns verwalten", self.onPlayerButtonClick, 610, 250, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("setFaction", "in Fraktion setzen", self.onPlayerButtonClick, 610, 290, 160, 30, Color.Accent, tabSpieler)
+	self:addAdminButton("setCompany", "in Unternehmen setzen", self.onPlayerButtonClick, 610, 330, 160, 30, Color.Accent, tabSpieler)
 
 	local tabOffline = self.m_TabPanel:addTab(_"Offline")
 	GUILabel:new(10, 10, 200, 20, "Suche:", tabOffline)
@@ -150,7 +153,7 @@ function AdminGUI:constructor(money)
 		end
 	end
 
-	self.m_PlayersOfflineGrid = GUIGridList:new(10, 70, 200, 300, tabOffline)
+	self.m_PlayersOfflineGrid = GUIGridList:new(10, 70, 200, 470, tabOffline)
 	self.m_PlayersOfflineGrid:addColumn(_"Spieler", 1)
 	self.m_PlayerOfflineLabel = {}
 	self.m_PlayerOfflineLabel["Name"] = GUILabel:new(220, 10, 180, 20, _"Spieler: -", tabOffline)
@@ -163,6 +166,7 @@ function AdminGUI:constructor(money)
 	self.m_PlayerOfflineLabel["Group"] = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabOffline)
 	self.m_PlayerOfflineLabel["Ban"] = GUILabel:new(410, 110, 180, 20, _"Gebannt: -", tabOffline)
 	self.m_PlayerOfflineLabel["Prison"] = GUILabel:new(410, 135, 180, 20, _"Prison: -", tabOffline)
+	self.m_PlayerOfflineLabel["ModsBan"] = GUILabel:new(410, 160, 180, 20, _"Modbann: -", tabOffline)
 
 	self:addAdminButton("offlineTimeban", "Timeban", self.onOfflineButtonClick, 220, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlinePermaban", "Permaban", self.onOfflineButtonClick, 410, 290, 180, 30, Color.Red, tabOffline)
@@ -171,6 +175,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineWarn", "Warns verwalten", self.onOfflineButtonClick, 220, 370, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlinePrison", "ins Prison", self.onOfflineButtonClick, 220, 410, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlineUnPrison", "aus Prison entlassen", self.onOfflineButtonClick, 410, 410, 180, 30, Color.Orange, tabOffline)
+	self:addAdminButton("offlineModsBan", "Mods sperren", self.onOfflineButtonClick, 220, 450, 180, 30, Color.Red, tabOffline)
+	self:addAdminButton("offlineRemoveModsBan", "Mods freigeben ", self.onOfflineButtonClick, 410, 450, 180, 30, Color.Red, tabOffline)
 
 	self:refreshOnlinePlayers()
 
@@ -284,6 +290,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 			BankMoney = false;
 			Ban = true;
 			PrisonTime = 0;
+			ModsBan = true;
 		}
 	end
 
@@ -302,7 +309,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 	end
 	self.m_PlayerOfflineLabel["Ban"]:setText(_("Gebannt: %s",  banString))
 	self.m_PlayerOfflineLabel["Prison"]:setText(_("Prison: %s", math.floor(info.PrisonTime/60).."min" or "-"))
-
+	self.m_PlayerOfflineLabel["ModsBan"]:setText(_("Modbann: %s", info.ModsBan and "Ja" or "Nein"))
 end
 
 function AdminGUI:onSelectPlayer(player)
@@ -424,6 +431,29 @@ function AdminGUI:onOfflineButtonClick(func)
 			function ()
 				triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer)
 			end)
+	elseif func == "offlineModsBan" then
+		AdminInputBox:new(
+			_("Modifikationen für den Spieler %s sperren", selectedPlayer),
+			_"Dauer in Tagen: (0 für Permanent)",
+			function (reason, duration)
+				if reason and duration then
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason, duration)
+				else
+					ErrorBox:new("Kein Grund oder Dauer angegeben!")
+				end
+			end)
+	elseif func == "offlineRemoveModsBan" then
+		InputBox:new(
+			_("Modifikationen von dem Spieler %s entsperren", selectedPlayer),
+			_("Aus welchem Grund möchtest du Modifikationen für %s wieder freigeben?", selectedPlayer),
+			function (reason)
+				if reason then
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason)
+				else
+					ErrorBox:new("Keine Dauer angegeben!")
+				end
+			end)	
+		
 	end
 end
 
@@ -525,6 +555,28 @@ function AdminGUI:onPlayerButtonClick(func)
 						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, newName)
 					end
 				end)
+	elseif func == "modsBan" then
+		AdminInputBox:new(
+				_("Modifikationen für den Spieler %s sperren", self.m_SelectedPlayer:getName()),
+				_"Dauer in Tagen: (0 für Permanent)",
+				function (reason, duration)
+					if reason and duration then
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+					else
+						ErrorBox:new("Kein Grund oder Dauer angegeben!")
+					end
+				end)
+	elseif func == "removeModsBan" then
+		InputBox:new(_("Modifikationen von dem Spieler %s entsperren", self.m_SelectedPlayer:getName()),
+				_("Aus welchem Grund möchtest du Modifikationen für %s wieder freigeben?", self.m_SelectedPlayer:getName()),	
+				function (reason)
+					if reason then
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason)
+					else
+						ErrorBox:new("Keine Dauer angegeben!")
+					end
+				end)	
+		
 	end
 end
 

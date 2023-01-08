@@ -187,6 +187,10 @@ function Core:ready() --onClientResourceStart
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
+	if SNOW_SHADERS_ENABLED then
+		triggerEvent("switchSnowFlakes", root, core:get("Event", "SnowFlakes", EVENT_CHRISTMAS))
+		triggerEvent("switchSnowGround", root, core:get("Event", "SnowGround", EVENT_CHRISTMAS), core:get("Event", "SnowGround_Extra", EVENT_CHRISTMAS))
+	end
 	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --these are only slot machine textures
 		Easter.updateTextures()
 	end

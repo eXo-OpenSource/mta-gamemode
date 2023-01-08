@@ -30,8 +30,8 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = true --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
-EVENT_CHRISTMAS_MARKET = true --(EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
+EVENT_CHRISTMAS = false --quests, mostly REMEMBER TO ADD/REMOVE <vrpfile src="files/models/skins/kobold.txd" /> AND <vrpfile src="files/models/skins/kobold.dff" /> TO META.XML DUE TO BIG FILE SIZE
+EVENT_CHRISTMAS_MARKET = false --(EVENT_CHRISTMAS and getRealTime().monthday >= 6 and getRealTime().monthday <= 26) -- determines whether the christmas market is enabled at pershing square (shops, ferris wheel, wheels of fortune)
 SNOW_SHADERS_ENABLED = getRealTime().month == 11 or getRealTime().month == 0 -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
@@ -71,10 +71,6 @@ JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
 JOB_LEVEL_BOXER = 8
-
-JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
-
-JOB_PAY_MULTIPLICATOR = 1
 
 BLIP_CATEGORY = {
 	Default = "Allgemein",
@@ -167,6 +163,10 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
 	["throwaway"] = RANK.Moderator,
+	["modsBan"] = RANK.Supporter,
+	["removeModsBan"] = RANK.Administrator,
+	["offlineModsBan"] = RANK.Supporter,
+	["offlineRemoveModsBan"] = RANK.Administrator,
 
 	--admin general
 	["event"] = RANK.Moderator,

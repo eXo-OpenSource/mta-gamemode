@@ -20,9 +20,9 @@ function SkyscraperManager:constructor()
 	
 	addEventHandler("Skyscraper:requestHouseInfos", root, bind(self.Event_requestHouseInfos, self))
 	addEventHandler("Skyscraper:requestGUI", root, bind(self.Event_requestGUI, self))
-	addCommandHandler("createskyscraper", bind(self.newSkyscraper, self))
-	addCommandHandler("addhousetoskyscraper", bind(self.addHouseToSkyscraper, self))
-	addCommandHandler("removehousefromskyscraper", bind(self.removeHouseFromSkyscraper, self))
+	addCommandHandler("createskyscraper", bind(self.newSkyscraper, self), false, false)
+	addCommandHandler("addhousetoskyscraper", bind(self.addHouseToSkyscraper, self), false, false)
+	addCommandHandler("removehousefromskyscraper", bind(self.removeHouseFromSkyscraper, self), false, false)
 end
 
 function SkyscraperManager:destructor()
