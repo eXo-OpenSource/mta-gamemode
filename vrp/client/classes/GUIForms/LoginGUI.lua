@@ -242,7 +242,7 @@ function LoginGUI:loadRegisterElements()
 					triggerServerEvent("accountregister", root, self.m_Elements.editName:getText(), self.m_Elements.editPW:getText(), self.m_Elements.editEmail:getText())
 					self.m_Elements.BtnRegister:setEnabled(false)
 				else
-					triggerEvent("registerfailed",localPlayer, _"Du musst den Serveregeln zustimmen!")
+					triggerEvent("registerfailed",localPlayer, _"Du musst den Serverregeln zustimmen!")
 				end
 			else
 				triggerEvent("registerfailed",localPlayer, _"Passwörter stimmen nicht überein!")

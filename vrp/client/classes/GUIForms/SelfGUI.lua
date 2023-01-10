@@ -1593,7 +1593,7 @@ function SelfGUI:onSettingChange(setting)
 			localPlayer.m_KeyBindType = "general"
 			self:KeyBindsButton_Click()
 		end
-		if localPlayer:getFaction():isRescueFaction() then
+		if localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() then
 			self.m_FMSKeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen (Funk)", self.m_SettingBG):setBarEnabled(true)
 			self.m_FMSKeyBindingsButton.onLeftClick = function()
 				localPlayer.m_KeyBindType = "FMS"
