@@ -10,32 +10,49 @@ inherit(Singleton, HouseEditGUI)
 
 addRemoteEvents{"getAdminHouseData"}
 
-function HouseEditGUI:constructor()
+function HouseEditGUI:constructor(forSale)
 	GUIWindow.updateGrid()			-- initialise the grid function to use a window
 	self.m_Width = grid("x", 6) 	-- width of the window
-	self.m_Height = grid("y", 3) 	-- height of the window
+	self.m_Height = grid("y", 4) 	-- height of the window
 	local int = 3
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Haus editieren", true, true, self)
-	self.m_InteriorChangeBtn = GUIGridButton:new(1, 1, 5, 1, _"Interior ändern", self.m_Window):setEnabled(localPlayer:hasAdminRightTo("freeHouse"))
-	self.m_InteriorChangeBtn.onLeftClick = function()
-		self:close()
-		HouseGUI:getSingleton():hide()
-		HouseInteriorChanger:new(self.m_CurrentInterior)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Haus Menü (Admin)", true, true, self)
+	
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["endHouseSale"] then
+		self.m_FreeBtn = GUIGridButton:new(1, 1, 5, 1, _"Hausverkauf beenden", self.m_Window):setBackgroundColor(Color.Red):setEnabled(forSale)
+		self.m_FreeBtn.onLeftClick = function()
+			QuestionBox:new(_"Möchtest du den Hausverkauf wirklich beenden?",
+				function()
+					triggerServerEvent("houseAdminEndSale", localPlayer)
+					delete(self)
+				end
+			)
+		end
 	end
 
-	self.m_FreeBtn = GUIGridButton:new(1, 2, 5, 1, _"Zwangsenteignen", self.m_Window):setBackgroundColor(Color.Red)
-	self.m_FreeBtn.onLeftClick = function()
-		QuestionBox:new(_"Möchtest du das Haus wirklich enteignen? Mietverträge und die Hauskasse werden gelöscht und der Besitzer nicht entschädigt!",
-			function()
-				triggerServerEvent("houseAdminFree", root, tonumber(selected))
-			end
-		)
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["editHouseInterior"] then
+		self.m_InteriorChangeBtn = GUIGridButton:new(1, 2, 5, 1, _"Interior ändern", self.m_Window):setEnabled(localPlayer:hasAdminRightTo("freeHouse"))
+		self.m_InteriorChangeBtn.onLeftClick = function()
+			self:close()
+			HouseGUI:getSingleton():hide()
+			HouseInteriorChanger:new(self.m_CurrentInterior)
+		end
+
+		triggerServerEvent("houseAdminRequestData", root)
+		addEventHandler("getAdminHouseData", root, bind(self.getHouseData, self))
 	end
 
-	triggerServerEvent("houseAdminRequestData", root)
-	addEventHandler("getAdminHouseData", root, bind(self.getHouseData, self))
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["freeHouse"] then
+		self.m_FreeBtn = GUIGridButton:new(1, 3, 5, 1, _"Zwangsenteignen", self.m_Window):setBackgroundColor(Color.Red)
+		self.m_FreeBtn.onLeftClick = function()
+			QuestionBox:new(_"Möchtest du das Haus wirklich enteignen? Mietverträge und die Hauskasse werden gelöscht und der Besitzer nicht entschädigt!",
+				function()
+					triggerServerEvent("houseAdminFree", root, tonumber(selected))
+				end
+			)
+		end
+	end
 end
 
 function HouseEditGUI:getHouseData(interior)

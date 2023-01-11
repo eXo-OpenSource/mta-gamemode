@@ -1019,6 +1019,7 @@
 	<script src="client/classes/GUIForms/WareRoundGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CookieClickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ChristmasTruckTreeGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HousesForSaleGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client"/>
@@ -3279,6 +3280,8 @@
 	<vrpfile src="files/models/firework.col"/>
 	<vrpfile src="files/models/firework.dff"/>
 	<vrpfile src="files/models/firework.txd"/>
+	<vrpfile src="files/models/property_red.txd"/>
+	<vrpfile src="files/models/property_red.dff"/>
 
 	<!--Buildings-->
 	<vrpfile src="files/models/buildings/casino_heist/bank_fence.col" />

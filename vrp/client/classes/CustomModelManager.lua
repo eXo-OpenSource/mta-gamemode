@@ -248,6 +248,9 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/objects/GingerbreadMask.txd", 2107)
 	self:loadImportDFF("files/models/objects/GingerbreadMask.dff", 2107)
 
+	self:loadImportTXD("files/models/property_red.txd", 1875)
+	self:loadImportDFF("files/models/property_red.dff", 1875)
+
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")
 	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")

@@ -204,7 +204,7 @@ function Shop:buy(player)
 				local group = player:getGroup()
 				if PermissionsManager:getSingleton():hasPlayerPermissionsTo(player, "group", "buyBIZ") then
 					if group:getMoney() >= self.m_Price then
-						group:transferMoney(self.m_BankAccountServer, self.m_Price, "Shop-Verkauf", "Shop", "Buy")
+						group:transferMoney(self.m_BankAccountServer, self.m_Price, "Shop-Kauf", "Shop", "Buy")
 						group:sendMessage(_("[FIRMA] %s hat den Shop '%s' für %d$ gekauft!", player, player:getName(), self.m_Name, self.m_Price), 0, 255, 0)
 						group:addLog(player, "Immobilien", _("hat den Shop '%s' für %d$ gekauft!", player, self.m_Name, self.m_Price))
 						self.m_OwnerId = group:getId()

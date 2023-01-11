@@ -6,12 +6,14 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
+HouseManager.Map = {}
 addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse",
 "breakHouse","lockHouse",
 "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
 "tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
 "houseAdminRequestData", "houseAdminChangeInterior", "houseAdminFree",
-"houseRingDoor", "houseRequestGUI", "breakHouseDoor", "toggleGarageState",
+"houseRingDoor", "houseRequestGUI", "breakHouseDoor", "toggleGarageState", "setHouseForSale",
+"buyHouseFromPlayer", "requestHousesForSale", "houseAdminEndSale"
 }
 
 local ROB_DELAY = DEBUG and 50 or 1000*60*15
@@ -24,7 +26,8 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"], value["buyPrice"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"], value["skyscraperID"], value["buyPrice"], value["salePrice"])
+		HouseManager.Map[value["Id"]] = self.m_Houses[value["Id"]]
 		count = count + 1
 	end
 
@@ -57,6 +60,10 @@ function HouseManager:constructor()
 	addEventHandler("houseAdminFree", root, bind(self.freeByAdmin,self))
 	addEventHandler("houseRequestGUI", root, bind(self.Event_requestGUI, self))
 	addEventHandler("toggleGarageState", root, bind(self.Event_toggleGarageState, self))
+	addEventHandler("setHouseForSale", root, bind(self.Event_setHouseForSale, self))
+	addEventHandler("buyHouseFromPlayer", root, bind(self.Event_buyHouseFromPlayer, self))
+	addEventHandler("requestHousesForSale", root, bind(self.Event_requestHousesForSale, self))
+	addEventHandler("houseAdminEndSale", root, bind(self.Event_endSale, self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
@@ -175,12 +182,12 @@ function HouseManager:breakDoor()
 end
 
 function HouseManager:requestAdminData()
-	if client:getRank() < ADMIN_RANK_PERMISSION.editHouse then return end
+	if client:getRank() < ADMIN_RANK_PERMISSION.editHouseInterior then return end
 	client:triggerEvent("getAdminHouseData", self.m_Houses[client.visitingHouse].m_InteriorID)
 end
 
 function HouseManager:changeInterior(interior)
-	if client:getRank() < ADMIN_RANK_PERMISSION.editHouse then return end
+	if client:getRank() < ADMIN_RANK_PERMISSION.editHouseInterior then return end
 	self.m_Houses[client.visitingHouse].m_InteriorID = interior
 	self.m_Houses[client.visitingHouse]:refreshInteriorMarker()
 	client:sendInfo(_("Du hast den Haus-Interior erfolgreich in ID: %d geändert!", client, interior))
@@ -307,7 +314,94 @@ function HouseManager:Event_requestGUI( )
 	end
 end
 
-function HouseManager:destructor ()
+function HouseManager:Event_setHouseForSale(forSale, amount, showInTownhall)
+	local house = self.m_Houses[client.visitingHouse]
+	if not client then return end
+	if not house then return end
+	if not house:isPlayerNearby(client) then 
+		return client:sendError(_("Du bist zu weit entfernt!", client))
+	end
+	if not tonumber(amount) then
+		return client:sendError(_("Ungültiger Preis!", client))
+	end
+	if house.m_Owner ~= client:getId() then
+		return client:sendError(_("Das Haus gehört dir nicht!", client))
+	end
+	if showInTownhall then
+		if not client:transferBankMoney(house.m_BankAccountServer2, 5000, "Gebühr", "House", "ShowInTownhall") then
+			return client:sendError(_("Du hast nicht genügend Geld auf der Bank (5.000$)", client))
+		end
+	end
+
+	amount = tonumber(amount)
+	house:setForSale(forSale, amount, showInTownhall)
+	house:showGUI(client)
+end
+
+function HouseManager:getHousesForSale()
+	local housesForSale = {}
+	for houseId, instance in pairs(self.m_Houses) do
+		if instance:isForSale() then
+			housesForSale[houseId] = instance
+		end
+	end
+	return housesForSale
+end
+
+function HouseManager:Event_buyHouseFromPlayer()
+	local house = self.m_Houses[client.visitingHouse]
+	if not client then return end
+	if not house:isPlayerNearby(client) then 
+		return client:sendError(_("Du bist zu weit entfernt!", client))
+	end
+	if self:getPlayerHouse(client) then
+		return client:sendWarning(_("Du hast bereits ein Haus!", client))
+	end
+	if not house.m_Owner or house.m_Owner == 0 then
+		return client:sendError(_("Das Haus hat keinen Besitzer", client)) 
+	end
+
+	local price = house:getSalePrice()
+	local forSale = house:isForSale()
+	local housePrice = house.m_Price
+	if price > 0 and forSale then
+		if price + housePrice <= client:getBankMoney() then
+			house:sellToPlayer(house.m_Owner, client)
+		else
+			return client:sendError(_("Du hast nicht genug Geld auf der Bank. (%s)", client, toMoneyString(housePrice + price)))
+		end
+	else
+		return client:sendError(_("Das Haus steht nicht zum Verkauf!", client))
+	end
+end
+
+function HouseManager:Event_requestHousesForSale()
+	local temp = {}
+	for houseId, instance in pairs(self:getHousesForSale()) do
+		if instance.m_ShowSaleInTownhall then
+			local ownerName = Account.getNameFromId(instance:getOwner())
+			local pos = instance:getPosition()
+			local zoneName = getZoneName(pos)
+			local garageCount = instance:getGarageCount()
+			local housePrice = instance.m_Price
+			local salePrice = instance:getSalePrice()
+			temp[houseId] = {["OwnerName"] = ownerName, ["ZoneName"] = zoneName, ["GarageCount"] = garageCount, ["HousePrice"] = housePrice, ["SalePrice"] = salePrice, ["Position"] = serialiseVector(pos)}
+		end
+	end
+	client:triggerEvent("sendHousesForSale", temp)
+end
+
+function HouseManager:Event_endSale()
+	if client:getRank() >= ADMIN_RANK_PERMISSION["endHouseSale"] then
+		local house = self.m_Houses[client.visitingHouse]
+		if house:isForSale() then
+			house:setForSale(false, false)
+			house:showGUI(client)
+		end
+	end
+end
+
+function HouseManager:destructor()
 	for key, house in pairs(self.m_Houses) do
 		house:save()
 	end

@@ -1337,6 +1337,11 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
+ 	if source:getPositionType() == VehiclePositionType.Harbor then
+		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es am Hafen in Los Santos ab!", client))
+		return
+	end
+
  	if source:getOwner() ~= client:getId() and not source:hasKey(client) and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return

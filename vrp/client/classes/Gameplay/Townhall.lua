@@ -38,7 +38,7 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = groupInfoPed
 
 	--// Group property ped
-	local groupImmoPed = Ped.create(290, Vector3(2763.01, -2374.46, 819.24))
+	local groupImmoPed = Ped.create(290, Vector3(2763.79, -2374.51, 819.24))
 	groupImmoPed:setRotation(Vector3(0, 0, 180))
 	groupImmoPed.Name = _"Firmen-/Gangimmobilien"
 	groupImmoPed:setInterior(5)
@@ -51,6 +51,18 @@ function Townhall:constructor()
 		end
 	end
 	self.m_Peds[#self.m_Peds + 1] = groupImmoPed
+
+	--Houses for sale Ped
+	local housesForSalePed = Ped.create(290, Vector3(2762.49, -2374.51, 819.24))
+	housesForSalePed:setRotation(Vector3(0, 0, 180))
+	housesForSalePed.Name = _"Häuser"
+	housesForSalePed:setInterior(5)
+	housesForSalePed.Description = _"Für mehr Infos klicke mich an!"
+	housesForSalePed.Func = function()
+		HousesForSaleGUI:new(housesForSalePed)
+	end
+	self.m_Peds[#self.m_Peds + 1] = housesForSalePed
+	
 	-- Items
 	local itemInfoPed = Ped.create(9, Vector3( 2767.47, -2374.46, 819.24))
 	itemInfoPed:setRotation(Vector3(0, 0, 180))

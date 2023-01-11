@@ -62,3 +62,27 @@ addEventHandler("inputBox", root,
 		inputBox:setServerTrigger(callback, additionalParameters)
 	end
 )
+
+InputBoxWithCheckbox = inherit(GUIForm)
+
+function InputBoxWithCheckbox:constructor(title, text, textCheckbox ,callback, integerOnly, offsetY)
+	local offsetY = offsetY or 0
+
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 21)
+	self.m_Height = grid("y", 4 + offsetY)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, title, true, true, self)
+
+	self.m_Label = GUIGridLabel:new(1, 1, 20, 1 + offsetY, text, self.m_Window)
+	self.m_EditBox = GUIGridEdit:new(1, 2 + offsetY, 20, 1, self.m_Window)
+	if integerOnly then	self.m_EditBox:setNumeric(true, true) end
+
+	self.m_Checkbox = GUIGridCheckbox:new(8, 3 + offsetY, 1, 1, _(textCheckbox), self.m_Window)
+	self.m_SubmitButton = GUIGridButton:new(1, 3 + offsetY, 6, 1, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+
+	if callback then
+		self.m_SubmitButton.onLeftClick = function() if callback then callback(self.m_EditBox:getText(), self.m_Checkbox:isChecked()) end delete(self) end
+	end
+end

@@ -239,10 +239,14 @@ ADMIN_RANK_PERMISSION = {
 	["showWorldItemInformation"] 	= RANK.Supporter,
 
 	--server edit tools
-	["editHouse"] = RANK.Administrator,
+	["editHouseGeneral"] = RANK.Supporter, -- this is used to just open the window itself
+	["editHouseInterior"] = RANK.Administrator,
 	["freeHouse"] = RANK.Administrator, -- free house from owner, tenants and house bank account money
+	["endHouseSale"] = RANK.Supporter,
+
 	["createSkyscraper"] = RANK.Developer, -- also includes deleting
 	["addHouseToSkyscraper"] = RANK.Developer, -- also includes removing 
+	
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Supporter,
 	["toggleFire"] = RANK.Supporter,
@@ -751,12 +755,12 @@ HOUSE_INTERIOR_TABLE = {
 	[13] = {9, 82.978126525879, 1322.5451660156, 1083.8662109375};
 	[14] = {15, -284.0530090332, 1471.0965576172, 1084.375};
 	[15] = {4, -260.75534057617, 1456.6932373047, 1084.3671875};
-	[16] = {8, -42.373157501221, 1405.9846191406, 1084.4296875};
+	[16] = {8, -42.58, 1405.95, 1084.23};
 	[17] = {2, 2454.717041, -1700.871582, 1013.515197};
 	[18] = {1, 2527.654052, -1679.388305, 1015.515197};
 	[19] = {8, 2807.619873, -1171.899902, 1025.5234375};
 	[20] = {5, 318.564971, 1118.209960, 1083.5234375};
-	[21] = {12, 2324.419921, -1145.568359, 1050.5234375};
+	[21] = {12, 2324.46, -1149.03, 1050.51};
 	[22] = {5, 1298.8719482422, -796.77032470703, 1083.6569824219};
 	[23] = {21, 1480.55, 1329.45, 13.09}; -- sewers
 	[24] = {21, 1530.05, 1475.21, 13.20}; -- sewers2
