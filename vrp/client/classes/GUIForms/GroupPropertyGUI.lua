@@ -23,6 +23,7 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_LockButton.onLeftClick = function() triggerServerEvent("switchGroupDoorState",localPlayer) end
 	self:setGroupDoorState( tObj.m_Open )
 	self.m_DepotButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.08, _"Depot", tabManage):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_DepotButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "manageImmoDepot"))
 	self.m_DepotBtnFunc = function() self:openDepot() end
 	self.m_DepotButton.onLeftClick = self.m_DepotBtnFunc
 
@@ -31,6 +32,7 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_MessageButton.onLeftClick = self.m_MessageFunc
 	self.m_MessageButton:setVisible(false) -- nicht fertig
 	self.m_SellButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.69, self.m_Width*0.35, self.m_Height*0.08, _"Verkaufen", tabManage):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_SellButton:setEnabled(PermissionsManager:getSingleton():hasPlayerPermissionsTo("group", "sellProperty"))
 	self.m_SellButton.onLeftClick = bind(GroupPropertyGUI.OnSellClick,self)
 
 	local x,y,z = getElementPosition( tObj.m_Pickup)

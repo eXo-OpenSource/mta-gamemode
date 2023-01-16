@@ -86,7 +86,7 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 		-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
 		local lastTime = client:getData("Trashman:LastCan") or -math.huge
 		if getTickCount() - lastTime < 2500 then
-			AntiCheat:getSingleton():report("Trashman:TooMuchTrash", CheatSeverity.Low)
+			AntiCheat:getSingleton():report(client, "Trashman:TooMuchTrash", CheatSeverity.Low)
 			return
 		end
 		client:setData("Trashman:LastCan", getTickCount())

@@ -19,7 +19,7 @@ function Fishing.load()
 
 	ped:setData("onClickEvent",
 		function()
-			FishingPedGUI:new()
+			FishingPedGUI:new("Angler Lutz")
 		end
 	)
 
@@ -33,7 +33,7 @@ function Fishing.load()
 
 	ped:setData("onClickEvent",
 		function()
-			FishingPedGUI:new()
+			FishingPedGUI:new("Angler Heinz")
 		end
 	)
 	--Tierra Robada
@@ -46,7 +46,20 @@ function Fishing.load()
 
 	ped:setData("onClickEvent",
 		function()
-			FishingPedGUI:new()
+			FishingPedGUI:new("Angler Bernd")
+		end
+	)
+	--Angler Insel
+	local ped = Ped.create(161, Vector3(673.34, -3117.46, 3.31), 90)
+
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Angler Dennis", "Verkaufe mir deinen Fang!", 0, 1.3)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			FishingPedGUI:new("Angler Dennis")
 		end
 	)
 end

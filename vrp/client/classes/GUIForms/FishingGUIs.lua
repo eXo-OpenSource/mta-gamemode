@@ -265,8 +265,8 @@ end
 FishingPedGUI = inherit(GUIButtonMenu)
 inherit(Singleton, FishingPedGUI)
 
-function FishingPedGUI:constructor()
-	GUIButtonMenu.constructor(self, "Angler Lutz")
+function FishingPedGUI:constructor(name)
+	GUIButtonMenu.constructor(self, name)
 	self:addItem(_"Shop", Color.Accent,
 		function()
 			triggerServerEvent("shopOpenGUI", localPlayer, 80)
