@@ -52,8 +52,8 @@ function VehicleHarbor:VehicleTakeMarker_Hit(hitElement, matchingDimension)
 end
 
 function VehicleHarbor:Event_harborTakeVehicle()
-	if client:getMoney() >= 500 then
-		client:transferMoney(self.m_BankAccountServer, 500, "Hafen", "Vehicle", "Repair")
+	if client:getMoney() >= 1000 then
+		client:transferMoney(self.m_BankAccountServer, 1000, "Hafen", "Vehicle", "Repair")
 		source:fix()
 
 		-- Spawn vehicle in non-collision zone

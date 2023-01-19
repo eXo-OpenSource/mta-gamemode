@@ -66,11 +66,11 @@ function MechanicTow:respawnVehicle(vehicle)
 	end
 	if instanceof(vehicle, FactionVehicle, true) then -- respawn faction vehicles immediately
 		vehicle:respawn(true, true)
-		vehicle:getFaction():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})
-		vehicle:getFaction():sendShortMessage(("Das Fahrzeug %s (%s) wurde vom M&T abgeschleppt und für %s an eurer Basis respawned!"):format(vehicle:getName(), vehicle:getPlateText(), toMoneyString(500)))
+		vehicle:getFaction():transferMoney(self, 1500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought", {silent = true, allowNegative = true})
+		vehicle:getFaction():sendShortMessage(("Das Fahrzeug %s (%s) wurde vom M&T abgeschleppt und für %s an eurer Basis respawned!"):format(vehicle:getName(), vehicle:getPlateText(), toMoneyString(1500)))
 	else
 		if instanceof(vehicle, GroupVehicle, true) then
-			GroupManager.Map[vehicle:getOwner()]:transferMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
+			GroupManager.Map[vehicle:getOwner()]:transferMoney({"company", self:getId(), true, true}, 500, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
 		end
 
 		if instanceof(vehicle, PermanentVehicle, true) then
@@ -82,7 +82,7 @@ function MechanicTow:respawnVehicle(vehicle)
 						player:load()
 					end
 
-					player:transferBankMoney({"company", self:getId(), true, true}, 250, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
+					player:transferBankMoney({"company", self:getId(), true, true}, 500, "Mech&Tow Abschleppkosten", "Company", "VehicleTowed")
 
 					if isOffline then
 						delete(player)
@@ -200,13 +200,13 @@ end
 
 function MechanicTow:Event_mechanicTakeVehicle()
 	if instanceof(source, GroupVehicle, true) then
-		if not client:getGroup():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
-			client:sendError(_("In der Kasse deiner %s befindet sich nicht genügend Geld! (500$)", client, client:getGroup():getType()))
+		if not client:getGroup():transferMoney(self, 1000, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
+			client:sendError(_("In der Kasse deiner %s befindet sich nicht genügend Geld! (1000$)", client, client:getGroup():getType()))
 			return false
 		end
 	else
-		if not client:transferBankMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
-			client:sendError(_("Du hast nicht genügend Geld! (500$)", client))
+		if not client:transferBankMoney(self, 1000, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
+			client:sendError(_("Du hast nicht genügend Geld! (1000$)", client))
 			return false
 		end
 	end

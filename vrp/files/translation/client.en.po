@@ -2939,8 +2939,8 @@ msgstr "Police Sounds"
 msgid "Fahrzeuge abholen"
 msgstr "Pick up cars"
 
-msgid "Freikaufen (500$)"
-msgstr "Buy out (500$)"
+msgid "Freikaufen (1000$)"
+msgstr "Buy out (1000$)"
 
 msgid "kein Kunde"
 msgstr "no client"
