@@ -353,11 +353,12 @@ function GroupVehicle:rent(player, duration)
 
 	if self.m_ForRent and self.m_RentRate >= 0 then
 		local rental = self.m_RentRate * duration
-		if player:getBankMoney() >= rental + 1000 then
+		if player:getBankMoney() >= rental + 2000 then
 			local group = self:getGroup()
 
 			if player:transferBankMoney(group, rental, "Firmen-Fahrzeug Vermietung", "Group", "VehicleRent") then
-				player:transferBankMoney(BankServer.get("group.deposit"), 1000, "Firmen-Fahrzeug Vermietung: Kaution", "Group", "VehicleDeposit")
+				player:transferBankMoney(BankServer.get("group.deposit"), 2000, "Firmen-Fahrzeug Vermietung: Kaution", "Group", "VehicleDeposit")
+				self.m_LastRentRate = self.m_RentRate
 				self:setForRent(false)
 
 				self.m_IsRented = true
@@ -396,11 +397,11 @@ function GroupVehicle:rentEnd()
 			outputChatBox(_("Die Mietzeit deines gemieteten Fahrzeuges ist nun vorbei.", player), player, 244, 182, 66)
 		end
 
-		local deposit = 1000
+		local deposit = 2000
 
 		if self:getPositionType() == VehiclePositionType.Mechanic then
-			deposit = deposit - 500
-			BankServer.get("group.deposit"):transferMoney(CompanyManager.Map[2], 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought")
+			deposit = deposit - 1000
+			BankServer.get("group.deposit"):transferMoney(CompanyManager.Map[2], 1000, "Fahrzeug freigekauft", "Company", "VehicleFreeBought")
 			self:getPositionType(VehiclePositionType.World)
 		end
 
@@ -449,6 +450,9 @@ function GroupVehicle:rentEnd()
 
 		if not self:getGroup().m_VehiclesSpawned then
 			VehicleManager:getSingleton():destroyGroupVehicles(self:getGroup())
+		else
+			self:setForRent(true, self.m_LastRentRate)
+			self.m_LastRentRate = nil
 		end
 	end
 end

@@ -472,6 +472,14 @@ function PermanentVehicle:toggleRegister(player)
 	end
 end
 
+function PermanentVehicle:hasRadarDetector()
+	if self:getTunings().m_Tuning["RadarDetector"] == 1 or self:getTunings().m_Tuning["RadarDetector"] == true then
+		return true
+	else
+		return false
+	end
+end
+
 function PermanentVehicle:onEnter()
 	return true -- otherwise last driver will not added
 end

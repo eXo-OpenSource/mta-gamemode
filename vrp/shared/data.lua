@@ -402,5 +402,6 @@ VEHICLE_UPGRADE_PRICES = {
 	["NeonColor"] = 0,
 	["Variant1"] = 2500,
 	["Variant2"] = 2500,
+	["RadarDetector"] = 50000,
 
 }

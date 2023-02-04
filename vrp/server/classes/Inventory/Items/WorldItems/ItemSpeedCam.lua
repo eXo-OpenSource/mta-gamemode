@@ -43,6 +43,10 @@ function ItemSpeedCam:use(player)
 						self.m_func = bind(self.onColShapeHit, self)
 						addEventHandler("onColShapeHit", object.col, self.m_func )
 
+						object.radarDetectorCol = worldItem:attach(createColSphere(position, 100))
+						self.m_RadarDetectorFunc = bind(self.onRadarDetectorColShapeHit, self)
+						addEventHandler("onColShapeHit", object.radarDetectorCol, self.m_RadarDetectorFunc)
+
 						local pos = player:getPosition()
 						FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 						StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z)
@@ -96,6 +100,17 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 
 					setElementData(source.object, "earning", getElementData(source.object, "earning") + costs)
 				end
+			end
+		end
+	end
+end
+
+function ItemSpeedCam:onRadarDetectorColShapeHit(element, dim)
+	if dim then
+		if element:getType() == "vehicle" then
+			if element:getOccupant() and element:hasRadarDetector() then
+				local player = element:getOccupant()
+				player:sendWarning(_("Achtung! Das Radarwarngerät meldet einen Blitzer in der Nähe!", player))
 			end
 		end
 	end

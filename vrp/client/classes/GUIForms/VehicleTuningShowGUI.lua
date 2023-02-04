@@ -26,9 +26,17 @@ function VehicleTuningShowGUI:constructor(vehicle, tuning, specialTuning, rcVehi
         if i == "Neon" then
             local item = self.m_ListSpecial:addItem(tostring(i), "████")
             item:setColumnColor(2, tocolor(unpack(v)))
+        elseif i == "Radarwarngerät" then
+            if (vehicle:getData("OwnerType") == "player" and vehicle:getData("OwnerName") == localPlayer:getName()) or (vehicle:getData("OwnerType") == "group" and vehicle:getData("OwnerName") == localPlayer:getGroupName()) then
+                self.m_ListSpecial:addItem(tostring(i), tostring(v))
+            end
         else
             self.m_ListSpecial:addItem(tostring(i), tostring(v))
         end
+    end
+
+    if self.m_ListSpecial:getItemCount() == 0 then
+        self.m_ListSpecial:addItem("(keine)", "")
     end
 
     if vehicle:getModel() == 459 then

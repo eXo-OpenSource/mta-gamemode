@@ -14,7 +14,6 @@ ItemAlcohol.Settings = {
 		},
 	["Whiskey"] =			{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Whiskey", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.2},
 	["Sex on the Beach"] =	{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Sex on the Beach", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.5,},
-	["Whiskey"] =		{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Whiskey", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.2},
 	["Pina Colada"] =	{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Pina Colada", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.7},
 	["Monster"] =		{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Monster Cocktail", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 2.1},
 	["Shot"] =			{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Shot", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.4},

@@ -94,8 +94,8 @@ function FactionState:constructor()
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
 	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
-	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm", "factionStateTicket", "factionStateDragFromVehicle"
-	}
+	"factionStateCuff", "factionStateUncuff", "factionStateTie", "factionStateDeactivateAreaAlarm", "factionStateTicket", "factionStateDragFromVehicle",
+	"factionStateRemoveIllegalTunings"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -137,7 +137,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateDeactivateAreaAlarm", root, bind(self.Event_DeactivateAreaAlarm, self))
 	addEventHandler("factionStateTicket", root, bind(self.Event_ticket, self))
 	addEventHandler("factionStateDragFromVehicle", root, bind(self.Event_dragFromVehicle, self))
-
+	addEventHandler("factionStateRemoveIllegalTunings", root, bind(self.Event_removeIllegalTunings, self))
 
 	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
@@ -2244,5 +2244,33 @@ function FactionState:Event_dragFromVehicle(target)
 		end
 		veh:vseEnterExit(target, false)
 		target:sendShortMessage(_("Du wurdest aus dem Fahrzeug gezerrt!", target))
+	end
+end
+
+function FactionState:Event_removeIllegalTunings(vehicle)
+	if not vehicle then return end
+	if not instanceof(vehicle, PermanentVehicle) then return end
+	if client:getFaction() and client:getFaction():isStateFaction() then
+		--if vehicle:hasRadarDetector() then
+			vehicle:getTunings().m_Tuning["RadarDetector"] = 0
+			client:sendSuccess(_("Illegale Tunings entfernt!", client))
+
+			local faction = client:getFaction()
+			local rankName = faction:getRankName(faction:getPlayerRank(client))
+			local vehicleOwner
+
+			if getElementData(vehicle, "OwnerType") == "player" and DatabasePlayer.getFromId(vehicle:getOwner()) then
+				vehicleOwner = DatabasePlayer.getFromId(vehicle:getOwner())
+				vehicleOwner:sendInfo(_("%s %s hat alle illegalen Tunings aus deinem Fahrzeug %s (%d) entfernt", vehicleOwner, rankName, client:getName(), getVehicleNameFromModel(vehicle:getModel()), vehicle:getId()))
+			elseif getElementData(vehicle, "OwnerType") == "group" then
+				for i, player in pairs(vehicle:getGroup():getOnlinePlayers()) do
+					player:sendInfo(_("%s %s hat alle illegalen Tunings aus eurem Fahrzeug %s (%d) entfernt", player, rankName, client:getName(), getVehicleNameFromModel(vehicle:getModel()), vehicle:getId()))
+				end
+			end
+			
+
+		--[[else
+			client:sendError(_("In dem Fahrzeug ist kein Radarwarngerät eingebaut.", client))
+		end]]
 	end
 end

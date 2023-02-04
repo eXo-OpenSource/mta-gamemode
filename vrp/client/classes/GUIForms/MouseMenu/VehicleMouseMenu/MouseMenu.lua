@@ -292,26 +292,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.List)
 			end
-			if localPlayer:getFaction():getId() == 2 then
-				self:addItem(_"Wanze anbringen",
-						function()
-							if self:getElement() then
-								if Vector3(localPlayer:getPosition() - element:getPosition()):getLength() < 10 then
-									triggerServerEvent("factionStateAttachBug", self:getElement())
-								end
-							end
-						end
-					):setIcon(FontAwesomeSymbols.Bug)
-				end
-			if localPlayer.vehicleSeat == 0 and getElementData(element, "StateVehicle") then
-				self:addItem(_("Radar %s", getElementData(element, "speedCamEnabled") and "stoppen" or "starten"),
-					function()
-						if self:getElement() then
-							triggerServerEvent("SpeedCam:onStartClick", self:getElement())
-						end
+			
+			self:addItem(_("Fraktion >>>"),
+				function()
+					if self:getElement() then
+						delete(self)
+						ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuFaction:new(posX, posY, element), element)
 					end
-				):setIcon(FontAwesomeSymbols.Video)
-			end
+				end
+			):setIcon(FontAwesomeSymbols.List)
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then
 			self:addItem(_"Schlüssel",
@@ -557,7 +546,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				if self:getElement() then
 					delete(self)
 
-					InputBox:new(_("Möchtest du das Fahrzeug für %d$ pro Stunde mieten?", getElementData(element, "forRentRate")), "Für wie viele Stunden möchtest du es mieten? Zusätzlich kommt noch eine Kaution von 1000$ dazu, welche zum Begleichen von Kosten vom Tanken, Schäden und/oder Abschleppen verwendet wird.",
+					InputBox:new(_("Möchtest du das Fahrzeug für %d$ pro Stunde mieten?", getElementData(element, "forRentRate")), "Für wie viele Stunden möchtest du es mieten? Zusätzlich kommt noch eine Kaution von 2000$ dazu, welche zum Begleichen von Kosten vom Tanken, Schäden und/oder Abschleppen verwendet wird.",
 					function (duration)
 						if duration and #duration > 0 and tonumber(duration) > 0 and tonumber(duration) <= 24 then
 							triggerServerEvent("groupRentVehicle", self:getElement(), tonumber(duration))

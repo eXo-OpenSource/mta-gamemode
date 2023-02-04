@@ -299,6 +299,11 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
         partName = "Neon-Ausbau"
     end
 
+	if partId == "RadarDetector" and info == 0 then
+		price = 0
+		partName = "Radarwarngerät ausbauen"
+	end
+
     local name = upgradeName and partName..": "..upgradeName or partName
     local item = self.m_ShoppingCartGrid:addItem(name, tostring(price).."$")
     item.PartSlot = partId
@@ -320,7 +325,7 @@ function VehicleTuningGUI:PartItem_Click(item)
     self.m_AddToCartButton:setVisible(true)
 
     self:closeAllWindows()
-    self:moveCameraToSlot(item.PartSlot)
+    self:moveCameraToSlot(item.PartSlot )
 
     if item.PartSlot then
         -- Check for special properties
@@ -489,6 +494,18 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
 			Disabled --]]
             return
+        elseif item.PartSlot == "RadarDetector" then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            self.m_NeonPicker = VehicleTuningItemGrid:new(
+                "Radarwarngerät ein/ausbauen",
+                {[0] = _"Kein Radarwarngerät", [1] = _"Radarwarngerät einbauen"},
+                function(radarDetector)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], radarDetector)
+                end,
+				nil
+            )
+            return
         end
 		self:resetUpgrades()
         self:updateUpgradeList(item.PartSlot)
@@ -604,6 +621,7 @@ VehicleTuningGUI.CameraPositions = {
 	["BoatsPainter"] = Vector3(8, -4, 2.1),
 	["Variant1"] = Vector3(8, -4, 2.1),
 	["Variant2"] = Vector3(8, -4, 2.1),
+	["RadarDetector"] = Vector3(8, -4, 2.1),
 }
 
 VehicleTuningGUI.SpecialTunings = {
@@ -614,8 +632,9 @@ VehicleTuningGUI.SpecialTunings = {
 	{"Neonröhren-Farbe", "NeonColor"},
 	{"Spezial-Hupe", "CustomHorn"},
 	{"Variante 1", "Variant1"},
-	{"Variante 2", "Variant2"}
+	{"Variante 2", "Variant2"},
 	--{"Spezial-Lackierung", "Texture"},
+	{"Radarwarngerät", "RadarDetector"}
 }
 
 VehicleTuningGUI.SpecialTuningsNames = {}

@@ -8,12 +8,13 @@
 VehicleInteraction = inherit(Singleton)
 
 function VehicleInteraction:constructor()
-	addRemoteEvents{"onInteractVehicleDoor", "onActionVehicleDoor", "onLockVehicleDoor", "onMouseMenuRepairkit"}
+	addRemoteEvents{"onInteractVehicleDoor", "onActionVehicleDoor", "onLockVehicleDoor", "onMouseMenuRepairkit", "onStateActionVehicleDoor"}
 
 	addEventHandler("onInteractVehicleDoor", root, bind(self.doInteractions, self))
 	addEventHandler("onActionVehicleDoor", root, bind(self.doAction, self))
 	addEventHandler("onLockVehicleDoor", root, bind(self.doLock, self))
 	addEventHandler("onMouseMenuRepairkit", root, bind(self.Event_repairVehicle, self))
+	addEventHandler("onStateActionVehicleDoor", root, bind(self.doStateAction, self))
 end
 
 function VehicleInteraction:doInteractions(door)
@@ -161,5 +162,27 @@ function VehicleInteraction:interactWith(source, vehicle, door)
 
     if doorRatio == 0 or doorRatio == 1 then
         setVehicleDoorOpenRatio(vehicle, door, 1 - doorRatio, 500)
+	end
+end
+
+function VehicleInteraction:doStateAction(vehicle)
+	if not vehicle.isTuningChecked then
+		vehicle.isTuningChecked = true
+		client:meChat(true, "schaut im Motorraum nach einem Radarwarngerät.")
+		client:setAnimation("BAR", "Barserve_give", 0, true)
+		toggleAllControls(client, false)
+
+		setTimer(function(player, vehicle)
+			player:setAnimation(false)
+			player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+			toggleAllControls(player, true)
+			vehicle.isTuningChecked = false
+			if getDistanceBetweenPoints3D(vehicle:getPosition(), player:getPosition()) <= 7 then
+				local hasDetector = vehicle:hasRadarDetector()
+
+				player:meChat(true, ("konnte %sein Radarwarngerät finden."):format(not hasDetector and "k" or ""))
+				player:sendInfo(_("%sRadarwarngerät gefunden", player, not hasDetector and "kein " or ""))
+			end
+		end, 7500, 1, client, vehicle)
 	end
 end

@@ -17,6 +17,7 @@ function VehicleInteraction:constructor()
 	self.m_interactButton = "O"
 	self.m_actionButton = "K"
 	self.m_lockButton = "L"
+    self.m_stateActionButton = "P"
 	self.m_isDebug = false
 	self.m_lookAtVehicle = nil
     self.m_LastInteraction = 0
@@ -42,6 +43,7 @@ function VehicleInteraction:constructor()
 	bindKey(self.m_interactButton, "down", bind(self.interact, self))
 	bindKey(self.m_actionButton, "down", bind(self.action, self))
 	bindKey(self.m_lockButton, "down", bind(self.lock, self))
+	bindKey(self.m_stateActionButton, "down", bind(self.stateAction, self))
 
 	self.m_DoorOpenedBind = bind(self.onDoorOpened, self)
 	self.m_DoorClosedBind = bind(self.onDoorClosed, self)
@@ -97,6 +99,11 @@ function VehicleInteraction:render()
 								end
                             elseif doorId == 0 then
                                 self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
+                                if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then
+                                    if self.m_lookAtVehicle:getData("OwnerType") == "player" or self.m_lookAtVehicle:getData("OwnerType") == "group" then
+                                        self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um nach einem Radarwarngerät zu schauen!", self.m_stateActionButton), 2)
+                                    end
+                                end
 							elseif ((vehicleModel == 416 or vehicleModel == 497) and (doorId == 4 or doorId == 5)) then
 								if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
 									self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
@@ -216,6 +223,24 @@ function VehicleInteraction:lock()
                 end
 			end
 		end
+	end
+end
+
+function VehicleInteraction:stateAction()
+	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
+        if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
+            if self.m_lookAtVehicle:getData("OwnerType") == "player" or self.m_lookAtVehicle:getData("OwnerType") == "group" then
+                local door = tonumber(self:getDoor())
+                local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, door)
+
+                if door == 0 and doorRatio > 0 then
+                    if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then
+                        self.m_LastInteraction = getTickCount()
+                        triggerServerEvent("onStateActionVehicleDoor", localPlayer, self.m_lookAtVehicle)
+                    end
+                end
+            end
+        end
 	end
 end
 
