@@ -11,7 +11,7 @@ function InfluxDB:constructor(username, password, database)
     self.m_Username = username
     self.m_Password = password
     self.m_Database = database
-	self.m_Host = "https://influxdb.merx.dev"
+	self.m_Host = ""
 	self.m_DomainNotBlocked = not isBrowserDomainBlocked or not isBrowserDomainBlocked(self.m_Host, true)
 
 	self.m_Branch = GIT_BRANCH or "dev"

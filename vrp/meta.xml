@@ -76,36 +76,16 @@
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
 	<script src="server/classes/Player/Ban.lua" type="server"/>
 	<script src="server/classes/Player/Warn.lua" type="server"/>
-	<script src="server/classes/Garage.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
-	<script src="server/classes/House.lua" type="server"/>
-	<script src="server/classes/HouseManager.lua" type="server"/>
-	<script src="server/classes/InteriorEnterExitManager.lua" type="server"/>
-	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
-	<script src="server/classes/Teleporter.lua" type="server"/>
-	<script src="server/classes/TeleportManager.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
-	<script src="server/classes/ParkGarageZone.lua" type="server"/>
-	<script src="server/classes/InstantTeleportArea.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
-	<script src="server/classes/Nametag.lua" type="server"/>
-	<script src="server/classes/Achievement.lua" type="server"/>
-	<script src="server/classes/InteriorManager.lua" type="server"/>
 	<script src="server/classes/StatisticsLogger.lua" type="server"/>
 	<script src="server/classes/Admin.lua" type="server"/>
-	<script src="server/classes/Guns.lua" type="server"/>
-	<script src="server/classes/ActionsCheck.lua" type="server"/>
-	<script src="server/classes/Gate.lua" type="server"/>
-	<script src="server/classes/Door.lua" type="server"/>
-	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
-	<script src="server/classes/ShortMessageQuestion.lua" type="server"/>
-	<script src="server/classes/QuestionBox.lua" type="server"/>
 	<script src="server/classes/InactivityManager.lua" type="server"/>
 	<script src="server/classes/BindManager.lua" type="server"/>
-	<script src="server/classes/NonCollisionArea.lua" type="server"/>
 	<script src="server/classes/ClientStatistics.lua" type="server"/>
 	<script src="server/classes/Discord.lua" type="server"/>
 	<script src="server/classes/ServerSettings.lua" type="server"/>
@@ -114,13 +94,9 @@
 	<script src="server/classes/InfluxLogging.lua" type="server"/>
 	<script src="server/classes/Time.lua" type="server"/>
 	<script src="server/classes/PedScale.lua" type="server"/>
-	<script src="server/classes/CustomAnimationManager.lua" type="server"/>
-	<script src="server/classes/HouseGarage.lua" type="server"/>
-	<script src="server/classes/Skyscraper.lua" type="server"/>
-	<script src="server/classes/SkyscraperManager.lua" type="server"/>
 	<script src="server/classes/PermissionsManager.lua" type="server"/>
 	<script src="server/classes/LeaderCheck.lua" type="server"/>
-	<script src="server/classes/CookieClickerManager.lua" type="server"/>
+
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -217,18 +193,38 @@
 	<script src="server/classes/UI/Blip.lua" type="server"/>
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 	<script src="server/classes/UI/ElementInfo.lua" type="server"/>
+	<script src="server/classes/UI/Nametag.lua" type="server"/>
+	<script src="server/classes/UI/ShortMessageQuestion.lua" type="server"/>
+	<script src="server/classes/UI/QuestionBox.lua" type="server"/>
 
 	<!-- Damage -->
 	<script src="server/classes/Gameplay/InjurySystem/DamageManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/InjurySystem/Damage.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Houses/House.lua" type="server"/>
+	<script src="server/classes/Gameplay/Houses/HouseGarage.lua" type="server"/>
+	<script src="server/classes/Gameplay/Houses/HouseManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Houses/Skyscraper.lua" type="server"/>
+	<script src="server/classes/Gameplay/Houses/SkyscraperManager.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Vehicles/GasStation.lua" type="server"/>
+	<script src="server/classes/Gameplay/Vehicles/GasStationManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Vehicles/NonCollisionArea.lua" type="server"/>
+	<script src="server/classes/Gameplay/Vehicles/ParkGarageZone.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Achievement.lua" type="server"/>
+	<script src="server/classes/Gameplay/CustomAnimationManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Guns.lua" type="server"/>
+	<script src="server/classes/Gameplay/Gate.lua" type="server"/>
+	<script src="server/classes/Gameplay/Garage.lua" type="server"/>
+	<script src="server/classes/Gameplay/Door.lua" type="server"/>
+	<script src="server/classes/Gameplay/InteriorManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Tour.lua" type="server"/>
+
 	<!-- Gameplay -->
-	<script src="server/classes/Gameplay/Sewers.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/Sewers.lua" type="server"/>
 
-	<script src="server/classes/Gameplay/PlayHouse.lua" type="server"/>
-
-	<!-- New Years Eve -->
-	<script src="server/classes/Gameplay/NewYearsEve.lua" type="server" />
+	<script src="server/classes/Gameplay/Places/PlayHouse.lua" type="server"/>
 
 	<!-- PoliceAnnouncements -->
 	<script src="server/classes/Gameplay/PoliceAnnouncements.lua" type="server" />
@@ -290,21 +286,21 @@
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/WheelOfFortune.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Places/ShootingRanch/ShootingRanch.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/ShootingRanch/ShootingRanchTraining.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Places/Atrium.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/BoxManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/Casino.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/SkinShops.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/Skydiving.lua" type="server"/>
+	<script src="server/classes/Gameplay/Places/Townhall.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
-	<script src="server/classes/Gameplay/ArmsDealer.lua" type="server"/>
-	<script src="server/classes/Gameplay/ArmsPackage.lua" type="server"/>
-	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
-	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
 	<script src="server/classes/Gameplay/Jail.lua" type="server"/>
 	<script src="server/classes/Gameplay/Slotmachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/EasterSlotmachine.lua" type="server"/>
-	<script src="server/classes/Gameplay/Townhall.lua" type="server"/>
-	<script src="server/classes/Gameplay/ShootingRanch.lua" type="server"/>
-	<script src="server/classes/Gameplay/ShootingRanchTraining.lua" type="server"/>
 	<script src="server/classes/Gameplay/Fishing.lua" type="server"/>
-	<script src="server/classes/Gameplay/Skydiving.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchDefault.lua" type="server"/>
@@ -315,13 +311,8 @@
 
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
-	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
-	<script src="server/classes/Gameplay/ElevatorManager.lua" type="server"/>
 
-	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
-	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
-	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
@@ -398,6 +389,14 @@
 	<script src="server/classes/MapEditor/MapLoader.lua" type="server" />
 	<script src="server/classes/MapEditor/MapEditor.lua" type="server" />
 
+	<script src="server/classes/Teleporters/Elevator.lua" type="server"/>
+	<script src="server/classes/Teleporters/ElevatorManager.lua" type="server"/>
+	<script src="server/classes/Teleporters/InstantTeleportArea.lua" type="server"/>
+	<script src="server/classes/Teleporters/InteriorEnterExitManager.lua" type="server"/>
+	<script src="server/classes/Teleporters/InteriorEnterExit.lua" type="server"/>
+	<script src="server/classes/Teleporters/Teleporter.lua" type="server"/>
+	<script src="server/classes/Teleporters/TeleportManager.lua" type="server"/>
+
 	<script src="server/classes/Textures/ElementTexture.lua" type="server" />
 
 	<script src="server/constants/shops.lua" type="server"/>
@@ -422,14 +421,17 @@
 
 	<!-- Factions -->
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/MWeaponTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/ActionsCheck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/AirDrop/ArmsDealer.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/AirDrop/ArmsPackage.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/WeaponTruck/MWeaponTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/WeaponTruck/WeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/StateEvidenceTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/FireRoot.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/WeedTruck/MWeedTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/WeedTruck/WeedTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/Fire/FireRoot.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/Fire/Fire.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/Fire/FireManager.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
 	<!--<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>-->
 	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
@@ -515,6 +517,7 @@
 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
+	<script src="server/classes/Events/NewYearsEve.lua" type="server" />
 
 	<!-- Halloween -->
 	<script src="server/classes/Events/Easter/Easter.lua" type="server"/>
@@ -525,6 +528,7 @@
 	<script src="server/classes/Events/Halloween/EasterEggs.lua" type="server"/>
 
 	<!-- Christmas -->
+	<script src="server/classes/Events/Christmas/CookieClickerManager.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/QuestManager.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quest.lua" type="server"/>
@@ -591,8 +595,6 @@
 	<script src="client/classes/ColshapeStreamer.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
-	<script src="client/classes/Player.lua" type="client"/>
-	<script src="client/classes/LocalPlayer.lua" type="client"/>
 	<script src="client/classes/Admin.lua" type="client"/>
 	<script src="client/classes/Version.lua" type="client"/>
 	<script src="client/classes/HUD/TinyInfoLabel.lua" type="client"/>
@@ -600,13 +602,9 @@
 	<script src="client/classes/ClickHandler.lua" type="client"/>
 	<script src="client/classes/AntiClickSpam.lua" type="client"/>
 	<script src="client/classes/HoverHandler.lua" type="client"/>
-	<script src="client/classes/ego.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
 	<script src="client/classes/Provider.lua" type="client"/>
-	<script src="client/classes/Skin.lua" type="client"/>
-	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/Sound.lua" type="client"/>
-	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/Textures/Cache/CachedTexture.lua" type="client"/>
 	<script src="client/classes/Textures/Cache/TextureCache.lua" type="client"/>
 	<script src="client/classes/Textures/TextureReplacer.lua" type="client"/>
@@ -614,23 +612,11 @@
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/RenderTargetTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/StaticTextureReplacer.lua" type="client"/>
-	<script src="client/classes/NonCollisionArea.lua" type="client"/>
-	<script src="client/classes/NonOcclusionZone.lua" type="client"/>
-	<script src="client/classes/NoParkingZone.lua" type="client"/>
-	<script src="client/classes/Housing.lua" type="client"/>
-	<script src="client/classes/Collectables.lua" type="client"/>
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
-	<script src="client/classes/Achievement.lua" type="client"/>
-	<script src="client/classes/AchievementBox.lua" type="client"/>
-	<script src="client/classes/CoronaEffect.lua" type="client"/>
-	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
-	<script src="client/classes/CustomAnimationManager.lua" type="client"/>
 	<script src="client/classes/PermissionsManager.lua" type="client"/>
 	
 	<script src="client/classes/KeyBinds.lua" type="client"/>
-	<script src="client/classes/NoDm.lua" type="client"/>
-	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
@@ -638,15 +624,11 @@
 	<script src="client/classes/Time.lua" type="client"/>
 	<script src="client/classes/PedScale.lua" type="client"/>
 
-
-	<script src="client/classes/Guns/Guns.lua" type="client"/>
-	<script src="client/classes/Guns/WeaponRecorder.lua" type="client"/>
-	<script src="client/classes/Guns/WeaponManager.lua" type="client"/>
-	<script src="client/classes/Guns/RocketLauncher.lua" type="client"/>
-	<script src="client/classes/Guns/SniperRifle.lua" type="client"/>
-	<script src="client/classes/Guns/DesertEagle.lua" type="client"/>
+	<script src="client/classes/Player/Player.lua" type="client"/>
+	<script src="client/classes/Player/LocalPlayer.lua" type="client"/>
 
 	<!-- Utils -->
+	<script src="client/classes/Utils/CameraDrive.lua" type="client"/>
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
 	<script src="client/classes/Utils/FileModdingHelper.lua" type="client"/>
 	<script src="client/classes/Utils/CenteredBonecam.lua" type="client"/>
@@ -810,7 +792,9 @@
 	<script src="client/classes/GUI/Elements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUI/Elements/BusRoutePlan.lua" type="client"/>
 
+	<script src="client/classes/HUD/AchievementBox.lua" type="client"/>
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
+	<script src="client/classes/HUD/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
@@ -824,237 +808,247 @@
 	<script src="client/classes/HUD/Help/ElementInfoManager.lua" type="client"/>
 
 	<!-- Forms -->
-	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/RadioStationEditGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleSellGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleSellAcceptGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleKeyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ArmsDealerGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DrawTestGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleKeyListGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminFireGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminLeaderBanGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminPedGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminSerialAccountsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminTransactionGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/GangwarDebugGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Admin/MultiAccountWindow.lua" type="client" />
 
-	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
+    <script src="client/classes/GUIForms/Animation/AnimationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Animation/CustomAnimationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Animation/WalkingstyleGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminPedGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminFireGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminSerialAccountsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminTransactionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Admin/AdminLeaderBanGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/DutyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/SkyscraperGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/Company/VehicleImportListGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/Cinema/CinemaCreateLobbyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Cinema/CinemaLobbyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Cinema/CinemaPasswordGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Cinema/CinemaVideoGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/InspectMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client"/>
+    <script src="client/classes/GUIForms/ColorCars/ColorCarsCreateLobbyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ColorCars/ColorCarsLobbyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ColorCars/ColorCarsMatchGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ColorCars/ColorCarsPasswordGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuLastDriver.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRcVehicle.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFaction.lua" type="client"/>
+    <script src="client/classes/GUIForms/Company/DrivingSchool/DrivingSchoolInstructorGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Company/DrivingSchool/DrivingSchoolPedGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Company/DrivingSchool/DrivingSchoolStudentGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Company/DrivingSchool/DrivingSchoolTheoryGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/BugCheckerPedMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/SpeedCamMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/GasStationMouseMenu.lua" type="client"/>
+    <script src="client/classes/GUIForms/Company/BusRouteInformationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Company/FuelTankGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Company/PublicTransportTaxoMeterGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Company/VehicleImportListGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/MouseMenu/WorldItemMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/HouseRobSellGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/DutyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/SkyscraperGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client" />
+    <script src="client/classes/GUIForms/Deathmatch/DeathmatchGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Deathmatch/DeathmatchLobbyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Deathmatch/DeathmatchWeaponSelectGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client"/>
-	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
-	<script src="client/classes/GUIForms/ShortCountdown.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehiclePerformanceGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DeathGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AmmuNationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DebugGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PerformanceStatsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HouseGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HouseEditGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/SendMoneyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/MapGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HelpBar.lua" type="client"/>
-	<script src="client/classes/GUIForms/HelpGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ScoreboardGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ItemShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/ChangerBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/ChangerBoxWithCheck.lua" type="client"/>
-	<script src="client/classes/GUIForms/DrivingSchoolPedGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DrivingSchoolTheoryGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DrivingSchoolStudentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/RadioCommunicationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/ColorPicker.lua" type="client"/>
-	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleTuningShowGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleTuningTemplateGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleCustomTextureGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ForumPermissionsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HistoryUninviteGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/InviteGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionWeaponShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionWTLoadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionWTHoverGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionExplosiveTruckBoxGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionMoneyBagHoverGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/EquipmentOptionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/StateEvidenceGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/StateFactionNoteGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
-	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/WalkingstyleGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CustomAnimationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/BindGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
-	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
-	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleInteraction.lua" type="client"/>
-	<script src="client/classes/GUIForms/TourGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ScoreGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HighscoreGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/KartGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HorseBetGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleUnregisterGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleRobGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionWeaponStoreGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleRcUpgradeGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/BarShopGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/Faction/ArmsDealerGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/ChristmasTruckTreeGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/FactionExplosiveTruckBoxGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/FactionMoneyBagHoverGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/FactionWeaponShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/FactionWeaponStoreGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/FactionWTHoverGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/FactionWTLoadGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/PolicePanel.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/StateEvidenceGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/StateFactionArrestGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Faction/StateFactionNoteGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
-	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/TownHallInfoGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/StreamGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/WeaponLevelGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ShaderPanelGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
-	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HTTPMinimalDownloadGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupPropertyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupPropertyMessageGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/MultiPlayerGameGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AchievementGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/JobBoxerGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/JobBoxerTopList.lua" type="client" />
-	<script src="client/classes/GUIForms/CoolingBagGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/FishingGUIs.lua" type="client" />
-	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/InjuryGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/AmmoQuickTradeGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/InjuryTreatmentGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/PlayerPermissionsGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/RankPermissionsGUI.lua" type="client" />
-	<script src="client/classes/Faction/Gangwar/GangwarPickGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/Group/GroupCreationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Group/GroupPropertyBuy.lua" type="client" />
+    <script src="client/classes/GUIForms/Group/GroupPropertyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Group/GroupPropertyMessageGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FuelTankGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GasStationShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HighStakeRouletteGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/WareRoundGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CookieClickerGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ChristmasTruckTreeGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/HousesForSaleGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/House/HouseEditGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/House/HouseGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/House/HouseRobSellGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/House/HousesForSaleGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/Deathmatch/DeathmatchLobbyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client"/>
-	<script src="client/classes/GUIForms/Deathmatch/DeathmatchGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Deathmatch/DeathmatchWeaponSelectGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PoliceSoundsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/MultiAccountWindow.lua" type="client"/>
-	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorObjectCreateGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorMapGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorMapSettingsGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorMainGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorEditingPlayersGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorHelpGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/MapEditor/MapEditorTextureEditGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Job/JobBoxerGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Job/JobBoxerTopList.lua" type="client" />
+    <script src="client/classes/GUIForms/Job/JobGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Job/JobHelpGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Job/JobServiceTechnicianQuestionGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/PlayHouseShopGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/MapEditor/MapEditorEditingPlayersGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorHelpGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorMainGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorMapGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorMapSettingsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorObjectCreateGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorObjectGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapEditor/MapEditorTextureEditGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/DialogGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/Minigames/HighscoreGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/HighStakeRouletteGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/HorseBetGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/MinigameGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/MultiPlayerGameGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/PricePoolEntryGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/PricePoolPriceGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/PricePoolRaffleGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/RouletteGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/ScoreGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/SkribbleGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/TurtleRaceGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/WareGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Minigames/WareRoundGUI.lua" type="client" />
 
-	<script src="client/classes/GUIForms/Cinema/CinemaCreateLobbyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Cinema/CinemaLobbyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Cinema/CinemaPasswordGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/Cinema/CinemaVideoGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/InspectMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client" />
 
-	<script src="client/classes/GUIForms/PricePoolRaffleGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PricePoolEntryGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PricePoolPriceGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFaction.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuLastDriver.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRcVehicle.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client" />
 
-	<script src="client/classes/GUIForms/ColorCars/ColorCarsLobbyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ColorCars/ColorCarsCreateLobbyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ColorCars/ColorCarsMatchGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/ColorCars/ColorCarsPasswordGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/BugCheckerPedMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/GasStationMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/SpeedCamMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client" />
+    <script src="client/classes/GUIForms/MouseMenu/WorldItemMouseMenu.lua" type="client" />
+
+    <script src="client/classes/GUIForms/Race/RaceCreateLobbyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Race/RaceLobbyGUI.lua" type="client" />
+
+    <script src="client/classes/GUIForms/Self/AchievementGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/BindGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/CompanyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/FactionGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/GroupGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/KeyBindingsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/PasswordChangeGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/PoliceSoundsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/RadioGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/RadioStationEditGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/SelfGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/ShaderPanelGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/ShortMessageLogGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Self/StreamGUI.lua" type="client" />
+
+    <script src="client/classes/GUIForms/Shop/AmmuNationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/BarShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/ClothesShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/FoodShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/GasStationShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/ItemShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/PlayHouseShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/SkinShopGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Shop/VehicleShopGUI.lua" type="client" />
+
+    <script src="client/classes/GUIForms/Vehicle/PremiumVehicleGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/TexturePreviewGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/TrunkGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleCustomTextureGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleHealth.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleInteraction.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleKeyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleKeyListGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleModelSelectionGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehiclePerformanceGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleRcUpgradeGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleRobGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleSellAcceptGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleSellGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleSpawnGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleTakeGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleTuningGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleTuningShowGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleTuningTemplateGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Vehicle/VehicleUnregisterGUI.lua" type="client" />
+
+    <script src="client/classes/GUIForms/AmmoQuickTradeGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/BankAccountGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/BankGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/BreakingNews.lua" type="client" />
+    <script src="client/classes/GUIForms/ChangerBox.lua" type="client" />
+    <script src="client/classes/GUIForms/ChangerBoxWithCheck.lua" type="client" />
+    <script src="client/classes/GUIForms/ColorPicker.lua" type="client" />
+    <script src="client/classes/GUIForms/CookieClickerGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/CoolingBagGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/Countdown.lua" type="client" />
+    <script src="client/classes/GUIForms/CountdownGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/DeathGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/DebugGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/DialogGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/DownloadGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/DrawTestGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/EquipmentOptionGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/EventJoinGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/FishingGUIs.lua" type="client" />
+    <script src="client/classes/GUIForms/ForumPermissionsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/GunBoxGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/HelpBar.lua" type="client" />
+    <script src="client/classes/GUIForms/HelpGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/HistoryUninviteGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/HTTPMinimalDownloadGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/IDCardGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/InjuryGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/InjuryTreatmentGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/InputBox.lua" type="client" />
+    <script src="client/classes/GUIForms/InteriorEnterExitGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/InviteGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ItemEquipmentGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/KartGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/LogGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/LoginGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MapGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/MostWanted3D.lua" type="client" />
+    <script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/PasswordBox.lua" type="client" />
+    <script src="client/classes/GUIForms/PerformanceStatsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/PlantGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/PlayerPermissionsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/QuestionBox.lua" type="client" />
+    <script src="client/classes/GUIForms/RadioCommunicationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/RankPermissionsGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ScoreboardGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/SendMoneyGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/ShootingRanchGUIs.lua" type="client" />
+    <script src="client/classes/GUIForms/ShortCountdown.lua" type="client" />
+    <script src="client/classes/GUIForms/ShortMessageQuestion.lua" type="client" />
+    <script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client" />
+    <script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/TourGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/TownHallInfoGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/TradeGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/TrainingGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/WeaponLevelGUI.lua" type="client" />
+    <script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1156,6 +1150,7 @@
 	<script src="client/classes/Vehicles/VehicleInfrared.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
+	<script src="client/classes/Vehicles/NoParkingZone.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupRentVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
@@ -1236,32 +1231,45 @@
 	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
 	<script src="client/classes/Effects/MonochromeShader.lua" type="client"/>
 	<script src="client/classes/Effects/DynamicLightingBind.lua" type="client"/>
+	<script src="client/classes/Effects/CoronaEffect.lua" type="client"/>
 
 	<!-- Gameplay -->
+	<script src="client/classes/Gameplay/Achievement.lua" type="client"/>
+	<script src="client/classes/Gameplay/CustomAnimationManager.lua" type="client"/>
+	<script src="client/classes/Gameplay/ego.lua" type="client"/>
+	<script src="client/classes/Gameplay/NonCollisionArea.lua" type="client"/>
+	<script src="client/classes/Gameplay/NonOcclusionZone.lua" type="client"/>
+	<script src="client/classes/Gameplay/NoDm.lua" type="client"/>
+	<script src="client/classes/Gameplay/Tour.lua" type="client"/>
+	<script src="client/classes/Gameplay/Housing.lua" type="client"/>
+	<script src="client/classes/Gameplay/Collectables.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/BarShop.lua" type="client"/>
-	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
 	<script src="client/classes/Gameplay/TrainManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Jail.lua" type="client"/>
 	<script src="client/classes/Gameplay/Prison.lua" type="client"/>
 	<script src="client/classes/Gameplay/Slotmachine.lua" type="client"/>
-	<script src="client/classes/Gameplay/BlackJack.lua" type="client"/>
-	<script src="client/classes/Gameplay/BlackJackTable.lua" type="client"/>
-	<script src="client/classes/Gameplay/BlackJackHelp.lua" type="client"/>
-	<script src="client/classes/Gameplay/CasinoWheel.lua" type="client"/>
-	<script src="client/classes/Gameplay/CasinoWheelBet.lua" type="client"/>
 	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
-	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
-	<script src="client/classes/Gameplay/Sewers.lua" type="client"/>
-	<script src="client/classes/Gameplay/PlayHouse.lua" type="client"/>
-	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
-	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
 	<script src="client/classes/Gameplay/ThrowObject.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/Minigames/BlackJack/BlackJack.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/BlackJack/BlackJackTable.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/BlackJack/BlackJackHelp.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/Minigames/CasinoWheel/CasinoWheel.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/CasinoWheel/CasinoWheelBet.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/InjurySystem/Damage.lua" type="client"/>
 	<script src="client/classes/Gameplay/InjurySystem/InjuryVisual.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/Guns/Guns.lua" type="client"/>
+	<script src="client/classes/Gameplay/Guns/WeaponRecorder.lua" type="client"/>
+	<script src="client/classes/Gameplay/Guns/WeaponManager.lua" type="client"/>
+	<script src="client/classes/Gameplay/Guns/RocketLauncher.lua" type="client"/>
+	<script src="client/classes/Gameplay/Guns/SniperRifle.lua" type="client"/>
+	<script src="client/classes/Gameplay/Guns/DesertEagle.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/PickupWeaponManager.lua" type="client"/>
 
@@ -1293,8 +1301,8 @@
 	<script src="client/classes/Gameplay/Race/Kart.lua" type="client"/>
 
 	<!-- Roaming Planes/Accident Planes -->
-	<script src="client/classes/Gameplay/PlaneManager.lua" type="client" />
-	<script src="client/classes/Gameplay/Plane.lua" type="client" />
+	<script src="client/classes/Gameplay/Plane/PlaneManager.lua" type="client" />
+	<script src="client/classes/Gameplay/Plane/Plane.lua" type="client" />
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
@@ -1321,6 +1329,14 @@
 	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
 
 	<script src="client/classes/Gameplay/Places/Atrium.lua" type="client"/>
+	<script src="client/classes/Gameplay/Places/Casino.lua" type="client"/>
+	<script src="client/classes/Gameplay/Places/PlayHouse.lua" type="client"/>
+	<script src="client/classes/Gameplay/Places/PremiumArea.lua" type="client"/>
+	<script src="client/classes/Gameplay/Places/Sewers.lua" type="client"/>
+	<script src="client/classes/Gameplay/Places/Townhall.lua" type="client"/>
+
+	<script src="client/classes/Gameplay/Skin/Skin.lua" type="client"/>
+	<script src="client/classes/Gameplay/Skin/SkinStreamer.lua" type="client"/>
 
 	<!-- PoliceAnnouncements -->
 	<script src="client/classes/Gameplay/PoliceAnnouncements.lua" type="client" />

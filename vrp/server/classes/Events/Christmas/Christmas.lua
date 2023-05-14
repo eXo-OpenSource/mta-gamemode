@@ -235,7 +235,7 @@ function Christmas:Event_buyBonus(bonusId)
 	client:getInventory():removeItem("Zuckerstange", bonus["CandyCane"])
 	client:getInventory():removeItem("Päckchen", bonus["Packages"])
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Päckchen und %d Zuckerstange/n gekauft!", client, bonus["Text"], bonus["Packages"], bonus["CandyCane"]))
-	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Packages"], bonus["CandyCane"])
+	StatisticsLogger:getSingleton():addEventShopLog(client, bonus["Text"], bonus["Packages"], bonus["CandyCane"])
 
 end
 

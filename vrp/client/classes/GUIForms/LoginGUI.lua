@@ -451,6 +451,7 @@ function LoginGUI.stopCameraDrive()
 		delete(localPlayer.m_LoginShader)
 		localPlayer.m_LoginShader = nil
 	end
+	RadialShader:getSingleton():setEnabled(false)
 	setCameraTarget(localPlayer)
 	triggerServerEvent("onClientRequestTime", localPlayer)
 end

@@ -10,7 +10,7 @@ inherit(Singleton, ShortMessageLogGUI)
 
 ShortMessageLogGUI.m_Log = {}
 function ShortMessageLogGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460, false)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ShortMessage-Log", true, true, self)
 	self.m_Window:addHelpButton(LexiconPages.ShortMessage)
 	self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() end)

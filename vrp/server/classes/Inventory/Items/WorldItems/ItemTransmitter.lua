@@ -24,7 +24,7 @@ function ItemTransmitter:destructor()
 			local frequency, frequencyName
 			frequency = obj.m_Frequency or "#"
 			frequencyName = obj.m_FrequencyName or "#"
-			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), frequency..":"..frequencyName, obj.Id )
+			sql:queryExec("UPDATE ??_static_world_items SET value=? WHERE Id=?;", sql:getPrefix(), frequency..":"..frequencyName, obj.Id )
 		end
 	end
 end
@@ -71,7 +71,7 @@ function ItemTransmitter:use(player)
 		local dim = getElementDimension(player)
 		--FactionState:getSingleton():sendShortMessage(_("%s hat ein Keypad bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Transmitter", position.x..","..position.y..","..position.z)
-		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Interior, Dimension, Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Transmitter", position.x, position.y, position.z, rotation, int, dim, "#:#", getZoneName(position).."/"..getZoneName(position, true), player:getId())
+		sql:queryExec("INSERT INTO ??_static_world_items(Typ, PosX, PosY, PosZ, RotationZ, Interior, Dimension, Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Transmitter", position.x, position.y, position.z, rotation, int, dim, "#:#", getZoneName(position).."/"..getZoneName(position, true), player:getId())
 		self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation), int, dim)
 	end)
 end
@@ -166,7 +166,7 @@ function ItemTransmitter:removeObject( id )
 		if self.m_Transmitters[id] then 
 			destroyElement(self.m_Transmitters[id])
 			self.m_Transmitters[id] = nil
-			sql:queryExec("DELETE FROM ??_word_objects WHERE Id=? ", sql:getPrefix(), id)
+			sql:queryExec("DELETE FROM ??_static_world_items WHERE Id=? ", sql:getPrefix(), id)
 		end
 	end
 end

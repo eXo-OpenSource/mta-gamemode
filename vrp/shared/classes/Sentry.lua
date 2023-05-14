@@ -1,7 +1,7 @@
 Sentry = inherit(Singleton)
 
 function Sentry:constructor()
-	self.m_DSN = "https://02b8397951db488690be010711c239cc@sentry.exo.cool/2"
+	self.m_DSN = ""
 
 	self:parseDSN()
 end
@@ -33,13 +33,13 @@ function Sentry:handleException(message, level, trace)
 
 		local frame = {
 			filename = filename,
-			abs_path = ("https://git.exo.cool/eXo/mta-gamemode/tree/%s/%s"):format(GIT_BRANCH or "master", filename),
+			--abs_path = (""):format(GIT_BRANCH or "master", filename),
 			["function"] = v[3]
 		}
 
 		if type(v[2]) == "number" then
 			frame["lineno"] = v[2]
-			frame["abs_path"] = ("https://git.exo.cool/eXo/mta-gamemode/tree/%s/%s#L%d"):format(GIT_BRANCH or "master", filename, v[2])
+			--frame["abs_path"] = (""):format(GIT_BRANCH or "master", filename, v[2])
 		end
 
 		table.insert(frames, frame)

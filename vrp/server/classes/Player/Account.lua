@@ -24,6 +24,7 @@ local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
 Account.REGISTRATION_ACTIVATED = true
+Account.FORUM_LOGIN = false
 Account.PendingRequests = {
 	Logins = {},
 	Registrations = {}
@@ -58,6 +59,34 @@ function Account.login(player, username, password, pwhash, enableAutologin)
 				return
 			end
 		end
+	end
+
+	if not Account.FORUM_LOGIN then
+		local row = sql:queryFetchSingle("SELECT Id, ForumId, Name, Password, Salt, RegisterDate, TeamspeakId, AutologinToken FROM ??_account WHERE LCASE(Name) = ?", sql:getPrefix(), username)
+		if not row then
+			player:triggerEvent("loginfailed", "Dieser Account existiert nicht")
+			return
+		end
+
+		local passwordHash = sha256(row.Salt..password)
+		if passwordHash ~= row.Password then
+			player:triggerEvent("loginfailed", "Falsches Passwort")
+			return
+		end
+
+		local loginToken = nil
+
+		if enableAutologin then
+			loginToken = string.random(32) .. "." .. player:getSerial()
+			sql:queryExec("UPDATE ??_account SET AutologinToken = ? WHERE Id = ?", sql:getPrefix(), loginToken, row.Id)
+		else
+			if row.AutologinToken then
+				sql:queryExec("UPDATE ??_account SET AutologinToken = ? WHERE Id = ?", sql:getPrefix(), "", row.Id)
+			end
+		end
+
+		Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId, loginToken)
+		return
 	end
 
 	Forum:getSingleton():userLogin(username, password, Async.waitFor(self))
@@ -164,6 +193,11 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	player:spawn()
 	player:triggerEvent("loginsuccess", pwhash)
 
+	if not Account.FORUM_LOGIN then
+		player:setSessionId("none")
+		return
+	end
+
 	if player:isActive() then
 		--
 		jwtSign(function(result)
@@ -230,6 +264,22 @@ function Account.register(player, username, password, email)
 		end
 	end
 
+	-- Login via Database
+	if not Account.FORUM_LOGIN then
+		if sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Name = ?", sql:getPrefix(), username) then
+			player:triggerEvent("registerfailed", _("Benutzername wird bereits verwendet!", player))
+			return false
+		end
+
+		if sql:queryFetchSingle("SELECT Name FROM ??_account WHERE EMail = ?", sql:getPrefix(), email) then
+			player:triggerEvent("registerfailed", _("E-Mail wird bereits verwendet!", player))
+			return false
+		end
+
+		Account.createAccount(player, 0, username, email, password)
+		return
+	end
+
 	-- Check if someone uses this username already
 	Account.createForum(username, password, email, player, Async.waitFor(self))
 	local result = Async.wait()
@@ -258,8 +308,14 @@ end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
 
-function Account.createAccount(player, boardId, username, email)
+function Account.createAccount(player, boardId, username, email, password)
 	local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumId, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), boardId, username, email, 0, player:getSerial(), player:getIP())
+	if password then
+		local salt = md5(math.random())
+		local passwordHash = sha256(salt..password)
+		sql:queryExec("UPDATE ??_account SET Password = ?, Salt = ? WHERE Name = ? ", sql:getPrefix(), passwordHash, salt, username)
+	end
+	
 	if result then
 		Account.loginSuccess(player, Id, username, boardId, RegisterDate, 0, nil, false)
 	else

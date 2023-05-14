@@ -29,8 +29,8 @@ function Core:constructor()
 
 	-- Create file logger for sql performance
 	FileLogger:new()
-	influx = InfluxDB:new("exo_mta_server", "BtuV2*mkZN4bkXcp*qFqGfCvKFM6kuaU", "exo_mta_sperf")
-	influxPlayer = InfluxDB:new("exo_mta_server", "BtuV2*mkZN4bkXcp*qFqGfCvKFM6kuaU", "exo_mta")
+	influx = InfluxDB:new("", "", "")
+	influxPlayer = InfluxDB:new("", "", "")
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
@@ -41,7 +41,8 @@ function Core:constructor()
 	sqlLogs:setPrefix("vrpLogs")
 
 	-- Create ACL user for web-access
-	self.m_ACLAccount = addAccount("exo_web", "tp&Qy?d{SbS*~By]")
+	--[[
+	self.m_ACLAccount = addAccount("", "")
 
 	local aclGroup = aclGetGroup("web")
     if not aclGroup then aclGroup = aclCreateGroup("web") end
@@ -55,6 +56,7 @@ function Core:constructor()
 	acl:setRight("function.fetchRemote", true)
 
 	aclGroup:addObject("user.exo_web")
+	]]
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
 	if GIT_BRANCH == "release/production" then

@@ -28,7 +28,7 @@ function Discord:outputBreakingNews( text )
 				username="Breaking News",
 			},
 		}
-		fetchRemote ( "https://discordapp.com/api/webhooks/401093257481682944/xX4jy3rTLFByTtGoXJeT8efFcJhLlh09ny0DS3xvLHIlBvYl0-z_cbmcY8cUXEVRnVbv", postData, function() end )
+		fetchRemote ( "", postData, function() end )
 	else 
 		outputDebugString("Discord Breaking-News was not sent ( Debug-Mode )", 3)
 	end
@@ -57,7 +57,7 @@ Das Gebiet '%s' der Fraktion %s wurde von der Fraktion %s angegriffen%s. Details
 				username="Gangwar-Ergebnisse",
 			},
 		}
-		fetchRemote ( "https://discordapp.com/api/webhooks/446674374230016012/oX1s0ReBw1vurodCnQnYVC-MSVFRqKeN_-ed-cB3rFj33PUO4g-QoJLPOeGSU0aZzn6r", postData, function() end )
+		fetchRemote ( "", postData, function() end )
 	--else 
 		outputDebugString("Discord Breaking-News was not sent ( Debug-Mode )", 3)
 	--end

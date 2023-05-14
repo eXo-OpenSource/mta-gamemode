@@ -47,7 +47,7 @@ function QuestPackageFind:reload()
 	end
 	self.m_Objects = {}
 
-   	local result = sql:queryFetch("SELECT * FROM ??_word_objects WHERE Typ = 'Osterei';", sql:getPrefix())
+   	local result = sql:queryFetch("SELECT * FROM ??_static_world_items WHERE Typ = 'Osterei';", sql:getPrefix())
 	for i, row in pairs(result) do
 		if chance(10) then
 			self:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))

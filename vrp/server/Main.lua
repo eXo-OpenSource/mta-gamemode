@@ -33,8 +33,8 @@ local function sendSlackMessage(msg, level, stackTrace)
 		for id = #stackTrace, 1, -1 do
 			local data = stackTrace[id]
 			data[1] = data[1]:gsub("@", "") -- for some reason msgs start with an @ which we don't need
-			formattedStackTrace =
-			formattedStackTrace .. ("<https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s#L%d|%s:%d>\n"):format(GIT_BRANCH or "master", data[1], data[2], data[1], data[2])
+			--formattedStackTrace =
+			--formattedStackTrace .. (""):format(GIT_BRANCH or "master", data[1], data[2], data[1], data[2])
 		end
 		local json = toJSON({
 			color = ("%s"):format(level == 2 and "ffcc00" or "ff0000"),
@@ -49,12 +49,14 @@ local function sendSlackMessage(msg, level, stackTrace)
 		}, true)
 		json = json:sub(2, #json-1)
 
+		--[[
 		local status = callRemote(INGAME_WEB_PATH .. "/slack.php", function (...) end, json)
 		if status then
 			outputDebugString("[Error-Listener] Reported Error to Slack!", 3)
 		else
 			outputDebugString("[Error-Listener] Reporting Error to Slack failed!", 3)
-		end
+		end 
+		]]
 	end
 end
 

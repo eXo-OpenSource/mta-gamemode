@@ -148,7 +148,7 @@ function Faction:save()
 	if self.m_Settings then
 		self.m_Settings:save()
 	end
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, RankPermissions = ?, RankActions = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), toJSON(self.m_RankPermissions), toJSON(self.m_RankActions), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, RankPermissions = ?, RankActions = ?, BankAccount = ?, Depot = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), toJSON(self.m_RankPermissions), toJSON(self.m_RankActions), self.m_BankAccount:getId(), self.m_Depot:getId(), diplomacy, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end

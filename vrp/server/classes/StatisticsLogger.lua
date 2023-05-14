@@ -503,10 +503,10 @@ function StatisticsLogger:addGangwarLog(area, attacker, owner, starttimestamp, e
 			area, attacker, owner, starttimestamp, endtimestamp, winner)
 end
 
-function StatisticsLogger:addHalloweenLog(player, bonus, pumpkins, sweets)
+function StatisticsLogger:addEventShopLog(player, bonus, primary, secondary)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	sqlLogs:queryExec("INSERT INTO ??_EventHalloween (UserId, Bonus, Pumpkins, Sweets, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
-	userId, bonus, pumpkins, sweets)
+	sqlLogs:queryExec("INSERT INTO ??_EventShop (UserId, Bonus, PrimaryItems, SecondaryItems, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+		userId, bonus, primary, secondary)
 end
 
 function StatisticsLogger:addGangwarDebugLog( warning, areaObj, attackSession)

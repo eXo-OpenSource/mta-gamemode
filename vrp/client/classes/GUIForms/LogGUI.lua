@@ -37,7 +37,7 @@ function LogGUI:updateLog(start, amount)
 	self.m_Cache = {}
 
 	local options = {
-		["postData"] = ("secret=%s"):format("8H041OAyGYk8wEpIa1Fv")
+		["postData"] = ("secret=%s"):format("")
 	}
 
 	local filter = "";

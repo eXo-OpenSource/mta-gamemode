@@ -339,7 +339,7 @@ function Halloween:Event_buyBonus(bonusId)
 	client:getInventory():removeItem("Suessigkeiten", bonus["Sweets"])
 	client:getInventory():removeItem("Kürbis", bonus["Pumpkin"])
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Kürbisse und %d Süßigkeiten gekauft!", client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"]))
-	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"])
+	StatisticsLogger:getSingleton():addEventShopLog(client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"])
 
 end
 
