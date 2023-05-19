@@ -56,7 +56,8 @@ function Core:constructor()
 
 				Provider:getSingleton():requestFiles(
 					bind(DownloadGUI.onComplete, dgi),
-					bind(DownloadGUI.onProgress, dgi)
+					bind(DownloadGUI.onProgress, dgi),
+					bind(DownloadGUI.onWrite, dgi)
 				)
 			end
 		)

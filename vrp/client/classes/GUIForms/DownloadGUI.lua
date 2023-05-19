@@ -22,6 +22,11 @@ function DownloadGUI:onProgress(p, fullSize)
 	self:setStateText(("%.2fMB / %.2fMB"):format(downloadedSize/1024/1024, fullSize/1024/1024))
 end
 
+function DownloadGUI:onWrite(files)
+	self.m_ProgressBar:setProgress(100)
+	self:setStateText(("Schreibe %d Dateien auf Festplatte..."):format(files))
+end
+
 function DownloadGUI:setStateText(text)
 	self.m_ProgressBar:setText(text)
 end
