@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `vrpLogs_ChatReceivers` (
   PRIMARY KEY (`MessageId`,`Receiver`) USING BTREE,
   KEY `vrpLogs_ChatReceivers_vrpLogs_Chat_ID_fk` (`MessageId`) USING BTREE,
   KEY `Receiver` (`Receiver`) USING BTREE,
-  CONSTRAINT `vrpLogs_ChatReceivers_vrpLogs_Chat_ID_fk` FOREIGN KEY (`MessageId`) REFERENCES `vrpLogs_chat` (`ID`)
+  CONSTRAINT `vrpLogs_ChatReceivers_vrpLogs_Chat_ID_fk` FOREIGN KEY (`MessageId`) REFERENCES `vrpLogs_Chat` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
