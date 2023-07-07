@@ -1,0 +1,43 @@
+name: Build docker
+on:
+  push:
+    branches:
+      - master
+
+env:
+  IMAGE_ID: "ghcr.io/exo-opensource/mta-gamemode" 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Building script
+        run: |
+          sudo apt update && sudo apt install -y python3 git lua5.1
+          echo "GIT_VERSION=\"$(git rev-parse HEAD)\" ; GIT_BRANCH=\"$GITHUB_REF_NAME\"" >> vrp/buildinfo.lua
+          python3 build/lint.py
+          python3 build/buildscript.py --branch $GITHUB_REF_NAME
+          python3 build/packAssets.py
+          ./build/make_archives.sh
+          wget -q -O build/workerserver https://github.com/eXo-OpenSource/deploy-workerunit/releases/download/v1.0/workserver
+          wget -q -O build/ml_gps.so https://github.com/eXo-OpenSource/ml_pathfind/releases/download/v1.0.3/ml_pathfind.so
+          wget -q -O build/ml_jwt.so https://github.com/eXo-OpenSource/ml_jwt/releases/download/1.0-wip/ml_jwt.so
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          labels: "runnumber=${GITHUB_RUN_ID}"
+          platforms: "linux/amd64"
+          push: true
+          tags: "${{ env.IMAGE_ID }}:latest"

@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 
 # Prerequisites
 RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip openssl libncursesw5
@@ -9,24 +9,26 @@ RUN echo $TZ | tee /etc/timezone && \
 	dpkg-reconfigure --frontend noninteractive tzdata
 
 # Setup user and change to its home
-RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
-	cd /var/lib/mtasa && \
+RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa
+
+WORKDIR /var/lib/mtasa
 
 	# Download and install MTA Server
-	wget -q -O mta.tar.gz https://nightly.mtasa.com/multitheftauto_linux_x64-1.5.8-rc-20985.tar.gz && \
+RUN	wget -q -O mta.tar.gz https://nightly.multitheftauto.com/multitheftauto_linux_x64-1.6.0-rc-21884.tar.gz && \
 	tar xfz mta.tar.gz && mv multitheftauto*/* ./ && \
+    ls -ls && \
 	rm -Rf multitheftauto* && \
-	rm mta.tar.gz && \
+	rm mta.tar.gz
 
 	# Download default resources
-	mkdir /var/lib/mtasa/mods/deathmatch/resources && \
+RUN	mkdir /var/lib/mtasa/mods/deathmatch/resources && \
 	cd /var/lib/mtasa/mods/deathmatch/resources && \
-	wget -q -O res.zip https://mirror.mtasa.com/mtasa/resources/mtasa-resources-latest.zip && \
+	wget -O res.zip https://mirror.mtasa.com/mtasa/resources/mtasa-resources-latest.zip && \
 	unzip res.zip && \
-	rm res.zip && \
+	rm res.zip
 
 	# Create modules directory and delete bad shipped libs
-	mkdir /var/lib/mtasa/x64/modules && \
+RUN	mkdir /var/lib/mtasa/x64/modules && \
 	rm -Rf /var/lib/mtasa/x64/linux-libs
 
 # Expose ports (22003/udp, 22126/udp, 22005/tcp are exposed dynamically)
@@ -36,7 +38,6 @@ EXPOSE 8080/tcp
 ADD build/workerserver /var/lib/mtasa/workerserver
 ADD build/ml_gps.so /var/lib/mtasa/x64/modules/ml_gps.so
 ADD build/ml_jwt.so /var/lib/mtasa/x64/modules/ml_jwt.so
-ADD build/ml_redis.so /var/lib/mtasa/x64/modules/ml_redis.so
 
 # Add entrypoint script
 ADD build/docker-entrypoint.sh /docker-entrypoint.sh
