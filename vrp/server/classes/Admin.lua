@@ -961,12 +961,8 @@ function Admin:chat(player,cmd,...)
 end
 
 function Admin:toggleJetPack(player)
-	if player:getRank() >= RANK.Supporter and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
-		givePedJetPack(player)
-	else
-		if doesPedHaveJetPack(player) then
-			removePedJetPack(player)
-		end
+	if player:getRank() >= RANK.Supporter and player:getPublicSync("supportMode") then
+		setPedWearingJetpack(player, not isPedWearingJetpack(player))
 	end
 end
 

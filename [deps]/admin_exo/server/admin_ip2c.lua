@@ -290,7 +290,7 @@ FileLineReader = {
 			-- Found '\n' ?
 			if endpos then
 				local line = string.sub(self.buffer, 1, endpos - 1)
-				self.buffer = string.sub(self.buffer, endpos + 1)
+				self.buffer = string.sub(self.buffer, endpos + 1, -1)
 				return line
 			end
 			-- Get more bytes if possible

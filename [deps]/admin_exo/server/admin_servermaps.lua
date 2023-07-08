@@ -153,7 +153,7 @@ function sortCompareFunction(s1, s2)
     elseif byte1 < byte2 then
         return true
     elseif byte1 == byte2 then
-        return sortCompareFunction(s1:sub(2), s2:sub(2))
+        return sortCompareFunction(s1:sub(2, -1), s2:sub(2, -1))
     else
         return false
     end

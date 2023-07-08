@@ -124,7 +124,7 @@ function RadioCommunicationGUI:input(id)
 		self:format()
 		playSound("files/audio/walkie_click.ogg")
 	elseif id == 10 then 
-		self.m_Input = self.m_Input:sub(2)
+		self.m_Input = self.m_Input:sub(2, -1)
 		self:format()
 		playSound("files/audio/walkie_click.ogg")
 	elseif id == 11 then 
@@ -148,13 +148,13 @@ function RadioCommunicationGUI:format()
 	if self.m_Input == "" then 
 		self.m_DisplayCenter:setText(("%s MHz"):format("-"))	
 	elseif #self.m_Input == 3 then 
-		display = ("%s.%s"):format(self.m_Input:sub(1, #self.m_Input-2), self.m_Input:sub(-2))
+		display = ("%s.%s"):format(self.m_Input:sub(1, #self.m_Input-2), self.m_Input:sub(-2, -1))
 		self.m_DisplayCenter:setText(("%s MHz"):format(display))
 	elseif #self.m_Input >= 4 then 
-		display = ("%s.%s"):format(self.m_Input:sub(1, #self.m_Input-3), self.m_Input:sub(-3))
+		display = ("%s.%s"):format(self.m_Input:sub(1, #self.m_Input-3), self.m_Input:sub(-3, -1))
 		if #self.m_Input > 5 then 
-			self.m_Input = self.m_Input:sub(2)
-			display = display:sub(2)
+			self.m_Input = self.m_Input:sub(2, -1)
+			display = display:sub(2, -1)
 		end
 		self.m_DisplayCenter:setText(("%s MHz"):format(display))	
 	else 
@@ -167,13 +167,13 @@ function RadioCommunicationGUI:formatSecond()
 	if self.m_InputPre == "" then 
 		self.m_DisplayBottom:setText(("%s MHz"):format("-"))	
 	elseif #self.m_InputPre == 3 then 
-		display = ("%s.%s"):format(self.m_InputPre:sub(1, #self.m_InputPre-2), self.m_InputPre:sub(-2))
+		display = ("%s.%s"):format(self.m_InputPre:sub(1, #self.m_InputPre-2), self.m_InputPre:sub(-2, -1))
 		self.m_DisplayBottom:setText(("%s MHz"):format(display))
 	elseif #self.m_InputPre >= 4 then 
-		display = ("%s.%s"):format(self.m_InputPre:sub(1, #self.m_InputPre-3), self.m_InputPre:sub(-3))
+		display = ("%s.%s"):format(self.m_InputPre:sub(1, #self.m_InputPre-3), self.m_InputPre:sub(-3, -1))
 		if #self.m_InputPre > 5 then 
-			self.m_InputPre = self.m_InputPre:sub(2)
-			display = display:sub(2)
+			self.m_InputPre = self.m_InputPre:sub(2, -1)
+			display = display:sub(2, -1)
 		end
 		self.m_DisplayBottom:setText(("%s MHz"):format(display))	
 	else 

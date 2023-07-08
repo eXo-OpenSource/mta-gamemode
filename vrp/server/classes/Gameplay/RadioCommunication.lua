@@ -130,13 +130,13 @@ function RadioCommunication:format(input)
 	if input == "" then 
 		return (("%s MHz"):format("-"))	
 	elseif #input == 3 then 
-		display = ("%s.%s"):format(input:sub(1, #input-2), input:sub(-2))
+		display = ("%s.%s"):format(input:sub(1, #input-2), input:sub(-2, -1))
 		return (("%s MHz"):format(display))
 	elseif #input >= 4 then 
-		display = ("%s.%s"):format(input:sub(1, #input-3), input:sub(-3))
+		display = ("%s.%s"):format(input:sub(1, #input-3), input:sub(-3, -1))
 		if #input > 5 then 
-			input = input:sub(2)
-			display = display:sub(2)
+			input = input:sub(2, -1)
+			display = display:sub(2, -1)
 		end
 		return (("%s MHz"):format(display))	
 	else 

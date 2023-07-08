@@ -12,7 +12,7 @@ function debugOutput(s)
 				local s, e = tostring(info):find('\\mods\\deathmatch\\resources\\', 0, true)
 				
 				if s and e then
-					source = tostring(info):sub(e)
+					source = tostring(info):sub(e, -1)
 				end
 			elseif tostring(title) == "currentline" then
 				line = tostring(info)

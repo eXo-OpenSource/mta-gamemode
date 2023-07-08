@@ -63,7 +63,7 @@ function aCommand ( admin, command, ... )
 			if not errormsg then
 				if ( call.type == "player" ) then triggerEvent ( "aPlayer", admin, arg[1], call.action, arg[2], arg[3], arg[4] )
 				elseif ( call.type == "vehicle" ) then triggerEvent ( "aVehicle", admin, arg[1], call.action, arg[2], arg[3], arg[4] )
-				else triggerEvent ( "a"..string.upper ( string.sub ( call.type, 1, 1 ) )..string.sub ( call.type, 2 ), admin, call.action, arg[1], arg[2], arg[3], arg[4] )
+				else triggerEvent ( "a"..string.upper ( string.sub ( call.type, 1, 1 ) )..string.sub ( call.type, 2, -1 ), admin, call.action, arg[1], arg[2], arg[3], arg[4] )
 				end
 			else
 				outputChatBox ( "Error: "..errormsg, admin, 255, 0, 0 )

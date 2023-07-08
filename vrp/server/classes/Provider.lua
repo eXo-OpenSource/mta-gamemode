@@ -8,7 +8,7 @@
 Provider = inherit(Singleton)
 addEvent("onClientRequestFile", true)
 local DOWNLOAD_SPEED = 8 * 1024 * 1024 -- 8MiB/s
-local DOWNLOAD_SIZE = 100 * 1024 * 1024 -- 100MB, Max size per latent client event
+local DOWNLOAD_SIZE = 90 * 1024 * 1024 -- 100MB, Max size per latent client event
 
 function Provider:constructor()
 	addEventHandler("onClientRequestFile", resourceRoot, bind(Provider.onClientRequestFile, self))

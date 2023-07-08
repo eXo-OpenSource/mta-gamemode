@@ -64,7 +64,7 @@ function utils.class.new(class, ...)
 	-- Add a change handler for all ._changeVARIABLE methods
 	for k, v in pairs(class) do
 		if k:sub(1, 7) == "_change" then
-			utils.class.addChangeHandler(instance, k:sub(8), v)
+			utils.class.addChangeHandler(instance, k:sub(8, -1), v)
 		end
 	end
 
@@ -118,7 +118,7 @@ function utils.class.enew(element, class, ...)
 	-- Add a change handler for all ._changeVARIABLE methods
 	for k, v in pairs(class) do
 		if k:sub(1, 7) == "_change" then
-			utils.class.addChangeHandler(instance, k:sub(8), v)
+			utils.class.addChangeHandler(instance, k:sub(8, -1), v)
 		end
 	end
 	

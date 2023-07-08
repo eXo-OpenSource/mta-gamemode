@@ -723,7 +723,7 @@ function loadStage()
 
 	function RemovePed(id)
 	if (source==direct) then
-		local pedid = tonumber(string.sub(id,4))
+		local pedid = tonumber(string.sub(id,4, -1))
 			destroyElement(recData[pedid]["ped"])
 			recData[pedid]= nil
 			-- 1.4.5

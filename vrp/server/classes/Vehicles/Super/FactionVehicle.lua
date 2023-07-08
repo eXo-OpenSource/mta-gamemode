@@ -68,7 +68,7 @@ function FactionVehicle:constructor(data)
 		self:setDoorsUndamageable(true)
 	end
 	
-	self:setPlateText((self.m_Faction.m_ShorterName .. " " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
+	self:setPlateText((self.m_Faction.m_ShorterName .. " " .. ("000000" .. tostring(self.m_Id)):sub(-5, -1)):sub(0,8))
 
 	self:setLocked(false) -- Unlock faction vehicles
 	self.m_SpawnDim = data.Dimension 

@@ -85,7 +85,7 @@ function aAdminSettings ( type, resName, settingstable )
 			table.sort(namesList, function(a,b) return(a < b) end)
 			-- Add to gridlist using sorted names
 			local row = guiGridListAddRowMaybe( aSettingsList, rowindex )
-			guiGridListSetItemText ( aSettingsList, row, 1, string.sub(groupname,1,1)=='_' and string.sub(groupname,2) or groupname, true, false )
+			guiGridListSetItemText ( aSettingsList, row, 1, string.sub(groupname,1,1)=='_' and string.sub(groupname,2, -1) or groupname, true, false )
 			for i,name in ipairs(namesList) do
 				local value = aSettingsData["settings"][name]
 				row = guiGridListAddRowMaybe( aSettingsList, rowindex )

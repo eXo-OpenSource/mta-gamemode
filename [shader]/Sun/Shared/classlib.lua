@@ -68,7 +68,7 @@ function new(class, ...)
 	-- Add a change handler for all ._changeVARIABLE methods
 	for k, v in ipairs(class) do
 		if k:sub(1, 7) == "_change" then
-			addChangeHandler(instance, k:sub(8), v)
+			addChangeHandler(instance, k:sub(8, -1), v)
 		end
 	end
 
@@ -128,7 +128,7 @@ function enew(element, class, ...)
 	-- Add a change handler for all ._changeVARIABLE methods
 	for k, v in ipairs(class) do
 		if k:sub(1, 7) == "_change" then
-			addChangeHandler(instance, k:sub(8), v)
+			addChangeHandler(instance, k:sub(8, -1), v)
 		end
 	end
 	

@@ -222,7 +222,7 @@ function PermanentVehicle:virtual_constructor(data)
 		--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
 		self.m_HasBeenUsed = 0
-		self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
+		self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5, -1)):sub(0,8))
 
 		if VEHICLE_MAX_PASSENGER[data.Model] then
 			self:initVehicleSeatExtension()

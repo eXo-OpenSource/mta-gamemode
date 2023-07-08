@@ -942,7 +942,7 @@ function normalize(x, y, z)
 end
 
 function addComas(str)
-	return #str % 3 == 0 and str:reverse():gsub("(%d%d%d)", "%1."):reverse():sub(2) or str:reverse():gsub("(%d%d%d)", "%1."):reverse()
+	return #str % 3 == 0 and str:reverse():gsub("(%d%d%d)", "%1."):reverse():sub(2, -1) or str:reverse():gsub("(%d%d%d)", "%1."):reverse()
 end
 
 URLEncoder = {

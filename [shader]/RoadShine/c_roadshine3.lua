@@ -530,7 +530,7 @@ function dxCreateShader( filepath, priority, maxDistance, bDebug )
 	bDebug = bDebug or false
 
 	-- Slight hack - maxEffectDistance doesn't work properly before build 3236 if fullscreen
-	local build = getVersion ().sortable:sub(9)
+	local build = getVersion ().sortable:sub(9, -1)
 	local fullscreen = not dxGetStatus ().SettingWindowed
 	if build < "03236" and fullscreen then
 		maxDistance = 0

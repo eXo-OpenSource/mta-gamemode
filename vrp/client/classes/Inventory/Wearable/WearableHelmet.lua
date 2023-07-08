@@ -31,7 +31,7 @@ function WearableHelmet:onTearNade()
 		triggerServerEvent("onPlayerEnterTearGas", localPlayer)
 	end
 	self.m_StopEffectTimer = setTimer(self.m_StopBind, 1500, 1)
-	setControlState(localPlayer, "walk", true)
+	setPedControlState(localPlayer, "walk", true)
 	toggleControl("sprint", false)
 	toggleControl("fire", false)
 	toggleControl("aim_weapon", false)
@@ -47,7 +47,7 @@ function WearableHelmet:onEffectStop()
 		self.m_ZoomBlur:delete()
 		self.m_ZoomBlur = nil
 	end
-	setControlState(localPlayer, "walk", false)
+	setPedControlState(localPlayer, "walk", false)
 	toggleControl("sprint", true)
 	toggleControl("jump", true)
 	toggleControl("fire", true)

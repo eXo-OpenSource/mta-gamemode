@@ -29,7 +29,7 @@ function InfluxLogging:writePerformance()
 				if name:sub(0, 1) ~= "." then
 					resource = name
 				else
-					if name ~= "unknown" then name = name:sub(#name * -1 + 1) end
+					if name ~= "unknown" then name = name:sub(#name * -1 + 1, -1) end
 					influx:write("performance", {["serial"] = localPlayer:getSerial(), ["name"] = name, ["resource"] = resource}, {["cpuTime"] = time, ["calls"] = calls, ["cpuUsage"] = tonumber(v[2]:sub(0, -2))})
 				end
             end
