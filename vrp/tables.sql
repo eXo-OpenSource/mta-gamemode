@@ -341,7 +341,7 @@ CREATE TABLE IF NOT EXISTS `vrpLogs_FishTrade` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 
-CREATE TABLE IF NOT EXISTS `vrpLogs_Gamestats` (
+CREATE TABLE IF NOT EXISTS `vrpLogs_GameStats` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Game` varchar(255) DEFAULT NULL,
   `Incoming` bigint(255) DEFAULT NULL,
@@ -350,7 +350,7 @@ CREATE TABLE IF NOT EXISTS `vrpLogs_Gamestats` (
   PRIMARY KEY (`Id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `vrpLogs_gamestats` (`Id`, `Game`, `Incoming`, `Outgoing`, `Played`) VALUES
+INSERT INTO `vrpLogs_GameStats` (`Id`, `Game`, `Incoming`, `Outgoing`, `Played`) VALUES
 	(1, 'Roulette', 0, 0, 0),
 	(2, 'HorseRace', 0, 0, 0),
 	(3, 'TurtleRace', 0, 0, 0);
@@ -2209,7 +2209,7 @@ INSERT INTO `vrp_group_property` (`Id`, `Name`, `GroupId`, `Type`, `Price`, `Cam
 	(65, 'Rodeo Drive #1', 0, 2, 2250000, '372.77709960938, -1549.8039550781, 48.541698455811, 371.99655151367, -1549.1822509766, 48.606342315674', '327.806, -1513.861, 36.039', 3, '384.808624,173.804992,1008.382812 	', 1, '', 0, NULL),
 	(66, 'Commerce Boulevard #15', 0, 2, 1000000, '1517.2209472656, -1422.8994140625, 18.906299591064, 1517.2803955078, -1423.8884277344, 18.771417617798', '1518.918, -1453.188, 14.206', 3, '384.808624,173.804992,1008.382812 	', 1, '', 0, NULL);
 
-CREATE TABLE IF NOT EXISTS `vrp_group_propkeys` (
+CREATE TABLE IF NOT EXISTS `vrp_group_propKeys` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Owner` int(11) NOT NULL,
   `PropId` int(11) NOT NULL,
@@ -17429,7 +17429,7 @@ CREATE TABLE IF NOT EXISTS `vrp_warns` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE IF NOT EXISTS `vrp_worlditems` (
+CREATE TABLE IF NOT EXISTS `vrp_WorldItems` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `Item` text NOT NULL,
   `Model` int(11) NOT NULL,
@@ -17447,7 +17447,7 @@ CREATE TABLE IF NOT EXISTS `vrp_worlditems` (
   PRIMARY KEY (`Id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `vrp_worlditems` (`Id`, `Item`, `Model`, `Owner`, `PosX`, `PosY`, `PosZ`, `Rotation`, `Interior`, `Dimension`, `Value`, `Breakable`, `Locked`, `Date`) VALUES
+INSERT INTO `vrp_WorldItems` (`Id`, `Item`, `Model`, `Owner`, `PosX`, `PosY`, `PosZ`, `Rotation`, `Interior`, `Dimension`, `Value`, `Breakable`, `Locked`, `Date`) VALUES
 	(1, 'Tor', 1493, 220, 1420.12, -1859.46, -36.5315, 0, 0, 3, '+49+50:2957:1420.6999511719:-1859.4615478516:-30', 0, 0, '2019-10-21 22:56:26'),
 	(2, 'Keypad', 2886, 220, 1418, -1859.56, -36.822, 0, 0, 3, '09040', 0, 0, '2019-10-21 22:57:03'),
 	(3, 'Keypad', 2886, 220, 1417.61, -1859.61, -36.717, 180, 0, 3, '09040', 0, 0, '2019-10-21 23:05:26');
