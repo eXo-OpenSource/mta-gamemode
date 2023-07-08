@@ -43,6 +43,8 @@ function Core:constructor()
 	sqlLogs = MySQL:new(Config.get('mysql')['logs']['host'], Config.get('mysql')['logs']['port'], Config.get('mysql')['logs']['username'], Config.get('mysql')['logs']['password'], Config.get('mysql')['logs']['database'], Config.get('mysql')['logs']['socket'])
 	sqlLogs:setPrefix("vrpLogs")
 
+	MigrationManager:new()
+
 	-- Create ACL user for web-access
 	--[[
 	self.m_ACLAccount = addAccount("", "")

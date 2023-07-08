@@ -16,6 +16,10 @@
     ```
     mklink /J [vrp] "pfadZumGitKlon"
     ```
+
+    ```
+    ln -s 'pfadZumGitKlon' '[vrp]'
+    ```
     Dies erzeugt einen symbolischene Verknüpfung zum eigentlichen Ressourcenordner.
 6. Config-Vorlage `config.json.dist` unter `vrp/server/config/` nach `config.json` kopieren.
 

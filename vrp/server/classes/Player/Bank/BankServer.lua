@@ -9,10 +9,6 @@ BankServer = inherit(Singleton)
 BankServer.Map = {}
 
 function BankServer:constructor()
-    if #sql:queryFetch("SELECT table_name FROM information_schema.tables WHERE table_schema = ? AND table_name = ?", Config.get('mysql')['main']['database'], sql:getPrefix() .. "_server_bank_accounts") == 0 then
-        sql:queryExec("CREATE TABLE ??_server_bank_accounts(Id INT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(32), BankAccount INT); CREATE UNIQUE INDEX ??_server_bank_accounts_Id_uindex ON ??_server_bank_accounts (Id);", sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
-    end
-
     self:loadAccounts()
 end
 

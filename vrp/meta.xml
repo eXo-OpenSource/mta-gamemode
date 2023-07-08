@@ -96,6 +96,7 @@
 	<script src="server/classes/PedScale.lua" type="server"/>
 	<script src="server/classes/PermissionsManager.lua" type="server"/>
 	<script src="server/classes/LeaderCheck.lua" type="server"/>
+	<script src="server/classes/MigrationManager.lua" type="server"/>
 
 
 	<!-- Super -->
@@ -582,6 +583,13 @@
 	<script src="server/tests/UtilsTest.lua" type="server"/>
 	<script src="server/tests/GroupTest.lua" type="server"/>
 	<script src="server/tests/PromiseTest.lua" type="server"/>
+
+	<!-- Migrations -->
+	<script src="server/migrations/Migration_20230707_2258_premium_db.lua" type="server"/>
+	<script src="server/migrations/Migration_20230707_2312_logs_db.lua" type="server"/>
+	<script src="server/migrations/Migration_20230707_2320_game_db.lua" type="server"/>
+	<script src="server/migrations/Migration_20230707_2322_game_db_data.lua" type="server"/>
+	<script src="server/migrations/Migration_20230708_2055_game_view.lua" type="server"/>
 
 	<script src="server/Main.lua" type="server"/>
 
