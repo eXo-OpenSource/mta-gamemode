@@ -29,8 +29,11 @@ function Core:constructor()
 
 	-- Create file logger for sql performance
 	FileLogger:new()
-	influx = InfluxDB:new("", "", "")
-	influxPlayer = InfluxDB:new("", "", "")
+	if not DISABLE_INFLUX then
+		influx = InfluxDB:new("", "", "")
+		influxPlayer = InfluxDB:new("", "", "")
+		InfluxLogging:new()
+	end
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
@@ -71,7 +74,6 @@ function Core:constructor()
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
 		Time:new()
-		InfluxLogging:new()
 		ServerSettings:new()
 		AntiCheat:new()
 		ModdingCheck:new()

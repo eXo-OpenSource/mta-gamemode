@@ -1,7 +1,7 @@
 PROJECT_NAME = "eXo Reallife"
 PROJECT_VERSION = "1.10"
-DISABLE_SENTRY = false
-DISABLE_INFLUX = false
+DISABLE_SENTRY = true
+DISABLE_INFLUX = true
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
