@@ -1,0 +1,43 @@
+services:
+  mtasa:
+    image: ghcr.io/exo-opensource/mta-gamemode:latest
+    restart: unless-stopped
+    ports:
+      - 22003:22003/udp
+      - 22005:22005
+      - 22126:22126/udp
+      - 127.0.0.1:5000:8080
+    environment:
+      - "API_SECRET=PLEASE_CHANGE_ME"
+      - "MTA_GAME_PORT=22003"
+      - "MTA_HTTP_PORT=22005"
+      - "MTA_SERVER_NAME=vRP Server"
+      - "START_MTA=please"
+      - "VRP_MYSQL_MAIN_HOST=mariadb"
+      - "VRP_MYSQL_MAIN_PORT=3306"
+      - "VRP_MYSQL_MAIN_USERNAME=root"
+      - "VRP_MYSQL_MAIN_PASSWORD=root"
+      - "VRP_MYSQL_MAIN_DATABASE=vrp"
+      - "VRP_MYSQL_LOGS_HOST=mariadb"
+      - "VRP_MYSQL_LOGS_PORT=3306"
+      - "VRP_MYSQL_LOGS_USERNAME=root"
+      - "VRP_MYSQL_LOGS_PASSWORD=root"
+      - "VRP_MYSQL_LOGS_DATABASE=vrp"
+      - "VRP_MYSQL_PREMIUM_HOST=mariadb"
+      - "VRP_MYSQL_PREMIUM_PORT=3306"
+      - "VRP_MYSQL_PREMIUM_USERNAME=root"
+      - "VRP_MYSQL_PREMIUM_PASSWORD=root"
+      - "VRP_MYSQL_PREMIUM_DATABASE=vrp"
+      - "VRP_BOARD_BASE_URL=https://forum.exo-reallife.de/index.php"
+      - "VRP_BOARD_SECRET="
+
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+#    ports:
+#      - "127.0.0.1:3306:3306" # For local access
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=vrp"
+      - "MYSQL_ROOT_PASSWORD=root"

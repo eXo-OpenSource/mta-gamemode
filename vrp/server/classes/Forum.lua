@@ -7,9 +7,12 @@
 -- ****************************************************************************
 Forum = inherit(Singleton)
 
+Config.register("BOARD_BASE_URL", "string", "")
+Config.register("BOARD_SECRET", "string", "")
+
 function Forum:constructor()
-	self.m_BaseUrl = Config.get('board')['baseurl']
-	self.m_Secret = Config.get('board')['secret']
+	self.m_BaseUrl = Config.get("BOARD_BASE_URL")
+	self.m_Secret = Config.get("BOARD_SECRET")
 end
 
 function Forum:destructor()

@@ -5,6 +5,7 @@ vrp_assets
 /tools/ml_gps/*.sdf
 /tools/ml_gps/*.suo
 /vrp/server/config/config.json
+/vrp/server/config/config.ini
 
 # IntelliJ IDEA 15 files
 .idea/

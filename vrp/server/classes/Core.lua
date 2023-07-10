@@ -1,6 +1,27 @@
 Core = inherit(Object)
 addEvent("Core.onClientInternalError", true)
 
+Config.register("MYSQL_MAIN_HOST", "string", "127.0.0.1")
+Config.register("MYSQL_MAIN_PORT", "number", "3306")
+Config.register("MYSQL_MAIN_USERNAME", "string", "root")
+Config.register("MYSQL_MAIN_PASSWORD", "string", "")
+Config.register("MYSQL_MAIN_DATABASE", "string", "vrp")
+
+Config.register("MYSQL_LOGS_HOST", "string", "127.0.0.1")
+Config.register("MYSQL_LOGS_PORT", "number", "3306")
+Config.register("MYSQL_LOGS_USERNAME", "string", "root")
+Config.register("MYSQL_LOGS_PASSWORD", "string", "")
+Config.register("MYSQL_LOGS_DATABASE", "string", "vrp")
+
+Config.register("MYSQL_PREMIUM_HOST", "string", "127.0.0.1")
+Config.register("MYSQL_PREMIUM_PORT", "number", "3306")
+Config.register("MYSQL_PREMIUM_USERNAME", "string", "root")
+Config.register("MYSQL_PREMIUM_PASSWORD", "string", "")
+Config.register("MYSQL_PREMIUM_DATABASE", "string", "vrp")
+
+Config.register("WEB_ACCOUNT_USERNAME", "string", "")
+Config.register("WEB_ACCOUNT_PASSWORD", "string", "")
+
 function Core:constructor()
 	outputServerLog("Initializing core...")
 	nextframe(function() --small hack to override the name meta-name
@@ -36,32 +57,31 @@ function Core:constructor()
 	end
 
 	-- Establish database connection
-	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
+	sql = MySQL:new(Config.get("MYSQL_MAIN_HOST"), Config.get("MYSQL_MAIN_PORT"), Config.get("MYSQL_MAIN_USERNAME"), Config.get("MYSQL_MAIN_PASSWORD"), Config.get("MYSQL_MAIN_DATABASE"), nil)
 	sql:setPrefix("vrp")
-	-- board = MySQL:new(Config.get('mysql')['board']['host'], Config.get('mysql')['board']['port'], Config.get('mysql')['board']['username'], Config.get('mysql')['board']['password'], Config.get('mysql')['board']['database'], Config.get('mysql')['board']['socket'])
-	sqlPremium = MySQL:new(Config.get('mysql')['premium']['host'], Config.get('mysql')['premium']['port'], Config.get('mysql')['premium']['username'], Config.get('mysql')['premium']['password'], Config.get('mysql')['premium']['database'], Config.get('mysql')['premium']['socket'])
-	sqlLogs = MySQL:new(Config.get('mysql')['logs']['host'], Config.get('mysql')['logs']['port'], Config.get('mysql')['logs']['username'], Config.get('mysql')['logs']['password'], Config.get('mysql')['logs']['database'], Config.get('mysql')['logs']['socket'])
+	sqlPremium = MySQL:new(Config.get("MYSQL_PREMIUM_HOST"), Config.get("MYSQL_PREMIUM_PORT"), Config.get("MYSQL_PREMIUM_USERNAME"), Config.get("MYSQL_PREMIUM_PASSWORD"), Config.get("MYSQL_PREMIUM_DATABASE"), nil)
+	sqlLogs = MySQL:new(Config.get("MYSQL_LOGS_HOST"), Config.get("MYSQL_LOGS_PORT"), Config.get("MYSQL_LOGS_USERNAME"), Config.get("MYSQL_LOGS_PASSWORD"), Config.get("MYSQL_LOGS_DATABASE"), nil)
 	sqlLogs:setPrefix("vrpLogs")
 
 	MigrationManager:new()
 
-	-- Create ACL user for web-access
-	--[[
-	self.m_ACLAccount = addAccount("", "")
+	if Config.get("WEB_ACCOUNT_USERNAME") ~= "" and Config.get("WEB_ACCOUNT_PASSWORD") ~= "" then
+		self.m_ACLAccount = Account.add(Config.get("WEB_ACCOUNT_USERNAME"), Config.get("WEB_ACCOUNT_PASSWORD"))
 
-	local aclGroup = aclGetGroup("web")
-    if not aclGroup then aclGroup = aclCreateGroup("web") end
+		local aclGroup = aclGetGroup("web")
+		if not aclGroup then aclGroup = aclCreateGroup("web") end
+	
+		local acl = aclGet("web")
+		if not acl then acl = aclCreate("web") end
+	
+		aclGroupAddACL(aclGroup, acl)
+		acl:setRight("general.http", true)
+		acl:setRight("function.callRemote", true)
+		acl:setRight("function.fetchRemote", true)
+	
+		aclGroup:addObject(("user.%s"):format(Config.get("WEB_ACCOUNT_USERNAME")))
+	end
 
-	local acl = aclGet("web")
-    if not acl then acl = aclCreate("web") end
-
-	aclGroupAddACL(aclGroup, acl)
-	acl:setRight("general.http", true)
-	acl:setRight("function.callRemote", true)
-	acl:setRight("function.fetchRemote", true)
-
-	aclGroup:addObject("user.exo_web")
-	]]
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
 	if GIT_BRANCH == "release/production" then

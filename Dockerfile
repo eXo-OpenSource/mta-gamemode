@@ -45,7 +45,6 @@ ADD build/docker-entrypoint.sh /docker-entrypoint.sh
 # Add MTA configs and modules
 ADD build/config/* /var/lib/mtasa/mods/deathmatch/
 ADD build/modules/* /var/lib/mtasa/x64/modules/
-ADD vrp/server/config/config.json.dist /var/lib/mtasa/config.json.dist
 
 # Add MTA resources
 ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
