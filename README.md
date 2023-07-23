@@ -13,15 +13,17 @@
     ```
 5. In den Ressourcenordner gehen und dann folgendes ausführen:
 
+    Unter Windows:
     ```
     mklink /J [vrp] "pfadZumGitKlon"
     ```
 
+    Unter Linux oder macOS:
     ```
     ln -s 'pfadZumGitKlon' '[vrp]'
     ```
     Dies erzeugt einen symbolischene Verknüpfung zum eigentlichen Ressourcenordner.
-6. Config-Vorlage `config.json.dist` unter `vrp/server/config/` nach `config.json` kopieren.
+6. Config-Vorlage `config.ini.example` unter `vrp/server/config/` nach `config.ini` kopieren.
 
 ## Datenbank
 `tables.sql` unter `vrp/` in einen MariaDB Server importieren.
