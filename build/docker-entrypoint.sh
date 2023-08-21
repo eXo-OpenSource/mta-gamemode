@@ -9,7 +9,7 @@ if [ ! -f "$CONFIG_DIR/config.ini" ]; then
 	echo "Populating config"
 	env | while IFS= read -r line; do
 		if [[ $line = VRP_* ]]; then
-			echo "$line\n" | sed "s/VRP_//g" >> $CONFIG_DIR/config.ini
+			echo "$line" | sed "s/VRP_//g" >> $CONFIG_DIR/config.ini
 		fi
 	done
 fi
