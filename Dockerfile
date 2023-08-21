@@ -14,7 +14,7 @@ RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa
 WORKDIR /var/lib/mtasa
 
 	# Download and install MTA Server
-RUN	wget -q -O mta.tar.gz https://nightly.multitheftauto.com/multitheftauto_linux_x64-1.6.0-rc-21884.tar.gz && \
+RUN	wget -q -O mta.tar.gz https://nightly.multitheftauto.com/multitheftauto_linux_x64-1.6.0-rc-21966.tar.gz && \
 	tar xfz mta.tar.gz && mv multitheftauto*/* ./ && \
     ls -ls && \
 	rm -Rf multitheftauto* && \
