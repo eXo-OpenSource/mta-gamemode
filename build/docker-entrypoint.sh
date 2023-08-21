@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 CONFIG_DIR=/var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
 # Exit immediately if something fails
