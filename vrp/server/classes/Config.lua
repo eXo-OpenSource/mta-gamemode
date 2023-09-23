@@ -26,8 +26,15 @@ end
 
 function Config:load()
 	local file = File.Open(Config.File)
-	local lines = split(file:getContent(), "\n")
+	local content = file:getContent()
 	file:close()
+
+	local lines
+	if getVersion().os == "Windows" then
+		lines = split(content, "\r\n")
+	else
+		lines = split(content, "\n")
+	end
 
 	for _, line in ipairs(lines) do
 		if line ~= "" then

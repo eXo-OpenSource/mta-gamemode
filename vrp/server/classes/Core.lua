@@ -63,7 +63,9 @@ function Core:constructor()
 	sqlLogs = MySQL:new(Config.get("MYSQL_LOGS_HOST"), Config.get("MYSQL_LOGS_PORT"), Config.get("MYSQL_LOGS_USERNAME"), Config.get("MYSQL_LOGS_PASSWORD"), Config.get("MYSQL_LOGS_DATABASE"), nil)
 	sqlLogs:setPrefix("vrpLogs")
 
-	MigrationManager:new()
+	if not DISABLE_MIGRATION then
+		MigrationManager:new()
+	end
 
 	if Config.get("WEB_ACCOUNT_USERNAME") ~= "" and Config.get("WEB_ACCOUNT_PASSWORD") ~= "" then
 		self.m_ACLAccount = Account.add(Config.get("WEB_ACCOUNT_USERNAME"), Config.get("WEB_ACCOUNT_PASSWORD"))
