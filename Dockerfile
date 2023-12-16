@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 
 # Prerequisites
 RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip openssl libncursesw5 libc6
