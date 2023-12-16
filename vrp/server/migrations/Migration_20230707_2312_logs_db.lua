@@ -655,17 +655,5 @@ Migration_20230707_2312_logs_db.Up = function()
             `Date` date DEFAULT NULL,
             PRIMARY KEY (`Id`) USING BTREE
           ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-          
-          CREATE TABLE `vrpLogs_vehicleTrade` (
-            `Id` int(11) NOT NULL AUTO_INCREMENT,
-            `SellerId` int(11) DEFAULT NULL,
-            `BuyerId` int(11) DEFAULT NULL,
-            `VehicleId` int(11) DEFAULT NULL,
-            `Trunk` text DEFAULT NULL,
-            `Price` int(10) DEFAULT NULL,
-            `Date` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-            `TradeType` varchar(255) DEFAULT NULL,
-            PRIMARY KEY (`Id`) USING BTREE
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
     ]]
 end
