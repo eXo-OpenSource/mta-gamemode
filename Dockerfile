@@ -3,6 +3,11 @@ FROM debian:bookworm
 # Prerequisites
 RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip openssl libncursesw5 libc6
 
+# Retreving older libssl version for mtasa
+RUN wget -O libssl-1.1.deb http://ftp.de.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb && \
+	apt -y install libssl-1.1.deb && \
+ 	rm libssl-1.1.deb
+
 # Set timezone
 ENV TZ=Europe/Berlin
 RUN echo $TZ | tee /etc/timezone && \
