@@ -23,7 +23,7 @@ RUN	wget -q -O mta.tar.gz https://nightly.multitheftauto.com/multitheftauto_linu
 	# Download default resources
 RUN	mkdir /var/lib/mtasa/mods/deathmatch/resources && \
 	cd /var/lib/mtasa/mods/deathmatch/resources && \
-	wget -O res.zip https://mirror.mtasa.com/mtasa/resources/mtasa-resources-latest.zip && \
+	wget -O res.zip https://mirror-cdn.multitheftauto.com/mtasa/resources/mtasa-resources-latest.zip && \
 	unzip res.zip && \
 	rm res.zip
 
