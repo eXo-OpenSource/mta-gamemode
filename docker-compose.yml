@@ -7,6 +7,11 @@ services:
       - 22005:22005
       - 22126:22126/udp
       - 127.0.0.1:5000:8080
+    links:
+      - mariadb:mariadb
+    depends_on:
+      mariadb:
+        condition: service_healthy
     environment:
       - "API_SECRET=PLEASE_CHANGE_ME"
       - "MTA_GAME_PORT=22003"
@@ -39,5 +44,12 @@ services:
     volumes:
       - ./data:/var/lib/mysql
     environment:
+      - "MYSQL_ROOT_HOST=%"
       - "MYSQL_DATABASE=vrp"
       - "MYSQL_ROOT_PASSWORD=root"
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
