@@ -14,15 +14,17 @@ on:
 
 jobs:
   build:
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      dockertag: ${{ inputs.version }}
+
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    needs: build
     steps:
     - uses: actions/checkout@v3
-
-    - uses: ./.github/workflows/build-docker.yml
-      with:
-        dockertag: ${{ inputs.version }}
 
     - uses: ncipollo/release-action@v1
       with:
