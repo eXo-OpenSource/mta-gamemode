@@ -18,11 +18,11 @@ jobs:
     permissions:
       contents: write
     steps:
+    - uses: actions/checkout@v3
+
     - uses: ./.github/workflows/build-docker.yml
       with:
         dockertag: ${{ inputs.version }}
-
-    - uses: actions/checkout@v3
 
     - uses: ncipollo/release-action@v1
       with:
