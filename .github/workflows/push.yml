@@ -1,0 +1,20 @@
+name: Pushes
+
+on:
+  push:
+    branches:
+      - master
+      - release/production
+
+jobs:
+  build-development:
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      dockertag: latest
+
+  build-production:
+    if: github.ref == 'refs/heads/release/production'
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      dockertag: stable

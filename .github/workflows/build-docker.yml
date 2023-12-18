@@ -1,9 +1,11 @@
 name: Docker Image Build
 
 on:
-  push:
-    branches:
-      - master
+  workflow_call:
+    inputs:
+      dockertag:
+        required: true
+        type: string
 
 env:
   IMAGE_ID: "ghcr.io/exo-opensource/mta-gamemode" 
@@ -41,4 +43,4 @@ jobs:
           labels: "runnumber=${GITHUB_RUN_ID}"
           platforms: "linux/amd64"
           push: true
-          tags: "${{ env.IMAGE_ID }}:latest"
+          tags: "${{ env.IMAGE_ID }}:${{ inputs.dockertag }}"

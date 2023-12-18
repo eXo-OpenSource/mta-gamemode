@@ -1,0 +1,30 @@
+name: Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: 'Release Version'
+        required: true
+      name:
+        type: string
+        description: 'Release Name'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: ./.github/workflows/build-docker.yml
+      with:
+        dockertag: ${{ inputs.version }}
+
+    - uses: actions/checkout@v3
+
+    - uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ inputs.version }}
+        name: ${{ inputs.name }}
