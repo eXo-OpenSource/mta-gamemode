@@ -81,7 +81,7 @@ function QuestDrawGUI:constructor(id, name)
 			self:showInfoText("Das Bild wird gespeichert...")
 
 			local options = {
-				["postData"] =  ("secret=%s&playerId=%d&contest=%s&img=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, base64Encode(self.m_Skribble:getImage("png"))),
+				["postData"] =  ("secret=%s&playerId=%d&contest=%s&img=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, encodeString("base64", self.m_Skribble:getImage("png"))),
 			}
 
 			fetchRemote(("%s/drawContest/upload.php%s"):format(PICUPLOAD_PATH, DEBUG and "?debug=true" or ""), options,

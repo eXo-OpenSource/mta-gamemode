@@ -60,7 +60,6 @@ function Jail:createGate(interior, openDir, gatePos, gateRot, keypad1Pos, keypad
 	self.m_Gates[Id].m_Id = Id
 	self.m_Gates[Id]:setInterior(interior)
 	self.m_Gates[Id].closed = true
-	self.m_Gates[Id].moving = false
 	self.m_Gates[Id].m_OpenDirection = openDir
 
 	if keypad1Pos then
@@ -114,10 +113,6 @@ function Jail:moveGate(gate, forceClose)
 			gate.closed = true
 			--outputChatBox("Gate "..gate.m_Id.." geschlossen", nil, 255, 0, 0)
 		end
-		gate.moving = true
-		setTimer(function(gate)
-			gate.moving = false
-		end,1500, 1, gate)
 	end
 end
 

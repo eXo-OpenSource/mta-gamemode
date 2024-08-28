@@ -764,7 +764,7 @@ Migration_20230707_2320_game_db.Up = function()
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
       
       
-      CREATE TABLE IF NOT EXISTS `vrp_offlinemessage` (
+      CREATE TABLE IF NOT EXISTS `vrp_offlineMessage` (
         `Id` int(11) NOT NULL AUTO_INCREMENT,
         `PlayerId` int(11) NOT NULL,
         `Text` text NOT NULL,

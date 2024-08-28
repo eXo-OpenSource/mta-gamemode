@@ -19,7 +19,7 @@ end
 
 function TemporaryVehicle.create(model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
-	local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
+	local vehicle = createVehicle(model, Vector3(posX, posY, posZ), Vector3(0, 0, rotation))
 	if vehicle then
 		enew(vehicle, TemporaryVehicle)
 	end

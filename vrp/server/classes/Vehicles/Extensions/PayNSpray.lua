@@ -99,7 +99,6 @@ end
 function PayNSpray:createCustomDoor(model, pos, rot)
 	self.m_CustomDoor = createObject(model, pos, rot)
 	self.m_CustomDoor.open = true
-	self.m_CustomDoor.moving = false
 end
 
 function PayNSpray:setCustomGarageOpen(state)
@@ -109,20 +108,16 @@ function PayNSpray:setCustomGarageOpen(state)
 			if not self.m_CustomDoor.open then
 				pos.z = pos.z+1.7
 				self.m_CustomDoor:move(2000, pos, Vector3(0, 90, 0))
-				self.m_CustomDoor.moving = true
 				setTimer(function()
 					self.m_CustomDoor.open = true
-					self.m_CustomDoor.moving = false
 				end, 2500, 1)
 			end
 		else
 			if self.m_CustomDoor.open then
 				pos.z = pos.z-1.7
 				self.m_CustomDoor:move(2000, pos, Vector3(0, -90, 0))
-				self.m_CustomDoor.moving = true
 				setTimer(function()
 					self.m_CustomDoor.open = false
-					self.m_CustomDoor.moving = false
 				end, 2500, 1)
 			end
 		end

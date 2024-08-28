@@ -182,7 +182,7 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 			local file = fileCreate(filePath)
 			if file then
 				if encrypt then
-					file:write(base64Encode(responseData))
+					file:write(encodeString("base64", responseData))
 				else
 					file:write(responseData)
 				end
